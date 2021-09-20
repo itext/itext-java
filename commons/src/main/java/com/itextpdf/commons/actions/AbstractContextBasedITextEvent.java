@@ -24,13 +24,14 @@ package com.itextpdf.commons.actions;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.actions.data.ProductData;
+import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 
 /**
  * Represents a context-based event. See also {@link AbstractContextBasedEventHandler}.
  * Only for internal usage.
  */
 public abstract class AbstractContextBasedITextEvent extends AbstractProductITextEvent {
-    private final IMetaInfo metaInfo;
+    private IMetaInfo metaInfo;
 
     /**
      * Creates an event containing auxiliary meta data.
@@ -44,20 +45,34 @@ public abstract class AbstractContextBasedITextEvent extends AbstractProductITex
     }
 
     /**
+     * Obtains the current event context class.
+     *
+     * @return context class
+     */
+    public Class<?> getClassFromContext() {
+        return this.getClass();
+    }
+
+    /**
+     * Sets meta info.
+     *
+     * @param metaInfo meta info
+     *
+     * @throws IllegalStateException if the current event already has not null meta info associated with it
+     */
+    public void setMetaInfo(IMetaInfo metaInfo) throws IllegalStateException {
+        if (this.metaInfo != null) {
+            throw new IllegalStateException(CommonsExceptionMessageConstant.META_INFO_SHOULDNT_BE_NULL);
+        }
+        this.metaInfo = metaInfo;
+    }
+
+    /**
      * Obtains stored meta info associated with the event.
      *
      * @return meta info
      */
     IMetaInfo getMetaInfo() {
         return metaInfo;
-    }
-
-    /**
-     * Obtains a current event context class.
-     *
-     * @return context class
-     */
-    public Class<?> getClassFromContext() {
-        return this.getClass();
     }
 }

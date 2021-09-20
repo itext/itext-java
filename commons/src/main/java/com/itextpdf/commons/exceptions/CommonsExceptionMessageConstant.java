@@ -34,14 +34,13 @@ public final class CommonsExceptionMessageConstant {
      * <li>1st is a new element identifier;
      * </ul>
      */
-    public static final String ELEMENT_ALREADY_HAS_IDENTIFIER =
-            "Element already has sequence id: {0}, new id {1} will be ignored";
-    public static final String INVALID_USAGE_CONFIGURATION_FORBIDDEN =
-            "Invalid usage of placeholder \"{0}\": any configuration is forbidden";
-    public static final String INVALID_USAGE_FORMAT_REQUIRED =
-            "Invalid usage of placeholder \"{0}\": format is required";
-    public static final String NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT =
-            "No events were registered for the document!";
+    public static final String ELEMENT_ALREADY_HAS_IDENTIFIER = "Element already has sequence id: {0}, new id {1} " +
+            "will be ignored";
+    public static final String INVALID_USAGE_CONFIGURATION_FORBIDDEN = "Invalid usage of placeholder \"{0}\": any "
+            + "configuration is forbidden";
+    public static final String INVALID_USAGE_FORMAT_REQUIRED = "Invalid usage of placeholder \"{0}\": format is required";
+    public static final String META_INFO_SHOULDNT_BE_NULL = "Meta info shouldn't be null";
+    public static final String NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT = "No events were registered for the document!";
     public static final String PATTERN_CONTAINS_OPEN_QUOTATION = "Pattern contains open quotation!";
     public static final String PATTERN_CONTAINS_UNEXPECTED_CHARACTER = "Pattern contains unexpected character {0}";
     public static final String PATTERN_CONTAINS_UNEXPECTED_COMPONENT = "Pattern contains unexpected component {0}";
