@@ -41,4 +41,36 @@ public class ProductDataTest extends ExtendedITextTest {
         Assert.assertEquals(1900, productData.getSinceCopyrightYear());
         Assert.assertEquals(2100, productData.getToCopyrightYear());
     }
+
+    @Test
+    public void equalsTest() {
+        ProductData a = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
+        ProductData b = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
+
+        Assert.assertEquals(a, a);
+
+        Assert.assertEquals(a, b);
+        Assert.assertEquals(b, a);
+    }
+
+    @Test
+    public void notEqualsTest() {
+        ProductData a = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
+        ProductData d = new ProductData("publicProductName", "productName", "1.2", 1910, 2110);
+
+        Assert.assertNotEquals(a, d);
+    }
+
+    @Test
+    public void hashCodeTest() {
+        ProductData a = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
+        ProductData b = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
+
+        Assert.assertEquals(a, b);
+        Assert.assertEquals(a.hashCode(), b.hashCode());
+
+        int h1 = a.hashCode();
+        int h2 = a.hashCode();
+        Assert.assertEquals(h1, h2);
+    }
 }
