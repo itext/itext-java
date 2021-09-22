@@ -36,9 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultITextProductEventProcessor extends AbstractITextProductEventProcessor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultITextProductEventProcessor.class);
-
-    private static final byte[] messageForLogging = Base64
+    static final byte[] MESSAGE_FOR_LOGGING = Base64
             .decode("WW91IGFyZSB1c2luZyBpVGV4dCB1bmRlciB0aGUgQUdQTC4KCklmIHRoaXMgaXMgeW9"
                     + "1ciBpbnRlbnRpb24sIHlvdSBoYXZlIHB1Ymxpc2hlZCB5b3VyIG93biBzb3VyY2UgY2"
                     + "9kZSBhcyBBR1BMIHNvZnR3YXJlIHRvby4KUGxlYXNlIGxldCB1cyBrbm93IHdoZXJlI"
@@ -53,6 +51,8 @@ public class DefaultITextProductEventProcessor extends AbstractITextProductEvent
                     + "XIsIHdlJ2xsIGV4cGxhaW4gaG93IHRvIGluc3RhbGwgeW91ciBsaWNlbnNlIGtleSB0"
                     + "byBhdm9pZCB0aGlzIG1lc3NhZ2UuCklmIHlvdSdyZSBub3QgYSBjdXN0b21lciwgd2U"
                     + "nbGwgZXhwbGFpbiB0aGUgYmVuZWZpdHMgb2YgYmVjb21pbmcgYSBjdXN0b21lci4=");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultITextProductEventProcessor.class);
 
     private static final long[] REPEAT = {10000L, 5000L, 1000L};
 
@@ -73,7 +73,7 @@ public class DefaultITextProductEventProcessor extends AbstractITextProductEvent
      */
     public DefaultITextProductEventProcessor(String productName) {
         super(productName);
-        repeatLevel = new AtomicLong(REPEAT[(int) level.get()]);
+        repeatLevel = new AtomicLong(acquireRepeatLevel((int) level.get()));
     }
 
     @Override
@@ -88,13 +88,13 @@ public class DefaultITextProductEventProcessor extends AbstractITextProductEvent
                 if (level.incrementAndGet() > MAX_LVL) {
                     level.set(MAX_LVL);
                 }
-                repeatLevel.set(REPEAT[(int) level.get()]);
+                repeatLevel.set(acquireRepeatLevel((int) level.get()));
                 isNeededToLogMessage = true;
             }
         }
 
         if (isNeededToLogMessage) {
-            String message = new String(messageForLogging, StandardCharsets.ISO_8859_1);
+            String message = new String(MESSAGE_FOR_LOGGING, StandardCharsets.ISO_8859_1);
             LOGGER.info(message);
             System.out.println(message);
         }
@@ -103,5 +103,9 @@ public class DefaultITextProductEventProcessor extends AbstractITextProductEvent
     @Override
     public String getUsageType() {
         return "AGPL";
+    }
+
+    long acquireRepeatLevel(int lvl) {
+        return REPEAT[lvl];
     }
 }

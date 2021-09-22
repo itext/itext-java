@@ -22,24 +22,74 @@
  */
 package com.itextpdf.commons.actions.processors;
 
+import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
+import com.itextpdf.commons.actions.data.CommonsProductData;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DefaultITextProductEventProcessorTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void constructorWithNullProductNameTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(CommonsExceptionMessageConstant.PRODUCT_NAME_CAN_NOT_BE_NULL);
-        new DefaultITextProductEventProcessor(null);
+        Exception e =
+                Assert.assertThrows(IllegalArgumentException.class, () -> new DefaultITextProductEventProcessor(null));
+        Assert.assertEquals(CommonsExceptionMessageConstant.PRODUCT_NAME_CAN_NOT_BE_NULL, e.getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = "{0} you are probably {1}", logLevel = LogLevelConstants.INFO))
+    public void messageIsLoggedTest() {
+        TestDefaultITextProductEventProcessor testProcessor = new TestDefaultITextProductEventProcessor();
+        ITextTestEvent e = new ITextTestEvent(new SequenceId(), CommonsProductData.getInstance(), null, "test event");
+        AssertUtil.doesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
+    }
+
+    @Test
+    @LogMessages(messages =
+        @LogMessage(messageTemplate = "{0} you are probably {1}", logLevel = LogLevelConstants.INFO, count = 4)
+    )
+    public void messageIsLoggedThreeTimesTest() {
+        int iterationsNumber = 15;
+        // "1" correspond to expected iterations with log messages:
+        // 1 0 0 0 0
+        // 0 1 0 0 0
+        // 1 0 0 0 1
+        TestDefaultITextProductEventProcessor testProcessor = new TestDefaultITextProductEventProcessor();
+        ITextTestEvent e = new ITextTestEvent(new SequenceId(), CommonsProductData.getInstance(), null, "test event");
+        for (int i = 0; i < iterationsNumber; ++i) {
+            AssertUtil.doesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
+        }
+    }
+
+    private static class TestDefaultITextProductEventProcessor extends DefaultITextProductEventProcessor {
+
+        public TestDefaultITextProductEventProcessor() {
+            super("test product");
+        }
+
+        @Override
+        long acquireRepeatLevel(int lvl) {
+            switch (lvl) {
+                case 0:
+                    return 0;
+                case 1:
+                    return 5;
+                case 2:
+                    return 3;
+            }
+            return 0;
+        }
     }
 }
