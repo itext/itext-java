@@ -23,9 +23,14 @@
 package com.itextpdf.commons.actions;
 
 /**
- * Base marker interface for any generated event of any source.
+ * The interface for an event handler.
  *
- * <p>TODO: DEVSIX-5311 rename it IEvent when the oldest mechanism is deleted
  */
-public interface IBaseEvent {
+public interface IEventHandler {
+    /**
+     * Handles the event.
+     *
+     * @param event to handle
+     */
+    void onEvent(IEvent event);
 }

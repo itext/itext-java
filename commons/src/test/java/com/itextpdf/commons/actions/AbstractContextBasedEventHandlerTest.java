@@ -87,7 +87,7 @@ public class AbstractContextBasedEventHandlerTest extends ExtendedITextTest {
         }
     }
 
-    private static class UnknownEvent implements IBaseEvent {
+    private static class UnknownEvent implements IEvent {
 
     }
 }

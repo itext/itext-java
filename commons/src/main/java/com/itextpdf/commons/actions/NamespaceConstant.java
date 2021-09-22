@@ -64,9 +64,7 @@ public final class NamespaceConstant {
     public static final String CORE_SVG = ITEXT + ".svg";
     
     //Addons
-    public static final String PDF_DEBUG = ITEXT + ".pdfdebug";
     public static final String PDF_HTML = ITEXT + ".html2pdf";
-    public static final String PDF_INVOICE = ITEXT + ".zugferd";
     public static final String PDF_SWEEP = ITEXT + ".pdfcleanup";
     public static final String PDF_OCR = ITEXT + ".pdfocr";
     public static final String PDF_OCR_TESSERACT4 = PDF_OCR + ".tesseract4";

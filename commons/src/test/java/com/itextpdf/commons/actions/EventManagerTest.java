@@ -22,10 +22,6 @@
  */
 package com.itextpdf.commons.actions;
 
-import com.itextpdf.commons.actions.EventManager;
-import com.itextpdf.commons.actions.IBaseEvent;
-import com.itextpdf.commons.actions.IBaseEventHandler;
-import com.itextpdf.commons.actions.ProductNameConstant;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.ecosystem.TestConfigurationEvent;
 import com.itextpdf.commons.exceptions.AggregatedException;
@@ -60,8 +56,8 @@ public class EventManagerTest extends ExtendedITextTest {
     @Test
     public void throwSomeExceptionsTest() {
         EventManager eventManager = EventManager.getInstance();
-        IBaseEventHandler handler1 = new ThrowArithmeticExpHandler();
-        IBaseEventHandler handler2 = new ThrowIllegalArgumentExpHandler();
+        IEventHandler handler1 = new ThrowArithmeticExpHandler();
+        IEventHandler handler2 = new ThrowIllegalArgumentExpHandler();
 
         eventManager.register(handler1);
         eventManager.register(handler2);
@@ -88,7 +84,7 @@ public class EventManagerTest extends ExtendedITextTest {
     @Test
     public void throwOneUncheckedExceptionsTest() {
         EventManager eventManager = EventManager.getInstance();
-        IBaseEventHandler handler1 = new ThrowArithmeticExpHandler();
+        IEventHandler handler1 = new ThrowArithmeticExpHandler();
         eventManager.register(handler1);
 
         try {
@@ -105,7 +101,7 @@ public class EventManagerTest extends ExtendedITextTest {
     @Test
     public void configureHandlersTest() {
         EventManager eventManager = EventManager.getInstance();
-        IBaseEventHandler handler = new ThrowArithmeticExpHandler();
+        IEventHandler handler = new ThrowArithmeticExpHandler();
 
         Assert.assertFalse(eventManager.isRegistered(handler));
 
@@ -119,16 +115,16 @@ public class EventManagerTest extends ExtendedITextTest {
 
     }
 
-    private static class ThrowArithmeticExpHandler implements IBaseEventHandler {
+    private static class ThrowArithmeticExpHandler implements IEventHandler {
         @Override
-        public void onEvent(IBaseEvent event) {
+        public void onEvent(IEvent event) {
             throw new ArithmeticException("ThrowArithmeticExpHandler");
         }
     }
 
-    private static class ThrowIllegalArgumentExpHandler implements IBaseEventHandler {
+    private static class ThrowIllegalArgumentExpHandler implements IEventHandler {
         @Override
-        public void onEvent(IBaseEvent event) {
+        public void onEvent(IEvent event) {
             throw new IllegalArgumentException("ThrowIllegalArgumentExpHandler");
         }
     }

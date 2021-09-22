@@ -724,7 +724,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * {@inheritDoc}
      */
     @Override
-    public void addEventHandler(String type, IEventHandler handler) {
+    public void addEventHandler(String type, com.itextpdf.kernel.events.IEventHandler handler) {
         eventDispatcher.addEventHandler(type, handler);
     }
 
@@ -756,7 +756,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * {@inheritDoc}
      */
     @Override
-    public void removeEventHandler(String type, IEventHandler handler) {
+    public void removeEventHandler(String type, com.itextpdf.kernel.events.IEventHandler handler) {
         eventDispatcher.removeEventHandler(type, handler);
     }
 

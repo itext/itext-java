@@ -36,7 +36,7 @@ import java.util.Set;
 public final class EventManager {
     private static final EventManager INSTANCE = new EventManager();
 
-    private final Set<IBaseEventHandler> handlers = new LinkedHashSet<>();
+    private final Set<IEventHandler> handlers = new LinkedHashSet<>();
 
     private EventManager() {
         handlers.add(ProductEventHandler.INSTANCE);
@@ -56,9 +56,9 @@ public final class EventManager {
      *
      * @param event to handle
      */
-    public void onEvent(IBaseEvent event) {
+    public void onEvent(IEvent event) {
         final List<RuntimeException> caughtExceptions = new ArrayList<>();
-        for (final IBaseEventHandler handler : handlers) {
+        for (final IEventHandler handler : handlers) {
             try {
                 handler.onEvent(event);
             } catch (RuntimeException ex) {
@@ -83,11 +83,11 @@ public final class EventManager {
     }
 
     /**
-     * Add new {@link IBaseEventHandler} to the event handling process.
+     * Add new {@link IEventHandler} to the event handling process.
      *
      * @param handler is a handler to add
      */
-    public void register(IBaseEventHandler handler) {
+    public void register(IEventHandler handler) {
         if (handler != null) {
             handlers.add(handler);
         }
@@ -99,7 +99,7 @@ public final class EventManager {
      * @param handler is a handler to check
      * @return true if handler has been already registered and false otherwise
      */
-    public boolean isRegistered(IBaseEventHandler handler) {
+    public boolean isRegistered(IEventHandler handler) {
         if (handler != null) {
             return handlers.contains(handler);
         }
@@ -113,7 +113,7 @@ public final class EventManager {
      * @return true if the handler had been registered previously and was removed. False if the
      * handler was not found among registered handlers
      */
-    public boolean unregister(IBaseEventHandler handler) {
+    public boolean unregister(IEventHandler handler) {
         if (handler != null) {
             return handlers.remove(handler);
         }

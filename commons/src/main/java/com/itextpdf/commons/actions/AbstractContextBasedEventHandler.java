@@ -28,7 +28,7 @@ import com.itextpdf.commons.actions.contexts.IContext;
 /**
  * Base class for events handling depending on the context.
  */
-public abstract class AbstractContextBasedEventHandler implements IBaseEventHandler {
+public abstract class AbstractContextBasedEventHandler implements IEventHandler {
     private final IContext defaultContext;
 
     /**
@@ -48,7 +48,7 @@ public abstract class AbstractContextBasedEventHandler implements IBaseEventHand
      *
      * @param event to handle
      */
-    public final void onEvent(IBaseEvent event) {
+    public final void onEvent(IEvent event) {
         if (!(event instanceof AbstractContextBasedITextEvent)) {
             return;
         }

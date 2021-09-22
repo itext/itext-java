@@ -24,7 +24,7 @@ package com.itextpdf.commons.actions.confirmations;
 
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.EventManager;
-import com.itextpdf.commons.actions.IBaseEvent;
+import com.itextpdf.commons.actions.IEvent;
 
 /**
  * Defines the strategy of {@link AbstractProductProcessITextEvent} confirming.
@@ -32,7 +32,7 @@ import com.itextpdf.commons.actions.IBaseEvent;
 public enum EventConfirmationType {
     /**
      * The successful execution of the process associated with the event should be confirmed by the
-     * second invocation of the {@link EventManager#onEvent(IBaseEvent)} method.
+     * second invocation of the {@link EventManager#onEvent(IEvent)} method.
      */
     ON_DEMAND,
     /**

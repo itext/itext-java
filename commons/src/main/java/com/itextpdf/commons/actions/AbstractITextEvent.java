@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Abstract class which defines events only for internal usage.
  */
-public abstract class AbstractITextEvent implements IBaseEvent {
+public abstract class AbstractITextEvent implements IEvent {
     private static final String ONLY_FOR_INTERNAL_USE = "AbstractITextEvent is only for internal usage.";
 
     private static final Map<String, Object> INTERNAL_PACKAGES = new ConcurrentHashMap<>();

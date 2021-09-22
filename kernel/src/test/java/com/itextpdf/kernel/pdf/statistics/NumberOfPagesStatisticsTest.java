@@ -22,8 +22,8 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.commons.actions.IBaseEvent;
-import com.itextpdf.commons.actions.IBaseEventHandler;
+import com.itextpdf.commons.actions.IEvent;
+import com.itextpdf.commons.actions.IEventHandler;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -119,11 +119,11 @@ public class NumberOfPagesStatisticsTest extends ExtendedITextTest {
         Assert.assertEquals(1, numberOfPagesEvents.get(2).getNumberOfPages());
     }
 
-    private static class NumberOfPagesStatisticsHandler implements IBaseEventHandler {
+    private static class NumberOfPagesStatisticsHandler implements IEventHandler {
         private List<NumberOfPagesStatisticsEvent> numberOfPagesEvents = new ArrayList<>();
 
         @Override
-        public void onEvent(IBaseEvent event) {
+        public void onEvent(IEvent event) {
             if (!(event instanceof NumberOfPagesStatisticsEvent)) {
                 return;
             }

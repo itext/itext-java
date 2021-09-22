@@ -38,10 +38,10 @@ public abstract class AbstractContextManagerConfigurationEvent extends AbstractI
     }
 
     protected void registerGenericContext(Collection<String> namespaces, Collection<String> products) {
-        ContextManager.getInstance().registerGenericContextForProducts(namespaces, products);
+        ContextManager.getInstance().registerGenericContext(namespaces, products);
     }
 
-    protected void unregisterGenericContext(Collection<String> namespaces) {
-        ContextManager.getInstance().unregisterGenericContextForProducts(namespaces);
+    protected void unregisterContext(Collection<String> namespaces) {
+        ContextManager.getInstance().unregisterContext(namespaces);
     }
 }

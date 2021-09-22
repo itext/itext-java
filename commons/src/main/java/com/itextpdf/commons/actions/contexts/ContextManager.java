@@ -62,28 +62,16 @@ public class ContextManager {
 
     static {
         ContextManager local = new ContextManager();
-        local.registerGenericContextForProducts(NamespaceConstant.ITEXT_CORE_NAMESPACES,
-                Collections.singletonList(NamespaceConstant.ITEXT),
+        local.registerGenericContext(NamespaceConstant.ITEXT_CORE_NAMESPACES,
                 Collections.singleton(ProductNameConstant.ITEXT_CORE));
 
-        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_DEBUG),
-                Collections.singletonList(NamespaceConstant.PDF_DEBUG),
-                Collections.<String>emptyList());
-
-        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_HTML),
-                Collections.singletonList(NamespaceConstant.PDF_HTML),
+        local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_HTML),
                 Collections.singleton(ProductNameConstant.PDF_HTML));
 
-        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_INVOICE),
-                Collections.singletonList(NamespaceConstant.PDF_INVOICE),
-                Collections.<String>emptyList());
-
-        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
-                Collections.singletonList(NamespaceConstant.PDF_SWEEP),
+        local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
                 Collections.singleton(ProductNameConstant.PDF_SWEEP));
 
-        local.registerGenericContextForProducts(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
-                Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
+        local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
                 Collections.singleton(ProductNameConstant.PDF_OCR_TESSERACT4));
 
         INSTANCE = local;
@@ -139,27 +127,9 @@ public class ContextManager {
         return null;
     }
 
-    // TODO DEVSIX-5311 consider renaming to be in sync with renamed registerGenericContextForProducts
-    void unregisterGenericContextForProducts(Collection<String> namespaces) {
+    void unregisterContext(Collection<String> namespaces) {
         for (String namespace : namespaces) {
-            unregisterContext(namespace);
-        }
-    }
-
-    // TODO DEVSIX-5311 rename into registerGenericContext (currently we cann't rename it as
-    //  the old method with the same arguments but different logic is used for old mechanism)
-    void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> products) {
-        registerGenericContextForProducts(namespaces, Collections.<String>emptyList(), products);
-    }
-
-    // TODO DEVSIX-5311 This method is needed for similar working of new and old license mechanism,
-    //  should be moved to single properly method
-    private void registerGenericContextForProducts(Collection<String> namespaces, Collection<String> eventIds,
-                                                   Collection<String> products) {
-        final GenericContext context = new GenericContext(products);
-        for (String namespace : namespaces) {
-            //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
-            registerContext(namespace.toLowerCase(), context);
+            contextMappings.remove(namespace);
         }
     }
 
@@ -170,17 +140,12 @@ public class ContextManager {
         return null;
     }
 
-    // TODO DEVSIX-5311 This method is used for old logic of license mechanism, will be removed
-    private void registerGenericContext(Collection<String> namespaces, Collection<String> eventIds) {
-        registerGenericContextForProducts(namespaces, eventIds, Collections.<String>emptyList());
-    }
-
-    private void registerContext(String namespace, IContext context) {
-        contextMappings.put(namespace, context);
-    }
-
-    private void unregisterContext(String namespace) {
-        contextMappings.remove(namespace);
+    void registerGenericContext(Collection<String> namespaces, Collection<String> products) {
+        final GenericContext context = new GenericContext(products);
+        for (String namespace : namespaces) {
+            //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
+            contextMappings.put(namespace.toLowerCase(), context);
+        }
     }
 
     private static class LengthComparator implements Comparator<String> {

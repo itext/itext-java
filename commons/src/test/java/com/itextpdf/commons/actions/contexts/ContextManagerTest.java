@@ -63,10 +63,10 @@ public class ContextManagerTest extends ExtendedITextTest {
         Assert.assertTrue(innerNamespaces.startsWith(outerNamespaces));
 
         ContextManager managerOuterBeforeInner = new ContextManager();
-        managerOuterBeforeInner.registerGenericContextForProducts(Collections.singletonList(outerNamespaces),
-                Collections.<String>emptyList());
-        managerOuterBeforeInner.registerGenericContextForProducts(Collections.singletonList(innerNamespaces),
-                Collections.<String>emptyList());
+        managerOuterBeforeInner
+                .registerGenericContext(Collections.singletonList(outerNamespaces), Collections.<String>emptyList());
+        managerOuterBeforeInner
+                .registerGenericContext(Collections.singletonList(innerNamespaces), Collections.<String>emptyList());
 
         Assert.assertEquals(outerNamespaces,
                 managerOuterBeforeInner.getRecognisedNamespace(outerNamespaces));
@@ -74,10 +74,10 @@ public class ContextManagerTest extends ExtendedITextTest {
                 managerOuterBeforeInner.getRecognisedNamespace(innerNamespaces));
 
         ContextManager managerInnerBeforeOuter = new ContextManager();
-        managerInnerBeforeOuter.registerGenericContextForProducts(Collections.singletonList(innerNamespaces),
-                Collections.<String>emptyList());
-        managerInnerBeforeOuter.registerGenericContextForProducts(Collections.singletonList(outerNamespaces),
-                Collections.<String>emptyList());
+        managerInnerBeforeOuter
+                .registerGenericContext(Collections.singletonList(innerNamespaces), Collections.<String>emptyList());
+        managerInnerBeforeOuter
+                .registerGenericContext(Collections.singletonList(outerNamespaces), Collections.<String>emptyList());
 
         Assert.assertEquals(outerNamespaces,
                 managerInnerBeforeOuter.getRecognisedNamespace(outerNamespaces));
@@ -97,11 +97,10 @@ public class ContextManagerTest extends ExtendedITextTest {
         String testNamespace = "com.hello.world";
         ContextManager manager = new ContextManager();
         Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
-        manager.registerGenericContextForProducts(Arrays.asList(testNamespace),
-                Arrays.asList("myProduct"));
+        manager.registerGenericContext(Arrays.asList(testNamespace), Arrays.asList("myProduct"));
         Assert.assertEquals(testNamespace,
                 manager.getRecognisedNamespace(testNamespace + ".MyClass"));
-        manager.unregisterGenericContextForProducts(Arrays.asList(testNamespace));
+        manager.unregisterContext(Arrays.asList(testNamespace));
         Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
     }
 

@@ -22,8 +22,8 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.commons.actions.IBaseEvent;
-import com.itextpdf.commons.actions.IBaseEventHandler;
+import com.itextpdf.commons.actions.IEvent;
+import com.itextpdf.commons.actions.IEventHandler;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.pdf.CountOutputStream;
@@ -126,11 +126,11 @@ public class SizeOfPdfStatisticsTest extends ExtendedITextTest {
         Assert.assertEquals(outputStream3.getAmountOfWrittenBytes(), sizeOfPdfEvents.get(2).getAmountOfBytes());
     }
 
-    private static class SizeOfPdfStatisticsHandler implements IBaseEventHandler {
+    private static class SizeOfPdfStatisticsHandler implements IEventHandler {
         private List<SizeOfPdfStatisticsEvent> sizeOfPdfEvents = new ArrayList<>();
 
         @Override
-        public void onEvent(IBaseEvent event) {
+        public void onEvent(IEvent event) {
             if (!(event instanceof SizeOfPdfStatisticsEvent)) {
                 return;
             }
