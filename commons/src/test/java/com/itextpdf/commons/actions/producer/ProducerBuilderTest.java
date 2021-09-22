@@ -57,7 +57,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         junitExpectedException.expect(IllegalArgumentException.class);
         junitExpectedException.expectMessage(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
 
-        ProducerBuilder.modifyProducer(Collections.emptyList(), null);
+        ProducerBuilder.modifyProducer(Collections.<AbstractProductProcessITextEvent>emptyList(), null);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         junitExpectedException.expect(IllegalArgumentException.class);
         junitExpectedException.expectMessage(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
 
-        ProducerBuilder.modifyProducer(null, null);
+        ProducerBuilder.modifyProducer((List<AbstractProductProcessITextEvent>)null, null);
     }
 
     @Test

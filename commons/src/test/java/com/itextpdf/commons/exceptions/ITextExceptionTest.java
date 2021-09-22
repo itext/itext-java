@@ -35,7 +35,7 @@ public class ITextExceptionTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(ITextException.class, () -> {
             throw new ITextException();
         });
-        Assert.assertNull(exception.getMessage());
+        Assert.assertEquals(CommonsExceptionMessageConstant.UNKNOWN_ITEXT_EXCEPTION, exception.getMessage());
     }
 
     @Test

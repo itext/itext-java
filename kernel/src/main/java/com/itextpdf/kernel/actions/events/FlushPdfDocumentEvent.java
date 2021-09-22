@@ -76,7 +76,7 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
             return;
         }
 
-        final Set<String> products = new HashSet<>(events.size());
+        final Set<String> products = new HashSet<>();
         for (final AbstractProductProcessITextEvent event : events) {
             if (event.getConfirmationType() == EventConfirmationType.ON_CLOSE) {
                 EventManager.getInstance().onEvent(new ConfirmEvent(pdfDocument.getDocumentIdWrapper(), event));

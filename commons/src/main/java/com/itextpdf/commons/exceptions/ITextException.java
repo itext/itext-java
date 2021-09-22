@@ -33,7 +33,7 @@ public class ITextException extends RuntimeException {
      * Creates a new ITextException with no error message and cause.
      */
     public ITextException() {
-        super();
+        super(CommonsExceptionMessageConstant.UNKNOWN_ITEXT_EXCEPTION);
     }
 
     /**

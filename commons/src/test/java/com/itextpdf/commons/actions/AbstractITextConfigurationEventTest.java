@@ -52,7 +52,7 @@ public class AbstractITextConfigurationEventTest extends ExtendedITextTest {
 
         Map<String, ITextProductEventProcessor> processors = ProductEventHandler.INSTANCE.getProcessors();
         Assert.assertEquals(1, processors.size());
-        Assert.assertTrue(processors.containsValue(processor));
+        Assert.assertTrue(processors.values().contains(processor));
     }
 
     @Test

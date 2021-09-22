@@ -61,6 +61,6 @@ public class DefaultITextProductEventProcessor implements ITextProductEventProce
 
     @Override
     public String getProducer() {
-        return "iText® ${usedProducts:P V (T 'version')} ©${copyrightSince}-${copyrightTo} iText Group NV";
+        return "iText\u00ae ${usedProducts:P V (T 'version')} \u00a9${copyrightSince}-${copyrightTo} iText Group NV";
     }
 }
