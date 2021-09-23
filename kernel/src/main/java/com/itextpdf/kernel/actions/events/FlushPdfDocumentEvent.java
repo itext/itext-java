@@ -25,6 +25,7 @@ package com.itextpdf.kernel.actions.events;
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
+import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
@@ -32,6 +33,7 @@ import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.actions.producer.ProducerBuilder;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
@@ -73,6 +75,10 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
         List<AbstractProductProcessITextEvent> events = getEvents(pdfDocument.getDocumentIdWrapper());
 
         if (events == null || events.isEmpty()) {
+            final ProductData productData = ITextCoreProductData.getInstance();
+            final String noEventProducer = "iText\u00ae \u00a9" + productData.getSinceCopyrightYear() + "-"
+                    + productData.getToCopyrightYear() + " iText Group NV (no registered products)";
+            pdfDocument.getDocumentInfo().setProducer(noEventProducer);
             return;
         }
 

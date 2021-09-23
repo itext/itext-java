@@ -22,7 +22,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.otf.lookuptype8.PosTableLookup8Format1;
 import com.itextpdf.io.font.otf.lookuptype8.PosTableLookup8Format1.PosRuleFormat1;
 import com.itextpdf.io.font.otf.lookuptype8.PosTableLookup8Format2;

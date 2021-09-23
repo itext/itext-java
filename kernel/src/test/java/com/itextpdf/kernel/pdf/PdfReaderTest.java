@@ -42,39 +42,38 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
@@ -2059,8 +2058,8 @@ public class PdfReaderTest extends ExtendedITextTest {
         //Later in the test we will need to delete a file. Since we do not want to delete it from sources, we will
         // copy it to destination folder.
         File copiedFile = copyFileForTest(fileName, copiedFileName);
-        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class, () -> new PdfReader(fileName));
-        Assert.assertEquals(com.itextpdf.io.IOException.PdfHeaderNotFound, e.getMessage());
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> new PdfReader(fileName));
+        Assert.assertEquals(com.itextpdf.io.exceptions.IOException.PdfHeaderNotFound, e.getMessage());
         //This check is meaningfull only on Windows, since on other OS the fact of a stream being open doesn't
         // prevent the stream from being deleted.
         Assert.assertTrue(FileUtil.deleteFile(copiedFile));
@@ -2072,7 +2071,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (InputStream pdfStream = new FileInputStream(fileName)) {
             IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
                     .createSource(pdfStream);
-            Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+            Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                     () -> new PdfReader(randomAccessSource, new ReaderProperties()));
             //An exception would be thrown, if stream is closed.
             Assert.assertEquals(-1, pdfStream.read());
