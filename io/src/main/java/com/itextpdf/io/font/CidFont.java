@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.IntHashtable;

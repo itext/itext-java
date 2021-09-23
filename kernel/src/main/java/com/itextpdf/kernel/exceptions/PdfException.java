@@ -41,10 +41,10 @@
   For more information, please contact iText Software Corp. at this
   address: sales@itextpdf.com
  */
-package com.itextpdf.kernel;
+package com.itextpdf.kernel.exceptions;
 
+import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * Exception class for exceptions in kernel module.
  */
-public class PdfException extends RuntimeException {
+public class PdfException extends ITextException {
     /**
      * Object for more details
      */

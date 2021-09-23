@@ -44,8 +44,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.crypto.BadPasswordException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import org.slf4j.Logger;

@@ -51,7 +51,7 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;

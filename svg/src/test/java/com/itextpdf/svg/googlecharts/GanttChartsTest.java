@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.googlecharts;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;

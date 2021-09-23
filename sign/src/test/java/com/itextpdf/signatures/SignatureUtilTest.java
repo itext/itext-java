@@ -43,7 +43,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.TimeTestUtil;

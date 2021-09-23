@@ -62,7 +62,7 @@ import com.itextpdf.io.source.OutputStream;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -703,7 +703,7 @@ public class PdfType0Font extends PdfFont {
                 if (subset || ttf.getDirectoryOffset() > 0) {
                     try {
                         ttfBytes = ttf.getSubset(usedGlyphs, subset);
-                    } catch (com.itextpdf.io.IOException e) {
+                    } catch (com.itextpdf.io.exceptions.IOException e) {
                         Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
                         logger.warn(LogMessageConstant.FONT_SUBSET_ISSUE);
                         ttfBytes = null;

@@ -22,12 +22,12 @@
  */
 package com.itextpdf.kernel.xmp.impl;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.DefaultSafeXmlParserFactory;
 import com.itextpdf.kernel.utils.XmlProcessorCreator;
 import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;

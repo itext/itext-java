@@ -53,4 +53,12 @@ public class ITextException extends RuntimeException {
     public ITextException(Throwable cause) {
         super(CommonsExceptionMessageConstant.UNKNOWN_ITEXT_EXCEPTION, cause);
     }
+
+    /**
+     * Creates a new ITextException.
+     *
+     * @param message the detail message
+     * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method)
+     */
+    public ITextException(String message, Throwable cause) { super(message, cause); }
 }

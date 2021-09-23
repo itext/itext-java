@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font.cmap;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 
 import java.util.ArrayList;
 import java.util.List;

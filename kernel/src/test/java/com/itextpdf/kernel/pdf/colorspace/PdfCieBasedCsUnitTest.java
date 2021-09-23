@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs.CalGray;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs.CalRgb;

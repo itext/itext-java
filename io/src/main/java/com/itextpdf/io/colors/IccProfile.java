@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.colors;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
@@ -85,7 +85,7 @@ public class IccProfile {
         icc.numComponents = nc;
         // invalid ICC
         if (nc != numComponents) {
-            throw new com.itextpdf.io.IOException(IOException.IccProfileContains0ComponentsWhileImageDataContains1Components).setMessageParams(nc, numComponents);
+            throw new IOException(IOException.IccProfileContains0ComponentsWhileImageDataContains1Components).setMessageParams(nc, numComponents);
         }
         return icc;
     }
@@ -119,13 +119,13 @@ public class IccProfile {
             while (remain > 0) {
                 int n = file.read(head, ptr, remain);
                 if (n < 0)
-                    throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile);
+                    throw new IOException(IOException.InvalidIccProfile);
                 remain -= n;
                 ptr += n;
             }
             if (head[36] != 0x61 || head[37] != 0x63
                     || head[38] != 0x73 || head[39] != 0x70) {
-                throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile);
+                throw new IOException(IOException.InvalidIccProfile);
             }
             remain = (head[0] & 0xff) << 24 | (head[1] & 0xff) << 16
                     | (head[2] & 0xff) << 8 | head[3] & 0xff;
@@ -136,14 +136,14 @@ public class IccProfile {
             while (remain > 0) {
                 int n = file.read(icc, ptr, remain);
                 if (n < 0) {
-                    throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile);
+                    throw new IOException(IOException.InvalidIccProfile);
                 }
                 remain -= n;
                 ptr += n;
             }
             return getInstance(icc);
         } catch (Exception ex) {
-            throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile, ex);
+            throw new IOException(IOException.InvalidIccProfile, ex);
         }
     }
 
@@ -161,7 +161,7 @@ public class IccProfile {
             raf = new RandomAccessFileOrArray(
                     new RandomAccessSourceFactory().createSource(stream));
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile, e);
+            throw new IOException(IOException.InvalidIccProfile, e);
         }
         return getInstance(raf);
     }
@@ -179,7 +179,7 @@ public class IccProfile {
             raf = new RandomAccessFileOrArray(
                     new RandomAccessSourceFactory().createBestSource(filename));
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile, e);
+            throw new IOException(IOException.InvalidIccProfile, e);
         }
         return getInstance(raf);
     }
@@ -196,7 +196,7 @@ public class IccProfile {
         try {
             colorSpace = new String(data, 16, 4, "US-ASCII");
         } catch (UnsupportedEncodingException e) {
-            throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile, e);
+            throw new IOException(IOException.InvalidIccProfile, e);
         }
         return colorSpace;
     }
@@ -213,7 +213,7 @@ public class IccProfile {
         try {
             deviceClass = new String(data, 12, 4, "US-ASCII");
         } catch (UnsupportedEncodingException e) {
-            throw new com.itextpdf.io.IOException(IOException.InvalidIccProfile, e);
+            throw new IOException(IOException.InvalidIccProfile, e);
         }
         return deviceClass;
     }

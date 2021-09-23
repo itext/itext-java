@@ -45,7 +45,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.ByteArrayOutputStream;

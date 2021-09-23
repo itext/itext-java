@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 
 
 public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream {

@@ -45,7 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
@@ -71,7 +71,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

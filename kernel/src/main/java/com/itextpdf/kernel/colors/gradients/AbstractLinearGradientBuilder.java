@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.colors.gradients;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.geom.AffineTransform;

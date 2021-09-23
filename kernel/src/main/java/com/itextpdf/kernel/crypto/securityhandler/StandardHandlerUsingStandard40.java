@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.kernel.crypto.ARCFOUREncryption;
-import com.itextpdf.kernel.crypto.BadPasswordException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamStandardEncryption;

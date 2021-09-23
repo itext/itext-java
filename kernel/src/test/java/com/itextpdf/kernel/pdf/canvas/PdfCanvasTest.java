@@ -49,7 +49,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -1359,7 +1359,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         try {
             ImageDataFactory.createGifFrame(baos.toByteArray(), 3);
             Assert.fail("IOException expected");
-        } catch (com.itextpdf.io.IOException ignored) {
+        } catch (com.itextpdf.io.exceptions.IOException ignored) {
 
         }
     }

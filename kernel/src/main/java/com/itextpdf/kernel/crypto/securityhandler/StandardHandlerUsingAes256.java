@@ -45,10 +45,10 @@ package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
-import com.itextpdf.kernel.crypto.BadPasswordException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;

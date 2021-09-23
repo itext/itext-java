@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 public class UnsupportedSecurityHandlerException extends PdfException {
 

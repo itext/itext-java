@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;

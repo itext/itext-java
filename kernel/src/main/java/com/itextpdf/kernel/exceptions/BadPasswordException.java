@@ -1,7 +1,8 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+    Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -40,40 +41,32 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf;
-
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+package com.itextpdf.kernel.exceptions;
 
 /**
- * Exception class for exceptions occurred during decompressed pdf streams processing.
+ * Bad password exception.
  */
-public class MemoryLimitsAwareException extends PdfException {
-    /**
-     * Creates a new instance of MemoryLimitsAwareException.
-     *
-     * @param message the detail message.
-     */
-    public MemoryLimitsAwareException(String message) {
-        super(message);
-    }
+public class BadPasswordException extends PdfException {
+
+
+    public static final String PdfReaderNotOpenedWithOwnerPassword = "PdfReader is not opened with owner password";
 
     /**
-     * Creates a new instance of MemoryLimitsAwareException.
-     *
-     * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method).
-     */
-    public MemoryLimitsAwareException(Throwable cause) {
-        this(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, cause);
-    }
-
-    /**
-     * Creates a new instance of MemoryLimitsAwareException.
+     * Creates a new BadPasswordException.
      *
      * @param message the detail message.
      * @param cause   the cause (which is saved for later retrieval by {@link #getCause()} method).
      */
-    public MemoryLimitsAwareException(String message, Throwable cause) {
+    public BadPasswordException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    /**
+     * Creates a new BadPasswordException.
+     *
+     * @param message the detail message.
+     */
+    public BadPasswordException(String message) {
+        super(message);
     }
 }

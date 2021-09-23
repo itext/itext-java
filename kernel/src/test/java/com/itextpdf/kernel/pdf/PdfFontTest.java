@@ -1430,7 +1430,7 @@ public class PdfFontTest extends ExtendedITextTest {
         try {
             byte[] pfb = StreamUtil.inputStreamToArray(new FileInputStream(fontsFolder + "cmr10.pfb"));
             FontProgramFactory.createType1Font(null, pfb);
-        } catch (com.itextpdf.io.IOException e) {
+        } catch (com.itextpdf.io.exceptions.IOException e) {
             message = e.getMessage();
         }
         Assert.assertEquals("Invalid afm or pfm font file.", message);
@@ -1442,10 +1442,10 @@ public class PdfFontTest extends ExtendedITextTest {
         String font = fontsFolder + "cmr10.pfb";
         try {
             FontProgramFactory.createType1Font(font, null);
-        } catch (com.itextpdf.io.IOException e) {
+        } catch (com.itextpdf.io.exceptions.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException._1IsNotAnAfmOrPfmFontFile, font), message);
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException._1IsNotAnAfmOrPfmFontFile, font), message);
 
     }
 

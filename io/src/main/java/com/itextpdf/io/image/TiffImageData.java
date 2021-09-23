@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;

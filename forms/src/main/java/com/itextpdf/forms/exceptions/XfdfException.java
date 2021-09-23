@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,24 +40,20 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.barcodes.qrcode;
+package com.itextpdf.forms.exceptions;
 
-/**
- * Thrown when an exception occurs during Reed-Solomon decoding, such as when
- * there are too many errors to correct.
- *
- * @author Sean Owen
- */
-final class ReedSolomonException extends Exception {
+import com.itextpdf.commons.exceptions.ITextException;
 
+public class XfdfException extends ITextException {
 
-    /**
-     * Creates a ReedSolomonException with a message.
-     *
-     * @param message the message of the exception
-     */
-    public ReedSolomonException(String message) {
+    public XfdfException(String message) {
         super(message);
     }
 
+    /** Message in case one tries to add attribute with null name or value */
+    public static final String ATTRIBUTE_NAME_OR_VALUE_MISSING = "Attribute name or value are missing";
+
+    /** Message in case one tries to add annotation without indicating the page it belongs to*/
+    public static final String PAGE_IS_MISSING = "Required Page attribute is missing.";
 }
+

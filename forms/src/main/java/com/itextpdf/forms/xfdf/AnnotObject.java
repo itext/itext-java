@@ -42,6 +42,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.forms.exceptions.AttributeNotFoundException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import java.io.IOException;
 

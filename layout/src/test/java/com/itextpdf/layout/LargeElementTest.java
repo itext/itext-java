@@ -44,7 +44,7 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.geom.PageSize;

@@ -112,7 +112,8 @@ public class CssQuotes {
             if (quotes.get(0).size() == quotes.get(1).size() && !quotes.get(0).isEmpty() && !error) {
                 return new CssQuotes(quotes.get(0), quotes.get(1));
             } else {
-                LoggerFactory.getLogger(CssQuotes.class).error(MessageFormatUtil.format(LogMessageConstant.QUOTES_PROPERTY_INVALID, quotesString));
+                LoggerFactory.getLogger(CssQuotes.class).error(MessageFormatUtil.format(
+                        LogMessageConstant.QUOTES_PROPERTY_INVALID, quotesString));
             }
         }
         return fallbackToDefault ? createDefaultQuotes() : null;

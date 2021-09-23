@@ -67,7 +67,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -200,10 +199,10 @@ public class GetImageBytesTest extends ExtendedITextTest {
         ImageExtractor listener = new ImageExtractor();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> processor.processPageContent(pdfDocument.getPage(1))
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.ExpectedTrailingZeroBitsForByteAlignedLines), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException.ExpectedTrailingZeroBitsForByteAlignedLines), e.getMessage());
     }
 
     private class ImageExtractor implements IEventListener {

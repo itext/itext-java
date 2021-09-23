@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.cmap.AbstractCMap;
 import com.itextpdf.io.font.cmap.CMapByteCid;
 import com.itextpdf.io.font.cmap.CMapCidByte;

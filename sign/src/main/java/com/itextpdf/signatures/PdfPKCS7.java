@@ -43,7 +43,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -103,7 +103,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;

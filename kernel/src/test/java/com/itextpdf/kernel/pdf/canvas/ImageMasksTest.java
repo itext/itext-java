@@ -205,9 +205,9 @@ public class ImageMasksTest extends ExtendedITextTest {
     public void imageWithInvalidMaskTest() throws IOException {
         ImageData mask = ImageDataFactory.create(sourceFolder + "mask.png");
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> mask.makeMask()
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.ThisImageCanNotBeAnImageMask), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException.ThisImageCanNotBeAnImageMask), e.getMessage());
     }
 }

@@ -23,7 +23,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;

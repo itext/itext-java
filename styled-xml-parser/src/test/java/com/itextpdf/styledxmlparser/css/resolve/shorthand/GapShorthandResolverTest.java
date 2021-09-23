@@ -25,7 +25,6 @@ package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexFlowShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GapShorthandResolver;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;

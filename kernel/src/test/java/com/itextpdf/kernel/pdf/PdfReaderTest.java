@@ -49,7 +49,7 @@ import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -1136,7 +1136,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         //There is a generation number mismatch in xref table and object for 3093
         try {
             document.getPdfObject(3093);
-        } catch (com.itextpdf.io.IOException ex) {
+        } catch (com.itextpdf.io.exceptions.IOException ex) {
             exception = true;
         }
         Assert.assertTrue(exception);
@@ -1715,7 +1715,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         boolean exceptionThrown = false;
         try {
             PdfReader reader = new PdfReader(nonPdfFileName);
-        } catch (com.itextpdf.io.IOException e) {
+        } catch (com.itextpdf.io.exceptions.IOException e) {
             exceptionThrown = true;
 
             // File should be available for writing
@@ -2045,7 +2045,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @Test
     public void startxrefNotFoundTest() throws IOException {
-        junitExpectedException.expect(com.itextpdf.io.IOException.class);
+        junitExpectedException.expect(com.itextpdf.io.exceptions.IOException.class);
         junitExpectedException.expectMessage(KernelExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND);
 
         PdfReader pdfReader = new PdfReader(sourceFolder + "startxrefNotFound.pdf");

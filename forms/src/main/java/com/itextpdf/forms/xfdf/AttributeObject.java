@@ -43,6 +43,8 @@
 package com.itextpdf.forms.xfdf;
 
 
+import com.itextpdf.forms.exceptions.XfdfException;
+
 /**
  * Represents the attribute of any XFDF element.
  */

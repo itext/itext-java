@@ -646,7 +646,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     @Test
     // Before the changes have been implemented this test had been produced different result in Java and .NET.
     // So this test checks if there are any differences
-    public void parseDoubleValues() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void parseDoubleValues() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "svgStackOver");
     }
 }

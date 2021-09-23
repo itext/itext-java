@@ -43,7 +43,8 @@
 package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.CompressionConstants;

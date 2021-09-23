@@ -20,14 +20,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.styledxmlparser;
+package com.itextpdf.styledxmlparser.exceptions;
+
+import com.itextpdf.commons.exceptions.ITextException;
 
 /**
- * Class containing constants to be used in exceptions in the SXP module.
+ * Thrown when the limit on the number of bytes read was violated.
  */
-public final class StyledXmlParserExceptionMessage {
-    public static final String READING_BYTE_LIMIT_MUST_NOT_BE_LESS_ZERO = "The reading byte limit argument must not be less than zero.";
-
-    private StyledXmlParserExceptionMessage() {
-    }
+public class ReadingByteLimitException extends ITextException {
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;

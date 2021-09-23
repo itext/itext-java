@@ -52,7 +52,7 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import static com.itextpdf.io.IOException.ErrorAtFilePointer1;
+import static com.itextpdf.io.exceptions.IOException.ErrorAtFilePointer1;
 
 @Category(UnitTest.class)
 public class PdfTokenizerTest extends ExtendedITextTest {
@@ -261,7 +261,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource("/Name1".getBytes(StandardCharsets.ISO_8859_1))));
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () ->  tok.throwError(ErrorAtFilePointer1, 0)
         );
         Assert.assertEquals(MessageFormatUtil.format(ErrorAtFilePointer1, 0), e.getMessage());

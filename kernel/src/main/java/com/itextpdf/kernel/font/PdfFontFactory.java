@@ -51,7 +51,7 @@ import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;

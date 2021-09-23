@@ -55,7 +55,7 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;

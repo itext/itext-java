@@ -43,8 +43,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.util.ExceptionUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.exceptions.ExceptionUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;

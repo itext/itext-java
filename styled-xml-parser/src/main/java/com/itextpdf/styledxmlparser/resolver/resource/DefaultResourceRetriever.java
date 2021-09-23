@@ -25,6 +25,7 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
 
 import java.io.IOException;
 import java.io.InputStream;

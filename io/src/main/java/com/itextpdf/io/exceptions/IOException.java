@@ -41,8 +41,9 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io;
+package com.itextpdf.io.exceptions;
 
+import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +52,7 @@ import java.util.List;
 /**
  * Exception class for exceptions in io module.
  */
-public class IOException extends RuntimeException {
+public class IOException extends ITextException {
 
     public static final String AllFillBitsPrecedingEolCodeMustBe0 = "All fill bits preceding eol code must be 0.";
     public static final String BadEndiannessTag0x4949Or0x4d4d = "Bad endianness tag: 0x4949 or 0x4d4d.";

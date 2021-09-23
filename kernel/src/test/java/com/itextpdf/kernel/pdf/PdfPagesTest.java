@@ -46,7 +46,7 @@ import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.PageSize;
@@ -488,7 +488,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assert.assertTrue(invalidContentsArray.get(4).isStream());
     }
 
-    private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.IOException, java.io.IOException {
+    private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.exceptions.IOException, java.io.IOException {
         boolean valid = true;
         PdfReader reader = new PdfReader(src);
         PdfDocument pdfDocument = new PdfDocument(reader);

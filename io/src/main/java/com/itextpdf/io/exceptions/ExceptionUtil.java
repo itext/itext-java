@@ -1,8 +1,7 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -41,31 +40,18 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.barcodes.qrcode;
+package com.itextpdf.io.exceptions;
 
 /**
- * A base class which covers the range of exceptions which may occur when encoding a barcode using
- * the Writer framework.
- *
- * @author dswitkin@google.com (Daniel Switkin)
+ * This file is a helper class for internal usage only.
+ * Be aware that its API and functionality may be changed in future.
  */
-public final class WriterException extends Exception {
+public final class ExceptionUtil {
 
-
-    /**
-     * Creates a WriterException.
-     */
-    public WriterException() {
-        super();
+    private ExceptionUtil() {
     }
 
-    /**
-     * Creates a WriterException with a message.
-     *
-     * @param message message of the exception
-     */
-    public WriterException(String message) {
-        super(message);
+    public static boolean isOutOfRange(Exception e) {
+        return e instanceof IndexOutOfBoundsException;
     }
 }
-

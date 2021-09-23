@@ -43,7 +43,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import java.security.cert.CRL;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;

@@ -44,9 +44,7 @@
 package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;

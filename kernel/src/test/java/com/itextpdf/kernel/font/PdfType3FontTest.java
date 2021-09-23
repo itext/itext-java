@@ -25,7 +25,7 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;

@@ -41,27 +41,33 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.io;
+package com.itextpdf.barcodes.exceptions;
 
-import com.itextpdf.io.util.GhostscriptHelper;
-import com.itextpdf.io.util.ImageMagickHelper;
+import com.itextpdf.commons.exceptions.ITextException;
 
 /**
- * Class containing constants to be used in exceptions in the IO module.
+ * A base class which covers the range of exceptions which may occur when encoding a barcode using
+ * the Writer framework.
+ *
+ * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class IoExceptionMessage {
-    public static final String COMPARE_COMMAND_IS_NOT_SPECIFIED =
-            "ImageMagick comparison command is not specified. Set the "
-                    + ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE
-                    + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
-    public static final String COMPARE_COMMAND_SPECIFIED_INCORRECTLY =
-            "ImageMagick comparison command specified incorrectly. Set the "
-                    + ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE
-                    + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
-    public static final String GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED =
-            "Ghostscript command is not specified or specified incorrectly. Set the " + GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE
-                    + " environment variable to a CLI command that can run the Ghostscript application. See BUILDING.MD in the root of the repository for more details.";
-    public static final String GHOSTSCRIPT_FAILED = "GhostScript failed for <filename>";
-    public static final String CANNOT_OPEN_OUTPUT_DIRECTORY = "Cannot open output directory for <filename>";
+public final class WriterException extends ITextException {
 
+
+    /**
+     * Creates a WriterException.
+     */
+    public WriterException() {
+        super();
+    }
+
+    /**
+     * Creates a WriterException with a message.
+     *
+     * @param message message of the exception
+     */
+    public WriterException(String message) {
+        super(message);
+    }
 }
+

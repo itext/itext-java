@@ -53,7 +53,7 @@ import com.itextpdf.io.image.PngImageHelperConstants;
 import com.itextpdf.io.image.PngImageData;
 import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;

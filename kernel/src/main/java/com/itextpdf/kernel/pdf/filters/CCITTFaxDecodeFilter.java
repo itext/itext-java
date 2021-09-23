@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.codec.TIFFFaxDecompressor;

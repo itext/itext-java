@@ -57,7 +57,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;

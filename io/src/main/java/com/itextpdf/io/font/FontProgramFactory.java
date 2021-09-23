@@ -43,10 +43,10 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.font.woff2.FontCompressionException;
+import com.itextpdf.io.exceptions.FontCompressionException;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;

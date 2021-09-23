@@ -52,7 +52,7 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
@@ -1323,7 +1323,7 @@ public class PdfReader implements Closeable {
         int offset;
         try {
             offset = tok.getHeaderOffset();
-        } catch (com.itextpdf.io.IOException ex) {
+        } catch (com.itextpdf.io.exceptions.IOException ex) {
             if (closeStream) {
                 tok.close();
             }

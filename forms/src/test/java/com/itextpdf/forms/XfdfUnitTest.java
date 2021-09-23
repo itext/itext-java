@@ -23,7 +23,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.xfdf.FitObject;
-import com.itextpdf.forms.xfdf.XfdfException;
+import com.itextpdf.forms.exceptions.XfdfException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

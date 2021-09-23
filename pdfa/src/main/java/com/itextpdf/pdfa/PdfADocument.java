@@ -43,6 +43,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.IPdfPageFactory;
@@ -72,6 +73,7 @@ import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -237,7 +239,7 @@ public class PdfADocument extends PdfDocument {
                 }
             } catch (XMPException exc) {
                 Logger logger = LoggerFactory.getLogger(PdfADocument.class);
-                logger.error(com.itextpdf.io.LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
+                logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
             }
         }
     }
@@ -252,7 +254,7 @@ public class PdfADocument extends PdfDocument {
             setXmpMetadata(xmpMeta);
         } catch (XMPException e) {
             Logger logger = LoggerFactory.getLogger(PdfADocument.class);
-            logger.error(com.itextpdf.io.LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 

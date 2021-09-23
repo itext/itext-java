@@ -22,7 +22,7 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.util.UrlUtil;
 
 import java.io.ByteArrayInputStream;

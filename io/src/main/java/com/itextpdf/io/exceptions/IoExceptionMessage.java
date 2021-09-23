@@ -1,7 +1,8 @@
 /*
+
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: iText Software.
+    Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -40,15 +41,27 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.forms.xfdf;
+package com.itextpdf.io.exceptions;
 
-public class AttributeNotFoundException extends RuntimeException {
+import com.itextpdf.io.util.GhostscriptHelper;
+import com.itextpdf.io.util.ImageMagickHelper;
 
-    /**
-     * The exception thrown when the attribute with given name is not found in the object attributes list.
-     * @param attribute the name of missing attribute.
-     */
-    public AttributeNotFoundException(String attribute) {
-        super("Required attribute " + attribute + " is not found");
-    }
+/**
+ * Class containing constants to be used in exceptions in the IO module.
+ */
+public final class IoExceptionMessage {
+    public static final String COMPARE_COMMAND_IS_NOT_SPECIFIED =
+            "ImageMagick comparison command is not specified. Set the "
+                    + ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE
+                    + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
+    public static final String COMPARE_COMMAND_SPECIFIED_INCORRECTLY =
+            "ImageMagick comparison command specified incorrectly. Set the "
+                    + ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE
+                    + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
+    public static final String GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED =
+            "Ghostscript command is not specified or specified incorrectly. Set the " + GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE
+                    + " environment variable to a CLI command that can run the Ghostscript application. See BUILDING.MD in the root of the repository for more details.";
+    public static final String GHOSTSCRIPT_FAILED = "GhostScript failed for <filename>";
+    public static final String CANNOT_OPEN_OUTPUT_DIRECTORY = "Cannot open output directory for <filename>";
+
 }

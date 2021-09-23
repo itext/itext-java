@@ -95,21 +95,21 @@ class ImagePdfBytesInfo {
         java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
         if (pngColorType < 0) {
             if (bpc != 8)
-                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
+                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
 
             if (colorspace instanceof PdfArray) {
                 PdfArray ca = (PdfArray) colorspace;
                 PdfObject tyca = ca.get(0);
                 if (!PdfName.ICCBased.equals(tyca))
-                    throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
+                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
                 PdfStream pr = (PdfStream) ca.get(1);
                 int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n != 4) {
-                    throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.NValueIsNotSupported).setMessageParams(n);
+                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.NValueIsNotSupported).setMessageParams(n);
                 }
                 icc = pr.getBytes();
             } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
-                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
+                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
             }
             stride = 4 * width;
             TiffWriter wr = new TiffWriter();

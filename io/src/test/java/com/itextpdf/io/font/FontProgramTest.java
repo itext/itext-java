@@ -64,7 +64,7 @@ public class FontProgramTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(java.io.IOException.class,
                 () -> FontProgramFactory.createFont(notExistingFont)
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException._1NotFoundAsFileOrResource, notExistingFont), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException._1NotFoundAsFileOrResource, notExistingFont), e.getMessage());
     }
 
     @Test

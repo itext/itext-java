@@ -24,7 +24,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import org.slf4j.Logger;

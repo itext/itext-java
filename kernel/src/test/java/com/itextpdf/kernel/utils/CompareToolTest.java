@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessage;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.commons.utils.SystemUtil;

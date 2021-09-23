@@ -48,7 +48,7 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;

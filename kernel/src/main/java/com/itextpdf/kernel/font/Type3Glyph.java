@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;

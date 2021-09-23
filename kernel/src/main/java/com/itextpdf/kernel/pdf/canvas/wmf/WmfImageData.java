@@ -46,7 +46,7 @@ package com.itextpdf.kernel.pdf.canvas.wmf;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.io.IOException;

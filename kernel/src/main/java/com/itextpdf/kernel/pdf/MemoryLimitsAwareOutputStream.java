@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;

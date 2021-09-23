@@ -197,17 +197,17 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
     @Test
     //TODO DEVSIX-2058
-    public void fontResolverIntegrationTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void fontResolverIntegrationTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontssvg");
     }
 
     @Test
-    public void validLocalFontTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void validLocalFontTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "validLocalFontTest");
     }
 
     @Test
-    public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void fontWeightTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontWeightTest");
     }
 
@@ -215,19 +215,19 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
     // TODO DEVSIX-4275 investigate why fill style not processed
-    public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithFillStyleTest");
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
-    public void externalStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void externalStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithStrokeStyleTest");
     }
 
     @Test
     //TODO DEVSIX-2264: that test shall fail after the fix.
-    public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void googleFontsTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "googleFontsTest");
     }
 

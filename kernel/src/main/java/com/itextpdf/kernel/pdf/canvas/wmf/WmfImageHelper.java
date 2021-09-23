@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
 import com.itextpdf.io.image.ImageType;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.io.image.ImageData;

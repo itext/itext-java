@@ -22,8 +22,8 @@
  */
 package com.itextpdf.kernel.geom;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.util.Arrays;
 import java.util.List;

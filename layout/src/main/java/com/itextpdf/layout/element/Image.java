@@ -45,7 +45,7 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageData;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;

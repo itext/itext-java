@@ -53,7 +53,7 @@ import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;

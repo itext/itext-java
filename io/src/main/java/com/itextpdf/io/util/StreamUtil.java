@@ -113,7 +113,7 @@ public final class StreamUtil {
         try {
             outputStream.write(buf.getInternalBuffer(), 0, buf.size());
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.CannotWriteBytes, e);
+            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.CannotWriteBytes, e);
         }
     }
 
@@ -122,7 +122,7 @@ public final class StreamUtil {
         try {
             outputStream.write(buf.getInternalBuffer(), 0, buf.size());
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.CannotWriteBytes, e);
+            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.CannotWriteBytes, e);
         }
     }
 

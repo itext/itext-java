@@ -42,7 +42,7 @@
  */
 package com.itextpdf.forms.xfa;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.DefaultSafeXmlParserFactory;
 import com.itextpdf.test.ExceptionTestUtil;
 

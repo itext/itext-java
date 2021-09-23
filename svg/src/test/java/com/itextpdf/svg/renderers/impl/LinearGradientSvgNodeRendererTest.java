@@ -22,7 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;

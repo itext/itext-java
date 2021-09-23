@@ -43,7 +43,7 @@
 package com.itextpdf.signatures.testutils.client;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import java.security.PrivateKey;

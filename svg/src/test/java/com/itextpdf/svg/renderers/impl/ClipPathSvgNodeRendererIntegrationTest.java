@@ -42,7 +42,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;

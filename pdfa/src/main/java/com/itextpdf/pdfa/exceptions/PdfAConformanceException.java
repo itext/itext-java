@@ -41,9 +41,9 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.pdfa;
+package com.itextpdf.pdfa.exceptions;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 /**
  * Exception that is thrown when the PDF Document doesn't adhere to the PDF/A specification.

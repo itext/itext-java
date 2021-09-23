@@ -49,7 +49,7 @@ import java.security.MessageDigest;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;

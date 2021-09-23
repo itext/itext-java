@@ -43,6 +43,8 @@
  */
 package com.itextpdf.barcodes.qrcode;
 
+import com.itextpdf.barcodes.exceptions.WriterException;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;

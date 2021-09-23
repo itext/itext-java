@@ -24,7 +24,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;

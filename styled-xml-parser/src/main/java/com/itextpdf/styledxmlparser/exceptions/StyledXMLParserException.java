@@ -42,10 +42,12 @@
  */
 package com.itextpdf.styledxmlparser.exceptions;
 
+import com.itextpdf.commons.exceptions.ITextException;
+
 /**
  * Runtime exception that gets thrown if something goes wrong in the HTML to PDF conversion.
  */
-public class StyledXMLParserException extends RuntimeException {
+public class StyledXMLParserException extends ITextException {
 
     /** The Constant INVALID_GRADIENT_VALUE. */
     public static final String INVALID_GRADIENT_FUNCTION_ARGUMENTS_LIST = "Invalid gradient function arguments list: {0}";

@@ -51,7 +51,6 @@ import com.itextpdf.io.image.Jpeg2000ImageData;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfSimpleFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
@@ -72,7 +71,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.pdfa.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 

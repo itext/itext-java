@@ -42,7 +42,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.DefaultSafeXmlParserFactory;
 
 import javax.xml.parsers.DocumentBuilder;
