@@ -23,7 +23,7 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.test.ExtendedITextTest;
@@ -72,7 +72,7 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(StyledXMLParserException.class,
                 () -> CssDimensionParsingUtils.parseResolution("10incorrectUnit")
         );
-        Assert.assertEquals(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE, e.getMessage());
+        Assert.assertEquals(StyledXmlParserLogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE, e.getMessage());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 1)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 1)})
     public void parseAbsoluteLengthFromUnknownType() {
         String value = "10pateekes";
         float actual = CssDimensionParsingUtils.parseAbsoluteLength(value, "pateekes");

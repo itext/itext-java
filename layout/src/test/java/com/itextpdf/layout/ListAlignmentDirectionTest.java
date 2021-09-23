@@ -23,7 +23,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -103,7 +103,7 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8))
     // TODO DEVSIX-5727 direction of the first list-item should define the symbol indent's side. Once the issue
     // is fixed, the corresponding cmps should be updated.
     public void alignmentDirectionTest() throws Exception {

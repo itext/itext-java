@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -96,7 +96,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 4)})
+            @LogMessage(messageTemplate = IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 4)})
     public void adjustChildPositionsAfterReorderingTestWithPercentMargins01() {
         Document dummyDocument = createDummyDocument();
         IRenderer dummy1 = createLayoutedTextRenderer("Hello", dummyDocument);
@@ -131,7 +131,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED)})
     public void inlineBlockWithBigMinWidth01() {
         Document dummyDocument = createDummyDocument();
         LineRenderer lineRenderer = (LineRenderer) new LineRenderer().setParent(dummyDocument.getRenderer());

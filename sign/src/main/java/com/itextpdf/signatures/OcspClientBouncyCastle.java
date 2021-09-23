@@ -43,7 +43,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.util.StreamUtil;
 
@@ -137,9 +137,9 @@ public class OcspClientBouncyCastle implements IOcspClient {
                     if (status == CertificateStatus.GOOD) {
                         return basicResponse.getEncoded();
                     } else if (status instanceof RevokedStatus) {
-                        throw new java.io.IOException(LogMessageConstant.OCSP_STATUS_IS_REVOKED);
+                        throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
                     } else {
-                        throw new java.io.IOException(LogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
+                        throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
                     }
                 }
             }

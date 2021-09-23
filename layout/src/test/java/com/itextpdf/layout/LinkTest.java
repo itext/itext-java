@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -133,7 +133,7 @@ public class LinkTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION)})
     public void linkTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "linkTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest03.pdf";
@@ -224,7 +224,7 @@ public class LinkTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void rotatedLinkInnerRotation() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "rotatedLinkInnerRotation.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLinkInnerRotation.pdf";

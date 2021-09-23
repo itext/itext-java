@@ -43,7 +43,7 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -148,7 +148,7 @@ public class PdfChoiceFormField extends PdfFormField {
     public PdfChoiceFormField setListSelected(String[] optionValues, boolean generateAppearance) {
         if (optionValues.length > 1 && !isMultiSelect()) {
             Logger logger = LoggerFactory.getLogger(this.getClass());
-            logger.warn(LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
+            logger.warn(IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
         }
         PdfArray options = getOptions();
         PdfArray indices = new PdfArray();
@@ -167,7 +167,7 @@ public class PdfChoiceFormField extends PdfFormField {
                 if (!(this.isCombo() && this.isEdit())) {
                     Logger logger = LoggerFactory.getLogger(this.getClass());
                     logger.warn(MessageFormatUtil
-                            .format(LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, element,
+                            .format(IoLogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, element,
                                     this.getFieldName()));
                 }
                 values.add(new PdfString(element, PdfEncodings.UNICODE_BIG));
@@ -199,7 +199,7 @@ public class PdfChoiceFormField extends PdfFormField {
     public PdfChoiceFormField setListSelected(int[] optionNumbers) {
         if (optionNumbers.length > 1 && !isMultiSelect()) {
             Logger logger = LoggerFactory.getLogger(this.getClass());
-            logger.warn(LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
+            logger.warn(IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
         }
         PdfArray indices = new PdfArray();
         PdfArray values = new PdfArray();

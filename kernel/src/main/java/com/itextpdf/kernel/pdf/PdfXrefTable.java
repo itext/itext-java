@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.data.ProductData;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
@@ -260,12 +260,12 @@ public class PdfXrefTable {
         }
         if (reference.checkState(PdfObject.MUST_BE_FLUSHED)) {
             Logger logger = LoggerFactory.getLogger(PdfXrefTable.class);
-            logger.error(LogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE);
+            logger.error(IoLogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE);
             return;
         }
         if (reference.checkState(PdfObject.FLUSHED)) {
             Logger logger = LoggerFactory.getLogger(PdfXrefTable.class);
-            logger.error(LogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE);
+            logger.error(IoLogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE);
             return;
         }
 

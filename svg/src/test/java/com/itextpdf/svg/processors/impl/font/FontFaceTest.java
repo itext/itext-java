@@ -44,7 +44,7 @@ package com.itextpdf.svg.processors.impl.font;
 
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
@@ -189,7 +189,7 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.FONT_SUBSET_ISSUE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.FONT_SUBSET_ISSUE)})
     //TODO(DEVSIX-5756): silently omitted, decompression should fail. Browser loads font but don't draw glyph.
     //See HeaderFlavor002Test in io for decompression details
     public void w3cProblemTest04() throws IOException, InterruptedException {

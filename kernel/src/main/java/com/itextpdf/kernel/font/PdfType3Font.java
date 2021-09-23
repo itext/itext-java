@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
@@ -177,7 +177,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         PdfDictionary encoding = fontDictionary.getAsDictionary(PdfName.Encoding);
         PdfArray differences = encoding != null ? encoding.getAsArray(PdfName.Differences) : null;
         if (charProcsDic == null || differences == null) {
-            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE);
+            LoggerFactory.getLogger(getClass()).warn(IoLogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE);
         }
         fillFontDescriptor(fontDictionary.getAsDictionary(PdfName.FontDescriptor));
 
@@ -396,7 +396,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         } else if (getPdfObject().getIndirectReference() != null
                 && getPdfObject().getIndirectReference().getDocument().isTagged()) {
             Logger logger = LoggerFactory.getLogger(PdfType3Font.class);
-            logger.warn(LogMessageConstant.TYPE3_FONT_ISSUE_TAGGED_PDF);
+            logger.warn(IoLogMessageConstant.TYPE3_FONT_ISSUE_TAGGED_PDF);
         }
         return null;
     }

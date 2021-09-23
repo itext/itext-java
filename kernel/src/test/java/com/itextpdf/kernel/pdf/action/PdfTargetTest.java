@@ -23,7 +23,7 @@
 
 package com.itextpdf.kernel.pdf.action;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -267,7 +267,7 @@ public class PdfTargetTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT)
     })
     public void getAnnotationSetAsStringNotAvailableTest() {
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {

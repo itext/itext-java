@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -239,7 +239,7 @@ public class PdfPrimitivesTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT)})
     public void makeIndirectDirectOnlyPdfBoolean() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfBoolean t = PdfBoolean.valueOf(true);

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,11 +224,11 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
                     firstThrownIOExc = ex;
                 } else {
                     Logger logger = LoggerFactory.getLogger(GroupedRandomAccessSource.class);
-                    logger.error(LogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
+                    logger.error(IoLogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
                 }
             } catch (Exception ex) {
                 Logger logger = LoggerFactory.getLogger(GroupedRandomAccessSource.class);
-                logger.error(LogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
+                logger.error(IoLogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
             }
         }
         if (firstThrownIOExc != null) {

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.css;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
@@ -66,7 +66,7 @@ import java.util.Map;
 public class XLinkTest extends ExtendedITextTest {
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL))
     public void svgCssResolveMalformedXlinkTest() {
         Element jsoupImage = new Element(Tag.valueOf("image"), "");
         Attributes imageAttributes = jsoupImage.attributes();

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.CidFont;
@@ -171,7 +171,7 @@ public class PdfType0Font extends PdfFont {
                 if (toUnicodeCMap == null) {
                     toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
                     Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_CMAP, uniMap));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.UNKNOWN_CMAP, uniMap));
                 }
             }
             fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
@@ -213,7 +213,7 @@ public class PdfType0Font extends PdfFont {
         } else if (PdfName.CIDFontType2.equals(subtype)) {
             cidFontType = CID_FONT_TYPE_2;
         } else {
-            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
+            LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
         }
         usedGlyphs = new TreeSet<>();
         subset = false;
@@ -576,7 +576,7 @@ public class PdfType0Font extends PdfFont {
                         failedCodes.append((int) charCodesSequence.charAt(i + codeLength - 1)).append(" ");
                     }
                     logger.warn(MessageFormatUtil
-                            .format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
+                            .format(IoLogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
                 }
                 i += codeSpaceMatchedLength - 1;
             }
@@ -705,7 +705,7 @@ public class PdfType0Font extends PdfFont {
                         ttfBytes = ttf.getSubset(usedGlyphs, subset);
                     } catch (com.itextpdf.io.exceptions.IOException e) {
                         Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                        logger.warn(LogMessageConstant.FONT_SUBSET_ISSUE);
+                        logger.warn(IoLogMessageConstant.FONT_SUBSET_ISSUE);
                         ttfBytes = null;
                     }
                 }

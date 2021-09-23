@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -445,7 +445,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
-                    LoggerFactory.getLogger(getClass()).warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
+                    LoggerFactory.getLogger(getClass())
+                            .warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                                    "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -472,7 +474,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
     public void draw(DrawContext drawContext) {
         Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
         if (occupiedArea == null) {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Drawing won't be performed."));
             return;
         }
 
@@ -523,7 +526,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 //  a renderer from the different page that was already flushed
                 if (page.isFlushed()) {
                     logger.error(MessageFormatUtil.format(
-                            LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "area clipping"));
+                            IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED,
+                            "area clipping"));
                     clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
                 } else {
                     clippedArea = page.getPageSize();
@@ -571,7 +575,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (rotationAngle != null) {
             if (!hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+                logger.error(
+                        MessageFormatUtil.format(IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
+                                getClass().getSimpleName()));
             } else {
                 bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
                 bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
@@ -777,7 +783,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (angle != null) {
             if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+                logger.error(
+                        MessageFormatUtil.format(IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
+                                getClass().getSimpleName()));
             } else {
                 AffineTransform transform = createRotationTransformInsideOccupiedArea();
                 canvas.saveState().concatMatrix(transform);

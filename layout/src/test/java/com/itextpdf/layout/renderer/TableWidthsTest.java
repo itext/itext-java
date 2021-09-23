@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -93,7 +93,7 @@ public class TableWidthsTest  extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.SUM_OF_TABLE_COLUMNS_IS_GREATER_THAN_100, count=2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.SUM_OF_TABLE_COLUMNS_IS_GREATER_THAN_100, count=2)})
     public void testSumOfColumnsIsGreaterThan100(){
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document doc = new Document(pdfDoc);

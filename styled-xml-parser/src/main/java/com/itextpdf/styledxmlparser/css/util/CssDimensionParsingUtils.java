@@ -23,9 +23,10 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 
@@ -133,8 +134,8 @@ public final class CssDimensionParsingUtils {
             return floatValue;
         }
 
-        logger.error(MessageFormatUtil
-                .format(LogMessageConstant.UNKNOWN_METRIC_ANGLE_PARSED, unit.equals("") ? defaultMetric : unit));
+        logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_METRIC_ANGLE_PARSED,
+                unit.equals("") ? defaultMetric : unit));
         return floatValue ;
     }
 
@@ -226,7 +227,7 @@ public final class CssDimensionParsingUtils {
             return (float) (f * 0.75);
         }
 
-        logger.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED,
+        logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED,
                 unit.equals("") ? defaultMetric : unit));
         return (float) f;
     }
@@ -384,7 +385,7 @@ public final class CssDimensionParsingUtils {
         } else if (unit.startsWith(CommonCssConstants.DPPX)) {
             f *= 96;
         } else if (!unit.startsWith(CommonCssConstants.DPI)) {
-            throw new StyledXMLParserException(LogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
+            throw new StyledXMLParserException(StyledXmlParserLogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
         }
 
         return (float) f;
@@ -399,7 +400,7 @@ public final class CssDimensionParsingUtils {
     public static float[] parseRgbaColor(String colorValue) {
         float[] rgbaColor = WebColors.getRGBAColor(colorValue);
         if (rgbaColor == null) {
-            logger.error(MessageFormatUtil.format(com.itextpdf.io.LogMessageConstant.COLOR_NOT_PARSED, colorValue));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.COLOR_NOT_PARSED, colorValue));
             rgbaColor = new float[] {0, 0, 0, 1};
         }
         return rgbaColor;

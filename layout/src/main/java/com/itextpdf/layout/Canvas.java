@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -180,7 +180,7 @@ public class Canvas extends RootElement<Canvas> {
     public void enableAutoTagging(PdfPage page) {
         if (isCanvasOfPage() && this.page != page) {
             Logger logger = LoggerFactory.getLogger(Canvas.class);
-            logger.error(LogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED);
+            logger.error(IoLogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED);
         }
         this.page = page;
     }

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.margincollapse;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
@@ -547,7 +547,8 @@ public class MarginsCollapseHandler {
         UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(Property.PADDING_TOP);
         if (null != padding && !padding.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_TOP));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_TOP));
         }
         return padding != null && padding.getValue() > 0;
     }
@@ -556,7 +557,8 @@ public class MarginsCollapseHandler {
         UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(Property.PADDING_BOTTOM);
         if (null != padding && !padding.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_BOTTOM));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_BOTTOM));
         }
         return padding != null && padding.getValue() > 0;
     }
@@ -583,7 +585,8 @@ public class MarginsCollapseHandler {
         UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(Property.MARGIN_TOP);
         if (null != marginUV && !marginUV.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_TOP));
         }
         // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
         return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;
@@ -601,7 +604,8 @@ public class MarginsCollapseHandler {
         UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(Property.MARGIN_BOTTOM);
         if (null != marginUV && !marginUV.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_TOP));
         }
         // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
         return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;

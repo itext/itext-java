@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
@@ -254,7 +254,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest07() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest07.pdf";
@@ -277,7 +277,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest08() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest08.pdf";
@@ -302,7 +302,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest09() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest09.pdf";
@@ -416,7 +416,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest15() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest15.pdf";
@@ -459,7 +459,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test()
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 50)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 50)
     })
     public void imageTest17() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest17.pdf";
@@ -593,7 +593,7 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
     public void imageTest22() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_imageTest22.pdf";
         String outFile = destinationFolder + "imageTest22.pdf";
@@ -779,7 +779,7 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2)})
     public void imageInTableTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageInTableTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageInTableTest01.pdf";
@@ -809,7 +809,7 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2)})
     public void imageInTableTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageInTableTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_imageInTableTest02.pdf";
@@ -947,7 +947,7 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
     public void createTiffImageTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "createTiffImageTest.pdf";
         String cmpFileName = sourceFolder + "cmp_createTiffImageTest.pdf";

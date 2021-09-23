@@ -43,7 +43,7 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
@@ -142,7 +142,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
       Invalid input: null
      */
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_ADDING_CHILD_NODE),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.ERROR_ADDING_CHILD_NODE),
     })
     public void dummyProcessingTestNodeHasNullChild() {
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");

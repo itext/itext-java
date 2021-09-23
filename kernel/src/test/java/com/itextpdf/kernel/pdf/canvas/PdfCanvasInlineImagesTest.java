@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.StreamUtil;
@@ -59,10 +59,10 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER),
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER),
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_MASK),
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER),
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER),
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_MASK),
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
     })
     public void inlineImagesTest01() throws IOException, InterruptedException {
         String filename = "inlineImages01.pdf";
@@ -87,10 +87,10 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER),
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER),
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_MASK),
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER),
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER),
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_MASK),
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
     })
     public void inlineImagesTest02() throws IOException, InterruptedException {
         String filename = "inlineImages02.pdf";

@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
 import java.util.Collections;
 import org.slf4j.Logger;

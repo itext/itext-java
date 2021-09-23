@@ -49,7 +49,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.util.DrawingUtil;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -2433,7 +2433,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             if (this.getFieldFlag(PdfTextFormField.FF_COMB)) {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
+                logger.error(MessageFormatUtil.format(IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
             }
             modelCanvas.showTextAligned(createParagraphForTextFieldValue(value).addStyle(paragraphStyle).setPaddings(0, X_OFFSET, 0, X_OFFSET),
                     x, rect.getHeight() / 2, textAlignment, VerticalAlignment.MIDDLE);
@@ -3347,7 +3347,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         } else {
             //Avoid NPE when handling corrupt pdfs
             Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-            logger.error(LogMessageConstant.INCORRECT_PAGEROTATION);
+            logger.error(IoLogMessageConstant.INCORRECT_PAGEROTATION);
             matrix = new PdfArray(new double[]{1, 0, 0, 1, 0, 0});
         }
         //Apply field rotation
@@ -3536,7 +3536,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                         .writeBytes(k);
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(LogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
+                logger.error(IoLogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
             }
         }
         return new PdfString(output.toByteArray());

@@ -44,7 +44,7 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.layout.properties.BlendMode;
 import com.itextpdf.styledxmlparser.CommonAttributeConstants;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.pseudo.CssPseudoElementNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
@@ -201,7 +201,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INCORRECT_CHARACTER_SEQUENCE))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INCORRECT_CHARACTER_SEQUENCE))
     public void splitStringWithCommaTest() {
         Assert.assertEquals(new ArrayList<String>(), CssUtils.splitStringWithComma(null));
         Assert.assertEquals(Arrays.asList("value1", "value2", "value3"),

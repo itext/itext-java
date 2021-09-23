@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -296,7 +296,9 @@ class StructureTreeCopier {
                     String destMapping = mappingEntry.getKey() + " -> " + destRoleMap.get(mappingEntry.getKey());
 
                     Logger logger = LoggerFactory.getLogger(StructureTreeCopier.class);
-                    logger.warn(MessageFormat.format(LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST, srcMapping, destMapping));
+                    logger.warn(MessageFormat.format(
+                            IoLogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST, srcMapping,
+                            destMapping));
                 }
             }
         }
@@ -488,7 +490,9 @@ class StructureTreeCopier {
                         copiedMapping = copiedMappingArray;
                     } else {
                         Logger logger = LoggerFactory.getLogger(StructureTreeCopier.class);
-                        logger.warn(MessageFormat.format(LogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_INVALID, entry.getKey().toString()));
+                        logger.warn(MessageFormat.format(
+                                IoLogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_INVALID,
+                                entry.getKey().toString()));
                         continue;
                     }
                 } else {

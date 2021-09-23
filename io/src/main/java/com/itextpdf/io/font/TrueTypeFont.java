@@ -44,7 +44,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.TrueTypeCodePages;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
@@ -303,7 +303,8 @@ public class TrueTypeFont extends FontProgram {
             int index = cmap.get(charCode)[0];
             if (index >= numOfGlyphs) {
                 Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
-                LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.FONT_HAS_INVALID_GLYPH, getFontNames().getFontName(), index));
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.FONT_HAS_INVALID_GLYPH,
+                        getFontNames().getFontName(), index));
                 continue;
             }
             Glyph glyph = new Glyph(index, glyphWidths[index], charCode, bBoxes != null ? bBoxes[index] : null);

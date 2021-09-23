@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.commons.utils.FileUtil;
@@ -263,7 +263,7 @@ public class PdfWriter extends PdfOutputStream {
         }
         if (checkTypeOfPdfDictionary(obj, PdfName.Catalog)) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.warn(LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
+            logger.warn(IoLogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
             obj = PdfNull.PDF_NULL;
         }
 

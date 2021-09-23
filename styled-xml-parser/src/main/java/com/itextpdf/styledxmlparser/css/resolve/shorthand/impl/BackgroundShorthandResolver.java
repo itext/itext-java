@@ -44,7 +44,7 @@ package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
@@ -96,7 +96,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
         }
         if (shorthandExpression.trim().isEmpty()) {
             LOGGER.warn(MessageFormatUtil.format(
-                    LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND));
+                    StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND));
             return new ArrayList<>();
         }
 
@@ -150,7 +150,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
             if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(
                     CssBackgroundUtils.getBackgroundPropertyNameFromType(property.getKey()), property.getValue()))) {
                 LOGGER.warn(MessageFormatUtil.format(
-                        LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, property.getValue()));
+                        StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, property.getValue()));
                 return false;
             }
             final IShorthandResolver resolver = ShorthandResolverFactory
@@ -208,11 +208,11 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
                                              Map<CssBackgroundUtils.BackgroundPropertyType, String> resolvedProps) {
         if (props.isEmpty()) {
             LOGGER.warn(MessageFormatUtil.format(
-                    LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND));
+                    StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND));
             return false;
         }
         if (resolvedProps.get(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_COLOR) != null) {
-            LOGGER.warn(LogMessageConstant.ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR);
+            LOGGER.warn(StyledXmlParserLogMessageConstant.ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR);
             return false;
         }
         removeSpacesAroundSlash(props);
@@ -278,7 +278,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
                 changePropertyType(CssBackgroundUtils.resolveBackgroundPropertyType(value1), false);
         if (typeBeforeSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION &&
                 typeBeforeSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE) {
-            LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_PROPERTY,
+            LOGGER.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY,
                     CommonCssConstants.BACKGROUND_POSITION, value1));
             return false;
         }
@@ -288,7 +288,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
                 changePropertyType(CssBackgroundUtils.resolveBackgroundPropertyType(value2), true);
         if (typeAfterSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_SIZE &&
                 typeAfterSlash != CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_POSITION_OR_SIZE) {
-            LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_PROPERTY,
+            LOGGER.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY,
                     CommonCssConstants.BACKGROUND_SIZE, value2));
             return false;
         }
@@ -346,7 +346,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
                                                   Set<CssBackgroundUtils.BackgroundPropertyType> usedTypes) {
         if (type == CssBackgroundUtils.BackgroundPropertyType.UNDEFINED) {
             LOGGER.warn(MessageFormatUtil.format(
-                    LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES, value));
+                    StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES, value));
             return false;
         }
 

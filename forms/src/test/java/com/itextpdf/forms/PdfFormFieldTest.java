@@ -46,7 +46,7 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -98,7 +98,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     // The first message for the case when the FormField is null,
     // the second message when the FormField is a indirect reference to null.
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CANNOT_CREATE_FORMFIELD, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CANNOT_CREATE_FORMFIELD, count = 2)})
     public void nullFormFieldTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "nullFormField.pdf"));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
@@ -517,7 +517,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.NO_FIELDS_IN_ACROFORM)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NO_FIELDS_IN_ACROFORM)})
     public void acroFieldDictionaryNoFields() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "acroFieldDictionaryNoFields.pdf";
         String cmpPdf = sourceFolder + "cmp_acroFieldDictionaryNoFields.pdf";
@@ -840,7 +840,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT)})
     public void noMaxLenWithSetCombFlagTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "noMaxLenWithSetCombFlagTest.pdf";
         String cmpPdf = sourceFolder + "cmp_noMaxLenWithSetCombFlagTest.pdf";
@@ -988,7 +988,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, count = 2)})
     public void regenerateMaxLenCombTest() throws IOException, InterruptedException {
         String srcPdf = sourceFolder + "regenerateMaxLenCombTest.pdf";
         String outPdf = destinationFolder + "regenerateMaxLenCombTest.pdf";
@@ -1045,7 +1045,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
     public void pdfWithDifferentFieldsTest() throws IOException, InterruptedException {
         String fileName = destinationFolder + "pdfWithDifferentFieldsTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));

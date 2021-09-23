@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -587,7 +587,8 @@ public class TagStructureContext {
                 } else {
                     nsStr = StandardNamespaces.getDefault();
                 }
-                logger.warn(MessageFormat.format(LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD, firstKid.getRole().getValue(), nsStr));
+                logger.warn(MessageFormat.format(IoLogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD,
+                        firstKid.getRole().getValue(), nsStr));
             }
             if (resolvedMapping == null || !StandardNamespaces.PDF_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {
                 documentDefaultNamespace = fetchNamespace(StandardNamespaces.PDF_2_0);
@@ -605,8 +606,8 @@ public class TagStructureContext {
 
     private String composeTooMuchTransitiveMappingsException(String role, PdfNamespace namespace) {
         return composeExceptionBasedOnNamespacePresence(role, namespace,
-                LogMessageConstant.CANNOT_RESOLVE_ROLE_TOO_MUCH_TRANSITIVE_MAPPINGS,
-                LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS);
+                IoLogMessageConstant.CANNOT_RESOLVE_ROLE_TOO_MUCH_TRANSITIVE_MAPPINGS,
+                IoLogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS);
     }
 
     private void initRegisteredNamespaces() {

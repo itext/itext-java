@@ -44,7 +44,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.IPdfPageExtraCopier;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -123,7 +123,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
     private PdfFormField makeFormField(PdfObject fieldDict) {
         PdfFormField field = PdfFormField.makeFormField(fieldDict, documentTo);
         if (field == null) {
-            logger.warn(MessageFormatUtil.format(LogMessageConstant.CANNOT_CREATE_FORMFIELD,
+            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
                     fieldDict.getIndirectReference()));
         }
         return field;
@@ -223,7 +223,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
             fullFieldName = newField.getFieldName().toUnicodeString();
         }
 
-        logger.warn(MessageFormatUtil.format(LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, fullFieldName));
+        logger.warn(MessageFormatUtil.format(IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, fullFieldName));
 
         PdfFormField existingField = formTo.getField(fullFieldName);
         if (existingField.isFlushed()) {

@@ -43,7 +43,7 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
@@ -143,7 +143,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR),
     })
     public void svgCssResolverInvalidNameStylesheetTest() {
         Element jsoupLink = new Element(Tag.valueOf(SvgConstants.Tags.LINK), "");

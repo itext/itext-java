@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.borders.Border;
@@ -731,7 +731,7 @@ final class TableWidths {
 
     private void warn100percent() {
         Logger logger = LoggerFactory.getLogger(TableWidths.class);
-        logger.warn(LogMessageConstant.SUM_OF_TABLE_COLUMNS_IS_GREATER_THAN_100);
+        logger.warn(IoLogMessageConstant.SUM_OF_TABLE_COLUMNS_IS_GREATER_THAN_100);
     }
 
     private float[] extractWidths() {
@@ -746,7 +746,7 @@ final class TableWidths {
         }
         if (actualWidth > tableWidth + MinMaxWidthUtils.getEps() * widths.length) {
             Logger logger = LoggerFactory.getLogger(TableWidths.class);
-            logger.warn(LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH);
+            logger.warn(IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH);
         }
         return columnWidths;
     }
@@ -865,11 +865,13 @@ final class TableWidths {
                 UnitValue[] paddings = cell.getPaddings();
                 if (!paddings[1].isPointValue()) {
                     Logger logger = LoggerFactory.getLogger(TableWidths.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            Property.PADDING_LEFT));
                 }
                 if (!paddings[3].isPointValue()) {
                     Logger logger = LoggerFactory.getLogger(TableWidths.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            Property.PADDING_RIGHT));
                 }
                 widthValue.setValue(widthValue.getValue() + paddings[1].getValue() + paddings[3].getValue());
             }

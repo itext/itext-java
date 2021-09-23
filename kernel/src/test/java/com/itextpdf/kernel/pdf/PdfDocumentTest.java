@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -371,7 +371,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE))
     public void testFreeReference() throws IOException, InterruptedException {
         PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "freeReference.pdf",
                 new WriterProperties().setFullCompressionMode(false));
@@ -519,7 +519,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.OUTLINE_DESTINATION_PAGE_NUMBER_IS_OUT_OF_BOUNDS, logLevel = LogLevelConstants.WARN)
+            @LogMessage(messageTemplate = IoLogMessageConstant.OUTLINE_DESTINATION_PAGE_NUMBER_IS_OUT_OF_BOUNDS, logLevel = LogLevelConstants.WARN)
     })
     public void removePageWithInvalidOutlineTest() throws IOException, InterruptedException {
         String source = SOURCE_FOLDER + "invalid_outline.pdf";
@@ -537,7 +537,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED,
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED,
                     logLevel = LogLevelConstants.ERROR)
     })
     public void openDocumentWithInvalidCatalogVersionTest() throws IOException {
@@ -555,7 +555,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED, e.getMessage());
+            Assert.assertEquals(IoLogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED, e.getMessage());
         }
     }
 

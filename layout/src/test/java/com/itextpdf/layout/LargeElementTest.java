@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -620,7 +620,7 @@ public class LargeElementTest extends ExtendedITextTest {
 
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
     public void largeTableWithLayoutResultNothingTest02() throws IOException, InterruptedException {
         String testName = "largeTableWithLayoutResultNothingTest02.pdf";
         String outFileName = destinationFolder + testName;
@@ -808,7 +808,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void largeTableWithCellBordersSplitTest() throws IOException, InterruptedException {
         String testName = "largeTableWithCellBordersSplitTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -1018,7 +1018,7 @@ public class LargeElementTest extends ExtendedITextTest {
 
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 1)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 1)})
     public void reuseLargeTableTest01() throws IOException, InterruptedException {
         String testName = "reuseLargeTableTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -1088,7 +1088,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 8)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 8)})
     public void largeEmptyTableTest02() throws IOException, InterruptedException {
         String testName = "largeEmptyTableTest02.pdf";
         String outFileName = destinationFolder + testName;
@@ -1162,7 +1162,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 8)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 8)})
     public void largeEmptyTableTest02Separated() throws IOException, InterruptedException {
         String testName = "largeEmptyTableTest02Separated.pdf";
         String outFileName = destinationFolder + testName;
@@ -1238,7 +1238,7 @@ public class LargeElementTest extends ExtendedITextTest {
 
     @Test
     // TODO DEVSIX-3953
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
     public void largeTableFooterNotFitTest() throws IOException, InterruptedException {
         String testName = "largeTableFooterNotFitTest.pdf";
         String outFileName = destinationFolder + testName;

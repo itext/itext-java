@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
@@ -91,7 +91,7 @@ public class CanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN))
     public void canvasNoPageLinkTest() throws IOException, InterruptedException {
         String testName = "canvasNoPageLinkTest";
         String out = DESTINATION_FOLDER + testName + ".pdf";
@@ -174,8 +174,8 @@ public class CanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN),
-            @LogMessage(messageTemplate = LogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN),
+            @LogMessage(messageTemplate = IoLogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED)})
     public void canvasWithPageEnableTaggingTest02() throws IOException, InterruptedException {
         String testName = "canvasWithPageEnableTaggingTest02";
         String out = DESTINATION_FOLDER + testName + ".pdf";
@@ -235,7 +235,7 @@ public class CanvasTest extends ExtendedITextTest {
 
     @Test
     //TODO: DEVSIX-4820 (discuss the displaying of element with absolute position)
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED)})
     public void parentElemWithAbsolPositionKidNotSuitCanvasTest() throws IOException, InterruptedException {
         String testName = "parentElemWithAbsolPositionKidNotSuitCanvas";
         String out = DESTINATION_FOLDER + testName + ".pdf";

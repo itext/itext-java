@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -176,7 +176,7 @@ public abstract class PdfObject {
             if (document != null) {
                 if (document.isAppendMode() && !isModified()) {
                     Logger logger = LoggerFactory.getLogger(PdfObject.class);
-                    logger.info(LogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
+                    logger.info(IoLogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
                     return;
                 }
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
@@ -366,7 +366,7 @@ public abstract class PdfObject {
         // In case ForbidRelease flag is set, release will not be performed.
         if (isReleaseForbidden()) {
             Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
+            logger.warn(IoLogMessageConstant.FORBID_RELEASE_IS_SET);
         } else {
             if (indirectReference != null && indirectReference.getReader() != null
                     && !indirectReference.checkState(FLUSHED)) {

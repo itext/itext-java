@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.properties;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
@@ -77,11 +77,11 @@ public class ParagraphOrphansControl {
         Logger logger = LoggerFactory.getLogger(ParagraphOrphansControl.class);
         if (renderer.getOccupiedArea() != null && renderer.getLines() != null) {
             int pageNumber = renderer.getOccupiedArea().getPageNumber();
-            String warnText = MessageFormatUtil.format(LogMessageConstant.ORPHANS_CONSTRAINT_VIOLATED, pageNumber,
+            String warnText = MessageFormatUtil.format(IoLogMessageConstant.ORPHANS_CONSTRAINT_VIOLATED, pageNumber,
                     minOrphans, renderer.getLines().size(), message);
             logger.warn(warnText);
         } else {
-            logger.warn(LogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD);
+            logger.warn(IoLogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD);
         }
     }
 }

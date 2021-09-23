@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -144,7 +144,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashInvalidSizeTest1() {
         String shorthandExpression = "50px/50";
@@ -159,7 +159,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashInvalidSizeTest2() {
         String shorthandExpression = "50px/repeat";
@@ -174,7 +174,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashInvalidSizeTest3() {
         String shorthandExpression = "50px/left";
@@ -189,7 +189,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithSlashInvalidSizeTest4() {
         String shorthandExpression = "50px/url(img.jpg)";
@@ -204,7 +204,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithSlashInvalidSizeTest5() {
         String shorthandExpression = "50px/";
@@ -219,7 +219,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION)
     })
     public void backgroundWithAnotherShorthandFailedTest() {
         String shorthandExpression = "no-repeat left right";
@@ -234,7 +234,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashInvalidPositionTest1() {
         String shorthandExpression = "50/50px";
@@ -249,7 +249,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashInvalidPositionTest2() {
         String shorthandExpression = "cover/50px";
@@ -264,7 +264,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashInvalidPositionTest3() {
         String shorthandExpression = "repeat/50px";
@@ -279,7 +279,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithSlashInvalidPositionTest4() {
         String shorthandExpression = "url(img.jpg)/50px";
@@ -294,7 +294,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithSlashInvalidPositionTest5() {
         String shorthandExpression = "/50px";
@@ -310,7 +310,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate =
-                    LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES, count = 3)
+                    StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES, count = 3)
     })
     public void backgroundIncorrectPositionTest() {
         IShorthandResolver backgroundResolver =
@@ -347,7 +347,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithMultiSlashFailedOnSizeTest1() {
         String shorthandExpression = "50px 5px/25px 5";
@@ -362,7 +362,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithMultiSlashFailedOnSizeTest2() {
         String shorthandExpression = "50px 5px/25px left";
@@ -377,7 +377,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithMultiSlashFailedOnPositionTest1() {
         String shorthandExpression = "50 5px/25px 5%";
@@ -392,7 +392,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithMultiSlashFailedOnPositionTest2() {
         String shorthandExpression = "cover 5px/25px 5%";
@@ -407,7 +407,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithTwoSlashesTest1() {
         String shorthandExpression = "5px/25px 5%/20px";
@@ -422,7 +422,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithTwoSlashesTest2() {
         String shorthandExpression = "5px/25px/5%";
@@ -500,7 +500,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest1() {
         String shorthandExpression = "repeat / 25px";
@@ -515,7 +515,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest2() {
         String shorthandExpression = "5px / repeat";
@@ -530,7 +530,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest3() {
         String shorthandExpression = "5px /repeat";
@@ -545,7 +545,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest4() {
         String shorthandExpression = "5px/ repeat-y";
@@ -560,7 +560,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest5() {
         String shorthandExpression = "repeat-x/ 20px";
@@ -575,7 +575,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_PROPERTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_PROPERTY)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest6() {
         String shorthandExpression = "no-repeat /20px";
@@ -590,7 +590,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest7() {
         String shorthandExpression = "20px /";
@@ -605,7 +605,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
     })
     public void backgroundWithSlashAndSpaceIncorrectTest8() {
         String shorthandExpression = "/ 20px";
@@ -642,7 +642,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void backgroundEmptyShorthandTest() {
         String shorthandExpression = "";
@@ -657,7 +657,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void backgroundEmptyShorthandWithSpaceTest() {
         String shorthandExpression = " ";
@@ -672,7 +672,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandTest1() {
         String shorthandExpression = "none,,none";
@@ -687,7 +687,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandTest2() {
         String shorthandExpression = "none,none,";
@@ -702,7 +702,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandTest3() {
         String shorthandExpression = ",none,none";
@@ -717,7 +717,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY)
     })
     public void multiBackgroundEmptyShorthandWithSpaceTest() {
         String shorthandExpression = "none, ,none";
@@ -753,7 +753,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.ONLY_THE_LAST_BACKGROUND_CAN_INCLUDE_BACKGROUND_COLOR)
     })
     public void backgroundColorNotLastTest() {
         String shorthandExpression = "url('img.gif') red, url('img2.gif')";
@@ -810,7 +810,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION)
     })
     public void backgroundDoubleColorTest() {
         String shorthandExpression = "url('img.gif'), url('img2.gif') red blue";
@@ -846,7 +846,7 @@ public class BackgroundShorthandResolverTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION)
     })
     public void backgroundDoubleImageTest() {
         String shorthandExpression = "url('img.gif'), url('img2.gif') url('img3.gif')";

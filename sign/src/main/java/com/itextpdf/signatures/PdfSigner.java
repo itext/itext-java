@@ -47,7 +47,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
@@ -1277,7 +1277,7 @@ public class PdfSigner {
                 reference.put(PdfName.DigestMethod, digestMethod);
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfSigner.class);
-                logger.error(LogMessageConstant.UNKNOWN_DIGEST_METHOD);
+                logger.error(IoLogMessageConstant.UNKNOWN_DIGEST_METHOD);
             }
         }
     }

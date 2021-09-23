@@ -44,7 +44,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -173,7 +173,7 @@ class JpegImageHelper {
                 image.setProfile(IccProfile.getInstance(ficc, image.getColorEncodingComponentsNumber()));
             } catch (Exception e) {
                 LOGGER.error(MessageFormatUtil.format(
-                        LogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED,
+                        IoLogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED,
                         e.getClass().getSimpleName(), e.getMessage()));
             }
         }

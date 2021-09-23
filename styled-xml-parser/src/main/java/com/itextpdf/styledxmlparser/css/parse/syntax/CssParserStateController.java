@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.parse.syntax;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssNestedAtRule;
 import com.itextpdf.styledxmlparser.css.CssNestedAtRuleFactory;
@@ -492,7 +492,9 @@ public final class CssParserStateController {
     private boolean isCurrentRuleSupported() {
         boolean isSupported = nestedAtRules.isEmpty() || SUPPORTED_RULES.contains(nestedAtRules.peek().getRuleName());
         if (!isSupported) {
-            LoggerFactory.getLogger(getClass()).error(MessageFormatUtil.format(LogMessageConstant.RULE_IS_NOT_SUPPORTED, nestedAtRules.peek().getRuleName()));
+            LoggerFactory.getLogger(getClass())
+                    .error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.RULE_IS_NOT_SUPPORTED,
+                            nestedAtRules.peek().getRuleName()));
         }
         return isSupported;
     }

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -104,7 +104,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     @Test
     @Ignore("DEVSIX-1124")
@@ -171,7 +171,7 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     public void incompleteTableTest03() throws IOException, InterruptedException {
         fileName = "incompleteTableTest03.pdf";
@@ -192,7 +192,7 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
     })
     public void incompleteTableTest04() throws IOException, InterruptedException {
         fileName = "incompleteTableTest04.pdf";
@@ -703,7 +703,7 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void infiniteLoopTest01() throws IOException, InterruptedException {
         fileName = "infiniteLoopTest01.pdf";
@@ -851,7 +851,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void splitCellsTest03() throws IOException, InterruptedException {
         fileName = "splitCellsTest03.pdf";
         Document doc = createDocument();
@@ -1373,7 +1373,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06.pdf";
         Document doc = createDocument();
@@ -1400,7 +1400,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06A() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06A.pdf";
         outFileName = destinationFolder + fileName;
@@ -1431,7 +1431,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06B() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06B.pdf";
         outFileName = destinationFolder + fileName;
@@ -1981,7 +1981,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void tableWithHeaderFooterTest20() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest20.pdf";
         Document doc = createDocument();
@@ -2003,7 +2003,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void splitRowspanKeepTogetherTest() throws IOException, InterruptedException {
         fileName = "splitRowspanKeepTogetherTest.pdf";
         Document doc = createDocument();
@@ -2044,8 +2044,8 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 4),
-            @LogMessage(messageTemplate = LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, count = 2),
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 4),
+            @LogMessage(messageTemplate = IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, count = 2),
 
     })
     public void forcedPlacementTest01() throws IOException, InterruptedException {

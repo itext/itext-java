@@ -22,7 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -72,7 +72,7 @@ public class SymbolTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
     })
     // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
     public void heightPercentsAttrTest() throws IOException, InterruptedException {
@@ -86,7 +86,7 @@ public class SymbolTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
     })
     // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
     public void widthPercentsAttrTest() throws IOException, InterruptedException {
@@ -100,7 +100,7 @@ public class SymbolTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2),
     })
     // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
     public void widthHeightAttrPercentsPxTest() throws IOException, InterruptedException {
@@ -182,7 +182,7 @@ public class SymbolTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
     })
     // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
     // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
@@ -193,7 +193,7 @@ public class SymbolTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3),
     })
     // TODO DEVSIX-4388 The handling of x and y attributes with percentages is not currently supported
     public void useSymbolXYContrudictionAllUnitsTest() throws IOException, InterruptedException {
@@ -203,7 +203,7 @@ public class SymbolTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 6)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 6)
     })
     // TODO DEVSIX-2654 Percent values are not correctly processed
     public void useSymbolCoordinatesContrudictionTest() throws IOException, InterruptedException {

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -483,7 +483,7 @@ public class TagTreePointer {
         PdfStructElem parent = (PdfStructElem) getCurrentStructElem().getParent();
         if (parent.isFlushed()) {
             Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
-            logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
+            logger.warn(IoLogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
 
             moveToRoot();
         } else {

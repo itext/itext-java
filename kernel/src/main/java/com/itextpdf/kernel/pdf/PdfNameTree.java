@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.LinkedHashMap;
@@ -137,7 +137,7 @@ public class PdfNameTree {
                 return;
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfNameTree.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
             }
         }
         modified = true;

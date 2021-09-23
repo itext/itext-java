@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
@@ -60,7 +60,7 @@ public class TextExtractIllegalDifferencesTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/TextExtractIllegalDifferencesTest/";
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, count = 1))
     public void illegalDifference() throws IOException {
         PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "illegalDifference.pdf"));
         PdfTextExtractor.getTextFromPage(pdf.getFirstPage());

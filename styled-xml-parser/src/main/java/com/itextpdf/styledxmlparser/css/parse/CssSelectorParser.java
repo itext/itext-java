@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.parse;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.selector.item.CssAttributeSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssClassSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssIdSelectorItem;
@@ -190,7 +190,9 @@ public final class CssSelectorParser {
         } else {
             ICssSelectorItem pseudoClassSelectorItem = CssPseudoClassSelectorItem.create(pseudoSelector.substring(1));
             if (pseudoClassSelectorItem == null) {
-                throw new IllegalArgumentException(MessageFormatUtil.format(LogMessageConstant.UNSUPPORTED_PSEUDO_CSS_SELECTOR, pseudoSelector));
+                throw new IllegalArgumentException(
+                        MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNSUPPORTED_PSEUDO_CSS_SELECTOR,
+                                pseudoSelector));
             }
             selectorItems.add(pseudoClassSelectorItem);
         }

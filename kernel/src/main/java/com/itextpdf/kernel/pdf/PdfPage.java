@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
@@ -422,7 +422,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else {
             if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
                 Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                logger.warn(LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
+                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
                 toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
             }
         }
@@ -578,7 +578,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (mediaBoxSize > 4) {
                 Logger logger = LoggerFactory.getLogger(PdfPage.class);
                 if (logger.isErrorEnabled()) {
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, mediaBoxSize));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS,
+                            mediaBoxSize));
 
                 }
             }
@@ -680,7 +681,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getPdfObject().getAsRectangle(PdfName.TrimBox) != null) {
             getPdfObject().remove(PdfName.TrimBox);
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
+            logger.warn(IoLogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
         put(PdfName.ArtBox, new PdfArray(rectangle));
         return this;
@@ -708,7 +709,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getPdfObject().getAsRectangle(PdfName.ArtBox) != null) {
             getPdfObject().remove(PdfName.ArtBox);
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
+            logger.warn(IoLogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
         put(PdfName.TrimBox, new PdfArray(rectangle));
         return this;
@@ -1170,7 +1171,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
             getDocument().getCatalog().addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);

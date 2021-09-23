@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.properties;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -195,7 +195,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
     })
     public void backgroundImageWithLinearGradientAndTransformTest() throws IOException, InterruptedException {
         AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()

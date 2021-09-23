@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -216,7 +216,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
     })
     public void insertFlushedPageTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
@@ -233,7 +233,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
     })
     public void addFlushedPageTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
@@ -250,7 +250,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED, count = 2)
     })
     public void removeFlushedPage() throws IOException {
         String filename = "removeFlushedPage.pdf";
@@ -535,7 +535,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, count = 1),
+            @LogMessage(messageTemplate = IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, count = 1),
     })
     public void pageGetMediaBoxTooManyArgumentsTest() throws IOException {
         PdfReader reader = new PdfReader(sourceFolder + "helloWorldMediaboxTooManyArguments.pdf");
@@ -662,7 +662,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
     public void brokenPageTreeWithExcessiveLastPageTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullLast.pdf";
 
@@ -675,7 +675,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
     public void brokenPageTreeWithExcessiveMiddlePageTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullMiddle.pdf";
 
@@ -688,7 +688,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 7)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 7)})
     public void brokenPageTreeWithExcessiveMultipleNegativePagesTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullMultipleSequence.pdf";
 
@@ -701,7 +701,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 2)})
     public void brokenPageTreeWithExcessiveRangeNegativePagesTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullRangeNegative.pdf";
 

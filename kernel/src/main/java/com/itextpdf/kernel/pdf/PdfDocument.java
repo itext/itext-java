@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.data.ProductData;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -305,11 +305,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         boolean writerHasEncryption = writerHasEncryption();
         if (properties.appendMode && writerHasEncryption) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(LogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
+            logger.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
         }
         if (properties.preserveEncryption && writerHasEncryption) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.warn(LogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
+            logger.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
         }
 
         open(writer.properties.pdfVersion);
@@ -1020,7 +1020,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     writer.close();
                 } catch (Exception e) {
                     Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                    logger.error(LogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
+                    logger.error(IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1029,7 +1029,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     reader.close();
                 } catch (Exception e) {
                     Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                    logger.error(LogMessageConstant.PDF_READER_CLOSING_FAILED, e);
+                    logger.error(IoLogMessageConstant.PDF_READER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1314,7 +1314,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                logger.warn(LogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
+                logger.warn(IoLogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
             }
         }
         if (catalog.isOutlineMode()) {
@@ -1466,7 +1466,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public void addNamedDestination(String key, PdfObject value) {
         checkClosingStatus();
         if (value.isArray() && ((PdfArray)value).get(0).isNumber())
-            LoggerFactory.getLogger(PdfDocument.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
+            LoggerFactory.getLogger(PdfDocument.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
         catalog.addNamedDestination(key, value);
     }
 
@@ -1576,7 +1576,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
 
         PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
@@ -1652,7 +1652,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
         }
         if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
-            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+            LoggerFactory.getLogger(getClass())
+                    .error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
         if (encryptedPayload == null) {
@@ -1661,7 +1662,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
         PdfCollection collection = getCatalog().getCollection();
         if (collection != null) {
-            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
+            LoggerFactory.getLogger(getClass())
+                    .warn(IoLogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
         } else {
             collection = new PdfCollection();
             getCatalog().setCollection(collection);
@@ -1787,7 +1789,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 if (writer != null) defaultFont.makeIndirect(this);
             } catch (IOException e) {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-                logger.error(LogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
+                logger.error(IoLogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
                 defaultFont = null;
             }
         }
@@ -2123,7 +2125,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             }
         } catch (XMPException e) {
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            logger.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -2243,7 +2245,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             structTreeRoot = null;
             structParentIndex = -1;
             Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-            logger.error(LogMessageConstant.TAG_STRUCTURE_INIT_FAILED, ex);
+            logger.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, ex);
         }
     }
 
@@ -2434,7 +2436,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     pdfVersion = catalogVersion;
                 }
             } catch (IllegalArgumentException e) {
-                processReadingError(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED);
+                processReadingError(IoLogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED);
             }
         }
     }
@@ -2449,7 +2451,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             }
 
             if (originalDocumentId == null || modifiedDocumentId == null) {
-                processReadingError(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
+                processReadingError(IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED);
             }
         }
     }

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -249,7 +249,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
         }
         if (null == resultAnnotation) {
             Logger logger = LoggerFactory.getLogger(PdfTarget.class);
-            logger.error(LogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
+            logger.error(IoLogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
         }
         return resultAnnotation;
     }

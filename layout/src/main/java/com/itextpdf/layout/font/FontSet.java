@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.Type3Font;
@@ -146,7 +146,7 @@ public final class FontSet {
         }
         if (fontProgram instanceof Type3Font) {
             Logger logger = LoggerFactory.getLogger(FontSet.class);
-            logger.error(LogMessageConstant.TYPE3_FONT_CANNOT_BE_ADDED);
+            logger.error(IoLogMessageConstant.TYPE3_FONT_CANNOT_BE_ADDED);
             return false;
         }
         FontInfo fi = FontInfo.create(fontProgram, encoding, alias, unicodeRange);

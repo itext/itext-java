@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
@@ -73,12 +73,12 @@ public class PlaceItemsShorthandResolver implements IShorthandResolver {
             );
         }
         if (CssTypesValidationUtils.containsInitialOrInheritOrUnset(shorthandExpression)) {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                     CommonCssConstants.PLACE_ITEMS,
                     shorthandExpression);
         }
         if (shorthandExpression.isEmpty()) {
-            return handleExpressionError(LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
                     CommonCssConstants.PLACE_ITEMS, shorthandExpression);
         }
 
@@ -94,7 +94,7 @@ public class PlaceItemsShorthandResolver implements IShorthandResolver {
                 return resolveShorthandWithFourWords(placeItemsProps[0],
                         placeItemsProps[1], placeItemsProps[2], placeItemsProps[3]);
             default:
-                return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                         CommonCssConstants.PLACE_ITEMS,
                         shorthandExpression);
         }
@@ -103,7 +103,7 @@ public class PlaceItemsShorthandResolver implements IShorthandResolver {
     private List<CssDeclaration> resolveShorthandWithOneWord(String firstWord) {
         List<CssDeclaration> resolvedShorthand = resolveAlignItemsAndJustifyItems(firstWord, firstWord);
         if (resolvedShorthand.isEmpty()) {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                     CommonCssConstants.PLACE_ITEMS,
                     firstWord);
         }
@@ -116,7 +116,7 @@ public class PlaceItemsShorthandResolver implements IShorthandResolver {
             resolvedShorthand =
                     resolveAlignItemsAndJustifyItems(firstWord + " " + secondWord, firstWord + " " + secondWord);
             if (resolvedShorthand.isEmpty()) {
-                return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                         CommonCssConstants.PLACE_ITEMS,
                         firstWord + " " + secondWord);
             }
@@ -130,7 +130,7 @@ public class PlaceItemsShorthandResolver implements IShorthandResolver {
         if (resolvedShorthand.isEmpty()) {
             resolvedShorthand = resolveAlignItemsAndJustifyItems(firstWord + " " + secondWord, thirdWord);
             if (resolvedShorthand.isEmpty()) {
-                return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                         CommonCssConstants.PLACE_ITEMS,
                         firstWord + " " + secondWord + " " + thirdWord);
             }
@@ -143,7 +143,7 @@ public class PlaceItemsShorthandResolver implements IShorthandResolver {
         List<CssDeclaration> resolvedShorthand =
                 resolveAlignItemsAndJustifyItems(firstWord + " " + secondWord, thirdWord + " " + fourthWord);
         if (resolvedShorthand.isEmpty()) {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                     CommonCssConstants.PLACE_ITEMS,
                     firstWord + " " + secondWord + " " + thirdWord + " " + fourthWord);
         }

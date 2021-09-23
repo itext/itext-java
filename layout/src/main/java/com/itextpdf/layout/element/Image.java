@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
@@ -471,7 +471,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
                 ((boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH) ||
                         (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_HEIGHT))) {
             Logger logger = LoggerFactory.getLogger(Image.class);
-            logger.warn(LogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
+            logger.warn(IoLogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
         }
         setProperty(Property.AUTO_SCALE, autoScale);
         return this;

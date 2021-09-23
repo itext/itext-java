@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
@@ -194,7 +194,7 @@ public class ListTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 8, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(count = 8, messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void addListOnShortPage1() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addListOnShortPage1.pdf";
@@ -230,8 +230,8 @@ public class ListTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 3, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
-            @LogMessage(count = 6, messageTemplate = LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
+            @LogMessage(count = 3, messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(count = 6, messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
     })
     public void addListOnShortPage2() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addListOnShortPage2.pdf";
@@ -460,7 +460,7 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 4)
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 4)
     })
     @Test
     public void listWithSetHeightProperties01() throws IOException, InterruptedException {
@@ -592,7 +592,7 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void listSymbolForcedPlacement01() throws Exception {
         String outFileName = destinationFolder + "listSymbolForcedPlacement01.pdf";
         String cmpFileName = sourceFolder + "cmp_listSymbolForcedPlacement01.pdf";
@@ -641,7 +641,7 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED))
     public void listItemMarginInPercentTest() throws Exception {
         String outFileName = destinationFolder + "listItemMarginInPercentTest.pdf";
         String cmpFileName = sourceFolder + "cmp_listItemMarginInPercentTest.pdf";

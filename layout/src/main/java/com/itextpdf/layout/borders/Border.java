@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.borders;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -286,7 +286,8 @@ public abstract class Border {
      */
     public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1, float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
         Logger logger = LoggerFactory.getLogger(Border.class);
-        logger.warn(MessageFormatUtil.format(LogMessageConstant.METHOD_IS_NOT_IMPLEMENTED_BY_DEFAULT_OTHER_METHOD_WILL_BE_USED,
+        logger.warn(MessageFormatUtil.format(
+                IoLogMessageConstant.METHOD_IS_NOT_IMPLEMENTED_BY_DEFAULT_OTHER_METHOD_WILL_BE_USED,
                 "Border#draw(PdfCanvas, float, float, float, float, float, float, float, float, Side, float, float",
                 "Border#draw(PdfCanvas, float, float, float, float, Side, float, float)"));
         draw(canvas, x1, y1, x2, y2, defaultSide, borderWidthBefore, borderWidthAfter);

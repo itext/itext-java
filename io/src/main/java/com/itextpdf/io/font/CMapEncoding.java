@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.cmap.CMapCidByte;
 import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
@@ -115,7 +115,7 @@ public class CMapEncoding {
             code2Cid = cid2Code.getReversMap();
             this.codeSpaceRanges = cid2Code.getCodeSpaceRanges();
         } catch (IOException e) {
-            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
+            LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
         }
     }
 

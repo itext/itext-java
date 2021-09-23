@@ -23,7 +23,7 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +89,7 @@ public class EscapeGroup {
             } else if (nextCharacter == closeCharacter) {
                 --counter;
                 if (counter < 0) {
-                    LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.INCORRECT_CHARACTER_SEQUENCE));
+                    LOGGER.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INCORRECT_CHARACTER_SEQUENCE));
                     counter = 0;
                 }
             }

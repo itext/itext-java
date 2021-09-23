@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,7 +166,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
                 channel.close();
             } catch (Exception ex) {
                 Logger logger = LoggerFactory.getLogger(PagedChannelRandomAccessSource.class);
-                logger.error(LogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
+                logger.error(IoLogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
             }
         }
     }

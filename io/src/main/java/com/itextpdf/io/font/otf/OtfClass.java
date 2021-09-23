@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -93,7 +93,7 @@ public class OtfClass {
             otfClass = new OtfClass(rf, classLocation);
         } catch (IOException e) {
             Logger logger = LoggerFactory.getLogger(OtfClass.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.getMessage()));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.getMessage()));
             otfClass = null;
         }
         return otfClass;

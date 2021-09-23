@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.colors;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import org.slf4j.Logger;
@@ -111,7 +111,7 @@ public class DeviceRgb extends Color {
         });
         if (r > 1 || r < 0 || g > 1 || g < 0 || b > 1 || b < 0) {
             Logger LOGGER = LoggerFactory.getLogger(DeviceRgb.class);
-            LOGGER.warn(LogMessageConstant.COLORANT_INTENSITIES_INVALID);
+            LOGGER.warn(IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
         }
     }
 
@@ -127,7 +127,7 @@ public class DeviceRgb extends Color {
         this(color.getRed(), color.getGreen(), color.getBlue());
         if (color.getAlpha() != 255) {
             Logger LOGGER = LoggerFactory.getLogger(DeviceRgb.class);
-            LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.getAlpha()));
+            LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.getAlpha()));
         }
     }
 

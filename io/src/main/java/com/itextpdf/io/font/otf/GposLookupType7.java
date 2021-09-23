@@ -42,7 +42,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.otf.lookuptype7.PosTableLookup7Format2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
@@ -121,7 +121,7 @@ public class GposLookupType7 extends OpenTableLookup {
                 break;
             case 1:
             case 3:
-                LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED,
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED,
                         substFormat, 7));
                 break;
             default:

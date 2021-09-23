@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -200,7 +200,7 @@ public class PositioningTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 1))
     public void fixedPositioningTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest03.pdf";
@@ -226,7 +226,7 @@ public class PositioningTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 1))
     public void fixedPositioningTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest04.pdf";

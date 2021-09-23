@@ -43,7 +43,7 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
@@ -263,7 +263,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
     // TODO DEVSIX-4140 font-relative values doesn't support
     public void relativeStyleInheritanceTest() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "relativeStyleInheritanceTest");

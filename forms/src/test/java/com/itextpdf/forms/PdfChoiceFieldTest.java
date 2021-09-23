@@ -24,7 +24,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -148,7 +148,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, count = 2)})
+            @LogMessage(messageTemplate = IoLogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, count = 2)})
     public void multiSelectByValueTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "multiSelectByValueTest.pdf";
         String cmpPdf = sourceFolder + "cmp_multiSelectByValueTest.pdf";
@@ -191,7 +191,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY)})
+            @LogMessage(messageTemplate = IoLogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY)})
     public void multiSelectByValueRemoveIKeyTest() throws IOException, InterruptedException {
         String srcPdf = sourceFolder + "listWithPreselectedValue.pdf";
         String outPdf = destinationFolder + "selectByValueRemoveIKeyTest.pdf";

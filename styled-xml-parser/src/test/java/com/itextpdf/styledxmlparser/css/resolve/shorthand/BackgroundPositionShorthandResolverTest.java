@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.test.ExtendedITextTest;
@@ -58,7 +58,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY))
     public void fullEmptyValueTest() {
         String shorthandExpression = " ";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -70,7 +70,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY))
     public void emptyValueTest() {
         String shorthandExpression = "50pt,  , 20pt";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -82,7 +82,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidXValueTest() {
         String shorthandExpression = "left right";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -94,7 +94,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void notExistingXValueTest() {
         String shorthandExpression = "30jacoco 50pt";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -106,7 +106,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidYValueTest() {
         String shorthandExpression = "top bottom";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -118,7 +118,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void notExistingYValueTest() {
         String shorthandExpression = "50pt 30jacoco";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -130,7 +130,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidNumericValueTest() {
         String shorthandExpression = "50px left top";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -142,7 +142,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidNotShortNumericValueTest() {
         String shorthandExpression = "50pt 30px 10pt";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -154,7 +154,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidTopPxShortNumericValueTest() {
         String shorthandExpression = "top 50px";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -180,7 +180,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidPxLeftShortNumericValueTest() {
         String shorthandExpression = "50px left";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -234,7 +234,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidCenterPxTopLargeNumericValueTest() {
         String shorthandExpression = "center 50px top";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -260,7 +260,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidDoubleHorizontalWithCenterAndVerticalValueTest() {
         String shorthandExpression = "center top left";
         Set<String> expectedResolvedProperties = new HashSet<>();
@@ -286,7 +286,7 @@ public class BackgroundPositionShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void invalidLeftTopCenterValueTest() {
         String shorthandExpression = "left bottom center";
         Set<String> expectedResolvedProperties = new HashSet<>();

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -122,10 +122,10 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public PdfLinkAnnotation setDestination(PdfObject destination) {
         if (getPdfObject().containsKey(PdfName.A)) {
             getPdfObject().remove(PdfName.A);
-            logger.warn(LogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
+            logger.warn(IoLogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
         }
         if (destination.isArray() && ((PdfArray)destination).get(0).isNumber())
-            LoggerFactory.getLogger(PdfLinkAnnotation.class).warn(LogMessageConstant.INVALID_DESTINATION_TYPE);
+            LoggerFactory.getLogger(PdfLinkAnnotation.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
         return (PdfLinkAnnotation) put(PdfName.Dest, destination);
     }
 
@@ -188,7 +188,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public PdfLinkAnnotation setAction(PdfAction action) {
         if (getDestinationObject() != null) {
             removeDestination();
-            logger.warn(LogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION);
+            logger.warn(IoLogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION);
         }
         return (PdfLinkAnnotation) put(PdfName.A, action.getPdfObject());
     }

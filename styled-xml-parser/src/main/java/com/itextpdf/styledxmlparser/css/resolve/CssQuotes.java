@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import org.slf4j.LoggerFactory;
@@ -113,7 +113,7 @@ public class CssQuotes {
                 return new CssQuotes(quotes.get(0), quotes.get(1));
             } else {
                 LoggerFactory.getLogger(CssQuotes.class).error(MessageFormatUtil.format(
-                        LogMessageConstant.QUOTES_PROPERTY_INVALID, quotesString));
+                        StyledXmlParserLogMessageConstant.QUOTES_PROPERTY_INVALID, quotesString));
             }
         }
         return fallbackToDefault ? createDefaultQuotes() : null;

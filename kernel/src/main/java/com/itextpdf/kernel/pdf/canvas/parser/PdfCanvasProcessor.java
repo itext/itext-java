@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -964,7 +964,7 @@ public class PdfCanvasProcessor {
                     throw exception;
                 } else {
                     Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX));
                 }
             }
         }
@@ -1279,13 +1279,17 @@ public class PdfCanvasProcessor {
             PdfDictionary properties = resources.getResource(PdfName.Properties);
             if (null == properties) {
                 Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, PdfName.Properties));
+                logger.warn(
+                        MessageFormatUtil.format(IoLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY,
+                                PdfName.Properties));
                 return null;
             }
             PdfDictionary propertiesDictionary = properties.getAsDictionary(dictionaryName);
             if (null == propertiesDictionary) {
                 Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, dictionaryName));
+                logger.warn(
+                        MessageFormatUtil.format(IoLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY,
+                                dictionaryName));
                 return null;
             }
             return properties.getAsDictionary(dictionaryName);

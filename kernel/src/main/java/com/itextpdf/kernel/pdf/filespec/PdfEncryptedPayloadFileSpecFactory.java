@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.filespec;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -178,7 +178,8 @@ public class PdfEncryptedPayloadFileSpecFactory {
 
     public static PdfFileSpec wrap(PdfDictionary dictionary) {
         if (!PdfName.EncryptedPayload.equals(dictionary.getAsName(PdfName.AFRelationship))) {
-            LoggerFactory.getLogger(PdfEncryptedPayloadFileSpecFactory.class).error(LogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+            LoggerFactory.getLogger(PdfEncryptedPayloadFileSpecFactory.class)
+                    .error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfDictionary ef = dictionary.getAsDictionary(PdfName.EF);
         if (ef == null || (ef.getAsStream(PdfName.F) == null) && (ef.getAsStream(PdfName.UF) == null)) {

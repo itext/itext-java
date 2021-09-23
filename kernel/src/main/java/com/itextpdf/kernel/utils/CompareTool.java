@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.GhostscriptHelper;
@@ -1355,7 +1355,7 @@ public class CompareTool {
                 PdfNumber outLeftover = flattenNumTree(outNumTree, null, outItems);
                 PdfNumber cmpLeftover = flattenNumTree(cmpNumTree, null, cmpItems);
                 if (outLeftover != null) {
-                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    LoggerFactory.getLogger(CompareTool.class).warn(IoLogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
                     if (cmpLeftover == null) {
                         if (compareResult != null && currentPath != null) {
                             compareResult.addError(currentPath, "Number tree unexpectedly ends with a key");
@@ -1364,7 +1364,7 @@ public class CompareTool {
                     }
                 }
                 if (cmpLeftover != null) {
-                    LoggerFactory.getLogger(CompareTool.class).warn(LogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    LoggerFactory.getLogger(CompareTool.class).warn(IoLogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
                     if (outLeftover == null) {
                         if (compareResult != null && currentPath != null) {
                             compareResult.addError(currentPath, "Number tree was expected to end with a key (although it is invalid according to the specification), but ended with a value");

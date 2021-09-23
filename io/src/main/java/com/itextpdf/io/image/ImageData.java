@@ -44,7 +44,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -332,11 +332,11 @@ public abstract class ImageData {
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(ImageData.class);
         if (imageSize > 4096) {
-            logger.warn(LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB);
+            logger.warn(IoLogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB);
             return false;
         }
         if (imageMask != null) {
-            logger.warn(LogMessageConstant.IMAGE_HAS_MASK);
+            logger.warn(IoLogMessageConstant.IMAGE_HAS_MASK);
             return false;
         }
         return true;

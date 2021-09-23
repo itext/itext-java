@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -212,7 +212,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -166,7 +166,7 @@ public class CrlClientOnline implements ICrlClient {
                 ar.add(bout.toByteArray());
                 LOGGER.info("Added CRL found at: " + urlt);
             } catch (Exception e) {
-                LOGGER.info(MessageFormatUtil.format(LogMessageConstant.INVALID_DISTRIBUTION_POINT, e.getMessage()));
+                LOGGER.info(MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, e.getMessage()));
             }
         }
         return ar;

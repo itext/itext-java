@@ -48,8 +48,9 @@ package com.itextpdf.kernel.logs;
  */
 public final class KernelLogMessageConstant {
 
-    public static final String DCTDECODE_FILTER_DECODING = "DCTDecode filter decoding into the "
-            + "bit map is not supported. The stream data would be left in JPEG baseline format";
+    public static final String DCTDECODE_FILTER_DECODING =
+            "DCTDecode filter decoding into the bit map is not supported. The stream data would be left in JPEG "
+                    + "baseline format";
 
     public static final String FEATURE_IS_NOT_SUPPORTED =
             "Exception was thrown: {0}. The feature {1} is probably not supported by your XML processor.";
@@ -59,16 +60,17 @@ public final class KernelLogMessageConstant {
                     "not cross-reference stream. " +
                     "Falling back to cross-reference table in appended document and switching full compression off";
 
-    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY = "Full compression mode was "
-            + "requested to be switched off in append mode but the original document has cross-reference stream, not "
-            + "cross-reference table. Falling back to cross-reference stream in appended document and switching full "
-            + "compression on";
+    public static final String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY =
+            "Full compression mode was requested to be switched off in append mode but the original document has "
+                    + "cross-reference stream, not cross-reference table. Falling back to cross-reference stream in "
+                    + "appended document and switching full compression on";
 
-    public static final String JPXDECODE_FILTER_DECODING = "JPXDecode filter decoding into the "
-            + "bit map is not supported. The stream data would be left in JPEG2000 format";
+    public static final String JPXDECODE_FILTER_DECODING =
+            "JPXDecode filter decoding into the bit map is not supported. The stream data would be left in JPEG2000 "
+                    + "format";
 
-    public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} "
-            + "color space";
+    public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE =
+            "Unable to parse color {0} within {1} color space";
 
     /**
      * Message warns about unexpected product name which was mentioned as involved into PDF
@@ -90,11 +92,11 @@ public final class KernelLogMessageConstant {
      * <li>1st is an event type;
      * </ul>
      */
-    public static final String UNCONFIRMED_EVENT = "Event for the product {0} with type {1} was reported " +
-            "but was not confirmed. Probably appropriate process fail";
+    public static final String UNCONFIRMED_EVENT =
+            "Event for the product {0} with type {1} was reported but was not confirmed. Probably appropriate process "
+                    + "fail";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
     }
-
 }

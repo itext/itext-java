@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.colors;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class DeviceGray extends Color {
         super(new PdfDeviceCs.Gray(), new float[] {value > 1 ? 1 : (value > 0 ? value : 0)});
         if (value > 1 || value < 0) {
             Logger LOGGER = LoggerFactory.getLogger(DeviceGray.class);
-            LOGGER.warn(LogMessageConstant.COLORANT_INTENSITIES_INVALID);
+            LOGGER.warn(IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
         }
     }
 

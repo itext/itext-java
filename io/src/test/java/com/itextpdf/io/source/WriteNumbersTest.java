@@ -42,7 +42,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -108,7 +108,7 @@ public class WriteNumbersTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_PROCESS_NAN))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_PROCESS_NAN))
     public void writeNanTest() {
         double d = Double.NaN;
 
@@ -120,7 +120,7 @@ public class WriteNumbersTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_PROCESS_NAN))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_PROCESS_NAN))
     public void writeNanHighPrecisionTest() {
         double d = Double.NaN;
 

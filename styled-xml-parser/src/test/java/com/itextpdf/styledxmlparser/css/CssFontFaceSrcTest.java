@@ -23,7 +23,7 @@
 package com.itextpdf.styledxmlparser.css;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.font.CssFontFace;
 import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
 import com.itextpdf.test.ExtendedITextTest;
@@ -105,7 +105,7 @@ public class CssFontFaceSrcTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION)})
     public void parseBase64SrcTest() throws Exception {
         CssStyleSheet styleSheet = CssStyleSheetParser.parse(new FileInputStream(sourceFolder + "srcs2.css"));
         CssFontFaceRule fontFaceRule = (CssFontFaceRule)styleSheet.getStatements().get(0);

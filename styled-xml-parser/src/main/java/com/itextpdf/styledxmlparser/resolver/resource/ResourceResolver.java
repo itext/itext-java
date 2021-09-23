@@ -48,7 +48,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -174,10 +174,11 @@ public class ResourceResolver {
             }
         }
         if (isDataSrc(src)) {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI,
-                    src));
+            logger.error(MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI, src));
         } else {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI,
+            logger.error(MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI,
                     uriResolver.getBaseUri(), src));
         }
         return null;
@@ -200,7 +201,8 @@ public class ResourceResolver {
             URL url = uriResolver.resolveAgainstBaseUri(src);
             return retriever.getByteArrayByUrl(url);
         } catch (Exception e) {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI,
+            logger.error(MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI,
                     uriResolver.getBaseUri(), src), e);
             return null;
         }
@@ -222,7 +224,8 @@ public class ResourceResolver {
             URL url = uriResolver.resolveAgainstBaseUri(src);
             return retriever.getInputStreamByUrl(url);
         } catch (Exception e) {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI,
+            logger.error(MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI,
                     uriResolver.getBaseUri(), src), e);
             return null;
         }

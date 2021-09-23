@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.parse;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssRuleSet;
 import com.itextpdf.styledxmlparser.css.selector.CssSelector;
@@ -132,7 +132,8 @@ public final class CssRuleSetParser {
             try {
                 ruleSets.add(new CssRuleSet( new CssSelector(currentSelectorStr), declarations));
             } catch (Exception exc) {
-                logger.error(MessageFormatUtil.format(LogMessageConstant.ERROR_PARSING_CSS_SELECTOR, currentSelectorStr), exc);
+                logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.ERROR_PARSING_CSS_SELECTOR,
+                        currentSelectorStr), exc);
                 //if any separated selector has errors, all others become invalid.
                 //in this case we just clear map, it is the easies way to support this.
                 declarations.clear();
@@ -156,7 +157,8 @@ public final class CssRuleSetParser {
         String[] result = new String[2];
         int position = property.indexOf(":");
         if (position < 0) {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, property.trim()));
+            logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                    property.trim()));
             return null;
         }
         result[0] = property.substring(0, position);

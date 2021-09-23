@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.tagging;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -202,7 +202,7 @@ public class LayoutTaggingHelper {
         TagTreePointer existingArtifactTag = new TagTreePointer(document);
         if (context.getWaitingTagsManager().tryMovePointerToWaitingTag(existingArtifactTag, hintKey)) {
             Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(LogMessageConstant.ALREADY_TAGGED_HINT_MARKED_ARTIFACT);
+            logger.error(IoLogMessageConstant.ALREADY_TAGGED_HINT_MARKED_ARTIFACT);
 
             context.getWaitingTagsManager().removeWaitingState(hintKey);
             if (immediateFlush) {
@@ -419,7 +419,7 @@ public class LayoutTaggingHelper {
         }
         if (kidHintKey.isFinished()) {
             Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(LogMessageConstant.CANNOT_REPLACE_FINISHED_HINT);
+            logger.error(IoLogMessageConstant.CANNOT_REPLACE_FINISHED_HINT);
 
             // If kidHintKey is finished you won't be able to add it anywhere after replacing is ended.
             // If kidHintKey might be finished, use moveKidHint instead.
@@ -435,7 +435,7 @@ public class LayoutTaggingHelper {
             if (i == RETVAL_PARENT_AND_KID_FINISHED
                     || i == RETVAL_NO_PARENT && newKidKey.isFinished()) {
                 Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-                logger.error(LogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
+                logger.error(IoLogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
                 continue;
             }
             kidsToBeAdded.add(newKidKey);
@@ -453,7 +453,7 @@ public class LayoutTaggingHelper {
     public int moveKidHint(TaggingHintKey hintKeyOfKidToMove, TaggingHintKey newParent, int insertIndex) {
         if (newParent.isFinished()) {
             Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(LogMessageConstant.CANNOT_MOVE_HINT_TO_FINISHED_PARENT);
+            logger.error(IoLogMessageConstant.CANNOT_MOVE_HINT_TO_FINISHED_PARENT);
             return -1;
         }
 
@@ -461,7 +461,7 @@ public class LayoutTaggingHelper {
         if (removeRes == RETVAL_PARENT_AND_KID_FINISHED
                 || removeRes == RETVAL_NO_PARENT && hintKeyOfKidToMove.isFinished()) {
             Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(LogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
+            logger.error(IoLogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
             return -1;
         }
         addKidsHint(newParent, Collections.<TaggingHintKey>singletonList(hintKeyOfKidToMove), insertIndex, true);
@@ -512,7 +512,7 @@ public class LayoutTaggingHelper {
 
         if (!skipFinishedChecks && parentKey.isFinished()) {
             Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(LogMessageConstant.CANNOT_ADD_HINTS_TO_FINISHED_PARENT);
+            logger.error(IoLogMessageConstant.CANNOT_ADD_HINTS_TO_FINISHED_PARENT);
             return;
         }
 
@@ -537,7 +537,7 @@ public class LayoutTaggingHelper {
             }
             if (!skipFinishedChecks && kidKey.isFinished()) {
                 Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-                logger.error(LogMessageConstant.CANNOT_ADD_FINISHED_HINT_AS_A_NEW_KID_HINT);
+                logger.error(IoLogMessageConstant.CANNOT_ADD_FINISHED_HINT_AS_A_NEW_KID_HINT);
                 continue;
             }
             if (insertIndex > -1) {
@@ -572,7 +572,7 @@ public class LayoutTaggingHelper {
     private boolean createSingleTag(TaggingHintKey hintKey, TagTreePointer tagPointer) {
         if (hintKey.isFinished()) {
             Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT);
+            logger.error(IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT);
             return false;
         }
 

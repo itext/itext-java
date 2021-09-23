@@ -44,7 +44,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
@@ -195,7 +195,7 @@ public class Type1Font extends FontProgram {
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
                     Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                    logger.error(LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
+                    logger.error(IoLogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
                     return null;
                 }
                 if (raf.read() != PFB_TYPES[k]) {

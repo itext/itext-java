@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.IsoKey;
@@ -174,7 +174,7 @@ class ParentTreeHandler {
         PdfIndirectReference mcrPageIndRef = mcr.getPageIndirectReference();
         if (mcrPageIndRef == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
             Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
-            logger.error(LogMessageConstant.ENCOUNTERED_INVALID_MCR);
+            logger.error(IoLogMessageConstant.ENCOUNTERED_INVALID_MCR);
             return;
         }
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(mcrPageIndRef);
@@ -204,7 +204,7 @@ class ParentTreeHandler {
             } else {
                 // TODO DEVSIX-3351 an error is thrown here because right now no /StructParents will be created.
                 Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
-                logger.error(LogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS);
+                logger.error(IoLogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS);
             }
             pageMcrs.putXObjectMcr(stmIndRef, mcr);
             if (registeringOnInit) {

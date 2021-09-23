@@ -44,7 +44,7 @@ package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
@@ -128,7 +128,8 @@ public class JsoupXmlParser implements IXmlParser {
         } else if (jsoupNode instanceof Comment || jsoupNode instanceof XmlDeclaration) {
             // Ignore. We should do this to avoid redundant log message
         } else {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE, jsoupNode.getClass()));
+            logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE,
+                    jsoupNode.getClass()));
         }
 
         for (Node node : jsoupNode.childNodes()) {

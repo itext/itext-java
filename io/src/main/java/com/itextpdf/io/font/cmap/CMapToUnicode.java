@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font.cmap;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
 import org.slf4j.Logger;
@@ -173,7 +173,7 @@ public class CMapToUnicode extends AbstractCMap {
             byteMappings.put((mark.charAt(0) << 8) + mark.charAt(1), dest);
         } else {
             Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
-            logger.warn(LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
+            logger.warn(IoLogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
         }
     }
 

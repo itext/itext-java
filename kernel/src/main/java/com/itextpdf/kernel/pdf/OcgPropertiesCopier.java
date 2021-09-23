@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -87,7 +87,7 @@ final class OcgPropertiesCopier {
             OcgPropertiesCopier.copyDDictionary(fromOcgsToCopy, fromOcProperties.getAsDictionary(PdfName.D),
                     toOcProperties, toDocument);
         } catch (Exception ex) {
-            LOGGER.error(MessageFormatUtil.format(LogMessageConstant.OCG_COPYING_ERROR, ex.toString()));
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.OCG_COPYING_ERROR, ex.toString()));
         }
     }
 
@@ -241,7 +241,7 @@ final class OcgPropertiesCopier {
         }
 
         if (hasConflictingNames) {
-            LOGGER.warn(LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES);
+            LOGGER.warn(IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES);
         }
     }
 

@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -44,7 +44,7 @@ import org.junit.experimental.categories.Category;
 public class BlockRendererUnitTest extends ExtendedITextTest {
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED))
     public void clippedAreaFlushedPageTest() {
         BlockRenderer blockRenderer = new DivRenderer(new Div());
         blockRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);

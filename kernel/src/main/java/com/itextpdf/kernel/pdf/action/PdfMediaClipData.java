@@ -43,14 +43,13 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
 /**
  * This class is a wrapper of media clip data dictionary that defines the data for a media object that can be played.

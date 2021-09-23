@@ -43,7 +43,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.test.ExtendedITextTest;
@@ -199,7 +199,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.OCSP_STATUS_IS_REVOKED),
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_REVOKED),
     })
     public void ocspStatusIsRevokedTest()
             throws UnrecoverableKeyException, CertificateException, KeyStoreException, IOException,
@@ -215,7 +215,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.OCSP_STATUS_IS_UNKNOWN),
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN),
     })
     public void ocspStatusIsUnknownTest()
             throws CertificateException, UnrecoverableKeyException, KeyStoreException, IOException,

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.jsoup;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
@@ -75,7 +75,7 @@ public class JsoupXmlParserTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_ADDING_CHILD_NODE),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.ERROR_ADDING_CHILD_NODE),
     })
     public void testMessageAddingChild() {
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");

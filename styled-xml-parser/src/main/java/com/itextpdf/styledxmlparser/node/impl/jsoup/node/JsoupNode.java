@@ -42,7 +42,7 @@
  */
 package com.itextpdf.styledxmlparser.node.impl.jsoup.node;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.node.INode;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public class JsoupNode implements INode {
             ((JsoupNode) node).parentNode = this;
         } else {
             Logger logger = LoggerFactory.getLogger(JsoupNode.class);
-            logger.error(LogMessageConstant.ERROR_ADDING_CHILD_NODE);
+            logger.error(StyledXmlParserLogMessageConstant.ERROR_ADDING_CHILD_NODE);
         }
     }
 

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -85,7 +85,7 @@ public class CanvasRenderer extends RootRenderer {
     public void addChild(IRenderer renderer) {
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FULL))) {
             LoggerFactory.getLogger(CanvasRenderer.class).warn(
-                    LogMessageConstant.CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED);
+                    IoLogMessageConstant.CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED);
         } else {
             super.addChild(renderer);
         }

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontNames;
@@ -329,7 +329,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
             } else {
                 Logger logger = LoggerFactory.getLogger(this.getClass());
                 if (logger.isWarnEnabled()) {
-                    logger.warn(MessageFormatUtil.format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, code));
+                    logger.warn(MessageFormatUtil.format(IoLogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, code));
                 }
                 allCodesDecoded = false;
             }

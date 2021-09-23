@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -62,14 +62,14 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD)})
     public void prematureCallOfHandleViolatedOrphans() {
         ParagraphOrphansControl orphansControl = new ParagraphOrphansControl(2);
         orphansControl.handleViolatedOrphans(new ParagraphRenderer(new Paragraph()), "");
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD)})
     public void prematureCallOfHandleViolatedWidows() {
         ParagraphWidowsControl widowsControl = new ParagraphWidowsControl(2, 1, false);
         widowsControl.handleViolatedWidows(new ParagraphRenderer(new Paragraph()), "");
@@ -91,7 +91,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ORPHANS_CONSTRAINT_VIOLATED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ORPHANS_CONSTRAINT_VIOLATED)})
     public void violatedOrphans() throws IOException, InterruptedException {
         runMinThreeOrphansTest("violatedOrphans", 1, true, false);
     }
@@ -112,13 +112,13 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
     public void violatedWidowsInabilityToFix() throws IOException, InterruptedException {
         runMinThreeWidowsTest("violatedWidowsInabilityToFix", 1, false, false);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
     public void violatedWidowsForcedPlacement() throws IOException, InterruptedException {
         runMinThreeWidowsTest("violatedWidowsForcedPlacement", 1, true, true);
     }
@@ -201,13 +201,13 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void maxHeightLimitCausesOrphans() throws IOException, InterruptedException {
         runMaxHeightLimit("maxHeightLimitCausesOrphans", true);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void maxHeightLimitCausesWidows() throws IOException, InterruptedException {
         runMaxHeightLimit("maxHeightLimitCausesWidows", false);
     }
@@ -228,13 +228,13 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void divSizeCausesOrphans() throws IOException, InterruptedException {
         runDivSize("divSizeCausesOrphans", true);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void divSizeCausesWidows() throws IOException, InterruptedException {
         runDivSize("divSizeCausesWidows", false);
     }
@@ -250,13 +250,13 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void keepTogetherLargeParagraphOrphans() throws IOException, InterruptedException {
         runKeepTogether("keepTogetherLargeParagraphOrphans", true, true);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void keepTogetherLargeParagraphWidows() throws IOException, InterruptedException {
         runKeepTogether("keepTogetherLargeParagraphWidows", false, true);
     }
@@ -272,14 +272,14 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
     public void hugeInlineImageOrphans() throws IOException, InterruptedException {
         runHugeInlineImage("hugeInlineImageOrphans", true);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2),
-            @LogMessage(messageTemplate = LogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2),
+            @LogMessage(messageTemplate = IoLogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
     public void hugeInlineImageWidows() throws IOException, InterruptedException {
         runHugeInlineImage("hugeInlineImageWidows", false);
     }
@@ -350,7 +350,7 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
     public void twoLinesParagraphMin3Widows() throws IOException, InterruptedException {
         runOrphansWidowsBiggerThanLinesCount("twoLinesParagraphMin3Widows", false, false);
     }

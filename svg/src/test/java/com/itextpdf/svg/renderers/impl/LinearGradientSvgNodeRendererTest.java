@@ -24,7 +24,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -325,7 +325,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
     })
     // TODO DEVSIX-4140 font-relative values doesn't support
     public void textTest() throws IOException, InterruptedException, java.io.IOException {
@@ -339,7 +339,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
     })
     public void textRotatedTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textRotatedTest");

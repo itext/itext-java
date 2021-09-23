@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -658,7 +658,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED))
     public void applyLinkAnnotationFlushedPageTest() {
         AbstractRenderer abstractRenderer = new DivRenderer(new Div());
         abstractRenderer.occupiedArea = new LayoutArea(1, new Rectangle(100, 100));

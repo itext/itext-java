@@ -43,7 +43,7 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.PortUtil;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +113,7 @@ class CssPropertyNormalizer {
         if (end == -1) {
             end = source.length();
             LoggerFactory.getLogger(CssPropertyNormalizer.class).warn(MessageFormatUtil.format(
-                    LogMessageConstant.QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION, source));
+                    StyledXmlParserLogMessageConstant.QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION, source));
         } else {
             ++end;
         }
@@ -142,7 +142,7 @@ class CssPropertyNormalizer {
                 curr = CssUtils.findNextUnescapedChar(source, ')', curr);
                 if (curr == -1) {
                     LoggerFactory.getLogger(CssPropertyNormalizer.class).warn(MessageFormatUtil.format(
-                            LogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION, source));
+                            StyledXmlParserLogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION, source));
                     return source.length();
                 } else {
                     buffer.append(source.substring(start, curr).trim());
@@ -152,7 +152,7 @@ class CssPropertyNormalizer {
             }
         } else {
             LoggerFactory.getLogger(CssPropertyNormalizer.class).warn(MessageFormatUtil.format(
-                    LogMessageConstant.URL_IS_EMPTY_IN_CSS_EXPRESSION, source));
+                    StyledXmlParserLogMessageConstant.URL_IS_EMPTY_IN_CSS_EXPRESSION, source));
             return source.length();
         }
     }

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -238,7 +238,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
                 PdfAnnotation annotation = makeAnnotation(popupObject);
                 if (!(annotation instanceof PdfPopupAnnotation)) {
                     Logger logger = LoggerFactory.getLogger(PdfMarkupAnnotation.class);
-                    logger.warn(LogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
+                    logger.warn(IoLogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
                     return null;
                 }
                 popup = (PdfPopupAnnotation) annotation;

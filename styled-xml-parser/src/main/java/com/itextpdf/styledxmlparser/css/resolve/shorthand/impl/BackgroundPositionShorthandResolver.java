@@ -23,7 +23,7 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
@@ -60,8 +60,8 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
             );
         }
         if (shorthandExpression.trim().isEmpty()) {
-            LOGGER.warn(MessageFormatUtil.format(
-                    LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND_POSITION));
+            LOGGER.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
+                    CommonCssConstants.BACKGROUND_POSITION));
             return new ArrayList<>();
         }
 
@@ -71,13 +71,14 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
         final Map<String, String> values = new HashMap<>();
         for (final List<String> props : propsList) {
             if (props.isEmpty()) {
-                LOGGER.warn(MessageFormatUtil.format(
-                        LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.BACKGROUND_POSITION));
+                LOGGER.warn(
+                        MessageFormatUtil.format(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
+                                CommonCssConstants.BACKGROUND_POSITION));
                 return new ArrayList<>();
             }
             if (!parsePositionShorthand(props, values)) {
                 LOGGER.warn(MessageFormatUtil.format(
-                        LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
+                        StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                 return new ArrayList<>();
             }
 
@@ -101,7 +102,7 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
     private static boolean checkProperty(Map<String, String> resolvedProps, String key) {
         if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(key, resolvedProps.get(key)))) {
             LOGGER.warn(MessageFormatUtil.format(
-                    LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, resolvedProps.get(key)));
+                    StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, resolvedProps.get(key)));
             return false;
         }
         return true;

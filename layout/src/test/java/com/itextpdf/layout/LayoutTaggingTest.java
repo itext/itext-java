@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -138,7 +138,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest01.pdf"));
@@ -991,7 +991,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
     })
     //TODO update cmp-file after DEVSIX-3335 fixed
     public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
@@ -1016,7 +1016,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     //TODO update cmp-file after DEVSIX-3351 fixed
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS)})
     public void checkParentTreeIfFormXObjectTaggedTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "checkParentTreeIfFormXObjectTaggedTest.pdf";
         String cmpPdf = sourceFolder + "cmp_checkParentTreeIfFormXObjectTaggedTest.pdf";

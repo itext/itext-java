@@ -23,7 +23,7 @@
 
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -58,7 +58,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)
     })
     public void getFontWithDirectFontDictionaryTest() {
         PdfDictionary initialFontDict = new PdfDictionary();
@@ -114,7 +114,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 3),
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 3),
     })
     public void copyPagesWithOCGSameName() throws IOException {
         List<List<String>> ocgNames = new ArrayList<>();
@@ -176,7 +176,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.OCG_COPYING_ERROR, logLevel = LogLevelConstants.ERROR)
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCG_COPYING_ERROR, logLevel = LogLevelConstants.ERROR)
     })
     public void copyPagesFlushedResources() throws IOException {
         byte[] docBytes;

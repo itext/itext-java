@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -393,7 +393,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_DESTINATION_TYPE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DESTINATION_TYPE)})
     public void remoteGoToNotValidExplicitDestinationTest() throws IOException, InterruptedException {
         String cmpFile = sourceFolder + "cmp_remoteGoToNotValidExplicitDestinationTest.pdf";
         String outFile = destinationFolder + "remoteGoToNotValidExplicitDestinationTest.pdf";

@@ -80,7 +80,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

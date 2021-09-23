@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
@@ -168,7 +168,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                             result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                             Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                            logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                         }
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
@@ -233,7 +233,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
                     if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
                         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                        logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+                        logger.warn(IoLogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
                         shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
                     } else {
                         keepWithNextHangingRenderer = renderer;
@@ -457,7 +457,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
             if (!ableToProcessKeepWithNext) {
                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                logger.warn(LogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
+                logger.warn(IoLogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
                 shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
             }
             keepWithNextHangingRenderer = null;
@@ -499,7 +499,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             overflowRenderer.setProperty(Property.FORCED_PLACEMENT, true);
             Logger logger = LoggerFactory.getLogger(RootRenderer.class);
             if (logger.isWarnEnabled()) {
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
             }
             return true;
         }
@@ -530,7 +530,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
         if (logger.isWarnEnabled()) {
             logger.warn(MessageFormatUtil.format(
-                    LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                    IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                     "KeepTogether property will be ignored."));
         }
         if (!rendererIsFloat) {

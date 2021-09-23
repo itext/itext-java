@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
@@ -221,7 +221,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET)})
     public void linkAnnotationActionDestinationTest() throws IOException, InterruptedException {
         String fileName = "linkAnnotationActionDestinationTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + fileName)));
@@ -421,7 +421,7 @@ public class PdfAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.EMBEDDED_GO_TO_DESTINATION_NOT_SPECIFIED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.EMBEDDED_GO_TO_DESTINATION_NOT_SPECIFIED)})
     public void noFileAttachmentTargetTest() throws IOException, InterruptedException {
         String fileName = "noFileAttachmentTargetTest.pdf";
 

@@ -44,7 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
@@ -378,7 +378,7 @@ public class ListRenderer extends BlockRenderer {
                 if (!marginToSetUV.isPointValue()) {
                     Logger logger = LoggerFactory.getLogger(ListRenderer.class);
                     logger.error(MessageFormatUtil.format(
-                            LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                             marginToSet));
                 }
                 float calculatedMargin = marginToSetUV.getValue();

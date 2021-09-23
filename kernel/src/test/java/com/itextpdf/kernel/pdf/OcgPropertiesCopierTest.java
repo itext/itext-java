@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -108,7 +108,7 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(
-            messages = @LogMessage(messageTemplate = LogMessageConstant.OCG_COPYING_ERROR, logLevel = LogLevelConstants.ERROR)
+            messages = @LogMessage(messageTemplate = IoLogMessageConstant.OCG_COPYING_ERROR, logLevel = LogLevelConstants.ERROR)
     )
     public void attemptToCopyInvalidOCGTest() throws IOException {
         byte[] fromDocBytes;
@@ -266,7 +266,7 @@ public class OcgPropertiesCopierTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(
-            messages = @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES)
+            messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES)
     )
     public void copyOCGsWithConflictNamesTest() throws IOException {
         byte[] fromDocBytes;

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -182,7 +182,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             PdfObject value = pdfDictionary.get(key, false);
             if (value == null) {
                 Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
                 value = PdfNull.PDF_NULL;
             }
             if ((value.getType() == PdfObject.NUMBER
@@ -214,13 +214,13 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
         if (indirectReference.isFree()) {
             Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-            logger.error(LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
+            logger.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.refersTo == null
                 && (indirectReference.checkState(PdfObject.MODIFIED) || indirectReference.getReader() == null
                     || !(indirectReference.getOffset() > 0 || indirectReference.getIndex() >= 0))) {
             Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-            logger.error(LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
+            logger.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).

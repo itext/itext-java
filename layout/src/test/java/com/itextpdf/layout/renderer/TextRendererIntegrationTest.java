@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -621,7 +621,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
     })
     public void minMaxWidthWordSplitAcrossMultipleTextRenderers() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "minMaxWidthWordSplitAcrossMultipleTextRenderers.pdf";
@@ -664,7 +664,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
     public void minWidthForWordInMultipleTextRenderersFollowedByFloatTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "minWidthForSpanningWordFollowedByFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_minWidthForSpanningWordFollowedByFloat.pdf";
@@ -724,7 +724,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN, count = 3)
+            @LogMessage(messageTemplate = IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN, count = 3)
     })
     public void customTextRendererShouldOverrideGetNextRendererTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "customTextRendererShouldOverrideGetNextRendererTest.pdf";
@@ -796,7 +796,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void nbspCannotBeFitAndMakesTheFirstChunkTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
@@ -820,7 +820,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";
@@ -864,7 +864,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN, count = 8)
+            @LogMessage(messageTemplate = IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN, count = 8)
     })
     public void customTextRendererShouldOverrideCreateCopyTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "customTextRendererShouldOverrideCreateCopyTest.pdf";

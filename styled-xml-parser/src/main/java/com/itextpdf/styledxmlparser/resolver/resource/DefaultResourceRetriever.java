@@ -24,7 +24,7 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
 
 import java.io.IOException;
@@ -85,7 +85,9 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      */
     public InputStream getInputStreamByUrl(URL url) throws IOException {
         if (!urlFilter(url)) {
-            logger.warn(MessageFormatUtil.format(LogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
+            logger.warn(
+                    MessageFormatUtil.format(StyledXmlParserLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT,
+                            url));
             return null;
         }
         return new LimitedInputStream(url.openStream(), resourceSizeByteLimit);
@@ -106,8 +108,9 @@ public class DefaultResourceRetriever implements IResourceRetriever{
 
             return StreamUtil.inputStreamToArray(stream);
         } catch (ReadingByteLimitException ex) {
-            logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT, url,
-                    resourceSizeByteLimit));
+            logger.warn(MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT,
+                    url, resourceSizeByteLimit));
         }
         return null;
     }
