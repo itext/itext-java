@@ -45,21 +45,32 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 
+/**
+ * Class with additional properties for {@link PdfDocument} processing.
+ * Needs to be passed at document initialization.
+ */
 public class DocumentProperties {
 
 
     protected IMetaInfo metaInfo = null;
 
+    /**
+     * Default constructor, use provided setters for configuration options.
+     */
     public DocumentProperties() {
     }
 
+    /**
+     * Creates a copy of class instance.
+     *
+     * @param other the base for new class instance
+     */
     public DocumentProperties(DocumentProperties other) {
         this.metaInfo = other.metaInfo;
     }
 
     /**
-     * Sets document meta info. This meta info will be passed to the {@link com.itextpdf.kernel.counter.EventCounter}
-     * with {@link com.itextpdf.kernel.counter.event.CoreEvent} and can be used to determine event origin.
+     * Sets document meta info.
      *
      * @param metaInfo meta info to set
      * @return this {@link DocumentProperties} instance
