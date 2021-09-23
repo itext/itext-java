@@ -64,9 +64,6 @@ public class PdfWriter extends PdfOutputStream {
     private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
     private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
 
-    // For internal usage only
-    private PdfOutputStream duplicateStream = null;
-
     protected WriterProperties properties;
 
     /**
@@ -114,9 +111,6 @@ public class PdfWriter extends PdfOutputStream {
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
         super(new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
         this.properties = properties;
-        if (properties.debugMode) {
-            duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
-        }
     }
 
     /**
@@ -190,80 +184,6 @@ public class PdfWriter extends PdfOutputStream {
     public PdfWriter setSmartMode(boolean smartMode) {
         this.properties.smartMode = smartMode;
         return this;
-    }
-
-    /**
-     * Write an integer to the underlying stream
-     *
-     * @param b integer to write
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed.
-     */
-    @Override
-    public void write(int b) throws java.io.IOException {
-        super.write(b);
-        if (duplicateStream != null) {
-            duplicateStream.write(b);
-        }
-    }
-
-    /**
-     * Write a byte array to the underlying stream
-     *
-     * @param b byte array to write
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed.
-     */
-    @Override
-    public void write(byte[] b) throws java.io.IOException {
-        super.write(b);
-        if (duplicateStream != null) {
-            duplicateStream.write(b);
-        }
-    }
-
-    /**
-     * Write a slice of the passed byte array to the underlying stream
-     *
-     * @param b   byte array to slice and write.
-     * @param off starting index of the slice.
-     * @param len length of the slice.
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed.
-     */
-    @Override
-    public void write(byte[] b, int off, int len) throws java.io.IOException {
-        super.write(b, off, len);
-        if (duplicateStream != null) {
-            duplicateStream.write(b, off, len);
-        }
-    }
-
-
-    /**
-     * Close the writer and underlying streams.
-     *
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed previously.
-     */
-    @Override
-    public void close() throws IOException {
-        try {
-            super.close();
-        } finally {
-            try {
-                if (duplicateStream != null) {
-                    duplicateStream.close();
-                }
-            } catch (Exception ex) {
-                Logger logger = LoggerFactory.getLogger(PdfWriter.class);
-                logger.error("Closing of the duplicatedStream failed.", ex);
-            }
-        }
     }
 
     /**

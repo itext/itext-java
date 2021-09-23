@@ -7,7 +7,7 @@
     <version>7.2.0-SNAPSHOT</version>
   </parent>
   <artifactId>commons</artifactId>
-  <name>iText 7 - events</name>
+  <name>iText 7 - commons</name>
   <url>https://itextpdf.com/</url>
 
   <dependencies>
