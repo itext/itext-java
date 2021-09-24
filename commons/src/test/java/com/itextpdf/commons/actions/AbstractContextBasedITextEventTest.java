@@ -56,8 +56,7 @@ public class AbstractContextBasedITextEventTest extends ExtendedITextTest {
 
         Assert.assertSame(metaInfoBefore, e.getMetaInfo());
 
-        Exception exception = Assert.assertThrows(IllegalStateException.class, () -> e.setMetaInfo(metaInfoAfter));
-        Assert.assertEquals(CommonsExceptionMessageConstant.META_INFO_SHOULDNT_BE_NULL, exception.getMessage());
+        Assert.assertFalse(e.setMetaInfo(metaInfoAfter));
     }
 
     private static class BasicAbstractContextBasedITextEvent extends AbstractContextBasedITextEvent {

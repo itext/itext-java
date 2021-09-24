@@ -58,13 +58,14 @@ public abstract class AbstractContextBasedITextEvent extends AbstractProductITex
      *
      * @param metaInfo meta info
      *
-     * @throws IllegalStateException if the current event already has not null meta info associated with it
+     * @return true if meta info has been set, false otherwise
      */
-    public void setMetaInfo(IMetaInfo metaInfo) throws IllegalStateException {
+    public boolean setMetaInfo(IMetaInfo metaInfo) {
         if (this.metaInfo != null) {
-            throw new IllegalStateException(CommonsExceptionMessageConstant.META_INFO_SHOULDNT_BE_NULL);
+            return false;
         }
         this.metaInfo = metaInfo;
+        return true;
     }
 
     /**

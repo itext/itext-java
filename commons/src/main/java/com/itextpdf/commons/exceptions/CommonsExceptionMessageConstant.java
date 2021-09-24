@@ -39,7 +39,6 @@ public final class CommonsExceptionMessageConstant {
     public static final String INVALID_USAGE_CONFIGURATION_FORBIDDEN = "Invalid usage of placeholder \"{0}\": any "
             + "configuration is forbidden";
     public static final String INVALID_USAGE_FORMAT_REQUIRED = "Invalid usage of placeholder \"{0}\": format is required";
-    public static final String META_INFO_SHOULDNT_BE_NULL = "Meta info shouldn't be null";
     public static final String NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT = "No events were registered for the document!";
     public static final String PATTERN_CONTAINS_OPEN_QUOTATION = "Pattern contains open quotation!";
     public static final String PATTERN_CONTAINS_UNEXPECTED_CHARACTER = "Pattern contains unexpected character {0}";
