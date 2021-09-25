@@ -130,31 +130,31 @@ public class FontSelector {
             // It's important to mention that at the FontProvider level we add the default font-family
             // which is to be processed if for all provided font-families the score is 0.
             for (int i = 0; i < fontFamilies.size() && res == 0; i++) {
-                final FontCharacteristics fc = fontStyles.get(i);
+                FontCharacteristics fc = fontStyles.get(i);
                 String fontFamily = fontFamilies.get(i);
+
+                if ("monospace".equalsIgnoreCase(fontFamily)) {
+                    fc.setMonospaceFlag(true);
+                }
                 boolean isLastFontFamilyToBeProcessed = i == fontFamilies.size() - 1;
                 res = characteristicsSimilarity(fontFamily, fc, o2, isLastFontFamilyToBeProcessed) - characteristicsSimilarity(fontFamily, fc, o1, isLastFontFamilyToBeProcessed);
             }
             return res;
         }
 
-        private static FontCharacteristics parseFontStyle(String fontFamily, FontCharacteristics defaultFc) {
-            if (defaultFc == null) {
-                defaultFc = new FontCharacteristics();
+        private static FontCharacteristics parseFontStyle(String fontFamily, FontCharacteristics fc) {
+            if (fc == null) {
+                fc = new FontCharacteristics();
             }
-            final FontCharacteristics parsedFc = new FontCharacteristics(defaultFc);
-            if (parsedFc.isUndefined()) {
-                if ("monospace".equalsIgnoreCase(fontFamily)) {
-                    parsedFc.setMonospaceFlag(true);
-                }
+            if (fc.isUndefined()) {
                 if (fontFamily.contains("bold")) {
-                    parsedFc.setBoldFlag(true);
+                    fc.setBoldFlag(true);
                 }
                 if (fontFamily.contains("italic") || fontFamily.contains("oblique")) {
-                    parsedFc.setItalicFlag(true);
+                    fc.setItalicFlag(true);
                 }
             }
-            return parsedFc;
+            return fc;
         }
 
         /**

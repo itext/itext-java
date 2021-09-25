@@ -1063,37 +1063,6 @@ public class FontSelectorTest extends ExtendedITextTest {
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
-    @Test
-    public void fontCharacteristicIsUnmodifiedTest() {
-        FontSet set = getOpenSansFontSet();
-
-        List<String> fontFamilies = new ArrayList<>();
-        fontFamilies.add("OpenSans italic");
-        fontFamilies.add("OpenSans bold");
-
-        FontCharacteristics fc = new FontCharacteristics();
-        FontCharacteristics expectedFc = new FontCharacteristics(fc);
-
-        // previously font characteristics might have been updated while sorting fonts
-        new FontSelector(set.getFonts(), fontFamilies, fc);
-
-        Assert.assertEquals(expectedFc, fc);
-    }
-
-    @Test
-    public void fontCharacteristicsNullTest() {
-        FontSet set = getOpenSansFontSet();
-
-        List<String> fontFamilies = new ArrayList<>();
-        fontFamilies.add("test");
-
-        FontCharacteristics fc = null;
-        FontSelector fontSelector = new FontSelector(set.getFonts(), fontFamilies, fc);
-
-        // We expect default font characteristics to be used, e.g. as a result regular font must be the best
-        Assert.assertEquals("OpenSans-Regular", fontSelector.bestMatch().getDescriptor().getFontName());
-    }
-
     private void checkSelector(Collection<FontInfo> fontInfoCollection, String fontFamily,
                                String expectedNormal, String expectedBold, String expectedItalic, String expectedBoldItalic) {
         List<String> fontFamilies = new ArrayList<>();
