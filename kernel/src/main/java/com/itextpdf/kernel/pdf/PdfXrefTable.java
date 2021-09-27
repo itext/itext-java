@@ -44,21 +44,21 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.data.ProductData;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A representation of a cross-referenced table of a PDF document.
@@ -512,13 +512,13 @@ public class PdfXrefTable {
      */
     protected static void writeKeyInfo(PdfDocument document) {
         PdfWriter writer = document.getWriter();
-        FingerPrint fingerPrint = document.getFingerPrint();
 
-        if (fingerPrint.getProducts().isEmpty()) {
+        final Collection<ProductData> products = document.getFingerPrint().getProducts();
+        if (products.isEmpty()) {
             writer.writeString(MessageFormatUtil
-                    .format("%iText-{0}-no-registered-products", ITextCoreProductData.getInstance().getVersion()));
+                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
         } else {
-            for (ProductData productData : fingerPrint.getProducts()) {
+            for (ProductData productData : products) {
                 writer.writeString(MessageFormatUtil
                         .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
             }

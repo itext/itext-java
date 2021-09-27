@@ -43,24 +43,24 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
+import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.data.ProductData;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
-import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
-import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
-import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
-import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.events.EventDispatcher;
 import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
@@ -885,7 +885,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
 
                 PdfObject crypto = null;
-                Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
+                final Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
                 if (properties.appendMode) {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(true);
@@ -2311,7 +2311,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     // Link annotation may have associated action. If it is GoTo type, we try to copy it's destination.
                     // GoToR and GoToE also contain destinations, but they point not to pages of the current document,
                     // so we just copy them as is. If it is action of any other type, it is also just copied as is.
-                    PdfDictionary action = annot.getAction();
+                    final PdfDictionary action = annot.getAction();
                     if (action != null) {
                         if (PdfName.GoTo.equals(action.get(PdfName.S))) {
                             copiedAction = action.copyTo(toDocument, Arrays.asList(PdfName.D), false);
@@ -2350,7 +2350,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
 
-        Set<PdfOutline> outlinesToCopy = new HashSet<>();
+        final Set<PdfOutline> outlinesToCopy = new HashSet<>();
         outlinesToCopy.addAll(outlines);
 
         for (PdfOutline outline : outlines) {
@@ -2373,7 +2373,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @param outlinesToCopy a Set of outlines to be copied
      */
     private void getAllOutlinesToCopy(PdfOutline outline, Set<PdfOutline> outlinesToCopy) {
-        PdfOutline parent = outline.getParent();
+        final PdfOutline parent = outline.getParent();
         //note there's no need to continue recursion if the current outline parent is root (first condition) or
         // if it is already in the Set of outlines to be copied (second condition)
         if ("Outlines".equals(parent.getTitle()) || outlinesToCopy.contains(parent)) {
@@ -2442,7 +2442,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     private void readDocumentIds() {
-        PdfArray id = reader.trailer.getAsArray(PdfName.ID);
+        final PdfArray id = reader.trailer.getAsArray(PdfName.ID);
 
         if (id != null) {
             if (id.size() == 2) {

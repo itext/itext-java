@@ -24,6 +24,7 @@ package com.itextpdf.commons.actions.data;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -34,10 +35,10 @@ public class CommonsProductDataTest extends ExtendedITextTest {
     public void getInstanceTest() {
         ProductData commonsProductData = CommonsProductData.getInstance();
 
-        Assert.assertEquals("Commons", commonsProductData.getPublicProductName());
-        Assert.assertEquals("commons", commonsProductData.getProductName());
-        Assert.assertEquals("7.2.0-SNAPSHOT", commonsProductData.getVersion());
-        Assert.assertEquals(2000, commonsProductData.getSinceCopyrightYear());
-        Assert.assertEquals(2021, commonsProductData.getToCopyrightYear());
+        Assert.assertEquals(CommonsProductData.COMMONS_PUBLIC_PRODUCT_NAME, commonsProductData.getPublicProductName());
+        Assert.assertEquals(CommonsProductData.COMMONS_PRODUCT_NAME, commonsProductData.getProductName());
+        Assert.assertEquals(CommonsProductData.COMMONS_VERSION, commonsProductData.getVersion());
+        Assert.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_SINCE, commonsProductData.getSinceCopyrightYear());
+        Assert.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_TO, commonsProductData.getToCopyrightYear());
     }
 }

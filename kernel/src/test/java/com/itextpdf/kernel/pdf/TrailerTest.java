@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
@@ -98,33 +99,31 @@ public class TrailerTest extends ExtendedITextTest {
     }
 
     private boolean doesTrailerContainFingerprint(File file, String fingerPrint) throws IOException {
-        RandomAccessFile raf = FileUtil.getRandomAccessFile(file);
+        try (RandomAccessFile raf = FileUtil.getRandomAccessFile(file)) {
 
-        // put the pointer at the end of the file
-        raf.seek(raf.length());
+            // put the pointer at the end of the file
+            raf.seek(raf.length());
 
-        // look for coreProductData
-        String coreProductData = "%iText-Core-7.2.0-SNAPSHOT";
-        String templine = "";
+            // look for coreProductData
+            String coreProductData = "%iText-Core-" + ITextCoreProductData.getInstance().getVersion();
+            String templine = "";
 
-        while (!templine.contains(coreProductData)) {
-            templine = (char) raf.read() + templine;
-            raf.seek(raf.getFilePointer() - 2);
+            while (!templine.contains(coreProductData)) {
+                templine = (char) raf.read() + templine;
+                raf.seek(raf.getFilePointer() - 2);
+            }
+
+            // look for fingerprint
+            char read = ' ';
+            templine = "";
+
+            while (read != '%') {
+                read = (char) raf.read();
+                templine = read + templine;
+                raf.seek(raf.getFilePointer() - 2);
+            }
+
+            return templine.contains(fingerPrint);
         }
-
-        // look for fingerprint
-        char read = ' ';
-        templine = "";
-
-        while (read != '%') {
-            read = (char) raf.read();
-            templine = read + templine;
-            raf.seek(raf.getFilePointer() - 2);
-        }
-
-        boolean output = templine.contains(fingerPrint);
-        raf.close();
-        return output;
     }
-
 }
