@@ -954,7 +954,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
 
                     for (int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
-                        getPage(pageNum).flush();
+                        PdfPage page = getPage(pageNum);
+                        if (page != null) {
+                            page.flush();
+                        }
                     }
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(false);

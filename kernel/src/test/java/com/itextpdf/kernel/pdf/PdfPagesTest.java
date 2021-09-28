@@ -57,6 +57,7 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -547,6 +548,40 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         Assert.assertTrue(expected.equalsWithEpsilon(actual));
 
+    }
+
+    @Test
+    public void closeDocumentWithRecursivePagesNodeReferencesThrowsExTest() throws IOException {
+        try (PdfReader reader = new PdfReader(sourceFolder + "recursivePagesNodeReference.pdf");
+                PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        ) {
+            PdfDocument pdfDocument = new PdfDocument(reader, writer);
+            Exception e = Assert.assertThrows(PdfException.class, () -> pdfDocument.close());
+            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE, 2), e.getMessage());
+        }
+    }
+
+    @Test
+    public void getPageWithRecursivePagesNodeReferenceInAppendModeThrowExTest() throws IOException {
+        try (PdfReader reader = new PdfReader(sourceFolder + "recursivePagesNodeReference.pdf");
+                PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+                PdfDocument pdfDocument = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
+        ) {
+            Assert.assertEquals(2, pdfDocument.getNumberOfPages());
+            Assert.assertNotNull(pdfDocument.getPage(1));
+            Exception e = Assert.assertThrows(PdfException.class, () -> pdfDocument.getPage(2));
+            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE, 2), e.getMessage());
+        }
+    }
+
+    @Test
+    public void closeDocumentWithRecursivePagesNodeInAppendModeDoesNotThrowsTest() throws IOException {
+        try (PdfReader reader = new PdfReader(sourceFolder + "recursivePagesNodeReference.pdf");
+                PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+                PdfDocument pdfDocument = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
+        ) {
+            AssertUtil.doesNotThrow(() -> pdfDocument.close());
+        }
     }
 
     @Test

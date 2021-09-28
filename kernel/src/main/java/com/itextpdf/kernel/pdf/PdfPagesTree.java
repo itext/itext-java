@@ -47,6 +47,9 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -337,6 +340,17 @@ class PdfPagesTree {
     }
 
     private void loadPage(int pageNum) {
+        loadPage(pageNum, new HashSet<>());
+    }
+
+    /**
+     * Load page from pages tree node structure
+     *
+     * @param pageNum page number to load
+     * @param processedParents set with already processed parents object reference numbers
+     * if this method was called recursively to avoid infinite recursion.
+     */
+    private void loadPage(int pageNum, Set<PdfIndirectReference> processedParents) {
         PdfIndirectReference targetPage = pageRefs.get(pageNum);
         if (targetPage != null)
             return;
@@ -344,6 +358,15 @@ class PdfPagesTree {
         //if we go here, we have to split PdfPages that contains pageNum
         int parentIndex = findPageParent(pageNum);
         PdfPages parent = parents.get(parentIndex);
+        PdfIndirectReference parentIndirectReference = parent.getPdfObject().getIndirectReference();
+        if (parentIndirectReference != null) {
+            if (processedParents.contains(parentIndirectReference)) {
+                throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE)
+                        .setMessageParams(pageNum + 1);
+            } else {
+                processedParents.add(parentIndirectReference);
+            }
+        }
         PdfArray kids = parent.getKids();
         if (kids == null) {
             throw new PdfException(KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE).setMessageParams(pageNum + 1);
@@ -430,7 +453,7 @@ class PdfPagesTree {
 
             // recursive call, to load needed pageRef.
             // NOTE optimization? add to loadPage startParentIndex.
-            loadPage(pageNum);
+            loadPage(pageNum, processedParents);
         } else {
             int from = parent.getFrom();
 
