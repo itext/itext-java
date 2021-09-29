@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * This file is a helper class for internal usage only.
@@ -144,6 +145,11 @@ public final class DateTimeUtil {
 
     public static String format(Date date, String pattern) {
         return initParserSDF(pattern).format(date);
+    }
+
+    public static long getCurrentTimeZoneOffset() {
+        TimeZone tz = TimeZone.getDefault();
+        return tz.getOffset(getCurrentTimeDate().getTime());
     }
 
     private static DateFormat initParserSDF(String pattern) {

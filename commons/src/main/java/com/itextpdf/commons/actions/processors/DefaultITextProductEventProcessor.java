@@ -96,6 +96,7 @@ public class DefaultITextProductEventProcessor extends AbstractITextProductEvent
         if (isNeededToLogMessage) {
             String message = new String(MESSAGE_FOR_LOGGING, StandardCharsets.ISO_8859_1);
             LOGGER.info(message);
+            // System out added with purpose. This is not a debug code
             System.out.println(message);
         }
     }

@@ -25,6 +25,7 @@ package com.itextpdf.commons.utils;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.Calendar;
 import java.util.Date;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,6 +33,10 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class DateTimeUtilTest extends ExtendedITextTest {
+
+    private static final double ZERO_DELTA = 1e-6;
+    private static final double ONE_SECOND_DELTA = 1000.0;
+
     @Test
     public void getCurrentTest() {
         Date date = new Date();
@@ -42,5 +47,30 @@ public class DateTimeUtilTest extends ExtendedITextTest {
     public void isInPastTest() {
         Date date = new Date(1);
         Assert.assertTrue(DateTimeUtil.isInPast(date));
+    }
+
+    @Test
+    public void parseDateAndGetUtcMillisFromEpochTest() {
+        Calendar parsedDate = DateTimeUtil.getCalendar(DateTimeUtil.parseWithDefaultPattern("2020-05-05"));
+        double millisFromEpochTo2020_05_05 = DateTimeUtil.getUtcMillisFromEpoch(parsedDate);
+
+        long offset = DateTimeUtil.getCurrentTimeZoneOffset();
+        Assert.assertEquals(1588636800000d - offset, millisFromEpochTo2020_05_05, ZERO_DELTA);
+    }
+
+    @Test
+    public void compareUtcMillisFromEpochWithNullParamAndCurrentTimeTest() throws InterruptedException {
+        double getUtcMillisFromEpochWithNullParam = DateTimeUtil.getUtcMillisFromEpoch(null);
+        double millisFromEpochToCurrentTime = DateTimeUtil.getUtcMillisFromEpoch(DateTimeUtil.getCurrentTimeCalendar());
+
+        Assert.assertEquals(millisFromEpochToCurrentTime, getUtcMillisFromEpochWithNullParam, ONE_SECOND_DELTA);
+    }
+
+    @Test
+    public void parseDateAndGetRelativeTimeTest() {
+        double relativeTime = DateTimeUtil.getRelativeTime(DateTimeUtil.parseWithDefaultPattern("2020-05-05"));
+
+        long offset = DateTimeUtil.getCurrentTimeZoneOffset();
+        Assert.assertEquals(1588636800000d - offset, relativeTime, ZERO_DELTA);
     }
 }
