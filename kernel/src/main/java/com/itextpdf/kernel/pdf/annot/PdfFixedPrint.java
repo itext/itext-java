@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 public class PdfFixedPrint extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 4253232541458560135L;
 
 	public PdfFixedPrint() {
         this(new PdfDictionary());

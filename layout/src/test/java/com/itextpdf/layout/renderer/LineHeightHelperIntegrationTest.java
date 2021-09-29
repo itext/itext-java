@@ -30,8 +30,8 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.RenderingMode;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.PdfEncodings;
 
 import java.io.ByteArrayInputStream;

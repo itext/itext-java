@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;

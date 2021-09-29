@@ -44,8 +44,8 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.layout.layout.LayoutPosition;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
 
 /**
  * This class helps to identify whether we are dealing with a renderer that creates

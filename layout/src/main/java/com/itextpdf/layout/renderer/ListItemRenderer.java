@@ -43,25 +43,25 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.ListSymbolAlignment;
-import com.itextpdf.layout.property.ListSymbolPosition;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.ListSymbolAlignment;
+import com.itextpdf.layout.properties.ListSymbolPosition;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.TaggingDummyElement;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.tagging.TaggingHintKey;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
@@ -103,7 +103,8 @@ public class ListItemRenderer extends DivRenderer {
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
             Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Drawing won't be performed."));
             return;
         }
         if (drawContext.isTaggingEnabled()) {
@@ -150,14 +151,18 @@ public class ListItemRenderer extends DivRenderer {
                         UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
                         if (!marginRightUV.isPointValue()) {
                             Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-                            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+                            logger.error(
+                                    MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                                            Property.MARGIN_RIGHT));
                         }
                         x -= marginRightUV.getValue();
                     } else {
                         UnitValue marginLeftUV = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
                         if (!marginLeftUV.isPointValue()) {
                             Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-                            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                            logger.error(
+                                    MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                                            Property.MARGIN_LEFT));
                         }
                         x += marginLeftUV.getValue();
                     }
@@ -326,7 +331,8 @@ public class ListItemRenderer extends DivRenderer {
         if (listItemFont != null && fontSize != null) {
             if (!fontSize.isPointValue()) {
                 Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                        Property.FONT_SIZE));
             }
             float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
             return new float[] {fontSize.getValue() * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, fontSize.getValue() * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};

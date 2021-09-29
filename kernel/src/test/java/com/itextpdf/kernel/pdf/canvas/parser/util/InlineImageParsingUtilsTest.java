@@ -42,8 +42,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.util;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -108,7 +108,7 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         PdfDictionary dictionary = new PdfDictionary();
 
         junitExpectedException.expect(InlineImageParseException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.UnexpectedColorSpace1, "/ICCBased"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"));
         InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary);
     }
 
@@ -125,7 +125,7 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         dictionary.put(colorSpace, array);
 
         junitExpectedException.expect(InlineImageParseException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(PdfException.UnexpectedColorSpace1, "/ICCBased"));
+        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"));
         InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary);
     }
 

@@ -22,13 +22,14 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -43,20 +44,19 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.OverflowWrapPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.RenderingMode;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -621,7 +621,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
     })
     public void minMaxWidthWordSplitAcrossMultipleTextRenderers() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "minMaxWidthWordSplitAcrossMultipleTextRenderers.pdf";
@@ -664,7 +664,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
     public void minWidthForWordInMultipleTextRenderersFollowedByFloatTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "minWidthForSpanningWordFollowedByFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_minWidthForSpanningWordFollowedByFloat.pdf";
@@ -724,7 +724,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN, count = 3)
+            @LogMessage(messageTemplate = IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN, count = 3)
     })
     public void customTextRendererShouldOverrideGetNextRendererTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "customTextRendererShouldOverrideGetNextRendererTest.pdf";
@@ -775,8 +775,96 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void nbspCannotBeFitAndIsTheOnlySymbolTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheOnlySymbolTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheOnlySymbolTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for any symbol (page width is fully occupied by margins)
+        Document doc = new Document(pdfDocument, new PageSize(72, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("\u00A0"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN, count = 8)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void nbspCannotBeFitAndMakesTheFirstChunkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for any symbol (page width is fully occupied by margins)
+        Document doc = new Document(pdfDocument, new PageSize(72, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("\u00A0"))
+                .add(new Text("SecondChunk"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for any symbol (page width is fully occupied by margins)
+        Document doc = new Document(pdfDocument, new PageSize(72, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("\u00A0First"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        // No place for the second symbol
+        Document doc = new Document(pdfDocument, new PageSize(81, 1000));
+
+        Paragraph paragraph = new Paragraph()
+                .add(new Text("H\u00A0"))
+                .add(new Text("ello"));
+
+        paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        doc.add(paragraph);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN, count = 8)
     })
     public void customTextRendererShouldOverrideCreateCopyTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "customTextRendererShouldOverrideCreateCopyTest.pdf";

@@ -76,7 +76,7 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         if (setParameterss()) {
             float x = Math.min(x1, x2);
             float y = Math.min(y1, y2);
@@ -86,7 +86,7 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
 
             return new Rectangle(x, y, width, height);
         } else {
-            return super.getObjectBoundingBox(context);
+            return null;
         }
     }
 

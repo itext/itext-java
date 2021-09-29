@@ -45,10 +45,12 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.property.RenderingMode;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.renderer.TextRenderer;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgTextUtil;
@@ -57,8 +59,7 @@ import com.itextpdf.svg.utils.TextRectangle;
 /**
  * {@link ISvgNodeRenderer} implementation for drawing text to a canvas.
  */
-public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer,
-        ISvgTextNodeHelper {
+public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer {
 
     @Override
     public ISvgNodeRenderer createDeepCopy() {
@@ -118,6 +119,11 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
     }
 
     @Override

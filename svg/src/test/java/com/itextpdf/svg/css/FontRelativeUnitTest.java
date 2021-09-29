@@ -22,7 +22,7 @@
  */
 package com.itextpdf.svg.css;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -79,7 +79,7 @@ public class FontRelativeUnitTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 4)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 4)
     })
     // TODO DEVSIX-2607 relative font-size value is not supported for tspan element
     public void textFontSizeInheritanceFromUseTest() throws IOException, InterruptedException {

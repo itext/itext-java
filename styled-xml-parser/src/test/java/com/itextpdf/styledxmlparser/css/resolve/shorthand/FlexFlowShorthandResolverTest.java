@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexFlowShorthandResolver;
@@ -82,7 +82,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
     public void containsInitialOrInheritOrUnsetShorthandTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
@@ -97,7 +97,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, count = 2))
     public void emptyShorthandTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
         String emptyShorthand = "";
@@ -136,7 +136,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 1))
     public void shorthandWithOneInvalidValueTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
@@ -173,7 +173,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoDirectionValuesTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
@@ -184,7 +184,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWrapValuesTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 
@@ -195,7 +195,7 @@ public class FlexFlowShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoValuesAndSecondIsInvalidTest() {
         IShorthandResolver resolver = new FlexFlowShorthandResolver();
 

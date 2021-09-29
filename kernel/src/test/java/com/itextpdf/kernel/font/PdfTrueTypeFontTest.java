@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -63,7 +64,9 @@ public class PdfTrueTypeFontTest extends ExtendedITextTest {
 
     @Test
     public void isNotBuiltInTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSans-Regular_v.1.8.2.ttf");
+        PdfFont font = PdfFontFactory.createFont(
+                SOURCE_FOLDER + "NotoSans-Regular_v.1.8.2.ttf",
+                PdfEncodings.WINANSI);
         Assert.assertTrue(font instanceof PdfTrueTypeFont);
         Assert.assertFalse(((PdfTrueTypeFont) font).isBuiltInFont());
     }

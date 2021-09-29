@@ -42,16 +42,16 @@
  */
 package com.itextpdf.layout.minmaxwidth;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,12 +102,14 @@ public final class MinMaxWidthUtils {
         UnitValue rightMargin = element.<UnitValue>getProperty(Property.MARGIN_RIGHT);
         if (null != rightMargin && !rightMargin.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MinMaxWidthUtils.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_RIGHT));
         }
         UnitValue leftMargin = element.<UnitValue>getProperty(Property.MARGIN_LEFT);
         if (null != leftMargin && !leftMargin.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MinMaxWidthUtils.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_LEFT));
         }
 
         float rightMarginWidth = rightMargin != null ? rightMargin.getValue() : 0;
@@ -120,12 +122,14 @@ public final class MinMaxWidthUtils {
         UnitValue rightPadding = element.<UnitValue>getProperty(Property.PADDING_RIGHT);
         if (null != rightPadding && !rightPadding.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MinMaxWidthUtils.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_RIGHT));
         }
         UnitValue leftPadding = element.<UnitValue>getProperty(Property.PADDING_LEFT);
         if (null != leftPadding && !leftPadding.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(MinMaxWidthUtils.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_LEFT));
         }
 
         float rightPaddingWidth = rightPadding != null ? rightPadding.getValue() : 0;

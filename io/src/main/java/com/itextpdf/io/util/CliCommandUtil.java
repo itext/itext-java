@@ -43,6 +43,8 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.commons.utils.SystemUtil;
+
 public final class CliCommandUtil {
 
     private CliCommandUtil() {

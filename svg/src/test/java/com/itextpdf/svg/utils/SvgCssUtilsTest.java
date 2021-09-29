@@ -162,25 +162,6 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void normalConvertPtsToPxTest() {
-        float[] input = new float[] { -1f, 0f, 1f };
-        float[] expected = new float[] {-1.3333334f, 0f, 1.3333334f};
-
-        for (int i = 0; i < input.length; i++) {
-            float actual = SvgCssUtils.convertPtsToPx(input[i]);
-            Assert.assertEquals(expected[i], actual, 0f);
-        }
-    }
-
-    @Test
-    public void convertFloatMaximumToPdfTest() {
-        float expected = Float.POSITIVE_INFINITY;
-        float actual = SvgCssUtils.convertPtsToPx(Float.MAX_VALUE);
-
-        Assert.assertEquals(expected, actual, 0f);
-    }
-
-    @Test
     public void convertFloatToStringTest() {
         String expected = "0.5";
         String actual = SvgCssUtils.convertFloatToString(0.5f);
@@ -194,25 +175,5 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
         String actual = SvgCssUtils.convertFloatToString(0.1234567f);
 
         Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void convertFloatMinimumToPdfTest() {
-        float expected = 1.4E-45f;
-        float actual = SvgCssUtils.convertPtsToPx(Float.MIN_VALUE);
-
-        Assert.assertEquals(expected, actual, 0f);
-    }
-
-    @Test
-    public void compareIsStyleSheetLinkResult() {
-        Element element = new Element(Tag.valueOf("link"), "");
-        element.attr(CommonAttributeConstants.REL, CommonAttributeConstants.STYLESHEET);
-        JsoupElementNode elementNode = new JsoupElementNode(element);
-
-        boolean expected = CssUtils.isStyleSheetLink(elementNode);
-        boolean actual = SvgCssUtils.isStyleSheetLink(elementNode);
-
-        Assert.assertEquals(actual, expected);
     }
 }

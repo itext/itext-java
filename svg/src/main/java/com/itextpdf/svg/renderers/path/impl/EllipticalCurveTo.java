@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -50,7 +50,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
 import java.util.Arrays;
@@ -90,7 +89,10 @@ public class EllipticalCurveTo extends AbstractPathShape {
     public void setCoordinates(String[] inputCoordinates, Point previous) {
         startPoint = previous;
         if (inputCoordinates.length < ARGUMENT_SIZE) {
-            throw new IllegalArgumentException(MessageFormatUtil.format(SvgLogMessageConstant.ARC_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0, Arrays.toString(inputCoordinates)));
+            throw new IllegalArgumentException(
+                    MessageFormatUtil.format(
+                            SvgExceptionMessageConstant.ARC_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0,
+                            Arrays.toString(inputCoordinates)));
         }
         coordinates = new String[ARGUMENT_SIZE];
         System.arraycopy(inputCoordinates, 0, coordinates, 0, ARGUMENT_SIZE);

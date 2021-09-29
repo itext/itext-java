@@ -70,9 +70,8 @@ public class PatternParser extends DefaultHandler {
     /**
      * Construct a pattern parser.
      * @param consumer a pattern consumer
-     * @throws HyphenationException if a hyphenation exception is raised
      */
-    public PatternParser(IPatternConsumer consumer) throws HyphenationException {
+    public PatternParser(IPatternConsumer consumer) {
         this();
         this.consumer = consumer;
     }

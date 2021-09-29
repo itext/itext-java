@@ -43,18 +43,18 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.AlignmentPropertyValue;
-import com.itextpdf.layout.property.FlexWrapPropertyValue;
-import com.itextpdf.layout.property.JustifyContent;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.FlexWrapPropertyValue;
+import com.itextpdf.layout.properties.JustifyContent;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -419,7 +419,7 @@ final class FlexUtil {
                 if (result.getStatus() == LayoutResult.FULL) {
                     info.hypotheticalCrossSize = info.getInnerCrossSize(result.getOccupiedArea().getBBox().getHeight());
                 } else {
-                    logger.error(LogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
+                    logger.error(IoLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
                     info.hypotheticalCrossSize = 0;
                 }
             }

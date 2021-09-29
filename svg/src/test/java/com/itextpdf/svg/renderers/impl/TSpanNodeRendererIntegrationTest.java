@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -194,7 +194,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
     })
     public void tspanBasicExample() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBasicExample");
@@ -203,7 +203,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
     })
     public void tspanNestedExample() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedExample");

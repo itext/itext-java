@@ -43,9 +43,10 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.codec.Base64;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -84,7 +85,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
@@ -159,7 +159,8 @@ final class SignUtils {
     static InputStream getHttpResponse(URL urlt) throws IOException {
         HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
         if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
+            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
+                    .setMessageParams(con.getResponseCode());
         }
         return (InputStream) con.getContent();
     }
@@ -196,7 +197,8 @@ final class SignUtils {
         dataOut.flush();
         dataOut.close();
         if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(PdfException.InvalidHttpResponse1).setMessageParams(con.getResponseCode());
+            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
+                    .setMessageParams(con.getResponseCode());
         }
         //Get Response
         return (InputStream) con.getContent();
@@ -263,7 +265,7 @@ final class SignUtils {
             tsaConnection = url.openConnection();
         }
         catch (IOException ioe) {
-            throw new PdfException(PdfException.FailedToGetTsaResponseFrom1).setMessageParams(tsaUrl);
+            throw new PdfException(SignExceptionMessageConstant.FAILED_TO_GET_TSA_RESPONSE).setMessageParams(tsaUrl);
         }
         tsaConnection.setDoInput(true);
         tsaConnection.setDoOutput(true);
@@ -301,6 +303,7 @@ final class SignUtils {
      * During major release I'd suggest changing java unsupported extensions check logic to the same as in .NET,
      * but only if it is possible to customize this logic.
      */
+    // TODO DEVSIX-2534
     @Deprecated
     static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
         if ( cert == null ) {

@@ -22,8 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -50,7 +50,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FORBID_RELEASE_IS_SET, count = 108))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET, count = 108))
     public void releaseObjectsInDocWithStructTreeRootTest() throws IOException, InterruptedException {
         singlePdfObjectReleaseTest("releaseObjectsInDocWithStructTreeRoot.pdf",
                 "releaseObjectsInDocWithStructTreeRoot_stamping.pdf",
@@ -58,7 +58,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FORBID_RELEASE_IS_SET, count = 5))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET, count = 5))
     public void releaseObjectsInDocWithXfaTest() throws IOException, InterruptedException {
         singlePdfObjectReleaseTest("releaseObjectsInDocWithXfa.pdf",
                 "releaseObjectsInDocWithXfa_stamping.pdf",
@@ -66,7 +66,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FORBID_RELEASE_IS_SET, count = 3))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET, count = 3))
     public void releaseObjectsInSimpleDocTest() throws IOException, InterruptedException {
         singlePdfObjectReleaseTest("releaseObjectsInSimpleDoc.pdf",
                 "releaseObjectsInSimpleDoc_stamping.pdf",
@@ -74,7 +74,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FORBID_RELEASE_IS_SET))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET))
     public void releaseCatalogTest() throws IOException, InterruptedException {
         String srcFile = sourceFolder + "releaseObjectsInSimpleDoc.pdf";
         String release = destinationFolder + "outReleaseObjectsInSimpleDoc.pdf";
@@ -87,7 +87,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FORBID_RELEASE_IS_SET))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET))
     public void releasePagesTest() throws IOException, InterruptedException {
         String srcFile = sourceFolder + "releaseObjectsInSimpleDoc.pdf";
         String release = destinationFolder + "outReleaseObjectsInSimpleDoc.pdf";
@@ -100,7 +100,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FORBID_RELEASE_IS_SET))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET))
     public void releaseStructTreeRootTest() throws IOException, InterruptedException {
         String srcFile = sourceFolder + "releaseObjectsInDocWithStructTreeRoot.pdf";
         String release = destinationFolder + "outReleaseObjectsInDocWithStructTreeRoot.pdf";

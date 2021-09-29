@@ -68,7 +68,6 @@ import java.nio.charset.StandardCharsets;
  */
 public class PdfString extends PdfPrimitiveObject {
 
-    private static final long serialVersionUID = 390789504287887010L;
 
     protected String value;
     protected String encoding;

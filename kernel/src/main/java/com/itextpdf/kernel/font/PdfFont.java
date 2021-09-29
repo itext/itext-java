@@ -47,7 +47,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -72,14 +73,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      */
     public static final int SIMPLE_FONT_MAX_CHAR_CODE_VALUE = 255;
 
-    private static final long serialVersionUID = -7661159455613720321L;
-
     protected FontProgram fontProgram;
 
     protected static final byte[] EMPTY_BYTES = new byte[0];
-
-    @Deprecated
-    protected static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0, 0.001, 0, 0};
 
     protected Map<Integer, Glyph> notdefGlyphs = new HashMap<>();
 
@@ -209,23 +205,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     public abstract void writeText(GlyphLine text, int from, int to, PdfOutputStream stream);
 
     public abstract void writeText(String text, PdfOutputStream stream);
-
-    /**
-     * Gets the transformation matrix that defines relation between text and glyph spaces.
-     *
-     * @return the font matrix
-     *
-     * @deprecated Use {@link FontProgram#UNITS_NORMALIZATION} constant for conversion between text and glyph space.
-     *         For now we opted to always expect that all {@link PdfFont} metrics in glyph-space
-     *         are related to text space as 1 to 1000, as it is defined for the majority of fonts. For fonts
-     *         which don't necessary follow this rule (see {@link PdfType3Font}), we perform internal normalization
-     *         of font metrics in order to adhere to this common expectation.
-     *         This method will be removed in next major release.
-     */
-    @Deprecated
-    public double[] getFontMatrix() {
-        return DEFAULT_FONT_MATRIX;
-    }
 
     /**
      * Returns the width of a certain character of this font in 1000 normalized units.
@@ -539,8 +518,8 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @throws PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */
     protected PdfStream getPdfFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
-        if (fontStreamBytes == null) {
-            throw new PdfException(PdfException.FontEmbeddingIssue);
+        if (fontStreamBytes == null || fontStreamLengths == null) {
+            throw new PdfException(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
         }
         PdfStream fontStream = new PdfStream(fontStreamBytes);
         makeObjectIndirect(fontStream);
@@ -548,43 +527,6 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             fontStream.put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
         }
         return fontStream;
-    }
-
-    /**
-     * Normalizes given ranges by making sure that first values in pairs are lower than second values and merges overlapping
-     * ranges in one.
-     * @param ranges a {@link List} of integer arrays, which are constituted by pairs of ints that denote
-     *               each range limits. Each integer array size shall be a multiple of two.
-     * @return single merged array consisting of pairs of integers, each of them denoting a range.
-     * @deprecated The logic has been moved to {@link com.itextpdf.io.font.TrueTypeFont}.
-     */
-    @Deprecated
-    protected static int[] compactRanges(List<int[]> ranges) {
-        List<int[]> simp = new ArrayList<>();
-        for (int[] range : ranges) {
-            for (int j = 0; j < range.length; j += 2) {
-                simp.add(new int[]{Math.max(0, Math.min(range[j], range[j + 1])), Math.min(0xffff, Math.max(range[j], range[j + 1]))});
-            }
-        }
-        for (int k1 = 0; k1 < simp.size() - 1; ++k1) {
-            for (int k2 = k1 + 1; k2 < simp.size(); ++k2) {
-                int[] r1 = simp.get(k1);
-                int[] r2 = simp.get(k2);
-                if (r1[0] >= r2[0] && r1[0] <= r2[1] || r1[1] >= r2[0] && r1[0] <= r2[1]) {
-                    r1[0] = Math.min(r1[0], r2[0]);
-                    r1[1] = Math.max(r1[1], r2[1]);
-                    simp.remove(k2);
-                    --k2;
-                }
-            }
-        }
-        int[] s = new int[simp.size() * 2];
-        for (int k = 0; k < simp.size(); ++k) {
-            int[] r = simp.get(k);
-            s[k * 2] = r[0];
-            s[k * 2 + 1] = r[1];
-        }
-        return s;
     }
 
     /**

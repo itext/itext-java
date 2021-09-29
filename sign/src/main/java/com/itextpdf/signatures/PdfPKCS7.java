@@ -43,8 +43,9 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Enumerated;
@@ -102,7 +103,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -143,7 +143,7 @@ public class PdfPKCS7 {
     /**
      * Holds value of property signDate.
      */
-    private Calendar signDate;
+    private Calendar signDate = (Calendar) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
 
     // Constructors for creating new signatures
 
@@ -168,7 +168,8 @@ public class PdfPKCS7 {
         // message digest
         digestAlgorithmOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
         if (digestAlgorithmOid == null)
-            throw new PdfException(PdfException.UnknownHashAlgorithm1).setMessageParams(hashAlgorithm);
+            throw new PdfException(SignExceptionMessageConstant.UNKNOWN_HASH_ALGORITHM)
+                    .setMessageParams(hashAlgorithm);
 
         // Copy the certificates
         signCert = (X509Certificate) certChain[0];
@@ -189,7 +190,8 @@ public class PdfPKCS7 {
             } else if (digestEncryptionAlgorithmOid.equals("DSA")) {
                 digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             } else {
-                throw new PdfException(PdfException.UnknownKeyAlgorithm1).setMessageParams(digestEncryptionAlgorithmOid);
+                throw new PdfException(
+                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(digestEncryptionAlgorithmOid);
             }
         }
 
@@ -261,15 +263,18 @@ public class PdfPKCS7 {
             try {
                 pkcs = din.readObject();
             } catch (IOException e) {
-                throw new IllegalArgumentException(PdfException.CannotDecodePkcs7SigneddataObject);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT);
             }
             if (!(pkcs instanceof ASN1Sequence)) {
-                throw new IllegalArgumentException(PdfException.NotAValidPkcs7ObjectNotASequence);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE);
             }
             ASN1Sequence signedData = (ASN1Sequence) pkcs;
             ASN1ObjectIdentifier objId = (ASN1ObjectIdentifier) signedData.getObjectAt(0);
             if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
-                throw new IllegalArgumentException(PdfException.NotAValidPkcs7ObjectNotSignedData);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA);
             ASN1Sequence content = (ASN1Sequence) ((ASN1TaggedObject) signedData.getObjectAt(1)).getObject();
             // the positions that we care are:
             //     0 - version
@@ -343,7 +348,8 @@ public class PdfPKCS7 {
             // the signerInfos
             ASN1Set signerInfos = (ASN1Set) content.getObjectAt(next);
             if (signerInfos.size() != 1)
-                throw new IllegalArgumentException(PdfException.ThisPkcs7ObjectHasMultipleSignerinfosOnlyOneIsSupportedAtThisTime);
+                throw new IllegalArgumentException(
+                        SignExceptionMessageConstant.THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME);
             ASN1Sequence signerInfo = (ASN1Sequence) signerInfos.getObjectAt(0);
             // the positions that we care are
             //     0 - version
@@ -364,7 +370,7 @@ public class PdfPKCS7 {
                 }
             }
             if (signCert == null) {
-                throw new PdfException(PdfException.CannotFindSigningCertificateWithSerial1).
+                throw new PdfException(SignExceptionMessageConstant.CANNOT_FIND_SIGNING_CERTIFICATE_WITH_THIS_SERIAL).
                         setMessageParams(issuer.getName() + " / " + serialNumber.toString(16));
             }
             signCertificateChain();
@@ -428,7 +434,8 @@ public class PdfPKCS7 {
                     }
                 }
                 if (digestAttr == null)
-                    throw new IllegalArgumentException(PdfException.AuthenticatedAttributeIsMissingTheDigest);
+                    throw new IllegalArgumentException(
+                            SignExceptionMessageConstant.AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST);
                 ++next;
             }
             if (isCades && !foundCades)
@@ -691,8 +698,10 @@ public class PdfPKCS7 {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             } else if (digestEncryptionAlgorithm.equals("ECDSA")) {
                 this.digestEncryptionAlgorithmOid = SecurityIDs.ID_ECDSA;
-            } else
-                throw new PdfException(PdfException.UnknownKeyAlgorithm1).setMessageParams(digestEncryptionAlgorithm);
+            } else {
+                throw new PdfException(SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM)
+                        .setMessageParams(digestEncryptionAlgorithm);
+            }
         }
     }
 
@@ -779,7 +788,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null, PdfSigner.CryptoStandard.CMS);
+        return getEncodedPKCS7(null, PdfSigner.CryptoStandard.CMS, null, null, null);
     }
 
     /**
@@ -790,43 +799,13 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte[] secondDigest) {
-        return getEncodedPKCS7(secondDigest, null, null, null, PdfSigner.CryptoStandard.CMS);
+        return getEncodedPKCS7(secondDigest, PdfSigner.CryptoStandard.CMS, null, null, null);
     }
 
     /**
      * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
      * in the signerInfo can also be set, and/or a time-stamp-authority client
      * may be provided.
-     *
-     * <p>
-     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
-     *
-     * @param secondDigest the digest in the authenticatedAttributes
-     * @param tsaClient    TSAClient - null or an optional time stamp authority client
-     * @param ocsp DER-encoded BasicOCSPResponse for the first certificate in the signature certificates chain,
-     *             or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
-     *                 or null if CRL revocation data is not to be added.
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
-     *                either basic CMS or CAdES
-     * @return byte[] the bytes for the PKCS7SignedData object
-     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
-     * @deprecated This overload is deprecated, use {@link #getEncodedPKCS7(byte[], PdfSigner.CryptoStandard, ITSAClient, Collection, Collection)} instead.
-     */
-    @Deprecated
-    public byte[] getEncodedPKCS7(byte[] secondDigest, ITSAClient tsaClient, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
-        return getEncodedPKCS7(secondDigest, sigtype, tsaClient, ocsp != null ? Collections.singleton(ocsp) : null, crlBytes);
-    }
-
-    /**
-     * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
-     * in the signerInfo can also be set, and/or a time-stamp-authority client
-     * may be provided.
-     *
-     * <p>
-     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
      *
      * @param secondDigest the digest in the authenticatedAttributes
      * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
@@ -998,51 +977,6 @@ public class PdfPKCS7 {
      *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
      *     only the DER-encoded BasicOCSPResponse value contained in the response data.
      *
-     *
-     * <p>
-     * A simple example:
-     * <pre>
-     * Calendar cal = Calendar.getInstance();
-     * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
-     * MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
-     * byte[] buf = new byte[8192];
-     * int n;
-     * InputStream inp = sap.getRangeStream();
-     * while ((n = inp.read(buf)) &gt; 0) {
-     *    messageDigest.update(buf, 0, n);
-     * }
-     * byte[] hash = messageDigest.digest();
-     * byte[] sh = pk7.getAuthenticatedAttributeBytes(hash, cal);
-     * pk7.update(sh, 0, sh.length);
-     * byte[] sg = pk7.getEncodedPKCS7(hash, cal);
-     * </pre>
-     *
-     * @param secondDigest the content digest
-     * @param ocsp collection of DER-encoded BasicOCSPResponses for the  certificate in the signature certificates
-     *             chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
-     *                 or null if CRL revocation data is not to be added.
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
-     *                either basic CMS or CAdES
-     * @return the byte array representation of the authenticatedAttributes ready to be signed
-     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
-     * @deprecated This method overload is deprecated. Please use {@link #getAuthenticatedAttributeBytes(byte[], PdfSigner.CryptoStandard, Collection, Collection)}
-     */
-    @Deprecated
-    public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, byte[] ocsp, Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
-        return getAuthenticatedAttributeBytes(secondDigest, sigtype, ocsp != null ? Collections.singleton(ocsp) : null, crlBytes);
-    }
-
-    /**
-     * When using authenticatedAttributes the authentication process is different.
-     * The document digest is generated and put inside the attribute. The signing is done over the DER encoded
-     * authenticatedAttributes. This method provides that encoding and the parameters must be
-     * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
-     *
-     * <p>
-     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
-     *
      * <p>
      * A simple example:
      * <pre>
@@ -1197,21 +1131,6 @@ public class PdfPKCS7 {
 
 
     // verification
-
-    /**
-     * Verify the digest.
-     *
-     * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
-     * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
-     * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to
-     * process the input data provided, if the public key is invalid or if security provider or signature algorithm
-     * are not recognized, etc.
-     * @deprecated This method will be removed in future versions. Please use {@link #verifySignatureIntegrityAndAuthenticity()} instead.
-     */
-    @Deprecated
-    public boolean verify() throws GeneralSecurityException {
-        return verifySignatureIntegrityAndAuthenticity();
-    }
 
     /**
      * Verifies that signature integrity is intact (or in other words that signed data wasn't modified)

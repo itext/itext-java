@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
@@ -76,7 +76,7 @@ public class ImageColorProfileTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS)})
     public void extractIncompatibleColorProfileTest() throws IOException {
         ImageData imageData = ImageDataFactory.create(sourceFolder + "png-incorrect-embedded-color-profile.png");
         Assert.assertNotNull(imageData.getProfile());
@@ -89,15 +89,15 @@ public class ImageColorProfileTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS),
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE)
+            @LogMessage(messageTemplate = IoLogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS),
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE)
     })
     public void pngIncorrectEmbeddedColorProfileTest() throws IOException, InterruptedException {
         runTest("pngIncorrectEmbeddedColorProfile.pdf", "png-incorrect-embedded-color-profile.png");
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS)})
     public void pngReplaceIncorrectEmbeddedColorProfileTest() throws IOException, InterruptedException {
         runTest("pngReplaceIncorrectColorProfile.pdf", "png-incorrect-embedded-color-profile.png", "sRGB_v4_ICC_preference.icc");
     }
@@ -113,13 +113,13 @@ public class ImageColorProfileTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_COLOR_SPACE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_COLOR_SPACE)})
     public void pngGreyscaleIncorrectColorProfileTest() throws IOException, InterruptedException {
         runTest("pngGreyscaleIncorrectColorProfile.pdf", "png-greyscale.png", "sRGB_v4_ICC_preference.icc");
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE)})
     public void pngUnsupportedColorSpaceTest() throws IOException, InterruptedException {
         Map<String, Object> fakeColorSpaceAttributes = new HashMap<>();
         fakeColorSpaceAttributes.put("ColorSpace", "/FakeColorSpace");
@@ -127,7 +127,7 @@ public class ImageColorProfileTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE)})
     public void PngUnsupportedBaseColorSpace() throws IOException, InterruptedException {
         Map<String, Object> fakeColorSpaceAttributes = new HashMap<>();
         String lookup = PdfEncodings.convertToString(new byte[]{0, 0, 0, (byte) 0xff, (byte) 0xff, (byte) 0xff}, null);

@@ -43,7 +43,9 @@
 package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
@@ -135,56 +137,56 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptWithPasswordStandard128() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard128() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard128.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard40() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard40() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard40.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard128NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard128NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard128NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordStandard40NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordStandard40NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard40NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes128() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes128() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes128.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes256() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes256() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes128NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes128NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes128NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithPasswordAes256NoCompression() throws IOException, XMPException, InterruptedException {
+    public void encryptWithPasswordAes256NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -251,7 +253,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public void openEncryptedDocWithoutPassword() throws IOException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf")) {
             Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(BadPasswordException.BadUserPassword, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.BAD_USER_PASSWORD, e.getMessage());
         }
     }
 
@@ -261,7 +263,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                 new ReaderProperties().setPassword("wrong_password".getBytes(StandardCharsets.ISO_8859_1)))) {
 
             Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(BadPasswordException.BadUserPassword, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.BAD_USER_PASSWORD, e.getMessage());
         }
     }
 
@@ -270,7 +272,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf")) {
 
             Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate,
+            Assert.assertEquals(KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE,
                     e.getMessage());
         }
     }
@@ -288,7 +290,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.BAD_CERTIFICATE_AND_KEY, e.getMessage());
         }
     }
 
@@ -305,7 +307,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.BAD_CERTIFICATE_AND_KEY, e.getMessage());
         }
     }
 
@@ -322,7 +324,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.PdfDecryption, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.PDF_DECRYPTION, e.getMessage());
         }
     }
 
@@ -339,7 +341,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(PdfException.BadCertificateAndKey, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.BAD_CERTIFICATE_AND_KEY, e.getMessage());
         }
     }
 
@@ -430,7 +432,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptAes256Pdf2NotEncryptMetadata() throws InterruptedException, IOException, XMPException {
+    public void encryptAes256Pdf2NotEncryptMetadata() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
         encryptWithPassword2(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);

@@ -53,16 +53,12 @@ import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
 import org.junit.Rule;
 import org.junit.rules.Timeout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is a generic class for testing. Subclassing it, or its subclasses is considered a good practice of
  * creating your own tests.
  */
 public abstract class ITextTest {
-
-    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Rule
     public Timeout testTimeout = getTestTimeout();

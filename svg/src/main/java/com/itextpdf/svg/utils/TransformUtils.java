@@ -44,7 +44,8 @@ package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
 import java.util.ArrayList;
@@ -131,11 +132,11 @@ public final class TransformUtils {
      */
     public static AffineTransform parseTransform(String transform) {
         if (transform == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_NULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_NULL);
         }
 
         if (transform.isEmpty()) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_EMPTY);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_EMPTY);
         }
 
         AffineTransform matrix = new AffineTransform();
@@ -185,7 +186,7 @@ public final class TransformUtils {
         String name = getNameFromString(transformation).toUpperCase();
 
         if (name.isEmpty()) {
-            throw new SvgProcessingException(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_TRANSFORM_DECLARATION);
         }
         switch (name) {
             case MATRIX:
@@ -201,7 +202,7 @@ public final class TransformUtils {
             case SKEWY:
                 return createSkewYTransformation(getValuesFromTransformationString(transformation));
             default:
-                throw new SvgProcessingException(SvgLogMessageConstant.UNKNOWN_TRANSFORMATION_TYPE);
+                throw new SvgProcessingException(SvgExceptionMessageConstant.UNKNOWN_TRANSFORMATION_TYPE);
         }
     }
 
@@ -213,7 +214,7 @@ public final class TransformUtils {
      */
     private static AffineTransform createSkewYTransformation(List<String> values) {
         if (values.size() != 1) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
         double tan = Math.tan(Math.toRadians((float) CssDimensionParsingUtils.parseFloat(values.get(0))));
@@ -230,7 +231,7 @@ public final class TransformUtils {
      */
     private static AffineTransform createSkewXTransformation(List<String> values) {
         if (values.size() != 1) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
         double tan = Math.tan(Math.toRadians((float) CssDimensionParsingUtils.parseFloat(values.get(0))));
@@ -247,7 +248,7 @@ public final class TransformUtils {
      */
     private static AffineTransform createRotationTransformation(List<String> values) {
         if (values.size() != 1 && values.size() != 3) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
         double angle = Math.toRadians((float) CssDimensionParsingUtils.parseFloat(values.get(0)));
@@ -269,7 +270,7 @@ public final class TransformUtils {
      */
     private static AffineTransform createScaleTransformation(List<String> values) {
         if (values.size() == 0 || values.size() > 2) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
         float scaleX = CssDimensionParsingUtils.parseRelativeValue(values.get(0), 1);
@@ -286,7 +287,7 @@ public final class TransformUtils {
      */
     private static AffineTransform createTranslateTransformation(List<String> values) {
         if (values.size() == 0 || values.size() > 2) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
         float translateX = CssDimensionParsingUtils.parseAbsoluteLength(values.get(0));
@@ -303,7 +304,7 @@ public final class TransformUtils {
      */
     private static AffineTransform createMatrixTransformation(List<String> values) {
         if (values.size() != 6) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
         float a = (float) Float.parseFloat(values.get(0));
@@ -326,7 +327,7 @@ public final class TransformUtils {
         int indexOfParenthesis = transformation.indexOf("(");
 
         if (indexOfParenthesis == -1) {
-            throw new SvgProcessingException(SvgLogMessageConstant.INVALID_TRANSFORM_DECLARATION);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_TRANSFORM_DECLARATION);
         }
 
         return transformation.substring(0, transformation.indexOf("("));

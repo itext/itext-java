@@ -44,8 +44,8 @@
 package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;

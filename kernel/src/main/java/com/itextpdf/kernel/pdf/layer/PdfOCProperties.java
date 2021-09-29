@@ -70,7 +70,6 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     static final String OC_CONFIG_NAME_PATTERN = "OCConfigName";
 
-    private static final long serialVersionUID = 1137977454824741350L;
     private List<PdfLayer> layers = new ArrayList<>();
 
     /**

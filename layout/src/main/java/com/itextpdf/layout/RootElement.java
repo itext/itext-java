@@ -55,13 +55,13 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.property.FontKerning;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.properties.FontKerning;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.Leading;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
@@ -102,12 +102,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @see BlockElement
      */
     public T add(IBlockElement element) {
-        childElements.add(element);
-        createAndAddRendererSubTree(element);
-        if (immediateFlush) {
-            childElements.remove(childElements.size() - 1);
-        }
-        return (T) (Object) this;
+        return addElement(element);
     }
 
     /**
@@ -118,12 +113,7 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * @see Image
      */
     public T add(Image image) {
-        childElements.add(image);
-        createAndAddRendererSubTree(image);
-        if (immediateFlush) {
-            childElements.remove(childElements.size() - 1);
-        }
-        return (T) (Object) this;
+        return addElement(image);
     }
 
     /**
@@ -379,5 +369,14 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
 
     private LayoutTaggingHelper initTaggingHelperIfNeeded() {
         return defaultLayoutTaggingHelper == null && pdfDocument.isTagged() ? defaultLayoutTaggingHelper = new LayoutTaggingHelper(pdfDocument, immediateFlush) : defaultLayoutTaggingHelper;
+    }
+
+    private T addElement(IElement element) {
+        childElements.add(element);
+        createAndAddRendererSubTree(element);
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
+        return (T) (Object) this;
     }
 }

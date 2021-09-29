@@ -55,7 +55,6 @@ import java.util.Map;
  */
 public class CMapCidByte extends AbstractCMap {
 
-    private static final long serialVersionUID = 4956059671207068672L;
     private Map<Integer, byte[]> map = new HashMap<>();
     private final byte[] EMPTY = {};
     private List<byte[]> codeSpaceRanges = new ArrayList<>();

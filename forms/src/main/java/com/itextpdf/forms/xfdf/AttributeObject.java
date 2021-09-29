@@ -43,6 +43,8 @@
 package com.itextpdf.forms.xfdf;
 
 
+import com.itextpdf.forms.exceptions.XfdfException;
+
 /**
  * Represents the attribute of any XFDF element.
  */
@@ -58,7 +60,7 @@ public class AttributeObject {
      */
     public AttributeObject(String name, String value) {
         if(name == null || value == null) {
-            throw new XfdfException(XfdfConstants.ATTRIBUTE_NAME_OR_VALUE_MISSING);
+            throw new XfdfException(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING);
         }
         this.name = name;
         this.value = value;

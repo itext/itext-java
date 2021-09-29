@@ -42,7 +42,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
@@ -52,6 +55,8 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
@@ -161,7 +166,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 36))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 36))
     // TODO DEVSIX-1643: destinations are not removed along with page
     public void removePageWithOutlinesTest() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = "removePageWithOutlinesTest.pdf";
@@ -215,7 +220,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getOutlinesInvalidParentLink() throws IOException, InterruptedException {
+    public void getOutlinesInvalidParentLink() throws IOException {
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "outlinesInvalidParentLink.pdf");
         String filename = "updateOutlineTitleInvalidParentLink.pdf";
         PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
@@ -295,7 +300,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
     })
     public void copyPagesWithOutlines() throws IOException {
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf");
@@ -507,5 +512,57 @@ public class PdfOutlineTest extends ExtendedITextTest {
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void constructOutlinesNoParentTest() throws IOException {
+        try (
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.addNewPage();
+
+            PdfDictionary first = new PdfDictionary();
+            first.makeIndirect(pdfDocument);
+
+            PdfDictionary outlineDictionary = new PdfDictionary();
+            outlineDictionary.put(PdfName.First, first);
+
+            Exception exception = Assert.assertThrows(
+                    PdfException.class,
+                    () -> pdfDocument.getCatalog().constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
+            );
+            Assert.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
+                            first.indirectReference),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void constructOutlinesNoTitleTest() throws IOException {
+        try (
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.addNewPage();
+
+            PdfDictionary first = new PdfDictionary();
+            first.makeIndirect(pdfDocument);
+
+            PdfDictionary outlineDictionary = new PdfDictionary();
+            outlineDictionary.makeIndirect(pdfDocument);
+
+            outlineDictionary.put(PdfName.First, first);
+            first.put(PdfName.Parent, outlineDictionary);
+
+            Exception exception = Assert.assertThrows(
+                    PdfException.class,
+                    () -> pdfDocument.getCatalog()
+                            .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
+            );
+            Assert.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
+                            first.indirectReference),
+                    exception.getMessage());
+        }
     }
 }

@@ -47,13 +47,11 @@ import com.itextpdf.io.font.constants.FontMacStyleFlags;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.FontStretches;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class FontNames implements Serializable {
+public class FontNames {
 
-    private static final long serialVersionUID = 1005168842463622025L;
 
     protected Map<Integer, List<String[]>> allNames;
 

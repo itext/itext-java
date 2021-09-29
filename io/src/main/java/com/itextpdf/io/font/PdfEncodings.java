@@ -43,8 +43,8 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
-import com.itextpdf.io.util.EncodingUtil;
+import com.itextpdf.commons.utils.EncodingUtil;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.io.UnsupportedEncodingException;

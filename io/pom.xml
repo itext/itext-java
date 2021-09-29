@@ -4,12 +4,17 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.1.16</version>
+    <version>7.2.0</version>
   </parent>
   <artifactId>io</artifactId>
   <name>iText 7 - io</name>
   <url>https://itextpdf.com/</url>
   <dependencies>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>pdftest</artifactId>

@@ -44,7 +44,6 @@
 package com.itextpdf.io.font.otf;
 
 public abstract class ContextualSubstRule extends ContextualRule {
-    private static final long serialVersionUID = -8640866820690910047L;
 
     /**
      * Retrieves the substitution lookup records. Each record specifies a position in the context glyph

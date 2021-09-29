@@ -23,7 +23,7 @@
 package com.itextpdf.io.font.otf.lookuptype7;
 
 import com.itextpdf.io.font.otf.ContextualPositionRule;
-import com.itextpdf.io.font.otf.ContextualPositionTable;
+import com.itextpdf.io.font.otf.ContextualTable;
 import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.OtfClass;
 import com.itextpdf.io.font.otf.PosLookupRecord;
@@ -32,9 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class PosTableLookup7Format2 extends ContextualPositionTable {
-    private static final long serialVersionUID = 2542153457480614040L;
-
+public class PosTableLookup7Format2 extends ContextualTable<ContextualPositionRule> {
     private Set<Integer> posCoverageGlyphIds;
     private List<List<ContextualPositionRule>> subClassSets;
     private OtfClass classDefinition;
@@ -61,7 +59,6 @@ public class PosTableLookup7Format2 extends ContextualPositionTable {
     }
 
     public static class PosRuleFormat2 extends ContextualPositionRule {
-        private static final long serialVersionUID = 652574134066355802L;
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
         private int[] inputClassIds;

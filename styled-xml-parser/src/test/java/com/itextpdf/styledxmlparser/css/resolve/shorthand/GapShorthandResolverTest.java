@@ -22,10 +22,9 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
-import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexFlowShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GapShorthandResolver;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -83,7 +82,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
     public void containsInitialOrInheritOrUnsetShorthandTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
 
@@ -98,7 +97,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, count = 2))
     public void emptyShorthandTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
         String emptyShorthand = "";
@@ -123,7 +122,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void gapWithOneInvalidValueTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
 
@@ -148,7 +147,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void gapWithValidAndInvalidValuesTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
 
@@ -159,7 +158,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void gapWithInvalidAndValidValuesTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
 
@@ -184,7 +183,7 @@ public class GapShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void gapWithThreeValuesTest() {
         IShorthandResolver resolver = new GapShorthandResolver();
 

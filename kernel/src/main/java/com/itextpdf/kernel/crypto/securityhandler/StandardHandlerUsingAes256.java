@@ -43,16 +43,17 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
-import com.itextpdf.kernel.crypto.BadPasswordException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -69,7 +70,6 @@ import org.slf4j.LoggerFactory;
 
 public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
-    private static final long serialVersionUID = -8365943606887257386L;
 
     private static final int VALIDATION_SALT_OFFSET = 32;
     private static final int KEY_SALT_OFFSET = 40;
@@ -184,7 +184,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             setStandardHandlerDicEntries(encryptionDictionary, userKey, ownerKey);
             setAES256DicEntries(encryptionDictionary, oeKey, ueKey, aes256Perms, encryptMetadata, embeddedFilesOnly);
         } catch (Exception ex) {
-            throw new PdfException(PdfException.PdfEncryption, ex);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, ex);
         }
     }
 
@@ -250,7 +250,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             } else {
                 hash = computeHash(password, uValue, VALIDATION_SALT_OFFSET, SALT_LENGTH);
                 if (!compareArray(hash, uValue, 32)) {
-                    throw new BadPasswordException(PdfException.BadUserPassword);
+                    throw new BadPasswordException(KernelExceptionMessageConstant.BAD_USER_PASSWORD);
                 }
                 hash = computeHash(password, uValue, KEY_SALT_OFFSET, SALT_LENGTH);
                 AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, hash);
@@ -261,7 +261,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, nextObjectKey);
             byte[] decPerms = ac.processBlock(perms, 0, perms.length);
             if (decPerms[9] != (byte) 'a' || decPerms[10] != (byte) 'd' || decPerms[11] != (byte) 'b')
-                throw new BadPasswordException(PdfException.BadUserPassword);
+                throw new BadPasswordException(KernelExceptionMessageConstant.BAD_USER_PASSWORD);
             int permissionsDecoded = (decPerms[0] & 0xff) | ((decPerms[1] & 0xff) << 8)
                     | ((decPerms[2] & 0xff) << 16) | ((decPerms[3] & 0xff) << 24);
             boolean encryptMetadata = decPerms[8] == (byte) 'T';
@@ -269,14 +269,14 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             Boolean encryptMetadataEntry = encryptionDictionary.getAsBool(PdfName.EncryptMetadata);
             if (permissionsDecoded != permissions || encryptMetadataEntry != null && encryptMetadata != encryptMetadataEntry) {
                 Logger logger = LoggerFactory.getLogger(StandardHandlerUsingAes256.class);
-                logger.error(LogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY);
+                logger.error(IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY);
             }
             this.permissions = permissionsDecoded;
             this.encryptMetadata = encryptMetadata;
         } catch (BadPasswordException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new PdfException(PdfException.PdfEncryption, ex);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, ex);
         }
     }
 

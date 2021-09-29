@@ -47,8 +47,7 @@ import java.net.URL;
 
 public class BmpImageData extends RawImageData {
 
-    private int size;
-    private boolean noHeader;
+    private final boolean noHeader;
 
     /**
      * Creates instance of {@link BmpImageData}
@@ -62,47 +61,12 @@ public class BmpImageData extends RawImageData {
 
     /**
      * Creates instance of {@link BmpImageData}
-     * @param url url of the image
-     * @param noHeader indicates that the source image does not have a header
-     * @param size the size of the image (length of the byte array)
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    protected BmpImageData(URL url, boolean noHeader, int size) {
-        this(url, noHeader);
-        this.size = size;
-    }
-
-    /**
-     * Creates instance of {@link BmpImageData}
      * @param bytes contents of the image
      * @param noHeader indicates that the source image does not have a header
      */
     protected BmpImageData(byte[] bytes, boolean noHeader) {
         super(bytes, ImageType.BMP);
         this.noHeader = noHeader;
-    }
-
-    /**
-     * Creates instance of {@link BmpImageData}
-     * @param bytes contents of the image
-     * @param noHeader indicates that the source image does not have a header
-     * @param size the size of the image (length of the byte array)
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    protected BmpImageData(byte[] bytes, boolean noHeader, int size) {
-        this(bytes, noHeader);
-        this.size = size;
-    }
-
-    /**
-     * @return size of the image
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    public int getSize() {
-        return size;
     }
 
     /**

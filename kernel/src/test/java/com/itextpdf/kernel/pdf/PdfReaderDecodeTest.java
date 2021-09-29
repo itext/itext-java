@@ -42,8 +42,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -92,8 +93,8 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void defaultMemoryHandlerTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(
@@ -120,8 +121,8 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void customMemoryHandlerSingleTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -151,14 +152,14 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assert.assertEquals(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void oneFilterCustomMemoryHandlerSingleTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -186,8 +187,8 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void overriddenMemoryHandlerAllStreamsAreSuspiciousTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler() {
@@ -214,14 +215,14 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assert.assertEquals(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void overriddenMemoryHandlerNoStreamsAreSuspiciousTest() throws IOException {
 
@@ -270,8 +271,8 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void customMemoryHandlerSumTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -288,14 +289,14 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assert.assertEquals(PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void pageSumTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -309,14 +310,14 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> pdfDocument.getFirstPage().getContentBytes()
             );
-            Assert.assertEquals(PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
     })
     public void pageAsSingleStreamTest() throws IOException {
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
@@ -330,7 +331,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> pdfDocument.getFirstPage().getContentBytes()
             );
-            Assert.assertEquals(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
         }
     }
 }

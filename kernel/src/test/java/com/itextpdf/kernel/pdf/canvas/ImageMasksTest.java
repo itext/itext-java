@@ -44,7 +44,7 @@ package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -205,9 +205,9 @@ public class ImageMasksTest extends ExtendedITextTest {
     public void imageWithInvalidMaskTest() throws IOException {
         ImageData mask = ImageDataFactory.create(sourceFolder + "mask.png");
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> mask.makeMask()
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.ThisImageCanNotBeAnImageMask), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException.ThisImageCanNotBeAnImageMask), e.getMessage());
     }
 }

@@ -42,6 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;

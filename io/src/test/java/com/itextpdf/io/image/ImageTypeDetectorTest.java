@@ -72,7 +72,7 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
     public void testNullUrl() throws MalformedURLException {
         URL url = UrlUtil.toURL("not existing path");
 
-        Assert.assertThrows(com.itextpdf.io.IOException.class,
+        Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageTypeDetector.detectImageType(url)
         );
     }
@@ -107,7 +107,7 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
         InputStream stream = new FileInputStream(SOURCE_FOLDER + IMAGE_NAME + ".wmf");
         stream.close();
 
-        // A common exception is expected instead of com.itextpdf.io.IOException, because in .NET
+        // A common exception is expected instead of com.itextpdf.io.exceptions.IOException, because in .NET
         // the thrown exception is different
         Assert.assertThrows(Exception.class, () -> ImageTypeDetector.detectImageType(stream));
     }

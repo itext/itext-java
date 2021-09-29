@@ -3,50 +3,33 @@
     Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.styledxmlparser.jsoup.select;
 
 import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
+import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.FormElement;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
-import com.itextpdf.styledxmlparser.jsoup.safety.Cleaner;
+import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,9 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-
 /**
- *
  * A list of {@link Element}s, with methods that act on every element in the list.
  * <p>
  * To get an {@code Elements} object, use the {@link Element#select(String)} method.
@@ -86,6 +67,7 @@ public class Elements extends ArrayList<Element> {
 
     /**
      * Creates a deep copy of these elements.
+     *
      * @return a deep copy
      */
     @Override
@@ -100,11 +82,12 @@ public class Elements extends ArrayList<Element> {
 
 	// attribute methods
     /**
-     Get an attribute value from the first matched element that has the attribute.
-     @param attributeKey The attribute key.
-     @return The attribute value from the first matched element that has the attribute.. If no elements were matched (isEmpty() == true),
-     or if the no elements have the attribute, returns empty string.
-     @see #hasAttr(String)
+     * Get an attribute value from the first matched element that has the attribute.
+     *
+     * @param attributeKey The attribute key.
+     * @return The attribute value from the first matched element that has the attribute.. If no elements were matched (isEmpty() == true),
+     * or if the no elements have the attribute, returns empty string.
+     * @see #hasAttr(String)
      */
     public String attr(String attributeKey) {
         for (Element element : this) {
@@ -115,9 +98,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Checks if any of the matched elements have this attribute set.
-     @param attributeKey attribute key
-     @return true if any of the elements have the attribute; false if none do.
+     * Checks if any of the matched elements have this attribute defined.
+     *
+     * @param attributeKey attribute key
+     * @return true if any of the elements have the attribute; false if none do.
      */
     public boolean hasAttr(String attributeKey) {
         for (Element element : this) {
@@ -125,6 +109,22 @@ public class Elements extends ArrayList<Element> {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Get the attribute value for each of the matched elements. If an element does not have this attribute, no value is
+     * included in the result set for that element.
+     * @param attributeKey the attribute name to return values for. You can add the {@code abs:} prefix to the key to
+     * get absolute URLs from relative URLs, e.g.: {@code doc.select("a").eachAttr("abs:href")} .
+     * @return a list of each element's attribute value for the attribute
+     */
+    public List<String> eachAttr(String attributeKey) {
+        List<String> attrs = new ArrayList<>(size());
+        for (Element element : this) {
+            if (element.hasAttr(attributeKey))
+                attrs.add(element.attr(attributeKey));
+        }
+        return attrs;
     }
 
     /**
@@ -153,9 +153,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Add the class name to every matched element's {@code class} attribute.
-     @param className class name to add
-     @return this
+     * Add the class name to every matched element's {@code class} attribute.
+     *
+     * @param className class name to add
+     * @return this
      */
     public Elements addClass(String className) {
         for (Element element : this) {
@@ -165,9 +166,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Remove the class name from every matched element's {@code class} attribute, if present.
-     @param className class name to remove
-     @return this
+     * Remove the class name from every matched element's {@code class} attribute, if present.
+     *
+     * @param className class name to remove
+     * @return this
      */
     public Elements removeClass(String className) {
         for (Element element : this) {
@@ -177,9 +179,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Toggle the class name on every matched element's {@code class} attribute.
-     @param className class name to add if missing, or remove if present, from every element.
-     @return this
+     * Toggle the class name on every matched element's {@code class} attribute.
+     *
+     * @param className class name to add if missing, or remove if present, from every element.
+     * @return this
      */
     public Elements toggleClass(String className) {
         for (Element element : this) {
@@ -189,9 +192,10 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Determine if any of the matched elements have this class name set in their {@code class} attribute.
-     @param className class name to check for
-     @return true if any do, false if none do
+     * Determine if any of the matched elements have this class name set in their {@code class} attribute.
+     *
+     * @param className class name to check for
+     * @return true if any do, false if none do
      */
     public boolean hasClass(String className) {
         for (Element element : this) {
@@ -208,7 +212,8 @@ public class Elements extends ArrayList<Element> {
      */
     public String val() {
         if (size() > 0)
-            return first().val();
+            //noinspection ConstantConditions
+            return first().val(); // first() != null as size() > 0
         else
             return "";
     }
@@ -231,23 +236,47 @@ public class Elements extends ArrayList<Element> {
      * children, as the Element.text() method returns the combined text of a parent and all its children.
      * @return string of all text: unescaped and no HTML.
      * @see Element#text()
+     * @see #eachText()
      */
     public String text() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = StringUtil.borrowBuilder();
         for (Element element : this) {
             if (sb.length() != 0)
                 sb.append(" ");
             sb.append(element.text());
         }
-        return sb.toString();
+        return StringUtil.releaseBuilder(sb);
     }
 
+    /**
+     * Test if any matched Element has any text content, that is not just whitespace.
+     *
+     * @return true if any element has non-blank text content.
+     * @see Element#hasText()
+     */
     public boolean hasText() {
         for (Element element: this) {
             if (element.hasText())
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Get the text content of each of the matched elements. If an element has no text, then it is not included in the
+     * result.
+     * @return A list of each matched element's text content.
+     * @see Element#text()
+     * @see Element#hasText()
+     * @see #text()
+     */
+    public List<String> eachText() {
+        ArrayList<String> texts = new ArrayList<>(size());
+        for (Element el: this) {
+            if (el.hasText())
+                texts.add(el.text());
+        }
+        return texts;
     }
     
     /**
@@ -257,13 +286,13 @@ public class Elements extends ArrayList<Element> {
      * @see #outerHtml()
      */
     public String html() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = StringUtil.borrowBuilder();
         for (Element element : this) {
             if (sb.length() != 0)
                 sb.append("\n");
             sb.append(element.html());
         }
-        return sb.toString();
+        return StringUtil.releaseBuilder(sb);
     }
     
     /**
@@ -273,13 +302,13 @@ public class Elements extends ArrayList<Element> {
      * @see #html()
      */
     public String outerHtml() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = StringUtil.borrowBuilder();
         for (Element element : this) {
             if (sb.length() != 0)
                 sb.append("\n");
             sb.append(element.outerHtml());
         }
-        return sb.toString();
+        return StringUtil.releaseBuilder(sb);
     }
 
     /**
@@ -294,8 +323,9 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     * Update the tag name of each matched element. For example, to change each {@code <i>} to a {@code <em>}, do
+     * Update (rename) the tag name of each matched element. For example, to change each {@code <i>} to a {@code <em>}, do
      * {@code doc.select("i").tagName("em");}
+     *
      * @param tagName the new tag name
      * @return this, for chaining
      * @see Element#tagName(String)
@@ -373,13 +403,14 @@ public class Elements extends ArrayList<Element> {
     }
 
     /**
-     Wrap the supplied HTML around each matched elements. For example, with HTML
-     {@code <p><b>This</b> is <b>Jsoup</b></p>},
-     <code>doc.select("b").wrap("&lt;i&gt;&lt;/i&gt;");</code>
-     becomes {@code <p><i><b>This</b></i> is <i><b>jsoup</b></i></p>}
-     @param html HTML to wrap around each element, e.g. {@code <div class="head"></div>}. Can be arbitrarily deep.
-     @return this (for chaining)
-     @see Element#wrap
+     * Wrap the supplied HTML around each matched elements. For example, with HTML
+     * {@code <p><b>This</b> is <b>Jsoup</b></p>},
+     * <code>doc.select("b").wrap("&lt;i&gt;&lt;/i&gt;");</code>
+     * becomes {@code <p><i><b>This</b></i> is <i><b>jsoup</b></i></p>}
+     *
+     * @param html HTML to wrap around each element, e.g. {@code <div class="head"></div>}. Can be arbitrarily deep.
+     * @return this (for chaining)
+     * @see Element#wrap
      */
     public Elements wrap(String html) {
         Validate.notEmpty(html);
@@ -394,8 +425,8 @@ public class Elements extends ArrayList<Element> {
      * dropping the elements but keeping their children.
      * <p>
      * This is useful for e.g removing unwanted formatting elements but keeping their contents.
-     * E.g. with HTML:
-     * <p>
+     * 
+     * E.g. with HTML: <p>
      * {@code <div><font>One</font> <font><a href="/">Two</a></font></div>}
      * <p>
      * {@code doc.select("font").unwrap();}
@@ -438,7 +469,7 @@ public class Elements extends ArrayList<Element> {
      * <code>doc.select("p").remove();</code><br>
      * HTML = {@code <div> <img /></div>}
      * <p>
-     * Note that this method should not be used to clean user-submitted HTML; rather, use {@link Cleaner} to clean HTML.
+     * Note that this method should not be used to clean user-submitted HTML; rather, use {@link com.itextpdf.styledxmlparser.jsoup.safety.Cleaner} to clean HTML.
      *
      * @return this, for chaining
      * @see Element#empty()
@@ -494,8 +525,98 @@ public class Elements extends ArrayList<Element> {
      * @return true if at least one element in the list matches the query.
      */
     public boolean is(String query) {
-        Elements children = select(query);
-        return !children.isEmpty();
+        Evaluator eval = QueryParser.parse(query);
+        for (Element e : this) {
+            if (e.is(eval))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get the immediate next element sibling of each element in this list.
+     * @return next element siblings.
+     */
+    public Elements next() {
+        return siblings(null, true, false);
+    }
+
+    /**
+     * Get the immediate next element sibling of each element in this list, filtered by the query.
+     * @param query CSS query to match siblings against
+     * @return next element siblings.
+     */
+    public Elements next(String query) {
+        return siblings(query, true, false);
+    }
+
+    /**
+     * Get each of the following element siblings of each element in this list.
+     * @return all following element siblings.
+     */
+    public Elements nextAll() {
+        return siblings(null, true, true);
+    }
+
+    /**
+     * Get each of the following element siblings of each element in this list, that match the query.
+     * @param query CSS query to match siblings against
+     * @return all following element siblings.
+     */
+    public Elements nextAll(String query) {
+        return siblings(query, true, true);
+    }
+
+    /**
+     * Get the immediate previous element sibling of each element in this list.
+     * @return previous element siblings.
+     */
+    public Elements prev() {
+        return siblings(null, false, false);
+    }
+
+    /**
+     * Get the immediate previous element sibling of each element in this list, filtered by the query.
+     * @param query CSS query to match siblings against
+     * @return previous element siblings.
+     */
+    public Elements prev(String query) {
+        return siblings(query, false, false);
+    }
+
+    /**
+     * Get each of the previous element siblings of each element in this list.
+     * @return all previous element siblings.
+     */
+    public Elements prevAll() {
+        return siblings(null, false, true);
+    }
+
+    /**
+     * Get each of the previous element siblings of each element in this list, that match the query.
+     * @param query CSS query to match siblings against
+     * @return all previous element siblings.
+     */
+    public Elements prevAll(String query) {
+        return siblings(query, false, true);
+    }
+
+    private Elements siblings(String query, boolean next, boolean all) {
+        Elements els = new Elements();
+        Evaluator eval = query != null? QueryParser.parse(query) : null;
+        for (Element e : this) {
+            Element temp = e;
+            do {
+                Element sib = next ? temp.nextElementSibling() : temp.previousElementSibling();
+                if (sib == null) break;
+                if (eval == null)
+                    els.add(sib);
+                else if (sib.is(eval))
+                    els.add(sib);
+                temp = sib;
+            } while (all);
+        }
+        return els;
     }
 
     /**
@@ -503,7 +624,7 @@ public class Elements extends ArrayList<Element> {
      * @return all of the parents and ancestor elements of the matched elements
      */
     public Elements parents() {
-        Set<Element> combo = new LinkedHashSet<Element>();
+        Set<Element> combo = new LinkedHashSet<>();
         for (Element e: this) {
             combo.addAll(e.parents());
         }
@@ -516,7 +637,7 @@ public class Elements extends ArrayList<Element> {
      @return The first matched element, or <code>null</code> if contents is empty.
      */
     public Element first() {
-        return this.isEmpty() ? null : get(0);
+        return isEmpty() ? null : get(0);
     }
 
     /**
@@ -524,7 +645,7 @@ public class Elements extends ArrayList<Element> {
      @return The last matched element, or <code>null</code> if contents is empty.
      */
     public Element last() {
-        return this.isEmpty() ? null : get(size() - 1);
+        return isEmpty() ? null : get(size() - 1);
     }
 
     /**
@@ -533,11 +654,17 @@ public class Elements extends ArrayList<Element> {
      * @return this, for chaining
      */
     public Elements traverse(NodeVisitor nodeVisitor) {
-        Validate.notNull(nodeVisitor);
-        NodeTraversor traversor = new NodeTraversor(nodeVisitor);
-        for (Element el: this) {
-            traversor.traverse(el);
-        }
+        NodeTraversor.traverse(nodeVisitor, this);
+        return this;
+    }
+
+    /**
+     * Perform a depth-first filtering on each of the selected elements.
+     * @param nodeFilter the filter callbacks to perform on each node
+     * @return this, for chaining
+     */
+    public Elements filter(NodeFilter nodeFilter) {
+        NodeTraversor.filter(nodeFilter, this);
         return this;
     }
 
@@ -547,11 +674,48 @@ public class Elements extends ArrayList<Element> {
      * no forms.
      */
     public List<FormElement> forms() {
-        ArrayList<FormElement> forms = new ArrayList<FormElement>();
+        ArrayList<FormElement> forms = new ArrayList<>();
         for (Element el: this)
             if (el instanceof FormElement)
                 forms.add((FormElement) el);
         return forms;
+    }
+
+    /**
+     * Get {@link Comment} nodes that are direct child nodes of the selected elements.
+     * @return Comment nodes, or an empty list if none.
+     */
+    public List<Comment> comments() {
+        return childNodesOfType(Comment.class);
+    }
+
+    /**
+     * Get {@link TextNode} nodes that are direct child nodes of the selected elements.
+     * @return TextNode nodes, or an empty list if none.
+     */
+    public List<TextNode> textNodes() {
+        return childNodesOfType(TextNode.class);
+    }
+
+    /**
+     * Get {@link DataNode} nodes that are direct child nodes of the selected elements. DataNode nodes contain the
+     * content of tags such as {@code script}, {@code style} etc and are distinct from {@link TextNode}s.
+     * @return Comment nodes, or an empty list if none.
+     */
+    public List<DataNode> dataNodes() {
+        return childNodesOfType(DataNode.class);
+    }
+
+    private <T extends Node> List<T> childNodesOfType(Class<T> tClass) {
+        ArrayList<T> nodes = new ArrayList<>();
+        for (Element el: this) {
+            for (int i = 0; i < el.childNodeSize(); i++) {
+                Node node = el.childNode(i);
+                if (tClass.isInstance(node))
+                    nodes.add(tClass.cast(node));
+            }
+        }
+        return nodes;
     }
 
 }

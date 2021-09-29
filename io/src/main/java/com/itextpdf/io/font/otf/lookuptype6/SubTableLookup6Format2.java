@@ -43,6 +43,7 @@
  */
 package com.itextpdf.io.font.otf.lookuptype6;
 
+import com.itextpdf.io.font.otf.ChainingContextualTable;
 import com.itextpdf.io.font.otf.ContextualSubstRule;
 import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.OtfClass;
@@ -55,8 +56,7 @@ import java.util.Set;
 /**
  * Chaining Contextual Substitution Subtable: Class-based Chaining Context Glyph Substitution
  */
-public class SubTableLookup6Format2 extends SubTableLookup6 {
-    private static final long serialVersionUID = -4930056769443953242L;
+public class SubTableLookup6Format2 extends ChainingContextualTable<ContextualSubstRule> {
     private Set<Integer> substCoverageGlyphIds;
     private List<List<ContextualSubstRule>> subClassSets;
     private OtfClass backtrackClassDefinition;
@@ -86,7 +86,6 @@ public class SubTableLookup6Format2 extends SubTableLookup6 {
     }
 
     public static class SubstRuleFormat2 extends ContextualSubstRule {
-        private static final long serialVersionUID = 5227942059467859541L;
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
         private int[] backtrackClassIds;

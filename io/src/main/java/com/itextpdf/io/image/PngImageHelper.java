@@ -43,20 +43,18 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.FilterUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import org.slf4j.LoggerFactory;
-
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -191,7 +189,8 @@ class PngImageHelper {
         readPng(pngStream, png);
         int colorType = png.image.getColorType();
         if (png.iccProfile != null && png.iccProfile.getNumComponents() != getExpectedNumberOfColorComponents(png)) {
-            LoggerFactory.getLogger(PngImageHelper.class).warn(LogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
+            LoggerFactory.getLogger(PngImageHelper.class)
+                    .warn(IoLogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
         }
         try {
             int pal0 = 0;

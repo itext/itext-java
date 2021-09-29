@@ -42,13 +42,14 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
@@ -130,7 +131,7 @@ public class PdfStringTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD)
+            @LogMessage(messageTemplate = IoLogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD)
     })
     public void readUtf8AltText() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-alt-text.pdf";
@@ -200,7 +201,7 @@ public class PdfStringTest extends ExtendedITextTest {
                         "\u043E\u0434\u0438\u0441\u0441\u0435\u044F)", PdfEncodings.UTF8));
         ImageData img = ImageDataFactory.create(RESOURCE);
         canvas.openTag(tagPointer.getTagReference());
-        canvas.addImage(img, 36, 700, 100, false, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(36, 700, 65, 100), false);
         canvas.closeTag();
         canvas.endText();
         pdfDoc.close();

@@ -54,8 +54,6 @@ package com.itextpdf.kernel.pdf;
  */
 public class PdfAnnotationBorder extends PdfObjectWrapper<PdfArray> {
 
-    /**  Serial version UID. */
-    private static final long serialVersionUID = -4058970009483489460L;
 
     /**
      * Creates a {@link PdfAnnotationBorder} with three numbers defining the horizontal

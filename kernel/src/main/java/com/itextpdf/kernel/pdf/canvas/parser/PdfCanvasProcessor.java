@@ -43,13 +43,13 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.CalGray;
 import com.itextpdf.kernel.colors.CalRgb;
 import com.itextpdf.kernel.colors.Color;
@@ -62,6 +62,7 @@ import com.itextpdf.kernel.colors.Indexed;
 import com.itextpdf.kernel.colors.Lab;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.colors.Separation;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
@@ -80,6 +81,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 import com.itextpdf.kernel.pdf.canvas.parser.data.AbstractRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
@@ -92,17 +94,14 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
-
-import java.util.Objects;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
-
-import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.FillingRule;
 
 /**
  * Processor for a PDF content stream.
@@ -270,7 +269,7 @@ public class PdfCanvasProcessor {
      */
     public void processContent(byte[] contentBytes, PdfResources resources) {
         if (resources == null) {
-            throw new PdfException(PdfException.ResourcesCannotBeNull);
+            throw new PdfException(KernelExceptionMessageConstant.RESOURCES_CANNOT_BE_NULL);
         }
         this.resourcesStack.push(resources);
         PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
@@ -282,7 +281,7 @@ public class PdfCanvasProcessor {
                 invokeOperator(operator, operands);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotParseContentStream, e);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
         }
 
         this.resourcesStack.pop();
@@ -906,12 +905,15 @@ public class PdfCanvasProcessor {
             PdfName dictionaryName = (PdfName) operands.get(0);
             PdfDictionary extGState = processor.getResources().getResource(PdfName.ExtGState);
             if (extGState == null)
-                throw new PdfException(PdfException.ResourcesDoNotContainExtgstateEntryUnableToProcessOperator1).setMessageParams(operator);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR
+                ).setMessageParams(operator);
             PdfDictionary gsDic = extGState.getAsDictionary(dictionaryName);
             if (gsDic == null) {
                 gsDic = extGState.getAsStream(dictionaryName);
                 if (gsDic == null)
-                    throw new PdfException(PdfException._1IsAnUnknownGraphicsStateDictionary).setMessageParams(dictionaryName);
+                    throw new PdfException(KernelExceptionMessageConstant.UNKNOWN_GRAPHICS_STATE_DICTIONARY)
+                            .setMessageParams(dictionaryName);
             }
             PdfArray fontParameter = gsDic.getAsArray(PdfName.Font);
             if (fontParameter != null) {
@@ -962,7 +964,7 @@ public class PdfCanvasProcessor {
                     throw exception;
                 } else {
                     Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX));
                 }
             }
         }
@@ -1161,8 +1163,8 @@ public class PdfCanvasProcessor {
         }
 
         static PdfColorSpace determineColorSpace(PdfName colorSpace, PdfCanvasProcessor processor) {
-            PdfColorSpace pdfColorSpace = null;
-            if (PdfColorSpace.directColorSpaces.contains(colorSpace)) {
+            PdfColorSpace pdfColorSpace;
+            if (PdfColorSpace.DIRECT_COLOR_SPACES.contains(colorSpace)) {
                 pdfColorSpace = PdfColorSpace.makeColorSpace(colorSpace);
             } else {
                 PdfResources pdfResources = processor.getResources();
@@ -1277,13 +1279,17 @@ public class PdfCanvasProcessor {
             PdfDictionary properties = resources.getResource(PdfName.Properties);
             if (null == properties) {
                 Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, PdfName.Properties));
+                logger.warn(
+                        MessageFormatUtil.format(IoLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY,
+                                PdfName.Properties));
                 return null;
             }
             PdfDictionary propertiesDictionary = properties.getAsDictionary(dictionaryName);
             if (null == propertiesDictionary) {
                 Logger logger = LoggerFactory.getLogger(PdfCanvasProcessor.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, dictionaryName));
+                logger.warn(
+                        MessageFormatUtil.format(IoLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY,
+                                dictionaryName));
                 return null;
             }
             return properties.getAsDictionary(dictionaryName);

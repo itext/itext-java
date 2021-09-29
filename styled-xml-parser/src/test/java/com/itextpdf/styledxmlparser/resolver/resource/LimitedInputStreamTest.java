@@ -22,7 +22,8 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.styledxmlparser.StyledXmlParserExceptionMessage;
+import com.itextpdf.styledxmlparser.exceptions.StyledXmlParserExceptionMessage;
+import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

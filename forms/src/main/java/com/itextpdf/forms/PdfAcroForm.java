@@ -43,11 +43,12 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -481,7 +482,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param appearance a String containing a sequence of valid PDF syntax
      * @return current AcroForm
-     * @see PdfFormField#setDefaultAppearance(java.lang.String)
      */
     public PdfAcroForm setDefaultAppearance(String appearance) {
         return put(PdfName.DA, new PdfString(appearance));
@@ -619,7 +619,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     public void flattenFields() {
         if (document.isAppendMode()) {
-            throw new PdfException(PdfException.FieldFlatteningIsNotSupportedInAppendMode);
+            throw new PdfException(FormsExceptionMessageConstant.FIELD_FLATTENING_IS_NOT_SUPPORTED_IN_APPEND_MODE);
         }
         Set<PdfFormField> fields;
         if (fieldsForFlattening.size() == 0) {
@@ -690,7 +690,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     xObject.put(PdfName.Subtype, PdfName.Form);
                     Rectangle annotBBox = fieldObject.getAsRectangle(PdfName.Rect);
                     if (page.isFlushed()) {
-                        throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+                        throw new PdfException(
+                                FormsExceptionMessageConstant.PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING);
                     }
                     PdfCanvas canvas = new PdfCanvas(page, !wrappedPages.contains(page));
                     wrappedPages.add(page);
@@ -712,14 +713,14 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     AffineTransform at = calcFieldAppTransformToAnnotRect(xObject, annotBBox);
                     float[] m = new float[6];
                     at.getMatrix(m);
-                    canvas.addXObject(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
+                    canvas.addXObjectWithTransformationMatrix(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
 
                     if (tagPointer != null) {
                         canvas.closeTag();
                     }
                 }
             } else {
-                logger.error(LogMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
+                logger.error(IoLogMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
             }
 
             PdfArray fFields = getFields();
@@ -860,7 +861,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     protected PdfArray getFields() {
         PdfArray fields = getPdfObject().getAsArray(PdfName.Fields);
         if (fields == null) {
-            logger.warn(LogMessageConstant.NO_FIELDS_IN_ACROFORM);
+            logger.warn(IoLogMessageConstant.NO_FIELDS_IN_ACROFORM);
             fields = new PdfArray();
             getPdfObject().put(PdfName.Fields, fields);
         }
@@ -876,12 +877,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         int index = 1;
         for (PdfObject field : array) {
             if (field.isFlushed()) {
-                logger.info(LogMessageConstant.FORM_FIELD_WAS_FLUSHED);
+                logger.info(IoLogMessageConstant.FORM_FIELD_WAS_FLUSHED);
                 continue;
             }
             PdfFormField formField = PdfFormField.makeFormField(field, document);
             if (formField == null) {
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.CANNOT_CREATE_FORMFIELD,
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
                         field.getIndirectReference() == null ? field : field.getIndirectReference()));
                 continue;
             }
@@ -956,7 +957,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary pageDic = annot.getPageObject();
         if (pageDic != null) {
             if (warnIfPageFlushed && pageDic.isFlushed()) {
-                throw new PdfException(PdfException.PageAlreadyFlushedUseAddFieldAppearanceToPageMethodBeforePageFlushing);
+                throw new PdfException(
+                        FormsExceptionMessageConstant.PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING);
             }
             PdfDocument doc = pageDic.getIndirectReference().getDocument();
             PdfPage widgetPage = doc.getPage(pageDic);

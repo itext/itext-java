@@ -51,7 +51,6 @@ import java.util.List;
 
 public class DefaultAccessibilityProperties extends AccessibilityProperties {
 
-    private static final long serialVersionUID = 3139055327755008473L;
 
     protected String role;
     protected String language;

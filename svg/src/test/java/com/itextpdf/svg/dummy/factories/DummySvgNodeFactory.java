@@ -43,7 +43,9 @@
 package com.itextpdf.svg.dummy.factories;
 
 import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.svg.dummy.renderers.impl.DummyArgumentedConstructorSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummyBranchSvgNodeRenderer;
+import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
@@ -58,8 +60,11 @@ public class DummySvgNodeFactory implements ISvgNodeRendererFactory{
         ISvgNodeRenderer result;
         if ("svg".equals(tag.name())) {
             result = new DummyBranchSvgNodeRenderer(tag.name());
-        }
-        else {
+        } else if ("processable".equals(tag.name())) {
+            result = new DummyProcessableSvgNodeRenderer();
+        } else if ("argumented".equals(tag.name())) {
+            result = new DummyArgumentedConstructorSvgNodeRenderer(15);
+        } else {
             result = new DummySvgNodeRenderer(tag.name());
         }
         result.setParent(parent);

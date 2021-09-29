@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -66,7 +66,6 @@ import java.util.List;
  */
 public class PdfTrapNetworkAnnotation extends PdfAnnotation {
 
-    private static final long serialVersionUID = 5118904991630303608L;
 
     /**
      * Creates a {@link PdfTrapNetworkAnnotation} instance. Note that there shall be at most one trap network annotation

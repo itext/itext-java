@@ -50,7 +50,6 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 
 public class StandardHandlerUsingStandard128 extends StandardHandlerUsingStandard40 {
 
-    private static final long serialVersionUID = 7184848757909055679L;
 
     public StandardHandlerUsingStandard128(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                            int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, byte[] documentId) {

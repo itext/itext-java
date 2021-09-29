@@ -42,13 +42,13 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.AreaBreakType;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.ParagraphOrphansControl;
-import com.itextpdf.layout.property.ParagraphWidowsControl;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.AreaBreakType;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.ParagraphOrphansControl;
+import com.itextpdf.layout.properties.ParagraphWidowsControl;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
@@ -655,7 +655,7 @@ public class OrphansWidowsTestUtil {
                 .rectangle(rectangle)
                 .fill()
                 .restoreState();
-        Canvas canvas = new Canvas(pdfCanvas, pdfDocument, rectangle);
+        Canvas canvas = new Canvas(pdfCanvas, rectangle);
         canvas.add(paraOnCanvas);
         canvas.close();
     }

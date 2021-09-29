@@ -43,7 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -55,7 +56,6 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
  */
 public class PdfPatternCanvas extends PdfCanvas {
 
-    private static final long serialVersionUID = -8325687042148621178L;
     private final PdfPattern.Tiling tilingPattern;
 
     /**
@@ -88,7 +88,8 @@ public class PdfPatternCanvas extends PdfCanvas {
 
     private void checkNoColor() {
         if (!tilingPattern.isColored()) {
-            throw new PdfException(PdfException.ContentStreamMustNotInvokeOperatorsThatSpecifyColorsOrOtherColorRelatedParameters);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS);
         }
     }
 }

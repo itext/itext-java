@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
@@ -188,11 +188,7 @@ public class CFFFont {
     }
 
     void seek(int offset) {
-        try {
-            buf.seek(offset);
-        } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
-        }
+        buf.seek(offset);
     }
 
     short getShort() {
@@ -212,11 +208,7 @@ public class CFFFont {
     }
 
     int getPosition() {
-        try {
-            return (int)buf.getPosition();
-        } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
-        }
+        return (int)buf.getPosition();
     }
     int nextIndexOffset;
     // read the offsets in the next index

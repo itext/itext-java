@@ -43,10 +43,10 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -197,37 +197,37 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
     @Test
     //TODO DEVSIX-2058
-    public void fontResolverIntegrationTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void fontResolverIntegrationTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontssvg");
     }
 
     @Test
-    public void validLocalFontTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void validLocalFontTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "validLocalFontTest");
     }
 
     @Test
-    public void fontWeightTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void fontWeightTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontWeightTest");
     }
 
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
     // TODO DEVSIX-4275 investigate why fill style not processed
-    public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithFillStyleTest");
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG, logLevel = LogLevelConstants.WARN))
-    public void externalStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void externalStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithStrokeStyleTest");
     }
 
     @Test
     //TODO DEVSIX-2264: that test shall fail after the fix.
-    public void googleFontsTest() throws com.itextpdf.io.IOException, InterruptedException, java.io.IOException {
+    public void googleFontsTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "googleFontsTest");
     }
 
@@ -263,7 +263,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
     // TODO DEVSIX-4140 font-relative values doesn't support
     public void relativeStyleInheritanceTest() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "relativeStyleInheritanceTest");

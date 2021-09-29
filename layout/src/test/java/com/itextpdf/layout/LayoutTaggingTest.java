@@ -42,11 +42,11 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
@@ -83,12 +83,12 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -138,7 +138,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest01.pdf"));
@@ -991,7 +991,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
     })
     //TODO update cmp-file after DEVSIX-3335 fixed
     public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
@@ -1016,7 +1016,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     //TODO update cmp-file after DEVSIX-3351 fixed
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS)})
     public void checkParentTreeIfFormXObjectTaggedTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "checkParentTreeIfFormXObjectTaggedTest.pdf";
         String cmpPdf = sourceFolder + "cmp_checkParentTreeIfFormXObjectTaggedTest.pdf";

@@ -47,7 +47,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -56,19 +56,6 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.kernel.pdf.PdfObject;
 
 public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
-
-    private static final long serialVersionUID = -9038993253308315792L;
-
-	/**
-     * @deprecated , use {@link PdfName#Polygon} instead.
-     */
-	@Deprecated
-    public static final PdfName Polygon = PdfName.Polygon;
-    /**
-     * @deprecated , use {@link PdfName#PolyLine} instead.
-     */
-	@Deprecated
-    public static final PdfName PolyLine = PdfName.PolyLine;
 
     PdfPolyGeomAnnotation(Rectangle rect, float[] vertices) {
         super(rect);
@@ -100,14 +87,14 @@ public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
 
     public PdfPolyGeomAnnotation setVertices(PdfArray vertices) {
         if (getPdfObject().containsKey(PdfName.Path)) {
-            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED);
+            LoggerFactory.getLogger(getClass()).warn(IoLogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED);
         }
         return (PdfPolyGeomAnnotation) put(PdfName.Vertices, vertices);
     }
 
     public PdfPolyGeomAnnotation setVertices(float[] vertices) {
         if (getPdfObject().containsKey(PdfName.Path)) {
-            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED);
+            LoggerFactory.getLogger(getClass()).warn(IoLogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED);
         }
         return (PdfPolyGeomAnnotation) put(PdfName.Vertices, new PdfArray(vertices));
     }
@@ -161,7 +148,7 @@ public abstract class PdfPolyGeomAnnotation extends PdfMarkupAnnotation {
      */
     public PdfPolyGeomAnnotation setPath(PdfArray path) {
         if (getPdfObject().containsKey(PdfName.Vertices)) {
-            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.IF_PATH_IS_SET_VERTICES_SHALL_NOT_BE_PRESENT);
+            LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.IF_PATH_IS_SET_VERTICES_SHALL_NOT_BE_PRESENT);
         }
         return (PdfPolyGeomAnnotation) put(PdfName.Path, path);
     }

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
@@ -52,10 +52,11 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.property.BorderCollapsePropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
 
 public class CellRenderer extends BlockRenderer {
     /**
@@ -123,7 +124,7 @@ public class CellRenderer extends BlockRenderer {
             try {
                 transform = transform.createInverse();
             } catch (NoninvertibleTransformException e) {
-                throw new PdfException(PdfException.NoninvertibleMatrixCannotBeProcessed, e);
+                throw new PdfException(LayoutExceptionMessageConstant.NONINVERTIBLE_MATRIX_CANNOT_BE_PROCESSED, e);
             }
             transform.concatenate(new AffineTransform());
             canvas.concatMatrix(transform);

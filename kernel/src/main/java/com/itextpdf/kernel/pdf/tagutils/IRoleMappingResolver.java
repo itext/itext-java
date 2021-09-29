@@ -43,7 +43,6 @@
 package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import java.io.Serializable;
 
 /**
  * A helper interface that facilitates roles mapping resolving for the tag structures that are defined for different
@@ -51,7 +50,7 @@ import java.io.Serializable;
  * <p>
  * Be aware, that it is explicitly allowed for the document by the specification to have circular or transitive mappings.
  */
-public interface IRoleMappingResolver extends Serializable {
+public interface IRoleMappingResolver {
 
     /**
      * Defines the current role of the resolver. On every successful resolving "step" the role returned by this method

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.colors;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,6 @@ public class DeviceCmyk extends Color {
      */
     public static final DeviceCmyk BLACK = new DeviceCmyk(0, 0, 0, 100);
 
-    private static final long serialVersionUID = 5466518014595706050L;
 
     /**
      * Creates DeviceCmyk color with all colorants intensities initialised as zeroes.
@@ -114,7 +113,7 @@ public class DeviceCmyk extends Color {
         });
         if (c > 1 || c < 0 || m > 1 || m < 0 || y > 1 || y < 0 || k > 1 || k < 0) {
             Logger LOGGER = LoggerFactory.getLogger(DeviceCmyk.class);
-            LOGGER.warn(LogMessageConstant.COLORANT_INTENSITIES_INVALID);
+            LOGGER.warn(IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
         }
     }
 

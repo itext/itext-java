@@ -17,7 +17,6 @@
 
 package com.itextpdf.layout.hyphenation;
 
-import java.io.Serializable;
 
 /**
  * This class implements a simple char vector with access to the
@@ -25,9 +24,8 @@ import java.io.Serializable;
  * <p>
  * This work was authored by Carlos Villegas (cav@uniscope.co.jp).
  */
-public class CharVector implements Serializable {
+public class CharVector {
 
-    private static final long serialVersionUID = 4263472982169004048L;
 
     /**
      * Capacity increment size

@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 
 import java.util.HashMap;
 import java.util.Map;

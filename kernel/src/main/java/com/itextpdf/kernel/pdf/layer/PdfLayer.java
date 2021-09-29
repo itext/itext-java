@@ -70,7 +70,6 @@ import java.util.List;
  */
 public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG {
 
-    private static final long serialVersionUID = -5367953708241595665L;
 	/**
      * Used for titling group of objects but not actually grouping them.
      */

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.PageSize;
@@ -104,15 +104,15 @@ public class PdfXObjectTest extends ExtendedITextTest{
         for (int i = 0; i < 4; i++) {
             PdfPage page = document.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
-            canvas.addXObject(images[i], PageSize.Default);
+            canvas.addXObjectFittedIntoRectangle(images[i], PageSize.DEFAULT);
             page.flush();
         }
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.addXObject(images[0], 0, 0, 200);
-        canvas.addXObject(images[1], 300, 0, 200);
-        canvas.addXObject(images[2], 0, 300, 200);
-        canvas.addXObject(images[3], 300, 300, 200);
+        canvas.addXObjectFittedIntoRectangle(images[0], new Rectangle(0, 0, 200, 112.35f));
+        canvas.addXObjectFittedIntoRectangle(images[1], new Rectangle(300, 0, 200, 112.35f));
+        canvas.addXObjectFittedIntoRectangle(images[2], new Rectangle(0, 300, 200, 112.35f));
+        canvas.addXObjectFittedIntoRectangle(images[3], new Rectangle(300, 300, 200, 112.35f));
         canvas.release();
         page.flush();
         document.close();
@@ -124,7 +124,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
+            @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB)
     })
     public void createDocumentFromImages2() throws IOException,  InterruptedException {
         final String destinationDocument = DESTINATION_FOLDER + "documentFromImages2.pdf";
@@ -135,8 +135,8 @@ public class PdfXObjectTest extends ExtendedITextTest{
         ImageData image = ImageDataFactory.create(SOURCE_FOLDER + "itext.jpg");
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
-        canvas.addImage(image, 50, 500, 100, true);
-        canvas.addImage(image, 200, 500, 100, false).flush();
+        canvas.addImageFittedIntoRectangle(image, new Rectangle(50, 500, 100, 14.16f), true);
+        canvas.addImageFittedIntoRectangle(image, new Rectangle(200, 500, 100, 14.16f), false).flush();
         canvas.release();
         page.flush();
 
@@ -192,7 +192,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY))
     public void xObjectIterativeReference() throws IOException {
 
         // The input file contains circular references chain, see: 8 0 R -> 10 0 R -> 4 0 R -> 8 0 R.

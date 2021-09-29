@@ -46,7 +46,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.Style;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -59,7 +59,8 @@ import java.util.Set;
  *
  * @param <T> the type of the implementation
  */
-public abstract class AbstractElement<T extends IElement> extends ElementPropertyContainer<T> implements IElement {
+public abstract class AbstractElement<T extends IElement>
+        extends ElementPropertyContainer<T> implements IAbstractElement {
 
     protected IRenderer nextRenderer;
     protected List<IElement> childElements = new ArrayList<>();
@@ -147,6 +148,7 @@ public abstract class AbstractElement<T extends IElement> extends ElementPropert
      *
      * @return a list of children
      */
+    @Override
     public List<IElement> getChildren() {
         return childElements;
     }

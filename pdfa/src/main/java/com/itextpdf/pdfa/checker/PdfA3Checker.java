@@ -47,9 +47,9 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.pdfa.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
 import java.util.Collections;
 import org.slf4j.Logger;
@@ -74,7 +74,6 @@ public class PdfA3Checker extends PdfA2Checker{
                     PdfName.Alternative,
                     PdfName.Supplement,
                     PdfName.Unspecified)));
-    private static final long serialVersionUID = 6280825718658124941L;
 
     /**
      * Creates a PdfA3Checker with the required conformance level

@@ -43,8 +43,8 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
@@ -101,7 +101,7 @@ public class Jbig2ImageData extends ImageData {
     @Override
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(ImageData.class);
-        logger.warn(LogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER);
+        logger.warn(IoLogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER);
         return false;
     }
 }

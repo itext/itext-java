@@ -43,9 +43,8 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.log.CounterManager;
-import com.itextpdf.kernel.log.ICounter;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.IPdfPageFactory;
 import com.itextpdf.kernel.pdf.IsoKey;
@@ -74,11 +73,13 @@ import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
@@ -94,7 +95,6 @@ import java.util.List;
  */
 public class PdfADocument extends PdfDocument {
 
-    private static final long serialVersionUID = -5908390625367471894L;
 
     private static IPdfPageFactory pdfAPageFactory = new PdfAPageFactory();
 
@@ -164,12 +164,6 @@ public class PdfADocument extends PdfDocument {
     @Override
     public void checkIsoConformance(Object obj, IsoKey key) {
         checkIsoConformance(obj, key, null, null);
-    }
-
-    @Override
-    @Deprecated
-    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources) {
-        checkIsoConformance(obj, key, resources, null);
     }
 
     @Override
@@ -246,7 +240,7 @@ public class PdfADocument extends PdfDocument {
                 }
             } catch (XMPException exc) {
                 Logger logger = LoggerFactory.getLogger(PdfADocument.class);
-                logger.error(com.itextpdf.io.LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
+                logger.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, exc);
             }
         }
     }
@@ -261,7 +255,7 @@ public class PdfADocument extends PdfDocument {
             setXmpMetadata(xmpMeta);
         } catch (XMPException e) {
             Logger logger = LoggerFactory.getLogger(PdfADocument.class);
-            logger.error(com.itextpdf.io.LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            logger.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -306,12 +300,6 @@ public class PdfADocument extends PdfDocument {
 
     protected void initTagStructureContext() {
         tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
-    }
-
-    @Deprecated
-    @Override
-    protected List<ICounter> getCounters() {
-        return CounterManager.getInstance().getCounters(PdfADocument.class);
     }
 
     @Override

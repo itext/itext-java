@@ -43,7 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -59,7 +60,6 @@ import com.itextpdf.kernel.pdf.function.PdfFunction;
  */
 public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 4781809723744243508L;
 
     /**
      * constants of shading type (see ISO-320001 Table 78)
@@ -91,10 +91,10 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static PdfShading makeShading(PdfDictionary shadingDictionary) {
         if (!shadingDictionary.containsKey(PdfName.ShadingType)) {
-            throw new PdfException(PdfException.ShadingTypeNotFound);
+            throw new PdfException(KernelExceptionMessageConstant.SHADING_TYPE_NOT_FOUND);
         }
         if (!shadingDictionary.containsKey(PdfName.ColorSpace)) {
-            throw new PdfException(PdfException.ColorSpaceNotFound);
+            throw new PdfException(KernelExceptionMessageConstant.COLOR_SPACE_NOT_FOUND);
         }
 
         PdfShading shading;
@@ -110,30 +110,30 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
                 break;
             case ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH:
                 if (!shadingDictionary.isStream()) {
-                    throw new PdfException(PdfException.UnexpectedShadingType);
+                    throw new PdfException(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE);
                 }
                 shading = new FreeFormGouraudShadedTriangleMesh((PdfStream) shadingDictionary);
                 break;
             case ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH:
                 if (!shadingDictionary.isStream()) {
-                    throw new PdfException(PdfException.UnexpectedShadingType);
+                    throw new PdfException(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE);
                 }
                 shading = new LatticeFormGouraudShadedTriangleMesh((PdfStream) shadingDictionary);
                 break;
             case ShadingType.COONS_PATCH_MESH:
                 if (!shadingDictionary.isStream()) {
-                    throw new PdfException(PdfException.UnexpectedShadingType);
+                    throw new PdfException(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE);
                 }
                 shading = new CoonsPatchMesh((PdfStream) shadingDictionary);
                 break;
             case ShadingType.TENSOR_PRODUCT_PATCH_MESH:
                 if (!shadingDictionary.isStream()) {
-                    throw new PdfException(PdfException.UnexpectedShadingType);
+                    throw new PdfException(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE);
                 }
                 shading = new TensorProductPatchMesh((PdfStream) shadingDictionary);
                 break;
             default:
-                throw new PdfException(PdfException.UnexpectedShadingType);
+                throw new PdfException(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE);
         }
         return shading;
     }
@@ -244,7 +244,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class FunctionBased extends PdfShading {
 
-        private static final long serialVersionUID = -4459197498902558052L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfDictionary}.
@@ -355,7 +354,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class Axial extends PdfShading {
 
-        private static final long serialVersionUID = 5504688740677023792L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfDictionary}.
@@ -562,7 +560,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class Radial extends PdfShading {
 
-        private static final long serialVersionUID = -5012819396006804845L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfDictionary}.
@@ -791,7 +788,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class FreeFormGouraudShadedTriangleMesh extends PdfShading {
 
-        private static final long serialVersionUID = -2690557760051875972L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfStream}.
@@ -964,7 +960,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class LatticeFormGouraudShadedTriangleMesh extends PdfShading {
 
-        private static final long serialVersionUID = -8776232978423888214L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfStream}.
@@ -1140,7 +1135,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class CoonsPatchMesh extends PdfShading {
 
-        private static final long serialVersionUID = 7296891352801419708L;
 
             /**
              * Creates the new instance of the class from the existing {@link PdfStream}.
@@ -1309,7 +1303,6 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      */
     public static class TensorProductPatchMesh extends PdfShading {
 
-        private static final long serialVersionUID = -2750695839303504742L;
 
         /**
          * Creates the new instance of the class from the existing {@link PdfStream}.

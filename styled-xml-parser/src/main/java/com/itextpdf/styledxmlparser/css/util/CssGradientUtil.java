@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
@@ -30,7 +30,7 @@ import com.itextpdf.kernel.colors.gradients.GradientColorStop.HintOffsetType;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder.GradientStrategy;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
@@ -184,7 +184,7 @@ public final class CssGradientUtil {
                     builder.addColorStop(lastCreatedStopColor);
                 } else {
                     for (int j = 1; j < elementsList.size(); ++j) {
-                        if (CssTypesValidationUtils.isNumericValue(elementsList.get(j))) {
+                        if (CssTypesValidationUtils.isNumber(elementsList.get(j))) {
                             // the numeric value is invalid in linear gradient function.
                             // So check it here as parsing method will use the default pt metric
                             throw new StyledXMLParserException(MessageFormatUtil

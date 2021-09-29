@@ -42,7 +42,10 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;svg&gt; tag.
@@ -54,5 +57,10 @@ public class SvgTagSvgNodeRenderer extends AbstractContainerSvgNodeRenderer {
         deepCopyAttributesAndStyles(copy);
         deepCopyChildren(copy);
         return copy;
+    }
+
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
     }
 }

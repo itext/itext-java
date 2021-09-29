@@ -43,12 +43,13 @@
 package com.itextpdf.svg.processors.impl.font;
 
 
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -162,7 +163,7 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: In w3c test suite this font is labeled as invalid though it correctly parsers both in browser and iText
+    //TODO(DEVSIX-5755): In w3c test suite this font is labeled as invalid though it correctly parsers both in browser and iText
     //See BlocksMetadataPadding001Test in io for decompression details
     public void w3cProblemTest01() throws IOException, InterruptedException {
         runTest("w3cProblemTest01");
@@ -181,15 +182,15 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: silently omitted, decompression should fail.
+    //TODO(DEVSIX-5756): silently omitted, decompression should fail.
     //See HeaderFlavor001Test in io for decompression details
     public void w3cProblemTest03() throws IOException, InterruptedException {
         runTest("w3cProblemTest03");
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = com.itextpdf.io.LogMessageConstant.FONT_SUBSET_ISSUE)})
-    //TODO: silently omitted, decompression should fail. Browser loads font but don't draw glyph.
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.FONT_SUBSET_ISSUE)})
+    //TODO(DEVSIX-5756): silently omitted, decompression should fail. Browser loads font but don't draw glyph.
     //See HeaderFlavor002Test in io for decompression details
     public void w3cProblemTest04() throws IOException, InterruptedException {
         //NOTE, iText fails on subsetting as expected.
@@ -197,14 +198,14 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: In w3c test suite this font is labeled as invalid though it correctly parsers both in browser and iText
+    //TODO(DEVSIX-5755): In w3c test suite this font is labeled as invalid though it correctly parsers both in browser and iText
     //See HeaderReserved001Test in io for decompression details
     public void w3cProblemTest05() throws IOException, InterruptedException {
         runTest("w3cProblemTest05");
     }
 
     @Test
-    //TODO: In w3c test suite this font is labeled as invalid though it correctly parsers both in browser and iText
+    //TODO(DEVSIX-5755): In w3c test suite this font is labeled as invalid though it correctly parsers both in browser and iText
     //See TabledataHmtxTransform003Test in io for decompression details
     public void w3cProblemTest06() throws IOException, InterruptedException {
         runTest("w3cProblemTest06");
@@ -273,7 +274,7 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithAllProperties";
         String svgFile = "fontSelectorTest";
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        String baseUri = FileUtil.getParentDirectory(new File(sourceFolder + svgFile + ".svg"));
+        String baseUri = FileUtil.getParentDirectoryUri(new File(sourceFolder + svgFile + ".svg"));
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
         convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties, writerprops);
         compare(fileName, sourceFolder, destinationFolder);
@@ -293,7 +294,7 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithConverterPropsAndWriterProps";
         String svgFile = "fontSelectorTest";
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        String baseUri = FileUtil.getParentDirectory(new File(sourceFolder + svgFile + ".svg"));
+        String baseUri = FileUtil.getParentDirectoryUri(new File(sourceFolder + svgFile + ".svg"));
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
         convertToSinglePage(new FileInputStream(sourceFolder + svgFile + ".svg"), new FileOutputStream(destinationFolder + fileName + ".pdf"), properties, writerprops);
         compare(fileName, sourceFolder, destinationFolder);

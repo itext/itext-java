@@ -45,7 +45,8 @@ package com.itextpdf.kernel.pdf.filters;
 
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -98,7 +99,7 @@ public class ASCIIHexDecodeFilter extends MemoryLimitsAwareFilter {
             }
             int n = ByteBuffer.getHex(ch);
             if (n == -1) {
-                throw new PdfException(PdfException.IllegalCharacterInAsciihexdecode);
+                throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE);
             }
             if (first) {
                 n1 = n;

@@ -42,9 +42,9 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.otf.lookuptype7.PosTableLookup7Format2;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,9 +61,7 @@ public class GposLookupType7 extends OpenTableLookup {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GposLookupType7.class);
 
-    private static final long serialVersionUID = 4596977183462695970L;
-
-    private List<ContextualPositionTable> subTables;
+    protected List<ContextualTable<ContextualPositionRule>> subTables;
 
     public GposLookupType7(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
             throws java.io.IOException {
@@ -79,7 +77,7 @@ public class GposLookupType7 extends OpenTableLookup {
         int oldLineEnd = line.end;
         int initialLineIndex = line.idx;
 
-        for (ContextualPositionTable subTable : subTables) {
+        for (ContextualTable<ContextualPositionRule> subTable : subTables) {
             ContextualPositionRule contextRule = subTable.getMatchingContextRule(line);
             if (contextRule == null) {
                 continue;
@@ -123,7 +121,7 @@ public class GposLookupType7 extends OpenTableLookup {
                 break;
             case 1:
             case 3:
-                LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED,
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED,
                         substFormat, 7));
                 break;
             default:

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.TextUtil;
@@ -61,12 +61,12 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.OverflowWrapPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.RenderingMode;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -112,7 +112,7 @@ public class TextRendererTest extends RendererUnitTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
     })
     public void setTextException() {
         final String val = "other text";
@@ -166,7 +166,9 @@ public class TextRendererTest extends RendererUnitTest {
         }
 
         renderer.setText(new GlyphLine(), pdfFont);
-        renderer.setText(glyphLine, 1, 2);
+        glyphLine.start = 1;
+        glyphLine.end = 2;
+        renderer.setText(glyphLine, pdfFont);
         GlyphLine actualLine = renderer.getText();
 
         Assert.assertFalse(actualLine == glyphLine);
@@ -185,7 +187,7 @@ public class TextRendererTest extends RendererUnitTest {
      */
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
+            @LogMessage(messageTemplate = IoLogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT)
     })
     public void setFontAsText() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));

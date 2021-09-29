@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
@@ -87,7 +87,7 @@ public class FontUtil {
                 CMapParser.parseCid("", cMapToUnicode, lb);
             } catch (Exception e) {
                 Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
-                logger.error(LogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
+                logger.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
                 cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
             }
         } else if (PdfName.IdentityH.equals(toUnicode)) {
@@ -131,7 +131,7 @@ public class FontUtil {
         Arrays.fill(res, missingWidth);
         if (widthsArray == null) {
             Logger logger = LoggerFactory.getLogger(FontUtil.class);
-            logger.warn(LogMessageConstant.FONT_DICTIONARY_WITH_NO_WIDTHS);
+            logger.warn(IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_WIDTHS);
             return res;
         }
 

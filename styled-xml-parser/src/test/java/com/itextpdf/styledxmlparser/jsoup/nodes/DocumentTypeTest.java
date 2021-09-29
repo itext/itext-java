@@ -3,49 +3,30 @@
     Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.styledxmlparser.jsoup.Jsoup;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -59,26 +40,60 @@ import org.junit.experimental.categories.Category;
 public class DocumentTypeTest extends ExtendedITextTest {
     @Test
     public void constructorValidationOkWithBlankName() {
-        AssertUtil.doesNotThrow(() -> new DocumentType("","", "", ""));
+        AssertUtil.doesNotThrow(() -> new DocumentType("","", ""));
+    }
+
+    @Test
+    public void constructorValidationThrowsExceptionOnNulls() {
+        Assert.assertThrows(IllegalArgumentException.class, () -> new DocumentType("html", null, null));
     }
 
     @Test
     public void constructorValidationOkWithBlankPublicAndSystemIds() {
-        AssertUtil.doesNotThrow(() -> new DocumentType("html","", "",""));
+        AssertUtil.doesNotThrow(() -> new DocumentType("html","", ""));
     }
 
-    @Test
-    public void outerHtmlGeneration() {
-        DocumentType html5 = new DocumentType("html", "", "", "");
+    @Test public void outerHtmlGeneration() {
+        DocumentType html5 = new DocumentType("html", "", "");
         Assert.assertEquals("<!doctype html>", html5.outerHtml());
 
-        DocumentType publicDocType = new DocumentType("html", "-//IETF//DTD HTML//", "", "");
+        DocumentType publicDocType = new DocumentType("html", "-//IETF//DTD HTML//", "");
         Assert.assertEquals("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML//\">", publicDocType.outerHtml());
 
-        DocumentType systemDocType = new DocumentType("html", "", "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd", "");
-        Assert.assertEquals("<!DOCTYPE html \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
+        DocumentType systemDocType = new DocumentType("html", "", "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd");
+        Assert.assertEquals("<!DOCTYPE html SYSTEM \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
 
-        DocumentType combo = new DocumentType("notHtml", "--public", "--system", "");
+        DocumentType combo = new DocumentType("notHtml", "--public", "--system");
         Assert.assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
+        Assert.assertEquals("notHtml", combo.name());
+        Assert.assertEquals("--public", combo.publicId());
+        Assert.assertEquals("--system", combo.systemId());
+    }
+
+    @Test public void testRoundTrip() {
+        String base = "<!DOCTYPE html>";
+        Assert.assertEquals("<!doctype html>", htmlOutput(base));
+        Assert.assertEquals(base, xmlOutput(base));
+
+        String publicDoc = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+        Assert.assertEquals(publicDoc, htmlOutput(publicDoc));
+        Assert.assertEquals(publicDoc, xmlOutput(publicDoc));
+
+        String systemDoc = "<!DOCTYPE html SYSTEM \"exampledtdfile.dtd\">";
+        Assert.assertEquals(systemDoc, htmlOutput(systemDoc));
+        Assert.assertEquals(systemDoc, xmlOutput(systemDoc));
+
+        String legacyDoc = "<!DOCTYPE html SYSTEM \"about:legacy-compat\">";
+        Assert.assertEquals(legacyDoc, htmlOutput(legacyDoc));
+        Assert.assertEquals(legacyDoc, xmlOutput(legacyDoc));
+    }
+
+    private String htmlOutput(String in) {
+        DocumentType type = (DocumentType) Jsoup.parse(in).childNode(0);
+        return type.outerHtml();
+    }
+
+    private String xmlOutput(String in) {
+        return Jsoup.parse(in, "", Parser.xmlParser()).childNode(0).outerHtml();
     }
 }

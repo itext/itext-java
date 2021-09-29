@@ -43,14 +43,12 @@
  */
 package com.itextpdf.io.source;
 
-import java.io.Serializable;
 
 /**
  * A RandomAccessSource that is based on an underlying byte array
  */
-class ArrayRandomAccessSource implements IRandomAccessSource, Serializable {
+class ArrayRandomAccessSource implements IRandomAccessSource {
 
-    private static final long serialVersionUID = 8497059230517630513L;
 
     private byte[] array;
 

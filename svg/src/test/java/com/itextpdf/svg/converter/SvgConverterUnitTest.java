@@ -58,9 +58,11 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -76,7 +78,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -320,7 +321,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> SvgConverter.drawOnDocument("test",null,1)
         );
-        Assert.assertEquals(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL, e.getMessage());
     }
 
     @Test
@@ -333,6 +334,12 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
         ResourceResolver currentResolver = SvgConverter.getResourceResolver(svgProcessorResult, properties);
         Assert.assertEquals(initialResolver, currentResolver);
+    }
+
+    @Test
+    public void createResourceResolverWithoutProcessorResultTest() {
+        ISvgConverterProperties props = new SvgConverterProperties();
+        Assert.assertNotNull(SvgConverter.getResourceResolver(null, props));
     }
 
     @Test
@@ -352,7 +359,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
         Assert.assertNotNull(currentResolver);
     }
 
-    class TestSvgProcessorResult implements ISvgProcessorResult {
+    private static class TestSvgProcessorResult implements ISvgProcessorResult {
 
         public TestSvgProcessorResult() {
         }

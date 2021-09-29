@@ -51,7 +51,7 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.svg.converter.SvgConverter;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -158,7 +158,7 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> root.draw(context)
         );
-        Assert.assertEquals(SvgLogMessageConstant.ROOT_SVG_NO_BBOX, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.ROOT_SVG_NO_BBOX, e.getMessage());
     }
 
     @Test

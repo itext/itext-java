@@ -23,8 +23,8 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -203,7 +203,7 @@ public class PatternTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
     // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void patternContentUnitsObjBoundBoxAbsoluteCoordTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsObjBoundBoxAbsoluteCoord");
@@ -212,7 +212,7 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
     //TODO DEVSIX-4834 support relative units in attributes of svg elements
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
     public void viewBoxAndAbsoluteCoordinatesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxAndAbsoluteCoordinates");
     }
@@ -314,7 +314,7 @@ public class PatternTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2)})
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2)})
     // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void severalComplexElementsInsidePatternTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "severalComplexElementsInsidePattern");

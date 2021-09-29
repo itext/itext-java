@@ -3,59 +3,37 @@
     Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.styledxmlparser.jsoup.select;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
-import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-
-import com.itextpdf.io.util.MessageFormatUtil;
-
-import static org.junit.Assert.*;
-
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
 
 @Category(UnitTest.class)
 public class CssTest extends ExtendedITextTest {
@@ -217,17 +195,17 @@ public class CssTest extends ExtendedITextTest {
 	@Test
 	public void empty() {
 		final Elements sel = html.select(":empty");
-		assertEquals(3, sel.size());
-		assertEquals("head", sel.get(0).tagName());
-		assertEquals("br", sel.get(1).tagName());
-		assertEquals("p", sel.get(2).tagName());
+		Assert.assertEquals(3, sel.size());
+	    Assert.assertEquals("head", sel.get(0).tagName());
+		Assert.assertEquals("br", sel.get(1).tagName());
+		Assert.assertEquals("p", sel.get(2).tagName());
 	}
 
 	@Test
 	public void onlyChild() {
 		final Elements sel = html.select("span :only-child");
-		assertEquals(1, sel.size());
-		assertEquals("br", sel.get(0).tagName());
+		Assert.assertEquals(1, sel.size());
+		Assert.assertEquals("br", sel.get(0).tagName());
 
 		check(html.select("#only :only-child"), "only");
 	}
@@ -235,36 +213,35 @@ public class CssTest extends ExtendedITextTest {
 	@Test
 	public void onlyOfType() {
 		final Elements sel = html.select(":only-of-type");
-		assertEquals(6, sel.size());
-		assertEquals("head", sel.get(0).tagName());
-		assertEquals("body", sel.get(1).tagName());
-		assertEquals("span", sel.get(2).tagName());
-		assertEquals("br", sel.get(3).tagName());
-		assertEquals("p", sel.get(4).tagName());
-		assertTrue(sel.get(4).hasClass("empty"));
-		assertEquals("em", sel.get(5).tagName());
+		Assert.assertEquals(6, sel.size());
+		Assert.assertEquals("head", sel.get(0).tagName());
+		Assert.assertEquals("body", sel.get(1).tagName());
+		Assert.assertEquals("span", sel.get(2).tagName());
+		Assert.assertEquals("br", sel.get(3).tagName());
+		Assert.assertEquals("p", sel.get(4).tagName());
+		Assert.assertTrue(sel.get(4).hasClass("empty"));
+		Assert.assertEquals("em", sel.get(5).tagName());
 	}
 
 	protected void check(Elements result, String...expectedContent ) {
-		assertEquals("Number of elements", expectedContent.length, result.size());
+		Assert.assertEquals(expectedContent.length, result.size());
 		for (int i = 0; i < expectedContent.length; i++) {
-			assertNotNull(result.get(i));
-			assertEquals("Expected element",expectedContent[i], result.get(i).ownText());
+			Assert.assertNotNull(result.get(i));
+			Assert.assertEquals(expectedContent[i], result.get(i).ownText());
 		}
 	}
-
 
 	@Test
 	public void root() {
 		Elements sel = html.select(":root");
-		assertEquals(1, sel.size());
-		assertNotNull(sel.get(0));
-		assertEquals(Tag.valueOf("html"), sel.get(0).tag());
+		Assert.assertEquals(1, sel.size());
+		Assert.assertNotNull(sel.get(0));
+		Assert.assertEquals(Tag.valueOf("html"), sel.get(0).tag());
 
 		Elements sel2 = html.select("body").select(":root");
-		assertEquals(1, sel2.size());
-		assertNotNull(sel2.get(0));
-		assertEquals(Tag.valueOf("body"), sel2.get(0).tag());
+		Assert.assertEquals(1, sel2.size());
+		Assert.assertNotNull(sel2.get(0));
+		Assert.assertEquals(Tag.valueOf("body"), sel2.get(0).tag());
 	}
 
 }

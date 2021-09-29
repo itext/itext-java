@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
-import com.itextpdf.layout.property.BackgroundRepeat.BackgroundRepeatValue;
+import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 
 /**

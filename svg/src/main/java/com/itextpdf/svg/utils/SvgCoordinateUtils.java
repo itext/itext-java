@@ -44,10 +44,9 @@ package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
@@ -107,7 +106,7 @@ public class SvgCoordinateUtils {
     public static double getCoordinateForUserSpaceOnUse(String attributeValue, double defaultValue,
             double start, double length, float em, float rem) {
         double absoluteValue;
-        final UnitValue unitValue = CssUtils.parseLengthValueToPt(attributeValue, em, rem);
+        final UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(attributeValue, em, rem);
         if (unitValue == null) {
             absoluteValue = defaultValue;
         } else if (unitValue.getUnitType() == UnitValue.PERCENT) {
@@ -130,7 +129,8 @@ public class SvgCoordinateUtils {
     public static double getCoordinateForObjectBoundingBox(String attributeValue, double defaultValue) {
         if (CssTypesValidationUtils.isPercentageValue(attributeValue)) {
             return CssDimensionParsingUtils.parseRelativeValue(attributeValue, 1);
-        } else if (CssTypesValidationUtils.isNumericValue(attributeValue)
+        }
+        if (CssTypesValidationUtils.isNumber(attributeValue)
                 || CssTypesValidationUtils.isMetricValue(attributeValue)
                 || CssTypesValidationUtils.isRelativeValue(attributeValue)) {
             // if there is incorrect value metric, then we do not need to parse the value

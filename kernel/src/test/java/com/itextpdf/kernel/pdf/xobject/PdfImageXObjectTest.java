@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -84,7 +85,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
-        canvas.addXObject(imageXObject, 50, 500, 200);
+        canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50, 500, 200, 200));
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpfile, destinationFolder));
@@ -168,7 +169,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(imageFilename));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        canvas.addXObject(imageXObject, 50, 500, 346);
+        canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50, 500, 346, imageXObject.getHeight()));
         pdfDoc.close();
 
         PdfDocument outDoc = new PdfDocument(new PdfReader(outFilename));

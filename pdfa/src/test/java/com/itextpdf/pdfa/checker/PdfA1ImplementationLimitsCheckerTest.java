@@ -62,7 +62,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Tiling;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.pdfa.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

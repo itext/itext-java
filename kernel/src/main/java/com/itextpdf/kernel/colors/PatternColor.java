@@ -49,7 +49,6 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 public class PatternColor extends Color {
 
-    private static final long serialVersionUID = -2405470180325720440L;
     private PdfPattern pattern;
     // The underlying color for uncolored patterns. Will be null for colored ones.
     private Color underlyingColor;
@@ -81,17 +80,6 @@ public class PatternColor extends Color {
     public void setColorValue(float[] value) {
         super.setColorValue(value);
         underlyingColor.setColorValue(value);
-    }
-
-    /**
-     * Changes pattern for {@link PatternColor}. Be sure to only set uncolored patterns for uncolored {@link PatternColor},
-     * and vice versa, only set colored patterns for colored {@link PatternColor}.
-     * @param pattern a pattern to be set for this instance.
-     * @deprecated To be removed in iText 7.2. In order to change pattern one shall create a new {@link PatternColor}.
-     */
-    @Deprecated
-    public void setPattern(PdfPattern pattern) {
-        this.pattern = pattern;
     }
 
     @Override

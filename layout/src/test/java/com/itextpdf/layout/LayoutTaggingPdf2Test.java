@@ -42,9 +42,9 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
@@ -64,9 +64,10 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.AreaBreakType;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.AreaBreakType;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -341,7 +342,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> document.add(customRolePara)
             );
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(LayoutExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "p", "http://iso.org/pdf/ssn"), e.getMessage());
         }
     }
@@ -365,7 +366,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> document.add(customRolePara)
             );
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleIsNotMappedToAnyStandardRole, "p"),
+            Assert.assertEquals(MessageFormat.format(LayoutExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "p"),
                     e.getMessage());
         }
     }
@@ -382,7 +383,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             customRolePara.getAccessibilityProperties().setRole(HtmlRoles.p);
 
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(customRolePara));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(LayoutExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "p", "http://iso.org/pdf2/ssn"), e.getMessage());
         }
     }
@@ -433,7 +434,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             // not explicitly setting namespace that we've manually created. This will lead to the situation, when
             // /Namespaces entry in StructTreeRoot would have two different namespace dictionaries with the same name.
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(customRolePara2));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(LayoutExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "p", "http://iso.org/pdf2/ssn"), e.getMessage());
         }
     }
@@ -473,7 +474,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, count = 1))
     public void docWithInvalidMapping07() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping07.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -496,7 +497,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             customRolePText1.getAccessibilityProperties().setNamespace(stdNs2);
 
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(new Paragraph(customRolePText1)));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleInNamespaceIsNotMappedToAnyStandardRole,
+            Assert.assertEquals(MessageFormat.format(LayoutExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
                     "span", "http://iso.org/pdf2/ssn"), e.getMessage());
         }
     }
@@ -513,12 +514,12 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
             h9Para.getAccessibilityProperties().setRole("H9");
 
             Exception e = Assert.assertThrows(PdfException.class, () -> document.add(h9Para));
-            Assert.assertEquals(MessageFormat.format(PdfException.RoleIsNotMappedToAnyStandardRole, "H9"), e.getMessage());
+            Assert.assertEquals(MessageFormat.format(LayoutExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "H9"), e.getMessage());
         }
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
     public void docWithInvalidMapping09() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping09.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -538,7 +539,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
     public void docWithInvalidMapping10() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping10.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));

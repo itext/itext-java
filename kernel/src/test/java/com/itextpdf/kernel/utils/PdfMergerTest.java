@@ -42,9 +42,8 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
@@ -112,7 +111,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
     })
     public void mergeDocumentOutlinesWithNullDestinationTest01() throws IOException, InterruptedException {
         String resultFile = destinationFolder + "mergeDocumentOutlinesWithNullDestinationTest01.pdf";
@@ -161,7 +160,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
     })
     public void mergeDocumentTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
@@ -200,8 +199,8 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
-            @LogMessage(messageTemplate = LogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING, count = 2)
     })
     public void mergeDocumentTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String filename = sourceFolder + "pdf_open_parameters.pdf";
@@ -273,7 +272,7 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 2)})
     public void mergeOutlinesNamedDestinations() throws IOException, InterruptedException {
         String filename = sourceFolder + "outlinesNamedDestinations.pdf";
         String resultFile = destinationFolder + "mergeOutlinesNamedDestinations.pdf";
@@ -300,7 +299,7 @@ public class PdfMergerTest extends ExtendedITextTest {
     @Test
     // TODO DEVSIX-1743. Update cmp file after fix
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
     })
     public void mergeWithAcroFormsTest() throws IOException, InterruptedException {
         String pdfAcro1 = sourceFolder + "pdfSource1.pdf";
@@ -318,7 +317,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 3)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 3)
     })
     public void mergePdfWithOCGTest() throws IOException, InterruptedException {
         String pdfWithOCG1 = sourceFolder  + "sourceOCG1.pdf";
@@ -338,7 +337,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES)
     })
     public void mergePdfWithComplexOCGTest() throws IOException, InterruptedException {
         String pdfWithOCG1 = sourceFolder  + "sourceOCG1.pdf";
@@ -356,7 +355,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES)
     })
     public void mergeTwoPagePdfWithComplexOCGTest() throws IOException, InterruptedException {
         String pdfWithOCG1 = sourceFolder  + "sourceOCG1.pdf";

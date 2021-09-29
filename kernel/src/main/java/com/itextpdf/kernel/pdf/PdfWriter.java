@@ -43,36 +43,26 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.OutputStream;
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.itextpdf.io.source.ByteUtils.getIsoBytes;
-
-public class PdfWriter extends PdfOutputStream implements Serializable {
-
-    private static final long serialVersionUID = -6875544505477707103L;
-
-    private static final byte[] obj = getIsoBytes(" obj\n");
-    private static final byte[] endobj = getIsoBytes("\nendobj\n");
-
-    // For internal usage only
-    private PdfOutputStream duplicateStream = null;
+public class PdfWriter extends PdfOutputStream {
+    private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
+    private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
 
     protected WriterProperties properties;
 
@@ -119,11 +109,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     public PdfWriter(java.io.OutputStream os, WriterProperties properties) {
-        super(FileUtil.wrapWithBufferedOutputStream(os));
+        super(new CountOutputStream(FileUtil.wrapWithBufferedOutputStream(os)));
         this.properties = properties;
-        if (properties.debugMode) {
-            setDebugMode();
-        }
     }
 
     /**
@@ -200,80 +187,6 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
     }
 
     /**
-     * Write an integer to the underlying stream
-     *
-     * @param b integer to write
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed.
-     */
-    @Override
-    public void write(int b) throws java.io.IOException {
-        super.write(b);
-        if (duplicateStream != null) {
-            duplicateStream.write(b);
-        }
-    }
-
-    /**
-     * Write a byte array to the underlying stream
-     *
-     * @param b byte array to write
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed.
-     */
-    @Override
-    public void write(byte[] b) throws java.io.IOException {
-        super.write(b);
-        if (duplicateStream != null) {
-            duplicateStream.write(b);
-        }
-    }
-
-    /**
-     * Write a slice of the passed byte array to the underlying stream
-     *
-     * @param b   byte array to slice and write.
-     * @param off starting index of the slice.
-     * @param len length of the slice.
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed.
-     */
-    @Override
-    public void write(byte[] b, int off, int len) throws java.io.IOException {
-        super.write(b, off, len);
-        if (duplicateStream != null) {
-            duplicateStream.write(b, off, len);
-        }
-    }
-
-
-    /**
-     * Close the writer and underlying streams.
-     *
-     * @throws java.io.IOException if an I/O error occurs. In particular,
-     *                             an <code>IOException</code> may be thrown if the output stream
-     *                             has been closed previously.
-     */
-    @Override
-    public void close() throws IOException {
-        try {
-            super.close();
-        } finally {
-            try {
-                if (duplicateStream != null) {
-                    duplicateStream.close();
-                }
-            } catch (Exception ex) {
-                Logger logger = LoggerFactory.getLogger(PdfWriter.class);
-                logger.error("Closing of the duplicatedStream failed.", ex);
-            }
-        }
-    }
-
-    /**
      * Gets the current object stream.
      *
      * @return object stream.
@@ -306,9 +219,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      *
      * @param pdfObject     object to flush.
      * @param canBeInObjStm indicates whether object can be placed into object stream.
-     * @throws IOException on error.
      */
-    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) throws IOException {
+    protected void flushObject(PdfObject pdfObject, boolean canBeInObjStm) {
         PdfIndirectReference indirectReference = pdfObject.getIndirectReference();
         if (isFullCompression() && canBeInObjStm) {
             PdfObjectStream objectStream = getObjectStream();
@@ -351,7 +263,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         }
         if (checkTypeOfPdfDictionary(obj, PdfName.Catalog)) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.warn(LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
+            logger.warn(IoLogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
             obj = PdfNull.PDF_NULL;
         }
 
@@ -392,9 +304,8 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
      * Writes object to body of PDF document.
      *
      * @param pdfObj object to write.
-     * @throws IOException obsolete. {@code throws} declaration would be removed in 7.2
      */
-    protected void writeToBody(PdfObject pdfObj) throws IOException {
+    protected void writeToBody(PdfObject pdfObj) {
         if (crypto != null) {
             crypto.setHashKeyForNextObject(pdfObj.getIndirectReference().getObjNumber(), pdfObj.getIndirectReference().getGenNumber());
         }
@@ -526,52 +437,7 @@ public class PdfWriter extends PdfOutputStream implements Serializable {
         }
     }
 
-    private PdfWriter setDebugMode() {
-        duplicateStream = new PdfOutputStream(new ByteArrayOutputStream());
-        return this;
-    }
-
-    private byte[] getDebugBytes() throws IOException {
-        if (duplicateStream != null) {
-            duplicateStream.flush();
-            return ((ByteArrayOutputStream) (duplicateStream.getOutputStream())).toByteArray();
-        } else {
-            return null;
-        }
-    }
-
     private static boolean checkTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
         return dictionary.isDictionary() && expectedType.equals(((PdfDictionary) dictionary).getAsName(PdfName.Type));
     }
-
-    /**
-     * This method is invoked while deserialization
-     *
-     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     * @throws ClassNotFoundException if the class of a serialized object could not be found.
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (outputStream == null) {
-            outputStream = new ByteArrayOutputStream().assignBytes(getDebugBytes());
-        }
-    }
-
-    /**
-     * This method is invoked while serialization
-     *
-     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        if (duplicateStream == null) {
-            throw new NotSerializableException(this.getClass().getName() + ": debug mode is disabled!");
-        }
-        OutputStream tempOutputStream = outputStream;
-        outputStream = null;
-        out.defaultWriteObject();
-        outputStream = tempOutputStream;
-    }
-
 }

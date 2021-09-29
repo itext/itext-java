@@ -43,7 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.collection;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -55,7 +56,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -6471103872805179766L;
 	private PdfCollectionSchema schema;
 
     public PdfCollectionItem(PdfCollectionSchema schema) {
@@ -114,7 +114,7 @@ public class PdfCollectionItem extends PdfObjectWrapper<PdfDictionary> {
         PdfName fieldName = new PdfName(key);
         PdfObject obj = getPdfObject().get(fieldName);
         if (obj == null) {
-            throw new PdfException(PdfException.YouMustSetAValueBeforeAddingAPrefix);
+            throw new PdfException(KernelExceptionMessageConstant.YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX);
         }
         PdfDictionary subItem = new PdfDictionary();
         subItem.put(PdfName.D, obj);

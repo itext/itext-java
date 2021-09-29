@@ -48,7 +48,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -112,6 +112,11 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         return null;
     }
 
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    }
+
     AffineTransform calculateTransformation(SvgDrawContext context){
         Rectangle viewPort = context.getCurrentViewPort();
         float horizontal = viewPort.getX();
@@ -133,7 +138,7 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         PdfStream contentStream = context.getCurrentCanvas().getContentStream();
 
         if ( ! contentStream.containsKey(PdfName.BBox) ) {
-            throw new SvgProcessingException(SvgLogMessageConstant.ROOT_SVG_NO_BBOX);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.ROOT_SVG_NO_BBOX);
         }
 
         PdfArray bboxArray = contentStream.getAsArray(PdfName.BBox);

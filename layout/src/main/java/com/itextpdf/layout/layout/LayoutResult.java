@@ -88,6 +88,9 @@ public class LayoutResult {
      * This renderer will be used to draw the overflowed part of content.
      */
     protected IRenderer overflowRenderer;
+    /**
+     * The {@link AreaBreak} that will be rendered by this object.
+     */
     protected AreaBreak areaBreak;
 
     /**
@@ -189,10 +192,21 @@ public class LayoutResult {
         this.overflowRenderer = overflowRenderer;
     }
 
+    /**
+     * Gets areaBreak value.
+     *
+     * @return the areaBreak value
+     */
     public AreaBreak getAreaBreak() {
         return areaBreak;
     }
 
+    /**
+     * Sets areaBreak value.
+     *
+     * @param areaBreak the areaBreak value
+     * @return the areaBreak value
+     */
     public LayoutResult setAreaBreak(AreaBreak areaBreak) {
         this.areaBreak = areaBreak;
         return this;

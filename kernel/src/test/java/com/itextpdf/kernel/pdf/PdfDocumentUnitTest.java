@@ -1,53 +1,36 @@
 /*
-
     This file is part of the iText (R) project.
     Copyright (c) 1998-2021 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.test.ExtendedITextTest;
@@ -58,21 +41,24 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfDocumentUnitTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentUnitTest/";
 
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
+
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE)
     })
     public void getFontWithDirectFontDictionaryTest() {
         PdfDictionary initialFontDict = new PdfDictionary();
@@ -128,7 +114,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 3),
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES, count = 3),
     })
     public void copyPagesWithOCGSameName() throws IOException {
         List<List<String>> ocgNames = new ArrayList<>();
@@ -179,7 +165,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
         try (PdfDocument outDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             try (PdfDocument fromDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
-                    fromDocument.copyPagesTo(1, fromDocument.getNumberOfPages(), outDocument);
+                fromDocument.copyPagesTo(1, fromDocument.getNumberOfPages(), outDocument);
             }
 
             List<String> layerNames = new ArrayList<>();
@@ -190,7 +176,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.OCG_COPYING_ERROR, logLevel = LogLevelConstants.ERROR)
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCG_COPYING_ERROR, logLevel = LogLevelConstants.ERROR)
     })
     public void copyPagesFlushedResources() throws IOException {
         byte[] docBytes;
@@ -366,5 +352,115 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         Assert.assertNotNull(layerDictionary.get(PdfName.Name));
         String layerNameString = layerDictionary.get(PdfName.Name).toString();
         Assert.assertEquals(name, layerNameString);
+    }
+
+    @Test
+    public void cannotGetTagStructureForUntaggedDocumentTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT);
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.getTagStructureContext();
+    }
+
+    @Test
+    public void cannotAddPageAfterDocumentIsClosedTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException
+                .expectMessage(KernelExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION);
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage(1);
+        pdfDoc.close();
+        pdfDoc.addNewPage(2);
+    }
+
+    @Test
+    public void cannotMovePageToZeroPositionTest() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        junitExpectedException.expectMessage(
+                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 0));
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        pdfDoc.movePage(1, 0);
+    }
+
+    @Test
+    public void cannotMovePageToNegativePosition() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        junitExpectedException.expectMessage(
+                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, -1));
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        pdfDoc.movePage(1, -1);
+    }
+
+    @Test
+    public void cannotMovePageToOneMorePositionThanPagesNumberTest() {
+        junitExpectedException.expect(IndexOutOfBoundsException.class);
+        junitExpectedException.expectMessage(
+                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 3));
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc.addNewPage();
+        pdfDoc.movePage(1, 3);
+    }
+
+    @Test
+    public void cannotAddPageToAnotherDocumentTest01() {
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc1.addNewPage(1);
+
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
+                pdfDoc1,
+                1,
+                pdfDoc2));
+
+        pdfDoc2.checkAndAddPage(1, pdfDoc1.getPage(1));
+    }
+
+    @Test
+    public void cannotAddPageToAnotherDocumentTest02() {
+        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        pdfDoc1.addNewPage(1);
+
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
+                pdfDoc1,
+                1,
+                pdfDoc2));
+
+        pdfDoc2.checkAndAddPage(pdfDoc1.getPage(1));
+    }
+
+    @Test
+    public void cannotSetEncryptedPayloadInReadingModeTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(
+                KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_DOCUMENT_OPENED_IN_READING_MODE);
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "setEncryptedPayloadInReadingModeTest.pdf"));
+        pdfDoc.setEncryptedPayload(null);
+    }
+
+    @Test
+    public void cannotSetEncryptedPayloadToEncryptedDocTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(
+                KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
+
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setStandardEncryption(new byte[] {}, new byte[] {}, 1, 1);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), writerProperties));
+        PdfFileSpec fs = PdfFileSpec
+                .createExternalFileSpec(pdfDoc, sourceFolder + "testPath");
+        pdfDoc.setEncryptedPayload(fs);
     }
 }

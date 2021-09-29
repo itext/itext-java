@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -62,7 +62,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class PdfMarkupAnnotation extends PdfAnnotation {
 
-    private static final long serialVersionUID = 239280278775576458L;
 
     protected PdfAnnotation inReplyTo = null;
     protected PdfPopupAnnotation popup = null;
@@ -239,7 +238,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
                 PdfAnnotation annotation = makeAnnotation(popupObject);
                 if (!(annotation instanceof PdfPopupAnnotation)) {
                     Logger logger = LoggerFactory.getLogger(PdfMarkupAnnotation.class);
-                    logger.warn(LogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
+                    logger.warn(IoLogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
                     return null;
                 }
                 popup = (PdfPopupAnnotation) annotation;
@@ -330,25 +329,6 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
      */
     public PdfDictionary getExternalData() {
         return getPdfObject().getAsDictionary(PdfName.ExData);
-    }
-
-    /**
-     * Sets an external data dictionary specifying data that shall be associated with the annotation.
-     * This dictionary should contain the following entries:
-     * <ul>
-     *     <li>{@link PdfName#Type} - (optional) If present, shall be {@link PdfName#ExData}.
-     *     <li>{@link PdfName#Subtype} - (required) a name specifying the type of data that the markup annotation
-     *     shall be associated with. The only defined value is {@link PdfName#Markup3D}. Table 298 (ISO-320001)
-     *     lists the values that correspond to a subtype of Markup3D (See also {@link Pdf3DAnnotation}).
-     * </ul>
-     *
-     * @param exData the external data dictionary
-     * @return this {@link PdfMarkupAnnotation} instance
-     * @deprecated use {@link PdfMarkupAnnotation#setExternalData(PdfDictionary)} instead
-     */
-    @Deprecated
-    public PdfMarkupAnnotation setExternalData(PdfName exData) {
-        return (PdfMarkupAnnotation) put(PdfName.ExData, exData);
     }
 
     /**

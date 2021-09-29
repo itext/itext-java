@@ -67,11 +67,10 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

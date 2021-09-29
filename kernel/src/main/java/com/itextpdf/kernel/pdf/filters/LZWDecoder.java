@@ -43,7 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -84,7 +85,7 @@ public class LZWDecoder {
     public void decode(byte[] data, OutputStream uncompData) {
 
         if (data[0] == (byte) 0x00 && data[1] == (byte) 0x01) {
-            throw new PdfException(PdfException.LzwFlavourNotSupported);
+            throw new PdfException(KernelExceptionMessageConstant.LZW_FLAVOUR_NOT_SUPPORTED);
         }
 
         initializeStringTable();
@@ -164,7 +165,7 @@ public class LZWDecoder {
         try {
             uncompData.write(string);
         } catch (IOException e) {
-            throw new PdfException(PdfException.LzwDecoderException, e);
+            throw new PdfException(KernelExceptionMessageConstant.LZW_DECODER_EXCEPTION, e);
         }
     }
 

@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.io.ByteArrayInputStream;
@@ -160,7 +160,7 @@ final class Jpeg2000ImageHelper {
                 int x0 = cio_read(4, jpeg2000Stream);
                 int y0 = cio_read(4, jpeg2000Stream);
                 StreamUtil.skip(jpeg2000Stream, 16);
-                jp2.setColorSpace(cio_read(2, jpeg2000Stream));
+                jp2.setColorEncodingComponentsNumber(cio_read(2, jpeg2000Stream));
                 jp2.setBpc(8);
                 jp2.setHeight(y1 - y0);
                 jp2.setWidth(x1 - x0);

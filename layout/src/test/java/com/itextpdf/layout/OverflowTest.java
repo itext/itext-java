@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -57,9 +57,9 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -324,7 +324,7 @@ public class OverflowTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED))
     public void forcedPlacementTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "forcedPlacementTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_forcedPlacementTest02.pdf";

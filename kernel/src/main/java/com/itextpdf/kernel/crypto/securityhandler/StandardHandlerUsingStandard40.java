@@ -43,13 +43,13 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.ARCFOUREncryption;
-import com.itextpdf.kernel.crypto.BadPasswordException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamStandardEncryption;
 import com.itextpdf.kernel.crypto.StandardDecryptor;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -65,7 +65,6 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
             (byte) 0x64, (byte) 0x53, (byte) 0x69, (byte) 0x7A};
     protected static final byte[] metadataPad = {(byte) 255, (byte) 255,
             (byte) 255, (byte) 255};
-    private static final long serialVersionUID = -7951837491441953183L;
 
     protected byte[] documentId;
     // stores key length of the main key
@@ -212,7 +211,7 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
             userKey = computeUserKey();
             // computed user key should be equal to uValue
             if (isValidPassword(uValue, userKey)) {
-                throw new BadPasswordException(PdfException.BadUserPassword);
+                throw new BadPasswordException(KernelExceptionMessageConstant.BAD_USER_PASSWORD);
             }
             usedOwnerPassword = false;
         }

@@ -43,12 +43,12 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.util.Map;
-
-import com.itextpdf.kernel.counter.event.IMetaInfo;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.Recipient;
 import org.bouncycastle.cms.RecipientInformation;

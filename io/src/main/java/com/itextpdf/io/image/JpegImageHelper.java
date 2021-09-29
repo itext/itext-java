@@ -43,13 +43,13 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.InputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -170,10 +170,10 @@ class JpegImageHelper {
                 total += bytes.length - 14;
             }
             try {
-                image.setProfile(IccProfile.getInstance(ficc, image.getColorSpace()));
+                image.setProfile(IccProfile.getInstance(ficc, image.getColorEncodingComponentsNumber()));
             } catch (Exception e) {
                 LOGGER.error(MessageFormatUtil.format(
-                        LogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED,
+                        IoLogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED,
                         e.getClass().getSimpleName(), e.getMessage()));
             }
         }
@@ -186,7 +186,8 @@ class JpegImageHelper {
             decodeParms.put("ColorTransform", 0);
             image.decodeParms = decodeParms;
         }
-        if (image.getColorSpace() != 1 && image.getColorSpace() != 3 && image.isInverted()) {
+        int colorComponents = image.getColorEncodingComponentsNumber();
+        if (colorComponents != 1 && colorComponents != 3 && image.isInverted()) {
             image.decode = new float[]{1, 0, 1, 0, 1, 0, 1, 0};
         }
     }
@@ -366,7 +367,7 @@ class JpegImageHelper {
                     }
                     image.setHeight(getShort(jpegStream));
                     image.setWidth(getShort(jpegStream));
-                    image.setColorSpace(jpegStream.read());
+                    image.setColorEncodingComponentsNumber(jpegStream.read());
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {

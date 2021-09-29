@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -38,7 +38,7 @@ public class TextRendererUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)
+            @LogMessage(messageTemplate = IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)
     })
     public void getNextRendererShouldBeOverriddenTest() {
         TextRenderer textRenderer = new TextRenderer(new Text("tet")) {

@@ -42,13 +42,11 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -58,17 +56,16 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.LineHeight;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.RenderingMode;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.LineHeight;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.LineRenderer.LineSplitIntoGlyphsData;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -99,7 +96,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 4)})
+            @LogMessage(messageTemplate = IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 4)})
     public void adjustChildPositionsAfterReorderingTestWithPercentMargins01() {
         Document dummyDocument = createDummyDocument();
         IRenderer dummy1 = createLayoutedTextRenderer("Hello", dummyDocument);
@@ -134,7 +131,7 @@ public class LineRendererUnitTest extends RendererUnitTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED)})
     public void inlineBlockWithBigMinWidth01() {
         Document dummyDocument = createDummyDocument();
         LineRenderer lineRenderer = (LineRenderer) new LineRenderer().setParent(dummyDocument.getRenderer());

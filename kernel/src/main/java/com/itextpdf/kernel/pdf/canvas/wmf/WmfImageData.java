@@ -46,7 +46,8 @@ package com.itextpdf.kernel.pdf.canvas.wmf;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +81,7 @@ public class WmfImageData extends ImageData {
         super(url, ImageType.WMF);
         byte[] imageType = readImageType(url);
         if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.NotAWmfImage);
+            throw new PdfException(KernelExceptionMessageConstant.NOT_A_WMF_IMAGE);
         }
     }
 
@@ -93,7 +94,7 @@ public class WmfImageData extends ImageData {
         super(bytes, ImageType.WMF);
         byte[] imageType = readImageType(bytes);
         if (!imageTypeIs(imageType, wmf)) {
-            throw new PdfException(PdfException.NotAWmfImage);
+            throw new PdfException(KernelExceptionMessageConstant.NOT_A_WMF_IMAGE);
         }
     }
 
@@ -113,7 +114,7 @@ public class WmfImageData extends ImageData {
             is.read(bytes);
             return bytes;
         } catch (IOException e) {
-            throw new PdfException(PdfException.IoException, e);
+            throw new PdfException(KernelExceptionMessageConstant.IO_EXCEPTION, e);
         } finally {
             if (is != null) {
                 try {

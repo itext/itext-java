@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -54,7 +54,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -97,8 +98,13 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         }
     }
 
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    }
+
     private PdfPattern.Tiling createTilingPattern(SvgDrawContext context,
-            Rectangle objectBoundingBox) {
+                                                  Rectangle objectBoundingBox) {
         final boolean isObjectBoundingBoxInPatternUnits = isObjectBoundingBoxInPatternUnits();
         final boolean isObjectBoundingBoxInPatternContentUnits = isObjectBoundingBoxInPatternContentUnits();
 
@@ -237,7 +243,10 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     }
 
     private boolean isObjectBoundingBoxInPatternUnits() {
-        final String patternUnits = getAttribute(Attributes.PATTERN_UNITS);
+        String patternUnits = getAttribute(Attributes.PATTERN_UNITS);
+        if (patternUnits == null) {
+            patternUnits = getAttribute(Attributes.PATTERN_UNITS.toLowerCase());
+        }
         if (Values.USER_SPACE_ON_USE.equals(patternUnits)) {
             return false;
         } else if (patternUnits != null && !Values.OBJECT_BOUNDING_BOX.equals(patternUnits)) {
@@ -248,7 +257,10 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     }
 
     private boolean isObjectBoundingBoxInPatternContentUnits() {
-        final String patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS);
+        String patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS);
+        if (patternContentUnits == null) {
+            patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS.toLowerCase());
+        }
         if (Values.OBJECT_BOUNDING_BOX.equals(patternContentUnits)) {
             return true;
         } else if (patternContentUnits != null && !Values.USER_SPACE_ON_USE
@@ -317,6 +329,9 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
 
     private AffineTransform getPatternTransform() {
         String patternTransform = getAttribute(SvgConstants.Attributes.PATTERN_TRANSFORM);
+        if (patternTransform == null) {
+            patternTransform = getAttribute(SvgConstants.Attributes.PATTERN_TRANSFORM.toLowerCase());
+        }
         if (patternTransform != null && !patternTransform.isEmpty()) {
             return TransformUtils.parseTransform(patternTransform);
         }

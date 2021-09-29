@@ -22,9 +22,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.test.ExtendedITextTest;
@@ -41,7 +40,7 @@ public class LinkRendererUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)
+            @LogMessage(messageTemplate = IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)
     })
     public void getNextRendererShouldBeOverriddenTest() {
         LinkRenderer linkRenderer =

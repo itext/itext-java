@@ -43,7 +43,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -61,16 +61,15 @@ import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
-
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
@@ -175,7 +174,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         page.getResources().setDefaultRgb(new PdfCieBasedCs.CalRgb(new float[]{0.3f, 0.4f, 0.5f}));
 
         canvas.saveState();
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "itext.png"), 0, 0, page.getPageSize().getWidth() / 2, false);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "itext.png"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
         canvas.restoreState();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());

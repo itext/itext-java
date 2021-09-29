@@ -46,84 +46,44 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
-import com.itextpdf.svg.dummy.factories.DummySvgNodeMapper;
+import com.itextpdf.svg.dummy.factories.DummySvgNodeFactory;
+import com.itextpdf.svg.dummy.renderers.impl.DummyArgumentedConstructorSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummyProcessableSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
-import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
-import com.itextpdf.svg.renderers.factories.ISvgNodeRendererMapper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
-    private ISvgNodeRendererFactory fact;
-
-    @Before
-    public void setUp() {
-        fact = new DefaultSvgNodeRendererFactory(new DummySvgNodeMapper());
-    }
+    private final ISvgNodeRendererFactory fact = new DummySvgNodeFactory();
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG)
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG)
     })
     public void nonExistingTagTest() {
+        ISvgNodeRendererFactory factory = new DefaultSvgNodeRendererFactory();
         Element nonExistingElement = new Element(Tag.valueOf("notAnExistingTag"), "");
         IElementNode tag = new JsoupElementNode(nonExistingElement);
-        fact.createSvgNodeRendererForTag(tag, null);
-    }
-
-    @Test
-    public void protectedConstructorTest() {
-        Element protectedElement = new Element(Tag.valueOf("protected"), "");
-        IElementNode tag = new JsoupElementNode(protectedElement);
-
-        Assert.assertThrows(SvgProcessingException.class, () -> fact.createSvgNodeRendererForTag(tag, null));
-    }
-
-    @Test
-    public void protectedConstructorInnerTest() throws ReflectiveOperationException {
-        Element protectedElement = new Element(Tag.valueOf("protected"), "");
-        IElementNode tag = new JsoupElementNode(protectedElement);
-
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
-                () -> fact.createSvgNodeRendererForTag(tag, null)
-        );
-        Assert.assertTrue(e.getCause() instanceof ReflectiveOperationException);
+        factory.createSvgNodeRendererForTag(tag, null);
     }
 
     @Test
     public void argumentedConstructorTest() {
         Element protectedElement = new Element(Tag.valueOf("argumented"), "");
         IElementNode tag = new JsoupElementNode(protectedElement);
-        Assert.assertThrows(SvgProcessingException.class, () -> Assert.assertNull(fact.createSvgNodeRendererForTag(tag, null)));
-    }
-
-    @Test
-    public void argumentedConstructorInnerTest() throws ReflectiveOperationException {
-        Element protectedElement = new Element(Tag.valueOf("argumented"), "");
-        IElementNode tag = new JsoupElementNode(protectedElement);
-
-        Exception e = Assert.assertThrows(SvgProcessingException.class,
-                () -> fact.createSvgNodeRendererForTag(tag, null)
-        );
-        Assert.assertTrue(e.getCause() instanceof ReflectiveOperationException);
+        ISvgNodeRenderer renderer = fact.createSvgNodeRendererForTag(tag, null);
+        Assert.assertTrue(renderer instanceof DummyArgumentedConstructorSvgNodeRenderer);
+        Assert.assertEquals(15, ((DummyArgumentedConstructorSvgNodeRenderer) renderer).number);
     }
 
     @Test
@@ -134,27 +94,26 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
         Assert.assertTrue(childRenderer instanceof DummySvgNodeRenderer);
     }
 
-    private static class LocalTestMapper implements ISvgNodeRendererMapper {
-
+    private static class LocalSvgNodeRendererFactory extends DefaultSvgNodeRendererFactory {
         @Override
-        public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
-            Map<String, Class<? extends ISvgNodeRenderer>> result = new HashMap<>();
-            result.put("test", DummyProcessableSvgNodeRenderer.class);
-            return result;
-        }
-
-        @Override
-        public Collection<String> getIgnoredTags() {
-            return new ArrayList<>();
+        public ISvgNodeRenderer createSvgNodeRendererForTag(IElementNode tag, ISvgNodeRenderer parent) {
+            ISvgNodeRenderer result;
+            if ("test".equals(tag.name())) {
+                result = new DummyProcessableSvgNodeRenderer();
+                result.setParent(parent);
+                return result;
+            } else {
+                return null;
+            }
         }
     }
 
     @Test
     public void customMapperTest() {
-        fact = new DefaultSvgNodeRendererFactory(new LocalTestMapper());
+        ISvgNodeRendererFactory factory = new LocalSvgNodeRendererFactory();
         Element element = new Element(Tag.valueOf("test"), "");
         IElementNode tag = new JsoupElementNode(element);
-        ISvgNodeRenderer rend = fact.createSvgNodeRendererForTag(tag, null);
+        ISvgNodeRenderer rend = factory.createSvgNodeRendererForTag(tag, null);
         Assert.assertTrue(rend instanceof DummyProcessableSvgNodeRenderer);
     }
 
@@ -169,26 +128,4 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
         Assert.assertEquals(parentRenderer, childRenderer.getParent());
     }
-
-    private static class FaultyTestMapper implements ISvgNodeRendererMapper {
-
-        @Override
-        public Map<String, Class<? extends ISvgNodeRenderer>> getMapping() {
-            throw new RuntimeException();
-        }
-
-        @Override
-        public Collection<String> getIgnoredTags() {
-            return null;
-        }
-    }
-
-    /**
-     * Tests that exception is already thrown in constructor
-     */
-    @Test
-    public void faultyMapperTest() {
-        Assert.assertThrows(RuntimeException.class, () -> new DefaultSvgNodeRendererFactory(new FaultyTestMapper()));
-    }
-
 }

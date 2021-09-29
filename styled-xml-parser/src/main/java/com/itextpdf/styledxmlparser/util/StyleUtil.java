@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Utility class for resolving parent-inheritance of style and attribute declarations.
+ */
 public final class StyleUtil {
 
     private StyleUtil() {
@@ -122,6 +125,6 @@ public final class StyleUtil {
             return false;
         }
         return value.endsWith(measurement) && CssTypesValidationUtils
-                .isNumericValue(value.substring(0, value.length() - measurement.length()).trim());
+                .isNumber(value.substring(0, value.length() - measurement.length()).trim());
     }
 }

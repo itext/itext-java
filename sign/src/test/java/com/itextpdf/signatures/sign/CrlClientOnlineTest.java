@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.sign;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.testutils.X509MockCertificate;
@@ -150,7 +150,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
                     LogLevelConstants.INFO),
             @LogMessage(messageTemplate = "Checking CRL: http://www.example.com/crl/test.crl", logLevel =
                     LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
     public void unreachableCrlDistributionPointTest() {
@@ -168,7 +168,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
                     LogLevelConstants.INFO),
             @LogMessage(messageTemplate = "Checking CRL: http://www.example.com/crl/test.crl", logLevel =
                     LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = LogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
+            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
     public void unreachableCrlDistributionPointFromCertChainTest() {

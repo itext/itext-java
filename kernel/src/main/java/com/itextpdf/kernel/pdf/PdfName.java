@@ -52,7 +52,6 @@ import java.util.Map;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
 
-    private static final long serialVersionUID = 7493154668111961953L;
 
     //  ' '
     private static final byte[] space = ByteUtils.getIsoBytes("#20");

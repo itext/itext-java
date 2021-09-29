@@ -43,13 +43,16 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.ArrayUtil;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -60,14 +63,14 @@ import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.RenderingMode;
-import com.itextpdf.layout.property.TabAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.Leading;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TabAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
 
@@ -369,7 +372,7 @@ public class LineRenderer extends AbstractRenderer {
 
                         if (childBlockMinMaxWidth.getMinWidth() > bbox.getWidth()) {
                             if (logger.isWarnEnabled()) {
-                                logger.warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
+                                logger.warn(IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
                             }
                             childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
                         }
@@ -530,6 +533,9 @@ public class LineRenderer extends AbstractRenderer {
 
                         childPos = lastFittingChildRendererData.childIndex;
                         childResult = lastFittingChildRendererData.childLayoutResult;
+                        if (0 == childPos && LayoutResult.NOTHING == childResult.getStatus()) {
+                            anythingPlaced = false;
+                        }
                         textRendererLayoutResults.put(childPos, childResult);
 
                         MinMaxWidth textSequenceElemminMaxWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth();
@@ -615,7 +621,7 @@ public class LineRenderer extends AbstractRenderer {
                                 && childResult.getOverflowRenderer().getChildRenderers().isEmpty()
                                 && childResult.getStatus() == LayoutResult.PARTIAL) {
                             if (logger.isWarnEnabled()) {
-                                logger.warn(LogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
+                                logger.warn(IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
                             }
                         } else {
                             split[1].addChildRenderer(childResult.getOverflowRenderer());
@@ -969,7 +975,8 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.MULTIPLIED:
                 UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
                 if (!fontSize.isPointValue()) {
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            Property.FONT_SIZE));
                 }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
                 // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
@@ -990,7 +997,8 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.MULTIPLIED:
                 UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
                 if (!fontSize.isPointValue()) {
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            Property.FONT_SIZE));
                 }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending on the version,
                 // the behavior id different. In one case, bottom leading indent is added for images, in the other it is not added.
@@ -1077,17 +1085,21 @@ public class LineRenderer extends AbstractRenderer {
                     currentWidth = ((TextRenderer) child).calculateLineWidth();
                     UnitValue[] margins = ((TextRenderer) child).getMargins();
                     if (!margins[1].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "right margin"));
+                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                                "right margin"));
                     }
                     if (!margins[3].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "left margin"));
+                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                                "left margin"));
                     }
                     UnitValue[] paddings = ((TextRenderer) child).getPaddings();
                     if (!paddings[1].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "right padding"));
+                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                                "right padding"));
                     }
                     if (!paddings[3].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "left padding"));
+                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                                "left padding"));
                     }
                     currentWidth += margins[1].getValue() + margins[3].getValue() + paddings[1].getValue() + paddings[3].getValue();
                     ((TextRenderer) child).occupiedArea.getBBox().setX(currentXPos).setWidth(currentWidth);
@@ -1486,7 +1498,16 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
             }
-            levels = unicodeIdsReorderingList.size() > 0 ? TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList)) : null;
+            if (unicodeIdsReorderingList.size() > 0) {
+                final PdfDocument pdfDocument = getPdfDocument();
+                final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
+                final MetaInfoContainer metaInfoContainer = this.<MetaInfoContainer>getProperty(Property.META_INFO);
+                final IMetaInfo metaInfo = metaInfoContainer == null ? null : metaInfoContainer.getMetaInfo();
+                levels = TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList),
+                        sequenceId, metaInfo);
+            } else {
+                levels = null;
+            }
         }
     }
 
@@ -1528,7 +1549,7 @@ public class LineRenderer extends AbstractRenderer {
         return normalizedChildWidth;
     }
 
-    static class RendererGlyph {
+    public static class RendererGlyph {
         public Glyph glyph;
         public TextRenderer renderer;
 

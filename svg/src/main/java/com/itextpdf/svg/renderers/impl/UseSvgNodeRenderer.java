@@ -44,12 +44,14 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgTextUtil;
@@ -133,5 +135,10 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         UseSvgNodeRenderer copy = new UseSvgNodeRenderer();
         deepCopyAttributesAndStyles(copy);
         return copy;
+    }
+
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
     }
 }

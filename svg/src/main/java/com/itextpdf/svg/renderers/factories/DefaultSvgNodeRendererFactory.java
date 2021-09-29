@@ -42,12 +42,14 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.node.IElementNode;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererMapper.ISvgNodeRendererCreator;
 import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
 
 import java.util.Collection;
@@ -64,36 +66,16 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
 
-    private Map<String, Class<? extends ISvgNodeRenderer>> rendererMap = new HashMap<>();
-    private Collection<String> ignoredTags = new HashSet<>();
+    private final Map<String, ISvgNodeRendererCreator> rendererMap = new HashMap<>();
+    private final Collection<String> ignoredTags = new HashSet<>();
 
     /**
      * Default constructor with default {@link ISvgNodeRenderer} creation logic.
      */
     public DefaultSvgNodeRendererFactory() {
-        this(new DefaultSvgNodeRendererMapper());
-    }
-
-    /**
-     * Constructor which allows injecting a custom
-     * {@link ISvgNodeRendererMapper} implementation.
-     *
-     * @param mapper the custom mapper implementation - if null, then we fall
-     * back to the {@link DefaultSvgNodeRendererMapper}
-     * @deprecated Will be removed in 7.2. The user should use the custom
-     * {@link ISvgNodeRendererFactory} implementation (or the custom
-     * {@link DefaultSvgNodeRendererFactory} extension) to create extensions of the factory.
-     */
-    @Deprecated
-    public DefaultSvgNodeRendererFactory(ISvgNodeRendererMapper mapper) {
-        if (mapper != null) {
-            rendererMap.putAll(mapper.getMapping());
-            ignoredTags.addAll(mapper.getIgnoredTags());
-        } else {
-            ISvgNodeRendererMapper defaultMapper = new DefaultSvgNodeRendererMapper();
-            rendererMap.putAll(defaultMapper.getMapping());
-            ignoredTags.addAll(defaultMapper.getIgnoredTags());
-        }
+        final DefaultSvgNodeRendererMapper defaultMapper = new DefaultSvgNodeRendererMapper();
+        rendererMap.putAll(defaultMapper.getMapping());
+        ignoredTags.addAll(defaultMapper.getIgnoredTags());
     }
 
     @Override
@@ -101,22 +83,18 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
         ISvgNodeRenderer result;
 
         if (tag == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.TAGPARAMETERNULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.TAG_PARAMETER_NULL);
         }
 
-        try {
-            Class<? extends ISvgNodeRenderer> clazz = rendererMap.get(tag.name());
+        final ISvgNodeRendererCreator svgNodeRendererCreator = rendererMap.get(tag.name());
 
-            if (clazz == null) {
-                Logger logger = LoggerFactory.getLogger(this.getClass());
-                logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPEDTAG, tag.name()));
-                return null;
-            }
-
-            result = (ISvgNodeRenderer) rendererMap.get(tag.name()).newInstance();
-        } catch (ReflectiveOperationException ex) {
-            throw new SvgProcessingException(SvgLogMessageConstant.COULDNOTINSTANTIATE, ex).setMessageParams(tag.name());
+        if (svgNodeRendererCreator == null) {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPED_TAG, tag.name()));
+            return null;
         }
+
+        result = svgNodeRendererCreator.create();
 
         // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage
         if (parent != null && !(result instanceof INoDrawSvgNodeRenderer) && !(parent instanceof DefsSvgNodeRenderer)) {

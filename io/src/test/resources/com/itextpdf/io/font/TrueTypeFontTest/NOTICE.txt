@@ -1,0 +1,2 @@
+This software uses the following test resources under the following licenses:
+| NotoSansJP-Regular.otf | OFL-1.1 | OFL.txt |

@@ -23,20 +23,21 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.WebColors;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Tags;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the gradient &lt;stop&gt; tag.
  */
-public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implements INoDrawSvgNodeRenderer {
+public class StopSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements INoDrawSvgNodeRenderer {
 
     /**
      * Evaluates the stop color offset value.
@@ -48,7 +49,7 @@ public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implemen
         String offsetAttribute = getAttribute(Attributes.OFFSET);
         if (CssTypesValidationUtils.isPercentageValue(offsetAttribute)) {
             offset = (double) CssDimensionParsingUtils.parseRelativeValue(offsetAttribute, 1);
-        } else if (CssTypesValidationUtils.isNumericValue(offsetAttribute)) {
+        } else if (CssTypesValidationUtils.isNumber(offsetAttribute)) {
             offset = CssDimensionParsingUtils.parseDouble(offsetAttribute);
         }
         double result = offset != null ? offset.doubleValue() : 0d;
@@ -95,7 +96,12 @@ public class StopSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implemen
     }
 
     @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+    }
+
+    @Override
     protected void doDraw(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgLogMessageConstant.DRAW_NO_DRAW);
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.DRAW_NO_DRAW);
     }
 }

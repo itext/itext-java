@@ -43,9 +43,10 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -73,7 +74,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
-    private static final long serialVersionUID = 2168384302241193868L;
 
     private PdfDocument document;
     private ParentTreeHandler parentTreeHandler;
@@ -191,7 +191,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         PdfObject prevVal = roleMap.put(convertRoleToPdfName(fromRole), convertRoleToPdfName(toRole));
         if (prevVal != null && prevVal instanceof PdfName) {
             Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
-            logger.warn(MessageFormat.format(LogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal, toRole));
+            logger.warn(MessageFormat.format(IoLogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal,
+                    toRole));
         }
 
         if (roleMap.isIndirect()) {
@@ -397,7 +398,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     public void move(PdfPage fromPage, int insertBeforePage) {
         for (int i = 1; i <= getDocument().getNumberOfPages(); ++i) {
             if (getDocument().getPage(i).isFlushed()) {
-                throw new PdfException(MessageFormatUtil.format(PdfException.CannotMovePagesInPartlyFlushedDocument, i));
+                throw new PdfException(MessageFormatUtil.format(
+                        KernelExceptionMessageConstant.CANNOT_MOVE_PAGES_IN_PARTLY_FLUSHED_DOCUMENT, i));
             }
         }
         StructureTreeCopier.move(getDocument(), fromPage, insertBeforePage);
@@ -431,7 +433,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
             Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
-            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
             getDocument().getCatalog().getNameTree(PdfName.EmbeddedFiles).addEntry(description, fs.getPdfObject());
@@ -486,7 +488,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         if (PdfStructElem.isStructElem(structElem)) {
             if (getPdfObject().getIndirectReference() == null) {
-                throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_AN_INDIRECT_OBJECT_IN_ORDER_TO_HAVE_CHILDREN);
             }
             structElem.put(PdfName.P, getPdfObject());
         }

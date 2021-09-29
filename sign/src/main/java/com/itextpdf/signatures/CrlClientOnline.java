@@ -43,15 +43,14 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -116,13 +115,9 @@ public class CrlClientOnline implements ICrlClient {
             X509Certificate cert = (X509Certificate) chain[i];
             LOGGER.info("Checking certificate: " + cert.getSubjectDN());
             String url = null;
-            try {
-                url = CertificateUtil.getCRLURL(cert);
-                if (url != null) {
-                    addUrl(url);
-                }
-            } catch (CertificateParsingException e) {
-                LOGGER.info("Skipped CRL url (certificate could not be parsed)");
+            url = CertificateUtil.getCRLURL(cert);
+            if (url != null) {
+                addUrl(url);
             }
         }
     }
@@ -171,7 +166,7 @@ public class CrlClientOnline implements ICrlClient {
                 ar.add(bout.toByteArray());
                 LOGGER.info("Added CRL found at: " + urlt);
             } catch (Exception e) {
-                LOGGER.info(MessageFormatUtil.format(LogMessageConstant.INVALID_DISTRIBUTION_POINT, e.getMessage()));
+                LOGGER.info(MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, e.getMessage()));
             }
         }
         return ar;

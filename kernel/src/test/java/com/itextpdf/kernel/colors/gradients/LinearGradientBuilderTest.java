@@ -696,7 +696,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void buildWithTwoStopsBeforeTheBeginningAndNoneTest() throws IOException, InterruptedException {
+    public void buildWithTwoStopsBeforeTheBeginningAndNoneTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
         AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
@@ -709,7 +709,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void buildWithTwoStopsAfterEndAndNoneTest() throws IOException, InterruptedException {
+    public void buildWithTwoStopsAfterEndAndNoneTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
         AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
@@ -722,7 +722,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void buildWithTwoEqualOffsetsStopsAndNoneTest() throws IOException, InterruptedException {
+    public void buildWithTwoEqualOffsetsStopsAndNoneTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
         AbstractLinearGradientBuilder gradientBuilder = new LinearGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,

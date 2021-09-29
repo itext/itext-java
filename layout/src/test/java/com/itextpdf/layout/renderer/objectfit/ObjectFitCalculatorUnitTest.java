@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout.renderer.objectfit;
 
-import com.itextpdf.layout.property.ObjectFit;
+import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

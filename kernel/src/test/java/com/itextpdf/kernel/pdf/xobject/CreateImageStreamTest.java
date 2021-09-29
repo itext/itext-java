@@ -46,6 +46,7 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -96,7 +97,7 @@ public class CreateImageStreamTest extends ExtendedITextTest {
             String imgFile = imgFiles[i];
             PdfImageXObject imageXObject = new PdfImageXObject(
                     ImageDataFactory.create(sourceFolder + "compare_colorspaces/" + imgFile));
-            canvas.addXObject(imageXObject, 50 + i * 40, 550, 40);
+            canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50 + i * 40, 550, 40, 160));
         }
 
         pdfDocument.close();
@@ -152,7 +153,7 @@ public class CreateImageStreamTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(out));
         PdfImageXObject imageXObject = new PdfImageXObject(img);
         new PdfCanvas(pdfDocument.addNewPage(new PageSize(img.getWidth(), img.getHeight())))
-                .addXObject(imageXObject, 0, 0, img.getWidth());
+                .addXObjectFittedIntoRectangle(imageXObject, new Rectangle(0, 0, img.getWidth(), img.getHeight()));
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(out, cmp, destinationFolder, "diff_"));

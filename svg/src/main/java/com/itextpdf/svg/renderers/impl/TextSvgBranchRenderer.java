@@ -56,7 +56,7 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -73,8 +73,7 @@ import java.util.List;
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;text&gt; and &lt;tspan&gt; tag.
  */
-public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer,
-        ISvgTextNodeHelper {
+public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer {
 
     /**
      * Top level transformation to flip the y-axis results in the character glyphs being mirrored, this tf corrects for this behaviour
@@ -174,8 +173,8 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             basePoint.translate(getRelativeTranslation()[0], getRelativeTranslation()[1]);
             Rectangle commonRect = null;
             for (ISvgTextNodeRenderer child : getChildren()) {
-                if (child instanceof ISvgTextNodeHelper) {
-                    TextRectangle rectangle = ((ISvgTextNodeHelper) child)
+                if (child != null) {
+                    TextRectangle rectangle = child
                             .getTextRectangle(context, basePoint);
                     basePoint = rectangle.getTextBaseLineRightPoint();
                     commonRect = Rectangle.getCommonRectangle(commonRect, rectangle);
@@ -190,7 +189,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     @Override
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return getTextRectangle(context, null);
     }
 
@@ -330,7 +329,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                 // FontProvider shall be used instead.
                 font = PdfFontFactory.createFont();
             } catch (IOException e) {
-                throw new SvgProcessingException(SvgLogMessageConstant.FONT_NOT_FOUND, e);
+                throw new SvgProcessingException(SvgExceptionMessageConstant.FONT_NOT_FOUND, e);
             }
         }
     }

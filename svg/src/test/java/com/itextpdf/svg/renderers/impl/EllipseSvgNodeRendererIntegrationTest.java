@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -156,7 +156,7 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest() throws java.io.IOException, InterruptedException {
+    public void parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest() throws java.io.IOException {
         String filename = "parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();

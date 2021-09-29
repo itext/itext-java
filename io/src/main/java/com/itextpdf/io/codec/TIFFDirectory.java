@@ -45,11 +45,10 @@
 */
 package com.itextpdf.io.codec;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.io.EOFException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,9 +75,8 @@ import java.util.Map;
  *
  * @see TIFFField
  */
-public class TIFFDirectory implements Serializable {
+public class TIFFDirectory {
 
-    private static final long serialVersionUID = -168636766193675380L;
 
     /**
      * A boolean storing the endianness of the stream.

@@ -42,8 +42,8 @@
  */
 package com.itextpdf.signatures.testutils.client;
 
-import com.itextpdf.io.util.DateTimeUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import java.security.PrivateKey;
@@ -57,7 +57,7 @@ public class TestCrlClient implements ICrlClient {
     private final TestCrlBuilder crlBuilder;
     private final PrivateKey caPrivateKey;
 
-    public TestCrlClient(TestCrlBuilder crlBuilder, PrivateKey caPrivateKey) throws CertificateEncodingException {
+    public TestCrlClient(TestCrlBuilder crlBuilder, PrivateKey caPrivateKey) {
         this.crlBuilder = crlBuilder;
         this.caPrivateKey = caPrivateKey;
     }

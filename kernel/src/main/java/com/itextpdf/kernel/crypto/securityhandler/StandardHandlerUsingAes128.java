@@ -56,7 +56,6 @@ import java.io.OutputStream;
 public class StandardHandlerUsingAes128 extends StandardHandlerUsingStandard128 {
     private static final byte[] salt = {(byte) 0x73, (byte) 0x41, (byte) 0x6c,
             (byte) 0x54};
-    private static final long serialVersionUID = -5459302622100333593L;
 
     public StandardHandlerUsingAes128(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, byte[] documentId) {

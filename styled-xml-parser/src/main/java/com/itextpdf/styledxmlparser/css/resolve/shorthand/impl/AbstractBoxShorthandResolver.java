@@ -42,8 +42,8 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
@@ -105,7 +105,9 @@ public abstract class AbstractBoxShorthandResolver implements IShorthandResolver
             for (String prop : props) {
                 if (CommonCssConstants.INHERIT.equals(prop) || CommonCssConstants.INITIAL.equals(prop)) {
                     Logger logger = LoggerFactory.getLogger(AbstractBoxShorthandResolver.class);
-                    logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
+                    logger.warn(
+                            MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                                    shorthandExpression));
                     return Collections.<CssDeclaration>emptyList();
                 }
             }

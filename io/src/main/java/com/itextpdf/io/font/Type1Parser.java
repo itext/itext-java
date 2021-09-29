@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -53,11 +53,9 @@ import com.itextpdf.io.util.ResourceUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.InputStream;
-import java.io.Serializable;
 
-class Type1Parser implements Serializable {
+class Type1Parser {
 
-    private static final long serialVersionUID = -8484541242371901414L;
 
     private static final String AFM_HEADER = "StartFontMetrics";
 

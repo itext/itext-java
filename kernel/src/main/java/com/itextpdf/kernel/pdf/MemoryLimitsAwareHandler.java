@@ -42,9 +42,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 
-import java.io.Serializable;
 import java.util.HashSet;
 
 /**
@@ -56,9 +56,8 @@ import java.util.HashSet;
  *
  * @see ReaderProperties#setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler)
  */
-public class MemoryLimitsAwareHandler implements Serializable {
+public class MemoryLimitsAwareHandler {
 
-    private static final long serialVersionUID = 2499046471291214639L;
 
     private static final int SINGLE_SCALE_COEFFICIENT = 100;
     private static final int SUM_SCALE_COEFFICIENT = 500;
@@ -181,7 +180,7 @@ public class MemoryLimitsAwareHandler implements Serializable {
             memoryUsedForCurrentPdfStreamDecompression = numOfOccupiedBytes;
             if (memoryUsedForCurrentPdfStreamDecompression > maxSizeOfSingleDecompressedPdfStream) {
                 throw new MemoryLimitsAwareException(
-                        PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed);
+                        KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED);
             }
         }
         return this;
@@ -209,7 +208,7 @@ public class MemoryLimitsAwareHandler implements Serializable {
         allMemoryUsedForDecompression += memoryUsedForCurrentPdfStreamDecompression;
         if (allMemoryUsedForDecompression > maxSizeOfDecompressedPdfStreamsSum) {
             throw new MemoryLimitsAwareException(
-                    PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed);
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED);
         }
         ensureCurrentStreamIsReset();
         considerCurrentPdfStream = false;

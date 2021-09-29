@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 
 /**
  * A generic Map-like interface that defines methods for storing and retrieving

@@ -48,8 +48,9 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.ImageType;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Point;
@@ -174,7 +175,7 @@ public class MetaDo {
      */
     public void readAll() throws IOException {
         if (in.readInt() != 0x9AC6CDD7) {
-            throw new PdfException(PdfException.NotAPlaceableWindowsMetafile);
+            throw new PdfException(KernelExceptionMessageConstant.NOT_A_PLACEABLE_WINDOWS_METAFILE);
         }
         in.readWord();
         left = in.readShort();
@@ -587,7 +588,7 @@ public class MetaDo {
                         float height = -destHeight * bmpImage.getHeight() / srcHeight;
                         float x = xDest - destWidth * xSrc / srcWidth;
                         float y = yDest + destHeight * ySrc / srcHeight - height;
-                        cb.addXObject(imageXObject, new Rectangle(x, y, width, height));
+                        cb.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(x, y, width, height));
                         cb.restoreState();
                     }
                     catch (Exception e) {
@@ -745,7 +746,7 @@ public class MetaDo {
      */
     public static byte[] wrapBMP(ImageData image) throws IOException {
         if (image.getOriginalType() != ImageType.BMP) {
-            throw new PdfException(PdfException.OnlyBmpCanBeWrappedInWmf);
+            throw new PdfException(KernelExceptionMessageConstant.ONLY_BMP_CAN_BE_WRAPPED_IN_WMF);
         }
         InputStream imgIn;
         byte data[];

@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.PlaceItemsShorthandResolver;
@@ -82,7 +82,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 3))
     public void containsInitialOrInheritOrUnsetShorthandTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -97,7 +97,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, count = 2))
     public void emptyShorthandTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
         String emptyShorthand = "";
@@ -122,7 +122,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneInvalidAlignItemsWordTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -133,7 +133,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneInvalidWordTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -172,7 +172,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAndFirstWordIsInvalidTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -183,7 +183,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAndSecondWordIsInvalidTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -208,7 +208,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithOneWordAlignItemsAndInvalidTwoWordsJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -233,7 +233,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAlignItemsAndInvalidOneWordJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -244,7 +244,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithThreeWordsAndInvalidAlignItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -269,7 +269,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithTwoWordsAlignItemsAndInvalidTwoWordsJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -280,7 +280,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithInvalidTwoWordsAlignItemsAndTwoWordsJustifyItemsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 
@@ -291,7 +291,7 @@ public class PlaceItemsShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION))
     public void shorthandWithFiveWordsTest() {
         IShorthandResolver resolver = new PlaceItemsShorthandResolver();
 

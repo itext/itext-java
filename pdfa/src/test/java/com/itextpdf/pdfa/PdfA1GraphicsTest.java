@@ -54,6 +54,7 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -263,7 +264,7 @@ public class PdfA1GraphicsTest extends ExtendedITextTest {
 
         PdfTransparencyGroup group = new PdfTransparencyGroup();
         xObject.setGroup(group);
-        canvas.addXObject(xObject, new Rectangle(300, 300));
+        canvas.addXObjectFittedIntoRectangle(xObject, new Rectangle(300, 300));
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
         Assert.assertEquals(PdfAConformanceException.A_GROUP_OBJECT_WITH_AN_S_KEY_WITH_A_VALUE_OF_TRANSPARENCY_SHALL_NOT_BE_INCLUDED_IN_A_FORM_XOBJECT,

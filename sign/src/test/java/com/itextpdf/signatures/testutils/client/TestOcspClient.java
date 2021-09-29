@@ -61,7 +61,7 @@ public class TestOcspClient implements IOcspClient {
         return this;
     }
 
-    public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, TestOcspResponseBuilder builder) throws CertificateEncodingException {
+    public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, TestOcspResponseBuilder builder) {
         issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16), builder);
         return this;
     }

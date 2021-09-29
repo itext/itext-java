@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 5184499156015360355L;
 
     /** A type of initial view */
     public static final int DETAILS = 0;
@@ -132,19 +131,6 @@ public class PdfCollection extends PdfObjectWrapper<PdfDictionary> {
                 break;
         }
         return this;
-    }
-
-    /**
-     * Retrieves view as {@link PdfNumber pdf number}.
-     *
-     * @return the view
-     * @deprecated Will always return null. The return will be changed to PdfName in 7.2.
-     *             Use {@code getPdfObject().getAsName(PdfName.View)},
-     *             or one of {@link #isViewDetails()}, {@link #isViewTile()}, {@link #isViewHidden()}.
-     */
-    @Deprecated
-    public PdfNumber getView() {
-        return getPdfObject().getAsNumber(PdfName.View);
     }
 
     /**

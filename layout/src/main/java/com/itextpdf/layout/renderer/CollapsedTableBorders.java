@@ -47,7 +47,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 
 import java.util.ArrayList;
 import java.util.List;

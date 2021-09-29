@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
@@ -58,7 +58,7 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -164,9 +164,15 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         String meetOrSlice = SvgConstants.Values.MEET;
         String align = SvgConstants.Values.DEFAULT_ASPECT_RATIO;
 
-        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
-            String preserveAspectRatioValue = this.attributesAndStyles
-                    .get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
+        String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (preserveAspectRatioValue == null) {
+            preserveAspectRatioValue =
+                    this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase());
+        }
+
+        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO) ||
+                this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase())) {
             List<String> aspectRatioValuesSplitValues = SvgCssUtils.splitValueList(preserveAspectRatioValue);
 
             align = aspectRatioValuesSplitValues.get(0).toLowerCase();
@@ -200,8 +206,12 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     private void applyViewportTranslationCorrection(SvgDrawContext context) {
         PdfCanvas currentCanvas = context.getCurrentCanvas();
         AffineTransform tf = this.calculateViewPortTranslation(context);
-        if (!tf.isIdentity() && SvgConstants.Values.NONE
-                .equals(this.getAttribute(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO))) {
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        boolean preserveAspectRationNone =
+                SvgConstants.Values.NONE.equals(getAttribute(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) ||
+                        SvgConstants.Values.NONE.equals(
+                                getAttribute(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase()));
+        if (!tf.isIdentity() && preserveAspectRationNone) {
             currentCanvas.concatMatrix(tf);
         }
     }
@@ -407,6 +417,10 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             return new float[]{};
         }
         String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (viewBoxValues == null) {
+            viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX.toLowerCase());
+        }
         if (viewBoxValues == null) {
             return new float[]{};
         }

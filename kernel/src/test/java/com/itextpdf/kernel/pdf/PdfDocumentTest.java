@@ -42,13 +42,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
@@ -65,13 +63,12 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.nio.charset.StandardCharsets;
-
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,14 +88,18 @@ public class PdfDocumentTest extends ExtendedITextTest {
     @Test
     public void missingProducerTest() throws IOException {
         String inputFile = SOURCE_FOLDER + "missingProducer.pdf";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNull(documentInfo.getProducer());
         }
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputStream),
+                new PdfWriter(new ByteArrayOutputStream()))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNotNull(document.getDocumentInfo().getProducer());
@@ -108,14 +109,17 @@ public class PdfDocumentTest extends ExtendedITextTest {
     @Test
     public void nullProducerTest() throws IOException {
         String inputFile = SOURCE_FOLDER + "nullProducer.pdf";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertEquals(PdfNull.PDF_NULL, documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNull(documentInfo.getProducer());
         }
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputStream), new PdfWriter(new ByteArrayOutputStream()))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNotNull(document.getDocumentInfo().getProducer());
@@ -125,14 +129,17 @@ public class PdfDocumentTest extends ExtendedITextTest {
     @Test
     public void nameProducerTest() throws IOException {
         String inputFile = SOURCE_FOLDER + "nameProducer.pdf";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertEquals(new PdfName("producerAsName"), documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNull(documentInfo.getProducer());
         }
 
-        try (PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(new ByteArrayOutputStream()))) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(inputStream), new PdfWriter(new ByteArrayOutputStream()))) {
             PdfDocumentInfo documentInfo = document.getDocumentInfo();
             Assert.assertNotNull(documentInfo.getPdfObject().get(PdfName.Producer));
             Assert.assertNotNull(document.getDocumentInfo().getProducer());
@@ -364,7 +371,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE))
     public void testFreeReference() throws IOException, InterruptedException {
         PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "freeReference.pdf",
                 new WriterProperties().setFullCompressionMode(false));
@@ -512,7 +519,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.OUTLINE_DESTINATION_PAGE_NUMBER_IS_OUT_OF_BOUNDS, logLevel = LogLevelConstants.WARN)
+            @LogMessage(messageTemplate = IoLogMessageConstant.OUTLINE_DESTINATION_PAGE_NUMBER_IS_OUT_OF_BOUNDS, logLevel = LogLevelConstants.WARN)
     })
     public void removePageWithInvalidOutlineTest() throws IOException, InterruptedException {
         String source = SOURCE_FOLDER + "invalid_outline.pdf";
@@ -530,7 +537,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED,
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED,
                     logLevel = LogLevelConstants.ERROR)
     })
     public void openDocumentWithInvalidCatalogVersionTest() throws IOException {
@@ -548,10 +555,26 @@ public class PdfDocumentTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> new PdfDocument(reader)
             );
-            Assert.assertEquals(LogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED, e.getMessage());
+            Assert.assertEquals(IoLogMessageConstant.DOCUMENT_VERSION_IN_CATALOG_CORRUPTED, e.getMessage());
         }
     }
 
+    @Test
+    // TODO DEVSIX-5760 cleaned widget left in the kids of the form field
+    public void widgetDaEntryRemovePageTest() throws IOException, InterruptedException {
+        // In this test widgets contain entry /DA that is not specific for widget annotation, so after removing of the
+        // page such widget is not removed from the document. See method PdfDocument#removeUnusedWidgetsFromFields
+        // to see logic of removing unused widgets.
+        // If open the output PDF in Adobe Acrobat, widgets on pages 3-4 will not be viewed. It seems to adobe bug.
+        final String testName = "widgetDaEntryRemovePage.pdf";
+        final String outPdf = DESTINATION_FOLDER + testName;
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "widgetWithDaEntry.pdf"),
+                new PdfWriter(outPdf));
+        pdfDocument.removePage(3);
+        pdfDocument.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_" + testName,
+                DESTINATION_FOLDER));
+    }
 
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 

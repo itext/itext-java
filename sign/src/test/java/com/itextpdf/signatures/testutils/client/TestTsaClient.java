@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.testutils.client;
 
-import com.itextpdf.io.util.SystemUtil;
+import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;

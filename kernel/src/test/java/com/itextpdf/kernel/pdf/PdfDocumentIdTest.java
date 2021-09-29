@@ -47,9 +47,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
@@ -271,7 +271,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
     })
     public void readPdfWithTwoNumberIdsTest() throws IOException{
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithTwoNumberIds.pdf"));
@@ -293,7 +293,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
     })
     public void readPdfWithOneNumberOneStringIdsTest() throws IOException{
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithOneNumberOneStringIds.pdf"));
@@ -313,7 +313,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
     })
     public void readPdfWithOneStringIdValueTest() throws IOException{
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithOneStringId.pdf"));
@@ -333,7 +333,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
     })
     public void readPdfWithOneNumberIdValueTest() throws IOException{
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithOneNumberId.pdf"));
@@ -353,7 +353,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED)
     })
     public void readPdfWithNoIdTest() throws IOException{
         PdfReader reader = new PdfReader(sourceFolder + "pdfWithNoId.pdf");
@@ -382,7 +382,7 @@ public class PdfDocumentIdTest extends ExtendedITextTest {
                 .setStrictnessLevel(StrictnessLevel.CONSERVATIVE)) {
 
             Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(LogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED, e.getMessage());
+            Assert.assertEquals(IoLogMessageConstant.DOCUMENT_IDS_ARE_CORRUPTED, e.getMessage());
         }
     }
 

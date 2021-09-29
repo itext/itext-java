@@ -590,11 +590,6 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         canvas.setFillColor(patternColorLine);
         canvas.rectangle(180, 576, 126, 126).fill();
 
-        // this case will be removed when deprecated method is removed
-        patternColorLine.setPattern(circle);
-        canvas.setFillColor(patternColorLine);
-        canvas.rectangle(360, 696, 126, 126).fill();
-
         byte[] pageContentStreamBytes = canvas.getContentStream().getBytes();
 
         canvas.release();
@@ -603,7 +598,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         String contentStreamString = new String(pageContentStreamBytes, StandardCharsets.US_ASCII);
         int p1Count = countSubstringOccurrences(contentStreamString, "/P1 scn");
         int p2Count = countSubstringOccurrences(contentStreamString, "/P2 scn");
-        Assert.assertEquals(3, p1Count);
+        Assert.assertEquals(2, p1Count);
         Assert.assertEquals(2, p2Count);
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + name,
                 SOURCE_FOLDER + "cmp_" + name, DESTINATION_FOLDER));

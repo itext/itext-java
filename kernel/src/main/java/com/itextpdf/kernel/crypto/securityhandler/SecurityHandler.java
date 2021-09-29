@@ -43,18 +43,15 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.security.MessageDigest;
 
-public abstract class SecurityHandler implements Serializable {
+public abstract class SecurityHandler {
 
-    private static final long serialVersionUID = 7980424575363686173L;
     /**
      * The global encryption key
      */
@@ -72,7 +69,7 @@ public abstract class SecurityHandler implements Serializable {
     protected int nextObjectKeySize;
 
 
-    protected transient MessageDigest md5;
+    protected MessageDigest md5;
     /**
      * Work area to prepare the object/generation bytes
      */
@@ -114,12 +111,7 @@ public abstract class SecurityHandler implements Serializable {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        safeInitMessageDigest();
     }
 }

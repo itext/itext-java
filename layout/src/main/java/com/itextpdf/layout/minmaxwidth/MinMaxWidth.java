@@ -42,11 +42,8 @@
  */
 package com.itextpdf.layout.minmaxwidth;
 
-import java.io.Serializable;
+public class MinMaxWidth {
 
-public class MinMaxWidth implements Serializable {
-
-    private static final long serialVersionUID = -4642527900783929637L;
 
     private float childrenMinWidth;
     private float childrenMaxWidth;

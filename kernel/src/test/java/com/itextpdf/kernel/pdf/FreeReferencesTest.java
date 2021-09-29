@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -53,7 +53,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeMap;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -335,7 +334,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE))
     public void freeARefInWrongWayTest01() throws IOException {
         String out = "freeARefInWrongWayTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + out));
@@ -378,7 +377,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE, count = 2))
     public void freeARefInWrongWayTest02() throws IOException {
         String out = "freeARefInWrongWayTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + out));
@@ -430,7 +429,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE))
     public void freeARefInWrongWayTest03() throws IOException {
         String out = "freeARefInWrongWayTest03.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + out));
@@ -481,7 +480,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE))
     public void freeARefInWrongWayTest04() throws IOException {
         String out = "freeARefInWrongWayTest04.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + out));
@@ -876,7 +875,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.INVALID_INDIRECT_REFERENCE))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE))
     public void corruptedDocIndRefToFree01() throws IOException {
         String src = "corruptedDocIndRefToFree.pdf";
         String out = "corruptedDocIndRefToFree01.pdf";

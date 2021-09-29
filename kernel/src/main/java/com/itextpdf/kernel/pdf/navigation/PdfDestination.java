@@ -55,7 +55,6 @@ import java.util.Map;
 
 public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
 
-    private static final long serialVersionUID = 8102903000978704308L;
 
     protected PdfDestination(PdfObject pdfObject) {
         super(pdfObject);

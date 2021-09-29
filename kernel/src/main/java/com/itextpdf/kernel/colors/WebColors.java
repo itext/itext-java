@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.colors;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,6 @@ import java.util.StringTokenizer;
  */
 public class WebColors extends HashMap<String, int[]> {
 
-    private static final long serialVersionUID = 3542523100813372896L;
     /**
      * HashMap containing all the names and corresponding color values.
      */
@@ -263,7 +262,7 @@ public class WebColors extends HashMap<String, int[]> {
                     color[2] = (float) (Integer.parseInt(colorName.substring(4), 16) / RGB_MAX_VAL);
                 } else {
                     Logger logger = LoggerFactory.getLogger(WebColors.class);
-                    logger.error(LogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
+                    logger.error(IoLogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
                 }
             } else if (colorName.startsWith("rgb(")) {
                 final String delim = "rgb(), \t\r\n\f";

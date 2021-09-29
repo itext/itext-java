@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.colors;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -121,7 +121,7 @@ public class DeviceRgbTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.COLORANT_INTENSITIES_INVALID, count = 14)
+            @LogMessage(messageTemplate = IoLogMessageConstant.COLORANT_INTENSITIES_INVALID, count = 14)
     })
     public void invalidConstructorArgumentsTest() {
         Assert.assertEquals(0, getSumOfColorValues(new DeviceRgb(-2f, 0f, 0f)), 0.001f);

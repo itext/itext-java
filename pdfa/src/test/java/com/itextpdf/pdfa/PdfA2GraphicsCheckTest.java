@@ -43,7 +43,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
@@ -69,6 +69,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.function.PdfFunction;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -342,7 +343,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
 
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "jpeg2000/p0_01.j2k"), 300, 300, false);
+        canvas.addImageAt(ImageDataFactory.create(sourceFolder + "jpeg2000/p0_01.j2k"), 300, 300, false);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
         Assert.assertEquals(PdfAConformanceException.ONLY_JPX_BASELINE_SET_OF_FEATURES_SHALL_BE_USED, e.getMessage());
@@ -358,7 +359,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
 
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "jpeg2000/file5.jp2"), 300, 300, false);
+        canvas.addImageAt(ImageDataFactory.create(sourceFolder + "jpeg2000/file5.jp2"), 300, 300, false);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
         Assert.assertEquals(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD,
@@ -375,7 +376,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         doc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
 
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "jpeg2000/file7.jp2"), 300, 300, false);
+        canvas.addImageAt(ImageDataFactory.create(sourceFolder + "jpeg2000/file7.jp2"), 300, 300, false);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
         Assert.assertEquals(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD,
@@ -403,13 +404,13 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         for (int i = 1; i < 5; ++i) {
             canvas = new PdfCanvas(doc.addNewPage());
-            canvas.addImage(ImageDataFactory.create(MessageFormatUtil.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
+            canvas.addImageAt(ImageDataFactory.create(MessageFormatUtil.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
         }
         canvas = new PdfCanvas(doc.addNewPage());
-        canvas.addImage(ImageDataFactory.create(sourceFolder + "jpeg2000/file6.jp2"), 300, 300, false);
+        canvas.addImageAt(ImageDataFactory.create(sourceFolder + "jpeg2000/file6.jp2"), 300, 300, false);
         for (int i = 8; i < 10; ++i) {
             canvas = new PdfCanvas(doc.addNewPage());
-            canvas.addImage(ImageDataFactory.create(MessageFormatUtil.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
+            canvas.addImageAt(ImageDataFactory.create(MessageFormatUtil.format(sourceFolder + "jpeg2000/file{0}.jp2", String.valueOf(i))), 300, 300, false);
         }
 
         doc.close();

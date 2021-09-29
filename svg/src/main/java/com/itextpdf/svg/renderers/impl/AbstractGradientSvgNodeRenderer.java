@@ -22,12 +22,13 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -41,12 +42,12 @@ import org.slf4j.LoggerFactory;
  * {@link ISvgNodeRenderer} abstract implementation for gradient tags
  * (&lt;linearGradient&gt;, &lt;radialGradient&gt;).
  */
-public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvgNodeRenderer implements
+public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements
         ISvgPaintServer {
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgLogMessageConstant.DRAW_NO_DRAW);
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.DRAW_NO_DRAW);
     }
 
     /**
@@ -57,6 +58,10 @@ public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvg
      */
     protected boolean isObjectBoundingBoxUnits() {
         String gradientUnits = getAttribute(Attributes.GRADIENT_UNITS);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (gradientUnits == null) {
+            getAttribute(Attributes.GRADIENT_UNITS.toLowerCase());
+        }
         if (Values.USER_SPACE_ON_USE.equals(gradientUnits)) {
             return false;
         } else if (gradientUnits != null && !Values.OBJECT_BOUNDING_BOX.equals(gradientUnits)) {
@@ -72,6 +77,10 @@ public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvg
      */
     protected AffineTransform getGradientTransform() {
         String gradientTransform = getAttribute(Attributes.GRADIENT_TRANSFORM);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (gradientTransform == null) {
+            gradientTransform = getAttribute(Attributes.GRADIENT_TRANSFORM.toLowerCase());
+        }
         if (gradientTransform != null && !gradientTransform.isEmpty()) {
             return TransformUtils.parseTransform(gradientTransform);
         }
@@ -98,6 +107,9 @@ public abstract class AbstractGradientSvgNodeRenderer extends NoDrawOperationSvg
      */
     protected GradientSpreadMethod parseSpreadMethod() {
         String spreadMethodValue = getAttribute(Attributes.SPREAD_METHOD);
+        if (spreadMethodValue == null) {
+            spreadMethodValue = getAttribute(Attributes.SPREAD_METHOD.toLowerCase());
+        }
         if (spreadMethodValue == null) {
             // returning svg default spread method
             return GradientSpreadMethod.PAD;

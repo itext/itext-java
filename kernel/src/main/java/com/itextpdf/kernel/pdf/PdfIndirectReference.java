@@ -43,11 +43,10 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
-    private static final long serialVersionUID = -8293603068792908601L;
 
 	private static final int LENGTH_OF_INDIRECTS_CHAIN = 31;
 

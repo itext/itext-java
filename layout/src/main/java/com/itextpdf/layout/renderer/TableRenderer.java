@@ -43,8 +43,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -58,12 +58,12 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.BorderCollapsePropertyValue;
-import com.itextpdf.layout.property.CaptionSide;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
+import com.itextpdf.layout.properties.CaptionSide;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -493,11 +493,14 @@ public class TableRenderer extends AbstractRenderer {
             // the element which was the first to cause Layout.Nothing
             IRenderer firstCauseOfNothing = null;
 
-            // the width of the widest bottom border of the row
+            // In the next lines we pretend as if the current row will be the last on the current area:
+            // in this case it will be collapsed with the table's bottom border / the footer's top border
             bordersHandler.setFinishRow(rowRange.getStartRow() + row);
-            Border widestRowBottomBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row + 1);
-            bordersHandler.setFinishRow(rowRange.getFinishRow());
+            final List<Border> rowBottomBorderIfLastOnPage =
+                    bordersHandler.getHorizontalBorder(rowRange.getStartRow() + row + 1);
+            Border widestRowBottomBorder = TableBorderUtil.getWidestBorder(rowBottomBorderIfLastOnPage);
             float widestRowBottomBorderWidth = null == widestRowBottomBorder ? 0 : widestRowBottomBorder.getWidth();
+            bordersHandler.setFinishRow(rowRange.getFinishRow());
 
             // if cell is in the last row on the page, its borders shouldn't collapse with the next row borders
             while (cellProcessingQueue.size() > 0) {
@@ -540,8 +543,41 @@ public class TableRenderer extends AbstractRenderer {
                 float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col,
                         rowspan, colspan);
                 if (!(bordersHandler instanceof SeparatedTableBorders)) {
+                    // Bottom indent to be applied consists of two parts which should be summed up:
+                    // a) half of the border of the current row (in case it is the last row on the area)
+                    // b) half of the widest possible bottom border (in case it is the last row on the area)
+                    //
+                    // The following "image" demonstrates the idea: C represents some content,
+                    // 1 represents border, 0 represents not occupied space, - represents
+                    // the middle of a horizontal border, | represents vertical border
+                    // (the latter could be of customized width as well, however, for the reasons
+                    // of this comment it could omitted)
+                    // CCCCC|CCCCC
+                    // CCCCC|11111
+                    // CCCCC|11111
+                    // 11111|11111
+                    // -----|-----
+                    // 11111|11111
+                    // 00000|11111
+                    // 00000|11111
+                    //
+                    // The question arises, however: what if the top border of the cell below is wider than the
+                    // bottom border of the table. This is already considered: when considering rowHeight
+                    // the width of the real collapsed border will be added to it.
+                    // It is quite important to understand that in case it is not possible
+                    // to add any other row, the current row should be collapsed with the table's bottom
+                    // footer's top borders rather than with the next row. If it is the case, iText
+                    // will revert collapsing to the one considered in the next calculations.
+
+                    // Be aware that if the col-th border of rowBottomBorderIfLastOnPage is null,
+                    // cellIndents[2] might not be null: imagine a table without borders,
+                    // a cell with no border (the current cell) and a cell below with some top border.
+                    // Nevertheless, a stated above we do not need to consider cellIndents[2] here.
+                    final float potentialWideCellBorder = null == rowBottomBorderIfLastOnPage.get(col)
+                            ? 0
+                            : rowBottomBorderIfLastOnPage.get(col).getWidth();
                     bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1],
-                            cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
+                            potentialWideCellBorder + widestRowBottomBorderWidth, cellIndents[3], false);
                 }
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
@@ -852,7 +888,13 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 // Apply borders if there is no footer
                 if (null == footerRenderer) {
-                    if (0 != this.childRenderers.size()) {
+                    // If split renderer does not have any rows, it can mean two things:
+                    // - either nothing is placed and the top border, which have been already applied,
+                    // should be reverted
+                    // - or the only placed row is placed partially.
+                    // In the latter case the number of added child renderers should equal to the number of the cells
+                    // in the current row (currChildRenderers stands for it)
+                    if (!splitResult[0].rows.isEmpty() || currChildRenderers.size() == childRenderers.size()) {
                         bordersHandler.applyBottomTableBorder(occupiedArea.getBBox(), layoutBox, false);
                     } else {
                         bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, true);
@@ -900,7 +942,7 @@ public class TableRenderer extends AbstractRenderer {
                             || wasHeightClipped) {
                         if (wasHeightClipped) {
                             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+                            logger.warn(IoLogMessageConstant.CLIP_ELEMENT);
                             // Process borders
                             if (status == LayoutResult.NOTHING) {
                                 bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
@@ -949,7 +991,7 @@ public class TableRenderer extends AbstractRenderer {
             }
             if (lastInRow < 0 || lastRow.length != lastInRow + (int) lastRow[lastInRow].getPropertyAsInteger(Property.COLSPAN)) {
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.warn(LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
+                logger.warn(IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
             }
         }
 
@@ -1322,25 +1364,17 @@ public class TableRenderer extends AbstractRenderer {
         UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
         if (!marginRightUV.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_RIGHT));
         }
         UnitValue marginLefttUV = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
         if (!marginLefttUV.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_LEFT));
         }
         float additionalWidth = marginLefttUV.getValue() + marginRightUV.getValue() + rightMaxBorder / 2 + leftMaxBorder / 2;
         return new MinMaxWidth(minWidth, maxColTotalWidth, additionalWidth);
-    }
-
-    /**
-     * @deprecated Will be removed in next major release (iText 7.2).
-     * The aim of this method overriding here is achieved by overriding {@link #allowLastYLineRecursiveExtraction} method.
-     */
-    @Override
-    @Deprecated
-    protected Float getLastYLineRecursively() {
-        return null;
     }
 
     @Override
@@ -1404,7 +1438,8 @@ public class TableRenderer extends AbstractRenderer {
             UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
             if (null != topMargin && !topMargin.isPointValue()) {
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                        Property.MARGIN_LEFT));
             }
             startY -= null == topMargin ? 0 : topMargin.getValue();
         }
@@ -1412,7 +1447,8 @@ public class TableRenderer extends AbstractRenderer {
             UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
             if (null != leftMargin && !leftMargin.isPointValue()) {
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                        Property.MARGIN_LEFT));
             }
             startX += +(null == leftMargin ? 0 : leftMargin.getValue());
         }
@@ -1685,7 +1721,8 @@ public class TableRenderer extends AbstractRenderer {
             // TODO Remove try-catch when DEVSIX-1655 is resolved.
             } catch (NullPointerException e) {
                 Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the cell's content might not end up placed correctly."));
+                logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                        "Some of the cell's content might not end up placed correctly."));
             }
         }
     }
@@ -1941,20 +1978,24 @@ public class TableRenderer extends AbstractRenderer {
         UnitValue[] margins = getMargins();
         if (!margins[1].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_RIGHT));
         }
         if (!margins[3].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_LEFT));
         }
         UnitValue[] paddings = getPaddings();
         if (!paddings[1].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_RIGHT));
         }
         if (!paddings[3].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_LEFT));
         }
         calculateColumnWidths(layoutBox.getWidth()
                 - margins[1].getValue() - margins[3].getValue()

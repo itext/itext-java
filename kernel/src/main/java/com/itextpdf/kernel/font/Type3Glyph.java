@@ -44,7 +44,7 @@
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -62,7 +62,6 @@ public final class Type3Glyph extends PdfCanvas {
     private static final String D_1_STR = "d1\n";
     private static final byte[] d0 = ByteUtils.getIsoBytes(D_0_STR);
     private static final byte[] d1 = ByteUtils.getIsoBytes(D_1_STR);
-    private static final long serialVersionUID = 5811604071799271336L;
 
     private float wx;
     private float llx;
@@ -189,11 +188,11 @@ public final class Type3Glyph extends PdfCanvas {
      * @return created Image XObject or null in case of in-line image (asInline = true).
      */
     @Override
-    public PdfXObject addImage(ImageData image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
+    public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f, boolean inlineImage) {
         if (!isColor && (!image.isMask() || !(image.getBpc() == 1 || image.getBpc() > 0xff))) {
             throw new PdfException("Not colorized type3 fonts accept only mask images.");
         }
-        return super.addImage(image, a, b, c, d, e, f, inlineImage);
+        return super.addImageWithTransformationMatrix(image, a, b, c, d, e, f, inlineImage);
     }
 
     private void fillBBFromBytes(byte[] bytes) {

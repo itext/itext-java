@@ -45,15 +45,22 @@ package com.itextpdf.kernel.pdf.xobject;
 import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
-import com.itextpdf.kernel.Version;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+
 import java.io.IOException;
 
 class ImagePdfBytesInfo {
+
+    private static final String TIFFTAG_SOFTWARE_VALUE = "iText\u00ae " +
+            ITextCoreProductData.getInstance().getVersion() + " \u00a9" + ITextCoreProductData.getInstance()
+            .getSinceCopyrightYear() + "-" + ITextCoreProductData.getInstance().getToCopyrightYear()
+            + " iText Group NV";
+
     private int pngColorType;
     private int pngBitDepth;
     private int bpc;
@@ -88,21 +95,21 @@ class ImagePdfBytesInfo {
         java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
         if (pngColorType < 0) {
             if (bpc != 8)
-                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
+                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
 
             if (colorspace instanceof PdfArray) {
                 PdfArray ca = (PdfArray) colorspace;
                 PdfObject tyca = ca.get(0);
                 if (!PdfName.ICCBased.equals(tyca))
-                    throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
+                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
                 PdfStream pr = (PdfStream) ca.get(1);
                 int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n != 4) {
-                    throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.NValueIsNotSupported).setMessageParams(n);
+                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.NValueIsNotSupported).setMessageParams(n);
                 }
                 icc = pr.getBytes();
             } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
-                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
+                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
             }
             stride = 4 * width;
             TiffWriter wr = new TiffWriter();
@@ -117,7 +124,7 @@ class ImagePdfBytesInfo {
             wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_XRESOLUTION, new int[]{300, 1}));
             wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_YRESOLUTION, new int[]{300, 1}));
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_RESOLUTIONUNIT, TIFFConstants.RESUNIT_INCH));
-            wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, Version.getInstance().getVersion()));
+            wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, TIFFTAG_SOFTWARE_VALUE));
             java.io.ByteArrayOutputStream comp = new java.io.ByteArrayOutputStream();
             TiffWriter.compressLZW(comp, 2, imageBytes, (int) height, 4, stride);
             byte[] buf = comp.toByteArray();

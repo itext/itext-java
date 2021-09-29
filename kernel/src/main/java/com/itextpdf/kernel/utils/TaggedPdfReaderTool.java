@@ -43,7 +43,8 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -131,7 +132,7 @@ public class TaggedPdfReaderTool {
         // get the StructTreeRoot from the document
         PdfStructTreeRoot structTreeRoot = document.getStructTreeRoot();
         if (structTreeRoot == null)
-            throw new PdfException(PdfException.DocumentDoesntContainStructTreeRoot);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT);
         // Inspect the child or children of the StructTreeRoot
         inspectKids(structTreeRoot.getKids());
         if (rootTag != null) {
@@ -192,7 +193,7 @@ public class TaggedPdfReaderTool {
                 out.write(" <flushedKid/> ");
             }
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
+            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.UnknownIOException, e);
         }
     }
 
@@ -216,7 +217,7 @@ public class TaggedPdfReaderTool {
                     out.write("\"");
                 }
             } catch (java.io.IOException e) {
-                throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
+                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.UnknownIOException, e);
             }
         }
     }
@@ -251,7 +252,7 @@ public class TaggedPdfReaderTool {
         try {
             out.write(escapeXML(tagContent, true));
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.IOException(com.itextpdf.io.IOException.UnknownIOException, e);
+            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.UnknownIOException, e);
         }
     }
 

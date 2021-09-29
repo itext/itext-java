@@ -42,22 +42,29 @@
  */
 package com.itextpdf.io.util;
 
-import com.itextpdf.io.IoExceptionMessage;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.SystemUtil;
+import com.itextpdf.io.exceptions.IoExceptionMessage;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import java.io.File;
-import java.io.IOException;
-
 
 @Category(IntegrationTest.class)
 public class GhostscriptHelperTest extends ExtendedITextTest {
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/GhostscriptHelperTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/GhostscriptHelperTest/";
+
+    // In some of the test we will check whether Ghostscript has printed its help message to the console.
+    // The value of this threshold should be definitely less than the length of the help message.
+    private static final int SYSTEM_OUT_LENGTH_LIMIT = 400;
 
     @Before
     public void setUp() {
@@ -74,7 +81,8 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
     public void ghostScriptEnvVarIsExplicitlySpecified() {
         String gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
         if (gsExec == null) {
-            gsExec = SystemUtil.getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
+            gsExec = SystemUtil
+                    .getPropertyOrEnvironmentVariable(GhostscriptHelper.GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
         }
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper(gsExec);
@@ -112,15 +120,16 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
     }
 
     @Test
-    public void runGhostScriptIncorrectParams() throws IOException, InterruptedException {
+    public void runGhostScriptIncorrectParams() {
         String inputPdf = SOURCE_FOLDER + "imageHandlerUtilTest.pdf";
-        String exceptionMessage = "GhostScript failed for " + inputPdf;
+        String invalidPageList = "q@W";
+        String exceptionMessage = "Invalid page list: " + invalidPageList;
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
 
-        Exception e = Assert.assertThrows(GhostscriptHelper.GhostscriptExecutionException.class,
-                () ->  ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
-                        "outputPageImage.png", "q@W")
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
+                        "outputPageImage.png", invalidPageList)
         );
         Assert.assertEquals(exceptionMessage, e.getMessage());
     }
@@ -131,10 +140,10 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
         ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
-                "specificPage.png", "1");
+                "specificPage", "1");
 
         Assert.assertEquals(1, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "specificPage.png"));
+        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "specificPage-001.png"));
     }
 
     @Test
@@ -142,13 +151,15 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         String inputPdf = SOURCE_FOLDER + "imageHandlerUtilTest.pdf";
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
-        String imageFileName = new File(inputPdf).getName() + "_severalSpecificPages-%03d.png";
+        String imageFileName = new File(inputPdf).getName() + "_severalSpecificPages";
         ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
                 imageFileName, "1,3");
 
         Assert.assertEquals(2, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_severalSpecificPages-001.png"));
-        Assert.assertTrue(FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_severalSpecificPages-002.png"));
+        Assert.assertTrue(
+                FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_severalSpecificPages-001.png"));
+        Assert.assertTrue(
+                FileUtil.fileExists(DESTINATION_FOLDER + "imageHandlerUtilTest.pdf_severalSpecificPages-002.png"));
     }
 
     @Test
@@ -156,7 +167,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         String inputPdf = SOURCE_FOLDER + "imageHandlerUtilTest.pdf";
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
-        String imageFileName = new File(inputPdf).getName() + "_allPages-%03d.png";
+        String imageFileName = new File(inputPdf).getName() + "_allPages";
         ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER, imageFileName);
 
         Assert.assertEquals(3, FileUtil.listFilesInDirectory(DESTINATION_FOLDER, true).length);
@@ -169,8 +180,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
     public void dSaferParamInGhostScriptHelperTest() throws IOException, InterruptedException {
         String input = SOURCE_FOLDER + "unsafePostScript.ps";
         String outputName = "unsafePostScript.png";
-        String maliciousResult1 = DESTINATION_FOLDER + "output1.txt";
-        String maliciousResult2 = DESTINATION_FOLDER + "output2.txt";
+
         try {
             GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
             ghostscriptHelper.runGhostScriptImageGeneration(input, DESTINATION_FOLDER, outputName);
@@ -179,23 +189,97 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
                     + "This is expected for some environments and ghostscript versions. "
                     + "We assert only the absence of malicious script result (created file).\n");
         }
+
+        // If we had not set -dSAFER option, the following files would be created
+        String maliciousResult1 = DESTINATION_FOLDER + "output1.txt";
+        String maliciousResult2 = DESTINATION_FOLDER + "output2.txt";
+
         Assert.assertFalse(FileUtil.fileExists(maliciousResult1));
         Assert.assertFalse(FileUtil.fileExists(maliciousResult2));
     }
 
     @Test
     public void ghostScriptImageGenerationTest() throws IOException, InterruptedException {
-        String filename = "resultantImage.png";
+        String name = "resultantImage";
+        String filename = name + ".png";
         String psFile = SOURCE_FOLDER + "simple.ps";
-        String resultantImage = DESTINATION_FOLDER + filename;
+        String resultantImage = DESTINATION_FOLDER + name + "-001.png";
         String cmpResultantImage = SOURCE_FOLDER + "cmp_" + filename;
         String diff = DESTINATION_FOLDER + "diff_" + filename;
 
         GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
-        ghostscriptHelper.runGhostScriptImageGeneration(psFile, DESTINATION_FOLDER, filename);
+        ghostscriptHelper.runGhostScriptImageGeneration(psFile, DESTINATION_FOLDER, name);
         Assert.assertTrue(FileUtil.fileExists(resultantImage));
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         Assert.assertTrue(imageMagickHelper.runImageMagickImageCompare(resultantImage, cmpResultantImage, diff));
+    }
+
+    @Test
+    // Previously this test printed help message. Now an exception should be thrown.
+    public void pdfCallsHelpTest() {
+        String inputPdf = SOURCE_FOLDER + "../test.pdf -h";
+        String outputImagePattern = "image";
+
+        GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
+
+        // In .NET the type of the thrown exception is different, therefore we just check here that
+        // any exception has been thrown.
+        Assert.assertThrows(Exception.class, () ->
+                ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER, outputImagePattern));
+    }
+
+    @Test
+    public void outputImageCallsHelpTest() throws IOException {
+        String inputPdf = SOURCE_FOLDER + "../test.pdf";
+        String outputImagePattern = "justSomeText \" -h";
+
+        GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
+
+        Object storedPrintStream = System.out;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            System.setOut(new PrintStream(baos));
+            ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER, outputImagePattern);
+        } catch (Exception e) {
+            // This test fails on Windows, but works on Linux. So our goal is not to check
+            // whether an exception was thrown, but whether there is the help message in the output
+        } finally {
+            System.out.flush();
+            StandardOutUtil.restoreStandardOut(storedPrintStream);
+            Assert.assertTrue(baos.toByteArray().length < SYSTEM_OUT_LENGTH_LIMIT);
+            baos.close();
+        }
+    }
+
+    @Test
+    // Previously this test printed help message. Now an exception should be thrown.
+    public void pageListCallsHelpTest() {
+        String inputPdf = SOURCE_FOLDER + "../test.pdf";
+        String outputImagePattern = "justSomeText";
+        String pageList = "1 -h";
+
+        GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
+
+        // In .NET the type of the thrown exception is different, therefore we just check here that
+        // any exception has been thrown.
+        Assert.assertThrows(Exception.class, () ->
+                ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, DESTINATION_FOLDER,
+                        outputImagePattern, pageList));
+    }
+
+    @Test
+    public void nonExistingDestinationFolder() {
+        String inputPdf = SOURCE_FOLDER + "../test.pdf";
+        String outputImagePattern = "justSomeText";
+        String destinationFolder = "notExistingFolder";
+
+        GhostscriptHelper ghostscriptHelper = new GhostscriptHelper();
+
+        // In .NET the type of the thrown exception is different, therefore we just check here that
+        // any exception has been thrown.
+        Assert.assertThrows(Exception.class,
+                () -> ghostscriptHelper.runGhostScriptImageGeneration(inputPdf, destinationFolder,
+                        outputImagePattern));
     }
 }

@@ -48,12 +48,11 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 
-import java.io.Serializable;
 
 /**
  * Enumeration of all the PDF/A conformance levels.
  */
-public class PdfAConformanceLevel implements Serializable {
+public class PdfAConformanceLevel {
 
     public static final PdfAConformanceLevel PDF_A_1A = new PdfAConformanceLevel("1", "A");
     public static final PdfAConformanceLevel PDF_A_1B = new PdfAConformanceLevel("1", "B");
@@ -63,7 +62,6 @@ public class PdfAConformanceLevel implements Serializable {
     public static final PdfAConformanceLevel PDF_A_3A = new PdfAConformanceLevel("3", "A");
     public static final PdfAConformanceLevel PDF_A_3B = new PdfAConformanceLevel("3", "B");
     public static final PdfAConformanceLevel PDF_A_3U = new PdfAConformanceLevel("3", "U");
-    private static final long serialVersionUID = 1481878095812910587L;
 
     private final String conformance;
     private final String part;

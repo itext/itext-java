@@ -44,7 +44,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(0, ((PngImageData)img).getColorType());
     }
 
@@ -56,7 +56,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(0, ((PngImageData)img).getColorType());
     }
 
@@ -67,10 +67,10 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(4, ((PngImageData)img).getColorType());
         Assert.assertNotNull(img.getImageMask());
-        Assert.assertEquals(1, img.getImageMask().getColorSpace());
+        Assert.assertEquals(1, img.getImageMask().getColorEncodingComponentsNumber());
         Assert.assertEquals(8, img.getImageMask().getBpc());
     }
 
@@ -81,10 +81,10 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(4, ((PngImageData) img).getColorType());
         Assert.assertNotNull(img.getImageMask());
-        Assert.assertEquals(1, img.getImageMask().getColorSpace());
+        Assert.assertEquals(1, img.getImageMask().getColorEncodingComponentsNumber());
         Assert.assertEquals(8, img.getImageMask().getBpc());
         Assert.assertNull(img.getProfile());
     }
@@ -96,7 +96,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(3, img.getColorSpace());
+        Assert.assertEquals(3, img.getColorEncodingComponentsNumber());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(3, img.getColorSpace());
+        Assert.assertEquals(3, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(2, ((PngImageData)img).getColorType());
     }
 
@@ -128,7 +128,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(3, img.getColorSpace());
+        Assert.assertEquals(3, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(2, ((PngImageData)img).getColorType());
         Assert.assertNull(img.getProfile());
     }
@@ -140,10 +140,10 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(3, img.getColorSpace());
+        Assert.assertEquals(3, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(6, ((PngImageData)img).getColorType());
         Assert.assertNotNull(img.getImageMask());
-        Assert.assertEquals(1, img.getImageMask().getColorSpace());
+        Assert.assertEquals(1, img.getImageMask().getColorEncodingComponentsNumber());
         Assert.assertEquals(8, img.getImageMask().getBpc());
     }
 
@@ -155,10 +155,10 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(3, img.getColorSpace());
+        Assert.assertEquals(3, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(6, ((PngImageData)img).getColorType());
         Assert.assertNotNull(img.getImageMask());
-        Assert.assertEquals(1, img.getImageMask().getColorSpace());
+        Assert.assertEquals(1, img.getImageMask().getColorEncodingComponentsNumber());
         Assert.assertEquals(8, img.getImageMask().getBpc());
     }
 
@@ -170,7 +170,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(49, img.getHeight(), 0);
         Assert.assertEquals(2, img.getBpc());
         //Indexed colorspace contains one component indeed
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(3, ((PngImageData)img).getColorType());
     }
 
@@ -182,7 +182,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(1, img.getBpc());
         //Indexed colorspace contains one component indeed
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(3, ((PngImageData)img).getColorType());
     }
 
@@ -194,7 +194,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(49, img.getHeight(), 0);
         Assert.assertEquals(2, img.getBpc());
         //Indexed colorspace contains one component indeed
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(3, ((PngImageData)img).getColorType());
     }
 
@@ -205,7 +205,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(200, img.getWidth(), 0);
         Assert.assertEquals(200, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(0, ((PngImageData)img).getColorType());
         Assert.assertNotNull(img.getImageAttributes().entrySet());
         Assert.assertEquals("[0 0]", img.getImageAttributes()
@@ -220,7 +220,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(600, img.getWidth(), 0);
         Assert.assertEquals(100, img.getHeight(), 0);
         Assert.assertEquals(8, img.getBpc());
-        Assert.assertEquals(3, img.getColorSpace());
+        Assert.assertEquals(3, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(2, ((PngImageData)img).getColorType());
         Assert.assertNotNull(img.getImageAttributes().entrySet());
         Assert.assertEquals("[255 255 0 0 0 0]", img.getImageAttributes()
@@ -235,7 +235,7 @@ public class PngTest extends ExtendedITextTest {
         Assert.assertEquals(49, img.getHeight(), 0);
         Assert.assertEquals(2, img.getBpc());
         //Indexed colorspace contains one component indeed
-        Assert.assertEquals(1, img.getColorSpace());
+        Assert.assertEquals(1, img.getColorEncodingComponentsNumber());
         Assert.assertEquals(3, ((PngImageData)img).getColorType());
         Assert.assertNotNull(img.getImageAttributes().entrySet());
         Assert.assertEquals(0, ((int[])img.getImageAttributes()

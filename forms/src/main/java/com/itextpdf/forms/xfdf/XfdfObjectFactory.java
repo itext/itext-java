@@ -43,7 +43,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -54,7 +54,6 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfFreeTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLineAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -65,9 +64,7 @@ import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
-import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -355,7 +352,7 @@ public class XfdfObjectFactory {
                 case XfdfConstants.FRINGE:
                     annotObject.addAttribute(new AttributeObject(attributeName, attributeNode.getNodeValue()));
                     break;
-                default: logger.warn(LogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
+                default: logger.warn(IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
                     break;
             }
         }

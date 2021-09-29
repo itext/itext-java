@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -55,7 +55,7 @@ import org.junit.experimental.categories.Category;
 public class PdfNumberTest extends ExtendedITextTest {
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ATTEMPT_PROCESS_NAN))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_PROCESS_NAN))
     public void testNaN() {
         PdfNumber number = new PdfNumber(Double.NaN);
         // code for "0"

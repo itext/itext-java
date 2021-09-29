@@ -46,12 +46,14 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -1163,7 +1165,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         canvas.release();
         document.close();
-        Assert.assertEquals(PdfException.UnbalancedBeginEndMarkedContentOperators, message);
+        Assert.assertEquals(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS, message);
     }
 
     @Test
@@ -1215,7 +1217,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         ImageData img = new WmfImageData(sourceFolder + "example.wmf");
-        canvas.addImage(img, 0, 0, 0.1f, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 0.1f, 0.1f), false);
 
         document.close();
 
@@ -1229,7 +1231,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         ImageData img = new WmfImageData(sourceFolder + "butterfly.wmf");
-        canvas.addImage(img, 0, 0, 1, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 1, 1), false);
 
         document.close();
 
@@ -1244,7 +1246,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         ImageData img = new WmfImageData(sourceFolder + "type1.wmf");
-        canvas.addImage(img, 0, 0, 1, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 1, 1), false);
 
         document.close();
 
@@ -1258,7 +1260,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         ImageData img = new WmfImageData(sourceFolder + "type0.wmf");
-        canvas.addImage(img, 0, 0, 1, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 1, 1), false);
 
         document.close();
 
@@ -1275,7 +1277,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         ImageData img = new WmfImageData(baos.toByteArray());
-        canvas.addImage(img, 0, 0, 1, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 1, 1), false);
 
         document.close();
 
@@ -1289,7 +1291,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         ImageData img = ImageDataFactory.create(sourceFolder + "2-frames.gif");
-        canvas.addImage(img, 100, 100, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 100, 200, 188.24f), false);
 
         document.close();
 
@@ -1311,7 +1313,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         ImageData img = ImageDataFactory.createGifFrame(baos.toByteArray(), 1);
-        canvas.addImage(img, 100, 100, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 100, 200, 188.24f), false);
 
         document.close();
 
@@ -1333,7 +1335,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page);
         ImageData img = ImageDataFactory.createGifFrame(baos.toByteArray(), 2);
-        canvas.addImage(img, 100, 100, 200, false);
+        canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 100, 200, 262.07f), false);
 
         document.close();
 
@@ -1357,7 +1359,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         try {
             ImageDataFactory.createGifFrame(baos.toByteArray(), 3);
             Assert.fail("IOException expected");
-        } catch (com.itextpdf.io.IOException ignored) {
+        } catch (com.itextpdf.io.exceptions.IOException ignored) {
 
         }
     }
@@ -1379,7 +1381,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         List<ImageData> frames = ImageDataFactory.createGifFrames(baos.toByteArray(), new int[]{1, 2, 5});
         float y = 600;
         for (ImageData img : frames) {
-            canvas.addImage(img, 100, y, 200, false);
+            canvas.addImageFittedIntoRectangle(img, new Rectangle(100, y, 200, 159.72f), false);
             y -= 200;
         }
 
@@ -1447,7 +1449,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int width = 100;
         for (String image : RESOURCES) {
             java.awt.Image awtImage = Toolkit.getDefaultToolkit().createImage(sourceFolder + image);
-            canvas.addImage(ImageDataFactory.create(awtImage, null), x, y, width, false);
+            ImageData imageData = ImageDataFactory.create(awtImage, null);
+            canvas.addImageFittedIntoRectangle(imageData, new Rectangle(x, y, width, (width / imageData.getWidth()) * imageData.getHeight()), false);
             y -= 150;
         }
 
@@ -1569,19 +1572,17 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    public void endPathNewPathTest() {
-        ByteArrayOutputStream boasEndPath = new ByteArrayOutputStream();
-        PdfDocument pdfDocEndPath = new PdfDocument(new PdfWriter(boasEndPath));
-        pdfDocEndPath.addNewPage();
+    public void addWmfImageTest() throws IOException, InterruptedException {
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "addWmfImage.pdf"));
+        PdfPage page = document.addNewPage();
 
-        PdfCanvas endPathCanvas = new PdfCanvas(pdfDocEndPath.getPage(1));
-        endPathCanvas.endPath();
+        PdfCanvas canvas = new PdfCanvas(page);
+        ImageData img = new WmfImageData(sourceFolder + "example2.wmf");
+        canvas.addImageAt(img, 0, 0, false);
 
-        ByteArrayOutputStream boasNewPath = new ByteArrayOutputStream();
-        PdfDocument pdfDocNewPath = new PdfDocument(new PdfWriter(boasNewPath));
-        pdfDocNewPath.addNewPage();
-        PdfCanvas newPathCanvas = new PdfCanvas(pdfDocNewPath.getPage(1));
-        newPathCanvas.newPath();
-        Assert.assertArrayEquals(boasNewPath.toByteArray(), boasEndPath.toByteArray());
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "addWmfImage.pdf",
+                sourceFolder + "cmp_addWmfImage.pdf", destinationFolder, "diff_"));
     }
 }

@@ -49,18 +49,4 @@ public class CanvasUnitTest extends ExtendedITextTest {
         Assert.assertEquals(pdfCanvas.getDocument(), canvas.getPdfDocument());
         Assert.assertFalse(canvas.immediateFlush);
     }
-
-    @Test
-    //TODO remove test after deprecated constructor is removed
-    public void canvasImmediateFlushDeprecatedConstructorTest() {
-        PdfDocument pdf = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        PdfPage page = pdf.addNewPage();
-        Rectangle pageSize = page.getPageSize();
-        PdfCanvas pdfCanvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), pdf);
-        Rectangle rectangle = new Rectangle(0, 0);
-        Canvas canvas = new Canvas(pdfCanvas, pdf, rectangle, false);
-
-        Assert.assertEquals(pdfCanvas.getDocument(), canvas.getPdfDocument());
-        Assert.assertFalse(canvas.immediateFlush);
-    }
 }

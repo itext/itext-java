@@ -43,8 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.MemoryLimitsAwareException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.pdf.MemoryLimitsAwareFilter;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -61,43 +62,6 @@ import java.util.zip.InflaterInputStream;
  * Handles FlateDecode filter.
  */
 public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
-
-    /**
-     * Defines how the corrupted streams should be treated.
-     *
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    private boolean strictDecoding = false;
-
-    /**
-     * Creates a FlateDecodeFilter.
-     */
-    public FlateDecodeFilter() {
-        this(false);
-    }
-
-    /**
-     * Creates a FlateDecodeFilter.
-     *
-     * @param strictDecoding defines whether the decoder will try to read a corrupted stream
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    public FlateDecodeFilter(boolean strictDecoding) {
-        this.strictDecoding = strictDecoding;
-    }
-
-    /**
-     * Checks whether the decoder will try to read a corrupted stream (not strict) or not (strict)
-     *
-     * @return true if the decoder will try to read a corrupted stream otherwise false
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    public boolean isStrictDecoding() {
-        return strictDecoding;
-    }
 
     /**
      * A helper to flateDecode.
@@ -213,7 +177,7 @@ public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
                     break;
                 default:
                     // Error -- unknown filter type
-                    throw new PdfException(PdfException.PngFilterUnknown);
+                    throw new PdfException(KernelExceptionMessageConstant.PNG_FILTER_UNKNOWN);
             }
             try {
                 fout.write(curr);
@@ -236,26 +200,12 @@ public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
         ByteArrayOutputStream outputStream = enableMemoryLimitsAwareHandler(streamDictionary);
         byte[] res = flateDecodeInternal(b, true, outputStream);
-        if (res == null && !strictDecoding) {
+        if (res == null) {
             outputStream.reset();
             res = flateDecodeInternal(b, false, outputStream);
         }
         b = decodePredictor(res, decodeParams);
         return b;
-    }
-
-
-    /**
-     * Defines how the corrupted streams should be treated.
-     *
-     * @param strict true if the decoder should try to read a corrupted stream otherwise false
-     * @return the decoder
-     * @deprecated will be removed in 7.2, use {@link FlateDecodeStrictFilter} instead.
-     */
-    @Deprecated
-    public FlateDecodeFilter setStrictDecoding(boolean strict) {
-        this.strictDecoding = strict;
-        return this;
     }
 
     /**

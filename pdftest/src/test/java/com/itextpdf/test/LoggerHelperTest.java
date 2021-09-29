@@ -23,14 +23,28 @@
 package com.itextpdf.test;
 
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.text.MessageFormat;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.text.MessageFormat;
-
 @Category(UnitTest.class)
 public class LoggerHelperTest extends ExtendedITextTest {
+
+    @Test
+    public void notEqualMessageWithSimilarStartTest() {
+        String pattern = "There might be a message: {0} with text.";
+        String example = "There might be a message: TEMP with text. And add some other text.";
+        Assert.assertFalse(LoggerHelper.equalsMessageByTemplate(example, pattern));
+    }
+
+    @Test
+    public void notEqualMessageWithSimilarEndTest() {
+        String pattern = "a message: {0} with text.";
+        String example = "There might be a message: TEMP with text.";
+        Assert.assertFalse(LoggerHelper.equalsMessageByTemplate(example, pattern));
+    }
 
     @Test
     public void equalsMessageByTemplate() {

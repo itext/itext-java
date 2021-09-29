@@ -43,20 +43,20 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import com.itextpdf.io.util.MessageFormatUtil;
 
 /**
  * An exception that is thrown when something is wrong with a certificate.
  */
 public class VerificationException extends GeneralSecurityException {
 
-    private static final long serialVersionUID = 2978604513926438256L;
 
     /**
-     * Creates a VerificationException
+     * Creates a VerificationException.
      *
      * @param cert is a failed certificate
      * @param message is a reason of failure

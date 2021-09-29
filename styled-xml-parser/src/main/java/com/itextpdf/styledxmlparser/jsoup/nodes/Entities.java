@@ -3,111 +3,96 @@
     Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
+import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.styledxmlparser.jsoup.SerializationException;
-import com.itextpdf.styledxmlparser.jsoup.helper.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Document.OutputSettings;
+import com.itextpdf.styledxmlparser.jsoup.parser.CharacterReader;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.CharsetEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Properties;
 
 /**
- * HTML entities, and escape routines.
- * Source: <a href="http://www.w3.org/TR/html5/named-character-references.html#named-character-references">W3C HTML
- * named character references</a>.
+ * HTML entities, and escape routines. Source: <a href="http://www.w3.org/TR/html5/named-character-references.html#named-character-references">W3C
+ * HTML named character references</a>.
  */
 public class Entities {
+    private static final int empty = -1;
+    private static final String emptyName = "";
+    static final int codepointRadix = 36;
+    private static final char[] codeDelims = {',', ';'};
+    private static final HashMap<String, String> multipoints = new HashMap<>(); // name -> multiple character references
+    private static final OutputSettings DefaultOutput = new OutputSettings();
+
     public static class EscapeMode {
         /**
          * Restricted entities suitable for XHTML output: lt, gt, amp, and quot only.
          */
-        public static final EscapeMode xhtml = new EscapeMode(xhtmlByVal, "xhtml");
+        public static EscapeMode xhtml = new EscapeMode(EntitiesData.xmlPoints, 4);
         /**
          * Default HTML output entities.
          */
-        public static final EscapeMode base = new EscapeMode(baseByVal, "base");
+        public static EscapeMode base = new EscapeMode(EntitiesData.basePoints, 106);
         /**
          * Complete HTML entities.
          */
-        public static final EscapeMode extended = new EscapeMode(fullByVal, "extended");
+        public static EscapeMode extended = new EscapeMode(EntitiesData.fullPoints, 2125);
 
-        private static Map<String, EscapeMode> nameValueMap = new HashMap<String, EscapeMode>();
+        // table of named references to their codepoints. sorted so we can binary search. built by BuildEntities.
+        String[] nameKeys;
+        int[] codeVals; // limitation is the few references with multiple characters; those go into multipoints.
 
-        public static EscapeMode valueOf(String name) {
-            return nameValueMap.get(name);
+        // table of codepoints to named entities.
+        int[] codeKeys; // we don't support multicodepoints to single named value currently
+        String[] nameVals;
+
+        EscapeMode(String file, int size) {
+            load(this, file, size);
         }
 
-        static {
-            nameValueMap.put(xhtml.name, xhtml);
-            nameValueMap.put(base.name, base);
-            nameValueMap.put(extended.name, extended);
+        int codepointForName(final String name) {
+            int index = ArrayUtil.indexOf(nameKeys, name);
+            return index >= 0 ? codeVals[index] : empty;
         }
 
-        private Map<Character, String> map;
-        private String name;
-
-        private EscapeMode(Map<Character, String> map, String name) {
-            this.map = map;
-            this.name = name;
+        String nameForCodepoint(final int codepoint) {
+            final int index = Arrays.binarySearch(codeKeys, codepoint);
+            if (index >= 0) {
+                // the results are ordered so lower case versions of same codepoint come after uppercase, and we prefer to emit lower
+                // (and binary search for same item with multi results is undefined
+                return (index < nameVals.length - 1 && codeKeys[index + 1] == codepoint) ?
+                    nameVals[index + 1] : nameVals[index];
+            }
+            return emptyName;
         }
 
-        public Map<Character, String> getMap() {
-            return map;
-        }
-
-        public String name() {
-            return name;
+        private int size() {
+            return nameKeys.length;
         }
     }
-
-    private static final Map<String, Character> full;
-    private static final Map<Character, String> xhtmlByVal;
-    private static final Map<String, Character> base;
-    private static final Map<Character, String> baseByVal;
-    private static final Map<Character, String> fullByVal;
 
     private Entities() {
     }
@@ -118,8 +103,8 @@ public class Entities {
      * @param name the possible entity name (e.g. "lt" or "amp")
      * @return true if a known named entity
      */
-    public static boolean isNamedEntity(String name) {
-        return full.containsKey(name);
+    public static boolean isNamedEntity(final String name) {
+        return EscapeMode.extended.codepointForName(name) != empty;
     }
 
     /**
@@ -129,40 +114,80 @@ public class Entities {
      * @return true if a known named entity in the base set
      * @see #isNamedEntity(String)
      */
-    public static boolean isBaseNamedEntity(String name) {
-        return base.containsKey(name);
+    public static boolean isBaseNamedEntity(final String name) {
+        return EscapeMode.base.codepointForName(name) != empty;
     }
 
     /**
-     * Get the Character value of the named entity
+     * Get the character(s) represented by the named entity
      *
-     * @param name named entity (e.g. "lt" or "amp")
-     * @return the Character value of the named entity (e.g. '{@literal <}' or '{@literal &}')
+     * @param name entity (e.g. "lt" or "amp")
+     * @return the string value of the character(s) represented by this entity, or "" if not defined
      */
-    public static Character getCharacterByName(String name) {
-        return full.get(name);
+    public static String getByName(String name) {
+        String val = multipoints.get(name);
+        if (val != null)
+            return val;
+        int codepoint = EscapeMode.extended.codepointForName(name);
+        if (codepoint != empty)
+            return new String(new char[]{(char) codepoint}, 0, 1);
+        return emptyName;
     }
 
-    static String escape(String string, Document.OutputSettings out) {
-        StringBuilder accum = new StringBuilder(string.length() * 2);
+    public static int codepointsForName(final String name, final int[] codepoints) {
+        String val = multipoints.get(name);
+        if (val != null) {
+            codepoints[0] = val.codePointAt(0);
+            codepoints[1] = val.codePointAt(1);
+            return 2;
+        }
+        int codepoint = EscapeMode.extended.codepointForName(name);
+        if (codepoint != empty) {
+            codepoints[0] = codepoint;
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * HTML escape an input string. That is, {@code <} is returned as {@code &lt;}
+     *
+     * @param string the un-escaped string to escape
+     * @param out the output settings to use
+     * @return the escaped string
+     */
+    public static String escape(String string, OutputSettings out) {
+        if (string == null)
+            return "";
+        StringBuilder accum = StringUtil.borrowBuilder();
         try {
             escape(accum, string, out, false, false, false);
         } catch (IOException e) {
             throw new SerializationException(e); // doesn't happen
         }
-        return accum.toString();
+        return StringUtil.releaseBuilder(accum);
+    }
+
+    /**
+     * HTML escape an input string, using the default settings (UTF-8, base entities). That is, {@code <} is returned as
+     * {@code &lt;}
+     *
+     * @param string the un-escaped string to escape
+     * @return the escaped string
+     */
+    public static String escape(String string) {
+        return escape(string, DefaultOutput);
     }
 
     // this method is ugly, and does a lot. but other breakups cause rescanning and stringbuilder generations
-    static void escape(Appendable accum, String str, Document.OutputSettings outputSettings,
+    static void escape(Appendable accum, String str, OutputSettings out,
                        boolean inAttribute, boolean normaliseWhite, boolean stripLeadingWhite) throws IOException {
 
         boolean lastWasWhite = false;
         boolean reachedNonWhite = false;
-        final EscapeMode escapeMode = outputSettings.escapeMode();
-        final CharsetEncoder encoder = outputSettings.encoder();
-        final CoreCharset coreCharset = getCoreCharsetByName(outputSettings.charset().name());
-        final Map<Character, String> map = escapeMode.getMap();
+        final EscapeMode escapeMode = out.escapeMode();
+        final CharsetEncoder encoder = out.encoder();
+        final CoreCharset coreCharset = out.coreCharset; // init in out.prepareEncoder()
         final int length = str.length();
 
         int codePoint;
@@ -196,8 +221,8 @@ public class Entities {
                             accum.append("&#xa0;");
                         break;
                     case '<':
-                        // escape when in character data or when in a xml attribue val; not needed in html attr val
-                        if (!inAttribute || escapeMode == EscapeMode.xhtml)
+                        // escape when in character data or when in a xml attribute val or XML syntax; not needed in html attr val
+                        if (!inAttribute || escapeMode == EscapeMode.xhtml || out.syntax() == Document.OutputSettings.Syntax.xml)
                             accum.append("&lt;");
                         else
                             accum.append(c);
@@ -217,22 +242,34 @@ public class Entities {
                     default:
                         if (canEncode(coreCharset, c, encoder))
                             accum.append(c);
-                        else if (map.containsKey(c))
-                            accum.append('&').append(map.get(c)).append(';');
                         else
-                            accum.append("&#x").append(Integer.toHexString(codePoint)).append(';');
+                            appendEncoded(accum, escapeMode, codePoint);
                 }
             } else {
                 final String c = new String(Character.toChars(codePoint));
                 if (encoder.canEncode(c)) // uses fallback encoder for simplicity
                     accum.append(c);
                 else
-                    accum.append("&#x").append(Integer.toHexString(codePoint)).append(';');
+                    appendEncoded(accum, escapeMode, codePoint);
             }
         }
     }
 
-    static String unescape(String string) {
+    private static void appendEncoded(Appendable accum, EscapeMode escapeMode, int codePoint) throws IOException {
+        final String name = escapeMode.nameForCodepoint(codePoint);
+        if (!emptyName.equals(name)) // ok for identity check
+            accum.append('&').append(name).append(';');
+        else
+            accum.append("&#x").append(Integer.toHexString(codePoint)).append(';');
+    }
+
+    /**
+     * Un-escape an HTML escaped string. That is, {@code &lt;} is returned as {@code <}.
+     *
+     * @param string the HTML string to un-escape
+     * @return the unescaped string
+     */
+    public static String unescape(String string) {
         return unescape(string, false);
     }
 
@@ -260,9 +297,7 @@ public class Entities {
      * Alterslash: 3013, 28
      * Jsoup: 167, 2
      */
-
     private static boolean canEncode(final CoreCharset charset, final char c, final CharsetEncoder fallback) {
-        // todo add more charset tests if impacted by Android's bad perf in canEncode
         switch (charset) {
             case ascii:
                 return c < 0x80;
@@ -274,11 +309,11 @@ public class Entities {
         }
     }
 
-    private enum CoreCharset {
-        ascii, utf, fallback;
+    enum CoreCharset {
+        ascii, utf, fallback
     }
 
-    private static CoreCharset getCoreCharsetByName(String name) {
+    static CoreCharset getCoreCharsetByName(final String name) {
         if (name.equals("US-ASCII"))
             return CoreCharset.ascii;
         if (name.startsWith("UTF-")) // covers UTF-8, UTF-16, et al
@@ -286,59 +321,45 @@ public class Entities {
         return CoreCharset.fallback;
     }
 
-    // xhtml has restricted entities
-    private static final Object[][] xhtmlArray = {
-            {"quot", 0x00022},
-            {"amp", 0x00026},
-            {"lt", 0x0003C},
-            {"gt", 0x0003E}
-    };
+    private static void load(EscapeMode e, String pointsData, int size) {
+        e.nameKeys = new String[size];
+        e.codeVals = new int[size];
+        e.codeKeys = new int[size];
+        e.nameVals = new String[size];
 
-    static {
-        xhtmlByVal = new HashMap<Character, String>();
-        base = loadEntities("entities-base.properties");  // most common / default
-        baseByVal = toCharacterKey(base);
-        full = loadEntities("entities-full.properties"); // extended and overblown.
-        fullByVal = toCharacterKey(full);
+        int i = 0;
+        CharacterReader reader = new CharacterReader(pointsData);
 
-        for (Object[] entity : xhtmlArray) {
-            char c = (char) ((Integer) entity[1]).intValue();
-            xhtmlByVal.put(c, ((String) entity[0]));
-        }
-    }
+        while (!reader.isEmpty()) {
+            // NotNestedLessLess=10913,824;1887&
 
-    private static Map<String, Character> loadEntities(String filename) {
-        Properties properties = new Properties();
-        Map<String, Character> entities = new HashMap<String, Character>();
-        try {
-            InputStream in = Entities.class.getResourceAsStream(filename);
-            properties.load(in);
-            in.close();
-        } catch (IOException e) {
-            throw new MissingResourceException("Error loading entities resource: " + e.getMessage(), "Entities", filename);
-        }
-
-        for (Object name : properties.keySet()) {
-            Character val = (char) Integer.parseInt(properties.getProperty((String) name), 16);
-            entities.put((String) name, val);
-        }
-        return entities;
-    }
-
-    private static Map<Character, String> toCharacterKey(Map<String, Character> inMap) {
-        Map<Character, String> outMap = new HashMap<Character, String>();
-        for (Map.Entry<String, Character> entry : inMap.entrySet()) {
-            char character = (char) entry.getValue();
-            String name = entry.getKey();
-
-            if (outMap.containsKey(character)) {
-                // dupe, prefer the lower case version
-                if (name.toLowerCase().equals(name))
-                    outMap.put(character, name);
+            final String name = reader.consumeTo('=');
+            reader.advance();
+            final int cp1 = Integer.parseInt(reader.consumeToAny(codeDelims), codepointRadix);
+            final char codeDelim = reader.current();
+            reader.advance();
+            final int cp2;
+            if (codeDelim == ',') {
+                cp2 = Integer.parseInt(reader.consumeTo(';'), codepointRadix);
+                reader.advance();
             } else {
-                outMap.put(character, name);
+                cp2 = empty;
             }
+            final String indexS = reader.consumeTo('&');
+            final int index = Integer.parseInt(indexS, codepointRadix);
+            reader.advance();
+
+            e.nameKeys[i] = name;
+            e.codeVals[i] = cp1;
+            e.codeKeys[index] = cp1;
+            e.nameVals[index] = name;
+
+            if (cp2 != empty) {
+                multipoints.put(name, new String(new char[]{(char) cp1, (char) cp2}, 0, 2));
+            }
+            i++;
         }
-        return outMap;
+
+        Validate.isTrue(i == size, "Unexpected count of entities loaded");
     }
 }

@@ -3,54 +3,34 @@
     Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
+import com.itextpdf.styledxmlparser.jsoup.PortUtil;
 import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
-import com.itextpdf.styledxmlparser.jsoup.nodes.BooleanAttribute;
+import com.itextpdf.styledxmlparser.jsoup.internal.Normalizer;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 
 /**
  * Parse tokens for the Tokeniser.
  */
-abstract class Token {
+public abstract class Token {
     TokenType type;
 
     private Token() {
@@ -74,6 +54,7 @@ abstract class Token {
 
     static final class Doctype extends Token {
         final StringBuilder name = new StringBuilder();
+        String pubSysKey = null;
         final StringBuilder publicIdentifier = new StringBuilder();
         final StringBuilder systemIdentifier = new StringBuilder();
         boolean forceQuirks = false;
@@ -85,6 +66,7 @@ abstract class Token {
         @Override
         Token reset() {
             reset(name);
+            pubSysKey = null;
             reset(publicIdentifier);
             reset(systemIdentifier);
             forceQuirks = false;
@@ -93,6 +75,10 @@ abstract class Token {
 
         String getName() {
             return name.toString();
+        }
+
+        String getPubSysKey() {
+            return pubSysKey;
         }
 
         String getPublicIdentifier() {
@@ -110,6 +96,7 @@ abstract class Token {
 
     static abstract class Tag extends Token {
         protected String tagName;
+        protected String normalName; // lc version of tag name, for case insensitive tree build
         private String pendingAttributeName; // attribute names are generally caught in one hop, not accumulated
         private StringBuilder pendingAttributeValue = new StringBuilder(); // but values are accumulated, from e.g. & in hrefs
         private String pendingAttributeValueS; // try to get attr vals in one shot, vs Builder
@@ -121,6 +108,7 @@ abstract class Token {
         @Override
         Token reset() {
             tagName = null;
+            normalName = null;
             pendingAttributeName = null;
             reset(pendingAttributeValue);
             pendingAttributeValueS = null;
@@ -136,15 +124,19 @@ abstract class Token {
                 attributes = new Attributes();
 
             if (pendingAttributeName != null) {
-                Attribute attribute;
-                if (hasPendingAttributeValue)
-                    attribute = new Attribute(pendingAttributeName,
-                        pendingAttributeValue.length() > 0 ? pendingAttributeValue.toString() : pendingAttributeValueS);
-                else if (hasEmptyAttributeValue)
-                    attribute = new Attribute(pendingAttributeName, "");
-                else
-                    attribute = new BooleanAttribute(pendingAttributeName);
-                attributes.put(attribute);
+                // the tokeniser has skipped whitespace control chars, but trimming could collapse to empty for other control codes, so verify here
+                pendingAttributeName = PortUtil.trimControlCodes(pendingAttributeName);
+                if (pendingAttributeName.length() > 0) {
+                    String value;
+                    if (hasPendingAttributeValue)
+                        value = pendingAttributeValue.length() > 0 ? pendingAttributeValue.toString() : pendingAttributeValueS;
+                    else if (hasEmptyAttributeValue)
+                        value = "";
+                    else
+                        value = null;
+                    // note that we add, not put. So that the first is kept, and rest are deduped, once in a context where case sensitivity is known (the appropriate tree builder).
+                    attributes.add(pendingAttributeName, value);
+                }
             }
             pendingAttributeName = null;
             hasEmptyAttributeValue = false;
@@ -153,21 +145,39 @@ abstract class Token {
             pendingAttributeValueS = null;
         }
 
+        final boolean hasAttributes() {
+            return attributes != null;
+        }
+
+        final boolean hasAttribute(String key) {
+            return attributes != null && attributes.hasKey(key);
+        }
+
         final void finaliseTag() {
             // finalises for emit
             if (pendingAttributeName != null) {
-                // todo: check if attribute name exists; if so, drop and error
                 newAttribute();
             }
         }
 
-        final String name() {
+        /** Preserves case */
+        final String name() { // preserves case, for input into Tag.valueOf (which may drop case)
             Validate.isFalse(tagName == null || tagName.length() == 0);
             return tagName;
         }
 
+        /** Lower case */
+        final String normalName() { // lower case, used in tree building for working out where in tree it should go
+            return normalName;
+        }
+
+        final String toStringName() {
+            return tagName != null ? tagName : "[unset]";
+        }
+
         final Tag name(String name) {
             tagName = name;
+            normalName = Normalizer.lowerCase(name);
             return this;
         }
 
@@ -175,14 +185,10 @@ abstract class Token {
             return selfClosing;
         }
 
-        @SuppressWarnings({"TypeMayBeWeakened"})
-        final Attributes getAttributes() {
-            return attributes;
-        }
-
         // these appenders are rarely hit in not null state-- caused by null chars.
         final void appendTagName(String append) {
             tagName = tagName == null ? append : tagName + append;
+            normalName = Normalizer.lowerCase(tagName);
         }
 
         final void appendTagName(char append) {
@@ -215,6 +221,13 @@ abstract class Token {
             ensureAttributeValue();
             pendingAttributeValue.append(append);
         }
+
+        final void appendAttributeValue(int[] appendCodepoints) {
+            ensureAttributeValue();
+            for (int codepoint : appendCodepoints) {
+                pendingAttributeValue.appendCodePoint(codepoint);
+            }
+        }
         
         final void setEmptyAttributeValue() {
             hasEmptyAttributeValue = true;
@@ -228,35 +241,37 @@ abstract class Token {
                 pendingAttributeValueS = null;
             }
         }
+
+        @Override
+        abstract public String toString();
     }
 
     final static class StartTag extends Tag {
         StartTag() {
             super();
-            attributes = new Attributes();
             type = TokenType.StartTag;
         }
 
         @Override
         Token reset() {
             super.reset();
-            attributes = new Attributes();
-            // todo - would prefer these to be null, but need to check Element assertions
+            attributes = null;
             return this;
         }
 
         StartTag nameAttr(String name, Attributes attributes) {
             this.tagName = name;
             this.attributes = attributes;
+            normalName = Normalizer.lowerCase(tagName);
             return this;
         }
 
         @Override
         public String toString() {
-            if (attributes != null && attributes.size() > 0)
-                return "<" + name() + " " + attributes.toString() + ">";
+            if (hasAttributes() && attributes.size() > 0)
+                return "<" + toStringName() + " " + attributes.toString() + ">";
             else
-                return "<" + name() + ">";
+                return "<" + toStringName() + ">";
         }
     }
 
@@ -268,17 +283,19 @@ abstract class Token {
 
         @Override
         public String toString() {
-            return "</" + name() + ">";
+            return "</" + toStringName() + ">";
         }
     }
 
     final static class Comment extends Token {
-        final StringBuilder data = new StringBuilder();
+        private final StringBuilder data = new StringBuilder();
+        private String dataS; // try to get in one shot
         boolean bogus = false;
 
         @Override
         Token reset() {
             reset(data);
+            dataS = null;
             bogus = false;
             return this;
         }
@@ -288,7 +305,31 @@ abstract class Token {
         }
 
         String getData() {
-            return data.toString();
+            return dataS != null ? dataS : data.toString();
+        }
+
+        final Comment append(String append) {
+            ensureData();
+            if (data.length() == 0) {
+                dataS = append;
+            } else {
+                data.append(append);
+            }
+            return this;
+        }
+
+        final Comment append(char append) {
+            ensureData();
+            data.append(append);
+            return this;
+        }
+
+        private void ensureData() {
+            // if on second hit, we'll need to move to the builder
+            if (dataS != null) {
+                data.append(dataS);
+                dataS = null;
+            }
         }
 
         @Override
@@ -297,7 +338,7 @@ abstract class Token {
         }
     }
 
-    final static class Character extends Token {
+    static class Character extends Token {
         private String data;
 
         Character() {
@@ -326,6 +367,19 @@ abstract class Token {
         }
     }
 
+    final static class CData extends Character {
+        CData(String data) {
+            super();
+            this.data(data);
+        }
+
+        @Override
+        public String toString() {
+            return "<![CDATA[" + getData() + "]]>";
+        }
+
+    }
+
     final static class EOF extends Token {
         EOF() {
             type = Token.TokenType.EOF;
@@ -334,6 +388,11 @@ abstract class Token {
         @Override
         Token reset() {
             return this;
+        }
+
+        @Override
+        public String toString() {
+            return "";
         }
     }
 
@@ -373,6 +432,10 @@ abstract class Token {
         return type == TokenType.Character;
     }
 
+    final boolean isCData() {
+        return this instanceof CData;
+    }
+
     final Character asCharacter() {
         return (Character) this;
     }
@@ -381,12 +444,12 @@ abstract class Token {
         return type == TokenType.EOF;
     }
 
-    enum TokenType {
+    public enum TokenType {
         Doctype,
         StartTag,
         EndTag,
         Comment,
-        Character,
+        Character, // note no CData - treated in builder as an extension of Character
         EOF
     }
 }

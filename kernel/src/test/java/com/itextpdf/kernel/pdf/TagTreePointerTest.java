@@ -43,8 +43,9 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.util.ExceptionUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.exceptions.ExceptionUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -210,7 +211,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
-        assertEquals(PdfException.TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot, exceptionMessage);
+        assertEquals(KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_REMOVED_ELEMENT_USE_MOVE_TO_ROOT, exceptionMessage);
 
         tagPointerCopy.moveToRoot().moveToKid(StandardRoles.TABLE);
 
@@ -225,14 +226,14 @@ public class TagTreePointerTest extends ExtendedITextTest {
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
-        assertEquals(PdfException.TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot, exceptionMessage);
+        assertEquals(KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_FLUSHED_ELEMENT_USE_MOVE_TO_ROOT, exceptionMessage);
 
         try {
             tagPointerCopy.moveToKid(0);
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
-        assertEquals(PdfException.CannotMoveToFlushedKid, exceptionMessage);
+        assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_FLUSHED_KID, exceptionMessage);
 
         document.close();
     }
@@ -388,7 +389,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         document.close();
 
-        assertEquals(PdfException.CannotFlushDocumentRootTagBeforeDocumentIsClosed, exceptionMessage);
+        assertEquals(KernelExceptionMessageConstant.CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED, exceptionMessage);
         compareResult("tagStructureFlushingTest01.pdf", "taggedDocument.pdf", "diffFlushing01_");
     }
 

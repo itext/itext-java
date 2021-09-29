@@ -42,8 +42,8 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
@@ -75,12 +75,12 @@ public class FlexFlowShorthandResolver implements IShorthandResolver {
             );
         }
         if (CssTypesValidationUtils.containsInitialOrInheritOrUnset(shorthandExpression)) {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                     CommonCssConstants.FLEX_FLOW,
                     shorthandExpression);
         }
         if (shorthandExpression.isEmpty()) {
-            return handleExpressionError(LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
                     CommonCssConstants.FLEX_FLOW, shorthandExpression);
         }
 
@@ -98,7 +98,7 @@ public class FlexFlowShorthandResolver implements IShorthandResolver {
                 if (CssDeclarationValidationMaster.checkDeclaration(flexWrapDeclaration)) {
                     resolvedProperties.add(flexWrapDeclaration);
                 } else {
-                    return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                    return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                             CommonCssConstants.FLEX_FLOW,
                             shorthandExpression);
                 }
@@ -121,7 +121,7 @@ public class FlexFlowShorthandResolver implements IShorthandResolver {
                 if (CssDeclarationValidationMaster.checkDeclaration(flexDirectionDeclaration)) {
                     resolvedProperties.add(flexDirectionDeclaration);
                 } else {
-                    return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                    return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                             CommonCssConstants.FLEX_DIRECTION,
                             shorthandExpression);
                 }
@@ -129,12 +129,12 @@ public class FlexFlowShorthandResolver implements IShorthandResolver {
             if (CssDeclarationValidationMaster.checkDeclaration(flexWrapDeclaration)) {
                 resolvedProperties.add(flexWrapDeclaration);
             } else {
-                return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                         CommonCssConstants.FLEX_WRAP,
                         shorthandExpression);
             }
         } else {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                     CommonCssConstants.FLEX_FLOW,
                     shorthandExpression);
         }

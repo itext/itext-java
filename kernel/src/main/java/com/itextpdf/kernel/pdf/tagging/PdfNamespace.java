@@ -42,8 +42,8 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -62,7 +62,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -4228596885910641569L;
 
     /**
      * Constructs namespace from the given {@link PdfDictionary} that represents namespace dictionary.
@@ -228,7 +227,8 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
             if (nsNameStr == null) {
                 nsNameStr = "this";
             }
-            logger.warn(MessageFormatUtil.format(LogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole, nsNameStr));
+            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole,
+                    nsNameStr));
         }
     }
 }

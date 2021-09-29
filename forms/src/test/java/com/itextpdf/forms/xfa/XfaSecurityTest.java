@@ -43,7 +43,7 @@
 package com.itextpdf.forms.xfa;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;

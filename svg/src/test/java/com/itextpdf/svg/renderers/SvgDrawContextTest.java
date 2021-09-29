@@ -46,7 +46,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
@@ -165,7 +165,7 @@ public class SvgDrawContextTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> this.context.addNamedObject(name, null)
         );
-        Assert.assertEquals(SvgLogMessageConstant.NAMED_OBJECT_NULL, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.NAMED_OBJECT_NULL, e.getMessage());
     }
 
     @Test
@@ -175,7 +175,7 @@ public class SvgDrawContextTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> this.context.addNamedObject(null, expected)
         );
-        Assert.assertEquals(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
     }
 
     @Test
@@ -185,7 +185,7 @@ public class SvgDrawContextTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> this.context.addNamedObject("", expected)
         );
-        Assert.assertEquals(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
     }
 
     @Test

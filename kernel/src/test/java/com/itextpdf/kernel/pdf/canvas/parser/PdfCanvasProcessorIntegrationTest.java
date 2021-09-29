@@ -42,10 +42,10 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.KernelLogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -58,7 +58,6 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.kernel.pdf.canvas.parser.util.InlineImageParsingUtils.InlineImageParseException;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.AssertUtil;
@@ -152,7 +151,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
     public void testNoninvertibleMatrix() throws IOException {
         String fileName = "noninvertibleMatrix.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName));

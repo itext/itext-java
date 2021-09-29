@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfUserProperty extends PdfObjectWrapper<PdfDictionary> {
-    private static final long serialVersionUID = -347021704725128837L;
 
     public enum ValueType {
         UNKNOWN,

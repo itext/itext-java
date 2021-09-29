@@ -43,7 +43,7 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;

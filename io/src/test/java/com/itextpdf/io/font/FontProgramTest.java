@@ -43,7 +43,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -64,7 +64,7 @@ public class FontProgramTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(java.io.IOException.class,
                 () -> FontProgramFactory.createFont(notExistingFont)
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException._1NotFoundAsFileOrResource, notExistingFont), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException._1NotFoundAsFileOrResource, notExistingFont), e.getMessage());
     }
 
     @Test

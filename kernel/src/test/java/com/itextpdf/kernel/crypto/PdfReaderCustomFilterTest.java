@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;

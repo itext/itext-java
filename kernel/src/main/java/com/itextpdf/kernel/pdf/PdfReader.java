@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
@@ -51,9 +51,10 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
@@ -62,7 +63,6 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Map;
 
 import com.itextpdf.kernel.xmp.XMPException;
@@ -73,14 +73,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Reads a PDF document.
  */
-public class PdfReader implements Closeable, Serializable {
+public class PdfReader implements Closeable {
 
     /**
      * The default {@link StrictnessLevel} to be used.
      */
     public static final StrictnessLevel DEFAULT_STRICTNESS_LEVEL = StrictnessLevel.LENIENT;
-
-    private static final long serialVersionUID = -3584187443691964939L;
 
     private static final String endstream1 = "endstream";
     private static final String endstream2 = "\nendstream";
@@ -99,9 +97,6 @@ public class PdfReader implements Closeable, Serializable {
 
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
-
-    // For internal usage only
-    private String sourcePath;
 
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
@@ -130,8 +125,7 @@ public class PdfReader implements Closeable, Serializable {
      * @throws IOException if an I/O error occurs
      */
     public PdfReader(IRandomAccessSource byteSource, ReaderProperties properties) throws IOException {
-        this.properties = properties;
-        this.tokens = getOffsetTokeniser(byteSource);
+        this(byteSource, properties, false);
     }
 
     /**
@@ -143,7 +137,7 @@ public class PdfReader implements Closeable, Serializable {
      * @throws IOException on error
      */
     public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
-        this(new RandomAccessSourceFactory().createSource(is), properties);
+        this(new RandomAccessSourceFactory().createSource(is), properties, true);
     }
 
     /**
@@ -180,9 +174,9 @@ public class PdfReader implements Closeable, Serializable {
                 new RandomAccessSourceFactory()
                         .setForceRead(false)
                         .createBestSource(filename),
-                properties
+                properties,
+                true
         );
-        this.sourcePath = filename;
     }
 
     /**
@@ -194,6 +188,11 @@ public class PdfReader implements Closeable, Serializable {
     public PdfReader(String filename) throws IOException {
         this(filename, new ReaderProperties());
 
+    }
+
+    PdfReader(IRandomAccessSource byteSource, ReaderProperties properties, boolean closeStream) throws IOException {
+        this.properties = properties;
+        this.tokens = getOffsetTokeniser(byteSource, closeStream);
     }
 
     /**
@@ -283,7 +282,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public boolean hasRebuiltXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         return rebuiltXref;
@@ -298,7 +297,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public boolean hasHybridXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         return hybridXref;
@@ -312,7 +311,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public boolean hasXrefStm() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         return xrefStm;
@@ -328,7 +327,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public boolean hasFixedXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         return fixedXref;
@@ -342,7 +341,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public long getLastXref() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         return lastXref;
@@ -501,7 +500,8 @@ public class PdfReader implements Closeable, Serializable {
             PdfName filterName = (PdfName) filters.get(j);
             IFilterHandler filterHandler = filterHandlers.get(filterName);
             if (filterHandler == null)
-                throw new PdfException(PdfException.Filter1IsNotSupported).setMessageParams(filterName);
+                throw new PdfException(KernelExceptionMessageConstant.THIS_FILTER_IS_NOT_SUPPORTED)
+                        .setMessageParams(filterName);
 
             PdfDictionary decodeParams;
             if (j < dp.size()) {
@@ -511,7 +511,8 @@ public class PdfReader implements Closeable, Serializable {
                 } else if (dpEntry.getType() == PdfObject.DICTIONARY) {
                     decodeParams = (PdfDictionary) dpEntry;
                 } else {
-                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(dpEntry.getClass().toString());
+                    throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
+                            .setMessageParams(dpEntry.getClass().toString());
                 }
             } else {
                 decodeParams = null;
@@ -541,9 +542,8 @@ public class PdfReader implements Closeable, Serializable {
      * Provides the size of the opened file.
      *
      * @return The size of the opened file.
-     * @throws IOException on error.
      */
-    public long getFileLength() throws IOException {
+    public long getFileLength() {
         return tokens.getSafeFile().length();
     }
 
@@ -558,7 +558,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public boolean isOpenedWithFullPermission() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         return !encrypted || decrypt.isOpenedWithFullPermission() || unethicalReading;
@@ -580,7 +580,7 @@ public class PdfReader implements Closeable, Serializable {
          * when this method would work incorrectly right now.
          */
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         long perm = 0;
@@ -599,7 +599,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public int getCryptoMode() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         if (decrypt == null)
@@ -638,7 +638,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public byte[] computeUserPassword() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         if (!encrypted || !decrypt.isOpenedWithFullPermission()) {
@@ -661,7 +661,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public byte[] getOriginalFileId() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         PdfArray id = trailer.getAsArray(PdfName.ID);
@@ -685,7 +685,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public byte[] getModifiedFileId() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         PdfArray id = trailer.getAsArray(PdfName.ID);
@@ -704,7 +704,7 @@ public class PdfReader implements Closeable, Serializable {
      */
     public boolean isEncrypted() {
         if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
-            throw new PdfException(PdfException.DocumentHasNotBeenReadYet);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
         return encrypted;
@@ -720,13 +720,13 @@ public class PdfReader implements Closeable, Serializable {
         try {
             this.headerPdfVersion = PdfVersion.fromString(version);
         } catch (IllegalArgumentException exc) {
-            throw new PdfException(PdfException.PdfVersionNotValid, version);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_VERSION_IS_NOT_VALID, version);
         }
         try {
             readXref();
         } catch (RuntimeException ex) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.error(LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, ex);
+            logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, ex);
 
             rebuildXref();
         }
@@ -764,7 +764,7 @@ public class PdfReader implements Closeable, Serializable {
                 address[k] = tokens.getIntValue() + first;
             }
             if (!ok)
-                throw new PdfException(PdfException.ErrorWhileReadingObjectStream);
+                throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_READING_OBJECT_STREAM);
             for (int k = 0; k < n; ++k) {
                 tokens.seek(address[k]);
                 tokens.nextToken();
@@ -815,23 +815,27 @@ public class PdfReader implements Closeable, Serializable {
         if (reference != null) {
             if (reference.isFree()) {
                 Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
+                        tokens.getGenNr()));
                 return createPdfNullInstance(readAsDirect);
             }
             if (reference.getGenNumber() != tokens.getGenNr()) {
                 if (fixedXref) {
                     Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                    logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                    logger.warn(
+                            MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
+                                    tokens.getGenNr()));
                     return createPdfNullInstance(readAsDirect);
                 } else {
-                    throw new PdfException(PdfException.InvalidIndirectReference1,
+                    throw new PdfException(KernelExceptionMessageConstant.INVALID_INDIRECT_REFERENCE,
                             MessageFormatUtil.format("{0} {1} R", reference.getObjNumber(), reference.getGenNumber()));
                 }
             }
         } else {
             if (table.isReadingCompleted()) {
                 Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
+                        tokens.getGenNr()));
                 return createPdfNullInstance(readAsDirect);
             } else {
                 reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
@@ -886,7 +890,7 @@ public class PdfReader implements Closeable, Serializable {
             case Ref:
                 return readReference(readAsDirect);
             case EndOfFile:
-                throw new PdfException(PdfException.UnexpectedEndOfFile);
+                throw new PdfException(KernelExceptionMessageConstant.UNEXPECTED_END_OF_FILE);
             default:
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.Null)) {
                     return createPdfNullInstance(readAsDirect);
@@ -924,14 +928,15 @@ public class PdfReader implements Closeable, Serializable {
             if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
                 break;
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
-                tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
+                tokens.throwError(
+                        KernelExceptionMessageConstant.THIS_DICTIONARY_KEY_IS_NOT_A_NAME, tokens.getStringValue());
             PdfName name = readPdfName(true);
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                    tokens.throwError(PdfException.UnexpectedGtGt);
+                    tokens.throwError(KernelExceptionMessageConstant.UNEXPECTED_GT_GT);
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                    tokens.throwError(PdfException.UnexpectedCloseBracket);
+                    tokens.throwError(KernelExceptionMessageConstant.UNEXPECTED_CLOSE_BRACKET);
             }
             dic.put(name, obj);
         }
@@ -946,7 +951,7 @@ public class PdfReader implements Closeable, Serializable {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
                     break;
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                    tokens.throwError(PdfException.UnexpectedGtGt);
+                    tokens.throwError(KernelExceptionMessageConstant.UNEXPECTED_GT_GT);
             }
             array.add(obj);
         }
@@ -957,10 +962,10 @@ public class PdfReader implements Closeable, Serializable {
         tokens.seek(tokens.getStartxref());
         tokens.nextToken();
         if (!tokens.tokenValueEqualsTo(PdfTokenizer.Startxref))
-            throw new PdfException(PdfException.PdfStartxrefNotFound, tokens);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND, tokens);
         tokens.nextToken();
         if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
-            throw new PdfException(PdfException.PdfStartxrefIsNotFollowedByANumber, tokens);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_STARTXREF_IS_NOT_FOLLOWED_BY_A_NUMBER, tokens);
         long startxref = tokens.getLongValue();
         lastXref = startxref;
         eofPos = tokens.getPosition();
@@ -987,7 +992,8 @@ public class PdfReader implements Closeable, Serializable {
             if (prev == null)
                 break;
             if (prev.longValue() == startxref)
-                throw new PdfException(PdfException.TrailerPrevEntryPointsToItsOwnCrossReferenceSection);
+                throw new PdfException(KernelExceptionMessageConstant.
+                        TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION);
             startxref = prev.longValue();
             tokens.seek(startxref);
             trailer2 = readXrefSection();
@@ -995,14 +1001,14 @@ public class PdfReader implements Closeable, Serializable {
 
         Integer xrefSize = trailer.getAsInt(PdfName.Size);
         if (xrefSize == null) {
-            throw new PdfException(PdfException.InvalidXrefTable);
+            throw new PdfException(KernelExceptionMessageConstant.INVALID_XREF_TABLE);
         }
     }
 
     protected PdfDictionary readXrefSection() throws IOException {
         tokens.nextValidToken();
         if (!tokens.tokenValueEqualsTo(PdfTokenizer.Xref))
-            tokens.throwError(PdfException.XrefSubsectionNotFound);
+            tokens.throwError(KernelExceptionMessageConstant.XREF_SUBSECTION_NOT_FOUND);
         PdfXrefTable xref = pdfDocument.getXref();
         while (true) {
             tokens.nextValidToken();
@@ -1010,12 +1016,13 @@ public class PdfReader implements Closeable, Serializable {
                 break;
             }
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
-                tokens.throwError(PdfException.ObjectNumberOfTheFirstObjectInThisXrefSubsectionNotFound);
+                tokens.throwError(
+                        KernelExceptionMessageConstant.OBJECT_NUMBER_OF_THE_FIRST_OBJECT_IN_THIS_XREF_SUBSECTION_NOT_FOUND);
             }
             int start = tokens.getIntValue();
             tokens.nextValidToken();
             if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
-                tokens.throwError(PdfException.NumberOfEntriesInThisXrefSubsectionNotFound);
+                tokens.throwError(KernelExceptionMessageConstant.NUMBER_OF_ENTRIES_IN_THIS_XREF_SUBSECTION_NOT_FOUND);
             }
             int end = tokens.getIntValue() + start;
             for (int num = start; num < end; num++) {
@@ -1057,14 +1064,16 @@ public class PdfReader implements Closeable, Serializable {
 
                 if (tokens.tokenValueEqualsTo(PdfTokenizer.N)) {
                     if (pos == 0) {
-                        tokens.throwError(PdfException.FilePosition1CrossReferenceEntryInThisXrefSubsection);
+                        tokens.throwError(
+                                KernelExceptionMessageConstant.FILE_POSITION_0_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
                     }
                 } else if (tokens.tokenValueEqualsTo(PdfTokenizer.F)) {
                     if (refFirstEncountered) {
                         reference.setState(PdfObject.FREE);
                     }
                 } else {
-                    tokens.throwError(PdfException.InvalidCrossReferenceEntryInThisXrefSubsection);
+                    tokens.throwError(
+                            KernelExceptionMessageConstant.INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION);
                 }
 
                 if (refFirstEncountered) {
@@ -1179,7 +1188,7 @@ public class PdfReader implements Closeable, Serializable {
                             newReference.setObjStreamNumber((int) field2);
                             break;
                         default:
-                            throw new PdfException(PdfException.InvalidXrefStream);
+                            throw new PdfException(KernelExceptionMessageConstant.INVALID_XREF_STREAM);
                     }
 
                     PdfIndirectReference reference = xref.get(base);
@@ -1274,7 +1283,7 @@ public class PdfReader implements Closeable, Serializable {
             }
         }
         if (trailer == null)
-            throw new PdfException(PdfException.TrailerNotFound);
+            throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
     }
 
     boolean isMemorySavingMode() {
@@ -1292,7 +1301,8 @@ public class PdfReader implements Closeable, Serializable {
         PdfName filter = enc.getAsName(PdfName.Filter);
         if (PdfName.Adobe_PubSec.equals(filter)) {
             if (properties.certificate == null) {
-                throw new PdfException(PdfException.CertificateIsNotProvidedDocumentIsEncryptedWithPublicKeyCertificate);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE);
             }
             decrypt = new PdfEncryption(enc, properties.certificateKey, properties.certificate,
                     properties.certificateKeyProvider, properties.externalDecryptionProcess);
@@ -1311,19 +1321,17 @@ public class PdfReader implements Closeable, Serializable {
      * @return a tokeniser that is guaranteed to start at the PDF header
      * @throws IOException if there is a problem reading the byte source
      */
-    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource) throws IOException {
-        com.itextpdf.io.IOException possibleException = null;
+    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource, boolean closeStream)
+            throws IOException {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
         int offset;
         try {
             offset = tok.getHeaderOffset();
-        } catch (com.itextpdf.io.IOException ex) {
-            possibleException = ex;
-            throw possibleException;
-        } finally {
-            if (possibleException != null) {
+        } catch (com.itextpdf.io.exceptions.IOException ex) {
+            if (closeStream) {
                 tok.close();
             }
+            throw ex;
         }
         if (offset != 0) {
             IRandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
@@ -1352,7 +1360,8 @@ public class PdfReader implements Closeable, Serializable {
                     if (tokens.getTokenType() != PdfTokenizer.TokenType.Obj
                             || tokens.getObjNr() != reference.getObjNumber()
                             || tokens.getGenNr() != reference.getGenNumber()) {
-                        tokens.throwError(PdfException.InvalidOffsetForObject1, reference.toString());
+                        tokens.throwError(
+                                KernelExceptionMessageConstant.INVALID_OFFSET_FOR_THIS_OBJECT, reference.toString());
                     }
                     object = readObject(false);
                 } catch (RuntimeException ex) {
@@ -1368,7 +1377,7 @@ public class PdfReader implements Closeable, Serializable {
                 return null;
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotReadPdfObject, e);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_READ_PDF_OBJECT, e);
         }
     }
 
@@ -1442,37 +1451,6 @@ public class PdfReader implements Closeable, Serializable {
         }
     }
 
-    /**
-     * This method is invoked while deserialization
-     *
-     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     * @throws ClassNotFoundException if the class of a serialized object could not be found.
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (sourcePath != null && tokens == null) {
-            tokens = getOffsetTokeniser(new RandomAccessSourceFactory().setForceRead(false).createBestSource(sourcePath));
-        }
-    }
-
-    /**
-     * This method is invoked while serialization
-     *
-     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        if (sourcePath != null) {
-            PdfTokenizer tempTokens = tokens;
-            tokens = null;
-            out.defaultWriteObject();
-            tokens = tempTokens;
-        } else {
-            out.defaultWriteObject();
-        }
-    }
-
     protected static class ReusableRandomAccessSource implements IRandomAccessSource {
         private ByteBuffer buffer;
 
@@ -1508,7 +1486,7 @@ public class PdfReader implements Closeable, Serializable {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             buffer = null;
         }
     }

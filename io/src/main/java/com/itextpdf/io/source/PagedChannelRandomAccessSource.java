@@ -43,14 +43,10 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,7 +61,6 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
     // the single size MRU case (24% speed improvement)
     public static final int DEFAULT_TOTAL_BUFSIZE = 1 << 26;
     public static final int DEFAULT_MAX_OPEN_BUFFERS = 16;
-    private static final long serialVersionUID = 4297575388315637274L;
 
     /**
      * The size of each of the buffers to use when mapping files into memory.  This must be greater than 0 and less than {@link Integer#MAX_VALUE}
@@ -171,17 +166,9 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
                 channel.close();
             } catch (Exception ex) {
                 Logger logger = LoggerFactory.getLogger(PagedChannelRandomAccessSource.class);
-                logger.error(LogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
+                logger.error(IoLogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
             }
         }
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        throw new NotSerializableException(getClass().toString());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException {
-        throw new NotSerializableException(getClass().toString());
     }
 
     private static class MRU<E> {

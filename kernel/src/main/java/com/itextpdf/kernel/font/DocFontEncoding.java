@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
@@ -54,8 +54,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,6 @@ import org.slf4j.LoggerFactory;
  */
 class DocFontEncoding extends FontEncoding {
 
-    private static final long serialVersionUID = -4248206280861742148L;
 
     protected DocFontEncoding() {
     }
@@ -125,7 +123,8 @@ class DocFontEncoding extends FontEncoding {
                     currentNumber = ((PdfNumber) obj).intValue();
                 } else if (currentNumber > 255) {
                     Logger LOGGER = LoggerFactory.getLogger(DocFontEncoding.class);
-                    LOGGER.warn(MessageFormatUtil.format(LogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, ((PdfName) obj).getValue()));
+                    LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES,
+                            ((PdfName) obj).getValue()));
                     /* don't return or break, because differences subarrays may
                      * be in any order:
                      * e.g. [255 /space /one 250 /two /three]

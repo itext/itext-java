@@ -43,10 +43,7 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
-
-public class SubstLookupRecord implements Serializable {
-    private static final long serialVersionUID = 8543433580793199311L;
+public class SubstLookupRecord {
     int sequenceIndex;
     int lookupListIndex;
 }

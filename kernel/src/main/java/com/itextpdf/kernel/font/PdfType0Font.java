@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.CidFont;
@@ -59,10 +59,11 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -76,7 +77,6 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -85,7 +85,10 @@ import org.slf4j.LoggerFactory;
 
 public class PdfType0Font extends PdfFont {
 
-    private static final long serialVersionUID = -8033620300884193397L;
+    /**
+     * This is the default encoding to use.
+     */
+    private static final String DEFAULT_ENCODING = "";
 
     /**
      * The code length shall not be greater than 4.
@@ -104,26 +107,25 @@ public class PdfType0Font extends PdfFont {
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
-    //longTag is actually ordered set of usedGlyphs, shall be renamed in 7.2
-    protected Set<Integer> longTag;
+    protected Set<Integer> usedGlyphs;
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
         if (!PdfEncodings.IDENTITY_H.equals(cmap) && !PdfEncodings.IDENTITY_V.equals(cmap)) {
-            throw new PdfException(PdfException.OnlyIdentityCMapsSupportsWithTrueType);
+            throw new PdfException(KernelExceptionMessageConstant.ONLY_IDENTITY_CMAPS_SUPPORTS_WITH_TRUETYPE);
         }
 
         if (!ttf.getFontNames().allowEmbedding()) {
-            throw new PdfException(PdfException.CannotBeEmbeddedDueToLicensingRestrictions)
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS)
                     .setMessageParams(ttf.getFontNames().getFontName() + ttf.getFontNames().getStyle());
         }
         this.fontProgram = ttf;
         this.embedded = true;
         vertical = cmap.endsWith("V");
         cmapEncoding = new CMapEncoding(cmap);
-        longTag = new TreeSet<>();
+        usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_2;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
@@ -151,7 +153,7 @@ public class PdfType0Font extends PdfFont {
         vertical = cmap.endsWith("V");
         String uniMap = getCompatibleUniMap(fontProgram.getRegistry());
         cmapEncoding = new CMapEncoding(cmap, uniMap);
-        longTag = new TreeSet<>();
+        usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_0;
     }
 
@@ -169,7 +171,7 @@ public class PdfType0Font extends PdfFont {
                 if (toUnicodeCMap == null) {
                     toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
                     Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.UNKNOWN_CMAP, uniMap));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.UNKNOWN_CMAP, uniMap));
                 }
             }
             fontProgram = DocTrueTypeFont.createFontProgram(cidFont, toUnicodeCMap);
@@ -198,7 +200,8 @@ public class PdfType0Font extends PdfFont {
                 }
             }
             if (fontProgram == null) {
-                throw new PdfException(MessageFormatUtil.format(PdfException.CannotRecogniseDocumentFontWithEncoding, cidFontName, cmap));
+                throw new PdfException(MessageFormatUtil.format(
+                        KernelExceptionMessageConstant.CANNOT_RECOGNISE_DOCUMENT_FONT_WITH_ENCODING, cidFontName, cmap));
             }
         }
         // DescendantFonts is a one-element array specifying the CIDFont dictionary that is the descendant of this Type 0 font.
@@ -210,9 +213,9 @@ public class PdfType0Font extends PdfFont {
         } else if (PdfName.CIDFontType2.equals(subtype)) {
             cidFontType = CID_FONT_TYPE_2;
         } else {
-            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
+            LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
         }
-        longTag = new TreeSet<>();
+        usedGlyphs = new TreeSet<>();
         subset = false;
     }
 
@@ -299,9 +302,7 @@ public class PdfType0Font extends PdfFont {
                     convertToBytes(glyph, buffer);
                 } else {
                     //getCode() could be either -1 or 0
-                    int nullCode = cmapEncoding.getCmapCode(0);
-                    buffer.append(nullCode >> 8);
-                    buffer.append(nullCode);
+                    buffer.append(cmapEncoding.getCmapBytes(0));
                 }
             }
         }
@@ -320,7 +321,7 @@ public class PdfType0Font extends PdfFont {
             byte[] bytes = new byte[totalByteCount];
             int offset = 0;
             for (int i = glyphLine.start; i < glyphLine.end; i++) {
-                longTag.add(glyphLine.get(i).getCode());
+                usedGlyphs.add(glyphLine.get(i).getCode());
                 offset = cmapEncoding.fillCmapBytes(glyphLine.get(i).getCode(), bytes, offset);
             }
             return bytes;
@@ -331,7 +332,7 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public byte[] convertToBytes(Glyph glyph) {
-        longTag.add(glyph.getCode());
+        usedGlyphs.add(glyph.getCode());
         return cmapEncoding.getCmapBytes(glyph.getCode());
     }
 
@@ -575,7 +576,7 @@ public class PdfType0Font extends PdfFont {
                         failedCodes.append((int) charCodesSequence.charAt(i + codeLength - 1)).append(" ");
                     }
                     logger.warn(MessageFormatUtil
-                            .format(LogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
+                            .format(IoLogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, failedCodes.toString()));
                 }
                 i += codeSpaceMatchedLength - 1;
             }
@@ -601,8 +602,8 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public boolean isBuiltWith(String fontProgram, String encoding) {
-        return getFontProgram().isBuiltWith(fontProgram) &&
-                cmapEncoding.isBuiltWith(encoding);
+        return getFontProgram().isBuiltWith(fontProgram)
+                && cmapEncoding.isBuiltWith(normalizeEncoding(encoding));
     }
 
     @Override
@@ -623,19 +624,6 @@ public class PdfType0Font extends PdfFont {
      */
     public CMapEncoding getCmap() {
         return cmapEncoding;
-    }
-
-    /**
-     * Creates a ToUnicode CMap to allow copy and paste from Acrobat.
-     *
-     * @param metrics metrics[0] contains the glyph index and metrics[2]
-     *                contains the Unicode code
-     * @return the stream representing this CMap or <CODE>null</CODE>
-     * @deprecated will be removed in 7.2. Use {@link #getToUnicode()} instead
-     */
-    @Deprecated
-    public PdfStream getToUnicode(Object[] metrics) {
-        return getToUnicode();
     }
 
     @Override
@@ -659,40 +647,9 @@ public class PdfType0Font extends PdfFont {
         return fontDescriptor;
     }
 
-    /**
-     * Generates the CIDFontType2 dictionary.
-     *
-     * @param ttf a font program of this font instance
-     * @param fontDescriptor the font descriptor dictionary
-     * @param fontName       a name of the font
-     * @param metrics        the horizontal width metrics
-     * @return fully initialized CIDFont
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    protected PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String fontName, int[][] metrics) {
-        return getCidFont(fontDescriptor, fontName, ttf != null && !ttf.isCff());
-    }
-
-    /**
-     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
-     * This set of used glyphs is required for building width array and ToUnicode CMAP.
-     *
-     * @param ttf a font program of this font instance.
-     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
-     *                This set is updated inside of the method if needed.
-     * @param includeMetrics used to define whether longTag map is populated with glyph metrics.
-     *                       Deprecated and is not used right now.
-     * @deprecated will be removed in 7.2
-     */
-    @Deprecated
-    protected void addRangeUni(TrueTypeFont ttf, Map<Integer, int[]> longTag, boolean includeMetrics) {
-        addRangeUni(ttf, longTag.keySet());
-    }
-
     private void convertToBytes(Glyph glyph, ByteBuffer result) {
         int code = glyph.getCode();
-        longTag.add(code);
+        usedGlyphs.add(code);
         cmapEncoding.fillCmapBytes(code, result);
     }
 
@@ -726,11 +683,11 @@ public class PdfType0Font extends PdfFont {
             PdfDictionary fontDescriptor = getFontDescriptor(fontName);
 
             PdfStream fontStream;
-            ttf.updateUsedGlyphs((SortedSet<Integer>) longTag, subset, subsetRanges);
+            ttf.updateUsedGlyphs((SortedSet<Integer>) usedGlyphs, subset, subsetRanges);
             if (ttf.isCff()) {
                 byte[] cffBytes;
                 if (subset) {
-                    cffBytes = new CFFFontSubset(ttf.getFontStreamBytes(), longTag).Process();
+                    cffBytes = new CFFFontSubset(ttf.getFontStreamBytes(), usedGlyphs).Process();
                 } else {
                     cffBytes = ttf.getFontStreamBytes();
                 }
@@ -745,10 +702,10 @@ public class PdfType0Font extends PdfFont {
                 //getDirectoryOffset() > 0 means ttc, which shall be subsetted anyway.
                 if (subset || ttf.getDirectoryOffset() > 0) {
                     try {
-                        ttfBytes = ttf.getSubset(longTag, subset);
-                    } catch (com.itextpdf.io.IOException e) {
+                        ttfBytes = ttf.getSubset(usedGlyphs, subset);
+                    } catch (com.itextpdf.io.exceptions.IOException e) {
                         Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
-                        logger.warn(LogMessageConstant.FONT_SUBSET_ISSUE);
+                        logger.warn(IoLogMessageConstant.FONT_SUBSET_ISSUE);
                         ttfBytes = null;
                     }
                 }
@@ -803,22 +760,6 @@ public class PdfType0Font extends PdfFont {
     /**
      * Generates the CIDFontType2 dictionary.
      *
-     * @param ttf a font program of this font instance
-     * @param fontDescriptor the indirect reference to the font descriptor
-     * @param fontName       a name of the font
-     * @param glyphIds       glyph ids used in from the font
-     * @return fully initialized CIDFont
-     * @deprecated use {@link #getCidFont(PdfDictionary, String, boolean)} instead.
-     */
-    @Deprecated
-    protected PdfDictionary getCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String fontName,
-                                            int[] glyphIds) {
-        return getCidFont(fontDescriptor, fontName, ttf != null && !ttf.isCff());
-    }
-
-    /**
-     * Generates the CIDFontType2 dictionary.
-     *
      * @param fontDescriptor the font descriptor dictionary
      * @param fontName       a name of the font
      * @param isType2        true, if the font is CIDFontType2 (TrueType glyphs),
@@ -863,7 +804,7 @@ public class PdfType0Font extends PdfFont {
         stream.writeByte('[');
         int lastNumber = -10;
         boolean firstTime = true;
-        for (int code : longTag) {
+        for (int code : usedGlyphs) {
             Glyph glyph = fontProgram.getGlyphByCode(code);
             if (glyph.getWidth() == FontProgram.DEFAULT_WIDTH) {
                 continue;
@@ -913,7 +854,7 @@ public class PdfType0Font extends PdfFont {
         ArrayList<Glyph> glyphGroup = new ArrayList<>(100);
 
         int bfranges = 0;
-        for (Integer glyphId : longTag) {
+        for (Integer glyphId : usedGlyphs) {
             Glyph glyph = fontProgram.getGlyphByCode((int) glyphId);
             if (glyph.getChars() != null) {
                 glyphGroup.add(glyph);
@@ -959,20 +900,6 @@ public class PdfType0Font extends PdfFont {
         return s.substring(s.length() - 4);
     }
 
-    /**
-     * The method will update set of used glyphs with range used in subset or with all glyphs if there is no subset.
-     * This set of used glyphs is required for building width array and ToUnicode CMAP.
-     *
-     * @param ttf a font program of this font instance.
-     * @param longTag a set of integers, which are glyph ids that denote used glyphs.
-     *                This set is updated inside of the method if needed.
-     * @deprecated use {@link TrueTypeFont#updateUsedGlyphs(SortedSet, boolean, List)} instead.
-     */
-    @Deprecated
-    protected void addRangeUni(TrueTypeFont ttf, Set<Integer> longTag) {
-        ttf.updateUsedGlyphs((SortedSet<Integer>) longTag, subset, subsetRanges);
-    }
-
     private String getCompatibleUniMap(String registry) {
         String uniMap = "";
         for (String name : CidFontProperties.getRegistryNames().get(registry + "_Uni")) {
@@ -999,5 +926,11 @@ public class PdfType0Font extends PdfFont {
                 return new CMapEncoding(cmapName, uniMap);
             }
         }
+    }
+
+    private static String normalizeEncoding(String encoding) {
+        return null == encoding || DEFAULT_ENCODING.equals(encoding)
+                ? PdfEncodings.IDENTITY_H
+                : encoding;
     }
 }

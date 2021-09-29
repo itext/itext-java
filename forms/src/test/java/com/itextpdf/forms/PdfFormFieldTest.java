@@ -46,14 +46,13 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -75,15 +74,14 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Map;
 
 
 @Category(IntegrationTest.class)
@@ -100,7 +98,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     // The first message for the case when the FormField is null,
     // the second message when the FormField is a indirect reference to null.
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.CANNOT_CREATE_FORMFIELD, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CANNOT_CREATE_FORMFIELD, count = 2)})
     public void nullFormFieldTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "nullFormField.pdf"));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
@@ -519,7 +517,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.NO_FIELDS_IN_ACROFORM)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NO_FIELDS_IN_ACROFORM)})
     public void acroFieldDictionaryNoFields() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "acroFieldDictionaryNoFields.pdf";
         String cmpPdf = sourceFolder + "cmp_acroFieldDictionaryNoFields.pdf";
@@ -842,7 +840,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT)})
     public void noMaxLenWithSetCombFlagTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "noMaxLenWithSetCombFlagTest.pdf";
         String cmpPdf = sourceFolder + "cmp_noMaxLenWithSetCombFlagTest.pdf";
@@ -990,7 +988,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT, count = 2)})
     public void regenerateMaxLenCombTest() throws IOException, InterruptedException {
         String srcPdf = sourceFolder + "regenerateMaxLenCombTest.pdf";
         String outPdf = destinationFolder + "regenerateMaxLenCombTest.pdf";
@@ -1047,7 +1045,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
     public void pdfWithDifferentFieldsTest() throws IOException, InterruptedException {
         String fileName = destinationFolder + "pdfWithDifferentFieldsTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
@@ -1134,20 +1132,22 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String srcPdf = sourceFolder + testName;
         ByteArrayOutputStream outPdf = new ByteArrayOutputStream();
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf),
-                new StampingProperties().useAppendMode());
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
-        PdfFormField field = form.getField("magenta");
-        field.setDefaultAppearance("/F1 25 Tf");
-        int objectNumer = field.getPdfObject().getIndirectReference().getObjNumber();
+        int objectNumber;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+            PdfFormField field = form.getField("magenta");
+            field.setFontSize(35);
+            field.updateDefaultAppearance();
+            objectNumber = field.getPdfObject().getIndirectReference().getObjNumber();
+        }
 
-        pdfDoc.close();
+        PdfString da;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outPdf.toByteArray())))) {
+            da = ((PdfDictionary) pdfDoc.getPdfObject(objectNumber)).getAsString(PdfName.DA);
+        }
 
-        pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outPdf.toByteArray())));
-        PdfString da = ((PdfDictionary) pdfDoc.getPdfObject(objectNumer)).getAsString(PdfName.DA);
-        pdfDoc.close();
-
-        Assert.assertEquals("/F1 25 Tf", da.toString());
+        Assert.assertEquals("/F1 35 Tf 1 0 1 rg", da.toString());
     }
 
     @Test

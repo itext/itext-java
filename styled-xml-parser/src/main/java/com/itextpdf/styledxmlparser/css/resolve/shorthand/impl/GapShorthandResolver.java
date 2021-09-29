@@ -42,8 +42,8 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
@@ -73,11 +73,11 @@ public class GapShorthandResolver implements IShorthandResolver {
             );
         }
         if (CssTypesValidationUtils.containsInitialOrInheritOrUnset(shorthandExpression)) {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, CommonCssConstants.GAP,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, CommonCssConstants.GAP,
                     shorthandExpression);
         }
         if (shorthandExpression.isEmpty()) {
-            return handleExpressionError(LogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.GAP,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.GAP,
                     shorthandExpression);
         }
 
@@ -88,7 +88,7 @@ public class GapShorthandResolver implements IShorthandResolver {
         } else if (gapProps.length == 2) {
             return resolveGapWithTwoProperties(gapProps[0], gapProps[1]);
         } else {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, CommonCssConstants.GAP,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, CommonCssConstants.GAP,
                     shorthandExpression);
 
         }
@@ -97,12 +97,12 @@ public class GapShorthandResolver implements IShorthandResolver {
     private List<CssDeclaration> resolveGapWithTwoProperties(String row, String column) {
         CssDeclaration rowGapDeclaration = new CssDeclaration(CommonCssConstants.ROW_GAP, row);
         if (!CssDeclarationValidationMaster.checkDeclaration(rowGapDeclaration)) {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                     CommonCssConstants.ROW_GAP, row);
         }
         CssDeclaration columnGapDeclaration = new CssDeclaration(CommonCssConstants.COLUMN_GAP, column);
         if (!CssDeclarationValidationMaster.checkDeclaration(columnGapDeclaration)) {
-            return handleExpressionError(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
                     CommonCssConstants.COLUMN_GAP, column);
         }
         return Arrays.asList(rowGapDeclaration, columnGapDeclaration);

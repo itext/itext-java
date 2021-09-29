@@ -48,7 +48,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import java.util.List;
 
 public class PdfUserPropertiesAttributes extends PdfStructureAttributes {
-    private static final long serialVersionUID = -3680551925943527773L;
 
     public PdfUserPropertiesAttributes(PdfDictionary attributesDict) {
         super(attributesDict);

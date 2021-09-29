@@ -42,24 +42,34 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
+import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
-public class TaggedPdfReaderToolTest extends ExtendedITextTest{
+public class TaggedPdfReaderToolTest extends ExtendedITextTest {
+
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -86,6 +96,24 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest{
         CompareTool compareTool = new CompareTool();
         if (!compareTool.compareXmls(outXmlPath, cmpXmlPath)) {
             Assert.fail("Resultant xml is different.");
+        }
+    }
+
+    @Test
+    public void noStructTreeRootInDocTest() {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT);
+
+        String outXmlPath = destinationFolder + "noStructTreeRootInDoc.xml";
+
+        try {
+            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+            TaggedPdfReaderTool tool = new TaggedPdfReaderTool(pdfDocument);
+            try (FileOutputStream outXml = new FileOutputStream(outXmlPath)) {
+                tool.convertToXml(outXml, "UTF-8");
+            }
+        } catch (IOException e) {
+            Assert.fail("IOException is not expected to be triggered");
         }
     }
 }

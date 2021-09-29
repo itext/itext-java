@@ -43,8 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -69,16 +70,13 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-
 
 /**
  * Internal helper class which is used to effectively build parent tree and also find marked content references:
  * for specified page, by MCID or by struct parent index.
  */
-class ParentTreeHandler implements Serializable {
+class ParentTreeHandler {
 
-    private static final long serialVersionUID = 1593883864288316473L;
 
     private PdfStructTreeRoot structTreeRoot;
 
@@ -176,7 +174,7 @@ class ParentTreeHandler implements Serializable {
         PdfIndirectReference mcrPageIndRef = mcr.getPageIndirectReference();
         if (mcrPageIndRef == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
             Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
-            logger.error(LogMessageConstant.ENCOUNTERED_INVALID_MCR);
+            logger.error(IoLogMessageConstant.ENCOUNTERED_INVALID_MCR);
             return;
         }
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(mcrPageIndRef);
@@ -206,7 +204,7 @@ class ParentTreeHandler implements Serializable {
             } else {
                 // TODO DEVSIX-3351 an error is thrown here because right now no /StructParents will be created.
                 Logger logger = LoggerFactory.getLogger(ParentTreeHandler.class);
-                logger.error(LogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS);
+                logger.error(IoLogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS);
             }
             pageMcrs.putXObjectMcr(stmIndRef, mcr);
             if (registeringOnInit) {
@@ -216,13 +214,13 @@ class ParentTreeHandler implements Serializable {
             PdfDictionary obj = ((PdfDictionary) mcr.getPdfObject()).getAsDictionary(PdfName.Obj);
             if (obj == null || obj.isFlushed()) {
                 throw new PdfException(
-                        PdfException.WhenAddingObjectReferenceToTheTagTreeItMustBeConnectedToNotFlushedObject);
+                        KernelExceptionMessageConstant.WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT);
             }
             PdfNumber n = obj.getAsNumber(PdfName.StructParent);
             if (n != null) {
                 pageMcrs.putObjectReferenceMcr(n.intValue(), mcr);
             } else {
-                throw new PdfException(PdfException.StructParentIndexNotFoundInTaggedObject);
+                throw new PdfException(KernelExceptionMessageConstant.STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT);
             }
         } else {
             pageMcrs.putPageContentStreamMcr(mcr.getMcid(), mcr);
@@ -241,7 +239,8 @@ class ParentTreeHandler implements Serializable {
             return;
         }
         if (pageDict.isFlushed()) {
-            throw new PdfException(PdfException.CannotRemoveMarkedContentReferenceBecauseItsPageWasAlreadyFlushed);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CANNOT_REMOVE_MARKED_CONTENT_REFERENCE_BECAUSE_ITS_PAGE_WAS_ALREADY_FLUSHED);
         }
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         if (pageMcrs != null) {
@@ -407,9 +406,8 @@ class ParentTreeHandler implements Serializable {
         return null;
     }
 
-    static class PageMcrsContainer implements Serializable {
+    static class PageMcrsContainer {
 
-        private static final long serialVersionUID = 8739394375814645643L;
 
         Map<Integer, PdfMcr> objRefs;
         NavigableMap<Integer, PdfMcr> pageContentStreams;

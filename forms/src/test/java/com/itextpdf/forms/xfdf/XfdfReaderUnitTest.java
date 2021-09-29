@@ -23,7 +23,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -44,7 +44,7 @@ import org.junit.experimental.categories.Category;
 public class XfdfReaderUnitTest extends ExtendedITextTest {
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
     public void xfdfSquareAnnotationWithoutFringe(){
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDocument.addNewPage();

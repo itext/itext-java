@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfPopupAnnotation extends PdfAnnotation {
 
-    private static final long serialVersionUID = -8892617787951569855L;
 	
     protected PdfAnnotation parent;
 

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -119,7 +119,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)})
     public void readPdfStringTest() throws IOException {
         final String author = "This string9078 contains \u00A5two octal characters\u00C7";
         final String creator = "iText\r 6\n";

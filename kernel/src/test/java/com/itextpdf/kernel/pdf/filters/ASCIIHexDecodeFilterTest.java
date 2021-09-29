@@ -22,7 +22,8 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -62,7 +63,7 @@ public class ASCIIHexDecodeFilterTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> ASCIIHexDecodeFilter.ASCIIHexDecode(bytes)
         );
-        Assert.assertEquals(PdfException.IllegalCharacterInAsciihexdecode, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE, e.getMessage());
     }
 
     @Test

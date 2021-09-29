@@ -42,7 +42,8 @@
  */
 package com.itextpdf.kernel.pdf.collection;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -97,7 +98,7 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> sort.setSortOrder(testAscendings)
         );
-        Assert.assertEquals(PdfException.YouNeedASingleBooleanForThisCollectionSortDictionary, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.YOU_NEED_A_SINGLE_BOOLEAN_FOR_THIS_COLLECTION_SORT_DICTIONARY, e.getMessage());
     }
 
     @Test
@@ -127,7 +128,7 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> sort.setSortOrder(testAscending)
         );
-        Assert.assertEquals(PdfException.YouHaveToDefineABooleanArrayForThisCollectionSortDictionary, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY, e.getMessage());
     }
 
     @Test
@@ -144,7 +145,7 @@ public class PdfCollectionSortTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> sort.setSortOrder(testAscendings)
         );
-        Assert.assertEquals(PdfException.NumberOfBooleansInTheArrayDoesntCorrespondWithTheNumberOfFields, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.NUMBER_OF_BOOLEANS_IN_THE_ARRAY_DOES_NOT_CORRESPOND_WITH_THE_NUMBER_OF_FIELDS, e.getMessage());
     }
 
     @Test

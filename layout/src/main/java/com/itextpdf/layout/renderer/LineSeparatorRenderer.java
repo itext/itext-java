@@ -51,7 +51,7 @@ import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 
 public class LineSeparatorRenderer extends BlockRenderer {
 

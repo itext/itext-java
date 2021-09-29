@@ -42,6 +42,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.forms.exceptions.XfdfException;
 import com.itextpdf.kernel.pdf.PdfObject;
 
 /**

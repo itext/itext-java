@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -95,7 +96,7 @@ public class PdfAFlushingTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         imageXObject.makeIndirect(doc);
-        canvas.addXObject(imageXObject, new Rectangle(30, 300, 300, 300));
+        canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(30, 300, 300, 300));
 
         imageXObject.flush();
         if (imageXObject.isFlushed()) {
@@ -119,7 +120,7 @@ public class PdfAFlushingTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         imageXObject.makeIndirect(doc);
-        canvas.addXObject(imageXObject, new Rectangle(30, 300, 300, 300));
+        canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(30, 300, 300, 300));
 
         PdfPage lastPage = doc.getLastPage();
         lastPage.flush();
@@ -142,7 +143,7 @@ public class PdfAFlushingTest extends ExtendedITextTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
-        canvas.addXObject(imageXObject, new Rectangle(30, 300, 300, 300));
+        canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(30, 300, 300, 300));
 
         PdfPage lastPage = doc.getLastPage();
         lastPage.flush(true);

@@ -42,16 +42,13 @@
  */
 package com.itextpdf.kernel.pdf.collection;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.pdf.PdfDate;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperException;
-import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperExceptionConstant;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -215,7 +212,7 @@ public class PdfCollectionFieldTest extends ExtendedITextTest {
         // this line will throw an exception as getValue() method is not
         // supported for subType which differs from S, N and D.
         Exception e = Assert.assertThrows(PdfException.class, () -> field.getValue(stringValue));
-        Assert.assertEquals(MessageFormatUtil.format(PdfException._1IsNotAnAcceptableValueForTheField2,
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNACCEPTABLE_FIELD_VALUE,
                 stringValue, fieldName), e.getMessage());
     }
 

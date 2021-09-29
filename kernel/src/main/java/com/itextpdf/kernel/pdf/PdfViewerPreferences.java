@@ -43,11 +43,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -6885879361985241602L;
 
 	public enum PdfViewerPreferencesConstants {
         /**
@@ -385,7 +385,7 @@ public class PdfViewerPreferences extends PdfObjectWrapper<PdfDictionary> {
                 // the viewer preferences dictionary specifies a valid value other than AppDefault
                 PdfName curPrintScaling = getPdfObject().getAsName(PdfName.PrintScaling);
                 if (curPrintScaling == null || PdfName.AppDefault.equals(curPrintScaling)) {
-                    throw new PdfException(PdfException.PrintScalingEnforceEntryInvalid);
+                    throw new PdfException(KernelExceptionMessageConstant.PRINT_SCALING_ENFORCE_ENTRY_INVALID);
                 }
             }
         }

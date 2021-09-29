@@ -22,16 +22,23 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
@@ -46,6 +53,11 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
@@ -55,10 +67,11 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class Pdf20SigningTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/Pdf20SigningTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/Pdf20SigningTest/";
-    public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.p12";
-    public static final char[] password = "testpass".toCharArray();
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/Pdf20SigningTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/Pdf20SigningTest/";
+    private static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.p12";
+
+    private static final char[] PASSWORD = "testpass".toCharArray();
 
     private Certificate[] chain;
     private PrivateKey pk;
@@ -66,30 +79,116 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     @BeforeClass
     public static void before() {
         Security.addProvider(new BouncyCastleProvider());
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Before
     public void init() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException,
             UnrecoverableKeyException {
-        pk = Pkcs12FileHelper.readFirstKey(keystorePath, password, password);
-        chain = Pkcs12FileHelper.readFirstChain(keystorePath, password);
+        pk = Pkcs12FileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD, PASSWORD);
+        chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
     }
 
     @Test
     public void signExistingFieldWhenDirectAcroformAndNoSigFlagTest() throws GeneralSecurityException, IOException {
-        String src = sourceFolder + "signExistingFieldWhenDirectAcroformAndNoSigFlag.pdf";
-        String dest = destinationFolder + "signExistingFieldWhenDirectAcroformAndNoSigFlag.pdf";
+        String srcFile = SOURCE_FOLDER + "signExistingFieldWhenDirectAcroformAndNoSigFlag.pdf";
+        String outPdf = DESTINATION_FOLDER + "signExistingFieldWhenDirectAcroformAndNoSigFlag.pdf";
+
         String fieldName = "Signature1";
 
-        sign(src, fieldName, dest, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, PdfSigner.NOT_CERTIFIED);
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES,
+                PdfSigner.NOT_CERTIFIED);
 
-        PdfDocument doc = new PdfDocument(new PdfReader(dest));
-        PdfNumber sigFlag = doc.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm).getAsNumber(PdfName.SigFlags);
+        PdfDocument doc = new PdfDocument(new PdfReader(outPdf));
+        PdfNumber sigFlag = doc.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm)
+                .getAsNumber(PdfName.SigFlags);
 
         Assert.assertEquals(new PdfNumber(3).intValue(), sigFlag.intValue());
     }
 
+    @Test
+    public void signPdf2CertificationAfterApprovalTest() {
+        String srcFile = SOURCE_FOLDER + "approvalSignedDocPdf2.pdf";
+        String outPdf = DESTINATION_FOLDER + "signedPdf2CertificationAfterApproval.pdf";
+
+        Rectangle rect = new Rectangle(30, 50, 200, 100);
+
+        String fieldName = "Signature2";
+
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
+                        PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true,
+                        PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null));
+        Assert.assertEquals(SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS, e.getMessage());
+    }
+
+    @Test
+    public void signedTwicePdf2Test() throws GeneralSecurityException, IOException {
+        String srcFile = SOURCE_FOLDER + "signedTwice.pdf";
+        String cmpPdfFileThree = SOURCE_FOLDER + "cmp_signedTwice.pdf";
+        String outPdfFileOne = DESTINATION_FOLDER + "signedOnce.pdf";
+        String outPdfFileTwo = DESTINATION_FOLDER + "updated.pdf";
+        String outPdfFileThree = DESTINATION_FOLDER + "signedTwice.pdf";
+
+        // sign document
+        Rectangle rectangle1 = new Rectangle(36, 100, 200, 100);
+        sign(srcFile, "Signature1", outPdfFileOne, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES,
+                "Sign 1", "TestCity", rectangle1, false, true);
+
+        // update document
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(outPdfFileOne), new PdfWriter(outPdfFileTwo),
+                new StampingProperties().useAppendMode());
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+
+        // sign document again
+        Rectangle rectangle2 = new Rectangle(236, 100, 200, 100);
+        sign(outPdfFileTwo, "Signature2", outPdfFileThree, chain, pk, DigestAlgorithms.SHA256,
+                PdfSigner.CryptoStandard.CADES, "Sign 2", "TestCity", rectangle2, false, true);
+        Map<Integer, List<Rectangle>> map = new HashMap<>();
+        List<Rectangle> list = new ArrayList<>();
+        list.add(rectangle1);
+        list.add(rectangle2);
+        map.put(1, list);
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdfFileThree, cmpPdfFileThree));
+    }
+
+    @Test
+    public void signPdf2CmsTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "signPdf2Cms.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signPdf2Cms.pdf";
+        String outPdf = DESTINATION_FOLDER + "signPdf2Cms.pdf";
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CMS, "Test 1",
+                "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+                getTestMap(rect)));
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+    @Test
+    public void signPdf2CadesTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "signPdf2Cades.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signPdf2Cades.pdf";
+        String outPdf = DESTINATION_FOLDER + "signPdf2Cades.pdf";
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+                getTestMap(rect)));
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
 
     protected void sign(String src, String name, String dest, Certificate[] chain, PrivateKey pk,
             String digestAlgorithm, PdfSigner.CryptoStandard subfilter, int certificationLevel)
@@ -108,5 +207,55 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
                 0, subfilter);
+    }
+
+    protected void sign(String src, String name, String dest,
+            Certificate[] chain, PrivateKey pk,
+            String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
+            String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
+            boolean isAppendMode, int certificationLevel, Float fontSize)
+            throws GeneralSecurityException, IOException {
+
+        PdfReader reader = new PdfReader(src);
+        StampingProperties properties = new StampingProperties();
+        if (isAppendMode) {
+            properties.useAppendMode();
+        }
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), properties);
+
+        signer.setCertificationLevel(certificationLevel);
+
+        // Creating the appearance
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
+                .setReason(reason)
+                .setLocation(location)
+                .setReuseAppearance(setReuseAppearance);
+
+        if (rectangleForNewField != null) {
+            appearance.setPageRect(rectangleForNewField);
+        }
+        if (fontSize != null) {
+            appearance.setLayer2FontSize((float) fontSize);
+        }
+
+        signer.setFieldName(name);
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);
+    }
+
+    protected void sign(String src, String name, String dest,
+            Certificate[] chain, PrivateKey pk,
+            String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
+            String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
+            boolean isAppendMode) throws GeneralSecurityException, IOException {
+        sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField,
+                setReuseAppearance, isAppendMode, PdfSigner.NOT_CERTIFIED, null);
+    }
+
+    private static Map<Integer, List<Rectangle>> getTestMap(Rectangle ignoredArea) {
+        Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
+        result.put(1, Arrays.asList(ignoredArea));
+        return result;
     }
 }

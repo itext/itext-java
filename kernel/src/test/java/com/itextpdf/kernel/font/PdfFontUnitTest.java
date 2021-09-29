@@ -20,32 +20,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-/*
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -60,14 +42,21 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.Assert;
+
+import java.io.IOException;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfFontUnitTest extends ExtendedITextTest {
     public static final int FONT_METRICS_DESCENT = -40;
     public static final int FONT_METRICS_ASCENT = 700;
     public static final int FONT_SIZE = 50;
+
+    @Rule
+    public ExpectedException junitExpectedException = ExpectedException.none();
 
     public static class TestFont extends PdfFont {
 
@@ -236,13 +225,6 @@ public class PdfFontUnitTest extends ExtendedITextTest {
 
         font.setFontProgram(new TestFontProgram());
         Assert.assertTrue(font.containsGlyph(TestFont.ZERO_CODE_GLYPH));
-    }
-
-    @Test
-    public void getFontMatrixTest() {
-        TestFont font = new TestFont();
-
-        Assert.assertArrayEquals(PdfFont.DEFAULT_FONT_MATRIX, font.getFontMatrix(), 0.0001);
     }
 
     @Test
@@ -567,7 +549,7 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> font.getPdfFontStream(null, null)
         );
-        Assert.assertEquals(PdfException.FontEmbeddingIssue, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, e.getMessage());
     }
 
     @Test
@@ -648,5 +630,32 @@ public class PdfFontUnitTest extends ExtendedITextTest {
             }
         }
         return sentence;
+    }
+
+    @Test
+    public void cannotGetFontStreamForNullBytesTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
+
+        PdfFont pdfFont = PdfFontFactory.createFont();
+        pdfFont.getPdfFontStream(null, new int[] {1});
+    }
+
+    @Test
+    public void cannotGetFontStreamForNullLengthsTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
+
+        PdfFont pdfFont = PdfFontFactory.createFont();
+        pdfFont.getPdfFontStream(new byte[] {1}, null);
+    }
+
+    @Test
+    public void cannotGetFontStreamForNullBytesAndLengthsTest() throws IOException {
+        junitExpectedException.expect(PdfException.class);
+        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
+
+        PdfFont pdfFont = PdfFontFactory.createFont();
+        pdfFont.getPdfFontStream(null, null);
     }
 }

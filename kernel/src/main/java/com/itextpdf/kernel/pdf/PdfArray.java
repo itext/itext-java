@@ -43,7 +43,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 
 import java.util.ArrayList;
@@ -57,7 +58,6 @@ import java.util.List;
  */
 public class PdfArray extends PdfObject implements Iterable<PdfObject> {
 
-    private static final long serialVersionUID = 1617495612878046869L;
 
     protected List<PdfObject> list;
 
@@ -479,7 +479,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * PdfNumbers, if not a PdfException will be thrown.
      *
      * @return Rectangle of the first four values
-     * @throws com.itextpdf.kernel.PdfException if one of the first values isn't a PdfNumber
+     * @throws PdfException if one of the first values isn't a PdfNumber
      */
     public Rectangle toRectangle() {
         try {
@@ -496,7 +496,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
              
             return new Rectangle(llx, lly, urx - llx, ury - lly);
         } catch (Exception e) {
-            throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_RECTANGLE, e, this);
         }
     }
 
@@ -504,7 +504,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * Returns this array as an array of floats. Will throw a PdfException when it encounters an issue.
      *
      * @return this array as an array of floats
-     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     * @throws PdfException if one of the values isn't a number
      */
     public float[] toFloatArray() {
         try {
@@ -514,7 +514,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CannotConvertPdfArrayToFloatArray, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_FLOAT_ARRAY, e, this);
         }
     }
 
@@ -522,7 +522,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * Returns this array as an array of doubles. Will throw a PdfException when it encounters an issue.
      *
      * @return this array as an array of doubles
-     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     * @throws PdfException if one of the values isn't a number
      */
     public double[] toDoubleArray() {
         try {
@@ -532,7 +532,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CannotConvertPdfArrayToDoubleArray, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY, e, this);
         }
     }
 
@@ -540,7 +540,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * Returns this array as an array of longs. Will throw a PdfException when it encounters an issue.
      *
      * @return this array as an array of longs
-     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     * @throws PdfException if one of the values isn't a number
      */
     public long[] toLongArray() {
         try {
@@ -550,7 +550,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CannotConvertPdfArrayToLongArray, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_LONG_ARRAY, e, this);
         }
     }
 
@@ -558,7 +558,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * Returns this array as an array of ints. Will throw a PdfException when it encounters an issue.
      *
      * @return this array as an array of ints
-     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a number
+     * @throws PdfException if one of the values isn't a number
      */
     public int[] toIntArray() {
         try {
@@ -568,7 +568,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             }
             return rslt;
         } catch (Exception e) {
-            throw new PdfException(PdfException.CannotConvertPdfArrayToIntArray, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY, e, this);
         }
     }
 
@@ -576,7 +576,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      * Returns this array as an array of booleans. Will throw a PdfException when it encounters an issue.
      *
      * @return this array as an array of booleans
-     * @throws com.itextpdf.kernel.PdfException if one of the values isn't a boolean
+     * @throws PdfException if one of the values isn't a boolean
      */
     public boolean[] toBooleanArray() {
         boolean[] rslt = new boolean[size()];
@@ -584,7 +584,8 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         for (int k = 0; k < rslt.length; ++ k) {
             tmp = getAsBoolean(k);
             if (tmp == null) {
-                throw new PdfException(PdfException.CannotConvertPdfArrayToBooleanArray, this);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS, this);
             }
             rslt[k] = tmp.getValue();
         }

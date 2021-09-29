@@ -43,7 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.collection;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -56,7 +57,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = 4766153544105870238L;
 
     /**
      * A possible type of collection field.
@@ -238,7 +238,8 @@ public class PdfCollectionField extends PdfObjectWrapper<PdfDictionary> {
             case NUMBER:
                 return new PdfNumber(Double.parseDouble(value.trim()));
         }
-        throw new PdfException(PdfException._1IsNotAnAcceptableValueForTheField2).setMessageParams(value, getPdfObject().getAsString(PdfName.N).getValue());
+        throw new PdfException(KernelExceptionMessageConstant.UNACCEPTABLE_FIELD_VALUE)
+                .setMessageParams(value, getPdfObject().getAsString(PdfName.N).getValue());
     }
 
     @Override

@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.path;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
 /**
@@ -81,4 +82,11 @@ public interface IPathShape {
      */
     boolean isRelative();
 
+    /**
+     * Get bounding rectangle of the current path shape.
+     *
+     * @param lastPoint start point for this shape
+     * @return calculated rectangle
+     */
+    Rectangle getPathShapeRectangle(Point lastPoint);
 }

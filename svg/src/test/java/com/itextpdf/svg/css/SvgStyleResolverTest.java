@@ -43,7 +43,7 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
@@ -143,7 +143,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR),
     })
     public void svgCssResolverInvalidNameStylesheetTest() {
         Element jsoupLink = new Element(Tag.valueOf(SvgConstants.Tags.LINK), "");
@@ -228,7 +228,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
                 "\t\tstroke:#da0000;\n" +
                 "\t\tstroke-opacity:1;\n" +
                 "\t}\n" +
-                "  ", "");
+                "  ");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
         Element ellipse = new Element(Tag.valueOf("ellipse"), "");
@@ -256,7 +256,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
                 "\t\tfont-family:Courier;\n" +
                 "\t\tsrc:url(#Super Sans);\n" +
                 "\t}\n" +
-                "  ", "");
+                "  ");
         JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
         jSoupStyle.addChild(new JsoupTextNode(styleContents));
         SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());

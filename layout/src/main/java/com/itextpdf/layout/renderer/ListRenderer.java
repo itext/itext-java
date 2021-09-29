@@ -44,9 +44,9 @@
 package com.itextpdf.layout.renderer;
 
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -61,12 +61,12 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.IListSymbolFactory;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.ListSymbolPosition;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.IListSymbolFactory;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.ListSymbolPosition;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -260,17 +260,17 @@ public class ListRenderer extends BlockRenderer {
     }
 
     /**
-     * Corrects split and overflow renderers when {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} is applied.
+     * Corrects split and overflow renderers when {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} is applied.
      * <p>
-     * We assume that {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} is applied when the first
+     * We assume that {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} is applied when the first
      * {@link com.itextpdf.layout.renderer.ListItemRenderer} cannot be fully layouted.
      * This means that the problem has occurred in one of the first list item renderer's children.
      * In that case we force the placement of all first item renderer's children before the one,
      * which was the cause of {@link com.itextpdf.layout.layout.LayoutResult#NOTHING}, including this child.
      * <p>
-     * Notice that we do not expect {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} to be applied
+     * Notice that we do not expect {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} to be applied
      * if we can render the first item renderer and strongly recommend not to set
-     * {@link com.itextpdf.layout.property.Property#FORCED_PLACEMENT} manually.
+     * {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} manually.
      *
      * @param splitRenderer    the {@link IRenderer split renderer} before correction
      * @param overflowRenderer the {@link IRenderer overflow renderer} before correction
@@ -367,17 +367,26 @@ public class ListRenderer extends BlockRenderer {
             listItemNum = 0;
             for (IRenderer childRenderer : childRenderers) {
                 childRenderer.setParent(this);
-                childRenderer.deleteOwnProperty(Property.MARGIN_LEFT);
-                UnitValue marginLeftUV = childRenderer.getProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(0f));
-                if (!marginLeftUV.isPointValue()) {
+
+                // Symbol indent's value should be summed with the margin's value
+                boolean isRtl = BaseDirection.RIGHT_TO_LEFT ==
+                        childRenderer.<BaseDirection>getProperty(Property.BASE_DIRECTION);
+                int marginToSet = isRtl ? Property.MARGIN_RIGHT : Property.MARGIN_LEFT;
+                childRenderer.deleteOwnProperty(marginToSet);
+                UnitValue marginToSetUV =
+                        childRenderer.<UnitValue>getProperty(marginToSet, UnitValue.createPointValue(0f));
+                if (!marginToSetUV.isPointValue()) {
                     Logger logger = LoggerFactory.getLogger(ListRenderer.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+                    logger.error(MessageFormatUtil.format(
+                            IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            marginToSet));
                 }
-                float calculatedMargin = marginLeftUV.getValue();
+                float calculatedMargin = marginToSetUV.getValue();
                 if ((ListSymbolPosition) getListItemOrListProperty(childRenderer, this, Property.LIST_SYMBOL_POSITION) == ListSymbolPosition.DEFAULT) {
                     calculatedMargin += maxSymbolWidth + (float) (symbolIndent != null ? symbolIndent : 0f);
                 }
-                childRenderer.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(calculatedMargin));
+                childRenderer.setProperty(marginToSet, UnitValue.createPointValue(calculatedMargin));
+
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
                 ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
                 if (symbolRenderer != null) {

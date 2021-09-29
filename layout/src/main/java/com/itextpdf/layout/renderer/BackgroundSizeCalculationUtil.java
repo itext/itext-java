@@ -43,9 +43,9 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.property.BackgroundImage;
-import com.itextpdf.layout.property.BackgroundSize;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BackgroundImage;
+import com.itextpdf.layout.properties.BackgroundSize;
+import com.itextpdf.layout.properties.UnitValue;
 
 /**
  * Utility class for calculate background image width and height.

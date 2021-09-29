@@ -43,7 +43,6 @@
  */
 package com.itextpdf.kernel.geom;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,10 +53,9 @@ import java.util.List;
  * other graphics. A path shall be composed of straight and curved line segments, which
  * may connect to one another or may be disconnected.
  */
-public class Path implements Serializable {
+public class Path {
 
     private static final String START_PATH_ERR_MSG = "Path shall start with \"re\" or \"m\" operator";
-    private static final long serialVersionUID = 1658560770858987684L;
 
     private List<Subpath> subpaths = new ArrayList<>();
     private Point currentPoint;

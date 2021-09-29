@@ -43,6 +43,8 @@
 
 package com.itextpdf.svg.dummy.renderers.impl;
 
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -96,5 +98,10 @@ public class DummyBranchSvgNodeRenderer extends DummySvgNodeRenderer implements 
             }
         }
         return true;
+    }
+
+    @Override
+    public Rectangle getObjectBoundingBox(SvgDrawContext context) {
+        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
     }
 }

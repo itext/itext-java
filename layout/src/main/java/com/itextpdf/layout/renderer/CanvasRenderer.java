@@ -43,15 +43,15 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.RootLayoutArea;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 
-import com.itextpdf.layout.property.Transform;
+import com.itextpdf.layout.properties.Transform;
 import org.slf4j.LoggerFactory;
 
 public class CanvasRenderer extends RootRenderer {
@@ -85,7 +85,7 @@ public class CanvasRenderer extends RootRenderer {
     public void addChild(IRenderer renderer) {
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FULL))) {
             LoggerFactory.getLogger(CanvasRenderer.class).warn(
-                    LogMessageConstant.CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED);
+                    IoLogMessageConstant.CANVAS_ALREADY_FULL_ELEMENT_WILL_BE_SKIPPED);
         } else {
             super.addChild(renderer);
         }
@@ -96,6 +96,8 @@ public class CanvasRenderer extends RootRenderer {
      */
     @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
+        linkRenderToDocument(resultRenderer, canvas.getPdfDocument());
+
         Transform transformProp = resultRenderer.<Transform>getProperty(Property.TRANSFORM);
         if (!waitingDrawingElements.contains(resultRenderer)) {
             processWaitingDrawing(resultRenderer, transformProp, waitingDrawingElements);

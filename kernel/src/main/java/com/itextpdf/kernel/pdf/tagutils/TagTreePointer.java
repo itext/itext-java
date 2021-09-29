@@ -43,8 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -145,7 +146,7 @@ public class TagTreePointer {
      */
     public TagTreePointer setPageForTagging(PdfPage page) {
         if (page.isFlushed()) {
-            throw new PdfException(PdfException.PageAlreadyFlushed);
+            throw new PdfException(KernelExceptionMessageConstant.PAGE_ALREADY_FLUSHED);
         }
         this.currentPage = page;
 
@@ -341,14 +342,14 @@ public class TagTreePointer {
         PdfStructElem currentStructElem = getCurrentStructElem();
         IStructureNode parentElem = currentStructElem.getParent();
         if (parentElem instanceof PdfStructTreeRoot) {
-            throw new PdfException(PdfException.CannotRemoveDocumentRootTag);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_REMOVE_DOCUMENT_ROOT_TAG);
         }
 
         List<IStructureNode> kids = currentStructElem.getKids();
         PdfStructElem parent = (PdfStructElem) parentElem;
 
         if (parent.isFlushed()) {
-            throw new PdfException(PdfException.CannotRemoveTagBecauseItsParentIsFlushed);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_REMOVE_TAG_BECAUSE_ITS_PARENT_IS_FLUSHED);
         }
 
         // remove waiting tag state if tag is removed
@@ -387,10 +388,11 @@ public class TagTreePointer {
      */
     public TagTreePointer relocateKid(int kidIndex, TagTreePointer pointerToNewParent) {
         if (getDocument() != pointerToNewParent.getDocument()) {
-            throw new PdfException(PdfException.TagCannotBeMovedToTheAnotherDocumentsTagStructure);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_CANNOT_BE_MOVED_TO_THE_ANOTHER_DOCUMENTS_TAG_STRUCTURE);
         }
         if (getCurrentStructElem().isFlushed()) {
-            throw new PdfException(PdfException.CannotRelocateTagWhichParentIsAlreadyFlushed);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_RELOCATE_TAG_WHICH_PARENT_IS_ALREADY_FLUSHED);
         }
 
         if (isPointingToSameTag(pointerToNewParent)){
@@ -401,7 +403,7 @@ public class TagTreePointer {
             }
         }
         if (getCurrentStructElem().getKids().get(kidIndex) == null) {
-            throw new PdfException(PdfException.CannotRelocateTagWhichIsAlreadyFlushed);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_RELOCATE_TAG_WHICH_IS_ALREADY_FLUSHED);
         }
         IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex, true);
         if (removedKid instanceof PdfStructElem) {
@@ -424,14 +426,14 @@ public class TagTreePointer {
      */
     public TagTreePointer relocate(TagTreePointer pointerToNewParent) {
         if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
-            throw new PdfException(PdfException.CannotRelocateRootTag);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_RELOCATE_ROOT_TAG);
         }
         if (getCurrentStructElem().isFlushed()) {
-            throw new PdfException(PdfException.CannotRelocateTagWhichIsAlreadyFlushed);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_RELOCATE_TAG_WHICH_IS_ALREADY_FLUSHED);
         }
         int i = getIndexInParentKidsList();
         if (i < 0) {
-            throw new PdfException(PdfException.CannotRelocateTagWhichParentIsAlreadyFlushed);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_RELOCATE_TAG_WHICH_PARENT_IS_ALREADY_FLUSHED);
         }
         new TagTreePointer(this).moveToParent().relocateKid(i, pointerToNewParent);
         return this;
@@ -475,13 +477,13 @@ public class TagTreePointer {
      */
     public TagTreePointer moveToParent() {
         if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
-            throw new PdfException(PdfException.CannotMoveToParentCurrentElementIsRoot);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_MOVE_TO_PARENT_CURRENT_ELEMENT_IS_ROOT);
         }
 
         PdfStructElem parent = (PdfStructElem) getCurrentStructElem().getParent();
         if (parent.isFlushed()) {
             Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
-            logger.warn(LogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
+            logger.warn(IoLogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
 
             moveToRoot();
         } else {
@@ -501,9 +503,9 @@ public class TagTreePointer {
         if (kid instanceof PdfStructElem) {
             setCurrentStructElem((PdfStructElem) kid);
         } else if (kid instanceof PdfMcr) {
-            throw new PdfException(PdfException.CannotMoveToMarkedContentReference);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE);
         } else {
-            throw new PdfException(PdfException.CannotMoveToFlushedKid);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_MOVE_TO_FLUSHED_KID);
         }
         return this;
     }
@@ -535,7 +537,7 @@ public class TagTreePointer {
 
         // MCR literal could be returned in a list of kid names (see #getKidsRoles())
         if (MCR_MARKER.equals(role)) {
-            throw new PdfException(PdfException.CannotMoveToMarkedContentReference);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE);
         }
         List<IStructureNode> descendants = new ArrayList<>(getCurrentStructElem().getKids());
         int k = 0;
@@ -552,7 +554,7 @@ public class TagTreePointer {
             }
         }
 
-        throw new PdfException(PdfException.NoKidWithSuchRole);
+        throw new PdfException(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE);
     }
 
     /**
@@ -589,7 +591,8 @@ public class TagTreePointer {
      */
     public TagTreePointer flushTag() {
         if (getCurrentStructElem().getPdfObject() == tagStructureContext.getRootTag().getPdfObject()) {
-            throw new PdfException(PdfException.CannotFlushDocumentRootTagBeforeDocumentIsClosed);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED);
         }
         IStructureNode parent = tagStructureContext.getWaitingTagsManager().flushTag(getCurrentStructElem());
         if (parent != null) {
@@ -716,7 +719,7 @@ public class TagTreePointer {
 
     TagTreePointer setCurrentStructElem(PdfStructElem structElem) {
         if (structElem.getParent() == null) {
-            throw new PdfException(PdfException.StructureElementShallContainParentObject);
+            throw new PdfException(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_SHALL_CONTAIN_PARENT_OBJECT);
         }
 
         currentStructElem = structElem;
@@ -725,14 +728,16 @@ public class TagTreePointer {
 
     PdfStructElem getCurrentStructElem() {
         if (currentStructElem.isFlushed()) {
-            throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtFlushedElementUseMoveToRoot);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_FLUSHED_ELEMENT_USE_MOVE_TO_ROOT);
         }
 
         PdfIndirectReference indRef = currentStructElem.getPdfObject().getIndirectReference();
         if (indRef != null && indRef.isFree()) {
             // is removed
 
-            throw new PdfException(PdfException.TagTreePointerIsInInvalidStateItPointsAtRemovedElementUseMoveToRoot);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_REMOVED_ELEMENT_USE_MOVE_TO_ROOT);
         }
 
         return currentStructElem;
@@ -832,7 +837,7 @@ public class TagTreePointer {
 
     private void throwExceptionIfCurrentPageIsNotInited() {
         if (currentPage == null) {
-            throw new PdfException(PdfException.PageIsNotSetForThePdfTagStructure);
+            throw new PdfException(KernelExceptionMessageConstant.PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE);
         }
     }
 }

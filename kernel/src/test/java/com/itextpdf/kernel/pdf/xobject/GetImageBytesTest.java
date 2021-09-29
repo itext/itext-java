@@ -47,8 +47,7 @@ import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.Version;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -68,7 +67,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -201,10 +199,10 @@ public class GetImageBytesTest extends ExtendedITextTest {
         ImageExtractor listener = new ImageExtractor();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.IOException.class,
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> processor.processPageContent(pdfDocument.getPage(1))
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.IOException.ExpectedTrailingZeroBitsForByteAlignedLines), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException.ExpectedTrailingZeroBitsForByteAlignedLines), e.getMessage());
     }
 
     private class ImageExtractor implements IEventListener {
@@ -279,7 +277,6 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 TIFFField resultField = resultDir.getField(tag);
 
                 if (tag == TIFFConstants.TIFFTAG_SOFTWARE) {
-                    compareSoftwareVersion(cmpField, resultField);
                 } else {
                     compareFields(cmpField, resultField);
                 }
@@ -287,14 +284,6 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
             compareImageData(cmpDir, resultDir, cmpBytes, resultBytes);
         }
-    }
-
-    private void compareSoftwareVersion(TIFFField cmpField, TIFFField resultField) {
-        byte[] versionBytes = resultField.getAsString(0).getBytes(StandardCharsets.US_ASCII);
-        //drop last always zero byte
-        byte[] versionToCompare = subArray(versionBytes, 0, versionBytes.length - 2);
-
-        Assert.assertArrayEquals(Version.getInstance().getVersion().getBytes(StandardCharsets.US_ASCII), versionToCompare);
     }
 
     private void compareFields(TIFFField cmpField, TIFFField resultField) {

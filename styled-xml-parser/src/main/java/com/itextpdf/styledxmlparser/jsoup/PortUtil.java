@@ -42,25 +42,9 @@
  */
 package com.itextpdf.styledxmlparser.jsoup;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PortUtil {
-
-    public static final String escapedSingleBracket = "''";
-    public static final String signedNumberFormat = ",number,+#;-#";
-
-    /**
-     * @deprecated use {@link Matcher#find()} instead
-     * */
-    @Deprecated
-    public static boolean hasMatch(Pattern pattern, String input) {
-        return pattern.matcher(input).find();
-    }
 
     public static boolean charsetIsSupported(String charsetName) {
         try {
@@ -70,15 +54,8 @@ public class PortUtil {
         }
     }
 
-    public static RandomAccessFile getReadOnlyRandomAccesFile(File file)throws FileNotFoundException {
-        return new RandomAccessFile(file, "r");
-    }
-
-    /**
-     * @deprecated use {@link Matcher#find()} instead
-     * */
-    @Deprecated
-    public static boolean isSuccessful(Matcher m) {
-        return m.find();
+    public static String trimControlCodes(String str) {
+        // In java trim method removes control codes by default.
+        return str.trim();
     }
 }

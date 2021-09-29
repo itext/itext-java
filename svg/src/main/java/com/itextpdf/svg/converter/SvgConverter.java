@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.converter;
 
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -58,22 +58,19 @@ import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
-import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.svg.processors.impl.SvgProcessorResult;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgCssUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,8 +78,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the main container class for static methods that do high-level
@@ -100,7 +98,7 @@ public final class SvgConverter {
 
     private static void checkNull(Object o) {
         if (o == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.PARAMETER_CANNOT_BE_NULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL);
         }
     }
 
@@ -470,9 +468,9 @@ public final class SvgConverter {
      */
     public static void createPdf(File svgFile, File pdfFile, ISvgConverterProperties props, WriterProperties writerProps) throws IOException {
         if (props == null) {
-            props = new SvgConverterProperties().setBaseUri(FileUtil.getParentDirectory(svgFile));
+            props = new SvgConverterProperties().setBaseUri(FileUtil.getParentDirectoryUri(svgFile));
         } else if (props.getBaseUri() == null || props.getBaseUri().isEmpty()) {
-            String baseUri = FileUtil.getParentDirectory(svgFile);
+            String baseUri = FileUtil.getParentDirectoryUri(svgFile);
             props = convertToSvgConverterProps(props, baseUri);
         }
         try (FileInputStream fileInputStream = new FileInputStream(svgFile.getAbsolutePath());
@@ -552,7 +550,7 @@ public final class SvgConverter {
             ISvgProcessorResult processorResult = process(parse(svgStream, props), props);
 
             ResourceResolver resourceResolver = SvgConverter.getResourceResolver(processorResult, props);
-            SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
+            final SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
             if (processorResult instanceof SvgProcessorResult) {
                 drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
             }
@@ -835,9 +833,8 @@ public final class SvgConverter {
      *
      * @param svgStream {@link InputStream Stream} containing the SVG to parse and process
      * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
-     * @throws IOException when the Stream cannot be read correctly
      */
-    public static ISvgProcessorResult parseAndProcess(InputStream svgStream) throws IOException {
+    public static ISvgProcessorResult parseAndProcess(InputStream svgStream) {
         return parseAndProcess(svgStream, null);
     }
 
@@ -847,31 +844,17 @@ public final class SvgConverter {
      * @param svgStream {@link InputStream Stream} containing the SVG to parse and process
      * @param props     {@link ISvgConverterProperties} an instance for extra properties to customize the behavior
      * @return {@link ISvgProcessorResult} containing the root renderer and metadata of the svg
-     * @throws IOException when the Stream cannot be read correctly
      */
-    public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) throws IOException {
+    public static ISvgProcessorResult parseAndProcess(InputStream svgStream, ISvgConverterProperties props) {
         IXmlParser parser = new JsoupXmlParser();
         String charset = SvgConverter.tryToExtractCharset(props);
         INode nodeTree;
         try {
             nodeTree = parser.parse(svgStream, charset);
         } catch (Exception e) {
-            throw new SvgProcessingException(SvgLogMessageConstant.FAILED_TO_PARSE_INPUTSTREAM, e);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.FAILED_TO_PARSE_INPUTSTREAM, e);
         }
         return new DefaultSvgProcessor().process(nodeTree, props);
-    }
-
-    /**
-     * Use the default implementation of {@link ISvgProcessor} to convert an XML
-     * DOM tree to a node renderer tree.
-     *
-     * @param root the XML DOM tree
-     * @return a node renderer tree corresponding to the passed XML DOM tree
-     * @deprecated will be removed in iText 7.2.
-     */
-    @Deprecated
-    public static ISvgProcessorResult process(INode root) {
-        return process(root, null);
     }
 
     /**
@@ -946,6 +929,10 @@ public final class SvgConverter {
 
         //Parse viewbox
         String vbString = topSvgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (vbString == null) {
+            vbString = topSvgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX.toLowerCase());
+        }
         float[] values = {0, 0, 0, 0};
         if (vbString != null) {
             List<String> valueStrings = SvgCssUtils.splitValueList(vbString);
@@ -992,17 +979,10 @@ public final class SvgConverter {
     }
 
     static ResourceResolver getResourceResolver(ISvgProcessorResult processorResult, ISvgConverterProperties props) {
-        ResourceResolver resourceResolver = null;
         if (processorResult instanceof SvgProcessorResult) {
-            SvgProcessorContext context = ((SvgProcessorResult) processorResult).getContext();
-            if (context != null) {
-                resourceResolver = context.getResourceResolver();
-            }
+            return ((SvgProcessorResult) processorResult).getContext().getResourceResolver();
         }
-        if (resourceResolver == null) {
-            resourceResolver = SvgConverter.createResourceResolver(props);
-        }
-       return resourceResolver;
+        return createResourceResolver(props);
     }
 
     /**
@@ -1019,10 +999,6 @@ public final class SvgConverter {
         if (props == null) {
             return new ResourceResolver(null);
         }
-        if (props instanceof SvgConverterProperties) {
-            return new ResourceResolver(props.getBaseUri(), ((SvgConverterProperties) props).getResourceRetriever());
-        } else {
-            return new ResourceResolver(props.getBaseUri(), null);
-        }
+        return new ResourceResolver(props.getBaseUri(), props.getResourceRetriever());
     }
 }

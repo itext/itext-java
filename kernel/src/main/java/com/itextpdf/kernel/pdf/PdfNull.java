@@ -50,7 +50,6 @@ import com.itextpdf.io.source.ByteUtils;
  */
 public class PdfNull extends PdfPrimitiveObject {
 
-    private static final long serialVersionUID = 7789114018630038033L;
 
 	public static final PdfNull PDF_NULL = new PdfNull(true);
     private static final byte[] NullContent = ByteUtils.getIsoBytes("null");

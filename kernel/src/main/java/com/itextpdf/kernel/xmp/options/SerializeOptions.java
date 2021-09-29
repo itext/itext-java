@@ -450,10 +450,8 @@ public final class SerializeOptions extends Options
 	/**
 	 *
 	 * @return Returns clone of this SerializeOptions-object with the same options set.
-	 * @throws CloneNotSupportedException Cannot happen in this place.
-	 */
-	public Object clone() throws CloneNotSupportedException
-	{
+     */
+	public Object clone() {
 		SerializeOptions clone;
 		try
 		{

@@ -1,0 +1,4 @@
+Please notice that the following fonts are used with the mentioned below licenses.
+
+* NotoSansMyanmar-Regular - SIL Open Font License v1.10 (obtained from https://fonts.google.com/specimen/Noto+Sans)
+* Padauk-Regular.ttf - SIL Open Font License v1.1 (obtained from https://fonts.google.com/specimen/Padauk)

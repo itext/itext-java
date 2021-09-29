@@ -59,17 +59,4 @@ public class DoNothingFilter implements IFilterHandler {
         lastFilterName = filterName;
         return b;
     }
-
-    /**
-     * Returns the last decoded filter name.
-     *
-     * @return the last decoded filter name.
-     * @deprecated Will be removed in 7.2. Used as a crutch in
-     * {@link PdfImageXObject#getImageBytes()} implementation. Now this method does not needed.
-     * If the user has been used it, then the same approach can be reached with nested class.
-     */
-    @Deprecated
-    public PdfName getLastFilterName() {
-        return lastFilterName;
-    }
 }

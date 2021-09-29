@@ -43,18 +43,18 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
-import com.itextpdf.kernel.crypto.BadPasswordException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.BadPasswordException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public abstract class PdfObject implements Serializable {
+public abstract class PdfObject {
 
-    private static final long serialVersionUID = -3852543867469424720L;
 
     public static final byte ARRAY = 1;
     public static final byte BOOLEAN = 2;
@@ -176,7 +176,7 @@ public abstract class PdfObject implements Serializable {
             if (document != null) {
                 if (document.isAppendMode() && !isModified()) {
                     Logger logger = LoggerFactory.getLogger(PdfObject.class);
-                    logger.info(LogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
+                    logger.info(IoLogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
                     return;
                 }
                 document.checkIsoConformance(this, IsoKey.PDF_OBJECT);
@@ -184,7 +184,7 @@ public abstract class PdfObject implements Serializable {
                         && getType() != INDIRECT_REFERENCE && getIndirectReference().getGenNumber() == 0);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotFlushObject, e, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_FLUSH_OBJECT, e, this);
         }
     }
 
@@ -227,7 +227,8 @@ public abstract class PdfObject implements Serializable {
             return this;
         }
         if (document.getWriter() == null) {
-            throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.THERE_IS_NO_ASSOCIATE_PDF_WRITER_FOR_MAKING_INDIRECTS);
         }
         if (reference == null) {
             indirectReference = document.createNextIndirectReference();
@@ -314,12 +315,13 @@ public abstract class PdfObject implements Serializable {
      */
     public PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
         if (document == null)
-            throw new PdfException(PdfException.DocumentForCopyToCannotBeNull);
+            throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL);
 
         if (indirectReference != null) {
             // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also DEVSIX-602
             if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
-                throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
+                throw new PdfException(
+                        KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
             }
             if (!indirectReference.getReader().isOpenedWithFullPermission()) {
                 throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
@@ -364,7 +366,7 @@ public abstract class PdfObject implements Serializable {
         // In case ForbidRelease flag is set, release will not be performed.
         if (isReleaseForbidden()) {
             Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.FORBID_RELEASE_IS_SET);
+            logger.warn(IoLogMessageConstant.FORBID_RELEASE_IS_SET);
         } else {
             if (indirectReference != null && indirectReference.getReader() != null
                     && !indirectReference.checkState(FLUSHED)) {
@@ -530,7 +532,7 @@ public abstract class PdfObject implements Serializable {
      */
     protected void copyContent(PdfObject from, PdfDocument document) {
         if (isFlushed())
-            throw new PdfException(PdfException.CannotCopyFlushedObject, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_COPY_FLUSHED_OBJECT, this);
     }
 
     /**
@@ -554,7 +556,7 @@ public abstract class PdfObject implements Serializable {
             //copyTo case
             PdfWriter writer = documentTo.getWriter();
             if (writer == null)
-                throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
+                throw new PdfException(KernelExceptionMessageConstant.CANNOT_COPY_TO_DOCUMENT_OPENED_IN_READING_MODE);
             return writer.copyObject(this, documentTo, allowDuplicating);
 
         } else {

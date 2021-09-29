@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font.cmap;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
 import org.slf4j.Logger;
@@ -61,7 +61,6 @@ import java.util.Set;
  */
 public class CMapToUnicode extends AbstractCMap {
 
-    private static final long serialVersionUID = 1037675640549795312L;
     public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
 
     private Map<Integer, char[]> byteMappings;
@@ -140,7 +139,7 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
-    public Map<Integer, Integer> createReverseMapping() throws java.io.IOException {
+    public Map<Integer, Integer> createReverseMapping() {
         Map<Integer, Integer> result = new HashMap<>();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
             if (entry.getValue().length == 1) {
@@ -174,7 +173,7 @@ public class CMapToUnicode extends AbstractCMap {
             byteMappings.put((mark.charAt(0) << 8) + mark.charAt(1), dest);
         } else {
             Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
-            logger.warn(LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
+            logger.warn(IoLogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
         }
     }
 

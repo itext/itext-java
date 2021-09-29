@@ -42,6 +42,8 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.kernel.geom.Rectangle;
+
 import java.util.Map;
 
 /**
@@ -111,4 +113,12 @@ public interface ISvgNodeRenderer {
      * @return deep copy of this renderer
      */
     ISvgNodeRenderer createDeepCopy();
+
+    /**
+     * Get object bounding box.
+     *
+     * @param context the {@link SvgDrawContext} context
+     * @return object bounding box
+     */
+    Rectangle getObjectBoundingBox(SvgDrawContext context);
 }

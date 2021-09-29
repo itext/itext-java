@@ -44,10 +44,10 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.layout.tagging.IAccessibleElement;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 
 /**
  * A {@link BlockElement} will try to take up as much horizontal space as
@@ -68,7 +68,6 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
-            case Property.OVERFLOW:
             case Property.OVERFLOW_X:
             case Property.OVERFLOW_Y:
                 return (T1) (Object) OverflowPropertyValue.FIT;

@@ -44,8 +44,8 @@ package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -81,10 +81,10 @@ class XfdfReader {
             if (pdfDocumentName.equalsIgnoreCase(xfdfObject.getF().getHref())) {
                 logger.info("Xfdf href and pdf name are equal. Continue merge");
             } else {
-                logger.warn(LogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT);
+                logger.warn(IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT);
             }
         } else {
-            logger.warn(LogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE);
+            logger.warn(IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE);
         }
         //TODO DEVSIX-4026 check for ids original/modified compatability with those in pdf document
 
@@ -112,7 +112,7 @@ class XfdfReader {
                 if (formFields.get(name) != null && xfdfField.getValue() != null) {
                     formFields.get(name).setValue(xfdfField.getValue());
                 } else {
-                    logger.error(LogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT);
+                    logger.error(IoLogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT);
                 }
             }
         }
@@ -279,7 +279,9 @@ class XfdfReader {
                 //XfdfConstants.LINK
                 //XfdfConstants.REDACT
                 //XfdfConstants.PROJECTION
-                default: logger.warn(MessageFormatUtil.format(LogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED, annotName));
+                default:
+                    logger.warn(
+                            MessageFormatUtil.format(IoLogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED, annotName));
                     break;
             }
 

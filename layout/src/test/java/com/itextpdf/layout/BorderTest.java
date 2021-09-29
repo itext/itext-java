@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
@@ -313,7 +313,7 @@ public class BorderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void rotatedBordersTest() throws IOException, InterruptedException {
         fileName = "rotatedBordersTest.pdf";
@@ -352,51 +352,24 @@ public class BorderTest extends ExtendedITextTest {
         }
     }
 
-
-    //When 7.2 release is in progress, remove the underlying code. It's here to pass A SQ line coverage quality gate and tests deprecated protected methods
-    public class TestDashedBorder extends DashedBorder {
-        public TestDashedBorder(float width) {
+    private static class TestBorder extends DashedBorder {
+        public TestBorder(float width) {
             super(width);
         }
-        public float publicGetDotsGap(double distance,float initialGap){
-            return getDotsGap(distance, initialGap);
-        }
-    }
 
-    public class TestDottedBorder extends DottedBorder {
-        public TestDottedBorder(float width) {
-            super(width);
-        }
-        public float publicGetDotsGap(double distance,float initialGap){
-            return getDotsGap(distance, initialGap);
-        }
-    }
-
-    public class TestRoundDotsBorder extends RoundDotsBorder {
-        public TestRoundDotsBorder(float width) {
-            super(width);
-        }
-        public float publicGetDotsGap(double distance,float initialGap){
+        public float publicGetDotsGap(double distance, float initialGap) {
             return getDotsGap(distance, initialGap);
         }
     }
 
     @Test
-    public void getDotsGapTest(){
+    public void getDotsGapTest() {
         float expected = 0.2f;
         double distance = 0.2;
         float initialGap = 0.2f;
 
-        TestDashedBorder db = new TestDashedBorder(1f);
-        TestDottedBorder dotb = new TestDottedBorder(1f);
-        TestRoundDotsBorder rdb = new TestRoundDotsBorder(1f);
-
-        float dbActual = db.publicGetDotsGap(distance,initialGap);
-        float dotbActual = dotb.publicGetDotsGap(distance,initialGap);
-        float rdbActual = rdb.publicGetDotsGap(distance,initialGap);
-
-        Assert.assertEquals(expected,dbActual,0.0001f);
-        Assert.assertEquals(expected,dotbActual,0.0001f);
-        Assert.assertEquals(expected,rdbActual,0.0001f);
+        TestBorder border = new TestBorder(1f);
+        float actual = border.publicGetDotsGap(distance, initialGap);
+        Assert.assertEquals(expected, actual, 0.0001f);
     }
 }

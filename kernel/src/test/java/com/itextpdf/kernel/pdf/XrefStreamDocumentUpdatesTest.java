@@ -242,7 +242,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
                 new PdfWriter(fileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
                 new StampingProperties().useAppendMode());
         // Clear state for document info indirect reference so that there are no modified objects
-        // in the document due to which, the document will have only one href table.
+        // in the document due to which, the document will have only one xref table.
         pdfDocument.getDocumentInfo().getPdfObject().getIndirectReference().clearState(PdfObject.MODIFIED);
         pdfDocument.close();
 

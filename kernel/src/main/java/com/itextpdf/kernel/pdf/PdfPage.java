@@ -43,10 +43,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
@@ -72,7 +73,6 @@ import java.util.List;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -952395541908379500L;
     private PdfResources resources = null;
     private int mcid = -1;
     PdfPages parentPages;
@@ -402,7 +402,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
-            if (annot.getSubtype().equals(PdfName.Link)) {
+            if (PdfName.Link.equals(annot.getSubtype())) {
                 getDocument().storeLinkAnnotation(page, (PdfLinkAnnotation) annot);
             } else {
                 PdfAnnotation newAnnot = PdfAnnotation.makeAnnotation(
@@ -422,7 +422,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else {
             if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
                 Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                logger.warn(LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
+                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
                 toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
             }
         }
@@ -571,19 +571,21 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             mediaBox = (PdfArray) getInheritedValue(PdfName.MediaBox, PdfObject.ARRAY);
         }
         if (mediaBox == null) {
-            throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE);
         }
         int mediaBoxSize;
         if ((mediaBoxSize = mediaBox.size()) != 4) {
             if (mediaBoxSize > 4) {
                 Logger logger = LoggerFactory.getLogger(PdfPage.class);
                 if (logger.isErrorEnabled()) {
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, mediaBoxSize));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS,
+                            mediaBoxSize));
 
                 }
             }
             if (mediaBoxSize < 4) {
-                throw new PdfException(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS).setMessageParams(mediaBox.size());
+                throw new PdfException(KernelExceptionMessageConstant. WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS)
+                        .setMessageParams(mediaBox.size());
             }
         }
 
@@ -592,7 +594,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfNumber urx = mediaBox.getAsNumber(2);
         PdfNumber ury = mediaBox.getAsNumber(3);
         if (llx == null || lly == null || urx == null || ury == null) {
-            throw new PdfException(PdfException.InvalidMediaBoxValue);
+            throw new PdfException(KernelExceptionMessageConstant.INVALID_MEDIA_BOX_VALUE);
         }
         return new Rectangle(Math.min(llx.floatValue(), urx.floatValue()),
                 Math.min(lly.floatValue(), ury.floatValue()),
@@ -679,7 +681,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getPdfObject().getAsRectangle(PdfName.TrimBox) != null) {
             getPdfObject().remove(PdfName.TrimBox);
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
+            logger.warn(IoLogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
         put(PdfName.ArtBox, new PdfArray(rectangle));
         return this;
@@ -707,7 +709,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getPdfObject().getAsRectangle(PdfName.ArtBox) != null) {
             getPdfObject().remove(PdfName.ArtBox);
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.warn(LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
+            logger.warn(IoLogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
         }
         put(PdfName.TrimBox, new PdfArray(rectangle));
         return this;
@@ -752,7 +754,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             return baos.toByteArray();
         } catch (IOException ioe) {
-            throw new PdfException(PdfException.CannotGetContentBytes, ioe, this);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_GET_CONTENT_BYTES, ioe, this);
         }
     }
 
@@ -775,7 +777,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getNextMcid() {
         if (!getDocument().isTagged()) {
-            throw new PdfException(PdfException.MustBeATaggedDocument);
+            throw new PdfException(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT);
         }
         if (mcid == -1) {
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
@@ -1011,7 +1013,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix, int firstPage) {
         if (firstPage < 1)
-            throw new PdfException(PdfException.InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.IN_A_PAGE_LABEL_THE_PAGE_NUMBERS_MUST_BE_GREATER_OR_EQUAL_TO_1);
         PdfDictionary pageLabel = new PdfDictionary();
         if (numberingStyle != null) {
             switch (numberingStyle) {
@@ -1168,7 +1171,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
             Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.error(LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
             getDocument().getCatalog().addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
@@ -1218,7 +1221,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             }
             getDocument().getStructTreeRoot().savePageStructParentIndexIfNeeded(this);
         } catch (Exception ex) {
-            throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED, ex);
         }
     }
 
@@ -1394,6 +1398,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
             PdfArray kids = newParent.getAsArray(PdfName.Kids);
             if (kids == null) {
+                // no kids are added here, since we do not know at this point which pages are to be copied,
+                // hence we do not know which annotations we should copy
                 newParent.put(PdfName.Kids, new PdfArray());
             }
             newField.put(PdfName.Parent, newParent);

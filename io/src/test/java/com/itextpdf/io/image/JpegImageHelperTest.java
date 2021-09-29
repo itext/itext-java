@@ -22,7 +22,7 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -42,7 +42,7 @@ public class JpegImageHelperTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED, logLevel = LogLevelConstants.ERROR)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED, logLevel = LogLevelConstants.ERROR)
     })
     public void attemptToSetInvalidIccProfileToImageTest() throws IOException {
         try (FileInputStream fis = new FileInputStream(SOURCE_FOLDER + "WP_20140410_001.jpg")) {

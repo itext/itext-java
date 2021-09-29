@@ -43,7 +43,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -217,6 +218,7 @@ public class PdfA1ActionCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
         doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());

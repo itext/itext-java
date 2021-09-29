@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 
 public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
 
-    private static final long serialVersionUID = 4611535787920619829L;
 
     private PdfStream fontFile;
     private PdfName fontFileName;
@@ -177,7 +176,7 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
     static void fillFontDescriptor(DocTrueTypeFont font, PdfDictionary fontDesc) {
         if (fontDesc == null) {
             Logger logger = LoggerFactory.getLogger(FontUtil.class);
-            logger.warn(LogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
+            logger.warn(IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
             return;
         }
         PdfNumber v = fontDesc.getAsNumber(PdfName.Ascent);

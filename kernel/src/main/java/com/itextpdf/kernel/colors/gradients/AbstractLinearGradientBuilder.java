@@ -22,8 +22,7 @@
  */
 package com.itextpdf.kernel.colors.gradients;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -160,7 +159,7 @@ public abstract class AbstractLinearGradientBuilder {
                 }
                 shadingTransform.concatenate(gradientTransformation);
             } catch (NoninvertibleTransformException e) {
-                LoggerFactory.getLogger(getClass()).error(LogMessageConstant.UNABLE_TO_INVERT_GRADIENT_TRANSFORMATION);
+                LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.UNABLE_TO_INVERT_GRADIENT_TRANSFORMATION);
             }
         }
 

@@ -49,8 +49,8 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.layout.property.TransparentColor;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
@@ -228,18 +228,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the object that knows the place to draw this element and maintains its state
      */
     protected abstract void doDraw(SvgDrawContext context);
-
-
-    /**
-     * Evaluate the current object bounding box.
-     *
-     * @param context the object that knows the place to draw this element and maintains its state
-     * @return the {@link Rectangle} representing the current object's bounding box
-     */
-    @Deprecated
-    protected Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        return null;
-    }
 
     static float getAlphaFromRGBA(String value) {
         try {

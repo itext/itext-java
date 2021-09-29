@@ -43,22 +43,20 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public class OtfClass implements Serializable {
+public class OtfClass {
 
     public static final int GLYPH_BASE = 1;
     public static final int GLYPH_LIGATURE = 2;
     public static final int GLYPH_MARK = 3;
-    private static final long serialVersionUID = -7584495836452964728L;
 
     //key is glyph, value is class inside all 2
     private IntHashtable mapClass = new IntHashtable();
@@ -95,7 +93,7 @@ public class OtfClass implements Serializable {
             otfClass = new OtfClass(rf, classLocation);
         } catch (IOException e) {
             Logger logger = LoggerFactory.getLogger(OtfClass.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.getMessage()));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.getMessage()));
             otfClass = null;
         }
         return otfClass;

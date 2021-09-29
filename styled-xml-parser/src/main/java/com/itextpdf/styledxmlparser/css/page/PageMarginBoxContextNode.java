@@ -44,12 +44,20 @@ package com.itextpdf.styledxmlparser.css.page;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.CssContextNode;
+import com.itextpdf.styledxmlparser.node.IAttribute;
+import com.itextpdf.styledxmlparser.node.IAttributes;
+import com.itextpdf.styledxmlparser.node.ICustomElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link CssContextNode} implementation for page margin box contexts.
  */
-public class PageMarginBoxContextNode extends CssContextNode {
+public class PageMarginBoxContextNode extends CssContextNode implements ICustomElementNode {
 
     /** The Constant PAGE_MARGIN_BOX_TAG. */
     public static final String PAGE_MARGIN_BOX_TAG = "_064ef03_page-margin-box";
@@ -85,7 +93,9 @@ public class PageMarginBoxContextNode extends CssContextNode {
 
     /**
      * Sets the rectangle in which page margin box contents are shown.
-     * @param pageMarginBoxRectangle the {@link Rectangle} defining position and dimensions of the margin box content area
+     *
+     * @param pageMarginBoxRectangle the {@link Rectangle} defining position and dimensions of the margin box content
+     *                               area
      */
     public void setPageMarginBoxRectangle(Rectangle pageMarginBoxRectangle) {
         this.pageMarginBoxRectangle = pageMarginBoxRectangle;
@@ -93,6 +103,7 @@ public class PageMarginBoxContextNode extends CssContextNode {
 
     /**
      * Gets the rectangle in which page margin box contents should be shown.
+     *
      * @return the {@link Rectangle} defining position and dimensions of the margin box content area
      */
     public Rectangle getPageMarginBoxRectangle() {
@@ -102,6 +113,7 @@ public class PageMarginBoxContextNode extends CssContextNode {
     /**
      * Sets the containing block rectangle for the margin box, which is used for calculating
      * some of the margin box properties relative values.
+     *
      * @param containingBlockForMarginBox the {@link Rectangle} which is used as a reference for some
      *                                    margin box relative properties calculations.
      */
@@ -111,9 +123,77 @@ public class PageMarginBoxContextNode extends CssContextNode {
 
     /**
      * @return the {@link Rectangle} which is used as a reference for some
-     *                                    margin box relative properties calculations.
+     * margin box relative properties calculations.
      */
     public Rectangle getContainingBlockForMarginBox() {
         return containingBlockForMarginBox;
+    }
+
+    @Override
+    public String name() {
+        return PageMarginBoxContextNode.PAGE_MARGIN_BOX_TAG;
+    }
+
+    @Override
+    public IAttributes getAttributes() {
+        return new AttributesStub();
+    }
+
+    @Override
+    public String getAttribute(String key) {
+        return null;
+    }
+
+    @Override
+    public List<Map<String, String>> getAdditionalHtmlStyles() {
+        return null;
+    }
+
+    @Override
+    public void addAdditionalHtmlStyles(Map<String, String> styles) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getLang() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * A simple {@link IAttributes} implementation.
+     */
+    private static class AttributesStub implements IAttributes {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String getAttribute(String key) {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setAttribute(String key, String value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Iterator<IAttribute> iterator() {
+            return Collections.<IAttribute>emptyIterator();
+        }
     }
 }

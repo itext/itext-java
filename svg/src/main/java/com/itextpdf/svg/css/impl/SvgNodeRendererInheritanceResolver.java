@@ -54,10 +54,9 @@ import java.util.Map;
 /**
  * Style and attribute inheritance resolver for {@link ISvgNodeRenderer} objects.
  */
-public class SvgNodeRendererInheritanceResolver {
-    @Deprecated
-    public SvgNodeRendererInheritanceResolver() {
-        // After removing this constructor, make this class final and add private constructor
+public final class SvgNodeRendererInheritanceResolver {
+
+    private SvgNodeRendererInheritanceResolver() {
     }
 
     /**
@@ -98,23 +97,5 @@ public class SvgNodeRendererInheritanceResolver {
 
             child.setAttributesAndStyles(childStyles);
         }
-    }
-
-    /**
-     * Apply style and attribute inheritance to the tree formed by the root and the subTree.
-     *
-     * @param root renderer to consider as the root of the subtree
-     * @param subTree tree of {@link ISvgNodeRenderer}
-     * @deprecated will be removed in 7.2 release, use
-     * {@link #applyInheritanceToSubTree(ISvgNodeRenderer, ISvgNodeRenderer, SvgCssContext)} instead
-     */
-    @Deprecated
-    public void applyInheritanceToSubTree(ISvgNodeRenderer root, ISvgNodeRenderer subTree) {
-        SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(root, subTree, null);
-    }
-
-    @Deprecated
-    protected void applyStyles(ISvgNodeRenderer parent, ISvgNodeRenderer child) {
-        SvgNodeRendererInheritanceResolver.applyStyles(parent, child, null);
     }
 }

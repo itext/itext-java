@@ -42,6 +42,7 @@
  */
 package com.itextpdf.io.font.woff2;
 
+import com.itextpdf.io.exceptions.FontCompressionException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;

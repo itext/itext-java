@@ -46,7 +46,6 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.layout.element.Paragraph;
 
 import java.io.FileOutputStream;

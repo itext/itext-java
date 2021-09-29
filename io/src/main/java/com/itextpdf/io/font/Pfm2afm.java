@@ -137,11 +137,10 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.io.util.FileUtil;
+import com.itextpdf.commons.utils.FileUtil;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.Writer;
 
 /**
  * Converts a PFM file into an AFM file.

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
@@ -60,11 +60,11 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.BoxSizingPropertyValue;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -193,7 +193,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void staticTextRotationTest01() throws IOException, InterruptedException {
@@ -215,7 +215,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     @Test
     public void staticTextRotationTest02() throws IOException, InterruptedException {
@@ -237,7 +237,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void staticTextRotationTest03() throws IOException, InterruptedException {
@@ -294,7 +294,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     @Test
     public void splitTextRotationTest02() throws IOException, InterruptedException {
@@ -339,7 +339,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void rotationInfiniteLoopTest02() throws IOException, InterruptedException {
@@ -359,7 +359,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
     })
     @Test
     public void tableRotationTest02() throws IOException, InterruptedException {
@@ -383,7 +383,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void tableRotationTest03() throws IOException, InterruptedException {
@@ -555,7 +555,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     @Test
     public void divRotationTest02() throws IOException, InterruptedException {
@@ -606,7 +606,7 @@ public class RotationTest extends ExtendedITextTest {
 
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void listRotationTest02() throws IOException, InterruptedException {
@@ -681,7 +681,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)
     })
     @Test
     public void innerRotationTest02() throws IOException, InterruptedException {
@@ -798,8 +798,8 @@ public class RotationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT),
-            @LogMessage(messageTemplate = LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
+            @LogMessage(messageTemplate = IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, count = 2)
     })
     public void ImageInRotatedBlockTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageInRotatedBlockTest02.pdf";

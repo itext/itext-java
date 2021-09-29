@@ -46,8 +46,14 @@ package com.itextpdf.signatures.testutils;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.SignatureUtil;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -57,20 +63,15 @@ import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.util.ASN1Dump;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-
 public class SignaturesCompareTool {
     private static final String OID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
     private static final String OID_SIGNED_DATA = "1.2.840.113549.1.7.2";
 
-    public static String compareSignatures(String dest, String cmp) throws IOException {
+    public static String compareSignatures(String dest, String cmp, ReaderProperties destProperties, ReaderProperties cmpProperties) {
         StringBuilder errorText = new StringBuilder();
 
-        try (PdfDocument outDocument = new PdfDocument(new PdfReader(dest));
-             PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmp))) {
+        try (PdfDocument outDocument = new PdfDocument(new PdfReader(dest, destProperties));
+             PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmp, cmpProperties))) {
             SignatureUtil outSigUtil = new SignatureUtil(outDocument);
             SignatureUtil cmpSigUtil = new SignatureUtil(cmpDocument);
             if (!cmpSigUtil.getSignatureNames().equals(outSigUtil.getSignatureNames())) {
@@ -181,7 +182,7 @@ public class SignaturesCompareTool {
                 }
             }
         } catch (Exception e) {
-            errorText.append(e.getMessage()).append("\n");
+            errorText.append(e.getMessage());
         }
 
         if (!errorText.toString().isEmpty()) {
@@ -189,6 +190,10 @@ public class SignaturesCompareTool {
         } else {
             return null;
         }
+    }
+
+    public static String compareSignatures(String dest, String cmp) {
+        return compareSignatures(dest, cmp, new ReaderProperties(), new ReaderProperties());
     }
 
     private static void writeToFile(String path, String content) throws IOException {

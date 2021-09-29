@@ -46,14 +46,12 @@ package com.itextpdf.io.source;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.Serializable;
 
 /**
  * Class that is used to unify reading from random access files and arrays.
  */
-public class RandomAccessFileOrArray implements DataInput, Serializable {
+public class RandomAccessFileOrArray implements DataInput {
 
-    private static final long serialVersionUID = -169314546265954851L;
 
 
     /**
@@ -206,9 +204,8 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      *
      * @param n the number of bytes to skip
      * @return the actual number of bytes skipped
-     * @throws java.io.IOException in case of any I/O error
      */
-    public long skip(long n) throws java.io.IOException {
+    public long skip(long n) {
         if (n <= 0) {
             return 0;
         }
@@ -240,7 +237,7 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
     /**
      * {@inheritDoc}
      */
-    public int skipBytes(int n) throws java.io.IOException {
+    public int skipBytes(int n) {
         return (int) skip(n);
     }
 
@@ -259,9 +256,8 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * Gets the total amount of bytes in the source.
      *
      * @return source's size.
-     * @throws java.io.IOException in case of any I/O error.
      */
-    public long length() throws java.io.IOException {
+    public long length() {
         return byteSource.length();
     }
 
@@ -269,9 +265,8 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      * Sets the current position in the source to the specified index.
      *
      * @param pos the position to set
-     * @throws java.io.IOException in case of any I/O error.
      */
-    public void seek(long pos) throws java.io.IOException {
+    public void seek(long pos) {
         byteSourcePosition = pos;
         isBack = false;
     }
@@ -281,9 +276,8 @@ public class RandomAccessFileOrArray implements DataInput, Serializable {
      *
      * @return the index of last read byte in the source in
      * or the index of last read byte in source - 1 in case byte was pushed.
-     * @throws java.io.IOException in case of any I/O error.
      */
-    public long getPosition() throws java.io.IOException {
+    public long getPosition() {
         return byteSourcePosition - (isBack ? 1 : 0);
     }
 

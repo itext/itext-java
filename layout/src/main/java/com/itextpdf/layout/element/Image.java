@@ -43,21 +43,22 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageData;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.layout.property.ObjectFit;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.layout.LayoutPosition;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
 
@@ -470,7 +471,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
                 ((boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH) ||
                         (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_HEIGHT))) {
             Logger logger = LoggerFactory.getLogger(Image.class);
-            logger.warn(LogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
+            logger.warn(IoLogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
         }
         setProperty(Property.AUTO_SCALE, autoScale);
         return this;
@@ -770,7 +771,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
 
     private static ImageData checkImageType(ImageData image) {
         if (image instanceof WmfImageData) {
-            throw new PdfException(PdfException.CannotCreateLayoutImageByWmfImage);
+            throw new PdfException(LayoutExceptionMessageConstant.CANNOT_CREATE_LAYOUT_IMAGE_BY_WMF_IMAGE);
         }
         return image;
     }

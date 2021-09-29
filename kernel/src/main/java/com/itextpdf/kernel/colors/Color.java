@@ -43,21 +43,20 @@
  */
 package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Represents a color
  */
-public class Color implements Serializable {
+public class Color {
 
-    private static final long serialVersionUID = -6639782922289701126L;
 
     /**
      * The color space of the color
@@ -229,7 +228,7 @@ public class Color implements Serializable {
      */
     public void setColorValue(float[] value) {
         if (colorValue.length != value.length) {
-            throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
+            throw new PdfException(KernelExceptionMessageConstant.INCORRECT_NUMBER_OF_COMPONENTS, this);
         }
         colorValue = value;
     }
@@ -256,7 +255,7 @@ public class Color implements Serializable {
      */
     @Override
     public int hashCode() {
-        int result = colorSpace != null ? colorSpace.getPdfObject().hashCode() : 0;
+        int result = colorSpace == null ? 0 : colorSpace.getPdfObject().hashCode();
         result = 31 * result + (colorValue != null ? Arrays.hashCode(colorValue) : 0);
         return result;
     }

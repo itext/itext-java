@@ -43,10 +43,9 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.NumberUtil;
-import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.font.PdfFont;
@@ -67,12 +66,13 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.font.FontCharacteristics;
-import com.itextpdf.layout.font.FontFamilySplitter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelector;
 import com.itextpdf.layout.font.FontSet;
@@ -82,19 +82,19 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.BackgroundImage;
-import com.itextpdf.layout.property.BackgroundBox;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.BlendMode;
-import com.itextpdf.layout.property.BorderRadius;
-import com.itextpdf.layout.property.BoxSizingPropertyValue;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.Transform;
-import com.itextpdf.layout.property.TransparentColor;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.BackgroundImage;
+import com.itextpdf.layout.properties.BackgroundBox;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.BlendMode;
+import com.itextpdf.layout.properties.BorderRadius;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.Transform;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,7 +156,6 @@ public abstract class AbstractRenderer implements IRenderer {
 
     private static final int ARC_QUARTER_CLOCKWISE_EXTENT = -90;
 
-    // TODO linkedList?
     protected List<IRenderer> childRenderers = new ArrayList<>();
     protected List<IRenderer> positionedRenderers = new ArrayList<>();
     protected IPropertyContainer modelElement;
@@ -534,13 +533,8 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     public void drawBackground(DrawContext drawContext) {
         final Background background = this.<Background>getProperty(Property.BACKGROUND);
-        final Object uncastedBackgroundImage = this.<Object>getProperty(Property.BACKGROUND_IMAGE);
-        final List<BackgroundImage> backgroundImagesList;
-        if (uncastedBackgroundImage instanceof BackgroundImage) {
-            backgroundImagesList = Collections.singletonList((BackgroundImage) uncastedBackgroundImage);
-        } else {
-            backgroundImagesList = this.<List<BackgroundImage>>getProperty(Property.BACKGROUND_IMAGE);
-        }
+        final List<BackgroundImage>  backgroundImagesList = this.<List<BackgroundImage>>getProperty(Property.BACKGROUND_IMAGE);
+
         if (background != null || backgroundImagesList != null) {
             Rectangle bBox = getOccupiedAreaBBox();
             boolean isTagged = drawContext.isTaggingEnabled();
@@ -551,7 +545,7 @@ public abstract class AbstractRenderer implements IRenderer {
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 logger.info(MessageFormatUtil.format(
-                        LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+                        IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
             } else {
                 boolean backgroundAreaIsClipped = false;
                 if (background != null) {
@@ -649,7 +643,7 @@ public abstract class AbstractRenderer implements IRenderer {
         if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.info(MessageFormatUtil.format(
-                    LogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
+                    IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
                     "background-image"));
         } else {
             final Rectangle clippedBackgroundArea = applyBackgroundBoxProperty(backgroundArea.clone(),
@@ -1092,7 +1086,7 @@ public abstract class AbstractRenderer implements IRenderer {
             Rectangle bBox = getBorderAreaBBox();
             if (bBox.getWidth() < 0 || bBox.getHeight() < 0) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
+                logger.error(MessageFormatUtil.format(IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
                 return;
             }
             float x1 = bBox.getX();
@@ -1719,7 +1713,7 @@ public abstract class AbstractRenderer implements IRenderer {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (pointOnly && value.getUnitType() == UnitValue.POINT) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
         }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
@@ -1791,19 +1785,23 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
         if (!margins[TOP_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_TOP));
         }
         if (!margins[RIGHT_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_RIGHT));
         }
         if (!margins[BOTTOM_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_BOTTOM));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_BOTTOM));
         }
         if (!margins[LEFT_SIDE].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_LEFT));
         }
         return rect.applyMargins(
                 margins[TOP_SIDE].getValue(),
@@ -1842,19 +1840,23 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
         if (!paddings[0].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_TOP));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_TOP));
         }
         if (!paddings[1].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_RIGHT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_RIGHT));
         }
         if (!paddings[2].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_BOTTOM));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_BOTTOM));
         }
         if (!paddings[3].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.PADDING_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.PADDING_LEFT));
         }
         return rect.applyMargins(paddings[0].getValue(), paddings[1].getValue(), paddings[2].getValue(), paddings[3].getValue(), reverse);
     }
@@ -1908,7 +1910,8 @@ public abstract class AbstractRenderer implements IRenderer {
             }
         } catch (Exception exc) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Absolute positioning might be applied incorrectly."));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Absolute positioning might be applied incorrectly."));
         }
     }
 
@@ -1934,7 +1937,9 @@ public abstract class AbstractRenderer implements IRenderer {
             if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
                 Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                 String logMessageArg = "Property.DESTINATION, which specifies this element location as destination, see ElementPropertyContainer.setDestination.";
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
+                logger.warn(MessageFormatUtil.format(
+                        IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
+                        logMessageArg));
                 return;
             }
             PdfArray array = new PdfArray();
@@ -1974,7 +1979,9 @@ public abstract class AbstractRenderer implements IRenderer {
             int pageNumber = occupiedArea.getPageNumber();
             if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
                 String logMessageArg = "Property.LINK_ANNOTATION, which specifies a link associated with this element content area, see com.itextpdf.layout.element.Link.";
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN, logMessageArg));
+                logger.warn(MessageFormatUtil.format(
+                        IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
+                        logMessageArg));
                 return;
             }
             // If an element with a link annotation occupies more than two pages,
@@ -1990,7 +1997,7 @@ public abstract class AbstractRenderer implements IRenderer {
             //  a renderer from the different page that was already flushed
             if (page.isFlushed()) {
                 logger.error(MessageFormatUtil.format(
-                        LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "link annotation applying"));
+                        IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "link annotation applying"));
             } else {
                 page.addAnnotation(linkAnnotation);
             }
@@ -2040,7 +2047,7 @@ public abstract class AbstractRenderer implements IRenderer {
         if (wasHeightClipped) {
             // if height was clipped, max height exists and can be resolved
             Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-            logger.warn(LogMessageConstant.CLIP_ELEMENT);
+            logger.warn(IoLogMessageConstant.CLIP_ELEMENT);
 
             if (enlargeOccupiedAreaOnHeightWasClipped) {
                 Float maxHeight = retrieveMaxHeight();
@@ -2207,7 +2214,8 @@ public abstract class AbstractRenderer implements IRenderer {
                     }
                 } catch (NullPointerException e) {
                     Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Some of the children might not end up aligned horizontally."));
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                            "Some of the children might not end up aligned horizontally."));
                 }
             }
         }
@@ -2374,6 +2382,23 @@ public abstract class AbstractRenderer implements IRenderer {
         return isFirstOnRootArea;
     }
 
+    /**
+     * Gets pdf document from root renderers.
+     *
+     * @return PdfDocument, or null if there are no document
+     */
+    PdfDocument getPdfDocument() {
+        RootRenderer renderer = getRootRenderer();
+        if (renderer instanceof DocumentRenderer) {
+            final Document document = ((DocumentRenderer) renderer).document;
+            return document.getPdfDocument();
+        } else if (renderer instanceof CanvasRenderer) {
+            return ((CanvasRenderer) renderer).canvas.getPdfDocument();
+        } else {
+            return null;
+        }
+    }
+
     RootRenderer getRootRenderer() {
         IRenderer currentRenderer = this;
         while (currentRenderer instanceof AbstractRenderer) {
@@ -2458,20 +2483,16 @@ public abstract class AbstractRenderer implements IRenderer {
         Object font = this.<Object>getProperty(Property.FONT);
         if (font instanceof PdfFont) {
             return (PdfFont) font;
-        } else if (font instanceof String || font instanceof String[]) {
-            if (font instanceof String) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.warn(LogMessageConstant.FONT_PROPERTY_OF_STRING_TYPE_IS_DEPRECATED_USE_STRINGS_ARRAY_INSTEAD);
-                List<String> splitFontFamily = FontFamilySplitter.splitFontFamily((String) font);
-                font = splitFontFamily.toArray(new String[splitFontFamily.size()]);
-            }
+        } else if (font instanceof String[]) {
             FontProvider provider = this.<FontProvider>getProperty(Property.FONT_PROVIDER);
             if (provider == null) {
-                throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
+                throw new IllegalStateException(
+                        LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED);
             }
             FontSet fontSet = this.<FontSet>getProperty(Property.FONT_SET);
             if (provider.getFontSet().isEmpty() && (fontSet == null || fontSet.isEmpty())) {
-                throw new IllegalStateException(PdfException.FontProviderNotSetFontFamilyNotResolved);
+                throw new IllegalStateException(
+                        LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED);
             }
             FontCharacteristics fc = createFontCharacteristics();
             return resolveFirstPdfFont((String[]) font, provider, fc, fontSet);
@@ -2738,7 +2759,7 @@ public abstract class AbstractRenderer implements IRenderer {
     boolean logWarningIfGetNextRendererNotOverridden(Class<?> baseClass, Class<?> rendererClass) {
         if (baseClass != rendererClass) {
             final Logger logger = LoggerFactory.getLogger(baseClass);
-            logger.warn(MessageFormatUtil.format(LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN));
+            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN));
             return false;
         } else {
             return true;

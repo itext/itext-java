@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -60,6 +60,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -392,7 +393,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.INVALID_DESTINATION_TYPE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DESTINATION_TYPE)})
     public void remoteGoToNotValidExplicitDestinationTest() throws IOException, InterruptedException {
         String cmpFile = sourceFolder + "cmp_remoteGoToNotValidExplicitDestinationTest.pdf";
         String outFile = destinationFolder + "remoteGoToNotValidExplicitDestinationTest.pdf";
@@ -406,5 +407,20 @@ public class PdfDestinationTest extends ExtendedITextTest {
         document.close();
 
         assertNull(new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void copyNullDestination() throws IOException {
+        try (
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.addNewPage();
+
+            PdfDestination copiedDestination = pdfDocument.getCatalog()
+                    .copyDestination(null, new HashMap<PdfPage, PdfPage>(), pdfDocument);
+
+            // We expect null to be returned if the destination to be copied is null
+            Assert.assertNull(copiedDestination);
+        }
     }
 }

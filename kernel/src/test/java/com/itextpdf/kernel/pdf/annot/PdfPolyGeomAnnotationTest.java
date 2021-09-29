@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -100,7 +100,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED)})
     public void setAndGetVerticesFloatArrayLogMessageTest() {
         PdfDictionary dict = new PdfDictionary();
         dict.put(PdfName.Path, new PdfString(""));
@@ -123,7 +123,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PATH_KEY_IS_PRESENT_VERTICES_WILL_BE_IGNORED)})
     public void setAndGetVerticesPdfArrayLogMessageTest() {
         PdfDictionary dict = new PdfDictionary();
         dict.put(PdfName.Path, new PdfString(""));
@@ -174,7 +174,7 @@ public class PdfPolyGeomAnnotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.IF_PATH_IS_SET_VERTICES_SHALL_NOT_BE_PRESENT)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.IF_PATH_IS_SET_VERTICES_SHALL_NOT_BE_PRESENT)})
     public void setAndGetPathLogMessageTest() {
         PdfPolyGeomAnnotation pdfPolyGeomAnnotation = new PdfPolygonAnnotation(new PdfDictionary());
         pdfPolyGeomAnnotation.setVertices(new float[]{1, 1, 1, 1});

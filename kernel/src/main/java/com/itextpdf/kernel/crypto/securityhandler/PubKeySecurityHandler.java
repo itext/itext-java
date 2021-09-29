@@ -44,7 +44,8 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -85,7 +86,6 @@ import java.util.List;
 public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private static final int SEED_LENGTH = 20;
-    private static final long serialVersionUID = -6093031394871440268L;
 
     private List<PublicKeyRecipient> recipients = null;
 
@@ -111,7 +111,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 md.update(new byte[]{(byte) 255, (byte) 255, (byte) 255,
                         (byte) 255});
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
 
         return md.digest();
@@ -145,7 +145,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
             }
             encryptionKey = md.digest();
         } catch (Exception f) {
-            throw new PdfException(PdfException.PdfDecryption, f);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, f);
         }
         return encryptionKey;
     }
@@ -163,7 +163,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         try {
             recipients = getEncodedRecipients();
         } catch (Exception e) {
-            throw new PdfException(PdfException.PdfEncryption, e);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
         return recipients;
     }

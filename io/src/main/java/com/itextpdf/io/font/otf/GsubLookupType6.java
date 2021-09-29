@@ -58,7 +58,6 @@ import java.util.Set;
  * LookupType 6: Chaining Contextual Substitution Subtable
  */
 public class GsubLookupType6 extends GsubLookupType5 {
-    private static final long serialVersionUID = 6205375104387477124L;
 
     protected GsubLookupType6(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);

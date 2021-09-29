@@ -56,7 +56,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
  */
 public class Pdf3DAnnotation extends PdfAnnotation {
 
-    private static final long serialVersionUID = 3823509772499230844L;
 
     /**
      * Creates a {@link Pdf3DAnnotation} instance.

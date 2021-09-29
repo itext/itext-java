@@ -57,26 +57,6 @@ public class DrawUtils {
      * Draw an arc on the passed canvas,
      * enclosed by the rectangle for which two opposite corners are specified.
      * The arc starts at the passed starting angle and extends to the starting angle + extent
-     * @deprecated In {@link PdfCanvas} most of the path drawing methods accept {@code double}.
-     * So it is preferable to use {@link DrawUtils#arc(double, double, double, double, double, double, PdfCanvas)}.
-     * This method will be removed in iText 7.2
-     * @param x1 corner-coordinate of the enclosing rectangle, first corner
-     * @param y1 corner-coordinate of the enclosing rectangle, first corner
-     * @param x2 corner-coordinate of the enclosing rectangle, second corner
-     * @param y2 corner-coordinate of the enclosing rectangle, second corner
-     * @param startAng starting angle in degrees
-     * @param extent extent of the arc
-     * @param cv canvas to paint on
-     */
-    @Deprecated
-    public static void arc(final float x1, final float y1, final float x2, final float y2, final float startAng, final float extent, PdfCanvas cv) {
-        arc((double) x1, (double) y1, (double) x2, (double) y2, (double) startAng, (double) extent, cv);
-    }
-
-    /**
-     * Draw an arc on the passed canvas,
-     * enclosed by the rectangle for which two opposite corners are specified.
-     * The arc starts at the passed starting angle and extends to the starting angle + extent
      * @param x1 corner-coordinate of the enclosing rectangle, first corner
      * @param y1 corner-coordinate of the enclosing rectangle, first corner
      * @param x2 corner-coordinate of the enclosing rectangle, second corner

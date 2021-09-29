@@ -22,10 +22,10 @@
  */
 package com.itextpdf.styledxmlparser.css.font;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.layout.font.FontFamilySplitter;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.util.FontFamilySplitterUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class CssFontFace {
         for(CssDeclaration descriptor: properties) {
             if ("font-family".equals(descriptor.getProperty())) {
                 // TODO DEVSIX-2534
-                fontFamily = FontFamilySplitter.removeQuotes(descriptor.getExpression());
+                fontFamily = FontFamilySplitterUtil.removeQuotes(descriptor.getExpression());
             } else if ("src".equals(descriptor.getProperty())) {
                 srcs = descriptor.getExpression();
             }

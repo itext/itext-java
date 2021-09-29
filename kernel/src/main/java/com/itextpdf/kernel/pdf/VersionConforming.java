@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,9 @@ public class VersionConforming {
 
     public static boolean validatePdfVersionForDictEntry(PdfDocument document, PdfVersion expectedVersion, PdfName entryKey, PdfName dictType) {
         if (document != null && document.getPdfVersion().compareTo(expectedVersion) < 0) {
-            logger.warn(MessageFormat.format(LogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, entryKey, dictType, expectedVersion, document.getPdfVersion()));
+            logger.warn(
+                    MessageFormat.format(IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, entryKey,
+                            dictType, expectedVersion, document.getPdfVersion()));
             return true;
         } else {
             return false;

@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.data;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 
 public class AbstractRenderInfo implements IEventData {
@@ -80,7 +80,7 @@ public class AbstractRenderInfo implements IEventData {
     // check if graphics state was released
     protected void checkGraphicsState() {
         if (null == gs) {
-            throw new IllegalStateException(LogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
+            throw new IllegalStateException(IoLogMessageConstant.GRAPHICS_STATE_WAS_DELETED);
         }
     }
 }

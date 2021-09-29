@@ -52,7 +52,6 @@ import java.util.List;
 
 public class DeviceN extends Color {
 
-    private static final long serialVersionUID = -2623878574830631842L;
 
     public DeviceN(PdfSpecialCs.DeviceN cs) {
         this(cs, getDefaultColorants(cs.getNumberOfComponents()));

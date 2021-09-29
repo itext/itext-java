@@ -45,10 +45,10 @@ package com.itextpdf.svg.processors.impl.font;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.Range;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.font.CssFontFace;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
@@ -90,7 +90,8 @@ public class SvgFontProcessor {
                 }
                 if (!findSupportedSrc) {
                     LoggerFactory.getLogger(SvgFontProcessor.class)
-                            .error(MessageFormatUtil.format(LogMessageConstant.UNABLE_TO_RETRIEVE_FONT, fontFace));
+                            .error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_FONT,
+                                    fontFace));
                 }
             }
         }

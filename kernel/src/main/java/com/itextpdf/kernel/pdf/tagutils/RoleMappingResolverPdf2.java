@@ -54,7 +54,6 @@ import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 
 class RoleMappingResolverPdf2 implements IRoleMappingResolver {
 
-    private static final long serialVersionUID = -564649110244365255L;
 
     private PdfName currRole;
     private PdfNamespace currNamespace;

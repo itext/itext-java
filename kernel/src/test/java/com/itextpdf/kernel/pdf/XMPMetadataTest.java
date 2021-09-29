@@ -42,7 +42,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -185,7 +185,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)
     })
     public void createEmptyDocumentWithAbcXmp() throws IOException {
         ByteArrayOutputStream fos = new ByteArrayOutputStream();

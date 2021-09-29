@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.cmap.CMapCidByte;
 import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
@@ -53,16 +53,14 @@ import com.itextpdf.io.util.IntHashtable;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class CMapEncoding implements Serializable {
+public class CMapEncoding {
 
     private static final List<byte[]> IDENTITY_H_V_CODESPACE_RANGES = Arrays.asList(new byte[] {0, 0}, new byte[] {(byte)0xff, (byte)0xff});
 
-    private static final long serialVersionUID = 2418291066110642993L;
     private String cmap;
     private String uniMap;
 
@@ -117,7 +115,7 @@ public class CMapEncoding implements Serializable {
             code2Cid = cid2Code.getReversMap();
             this.codeSpaceRanges = cid2Code.getCodeSpaceRanges();
         } catch (IOException e) {
-            LoggerFactory.getLogger(getClass()).error(LogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
+            LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
         }
     }
 
@@ -169,21 +167,6 @@ public class CMapEncoding implements Serializable {
      */
     public boolean isBuiltWith(String cmap) {
         return Objects.equals(cmap, this.cmap);
-    }
-
-    /**
-     * @deprecated Will be removed in 7.2. Use {@link #getCmapBytes(int)} instead.
-     *
-     * @param cid a CID
-     * @return CMAP code as an int
-     */
-    @Deprecated
-    public int getCmapCode(int cid) {
-        if (isDirect) {
-            return cid;
-        } else {
-            return toInteger(cid2Code.lookup(cid));
-        }
     }
 
     public byte[] getCmapBytes(int cid) {
@@ -252,14 +235,5 @@ public class CMapEncoding implements Serializable {
             }
         }
         return false;
-    }
-
-    private static int toInteger(byte[] bytes) {
-        int result = 0;
-        for (byte b : bytes) {
-            result <<= 8;
-            result += b & 0xff;
-        }
-        return result;
     }
 }

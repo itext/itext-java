@@ -47,7 +47,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
@@ -70,7 +70,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
-import com.itextpdf.pdfa.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,7 +80,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +130,6 @@ public class PdfA1Checker extends PdfAChecker {
                     PdfName.Perceptual,
                     PdfName.Saturation)));
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 8;
-    private static final long serialVersionUID = 5103027349795298132L;
 
     /**
      * Creates a PdfA1Checker with the required conformance level
@@ -168,11 +168,6 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         checkImage(inlineImage, currentColorSpaces);
-    }
-
-    @Override
-    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill) {
-        checkColorSpace(color.getColorSpace(), currentColorSpaces, true, fill);
     }
 
     @Override
@@ -257,11 +252,6 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
-    public void checkExtGState(CanvasGraphicsState extGState) {
-        checkExtGState(extGState, null);
-    }
-
-    @Override
     public void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream) {
         if (extGState.getTransferFunction() != null) {
             throw new PdfAConformanceException(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_TR_KEY);
@@ -292,6 +282,11 @@ public class PdfA1Checker extends PdfAChecker {
         if (ca != null && ca != 1) {
             throw new PdfAConformanceException(PdfAConformanceException.TRANSPARENCY_IS_NOT_ALLOWED_AND_CA_SHALL_BE_EQUAL_TO_1);
         }
+    }
+
+    @Override
+    public void checkFontGlyphs(PdfFont font, PdfStream contentStream) {
+        // This check is irrelevant for the PdfA1 checker, so the body of the method is empty
     }
 
     @Override
@@ -330,6 +325,11 @@ public class PdfA1Checker extends PdfAChecker {
     }
 
     @Override
+    protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
+        // This check is irrelevant for the PdfA1 checker, so the body of the method is empty
+    }
+
+    @Override
     protected void checkContentStream(PdfStream contentStream) {
         if (isFullCheckMode() || contentStream.isModified()) {
             byte[] contentBytes = contentStream.getBytes();
@@ -345,7 +345,7 @@ public class PdfA1Checker extends PdfAChecker {
                     }
                 }
             } catch (IOException e) {
-                throw new PdfException(PdfException.CannotParseContentStream, e);
+                throw new PdfException(PdfaExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
             }
         }
     }

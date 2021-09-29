@@ -64,19 +64,7 @@ public class CssMarginRule extends CssNestedAtRule {
      * @param ruleName the rule name
      */
     public CssMarginRule(String ruleName) {
-        this(ruleName, "");
-    }
-
-    /**
-     * Creates a new {@link CssMarginRule} instance.
-     *
-     * @param ruleName the rule name
-     * @param ruleParameters the rule parameters
-     * @deprecated Will be removed in 7.2. Use {@link #CssMarginRule(String)} instead
-     */
-    @Deprecated
-    public CssMarginRule(String ruleName, String ruleParameters) {
-        super(ruleName, ruleParameters);
+        super(ruleName, "");
     }
 
     /* (non-Javadoc)

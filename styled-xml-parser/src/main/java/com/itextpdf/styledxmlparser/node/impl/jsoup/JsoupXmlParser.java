@@ -42,9 +42,9 @@
  */
 package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
@@ -54,6 +54,7 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
+import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDataNode;
@@ -83,7 +84,7 @@ public class JsoupXmlParser implements IXmlParser {
         // Based on some brief investigations, it seems that Jsoup uses baseUri for resolving relative uri's into absolute
         // on user demand. We perform such resolving in ResourceResolver class, therefore it is not needed here.
         String baseUri = "";
-        Document doc = Jsoup.parseXML(xmlStream, charset, baseUri);
+        Document doc = Jsoup.parse(xmlStream, charset, baseUri, Parser.xmlParser());
         INode result = wrapJsoupHierarchy(doc);
         if (result instanceof IDocumentNode) {
             return (IDocumentNode) result;
@@ -97,7 +98,7 @@ public class JsoupXmlParser implements IXmlParser {
      */
     @Override
     public IDocumentNode parse(String xml) {
-        Document doc = Jsoup.parseXML(xml);
+        Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
         INode result = wrapJsoupHierarchy(doc);
         if (result instanceof IDocumentNode) {
             return (IDocumentNode) result;
@@ -127,7 +128,8 @@ public class JsoupXmlParser implements IXmlParser {
         } else if (jsoupNode instanceof Comment || jsoupNode instanceof XmlDeclaration) {
             // Ignore. We should do this to avoid redundant log message
         } else {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE, jsoupNode.getClass()));
+            logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE,
+                    jsoupNode.getClass()));
         }
 
         for (Node node : jsoupNode.childNodes()) {

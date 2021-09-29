@@ -45,15 +45,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.PdfEncodings;
 
-import java.io.Serializable;
 import java.util.Map;
 
-public class PdfDocumentInfo implements Serializable {
+public class PdfDocumentInfo {
 
     static final PdfName PDF20_DEPRECATED_KEYS[] = new PdfName[] {PdfName.Title, PdfName.Author, PdfName.Subject, PdfName.Keywords,
             PdfName.Creator, PdfName.Producer, PdfName.Trapped};
 
-    private static final long serialVersionUID = -21957940280527125L;
 
     private PdfDictionary infoDictionary;
 
@@ -96,6 +94,17 @@ public class PdfDocumentInfo implements Serializable {
 
     public PdfDocumentInfo setCreator(String creator) {
         return put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
+    }
+
+    /**
+     * Sets a producer line for the {@link PdfDocument} described by this instance.
+     *
+     * @param producer is a new producer line to set
+     * @return this instance
+     */
+    public PdfDocumentInfo setProducer(String producer) {
+        getPdfObject().put(PdfName.Producer, new PdfString(producer, PdfEncodings.UNICODE_BIG));
+        return this;
     }
 
     public PdfDocumentInfo setTrapped(PdfName trapped) {

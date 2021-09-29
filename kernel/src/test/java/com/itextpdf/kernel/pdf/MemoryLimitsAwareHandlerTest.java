@@ -43,7 +43,8 @@
 package com.itextpdf.kernel.pdf;
 
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -127,7 +128,7 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     private static void testSingleStream(MemoryLimitsAwareHandler handler) {
-        String expectedExceptionMessage = PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed;
+        String expectedExceptionMessage = KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED;
         int expectedFailureIndex = 10;
         String occuredExceptionMessage = null;
 
@@ -150,7 +151,7 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     private static void testMultipleStreams(MemoryLimitsAwareHandler handler) {
-        String expectedExceptionMessage = PdfException.DuringDecompressionMultipleStreamsInSumOccupiedMoreMemoryThanAllowed;
+        String expectedExceptionMessage = KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED;
         int expectedFailureIndex = 10;
         String occuredExceptionMessage = null;
 

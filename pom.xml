@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.16</version>
+  <version>7.2.0</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -42,6 +42,7 @@
     </mailingList>
   </mailingLists>
   <modules>
+    <module>commons</module>
     <module>barcodes</module>
     <module>font-asian</module>
     <module>forms</module>
@@ -495,6 +496,8 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
+              <!-- TODO DEVSIX-5576 Enable japicmp after major release -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>

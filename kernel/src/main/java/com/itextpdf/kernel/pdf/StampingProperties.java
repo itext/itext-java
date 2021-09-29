@@ -43,11 +43,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import java.io.Serializable;
 
-public class StampingProperties extends DocumentProperties implements Serializable {
+public class StampingProperties extends DocumentProperties {
 
-    private static final long serialVersionUID = 6108082513101777457L;
 
     protected boolean appendMode = false;
     protected boolean preserveEncryption = false;

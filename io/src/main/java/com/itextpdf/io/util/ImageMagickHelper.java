@@ -43,8 +43,11 @@
  */
 package com.itextpdf.io.util;
 
-import com.itextpdf.io.IoExceptionMessage;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.SystemUtil;
+import com.itextpdf.io.exceptions.IoExceptionMessage;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -66,6 +69,8 @@ public class ImageMagickHelper {
     static final String MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY = "compareExec";
 
     static final String MAGICK_COMPARE_KEYWORD = "ImageMagick Studio LLC";
+
+    private static final String TEMP_FILE_PREFIX = "itext_im_io_temp";
 
     private String compareExec;
 
@@ -113,9 +118,7 @@ public class ImageMagickHelper {
      * @param outImageFilePath Path to the output image file
      * @param cmpImageFilePath Path to the cmp image file
      * @param diffImageName    Path to the difference output image file
-     *
      * @return boolean result of comparing: true - images are visually equal
-     *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing ImageMagick.
      */
@@ -132,22 +135,53 @@ public class ImageMagickHelper {
      * @param diffImageName    Path to the difference output image file
      * @param fuzzValue        String fuzziness value to compare images. Should be formatted as string with integer
      *                         or decimal number. Can be null, if it is not required to use fuzziness
-     *
      * @return boolean result of comparing: true - images are visually equal
-     *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing ImageMagick.
      */
     public boolean runImageMagickImageCompare(String outImageFilePath, String cmpImageFilePath,
             String diffImageName, String fuzzValue) throws IOException, InterruptedException {
+        if (!validateFuzziness(fuzzValue)) {
+            throw new IllegalArgumentException("Invalid fuzziness value: " + fuzzValue);
+        }
         fuzzValue = (fuzzValue == null) ? "" : " -metric AE -fuzz <fuzzValue>%".replace("<fuzzValue>", fuzzValue);
 
-        StringBuilder currCompareParams = new StringBuilder();
-        currCompareParams
-                .append(fuzzValue).append(" '")
-                .append(outImageFilePath).append("' '")
-                .append(cmpImageFilePath).append("' '")
-                .append(diffImageName).append("'");
-        return SystemUtil.runProcessAndWait(compareExec, currCompareParams.toString());
+        String replacementOutFile = null;
+        String replacementCmpFile = null;
+        String replacementDiff = null;
+        try {
+            replacementOutFile = FileUtil.createTempCopy(outImageFilePath, TEMP_FILE_PREFIX, null);
+            replacementCmpFile = FileUtil.createTempCopy(cmpImageFilePath, TEMP_FILE_PREFIX, null);
+
+            // ImageMagick generates difference images in .png format, therefore we can specify it.
+            // For some reason .webp comparison fails if the extension of diff image is not specified.
+            replacementDiff = FileUtil.createTempFile(TEMP_FILE_PREFIX, ".png").getAbsolutePath();
+            String currCompareParams = fuzzValue + " '"
+                    + replacementOutFile + "' '"
+                    + replacementCmpFile + "' '"
+                    + replacementDiff + "'";
+            boolean result = SystemUtil.runProcessAndWait(compareExec, currCompareParams);
+
+            if (FileUtil.fileExists(replacementDiff)) {
+                FileUtil.copy(replacementDiff, diffImageName);
+            }
+            return result;
+        } finally {
+            FileUtil.removeFiles(new String[] {replacementOutFile, replacementCmpFile, replacementDiff});
+        }
+    }
+
+    static boolean validateFuzziness(String fuzziness) {
+        if (null == fuzziness) {
+            return true;
+        } else {
+            try {
+                return Double.parseDouble(fuzziness) >= 0;
+            } catch (NumberFormatException e) {
+                // In case of an exception the string could not be parsed to double,
+                // therefore it is considered to be invalid.
+                return false;
+            }
+        }
     }
 }

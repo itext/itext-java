@@ -42,9 +42,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -189,16 +191,112 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         PdfDocument pdfDoc = createDocument(filename);
 
         String font = StandardFonts.COURIER;
+        EmbeddingStrategy embeddingStrategy = EmbeddingStrategy.PREFER_NOT_EMBEDDED;
 
         //All those encodings actually the same winansi.
-        addPagesWithFonts(pdfDoc, font, null, TextSetWithABC);
-        addPagesWithFonts(pdfDoc, font, "", TextSetWithABC);
-        addPagesWithFonts(pdfDoc, font, "WinAnsi", TextSetWithABC);
-        addPagesWithFonts(pdfDoc, font, "WinAnsiEncoding", TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, null, embeddingStrategy, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, "", embeddingStrategy, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, "WinAnsi", embeddingStrategy, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, "WinAnsiEncoding", embeddingStrategy, TextSetWithABC);
 
         pdfDoc.close();
 
         Assert.assertEquals(1, countPdfFonts(filename));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithAbserifAndIdentityHEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithAbserifAndIdentityHEncodings";
+
+        String filename = destinationFolder + testName + ".pdf";
+        String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDoc = createDocument(filename);
+
+        String font = fontsFolder + "abserif4_5.ttf";
+
+        //All those encodings actually the same Identity-H.
+        addPagesWithFonts(pdfDoc, font, null, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, "", TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, PdfEncodings.IDENTITY_H, TextSetWithABC);
+
+        pdfDoc.close();
+
+        Assert.assertEquals(1, countPdfFonts(filename));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings";
+
+        String filename = destinationFolder + testName + ".pdf";
+        String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDoc = createDocument(filename);
+
+        String font = fontsFolder + "abserif4_5.ttf";
+
+        addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, "", TextSetWithABC);
+        pdfDoc.close();
+
+        Assert.assertEquals(2, countPdfFonts(filename));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings";
+
+        String filename = destinationFolder + testName + ".pdf";
+        String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDoc = createDocument(filename);
+
+        String font = fontsFolder + "abserif4_5.ttf";
+
+        addPagesWithFonts(pdfDoc, font, "", TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, TextSetWithABC);
+        pdfDoc.close();
+
+        Assert.assertEquals(2, countPdfFonts(filename));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithNotEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithNotEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings";
+
+        String filename = destinationFolder + testName + ".pdf";
+        String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDoc = createDocument(filename);
+
+        String font = fontsFolder + "abserif4_5.ttf";
+        EmbeddingStrategy embeddingStrategy = EmbeddingStrategy.PREFER_NOT_EMBEDDED;
+
+        addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, embeddingStrategy, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, "", embeddingStrategy, TextSetWithABC);
+        pdfDoc.close();
+
+        Assert.assertEquals(2, countPdfFonts(filename));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithNotEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithNotEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings";
+
+        String filename = destinationFolder + testName + ".pdf";
+        String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDoc = createDocument(filename);
+
+        String font = fontsFolder + "abserif4_5.ttf";
+        EmbeddingStrategy embeddingStrategy = EmbeddingStrategy.PREFER_NOT_EMBEDDED;
+
+        addPagesWithFonts(pdfDoc, font, "", embeddingStrategy, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, embeddingStrategy, TextSetWithABC);
+        pdfDoc.close();
+
+        Assert.assertEquals(2, countPdfFonts(filename));
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
@@ -223,8 +321,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocumentWithTrueType() throws IOException, InterruptedException {
-        String testName = "DocumentWithTrueType";
+    public void createDocumentWithTrueTypeAsType0DefaultEncoding() throws IOException, InterruptedException {
+        String testName = "DocumentWithTrueTypeAsType0DefaultEncoding";
 
         String filename = destinationFolder + testName + ".pdf";
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
@@ -232,6 +330,26 @@ public class PdfFontCacheTest extends ExtendedITextTest {
 
         String font = fontsFolder + "abserif4_5.ttf";
         String encoding = null;
+
+        addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
+        pdfDoc.close();
+
+        Assert.assertEquals(1, countPdfFonts(filename));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createDocumentWithTrueTypeAsTrueType() throws IOException, InterruptedException {
+        String testName = "DocumentWithTrueType";
+
+        String filename = destinationFolder + testName + ".pdf";
+        String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
+        PdfDocument pdfDoc = createDocument(filename);
+
+        String font = fontsFolder + "abserif4_5.ttf";
+        String encoding = PdfEncodings.WINANSI;
 
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
@@ -449,7 +567,6 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         Assert.assertEquals(2, countPdfFonts(filename));
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
-
     @Test
     public void createDocumentWithTrueTypeAboriginalFromDocument() throws IOException, InterruptedException {
         String testName = "DocumentWithTrueTypeAboriginalFromDocument";
@@ -534,7 +651,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         //There is only one just loaded and used document font.
         Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
-        addPagesWithFonts(pdfDoc, fontsFolder + "NotoSansCJKjp-Bold.otf", encoding, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, fontsFolder + "NotoSansCJKjp-Bold.otf", encoding,
+                EmbeddingStrategy.FORCE_NOT_EMBEDDED, TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
@@ -626,7 +744,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         //There is only one just loaded and used document font.
         Assert.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
-        addPagesWithFonts(pdfDoc, fontsFolder + "NotoSansCJKjp-Bold.otf", "WinAnsi", TextSetWithABC);
+        addPagesWithFonts(pdfDoc, fontsFolder + "NotoSansCJKjp-Bold.otf", PdfEncodings.WINANSI,
+                EmbeddingStrategy.PREFER_NOT_EMBEDDED, TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
@@ -687,6 +806,11 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     private void addPagesWithFonts(PdfDocument pdfDoc, String fontProgram, String fontEncoding, String[] text) throws IOException {
+        addPagesWithFonts(pdfDoc, fontProgram, fontEncoding, EmbeddingStrategy.PREFER_EMBEDDED, text);
+    }
+
+    private void addPagesWithFonts(PdfDocument pdfDoc, String fontProgram, String fontEncoding,
+            EmbeddingStrategy embeddingStrategy, String[] text) throws IOException {
         final int top = 700;
         for (String t : text) {
             PdfPage page = pdfDoc.addNewPage();
@@ -694,7 +818,8 @@ public class PdfFontCacheTest extends ExtendedITextTest {
             canvas.saveState()
                     .beginText()
                     .moveText(36, top)
-                    .setFontAndSize(PdfFontFactory.createFont(fontProgram, fontEncoding, pdfDoc), 72)
+                    .setFontAndSize(
+                            PdfFontFactory.createFont(fontProgram, fontEncoding, embeddingStrategy, pdfDoc), 72)
                     .showText(t)
                     .endText()
                     .restoreState();

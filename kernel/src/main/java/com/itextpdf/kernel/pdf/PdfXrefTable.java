@@ -43,29 +43,28 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.commons.actions.data.ProductData;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.ProductInfo;
-import com.itextpdf.kernel.VersionInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A representation of a cross-referenced table of a PDF document.
  */
-public class PdfXrefTable implements Serializable {
+public class PdfXrefTable {
 
-    private static final long serialVersionUID = 4171655392492002944L;
 
     private static final int INITIAL_CAPACITY = 32;
     private static final int MAX_GENERATION = 65535;
@@ -261,12 +260,12 @@ public class PdfXrefTable implements Serializable {
         }
         if (reference.checkState(PdfObject.MUST_BE_FLUSHED)) {
             Logger logger = LoggerFactory.getLogger(PdfXrefTable.class);
-            logger.error(LogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE);
+            logger.error(IoLogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE);
             return;
         }
         if (reference.checkState(PdfObject.FLUSHED)) {
             Logger logger = LoggerFactory.getLogger(PdfXrefTable.class);
-            logger.error(LogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE);
+            logger.error(IoLogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE);
             return;
         }
 
@@ -513,18 +512,16 @@ public class PdfXrefTable implements Serializable {
      */
     protected static void writeKeyInfo(PdfDocument document) {
         PdfWriter writer = document.getWriter();
-        FingerPrint fingerPrint = document.getFingerPrint();
 
-        String platform = "";
-        VersionInfo versionInfo = document.getVersionInfo();
-        String k = versionInfo.getKey();
-        if (k == null) {
-            k = "iText";
-        }
-        writer.writeString(MessageFormatUtil.format("%{0}-{1}{2}\n", k, versionInfo.getRelease(), platform));
-
-        for (ProductInfo productInfo : fingerPrint.getProducts() ) {
-            writer.writeString(MessageFormatUtil.format("%{0}\n", productInfo));
+        final Collection<ProductData> products = document.getFingerPrint().getProducts();
+        if (products.isEmpty()) {
+            writer.writeString(MessageFormatUtil
+                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
+        } else {
+            for (ProductData productData : products) {
+                writer.writeString(MessageFormatUtil
+                        .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
+            }
         }
     }
 

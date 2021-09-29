@@ -43,14 +43,12 @@
  */
 package com.itextpdf.io.font.otf;
 
-import java.io.Serializable;
 
 /**
  *
  * @author psoares
  */
-public class FeatureRecord implements Serializable {
-    private static final long serialVersionUID = 6036713232626317539L;
+public class FeatureRecord {
     public String tag;
     public int[] lookups;
 }

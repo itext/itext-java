@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.AdobeGlyphList;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
@@ -53,7 +53,8 @@ import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -101,20 +102,28 @@ import java.util.Map;
  */
 public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
-    private static final long serialVersionUID = 4940119184993066859L;
 
     private static final int FONT_BBOX_LLX = 0;
     private static final int FONT_BBOX_LLY = 1;
     private static final int FONT_BBOX_URX = 2;
     private static final int FONT_BBOX_URY = 3;
+    private static final double[] DEFAULT_FONT_MATRIX = {0.001, 0, 0, 0.001, 0, 0};
 
-    @Deprecated
     private double[] fontMatrix = DEFAULT_FONT_MATRIX;
 
     /**
      * Used to normalize font metrics expressed in glyph space units. See {@link PdfType3Font}.
      */
     private double glyphSpaceNormalizationFactor;
+
+    /**
+     * Gets the transformation matrix that defines relation between text and glyph spaces.
+     *
+     * @return the font matrix
+     */
+    private double[] getFontMatrix() {
+        return this.fontMatrix;
+    }
 
     /**
      * Creates a Type 3 font.
@@ -168,7 +177,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         PdfDictionary encoding = fontDictionary.getAsDictionary(PdfName.Encoding);
         PdfArray differences = encoding != null ? encoding.getAsArray(PdfName.Differences) : null;
         if (charProcsDic == null || differences == null) {
-            LoggerFactory.getLogger(getClass()).warn(LogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE);
+            LoggerFactory.getLogger(getClass()).warn(IoLogMessageConstant.TYPE3_FONT_INITIALIZATION_ISSUE);
         }
         fillFontDescriptor(fontDictionary.getAsDictionary(PdfName.FontDescriptor));
 
@@ -176,7 +185,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         normalizeGlyphSpaceUnitsTo1000Units(fontBBoxRect);
         normalizeGlyphSpaceUnitsTo1000Units(widthsArray);
 
-        int firstChar = initializeShortTag(fontDictionary);
+        int firstChar = initializeUsedGlyphs(fontDictionary);
         fontMatrix = fontMatrixArray;
         initializeFontBBox(fontBBoxRect);
         initializeTypoAscenderDescender(fontBBoxRect);
@@ -274,22 +283,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     @Override
     public boolean isEmbedded() {
         return true;
-    }
-
-    @Override
-    public double[] getFontMatrix() {
-        return this.fontMatrix;
-    }
-
-    /**
-     * Sets font matrix, mapping glyph space to text space. Must be identity matrix divided by 1000.
-     * @param fontMatrix an array of six numbers specifying the font matrix,
-     *                   mapping glyph space to text space.
-     * @deprecated will be made internal in next major release
-     */
-    @Deprecated
-    public void setFontMatrix(double[] fontMatrix) {
-        this.fontMatrix = fontMatrix;
     }
 
     /**
@@ -403,7 +396,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         } else if (getPdfObject().getIndirectReference() != null
                 && getPdfObject().getIndirectReference().getDocument().isTagged()) {
             Logger logger = LoggerFactory.getLogger(PdfType3Font.class);
-            logger.warn(LogMessageConstant.TYPE3_FONT_ISSUE_TAGGED_PDF);
+            logger.warn(IoLogMessageConstant.TYPE3_FONT_ISSUE_TAGGED_PDF);
         }
         return null;
     }
@@ -413,7 +406,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         double[] widths = new double[lastChar - firstChar + 1];
         for (int k = firstChar; k <= lastChar; ++k) {
             int i = k - firstChar;
-            if (shortTag[k] == 0) {
+            if (usedGlyphs[k] == 0) {
                 widths[i] = 0;
             } else {
                 int uni = getFontEncoding().getUnicode(k);
@@ -431,11 +424,6 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
-    }
-
-    @Override
-    protected double getGlyphWidth(Glyph glyph) {
-        return glyph != null ? glyph.getWidth() / this.getGlyphSpaceNormalizationFactor() : 0;
     }
 
     final double getGlyphSpaceNormalizationFactor() {
@@ -511,7 +499,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     private void flushFontData() {
         if (((Type3Font) getFontProgram()).getNumberOfGlyphs() < 1) {
-            throw new PdfException(PdfException.NoGlyphsDefinedForType3Font);
+            throw new PdfException(KernelExceptionMessageConstant.NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT);
         }
         PdfDictionary charProcs = new PdfDictionary();
         for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
@@ -550,7 +538,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private double[] readWidths(PdfDictionary fontDictionary) {
         PdfArray pdfWidths = fontDictionary.getAsArray(PdfName.Widths);
         if (pdfWidths == null) {
-            throw new PdfException(PdfException.MissingRequiredFieldInFontDictionary).setMessageParams(PdfName.Widths);
+            throw new PdfException(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY)
+                    .setMessageParams(PdfName.Widths);
         }
 
         double[] widths = new double[pdfWidths.size()];
@@ -562,12 +551,12 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         return widths;
     }
 
-    private int initializeShortTag(PdfDictionary fontDictionary) {
+    private int initializeUsedGlyphs(PdfDictionary fontDictionary) {
         int firstChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.FirstChar), 0);
         int lastChar = normalizeFirstLastChar(fontDictionary.getAsNumber(PdfName.LastChar),
                 PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE);
         for (int i = firstChar; i <= lastChar; i++) {
-            shortTag[i] = 1;
+            usedGlyphs[i] = 1;
         }
         return firstChar;
     }
@@ -589,7 +578,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private double[] readFontMatrix() {
         PdfArray fontMatrixArray = getPdfObject().getAsArray(PdfName.FontMatrix);
         if (fontMatrixArray == null) {
-            throw new PdfException(PdfException.MissingRequiredFieldInFontDictionary)
+            throw new PdfException(KernelExceptionMessageConstant.MISSING_REQUIRED_FIELD_IN_FONT_DICTIONARY)
                     .setMessageParams(PdfName.FontMatrix);
         }
         double[] fontMatrix = new double[6];

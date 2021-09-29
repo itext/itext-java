@@ -43,7 +43,8 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -352,7 +353,7 @@ public class Barcode128 extends Barcode1D {
         for (int k = 0; k < tLen; ++k) {
             c = text.charAt(k);
             if (c > 127 && c != FNC1)
-                throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
+                throw new PdfException(BarcodeExceptionMessageConstant.THERE_ARE_ILLEGAL_CHARACTERS_FOR_BARCODE_128);
         }
         c = text.charAt(0);
         char currentCode = getStartSymbol(codeSet);
@@ -383,7 +384,7 @@ public class Barcode128 extends Barcode1D {
             ++index;
         }
         if (codeSet != Barcode128CodeSet.AUTO && currentCode != getStartSymbol(codeSet))
-            throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
+            throw new PdfException(BarcodeExceptionMessageConstant.THERE_ARE_ILLEGAL_CHARACTERS_FOR_BARCODE_128);
         while (index < tLen) {
             switch (currentCode) {
                 case START_A: {
@@ -452,7 +453,7 @@ public class Barcode128 extends Barcode1D {
                 break;
             }
             if (codeSet != Barcode128CodeSet.AUTO && currentCode != getStartSymbol(codeSet))
-                throw new PdfException(PdfException.ThereAreIllegalCharactersForBarcode128In1);
+                throw new PdfException(BarcodeExceptionMessageConstant.THERE_ARE_ILLEGAL_CHARACTERS_FOR_BARCODE_128);
         }
         return out;
     }

@@ -29,9 +29,9 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.OverflowWrapPropertyValue;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.LineRenderer.LineAscentDescentState;
 
 import java.util.ArrayList;

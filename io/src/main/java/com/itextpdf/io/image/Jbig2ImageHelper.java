@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
@@ -91,7 +91,7 @@ class Jbig2ImageHelper {
             image.setHeight(p.pageBitmapHeight);
             image.setWidth(p.pageBitmapWidth);
             image.setBpc(1);
-            image.setColorSpace(1);
+            image.setColorEncodingComponentsNumber(1);
             //TODO JBIG2 globals caching
             byte[] globals = sr.getGlobal(true);
 
@@ -108,7 +108,7 @@ class Jbig2ImageHelper {
             }
 
             image.setFilter("JBIG2Decode");
-            image.setColorSpace(1);
+            image.setColorEncodingComponentsNumber(1);
             image.setBpc(1);
             image.data = p.getData(true);
         } catch (java.io.IOException e) {

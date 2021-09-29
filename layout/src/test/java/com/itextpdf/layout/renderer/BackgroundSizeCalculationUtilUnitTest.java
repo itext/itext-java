@@ -24,7 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
-import com.itextpdf.layout.property.BackgroundImage;
+import com.itextpdf.layout.properties.BackgroundImage;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -42,7 +42,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
     @Test
     public void calculateImageSizeTest() throws MalformedURLException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject);
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
 
@@ -52,7 +52,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
     @Test
     public void calculateImageSizeWithCoverPropertyTest() throws MalformedURLException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject);
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
         backgroundImage.getBackgroundSize().setBackgroundSizeToCover();
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
@@ -63,7 +63,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
     @Test
     public void calculateSizeWithContainPropertyTest() throws MalformedURLException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject);
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
         backgroundImage.getBackgroundSize().setBackgroundSizeToContain();
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
@@ -74,7 +74,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
     @Test
     public void calculateSizeWithContainAndImageWeightMoreThatHeightTest() throws MalformedURLException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject);
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
         backgroundImage.getBackgroundSize().setBackgroundSizeToContain();
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);
@@ -85,7 +85,7 @@ public class BackgroundSizeCalculationUtilUnitTest extends ExtendedITextTest {
     @Test
     public void calculateSizeWithCoverAndImageWeightMoreThatHeightTest() throws MalformedURLException {
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
-        BackgroundImage backgroundImage = new BackgroundImage(xObject);
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
         backgroundImage.getBackgroundSize().setBackgroundSizeToCover();
 
         float[] widthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(backgroundImage, 200f, 300f);

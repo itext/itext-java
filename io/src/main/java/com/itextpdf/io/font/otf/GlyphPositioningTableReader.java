@@ -56,7 +56,6 @@ import java.util.Map;
  * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
-    private static final long serialVersionUID = 7437245788115628787L;
 
     public GlyphPositioningTableReader(RandomAccessFileOrArray rf, int gposTableLocation,
                                        OpenTypeGdefTableReader gdef, Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws java.io.IOException {
@@ -89,6 +88,8 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
                 return new GposLookupType6(this, lookupFlag, subTableLocations);
             case 7:
                 return new GposLookupType7(this, lookupFlag, subTableLocations);
+            case 8:
+                return new GposLookupType8(this, lookupFlag, subTableLocations);
             default:
                 return null;
         }

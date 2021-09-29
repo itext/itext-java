@@ -42,8 +42,8 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
@@ -103,10 +103,11 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
         for (String value : props) {
             if (CommonCssConstants.INITIAL.equals(value) || CommonCssConstants.INHERIT.equals(value)) {
                 Logger logger = LoggerFactory.getLogger(AbstractBorderShorthandResolver.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
+                logger.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                        shorthandExpression));
                 return Collections.<CssDeclaration>emptyList();
             }
-            if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssTypesValidationUtils.isNumericValue(value)
+            if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssTypesValidationUtils.isNumber(value)
                     || CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isRelativeValue(value)) {
                 borderWidthValue = value;
             } else if (CommonCssConstants.BORDER_STYLE_VALUES.contains(value) || value.equals(CommonCssConstants.AUTO)) { // AUTO property value is needed for outline property only

@@ -44,14 +44,12 @@
 package com.itextpdf.io.font.otf;
 
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
-import java.io.Serializable;
-import com.itextpdf.io.util.MessageFormatUtil;
 import java.util.Arrays;
 
-public class Glyph implements Serializable {
+public class Glyph {
 
-    private static final long serialVersionUID = 1627806639423114471L;
 
     private static final char REPLACEMENT_CHARACTER = '\ufffd';
     private static final char[] REPLACEMENT_CHARACTERS = new char[] {REPLACEMENT_CHARACTER};

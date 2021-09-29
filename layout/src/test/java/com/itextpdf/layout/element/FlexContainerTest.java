@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -31,14 +31,14 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.property.AlignmentPropertyValue;
-import com.itextpdf.layout.property.Background;
-import com.itextpdf.layout.property.BoxSizingPropertyValue;
-import com.itextpdf.layout.property.JustifyContent;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.JustifyContent;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -52,8 +52,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import java.io.IOException;
-import java.util.Arrays;
 
 @RunWith(Parameterized.class)
 @Category(IntegrationTest.class)
@@ -214,7 +212,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";

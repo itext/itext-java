@@ -42,7 +42,7 @@
  */
 package com.itextpdf.signatures.testutils.builder;
 
-import com.itextpdf.io.util.DateTimeUtil;
+import com.itextpdf.commons.utils.DateTimeUtil;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
@@ -77,18 +77,24 @@ public class TestOcspResponseBuilder {
     private BasicOCSPRespBuilder responseBuilder;
     private X509Certificate issuerCert;
     private PrivateKey issuerPrivateKey;
-    private CertificateStatus certificateStatus = CertificateStatus.GOOD;
+    private CertificateStatus certificateStatus;
     private Calendar thisUpdate = DateTimeUtil.getCurrentTimeCalendar();
     private Calendar nextUpdate = DateTimeUtil.getCurrentTimeCalendar();
 
-    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
+    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, CertificateStatus certificateStatus)
             throws CertificateEncodingException {
         this.issuerCert = issuerCert;
         this.issuerPrivateKey = issuerPrivateKey;
+        this.certificateStatus = certificateStatus;
         X500Name subjectDN = new X500Name(PrincipalUtil.getSubjectX509Principal(issuerCert).getName());
         thisUpdate = DateTimeUtil.addDaysToCalendar(thisUpdate, -1);
         nextUpdate = DateTimeUtil.addDaysToCalendar(nextUpdate, 30);
         responseBuilder = new BasicOCSPRespBuilder(new RespID(subjectDN));
+    }
+
+    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
+            throws CertificateEncodingException {
+        this(issuerCert, issuerPrivateKey, CertificateStatus.GOOD);
     }
 
     public X509Certificate getIssuerCert() {

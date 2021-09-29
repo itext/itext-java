@@ -30,7 +30,6 @@ import com.itextpdf.kernel.geom.Rectangle;
  */
 public class TextRectangle extends Rectangle {
 
-    private static final long serialVersionUID = -1263921426258495543L;
 
     /**
      * The y coordinate of the line on which the text is located.

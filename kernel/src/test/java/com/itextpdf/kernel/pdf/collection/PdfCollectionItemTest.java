@@ -42,7 +42,8 @@
  */
 package com.itextpdf.kernel.pdf.collection;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -200,7 +201,7 @@ public class PdfCollectionItemTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> item.setPrefix(fieldName, fieldPrefix)
         );
-        Assert.assertEquals(PdfException.YouMustSetAValueBeforeAddingAPrefix, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX, e.getMessage());
     }
 
     @Test

@@ -42,9 +42,9 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.CssRuleSetComparator;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
@@ -202,7 +202,8 @@ public class CssStyleSheet {
                 stylesMap.put(cssDeclaration.getProperty(), cssDeclaration);
         } else {
             Logger logger = LoggerFactory.getLogger(ICssResolver.class);
-            logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, cssDeclaration));
+            logger.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
+                    cssDeclaration));
         }
     }
 

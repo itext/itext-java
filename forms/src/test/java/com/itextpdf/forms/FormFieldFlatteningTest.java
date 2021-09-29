@@ -44,19 +44,12 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.Document;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -64,7 +57,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -254,7 +246,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 3)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 5)})
     //Logging is expected since there are duplicate field names
     //isReadOnly should be true after DEVSIX-2156
     public void flattenReadOnly() throws IOException {

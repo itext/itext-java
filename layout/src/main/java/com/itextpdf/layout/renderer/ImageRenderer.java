@@ -43,7 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -61,19 +61,18 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.ObjectFit;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.ObjectFit;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitApplyingResult;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitCalculator;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
@@ -220,12 +219,14 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
         if (!leftMargin.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_LEFT));
         }
         UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
         if (!topMargin.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_TOP));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.MARGIN_TOP));
         }
 
         if (0 != leftMargin.getValue() || 0 != topMargin.getValue()) {
@@ -269,7 +270,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
             Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Drawing won't be performed."));
             return;
         }
 
@@ -340,7 +342,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         final float renderedImageShiftX = ((float) width - renderedImageWidth) / 2;
         final float renderedImageShiftY = ((float) height - renderedImageHeight) / 2;
-        canvas.addXObject(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition +
+        canvas.addXObjectWithTransformationMatrix(xObject, matrix[0], matrix[1], matrix[2], matrix[3], (float) fixedXPosition +
                 deltaX + renderedImageShiftX, (float) fixedYPosition + renderedImageShiftY);
 
         endElementOpacityApplying(drawContext);

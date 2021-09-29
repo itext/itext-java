@@ -51,7 +51,6 @@ import com.itextpdf.io.image.Jpeg2000ImageData;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfSimpleFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
@@ -72,8 +71,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.pdfa.PdfAConformanceException;
-import com.itextpdf.pdfa.PdfAConformanceLogMessageConstant;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 
 import java.util.Collections;
@@ -139,7 +138,6 @@ public class PdfA2Checker extends PdfA1Checker {
     static final int MAX_PAGE_SIZE = 14400;
     static final int MIN_PAGE_SIZE = 3;
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 32;
-    private static final long serialVersionUID = -5937712517954260687L;
 
     private boolean currentFillCsIsIccBasedCMYK = false;
     private boolean currentStrokeCsIsIccBasedCMYK = false;
@@ -179,11 +177,6 @@ public class PdfA2Checker extends PdfA1Checker {
         }
 
         checkImage(inlineImage, currentColorSpaces);
-    }
-
-    @Override
-    public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill) {
-        checkColor(color, currentColorSpaces, fill, null);
     }
 
     @Override
@@ -287,11 +280,6 @@ public class PdfA2Checker extends PdfA1Checker {
                 }
             }
         }
-    }
-
-    @Override
-    public void checkExtGState(CanvasGraphicsState extGState) {
-        checkExtGState(extGState, null);
     }
 
     @Override
@@ -937,7 +925,7 @@ public class PdfA2Checker extends PdfA1Checker {
         } else {
             checkedObjects.add(ap);
         }
-        for (PdfObject val : ap.values()) {
+        for (final PdfObject val : ap.values()) {
             if (this.transparencyObjects.contains(val)) {
                 throw new PdfAConformanceException(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE);
             } else if (val.isDictionary()) {

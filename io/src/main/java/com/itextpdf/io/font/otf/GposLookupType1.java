@@ -33,8 +33,6 @@ import java.util.Map;
  */
 public class GposLookupType1 extends OpenTableLookup {
 
-    private static final long serialVersionUID = 4562279115440679363L;
-
     private Map<Integer, GposValueRecord> valueRecordMap = new HashMap<>();
 
     public GposLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)

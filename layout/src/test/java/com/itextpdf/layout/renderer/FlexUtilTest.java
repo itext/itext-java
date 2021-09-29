@@ -39,11 +39,11 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.property.AlignmentPropertyValue;
-import com.itextpdf.layout.property.FlexWrapPropertyValue;
-import com.itextpdf.layout.property.JustifyContent;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.FlexWrapPropertyValue;
+import com.itextpdf.layout.properties.JustifyContent;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

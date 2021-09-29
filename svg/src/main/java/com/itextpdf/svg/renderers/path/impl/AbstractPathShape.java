@@ -101,6 +101,7 @@ public abstract class AbstractPathShape implements IPathShape {
      * @param lastPoint start point for this shape
      * @return calculated rectangle
      */
+    @Override
     public Rectangle getPathShapeRectangle(Point lastPoint) {
         return new Rectangle((float) CssUtils.convertPxToPts(getEndingPoint().getX()),
                 (float) CssUtils.convertPxToPts(getEndingPoint().getY()), 0,

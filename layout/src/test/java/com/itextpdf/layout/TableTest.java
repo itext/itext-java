@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -68,22 +68,20 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.property.BorderCollapsePropertyValue;
-import com.itextpdf.layout.property.CaptionSide;
-import com.itextpdf.layout.property.HorizontalAlignment;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
+import com.itextpdf.layout.properties.CaptionSide;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
-import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -91,7 +89,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class TableTest extends ExtendedITextTest {
+public class TableTest extends AbstractTableTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableTest/";
 
@@ -181,15 +179,11 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)));
-        table.addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + textContent + textContent + textContent)));
-        table.addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)));
-        table.addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)));
+        table.addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT)));
+        table.addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)));
+        table.addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -204,15 +198,11 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + textContent + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)));
+                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -227,15 +217,11 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
-                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 2:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -250,15 +236,11 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)));
+                .addCell(new Cell(3, 1).add(new Paragraph("cell 1, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -273,18 +255,15 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)));
@@ -302,9 +281,6 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -313,7 +289,7 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 1, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + middleTextContent)))
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 2:2, 1:3\n" + textContent + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 2:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
@@ -480,18 +456,15 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 1:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
@@ -515,9 +488,6 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -529,10 +499,10 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + middleTextContent)))
-                .addCell(new Cell(3, 2).add(new Paragraph("cell 3:2, 1:3\n" + textContent + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + textContent)))
+                .addCell(new Cell(3, 2).add(new Paragraph("cell 3:2, 1:3\n" + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 1\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)))
@@ -553,14 +523,11 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
                 .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + longTextContent)))
@@ -574,7 +541,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest17() throws IOException, InterruptedException {
         String testName = "tableTest17.pdf";
@@ -604,7 +571,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest18() throws IOException, InterruptedException {
         String testName = "tableTest18.pdf";
@@ -636,7 +603,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest19() throws IOException, InterruptedException {
         String testName = "tableTest19.pdf";
@@ -667,7 +634,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest20() throws IOException, InterruptedException {
         String testName = "tableTest20.pdf";
@@ -694,7 +661,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest21() throws IOException, InterruptedException {
         String testName = "tableTest21.pdf";
@@ -704,14 +671,11 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        doc.add(new Paragraph(textContent));
+        doc.add(new Paragraph(TEXT_CONTENT));
 
         Table table = new Table(new float[]{130, 130, 260})
                 .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
@@ -825,17 +789,14 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + middleTextContent)))
@@ -855,22 +816,19 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -885,19 +843,16 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + middleTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 4, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -912,22 +867,19 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
                 "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
 
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(5, 1).add(new Paragraph("cell 1, 2\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 4, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 4, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -942,18 +894,15 @@ public class TableTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        String textContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
-                "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
-                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.\n";
-        String longTextContent = "1. " + textContent + "2. " + textContent + "3. " + textContent + "4. " + textContent
-                + "5. " + textContent + "6. " + textContent + "7. " + textContent + "8. " + textContent + "9. " + textContent;
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
+                + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. " + TEXT_CONTENT + "9. " + TEXT_CONTENT;
 
         Table table = new Table(new float[]{250, 250})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + textContent)))
+                .addCell(new Cell().add(new Paragraph("cell 1, 1\n" + TEXT_CONTENT)))
                 .addCell(new Cell(2, 1).add(new Paragraph("cell 1, 1 and 2\n" + longTextContent)))
-                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + textContent)))
-                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + textContent)));
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
 
         doc.add(table);
         doc.close();
@@ -1073,7 +1022,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     @Test
     public void toLargeElementWithKeepTogetherPropertyInTableTest01() throws IOException, InterruptedException {
@@ -1103,7 +1052,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
 
     @Test
@@ -1233,7 +1182,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     @Test
     public void splitTableOnShortPage() throws IOException, InterruptedException {
@@ -1370,7 +1319,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3)
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 3)
     })
     @Test
     public void tableWithSetHeightProperties01() throws IOException, InterruptedException {
@@ -1446,7 +1395,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 3)
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 3)
     })
     @Test
     public void tableWithSetHeightProperties02() throws IOException, InterruptedException {
@@ -1660,7 +1609,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void bigFooterTest01() throws IOException, InterruptedException {
         String testName = "bigFooterTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -1680,7 +1629,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void bigFooterTest02() throws IOException, InterruptedException {
         String testName = "bigFooterTest02.pdf";
         String outFileName = destinationFolder + testName;
@@ -1755,7 +1704,7 @@ public class TableTest extends ExtendedITextTest {
                 .setBorderBottom(new SolidBorder(ColorConstants.MAGENTA, 100))
         );
 
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.add(new AreaBreak());
 
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
@@ -1765,11 +1714,11 @@ public class TableTest extends ExtendedITextTest {
                 .addCell(new Cell().setPadding(0).setMargin(0).setBorder(Border.NO_BORDER))
                 .addCell(new Cell().add(new Paragraph("Hello"))
                 ));
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.add(new AreaBreak());
 
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setMinHeight(300).setBorderRight(new SolidBorder(ColorConstants.ORANGE, 5)).setBorderTop(new SolidBorder(100)).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 50)));
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1790,7 +1739,7 @@ public class TableTest extends ExtendedITextTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setVerticalBorderSpacing(20);
         doc.add(table);
-        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
@@ -1798,7 +1747,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void tableWithIncompleteFooter() throws IOException, InterruptedException {
         String testName = "tableWithIncompleteFooter.pdf";
         String outFileName = destinationFolder + testName;
@@ -1822,8 +1771,8 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE),
-            @LogMessage(messageTemplate = LogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)})
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)})
     public void tableWithCustomRendererTest01() throws IOException, InterruptedException {
         String testName = "tableWithCustomRendererTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -2037,8 +1986,8 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.LAST_ROW_IS_NOT_COMPLETE),
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE),
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void tableNothingResultTest() throws IOException, InterruptedException {
         String testName = "tableNothingResultTest.pdf";
@@ -2182,7 +2131,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2)
     })
     public void fixedPositionTest01() throws IOException, InterruptedException {
         String testName = "fixedPositionTest01.pdf";
@@ -2215,7 +2164,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // When the test was created, only first line of text was displayed on the first page
     public void nestedTableLostContent() throws IOException, InterruptedException {
         String testName = "nestedTableLostContent.pdf";
@@ -2242,7 +2191,7 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // When the test was created, an exception was thrown due to min-max width calculations for an inner table.
     // At some point isOriginalNonSplitRenderer was true for a parent renderer but false for the inner table renderer
     public void nestedTableMinMaxWidthException() throws IOException, InterruptedException {
@@ -2461,7 +2410,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+            @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
     })
     public void splitTableMinMaxWidthTest01() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
@@ -2905,33 +2854,92 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("Ignored because the test enters an infinite loop when closing a document. Remove ignore after fixing DEVSIX-3356")
-    // TODO remove ignore after fixing DEVSIX-3356
-    public void infiniteLoopOnUnfitCellAndBigRowspanTest() throws IOException {
-        String testName = "infiniteLoopOnUnfitCellAndBigRowspanTest.pdf";
+    public void firstRowPartiallyFitWideBottomBorderTest() throws IOException, InterruptedException {
+        String testName = "firstRowPartiallyFitWideBottomBorderTest.pdf";
         String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+        Document doc = new Document(pdfDoc, PageSize.A4);
 
-        Table table = new Table(38);
-        table.useAllAvailableWidth();
-        table.setFixedLayout();
+        Table table = new Table(1);
+        table.setBorderBottom(new SolidBorder(ColorConstants.RED, 250));
 
-        Cell cellNum1 = new Cell(1, 1);
-        table.addCell(cellNum1);
+        Cell notFitCell = new Cell();
+        notFitCell.add(new Paragraph("Some text which should be big enough."));
+        notFitCell.setFontSize(100);
+        table.addCell(notFitCell);
 
-        Cell cellNum2 = new Cell(2, 2);
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "itext.png"));
-        cellNum2.add(img);
-        table.addCell(cellNum2);
-
-        Cell cellNum3 = new Cell(2, 36);
-        cellNum3.add(new Paragraph("text"));
-        table.addCell(cellNum3);
+        table.addCell("row 2 col 1");
+        table.addCell("row 2 col 2");
 
         doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+        doc.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void collapseWithNextRowWiderThanWithTableBorderTest() throws IOException, InterruptedException {
+        String testName = "collapseWithNextRowWiderThanWithTableBorderTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4);
+
+        Table table = new Table(1);
+
+        Cell cell1 = new Cell();
+        cell1.add(new Paragraph("Usual bottom border"));
+        cell1.setHeight(300);
+        table.addCell(cell1);
+
+        Cell cell2 = new Cell();
+        cell2.add(new Paragraph("Top border: 600pt"));
+        cell2.setBorderTop(new SolidBorder(600));
+        table.addCell(cell2);
+
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+        doc.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void tableBottomBorderWideTest() throws IOException, InterruptedException {
+        String testName = "tableBottomBorderWideTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(1)
+                .setBorderBottom(new SolidBorder(ColorConstants.RED, 500))
+                .addCell(new Cell().add(new Paragraph(TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT + TEXT_CONTENT)))
+                .addCell(new Cell().add(new Paragraph("Hello World")));
+        doc.add(table);
+        doc.add(new AreaBreak());
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        doc.add(table);
+        addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
     @Test
@@ -3045,6 +3053,74 @@ public class TableTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void infiniteLoopOnUnfitCellAndBigRowspanTest() throws IOException, InterruptedException {
+        String testName = "infiniteLoopOnUnfitCellAndBigRowspanTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4.rotate());
+
+        Table table = new Table(38);
+        table.useAllAvailableWidth();
+        table.setFixedLayout();
+
+        Cell cellNum1 = new Cell(1, 1);
+        table.addCell(cellNum1);
+
+        Cell cellNum2 = new Cell(2, 2);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + "itext.png"));
+        cellNum2.add(img);
+        table.addCell(cellNum2);
+
+        Cell cellNum3 = new Cell(2, 36);
+        cellNum3.add(new Paragraph("text"));
+        table.addCell(cellNum3);
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
+    })
+    public void firstRowNotFitBigRowspanTest() throws IOException, InterruptedException {
+        String testName = "firstRowNotFitBigRowspanTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, PageSize.A4);
+
+        Table table = new Table(4);
+
+        table.addCell("row 1 col 1");
+
+        Cell notFitCell = new Cell(2, 1);
+        notFitCell.add(new Paragraph("row 1-2 col 2"));
+        notFitCell.setFontSize(1000);
+        table.addCell(notFitCell);
+
+        Cell fitCell = new Cell(2, 2);
+        fitCell.add(new Paragraph("row 1-2 col 3-4"));
+        table.addCell(fitCell);
+
+        table.addCell("row 2 col 1");
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarFullTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarFullTest.pdf";
@@ -3117,7 +3193,7 @@ public class TableTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarNothingTest() throws IOException, InterruptedException {
@@ -3165,7 +3241,8 @@ public class TableTest extends ExtendedITextTest {
 
         @Override
         protected PageSize addNewPage(PageSize customPageSize) {
-            PageSize pageSize = currentPageNumber % 2 == 1 ? PageSize.A4 : PageSize.A4.rotate();
+            int currentNumberOfPages = document.getPdfDocument().getNumberOfPages();
+            PageSize pageSize = currentNumberOfPages % 2 == 1 ? PageSize.A4.rotate() : PageSize.A4;
             pdfDoc.addNewPage(pageSize);
             return pageSize;
         }

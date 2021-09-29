@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.font.cmap;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,6 @@ import java.util.List;
  */
 public class CMapByteCid extends AbstractCMap {
 
-    private static final long serialVersionUID = 8843696844192313477L;
 
     protected static class Cursor {
 

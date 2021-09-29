@@ -43,7 +43,7 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
@@ -54,7 +54,8 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummyBranchSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
@@ -141,7 +142,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
       Invalid input: null
      */
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_ADDING_CHILD_NODE),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.ERROR_ADDING_CHILD_NODE),
     })
     public void dummyProcessingTestNodeHasNullChild() {
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
@@ -160,9 +161,6 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.ERROR_RESOLVING_PARENT_STYLES),
-                })
     public void dummyProcessingSvgTagIsNotRootOfInput() {
         Element jsoupRandomElement = new Element(Tag.valueOf("body"), "");
         Element jsoupSVGRoot = new Element(Tag.valueOf("svg"), "");
@@ -194,7 +192,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(SvgProcessingException.class,
                 () -> processor.process(root, props).getRootRenderer()
         );
-        Assert.assertEquals(SvgLogMessageConstant.NOROOT, e.getMessage());
+        Assert.assertEquals(SvgExceptionMessageConstant.NO_ROOT, e.getMessage());
     }
 
     @Test
@@ -256,7 +254,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPEDTAG),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
     })
     public void depthFirstNullRendererTest() {
         Element jsoupNonExistingElement = new Element(Tag.valueOf("nonExisting"), "");

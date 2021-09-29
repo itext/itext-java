@@ -43,8 +43,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -62,13 +62,13 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.AreaBreakType;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
-import com.itextpdf.layout.property.ClearPropertyValue;
+import com.itextpdf.layout.properties.AreaBreakType;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
+import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +139,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Border[] borders = getBorders();
         UnitValue[] paddings = getPaddings();
 
-        applyBordersPaddingsMargins(parentBBox, borders, paddings);
+        applyMargins(parentBBox, false);
+        applyBorderBox(parentBBox, borders, false);
+        if (isFixedLayout()) {
+            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
+        }
+        applyPaddings(parentBBox, paddings, false);
         Float blockMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
                 && !wasParentsHeightClipped
@@ -293,7 +298,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 if (currentAreaPos + 1 < areas.size() && !(result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         childRenderers.set(childPos, result.getSplitRenderer());
-                        // TODO linkedList would make it faster
                         childRenderers.add(childPos + 1, result.getOverflowRenderer());
                     } else {
                         if (result.getOverflowRenderer() != null) {
@@ -441,7 +445,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
-                    LoggerFactory.getLogger(getClass()).warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
+                    LoggerFactory.getLogger(getClass())
+                            .warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                                    "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -468,7 +474,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
     public void draw(DrawContext drawContext) {
         Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
         if (occupiedArea == null) {
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Drawing won't be performed."));
             return;
         }
 
@@ -519,7 +526,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 //  a renderer from the different page that was already flushed
                 if (page.isFlushed()) {
                     logger.error(MessageFormatUtil.format(
-                            LogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "area clipping"));
+                            IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED,
+                            "area clipping"));
                     clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
                 } else {
                     clippedArea = page.getPageSize();
@@ -567,7 +575,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (rotationAngle != null) {
             if (!hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+                logger.error(
+                        MessageFormatUtil.format(IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
+                                getClass().getSimpleName()));
             } else {
                 bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
                 bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
@@ -773,7 +783,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (angle != null) {
             if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(MessageFormatUtil.format(LogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, getClass().getSimpleName()));
+                logger.error(
+                        MessageFormatUtil.format(IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
+                                getClass().getSimpleName()));
             } else {
                 AffineTransform transform = createRotationTransformInsideOccupiedArea();
                 canvas.saveState().concatMatrix(transform);
@@ -974,28 +986,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             float difference = layoutBox.getBottom() - occupiedArea.getBBox().getBottom();
             occupiedArea.getBBox().moveUp(difference).decreaseHeight(difference);
         }
-    }
-
-    /**
-     * Decreases parentBBox to the size of borders, paddings and margins.
-     *
-     * @param parentBBox {@link Rectangle} to be decreased
-     * @param borders the border values to decrease parentBBox
-     * @param paddings the padding values to decrease parentBBox
-     * @return the difference between previous and current parentBBox's
-     * @deprecated Need to be removed in next major release.
-     */
-    @Deprecated
-    protected float applyBordersPaddingsMargins(Rectangle parentBBox, Border[] borders, UnitValue[] paddings) {
-        float parentWidth = parentBBox.getWidth();
-
-        applyMargins(parentBBox, false);
-        applyBorderBox(parentBBox, borders, false);
-        if (isFixedLayout()) {
-            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
-        }
-        applyPaddings(parentBBox, paddings, false);
-        return parentWidth - parentBBox.getWidth();
     }
 
     /**

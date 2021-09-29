@@ -42,7 +42,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
@@ -62,11 +62,11 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.ListNumberingType;
-import com.itextpdf.layout.property.ListSymbolAlignment;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.UnitValue;
-import com.itextpdf.layout.property.VerticalAlignment;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.ListSymbolAlignment;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -194,7 +194,7 @@ public class ListTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 8, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(count = 8, messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void addListOnShortPage1() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addListOnShortPage1.pdf";
@@ -230,8 +230,8 @@ public class ListTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 3, messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
-            @LogMessage(count = 6, messageTemplate = LogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
+            @LogMessage(count = 3, messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(count = 6, messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
     })
     public void addListOnShortPage2() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addListOnShortPage2.pdf";
@@ -460,7 +460,7 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.CLIP_ELEMENT, count = 4)
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 4)
     })
     @Test
     public void listWithSetHeightProperties01() throws IOException, InterruptedException {
@@ -592,7 +592,7 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void listSymbolForcedPlacement01() throws Exception {
         String outFileName = destinationFolder + "listSymbolForcedPlacement01.pdf";
         String cmpFileName = sourceFolder + "cmp_listSymbolForcedPlacement01.pdf";
@@ -614,5 +614,60 @@ public class ListTest extends ExtendedITextTest {
         document.close();
         // TODO DEVSIX-1655: partially not fitting list symbol not shown at all, however this might be improved
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    // There is no symbol indent in html: one uses margins for such a purpose.
+    public void bothSymbolIndentAndMarginAreSetTest() throws Exception {
+        String outFileName = destinationFolder + "bothSymbolIndentAndMarginAreSetTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_bothSymbolIndentAndMarginAreSetTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        List l = createTestList();
+
+        ListItem li = new ListItem("Only symbol indent: 50pt");
+        li.setBackgroundColor(ColorConstants.BLUE);
+        l.add(li);
+        li = new ListItem("Symbol indent: 50pt and margin-left: 50pt = 100pt");
+        li.setMarginLeft(50);
+        li.setBackgroundColor(ColorConstants.YELLOW);
+        l.add(li);
+
+        document.add(l);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED))
+    public void listItemMarginInPercentTest() throws Exception {
+        String outFileName = destinationFolder + "listItemMarginInPercentTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemMarginInPercentTest.pdf";
+
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+
+        List l = createTestList();
+
+        ListItem li = new ListItem("Left margin in percent: 50%");
+        li.setProperty(Property.MARGIN_LEFT, UnitValue.createPercentValue(50));
+        li.setBackgroundColor(ColorConstants.BLUE);
+        l.add(li);
+
+        document.add(l);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    private static List createTestList() {
+        List l = new List();
+        l.setWidth(300);
+        l.setBackgroundColor(ColorConstants.RED);
+        l.setSymbolIndent(50);
+        l.setListSymbol("\u2022");
+
+        return l;
     }
 }

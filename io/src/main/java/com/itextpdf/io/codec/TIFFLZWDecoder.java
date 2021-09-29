@@ -45,7 +45,7 @@
 */
 package com.itextpdf.io.codec;
 
-import com.itextpdf.io.IOException;
+import com.itextpdf.io.exceptions.IOException;
 
 /**
  * A class for performing LZW decoding.

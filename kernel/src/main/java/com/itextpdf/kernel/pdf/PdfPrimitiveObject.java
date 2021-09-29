@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,6 @@ import java.util.Arrays;
 
 public abstract class PdfPrimitiveObject extends PdfObject {
 
-    private static final long serialVersionUID = -1788064882121987538L;
 	
     protected byte[] content = null;
     protected boolean directOnly;
@@ -94,7 +93,7 @@ public abstract class PdfPrimitiveObject extends PdfObject {
             return super.makeIndirect(document, reference);
         } else {
             Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
+            logger.warn(IoLogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
         }
         return this;
     }
@@ -105,7 +104,7 @@ public abstract class PdfPrimitiveObject extends PdfObject {
             super.setIndirectReference(indirectReference);
         } else {
             Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
+            logger.warn(IoLogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
         }
         return this;
     }

@@ -48,12 +48,13 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.util.FileUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ import java.util.Map;
  * FontProvider the only end point for creating {@link PdfFont}.
  * <p>
  * It is allowed to use only one {@link FontProvider} per document. If additional fonts per element needed,
- * another instance of  {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.property.Property#FONT_SET},
+ * another instance of  {@link FontSet} can be used. For more details see {@link com.itextpdf.layout.properties.Property#FONT_SET},
  * {@link #getPdfFont(FontInfo, FontSet)}, {@link #getStrategy(String, List, FontCharacteristics, FontSet)}.
  * <p>
  * Note, FontProvider does not close created {@link FontProgram}s, because of possible conflicts with {@link FontCache}.
@@ -538,7 +539,7 @@ public class FontProvider {
                 // Even though softening of checked exceptions can be handled at higher levels in order to let
                 // the caller of this method know that font creation failed, we prefer to avoid bloating highlevel API
                 // and avoid making higher level code depend on low-level code because of the exceptions handling.
-                throw new PdfException(PdfException.IoExceptionWhileCreatingFont, e);
+                throw new PdfException(LayoutExceptionMessageConstant.IO_EXCEPTION_WHILE_CREATING_FONT, e);
             }
 
             pdfFonts.put(fontInfo, pdfFont);

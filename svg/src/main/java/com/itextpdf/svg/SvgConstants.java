@@ -107,8 +107,7 @@ public final class SvgConstants {
         /**
          * Tag defining a clipping path. A clipping path defines the region where can be drawn. Anything outside the path won't be drawn.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String CLIP_PATH = "clipPath".toLowerCase();
+        public static final String CLIP_PATH = "clipPath";
 
         /**
          * Tag defining the color profile to be used.
@@ -333,8 +332,7 @@ public final class SvgConstants {
         /**
          * Tag defining a {@link com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer linear gradient}.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String LINEAR_GRADIENT = "linearGradient".toLowerCase();
+        public static final String LINEAR_GRADIENT = "linearGradient";
 
         /**
          * Tag defining a link
@@ -474,11 +472,6 @@ public final class SvgConstants {
         public static final String TITLE = "title";
 
         /**
-         * Deprecated in SVG. Tag defining text that was defined in an SVG document.
-         */
-        public static final String TREF = "tref";
-
-        /**
          * Tag defining a span within a text element.
          */
         public static final String TSPAN = "tspan";
@@ -587,14 +580,12 @@ public final class SvgConstants {
         /**
          * Attribute defining the units relation for a color gradient.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String GRADIENT_UNITS = "gradientUnits".toLowerCase();
+        public static final String GRADIENT_UNITS = "gradientUnits";
 
         /**
          * Attribute defining the transformations for a color gradient.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String GRADIENT_TRANSFORM = "gradientTransform".toLowerCase();
+        public static final String GRADIENT_TRANSFORM = "gradientTransform";
 
         /**
          * Attribute defining the height. Used in several elements.
@@ -619,8 +610,7 @@ public final class SvgConstants {
         /**
          * Attribute defining the height of the viewport in which the marker is to be fitted
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String MARKER_HEIGHT = "markerHeight".toLowerCase();
+        public static final String MARKER_HEIGHT = "markerHeight";
 
         /**
          * Attribute defining the marker drawn at every other vertex but the start and end of a path, line, polygon or polyline
@@ -635,14 +625,12 @@ public final class SvgConstants {
         /**
          * Attribute defining the width of the viewport in which the marker is to be fitted
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String MARKER_WIDTH = "markerWidth".toLowerCase();
+        public static final String MARKER_WIDTH = "markerWidth";
 
         /**
          * Attribute defining the coordinate system for attributes ‘markerWidth’, ‘markerHeight’ and the contents of the ‘marker’.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String MARKER_UNITS = "markerUnits".toLowerCase();
+        public static final String MARKER_UNITS = "markerUnits";
 
         /**
          * Attribute defining the offset of a stop color for gradients.
@@ -775,20 +763,17 @@ public final class SvgConstants {
         /**
          * Attribute defining the coordinate system for the pattern content.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String PATTERN_CONTENT_UNITS = "patternContentUnits".toLowerCase();
+        public static final String PATTERN_CONTENT_UNITS = "patternContentUnits";
 
         /**
          * Attribute defining list of transform definitions for the pattern element.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String PATTERN_TRANSFORM = "patternTransform".toLowerCase();
+        public static final String PATTERN_TRANSFORM = "patternTransform";
 
         /**
          * Attribute defining the coordinate system for attributes x, y, width , and height in pattern.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String PATTERN_UNITS = "patternUnits".toLowerCase();
+        public static final String PATTERN_UNITS = "patternUnits";
 
         /**
          * Attribute defining the points of a polyline or polygon.
@@ -798,8 +783,7 @@ public final class SvgConstants {
         /**
          * Attribute defining how to preserve the aspect ratio when scaling.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String PRESERVE_ASPECT_RATIO = "preserveAspectRatio".toLowerCase();
+        public static final String PRESERVE_ASPECT_RATIO = "preserveAspectRatio";
 
         /**
          * Attribute defining the radius of a circle.
@@ -809,14 +793,12 @@ public final class SvgConstants {
         /**
          * Attribute defining the x-axis coordinate of the reference point which is to be aligned exactly at the marker position.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String REFX = "refX".toLowerCase();
+        public static final String REFX = "refX";
 
         /**
          * Attribute defining the y-axis coordinate of the reference point which is to be aligned exactly at the marker position.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String REFY = "refY".toLowerCase();
+        public static final String REFY = "refY";
 
         /**
          * Attribute defining the x-axis of an ellipse or the x-axis radius of rounded rectangles.
@@ -831,8 +813,7 @@ public final class SvgConstants {
         /**
          * Attribute defining the spread method for a color gradient.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String SPREAD_METHOD = "spreadMethod".toLowerCase();
+        public static final String SPREAD_METHOD = "spreadMethod";
 
         /**
          * Attribute defining the stroke color.
@@ -892,8 +873,7 @@ public final class SvgConstants {
         /**
          * Attribute defining the viewbox of an element.
          */
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        public static final String VIEWBOX = "viewBox".toLowerCase();
+        public static final String VIEWBOX = "viewBox";
 
         /**
          * Attribute defining the width of an element.
@@ -987,24 +967,6 @@ public final class SvgConstants {
         public static final String FILL_RULE_NONZERO = "nonzero";
 
         /**
-         * Value representing the gradient units relation "objectBoundingBox".
-         *
-         * @deprecated it will be removed in the 7.2 update.
-         * Use {@link SvgConstants.Values#OBJECT_BOUNDING_BOX} instead.
-         */
-        @Deprecated
-        public static final String GRADIENT_UNITS_OBJECT_BOUNDING_BOX = Values.OBJECT_BOUNDING_BOX;
-
-        /**
-         * Value representing the gradient units relation "userSpaceOnUse".
-         *
-         * @deprecated it will be removed in the 7.2 update.
-         * Use {@link SvgConstants.Values#USER_SPACE_ON_USE} instead.
-         */
-        @Deprecated
-        public static final String GRADIENT_UNITS_USER_SPACE_ON_USE = Values.USER_SPACE_ON_USE;
-
-        /**
          * Value representing the meet for preserve aspect ratio calculations.
          */
         public static final String MEET = "meet";
@@ -1023,12 +985,6 @@ public final class SvgConstants {
          * The value representing slice for the preserve aspect ratio calculations;
          */
         public static final String SLICE = "slice";
-
-        /**
-         * The value corresponding with the namespace url for SVG. Will be removed since version 7.2.
-         */
-        @Deprecated
-        public static final String SVGNAMESPACEURL = "http://www.w3.org/2000/svg";
 
         /**
          * Value representing the text-alignment end for text objects

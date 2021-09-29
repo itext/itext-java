@@ -51,7 +51,6 @@ import java.util.List;
  */
 public class Line implements IShape {
 
-    private static final long serialVersionUID = 4796508543986646437L;
     private final Point p1;
     private final Point p2;
 

@@ -3,55 +3,38 @@
     Copyright (c) 1998-2021 iText Group NV
     Authors: iText Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
-import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
+import com.itextpdf.styledxmlparser.jsoup.nodes.CDataNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Document;
 import com.itextpdf.styledxmlparser.jsoup.nodes.DocumentType;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Entities;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 
 /**
@@ -63,11 +46,31 @@ import java.util.List;
  * @author Jonathan Hedley
  */
 public class XmlTreeBuilder extends TreeBuilder {
+    ParseSettings defaultSettings() {
+        return ParseSettings.preserveCase;
+    }
+
     @Override
-    protected void initialiseParse(String input, String baseUri, ParseErrorList errors) {
-        super.initialiseParse(input, baseUri, errors);
+    protected void initialiseParse(Reader input, String baseUri, Parser parser) {
+        super.initialiseParse(input, baseUri, parser);
         stack.add(doc); // place the document onto the stack. differs from HtmlTreeBuilder (not on stack)
-        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+        doc.outputSettings()
+            .syntax(Document.OutputSettings.Syntax.xml)
+            .escapeMode(Entities.EscapeMode.xhtml)
+            .prettyPrint(false); // as XML, we don't understand what whitespace is significant or not
+    }
+
+    Document parse(Reader input, String baseUri) {
+        return parse(input, baseUri, new Parser(this));
+    }
+
+    Document parse(String input, String baseUri) {
+        return parse(new StringReader(input), baseUri, new Parser(this));
+    }
+
+    @Override
+    TreeBuilder newInstance() {
+        return new XmlTreeBuilder();
     }
 
     @Override
@@ -102,12 +105,13 @@ public class XmlTreeBuilder extends TreeBuilder {
     }
 
     Element insert(Token.StartTag startTag) {
-        Tag tag = Tag.valueOf(startTag.name());
-        // todo: wonder if for xml parsing, should treat all tags as unknown? because it's not html.
-        Element el = new Element(tag, baseUri, startTag.attributes);
+        Tag tag = Tag.valueOf(startTag.name(), settings);
+        if (startTag.hasAttributes())
+            startTag.attributes.deduplicate(settings);
+
+        Element el = new Element(tag, null, settings.normalizeAttributes(startTag.attributes));
         insertNode(el);
         if (startTag.isSelfClosing()) {
-            tokeniser.acknowledgeSelfClosingFlag();
             if (!tag.isKnownTag()) // unknown tag, remember this is self closing for output. see above.
                 tag.setSelfClosing();
         } else {
@@ -117,28 +121,26 @@ public class XmlTreeBuilder extends TreeBuilder {
     }
 
     void insert(Token.Comment commentToken) {
-        Comment comment = new Comment(commentToken.getData(), baseUri);
+        Comment comment = new Comment(commentToken.getData());
         Node insert = comment;
-        if (commentToken.bogus) { // xml declarations are emitted as bogus comments (which is right for html, but not xml)
+        if (commentToken.bogus && comment.isXmlDeclaration()) {
+            // xml declarations are emitted as bogus comments (which is right for html, but not xml)
             // so we do a bit of a hack and parse the data as an element to pull the attributes out
-            String data = comment.getData();
-            if (data.length() > 1 && (data.startsWith("!") || data.startsWith("?"))) {
-                Document doc = Jsoup.parse("<" + data.substring(1, data.length() -1) + ">", baseUri, Parser.xmlParser());
-                Element el = doc.child(0);
-                insert = new XmlDeclaration(el.tagName(), comment.baseUri(), data.startsWith("!"));
-                insert.attributes().addAll(el.attributes());
-            }
+            XmlDeclaration decl = comment.asXmlDeclaration(); // else, we couldn't parse it as a decl, so leave as a comment
+            if (decl != null)
+                insert = decl;
         }
         insertNode(insert);
     }
 
-    void insert(Token.Character characterToken) {
-        Node node = new TextNode(characterToken.getData(), baseUri);
-        insertNode(node);
+    void insert(Token.Character token) {
+        final String data = token.getData();
+        insertNode(token.isCData() ? new CDataNode(data) : new TextNode(data));
     }
 
     void insert(Token.Doctype d) {
-        DocumentType doctypeNode = new DocumentType(d.getName(), d.getPublicIdentifier(), d.getSystemIdentifier(), baseUri);
+        DocumentType doctypeNode = new DocumentType(settings.normalizeTag(d.getName()), d.getPublicIdentifier(), d.getSystemIdentifier());
+        doctypeNode.setPubSysKey(d.getPubSysKey());
         insertNode(doctypeNode);
     }
 
@@ -146,10 +148,10 @@ public class XmlTreeBuilder extends TreeBuilder {
      * If the stack contains an element with this tag's name, pop up the stack to remove the first occurrence. If not
      * found, skips.
      *
-     * @param endTag
+     * @param endTag tag to close
      */
     private void popStackToClose(Token.EndTag endTag) {
-        String elName = endTag.name();
+        String elName = settings.normalizeTag(endTag.tagName);
         Element firstFound = null;
 
         for (int pos = stack.size() -1; pos >= 0; pos--) {
@@ -170,9 +172,14 @@ public class XmlTreeBuilder extends TreeBuilder {
         }
     }
 
-    List<Node> parseFragment(String inputFragment, String baseUri, ParseErrorList errors) {
-        initialiseParse(inputFragment, baseUri, errors);
+
+    List<Node> parseFragment(String inputFragment, String baseUri, Parser parser) {
+        initialiseParse(new StringReader(inputFragment), baseUri, parser);
         runParser();
         return doc.childNodes();
+    }
+
+    List<Node> parseFragment(String inputFragment, Element context, String baseUri, Parser parser) {
+        return parseFragment(inputFragment, baseUri, parser);
     }
 }

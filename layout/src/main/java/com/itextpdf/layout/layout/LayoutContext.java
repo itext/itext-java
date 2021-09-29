@@ -55,12 +55,18 @@ import java.util.List;
 public class LayoutContext {
 
     /**
-     * The {@link LayoutArea area} the content to be placed on.
+     * The {@link LayoutArea} for the content to be placed on.
      */
     protected LayoutArea area;
 
+    /**
+     * The info about margins collapsing.
+     */
     protected MarginsCollapseInfo marginsCollapseInfo;
 
+    /**
+     * The list of {@link Rectangle} objects.
+     */
     protected List<Rectangle> floatRendererAreas = new ArrayList<>();
 
     /**
@@ -68,15 +74,33 @@ public class LayoutContext {
      */
     protected boolean clippedHeight = false;
 
+    /**
+     * Creates the layout context.
+     *
+     * @param area for the content to be placed on
+     */
     public LayoutContext(LayoutArea area) {
         this.area = area;
     }
 
+    /**
+     * Creates the layout context.
+     *
+     * @param area for the content to be placed on
+     * @param marginsCollapseInfo the info about margins collapsing
+     */
     public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo) {
         this.area = area;
         this.marginsCollapseInfo = marginsCollapseInfo;
     }
 
+    /**
+     * Creates the layout context.
+     *
+     * @param area for the content to be placed on
+     * @param marginsCollapseInfo the info about margins collapsing
+     * @param floatedRendererAreas list of {@link Rectangle} objects
+     */
     public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRendererAreas) {
         this(area, marginsCollapseInfo);
         if (floatedRendererAreas != null) {
@@ -84,11 +108,25 @@ public class LayoutContext {
         }
     }
 
+    /**
+     * Creates the layout context.
+     *
+     * @param area for the content to be placed on
+     * @param clippedHeight indicates whether the height is clipped or not
+     */
     public LayoutContext(LayoutArea area, boolean clippedHeight) {
         this(area);
         this.clippedHeight = clippedHeight;
     }
 
+    /**
+     * Creates the layout context.
+     *
+     * @param area for the content to be placed on
+     * @param marginsCollapseInfo the info about margins collapsing
+     * @param floatedRendererAreas list of {@link Rectangle} objects
+     * @param clippedHeight indicates whether the height is clipped or not
+     */
     public LayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRendererAreas, boolean clippedHeight) {
         this(area, marginsCollapseInfo);
         if (floatedRendererAreas != null) {
@@ -106,10 +144,20 @@ public class LayoutContext {
         return area;
     }
 
+    /**
+     * Gets info about margins collapsing.
+     *
+     * @return the info about margins collapsing
+     */
     public MarginsCollapseInfo getMarginsCollapseInfo() {
         return marginsCollapseInfo;
     }
 
+    /**
+     * Gets list of {@link Rectangle} objects.
+     *
+     * @return list of {@link Rectangle} objects
+     */
     public List<Rectangle> getFloatRendererAreas() {
         return floatRendererAreas;
     }

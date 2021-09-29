@@ -61,7 +61,6 @@ import java.util.TreeMap;
  */
 public class PdfDictionary extends PdfObject {
 
-    private static final long serialVersionUID = -1122075818690871644L;
     private Map<PdfName, PdfObject> map = new TreeMap<>();
 
     /**

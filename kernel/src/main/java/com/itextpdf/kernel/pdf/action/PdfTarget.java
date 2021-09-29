@@ -43,8 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -71,7 +72,6 @@ import java.util.Map;
  */
 public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -5814265943827690509L;
 
     private PdfTarget(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -187,7 +187,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
     public PdfTarget setAnnotation(PdfFileAttachmentAnnotation pdfAnnotation, PdfDocument pdfDocument) {
         PdfPage page = pdfAnnotation.getPage();
         if (null == page) {
-            throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
+            throw new PdfException(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE);
         } else {
             put(PdfName.P, new PdfNumber(pdfDocument.getPageNumber(page) - 1));
             int indexOfAnnotation = -1;
@@ -249,7 +249,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
         }
         if (null == resultAnnotation) {
             Logger logger = LoggerFactory.getLogger(PdfTarget.class);
-            logger.error(LogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
+            logger.error(IoLogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
         }
         return resultAnnotation;
     }

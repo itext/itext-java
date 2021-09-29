@@ -50,7 +50,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfWatermarkAnnotation extends PdfAnnotation {
 
-    private static final long serialVersionUID = -4490286782196827176L;
 
 	public PdfWatermarkAnnotation(Rectangle rect) {
         super(rect);

@@ -43,8 +43,9 @@
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -58,7 +59,6 @@ import java.util.ArrayList;
 
 public abstract class PdfCieBasedCs extends PdfColorSpace {
 
-    private static final long serialVersionUID = 7803780450619297557L;
 
     /**
      * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
@@ -83,7 +83,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class CalGray extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = -3974274460820215173L;
 
 		public CalGray(PdfArray pdfObject) {
             super(pdfObject);
@@ -92,7 +91,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public CalGray(float[] whitePoint) {
             this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
+                throw new PdfException(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
@@ -121,7 +120,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class CalRgb extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = -2926074370411556426L;
 
 		public CalRgb(PdfArray pdfObject) {
             super(pdfObject);
@@ -130,7 +128,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public CalRgb(float[] whitePoint) {
             this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
+                throw new PdfException(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
@@ -161,7 +159,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class Lab extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = 7067722970343880433L;
 
 		public Lab(PdfArray pdfObject) {
             super(pdfObject);
@@ -170,7 +167,7 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         public Lab(float[] whitePoint) {
             this(getInitialPdfArray());
             if (whitePoint == null || whitePoint.length != 3)
-                throw new PdfException(PdfException.WhitePointIsIncorrectlySpecified, this);
+                throw new PdfException(KernelExceptionMessageConstant.WHITE_POINT_IS_INCORRECTLY_SPECIFIED, this);
             PdfDictionary d = ((PdfArray)getPdfObject()).getAsDictionary(1);
             d.put(PdfName.WhitePoint, new PdfArray(whitePoint));
         }
@@ -199,7 +196,6 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
 
     public static class IccBased extends PdfCieBasedCs {
         
-    	private static final long serialVersionUID = 3265273715107224067L;
 
 		public IccBased(PdfArray pdfObject) {
             super(pdfObject);

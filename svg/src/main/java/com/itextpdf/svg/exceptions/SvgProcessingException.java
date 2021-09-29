@@ -42,7 +42,7 @@
  */
 package com.itextpdf.svg.exceptions;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 /**
  * Exception thrown by {@link com.itextpdf.svg.processors.ISvgProcessor} when it cannot process an SVG

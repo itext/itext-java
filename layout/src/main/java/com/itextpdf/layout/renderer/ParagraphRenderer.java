@@ -43,8 +43,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
@@ -57,16 +57,16 @@ import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.property.BaseDirection;
-import com.itextpdf.layout.property.FloatPropertyValue;
-import com.itextpdf.layout.property.Leading;
-import com.itextpdf.layout.property.OverflowPropertyValue;
-import com.itextpdf.layout.property.ParagraphOrphansControl;
-import com.itextpdf.layout.property.ParagraphWidowsControl;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.RenderingMode;
-import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.Leading;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.ParagraphOrphansControl;
+import com.itextpdf.layout.properties.ParagraphWidowsControl;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 
 import org.slf4j.LoggerFactory;
 
@@ -82,11 +82,6 @@ import java.util.Set;
  */
 public class ParagraphRenderer extends BlockRenderer {
 
-    @Deprecated
-    /**
-     * @deprecated will be removed in 7.2
-     */
-    protected float previousDescent = 0;
     protected List<LineRenderer> lines = null;
 
     /**
@@ -172,7 +167,15 @@ public class ParagraphRenderer extends BlockRenderer {
         Border[] borders = getBorders();
         UnitValue[] paddings = getPaddings();
 
-        float additionalWidth = applyBordersPaddingsMargins(parentBBox, borders, paddings);
+        float parentWidth = parentBBox.getWidth();
+
+        applyMargins(parentBBox, false);
+        applyBorderBox(parentBBox, borders, false);
+        if (isFixedLayout()) {
+            parentBBox.setX((float) this.getPropertyAsFloat(Property.LEFT));
+        }
+        applyPaddings(parentBBox, paddings, false);
+        float additionalWidth = parentWidth - parentBBox.getWidth();
         applyWidth(parentBBox, blockWidth, overflowX);
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
 
@@ -480,7 +483,9 @@ public class ParagraphRenderer extends BlockRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
-                    LoggerFactory.getLogger(getClass()).warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, "It fits by height so it will be forced placed"));
+                    LoggerFactory.getLogger(getClass())
+                            .warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                                    "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);

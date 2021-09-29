@@ -53,7 +53,6 @@ import com.itextpdf.kernel.pdf.PdfString;
  */
 public class PdfWin extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final long serialVersionUID = -3057526285278565800L;
 
     /**
      * Creates a new wrapper around an existing Windows launch parameter dictionary.

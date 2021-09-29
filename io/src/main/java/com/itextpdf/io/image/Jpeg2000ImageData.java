@@ -43,7 +43,7 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,6 @@ public class Jpeg2000ImageData extends ImageData {
 
     public static class ColorSpecBox extends ArrayList<Integer> {
         
-		private static final long serialVersionUID = -6008490897027025733L;
 		
 		private byte[] colorProfile;
 
@@ -105,7 +104,7 @@ public class Jpeg2000ImageData extends ImageData {
     @Override
     public boolean canImageBeInline() {
         Logger logger = LoggerFactory.getLogger(ImageData.class);
-        logger.warn(LogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER);
+        logger.warn(IoLogMessageConstant.IMAGE_HAS_JPXDECODE_FILTER);
         return false;
     }
 

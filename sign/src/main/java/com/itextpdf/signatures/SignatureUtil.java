@@ -52,7 +52,7 @@ import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -62,6 +62,7 @@ import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,24 +86,6 @@ public class SignatureUtil {
     private int totalRevisions;
 
     /**
-     * Converts a {@link com.itextpdf.kernel.pdf.PdfArray} to an array of longs
-     *
-     * @param pdfArray PdfArray to be converted
-     * @return long[] containing the PdfArray values
-     * @deprecated Will be removed in 7.2. Use {@link PdfArray#toLongArray()} instead
-     */
-    @Deprecated
-    public static long[] asLongArray(PdfArray pdfArray) {
-        long[] rslt = new long[pdfArray.size()];
-
-        for (int k = 0; k < rslt.length; ++k) {
-            rslt[k] = pdfArray.getAsNumber(k).longValue();
-        }
-
-        return rslt;
-    }
-
-    /**
      * Creates a SignatureUtil instance. Sets the acroForm field to the acroForm in the PdfDocument.
      * iText will create a new AcroForm if the PdfDocument doesn't contain one.
      *
@@ -113,52 +96,7 @@ public class SignatureUtil {
         // Only create new AcroForm if there is a writer
         this.acroForm = PdfAcroForm.getAcroForm(document, document.getWriter() != null);
     }
-
-    /**
-     * Prepares an {@link PdfPKCS7} instance for the given signature.
-     * This method handles signature parsing and might throw an exception if
-     * signature is malformed.
-     * <p>
-     * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * <p>
-     * In order to check that given signature covers the current PdfDocument revision please
-     * use {@link #signatureCoversWholeDocument(String)} method.
-     *
-     * @param name     the signature field name
-     * @return a {@link PdfPKCS7} instance which can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * @deprecated This method is deprecated and will be removed in future versions.
-     * Please use {@link #readSignatureData(String)} instead.
-     */
-    @Deprecated
-    public PdfPKCS7 verifySignature(String name) {
-        return readSignatureData(name, null);
-    }
-
-    /**
-     * Prepares an {@link PdfPKCS7} instance for the given signature.
-     * This method handles signature parsing and might throw an exception if
-     * signature is malformed.
-     * <p>
-     * The returned {@link PdfPKCS7} can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * <p>
-     * In order to check that given signature covers the current PdfDocument revision please
-     * use {@link #signatureCoversWholeDocument(String)} method.
-     *
-     * @param name     the signature field name
-     * @param provider the security provider or null for the default provider
-     * @return a {@link PdfPKCS7} instance which can be used to fetch additional info about the signature
-     * and also to perform integrity check of data signed by the given signature field.
-     * @deprecated This method is deprecated and will be removed in future versions.
-     * Please use {@link #readSignatureData(String, String)} instead.
-     */
-    @Deprecated
-    public PdfPKCS7 verifySignature(String name, String provider) {
-        return readSignatureData(name, provider);
-    }
-
+    
     /**
      * Prepares an {@link PdfPKCS7} instance for the given signature.
      * This method handles signature parsing and might throw an exception if
@@ -413,12 +351,10 @@ public class SignatureUtil {
         }
         Collections.sort(sorter, new SorterComparator());
         if (sorter.size() > 0) {
-            try {
-                if (((int[]) sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength())
-                    totalRevisions = sorter.size();
-                else
-                    totalRevisions = sorter.size() + 1;
-            } catch (IOException e) {
+            if (((int[]) sorter.get(sorter.size() - 1)[1])[0] == document.getReader().getFileLength()) {
+                totalRevisions = sorter.size();
+            } else {
+                totalRevisions = sorter.size() + 1;
             }
             for (int k = 0; k < sorter.size(); ++k) {
                 Object[] objs = sorter.get(k);
@@ -460,12 +396,7 @@ public class SignatureUtil {
             rangeIsCorrect = false;
             PdfDictionary signature = (PdfDictionary) signatureField.getValue();
             int[] byteRange = ((PdfArray) signature.get(PdfName.ByteRange)).toIntArray();
-            try {
-                if (4 != byteRange.length || 0 != byteRange[0] || tokens.getSafeFile().length() != byteRange[2] + byteRange[3]) {
-                    return false;
-                }
-            } catch (IOException e) {
-                // That's not expected because if the signature is invalid, it should have already failed
+            if (4 != byteRange.length || 0 != byteRange[0] || tokens.getSafeFile().length() != byteRange[2] + byteRange[3]) {
                 return false;
             }
 
@@ -507,7 +438,8 @@ public class SignatureUtil {
                     break;
                 }
                 if (tokens.getTokenType() != PdfTokenizer.TokenType.Name) {
-                    tokens.throwError(PdfException.DictionaryKey1IsNotAName, tokens.getStringValue());
+                    tokens.throwError(
+                            SignExceptionMessageConstant.DICTIONARY_THIS_KEY_IS_NOT_A_NAME, tokens.getStringValue());
                 }
                 PdfName name = readPdfName(true);
                 PdfObject obj;
@@ -534,9 +466,9 @@ public class SignatureUtil {
                 }
                 if (obj == null) {
                     if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                        tokens.throwError(PdfException.UnexpectedGtGt);
+                        tokens.throwError(SignExceptionMessageConstant.UNEXPECTED_GT_GT);
                     if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                        tokens.throwError(PdfException.UnexpectedCloseBracket);
+                        tokens.throwError(SignExceptionMessageConstant.UNEXPECTED_CLOSE_BRACKET);
                 }
                 dic.put(name, obj);
             }

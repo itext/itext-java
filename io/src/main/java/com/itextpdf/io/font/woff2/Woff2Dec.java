@@ -15,8 +15,9 @@
 // This is part of java port of project hosted at https://github.com/google/woff2
 package com.itextpdf.io.font.woff2;
 
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.codec.brotli.dec.BrotliInputStream;
+import com.itextpdf.io.exceptions.FontCompressionException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

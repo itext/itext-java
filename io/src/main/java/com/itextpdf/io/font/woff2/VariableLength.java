@@ -15,6 +15,8 @@
 // This is part of java port of project hosted at https://github.com/google/woff2
 package com.itextpdf.io.font.woff2;
 
+import com.itextpdf.io.exceptions.FontCompressionException;
+
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.asU16;
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.asU8;
 

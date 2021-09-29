@@ -43,11 +43,11 @@
  */
 package com.itextpdf.kernel.geom;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfPage;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,11 +56,10 @@ import java.util.List;
 /**
  * Class that represent rectangle object.
  */
-public class Rectangle implements Cloneable, Serializable {
+public class Rectangle implements Cloneable {
 
     static float EPS = 1e-4f;
 
-    private static final long serialVersionUID = 8025677415569233446L;
 
     protected float x;
     protected float y;
@@ -687,7 +686,7 @@ public class Rectangle implements Cloneable, Serializable {
     public static List<Rectangle> createBoundingRectanglesFromQuadPoint(PdfArray quadPoints) throws PdfException {
         List<Rectangle> boundingRectangles = new ArrayList<>();
         if (quadPoints.size() % 8 != 0) {
-            throw new PdfException(PdfException.QuadPointArrayLengthIsNotAMultipleOfEight);
+            throw new PdfException(KernelExceptionMessageConstant.QUAD_POINT_ARRAY_LENGTH_IS_NOT_A_MULTIPLE_OF_EIGHT);
         }
         for (int i = 0; i < quadPoints.size(); i += 8) {
             float[] quadPointEntry = Arrays.copyOfRange(quadPoints.toFloatArray(),i,i+8);
@@ -707,7 +706,7 @@ public class Rectangle implements Cloneable, Serializable {
 
         //Check if array length is a multiple of 8
         if (quadPoints.size() % 8 != 0) {
-            throw new PdfException(PdfException.QuadPointArrayLengthIsNotAMultipleOfEight);
+            throw new PdfException(KernelExceptionMessageConstant.QUAD_POINT_ARRAY_LENGTH_IS_NOT_A_MULTIPLE_OF_EIGHT);
         }
         float llx = Float.MAX_VALUE;
         float lly = Float.MAX_VALUE;

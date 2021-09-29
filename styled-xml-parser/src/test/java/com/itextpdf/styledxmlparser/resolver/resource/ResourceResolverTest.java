@@ -42,9 +42,9 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -107,23 +107,24 @@ public class ResourceResolverTest extends ExtendedITextTest {
     // Malformed resource name tests block
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveStreamByMalformedResourceNameTest() {
         String fileName = "resourceResolverTest .png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        byte[] bytes = resourceResolver.retrieveStream(fileName);
+        byte[] bytes = resourceResolver.retrieveBytesFromResource(fileName);
         Assert.assertNull(bytes);
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveStyleSheetByMalformedResourceNameTest() throws IOException {
         String fileName = "retrieveStyl eSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        Assert.assertThrows(IOException.class, () -> resourceResolver.retrieveStyleSheet(fileName));
+        resourceResolver.retrieveResourceAsInputStream(fileName);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveResourceAsInputStreamByMalformedResourceNameTest() {
         String fileName = "retrieveStyl eSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
@@ -132,7 +133,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveBytesFromResourceByMalformedResourceNameTest() {
         String fileName = "retrieveStyl eSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
@@ -141,12 +142,12 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
-    public void retrieveImageExtendedByMalformedResourceNameTest() {
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    public void retrieveImageByMalformedResourceNameTest() {
         String fileName = "retrieveStyl eSheetTest.css";
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfXObject pdfXObject = resourceResolver.retrieveImageExtended(fileName);
+        PdfXObject pdfXObject = resourceResolver.retrieveImage(fileName);
         Assert.assertNull(pdfXObject);
     }
 
@@ -157,7 +158,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         InputStream expected = new FileInputStream(baseUri + "#[]@!$&'()+,;=._~-/styles09.css");
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        InputStream stream = resourceResolver.retrieveStyleSheet(fileName);
+        InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
 
         Assert.assertNotNull(stream);
         Assert.assertEquals(expected.read(), stream.read());
@@ -167,51 +168,42 @@ public class ResourceResolverTest extends ExtendedITextTest {
 
     @Test
     public void isDataSrcTest() {
-        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        Assert.assertTrue(resourceResolver.isDataSrc(bLogo));
-        Assert.assertTrue(resourceResolver.isDataSrc(bLogoCorruptedData));
-        Assert.assertTrue(resourceResolver.isDataSrc(bLogoIncorrect));
-        Assert.assertFalse(resourceResolver.isDataSrc("https://data.com/data"));
-    }
-
-    @Test
-    public void isImageTypeSupportedTest() {
-        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        Assert.assertTrue(resourceResolver.isImageTypeSupportedByImageDataFactory("resourceResolverTest.png"));
-        Assert.assertFalse(resourceResolver.isImageTypeSupportedByImageDataFactory("test.txt"));
-        Assert.assertFalse(resourceResolver.isImageTypeSupportedByImageDataFactory("htt://test.png"));
+        Assert.assertTrue(ResourceResolver.isDataSrc(bLogo));
+        Assert.assertTrue(ResourceResolver.isDataSrc(bLogoCorruptedData));
+        Assert.assertTrue(ResourceResolver.isDataSrc(bLogoIncorrect));
+        Assert.assertFalse(ResourceResolver.isDataSrc("https://data.com/data"));
     }
 
     // Retrieve pdfXObject tests block
 
     @Test
-    public void retrieveImageExtendedBase64Test() {
+    public void retrieveImageBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfXObject image = resourceResolver.retrieveImageExtended(bLogo);
+        PdfXObject image = resourceResolver.retrieveImage(bLogo);
         Assert.assertNotNull(image);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI))
-    public void retrieveImageExtendedIncorrectBase64Test() {
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI))
+    public void retrieveImageIncorrectBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfXObject image = resourceResolver.retrieveImageExtended(bLogoCorruptedData);
+        PdfXObject image = resourceResolver.retrieveImage(bLogoCorruptedData);
         Assert.assertNull(image);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI, logLevel = LogLevelConstants.ERROR))
-    public void retrieveImageExtendedCorruptedDataBase64Test() {
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI, logLevel = LogLevelConstants.ERROR))
+    public void retrieveImageCorruptedDataBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfXObject image = resourceResolver.retrieveImageExtended(bLogoCorruptedData);
+        PdfXObject image = resourceResolver.retrieveImage(bLogoCorruptedData);
         Assert.assertNull(image);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
-    public void retrieveImageExtendedNullTest() {
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    public void retrieveImageNullTest() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfXObject image = resourceResolver.retrieveImageExtended(null);
+        PdfXObject image = resourceResolver.retrieveImage(null);
         Assert.assertNull(image);
     }
 
@@ -219,9 +211,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveImageTest() {
         String fileName = "resourceResolverTest.png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        PdfXObject image = resourceResolver.retrieveImage(fileName);
         Assert.assertNotNull(image);
-        Assert.assertTrue(image.identifyImageFileExtension().equalsIgnoreCase("png"));
     }
 
     // Retrieve byte array tests block
@@ -234,7 +225,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveBytesFromResourceIncorrectBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(bLogoIncorrect);
@@ -242,7 +233,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR))
     public void retrieveBytesFromResourceCorruptedDataBase64Test() {
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] bytes = resourceResolver.retrieveBytesFromResource(bLogoCorruptedData);
@@ -264,8 +255,8 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "resourceResolverTest.png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
         byte[] expected = Files.readAllBytes(new File(baseUri + fileName).toPath());
-        byte[] stream = resourceResolver.retrieveStream(fileName);
-        Assert.assertNotNull(resourceResolver.retrieveStream(fileName));
+        byte[] stream = resourceResolver.retrieveBytesFromResource(fileName);
+        Assert.assertNotNull(resourceResolver.retrieveBytesFromResource(fileName));
         Assert.assertEquals(expected.length, stream.length);
     }
 
@@ -280,7 +271,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
     public void attemptToRetrieveBytesFromResourceStyleSheetWithFilterRetrieverTest() {
         String fileName = "retrieveStyleSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
@@ -290,11 +281,11 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI))
     public void retrieveImageWrongPathTest() {
         String fileName = "/itextpdf.com/itis.jpg";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        PdfXObject image = resourceResolver.retrieveImage(fileName);
         Assert.assertNull(image);
     }
 
@@ -302,21 +293,20 @@ public class ResourceResolverTest extends ExtendedITextTest {
     public void retrieveImageRightPathTest() {
         String fileName = "itextpdf.com/itis.jpg";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        PdfXObject image = resourceResolver.retrieveImage(fileName);
         Assert.assertNotNull(image);
-        Assert.assertTrue(image.identifyImageFileExtension().equalsIgnoreCase("jpg"));
     }
 
     @Test
     public void retrieveImagePathWithSpacesTest() {
         String fileName = "retrieveImagePathWithSpaces.jpg";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri + "path with spaces/");
-        PdfImageXObject image = resourceResolver.retrieveImage(fileName);
+        PdfXObject image = resourceResolver.retrieveImage(fileName);
         Assert.assertNotNull(image);
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI))
     public void retrieveBytesMalformedResourceNameTest() {
         String fileName = "resourceResolverTest .png";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
@@ -335,7 +325,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT, logLevel = LogLevelConstants.WARN))
     public void attemptToRetrieveBytesFromLocalWithResourceSizeByteLimitTest() {
         String fileName = "retrieveStyleSheetTest.css.dat";
         // retrieveStyleSheetTest.css.dat size is 89 bytes
@@ -385,7 +375,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileName = "retrieveStyleSheetTest.css";
         InputStream expected = new FileInputStream(baseUri + fileName);
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        InputStream stream = resourceResolver.retrieveStyleSheet(fileName);
+        InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
         Assert.assertNotNull(stream);
         Assert.assertEquals(expected.read(), stream.read());
     }
@@ -401,7 +391,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
     public void attemptToRetrieveInputStreamWithFilterRetrieverTest() {
         String fileName = "retrieveStyleSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
@@ -458,7 +448,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String absolutePath = Paths.get(baseUri, fileName).toFile().getAbsolutePath();
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        try (InputStream stream = resourceResolver.retrieveStyleSheet(absolutePath);
+        try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(absolutePath);
                 InputStream expected = new FileInputStream(absolutePath);) {
             Assert.assertNotNull(stream);
             Assert.assertEquals(expected.read(), stream.read());
@@ -485,7 +475,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
         String fileUrlString = url.toExternalForm();
 
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
-        try (InputStream stream = resourceResolver.retrieveStyleSheet(fileUrlString);
+        try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileUrlString);
                 InputStream expected = url.openStream()) {
             Assert.assertNotNull(stream);
             Assert.assertEquals(expected.read(), stream.read());

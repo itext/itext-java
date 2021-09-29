@@ -43,13 +43,14 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.layout.element.Link;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.layout.layout.LayoutContext;
 
 public class LinkRenderer extends TextRenderer {
 
@@ -76,7 +77,8 @@ public class LinkRenderer extends TextRenderer {
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
             Logger logger = LoggerFactory.getLogger(LinkRenderer.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, "Drawing won't be performed."));
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Drawing won't be performed."));
             return;
         }
         super.draw(drawContext);

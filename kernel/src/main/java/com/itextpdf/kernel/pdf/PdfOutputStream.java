@@ -43,23 +43,23 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
-import com.itextpdf.io.util.MessageFormatUtil;
 
 public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
-    private static final long serialVersionUID = -548180479472231600L;
 
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
     private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
@@ -67,9 +67,6 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     private static final byte[] closeDict = ByteUtils.getIsoBytes(">>");
     private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
     private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
-
-    // For internal usage only
-    private byte[] duplicateContentBuffer = null;
 
     /**
      * Document associated with PdfOutputStream.
@@ -102,7 +99,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             pdfObject = pdfObject.getIndirectReference();
         }
         if (pdfObject.checkState(PdfObject.READ_ONLY)) {
-            throw new PdfException(PdfException.CannotWriteObjectAfterItWasReleased);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_OBJECT_AFTER_IT_WAS_RELEASED);
         }
         switch (pdfObject.getType()) {
             case PdfObject.ARRAY:
@@ -185,7 +182,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             PdfObject value = pdfDictionary.get(key, false);
             if (value == null) {
                 Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
                 value = PdfNull.PDF_NULL;
             }
             if ((value.getType() == PdfObject.NUMBER
@@ -213,17 +210,17 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
 
     private void write(PdfIndirectReference indirectReference) {
         if (document != null && !indirectReference.getDocument().equals(document)) {
-            throw new PdfException(PdfException.PdfIndirectObjectBelongsToOtherPdfDocument);
+            throw new PdfException(KernelExceptionMessageConstant.PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT);
         }
         if (indirectReference.isFree()) {
             Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-            logger.error(LogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
+            logger.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.refersTo == null
                 && (indirectReference.checkState(PdfObject.MODIFIED) || indirectReference.getReader() == null
                     || !(indirectReference.getOffset() > 0 || indirectReference.getIndex() >= 0))) {
             Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-            logger.error(LogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
+            logger.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
@@ -375,7 +372,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                         byteArrayStream = encodedStream;
                     }
                 } catch (IOException ioe) {
-                    throw new PdfException(PdfException.IoException, ioe);
+                    throw new PdfException(KernelExceptionMessageConstant.IO_EXCEPTION, ioe);
                 }
                 pdfStream.put(PdfName.Length, new PdfNumber(byteArrayStream.size()));
                 pdfStream.updateLength((int) byteArrayStream.size());
@@ -386,7 +383,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 writeBytes(PdfOutputStream.endstream);
             }
         } catch (IOException e) {
-            throw new PdfException(PdfException.CannotWriteToPdfStream, e, pdfStream);
+            throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_TO_PDF_STREAM, e, pdfStream);
         }
     }
 
@@ -423,7 +420,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 if (((PdfArray) filter).contains(PdfName.FlateDecode))
                     return true;
             } else {
-                throw new PdfException(PdfException.FilterIsNotANameOrArray);
+                throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
             }
         }
         return false;
@@ -451,7 +448,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 } else if (decodeParms instanceof PdfArray) {
                     ((PdfArray) decodeParms).add(0, new PdfNull());
                 } else {
-                    throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(decodeParms.getClass().toString());
+                    throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
+                            .setMessageParams(decodeParms.getClass().toString());
                 }
             }
             pdfStream.put(PdfName.Filter, filters);
@@ -472,7 +470,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             filtersArray = (PdfArray) filterObject;
             filterName = filtersArray.getAsName(0);
         } else {
-            throw new PdfException(PdfException.FilterIsNotANameOrArray);
+            throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
         }
 
         if (!PdfName.FlateDecode.equals(filterName)) {
@@ -491,7 +489,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             decodeParamsArray = (PdfArray) decodeParamsObject;
             decodeParams = decodeParamsArray.getAsDictionary(0);
         } else {
-            throw new PdfException(PdfException.DecodeParameterType1IsNotSupported).setMessageParams(decodeParamsObject.getClass().toString());
+            throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
+                    .setMessageParams(decodeParamsObject.getClass().toString());
         }
 
         // decode
@@ -535,37 +534,5 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
 
         return bytes;
-    }
-
-    /**
-     * This method is invoked while deserialization
-     *
-     * @param in {@link java.io.ObjectInputStream} inputStream that is read during deserialization
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     * @throws ClassNotFoundException if the class of a serialized object could not be found.
-     */
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        if (outputStream == null && duplicateContentBuffer != null) {
-            outputStream = new ByteArrayOutputStream();
-            write(duplicateContentBuffer);
-            duplicateContentBuffer = null;
-        }
-    }
-
-    /**
-     * This method is invoked while serialization
-     *
-     * @param out {@link java.io.ObjectOutputStream} output stream to write object into
-     * @throws IOException if I/O errors occur while writing to the underlying output stream
-     */
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-        java.io.OutputStream tempOutputStream = outputStream;
-        if (outputStream instanceof java.io.ByteArrayOutputStream) {
-            duplicateContentBuffer = ((java.io.ByteArrayOutputStream) outputStream).toByteArray();
-        }
-        outputStream = null;
-        out.defaultWriteObject();
-        outputStream = tempOutputStream;
     }
 }

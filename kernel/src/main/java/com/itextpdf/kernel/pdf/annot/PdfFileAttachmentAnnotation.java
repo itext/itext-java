@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 
 public class PdfFileAttachmentAnnotation extends PdfMarkupAnnotation {
 
-    private static final long serialVersionUID = -6190623972220405822L;
 
 	public PdfFileAttachmentAnnotation(Rectangle rect) {
         super(rect);

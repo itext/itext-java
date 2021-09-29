@@ -49,7 +49,6 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.Range;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
-import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
@@ -93,12 +92,8 @@ public class SvgProcessorContext {
         if (fontProvider == null) {
             fontProvider = new BasicFontProvider();
         }
-
-        IResourceRetriever retriever = null;
-        if (converterProperties instanceof SvgConverterProperties) {
-            retriever = ((SvgConverterProperties) converterProperties).getResourceRetriever();
-        }
-        resourceResolver = new ResourceResolver(converterProperties.getBaseUri(), retriever);
+        resourceResolver = new ResourceResolver(converterProperties.getBaseUri(),
+                converterProperties.getResourceRetriever());
 
         cssContext = new SvgCssContext();
     }

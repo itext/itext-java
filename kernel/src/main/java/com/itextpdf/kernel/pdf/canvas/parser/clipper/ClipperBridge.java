@@ -60,14 +60,19 @@ import java.util.List;
  *     <li>{@link Point.LongPoint} to {@link com.itextpdf.kernel.geom.Point}
  * </ul>
  */
-public class ClipperBridge {
+public final class ClipperBridge {
 
     /**
      * Since the clipper library uses integer coordinates, we should convert
      * our floating point numbers into fixed point numbers by multiplying by
      * this coefficient. Vary it to adjust the preciseness of the calculations.
      */
+    //TODO DEVSIX-5770 make this constant a single non-static configuration
     public static double floatMultiplier = Math.pow(10, 14);
+
+    private ClipperBridge() {
+        //empty constructor
+    }
 
     /**
      * Converts Clipper library {@link PolyTree} abstraction into iText
@@ -289,21 +294,5 @@ public class ClipperBridge {
         if (close) {
             path.closeSubpath();
         }
-    }
-
-    /**
-     * Adds rectangle path based on array of {@link com.itextpdf.kernel.geom.Point} (internally converting
-     * them by {@link #convertToLongPoints}) and adds this path to {@link IClipper} instance.
-     *
-     * @param clipper      {@link IClipper} instance to which the created rectangle path will be added.
-     * @param rectVertices an array of {@link com.itextpdf.kernel.geom.Point} which will be internally converted
-     *                     to clipper path and added to the clipper instance.
-     * @param polyType     either {@link IClipper.PolyType#SUBJECT} or {@link IClipper.PolyType#CLIP} denoting whether added
-     *                     path is a subject of clipping or a part of the clipping polygon.
-     * @deprecated use {@link #addPolygonToClipper} instead.
-     */
-    @Deprecated
-    public static void addRectToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] rectVertices, IClipper.PolyType polyType) {
-        clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(rectVertices)))), polyType, true);
     }
 }

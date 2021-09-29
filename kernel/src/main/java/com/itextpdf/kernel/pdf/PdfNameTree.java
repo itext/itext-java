@@ -43,24 +43,21 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class PdfNameTree implements Serializable {
+public class PdfNameTree {
 
     private static final int NODE_SIZE = 40;
-    private static final long serialVersionUID = 8153711383828989907L;
 
     private PdfCatalog catalog;
     private Map<String, PdfObject> items = new LinkedHashMap<>();
@@ -140,7 +137,7 @@ public class PdfNameTree implements Serializable {
                 return;
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfNameTree.class);
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
             }
         }
         modified = true;

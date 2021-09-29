@@ -49,7 +49,6 @@ import java.nio.charset.StandardCharsets;
 
 public class PdfNumber extends PdfPrimitiveObject {
 
-    private static final long serialVersionUID = -250799718574024246L;
 
     private double value;
     private boolean isDouble;

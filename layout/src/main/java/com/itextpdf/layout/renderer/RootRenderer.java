@@ -43,9 +43,14 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.LogMessageConstant;
-import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
+import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -54,8 +59,8 @@ import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
-import com.itextpdf.layout.property.ClearPropertyValue;
-import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.properties.ClearPropertyValue;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
@@ -69,7 +74,6 @@ public abstract class RootRenderer extends AbstractRenderer {
 
     protected boolean immediateFlush = true;
     protected RootLayoutArea currentArea;
-    protected int currentPageNumber;
     protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
     List<Rectangle> floatRendererAreas;
     private IRenderer keepWithNextHangingRenderer;
@@ -164,7 +168,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                             result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                             Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                            logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                         }
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
@@ -229,7 +233,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
                     if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
                         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                        logger.warn(LogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+                        logger.warn(IoLogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
                         shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
                     } else {
                         keepWithNextHangingRenderer = renderer;
@@ -245,8 +249,9 @@ public abstract class RootRenderer extends AbstractRenderer {
             positionedRenderers.add(addedPositionedRenderers.get(i));
             renderer = positionedRenderers.get(positionedRenderers.size() - 1);
             Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
-            if (positionedPageNumber == null)
-                positionedPageNumber = currentPageNumber;
+            if (positionedPageNumber == null) {
+                positionedPageNumber = currentArea.getPageNumber();
+            }
 
             LayoutArea layoutArea;
             // For position=absolute, if none of the top, bottom, left, right properties are provided,
@@ -361,6 +366,24 @@ public abstract class RootRenderer extends AbstractRenderer {
         waitingDrawingElements.removeAll(flushedElements);
     }
 
+    final void linkRenderToDocument(IRenderer renderer, PdfDocument pdfDocument) {
+        if (renderer == null) {
+            return;
+        }
+        final IPropertyContainer container = renderer.getModelElement();
+        if (container instanceof AbstractIdentifiableElement) {
+            EventManager.getInstance().onEvent(
+                    new LinkDocumentIdEvent(pdfDocument, (AbstractIdentifiableElement) container)
+            );
+        }
+        final List<IRenderer> children = renderer.getChildRenderers();
+        if (children != null) {
+            for (IRenderer child : children) {
+                linkRenderToDocument(child, pdfDocument);
+            }
+        }
+    }
+
     private void processRenderer(IRenderer renderer, List<IRenderer> resultRenderers) {
         alignChildHorizontally(renderer, currentArea.getBBox());
         if (immediateFlush) {
@@ -404,7 +427,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                                 ableToProcessKeepWithNext = true;
 
                                 currentArea = firstElementSplitLayoutArea;
-                                currentPageNumber = firstElementSplitLayoutArea.getPageNumber();
                                 shrinkCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getSplitRenderer(), new ArrayList<IRenderer>(), firstElementSplitLayoutResult);
                                 updateCurrentAndInitialArea(firstElementSplitLayoutResult);
                                 shrinkCurrentAreaAndProcessRenderer(firstElementSplitLayoutResult.getOverflowRenderer(), new ArrayList<IRenderer>(), firstElementOverflowLayoutResult);
@@ -412,7 +434,6 @@ public abstract class RootRenderer extends AbstractRenderer {
                         }
                         if (!ableToProcessKeepWithNext) {
                             currentArea = storedArea;
-                            currentPageNumber = storedArea.getPageNumber();
                         }
                     }
                 }
@@ -432,12 +453,11 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
                 if (!ableToProcessKeepWithNext) {
                     currentArea = storedArea;
-                    currentPageNumber = storedArea.getPageNumber();
                 }
             }
             if (!ableToProcessKeepWithNext) {
                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                logger.warn(LogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
+                logger.warn(IoLogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
                 shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
             }
             keepWithNextHangingRenderer = null;
@@ -479,7 +499,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             overflowRenderer.setProperty(Property.FORCED_PLACEMENT, true);
             Logger logger = LoggerFactory.getLogger(RootRenderer.class);
             if (logger.isWarnEnabled()) {
-                logger.warn(MessageFormatUtil.format(LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
             }
             return true;
         }
@@ -510,7 +530,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
         if (logger.isWarnEnabled()) {
             logger.warn(MessageFormatUtil.format(
-                    LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                    IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                     "KeepTogether property will be ignored."));
         }
         if (!rendererIsFloat) {

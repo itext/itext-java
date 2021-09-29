@@ -43,8 +43,8 @@
  */
 package com.itextpdf.io.font.otf.lookuptype5;
 
-import com.itextpdf.io.font.otf.ContextualSubTable;
 import com.itextpdf.io.font.otf.ContextualSubstRule;
+import com.itextpdf.io.font.otf.ContextualTable;
 import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.OtfClass;
 import com.itextpdf.io.font.otf.SubstLookupRecord;
@@ -56,8 +56,7 @@ import java.util.Set;
 /**
  * Contextual Substitution Subtable: Class-based context glyph substitution
  */
-public class SubTableLookup5Format2 extends ContextualSubTable {
-    private static final long serialVersionUID = -2184080481143798249L;
+public class SubTableLookup5Format2 extends ContextualTable<ContextualSubstRule> {
     private Set<Integer> substCoverageGlyphIds;
     private List<List<ContextualSubstRule>> subClassSets;
     private OtfClass classDefinition;
@@ -83,7 +82,6 @@ public class SubTableLookup5Format2 extends ContextualSubTable {
     }
 
     public static class SubstRuleFormat2 extends ContextualSubstRule {
-        private static final long serialVersionUID = 652574134066355802L;
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
         private int[] inputClassIds;

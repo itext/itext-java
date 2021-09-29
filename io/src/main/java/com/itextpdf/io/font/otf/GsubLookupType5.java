@@ -59,8 +59,7 @@ import java.util.Set;
  */
 public class GsubLookupType5 extends OpenTableLookup {
 
-    private static final long serialVersionUID = 1499367592878919320L;
-    protected List<ContextualSubTable> subTables;
+    protected List<ContextualTable<ContextualSubstRule>> subTables;
 
     protected GsubLookupType5(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
@@ -75,7 +74,7 @@ public class GsubLookupType5 extends OpenTableLookup {
         int oldLineEnd = line.end;
         int initialLineIndex = line.idx;
 
-        for (ContextualSubTable subTable : subTables) {
+        for (ContextualTable<ContextualSubstRule> subTable : subTables) {
             ContextualSubstRule contextRule = subTable.getMatchingContextRule(line);
             if (contextRule == null) {
                 continue;

@@ -43,10 +43,9 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.LogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.CssDeclaration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -174,7 +173,9 @@ public class CssDefaults {
         String defaultVal = defaultValues.get(property);
         if (defaultVal == null) {
             Logger logger = LoggerFactory.getLogger(CssDefaults.class);
-            logger.error(MessageFormatUtil.format(LogMessageConstant.DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN, property));
+            logger.error(
+                    MessageFormatUtil.format(StyledXmlParserLogMessageConstant.DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN,
+                            property));
         }
         return defaultVal;
     }

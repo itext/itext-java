@@ -60,7 +60,6 @@ import java.util.List;
 
 class BackedAccessibilityProperties extends AccessibilityProperties {
 
-    private static final long serialVersionUID = 4080083623525383278L;
 
     private TagTreePointer pointerToBackingElem;
 

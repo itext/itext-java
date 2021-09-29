@@ -42,13 +42,16 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.util.MessageFormatUtil;
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -77,7 +80,6 @@ public class PdfPagesTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPagesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     private static final PdfName PageNum = new PdfName("PageNum");
-    private static final PdfName PageNum5 = new PdfName("PageNum");
 
     @BeforeClass
     public static void setup() {
@@ -214,7 +216,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
     })
     public void insertFlushedPageTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
@@ -226,12 +228,12 @@ public class PdfPagesTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(1, page)
         );
-        Assert.assertEquals(PdfException.FlushedPageCannotBeAddedOrInserted, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
+            @LogMessage(messageTemplate = IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED)
     })
     public void addFlushedPageTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
@@ -243,12 +245,12 @@ public class PdfPagesTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> pdfDoc.addPage(page)
         );
-        Assert.assertEquals(PdfException.FlushedPageCannotBeAddedOrInserted, e.getMessage());
+        Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, e.getMessage());
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED, count = 2)
+            @LogMessage(messageTemplate = IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED, count = 2)
     })
     public void removeFlushedPage() throws IOException {
         String filename = "removeFlushedPage.pdf";
@@ -284,7 +286,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> pdfDocument.removePage(1)
             );
-            Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -298,7 +300,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> pdfDocument.removePage(1)
             );
-            Assert.assertEquals(PdfException.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
+            Assert.assertEquals(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_REMOVED, e.getMessage());
         }
     }
 
@@ -486,7 +488,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assert.assertTrue(invalidContentsArray.get(4).isStream());
     }
 
-    private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.IOException, java.io.IOException {
+    private boolean testPageTreeParentsValid(String src) throws com.itextpdf.io.exceptions.IOException, java.io.IOException {
         boolean valid = true;
         PdfReader reader = new PdfReader(src);
         PdfDocument pdfDocument = new PdfDocument(reader);
@@ -520,7 +522,7 @@ public class PdfPagesTest extends ExtendedITextTest {
             PdfFormXObject pageCopy = sourcePage.copyAsFormXObject(outputPdf);
             PdfPage page = outputPdf.addNewPage(PageSize.A4);
             PdfCanvas outputCanvas = new PdfCanvas(page);
-            outputCanvas.addXObject(pageCopy, scaleX, 0, 0, scaleY, 0, 0);
+            outputCanvas.addXObjectWithTransformationMatrix(pageCopy, scaleX, 0, 0, scaleY, 0, 0);
             page.flush();
         }
 
@@ -533,7 +535,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, count = 1),
+            @LogMessage(messageTemplate = IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, count = 1),
     })
     public void pageGetMediaBoxTooManyArgumentsTest() throws IOException {
         PdfReader reader = new PdfReader(sourceFolder + "helloWorldMediaboxTooManyArguments.pdf");
@@ -555,7 +557,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfPage pageOne = pdfDoc.getPage(1);
 
         Exception e = Assert.assertThrows(PdfException.class, () -> pageOne.getPageSize());
-        Assert.assertEquals(MessageFormatUtil.format(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS, 3), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS, 3), e.getMessage());
     }
 
     @Test
@@ -584,6 +586,26 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(reader);
         document.close();
         Assert.assertFalse(reader.pagesAreRead);
+    }
+
+    @Test
+    public void copyAnnotationWithoutSubtypeTest() throws IOException {
+        try (
+                ByteArrayOutputStream baos = createSourceDocumentWithEmptyAnnotation(new ByteArrayOutputStream());
+                PdfDocument documentToMerge = new PdfDocument(
+                        new PdfReader(
+                                new RandomAccessSourceFactory().createSource(baos.toByteArray()),
+                                new ReaderProperties()));
+                ByteArrayOutputStream resultantBaos = new ByteArrayOutputStream();
+                PdfDocument resultantDocument = new PdfDocument(new PdfWriter(resultantBaos))) {
+
+            // We do expect that the following line will not throw any NPE
+            PdfPage copiedPage = documentToMerge.getPage(1).copyTo(resultantDocument);
+            Assert.assertEquals(1, copiedPage.getAnnotations().size());
+            Assert.assertNull(copiedPage.getAnnotations().get(0).getSubtype());
+
+            resultantDocument.addPage(copiedPage);
+        }
     }
 
     @Test
@@ -640,7 +662,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
     public void brokenPageTreeWithExcessiveLastPageTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullLast.pdf";
 
@@ -653,7 +675,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE)})
     public void brokenPageTreeWithExcessiveMiddlePageTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullMiddle.pdf";
 
@@ -666,7 +688,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 7)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 7)})
     public void brokenPageTreeWithExcessiveMultipleNegativePagesTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullMultipleSequence.pdf";
 
@@ -679,7 +701,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, count = 2)})
     public void brokenPageTreeWithExcessiveRangeNegativePagesTest() throws IOException {
         String inFileName = sourceFolder + "brokenPageTreeNullRangeNegative.pdf";
 
@@ -689,6 +711,30 @@ public class PdfPagesTest extends ExtendedITextTest {
         Set<Integer> nullPages = new HashSet<>(pages);
 
         findAndAssertNullPages(pdfDocument, nullPages);
+    }
+    
+    @Test
+    public void testPageTreeGenerationWhenFirstPdfPagesHasOnePageOnly() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+
+        int totalPageCount = PdfPagesTree.DEFAULT_LEAF_SIZE + 4;
+        for (int i = 0; i < totalPageCount; i++) {
+            pdfDocument.addNewPage();
+        }
+        Assert.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
+        Assert.assertEquals(PdfPagesTree.DEFAULT_LEAF_SIZE,
+                pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
+
+        // Leave only one page in the first pages tree
+        for (int i = PdfPagesTree.DEFAULT_LEAF_SIZE - 1; i >= 1; i--) {
+            pdfDocument.removePage(i);
+        }
+        Assert.assertEquals(2, pdfDocument.getCatalog().getPageTree().getParents().size());
+        Assert.assertEquals(1,
+                pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
+
+        // TODO DEVSIX-5575 remove expected exception and add proper assertions
+        Assert.assertThrows(NullPointerException.class, () -> pdfDocument.close());
     }
 
     private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
@@ -715,7 +761,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
             Assert.assertNotNull(page);
-            PdfNumber number = page.getAsNumber(PageNum5);
+            PdfNumber number = page.getAsNumber(PageNum);
             Assert.assertEquals("Page number", i, number.intValue());
         }
 
@@ -733,6 +779,15 @@ public class PdfPagesTest extends ExtendedITextTest {
             from = parents.get(i).getFrom() + parents.get(i).getCount();
         }
         return -1;
+    }
+
+    private static ByteArrayOutputStream createSourceDocumentWithEmptyAnnotation(ByteArrayOutputStream baos) {
+        try (PdfDocument sourceDocument = new PdfDocument(new PdfWriter(baos))) {
+            PdfPage page = sourceDocument.addNewPage();
+            PdfAnnotation annotation = PdfAnnotation.makeAnnotation(new PdfDictionary());
+            page.addAnnotation(annotation);
+            return baos;
+        }
     }
 
     private class CustomPdfReader extends PdfReader {

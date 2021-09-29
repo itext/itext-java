@@ -51,7 +51,7 @@ import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.SvgCssContext;
-import com.itextpdf.svg.exceptions.SvgLogMessageConstant;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
 import java.util.Deque;
@@ -95,19 +95,6 @@ public class SvgDrawContext {
         }
         this.fontProvider = fontProvider;
         cssContext = new SvgCssContext();
-    }
-
-    /**
-     * Create an instance of the context that is used to store information when converting SVG.
-     *
-     * @param resourceResolver instance of {@link ResourceResolver}
-     * @param fontProvider instance of {@link FontProvider}
-     * @param svgRootRenderer svg element that is root for current file
-     * @deprecated will be removed in 7.2, use {@link #SvgDrawContext(ResourceResolver, FontProvider)} instead
-     */
-    @Deprecated
-    public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider, ISvgNodeRenderer svgRootRenderer) {
-        this(resourceResolver, fontProvider);
     }
 
     /**
@@ -196,11 +183,11 @@ public class SvgDrawContext {
      */
     public void addNamedObject(String name, ISvgNodeRenderer namedObject) {
         if (namedObject == null) {
-            throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NULL);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.NAMED_OBJECT_NULL);
         }
 
         if (name == null || name.isEmpty()) {
-            throw new SvgProcessingException(SvgLogMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
+            throw new SvgProcessingException(SvgExceptionMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY);
         }
 
         if (!this.namedObjects.containsKey(name)) {
@@ -346,18 +333,6 @@ public class SvgDrawContext {
                     currentTransform.get(3), currentTransform.get(4), currentTransform.get(6), currentTransform.get(7));
         }
         return new AffineTransform();
-    }
-
-    /**
-     * Return the value of root svg element font-size
-     *
-     * @return rem value
-     * @deprecated will be removed in 7.2, use {@link #getCssContext()} and
-     * {@link SvgCssContext#getRootFontSize()} instead
-     */
-    @Deprecated
-    public float getRemValue() {
-        return cssContext.getRootFontSize();
     }
 
     /**
