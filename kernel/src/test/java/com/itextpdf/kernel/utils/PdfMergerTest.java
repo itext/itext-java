@@ -401,6 +401,22 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void stackOverflowErrorCycleReferenceOcgMergeTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "cycleReferenceMerged.pdf";
+        String cmpPdf = sourceFolder + "cmp_stackOverflowErrorCycleReferenceOcrMerge.pdf";
+        
+        PdfDocument pdfWithOCG = new PdfDocument(new PdfReader(sourceFolder + "sourceOCG1.pdf"),
+                new PdfWriter(outPdf));
+        PdfDocument pdfWithOCGToMerge = new PdfDocument
+                (new PdfReader( sourceFolder + "stackOverflowErrorCycleReferenceOcgMerge.pdf")); // problem file
+        PdfMerger merger = new PdfMerger(pdfWithOCG);
+        merger.merge(pdfWithOCGToMerge, 1, pdfWithOCGToMerge.getNumberOfPages());
+        pdfWithOCGToMerge.close();
+        pdfWithOCG.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
     @Ignore ("TODO: DEVSIX-5064 (when doing merge with outlines infinite loop occurs )")
     public void mergeOutlinesWithWrongStructureTest() throws IOException, InterruptedException {
         PdfDocument inputDoc = new PdfDocument(new PdfReader(
