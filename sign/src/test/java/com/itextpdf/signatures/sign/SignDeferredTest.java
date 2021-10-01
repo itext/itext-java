@@ -62,14 +62,10 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -80,6 +76,11 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class SignDeferredTest extends ExtendedITextTest {
@@ -143,6 +144,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         // validate result
         PadesSigTest.basicCheckSignedDoc(outFileName, sigFieldName);
         Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -193,6 +195,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         // validate result
         PadesSigTest.basicCheckSignedDoc(outFileName, sigFieldName);
         Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     static void validateTemplateForSignedDeferredResult(String output, String sigFieldName, PdfName filter, PdfName subFilter, int estimatedSize) throws IOException {

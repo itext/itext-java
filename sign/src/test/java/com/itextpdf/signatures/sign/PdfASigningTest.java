@@ -55,16 +55,11 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,10 +71,16 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfASigningTest extends ExtendedITextTest {
@@ -121,6 +122,8 @@ public class PdfASigningTest extends ExtendedITextTest {
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
+        Assert.assertNull(new VeraPdfValidator().validate(dest));
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(dest, sourceFolder + "cmp_" + fileName));
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 575, 155, 15))));
     }
@@ -172,8 +175,7 @@ public class PdfASigningTest extends ExtendedITextTest {
 
     private static Map<Integer, List<Rectangle>> getTestMap(Rectangle ignoredArea) {
         Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
-        result.put(1, Arrays.asList(ignoredArea));
+        result.put(1, Collections.singletonList(ignoredArea));
         return result;
     }
-
 }
