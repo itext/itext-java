@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -29,32 +30,53 @@ import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Calendar;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class PdfSignerUnitTest extends ExtendedITextTest {
 
+    private static final byte[] OWNER = "owner".getBytes();
+    private static final byte[] USER = "user".getBytes();
+
+    private static final String PDFA_RESOURCES = "./src/test/resources/com/itextpdf/signatures/pdfa/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PdfSignerUnitTest/";
+
+    @BeforeClass
+    public static void before() {
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
     @Test
     public void createNewSignatureFormFieldInvisibleAnnotationTest() throws IOException {
         PdfSigner signer = new PdfSigner(
-                new PdfReader(new ByteArrayInputStream(createDocumentWithoutWidgetAnnotation()),
-                        new ReaderProperties().setPassword("owner".getBytes())), new ByteArrayOutputStream(), new StampingProperties());
+                new PdfReader(new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
+                        new ReaderProperties().setPassword(OWNER)), new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
         signer.appearance.setPageRect(new Rectangle(100, 100, 0, 0));
 
@@ -70,8 +92,8 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     @Test
     public void createNewSignatureFormFieldNotInvisibleAnnotationTest() throws IOException {
         PdfSigner signer = new PdfSigner(
-                new PdfReader(new ByteArrayInputStream(createDocumentWithoutWidgetAnnotation()),
-                        new ReaderProperties().setPassword("owner".getBytes())), new ByteArrayOutputStream(), new StampingProperties());
+                new PdfReader(new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
+                        new ReaderProperties().setPassword(OWNER)), new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
         signer.appearance.setPageRect(new Rectangle(100, 100, 10, 10));
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
@@ -90,13 +112,13 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     public void populateExistingSignatureFormFieldInvisibleAnnotationTest() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument document = new PdfDocument(new PdfWriter(outputStream,
-                new WriterProperties().setStandardEncryption("user".getBytes(), "owner".getBytes(), 0, EncryptionConstants.STANDARD_ENCRYPTION_128)));
+                new WriterProperties().setStandardEncryption(USER, OWNER, 0, EncryptionConstants.STANDARD_ENCRYPTION_128)));
         document.addNewPage();
         PdfWidgetAnnotation widgetAnnotation = new PdfWidgetAnnotation(new Rectangle(100, 100, 0, 0));
         document.getPage(1).addAnnotation(widgetAnnotation);
         document.close();
         PdfSigner signer = new PdfSigner(
-                new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()), new ReaderProperties().setPassword("owner".getBytes())),
+                new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()), new ReaderProperties().setPassword(OWNER)),
                 new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
         signer.appearance.setPageRect(new Rectangle(100, 100, 0, 0));
@@ -118,13 +140,13 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     public void populateExistingSignatureFormFieldNotInvisibleAnnotationTest() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument document = new PdfDocument(new PdfWriter(outputStream,
-                new WriterProperties().setStandardEncryption("user".getBytes(), "owner".getBytes(), 0, EncryptionConstants.STANDARD_ENCRYPTION_128)));
+                new WriterProperties().setStandardEncryption(USER, OWNER, 0, EncryptionConstants.STANDARD_ENCRYPTION_128)));
         document.addNewPage();
         PdfWidgetAnnotation widgetAnnotation = new PdfWidgetAnnotation(new Rectangle(100, 100, 0, 0));
         document.getPage(1).addAnnotation(widgetAnnotation);
         document.close();
         PdfSigner signer = new PdfSigner(
-                new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()), new ReaderProperties().setPassword("owner".getBytes())),
+                new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()), new ReaderProperties().setPassword(OWNER)),
                 new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
@@ -144,18 +166,180 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         Assert.assertTrue(formFieldDictionary.containsKey(PdfName.AP));
     }
 
-    private static byte[] createDocumentWithoutWidgetAnnotation() {
+    @Test
+    public void tempFileProvidedTest() throws IOException {
+        String tempFileName = "tempFile";
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimpleDocument())),
+                new ByteArrayOutputStream(), DESTINATION_FOLDER + tempFileName, new StampingProperties());
+        Assert.assertNotNull(signer.tempFile);
+        Assert.assertEquals(tempFileName, signer.tempFile.getName());
+        Assert.assertNull(signer.temporaryOS);
+    }
+
+    @Test
+    // TODO DEVSIX-5910 The wrapped document should be recognized as Pdf/A
+    public void initPdfaDocumentTest() throws IOException {
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
+                new ByteArrayOutputStream(), new StampingProperties());
+        Assert.assertFalse(signer.getDocument() instanceof PdfADocument);
+    }
+
+    @Test
+    public void signingDateSetGetTest() throws IOException {
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
+                new ByteArrayOutputStream(), new StampingProperties());
+        Calendar testDate = DateTimeUtil.getCurrentTimeCalendar();
+        signer.setSignDate(testDate);
+
+        Assert.assertEquals(testDate, signer.getSignDate());
+    }
+
+    @Test
+    public void certificationLevelSetGetTest() throws IOException {
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
+                new ByteArrayOutputStream(), new StampingProperties());
+        Assert.assertEquals(PdfSigner.NOT_CERTIFIED, signer.getCertificationLevel());
+
+        int testLevel = PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED;
+        signer.setCertificationLevel(testLevel);
+        Assert.assertEquals(testLevel, signer.getCertificationLevel());
+    }
+
+    @Test
+    public void signatureDictionarySetGetTest() throws IOException {
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
+                new ByteArrayOutputStream(), new StampingProperties());
+        Assert.assertNull(signer.getSignatureDictionary());
+
+        PdfSignature testSignature = new PdfSignature();
+        signer.cryptoDictionary = testSignature;
+        Assert.assertEquals(testSignature, signer.getSignatureDictionary());
+    }
+
+    @Test
+    public void signatureEventSetGetTest() throws IOException {
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
+                new ByteArrayOutputStream(), new StampingProperties());
+        Assert.assertNull(signer.getSignatureEvent());
+
+        ISignatureEvent testEvent = new DummySignatureEvent();
+        signer.setSignatureEvent(testEvent);
+        Assert.assertEquals(testEvent, signer.getSignatureEvent());
+    }
+
+    @Test
+    public void signatureFieldNameMustNotContainDotTest() throws IOException {
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
+                new ByteArrayOutputStream(), new StampingProperties());
+
+        Exception exception =
+                Assert.assertThrows(IllegalArgumentException.class, () -> signer.setFieldName("name.with.dots"));
+        Assert.assertEquals(SignExceptionMessageConstant.FIELD_NAMES_CANNOT_CONTAIN_A_DOT, exception.getMessage());
+    }
+
+    @Test
+    public void documentWithoutReaderCannotBeSetToSignerTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument()));
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+
+        PdfDocument documentWithoutReader = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Exception e =
+                Assert.assertThrows(IllegalArgumentException.class, () -> signer.setDocument(documentWithoutReader));
+        Assert.assertEquals(SignExceptionMessageConstant.DOCUMENT_MUST_HAVE_READER, e.getMessage());
+    }
+
+    @Test
+    public void documentSetGetTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument()));
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+
+        PdfDocument document = signer.getDocument();
+        Assert.assertEquals(reader, document.getReader());
+
+        PdfDocument documentWithoutReader = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(createSimpleDocument())),
+                new PdfWriter(new ByteArrayOutputStream()));
+        signer.setDocument(documentWithoutReader);
+        Assert.assertEquals(documentWithoutReader, signer.getDocument());
+    }
+
+    @Test
+    public void outputStreamSetGetTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
+
+        Assert.assertEquals(outputStream, signer.originalOS);
+
+        ByteArrayOutputStream anotherStream = new ByteArrayOutputStream();
+        signer.setOriginalOutputStream(anotherStream);
+        Assert.assertEquals(anotherStream, signer.originalOS);
+    }
+
+    @Test
+    public void fieldLockSetGetTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
+
+        Assert.assertNull(signer.getFieldLockDict());
+
+        PdfSigFieldLock fieldLock = new PdfSigFieldLock();
+        signer.setFieldLockDict(fieldLock);
+        Assert.assertEquals(fieldLock, signer.getFieldLockDict());
+    }
+
+    private static byte[] createEncryptedDocumentWithoutWidgetAnnotation() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument document = new PdfDocument(new PdfWriter(outputStream,
-                new WriterProperties().setStandardEncryption("user".getBytes(), "owner".getBytes(), 0, EncryptionConstants.STANDARD_ENCRYPTION_128)));
+                new WriterProperties().setStandardEncryption(USER, OWNER, 0, EncryptionConstants.STANDARD_ENCRYPTION_128)));
         document.addNewPage();
         document.close();
+        return outputStream.toByteArray();
+    }
+
+    private static byte[] createSimpleDocument() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument document = new PdfDocument(new PdfWriter(outputStream));
+        document.addNewPage();
+        document.close();
+        return outputStream.toByteArray();
+    }
+
+    private static byte[] createSimplePdfaDocument() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(outputStream);
+        InputStream is = new FileInputStream(PDFA_RESOURCES + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfDocument document = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1A, outputIntent);
+
+        document.setTagged();
+        document.getCatalog().setLang(new PdfString("en-US"));
+
+        document.addNewPage();
+        document.close();
+
         return outputStream.toByteArray();
     }
 
     static class ExtendedPdfSignatureFormField extends PdfSignatureFormField {
         public ExtendedPdfSignatureFormField(PdfWidgetAnnotation widgetAnnotation, PdfDocument document) {
             super(widgetAnnotation, document);
+        }
+    }
+
+    class DummySignatureEvent implements ISignatureEvent {
+
+        @Override
+        public void getSignatureDictionary(PdfSignature sig) {
+            // Do nothing
         }
     }
 }

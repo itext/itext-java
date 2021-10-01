@@ -39,6 +39,7 @@ public final class SignExceptionMessageConstant {
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
+    public static final String DOCUMENT_MUST_HAVE_READER = "Document must have reader.";
     public static final String FAILED_TO_GET_TSA_RESPONSE = "Failed to get TSA response from {0}.";
     public static final String FIELD_ALREADY_SIGNED = "Field has been already signed.";
     public static final String FIELD_NAMES_CANNOT_CONTAIN_A_DOT = "Field names cannot contain a dot.";

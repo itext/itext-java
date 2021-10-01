@@ -454,6 +454,9 @@ public class PdfSigner {
      * @param document The PdfDocument
      */
     protected void setDocument(PdfDocument document) {
+        if (null == document.getReader()) {
+            throw new IllegalArgumentException(SignExceptionMessageConstant.DOCUMENT_MUST_HAVE_READER);
+        }
         this.document = document;
     }
 
