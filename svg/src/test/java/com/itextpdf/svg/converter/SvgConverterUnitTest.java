@@ -42,13 +42,17 @@
  */
 package com.itextpdf.svg.converter;
 
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
@@ -75,6 +79,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -357,6 +362,15 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
         ResourceResolver currentResolver = SvgConverter.getResourceResolver(testSvgProcessorResult, null);
         Assert.assertNotNull(currentResolver);
+    }
+
+    @Test
+    public void nullBBoxInDrawTest() throws Exception {
+        Assert.assertThrows(PdfException.class, () -> {
+            PdfFormXObject object = SvgConverter.convertToXObject(content, doc);
+            ((PdfDictionary)object.getPdfObject()).remove(PdfName.BBox);
+            SvgConverter.draw(object, new PdfCanvas(doc, 1), 0, 0);
+        });
     }
 
     private static class TestSvgProcessorResult implements ISvgProcessorResult {

@@ -98,7 +98,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
                 .setFontAndSize(PdfFontFactory.createFont(), 12)
                 .showText("Invisible image (both opaque and non opaque pixels have the same color)")
                 .endText();
-        canvas.addXObject(new PdfImageXObject(
+        canvas.addXObjectAt(new PdfImageXObject(
                 ImageDataFactory.create(createBinaryTransparentAWTImage(null), null)), 36, 580);
 
         PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFile));
@@ -135,7 +135,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
                 .setFontAndSize(PdfFontFactory.createFont(), 12)
                 .showText("Invisible image (both opaque and non opaque pixels have different colors)")
                 .endText();
-        canvas.addXObject(new PdfImageXObject(
+        canvas.addXObjectAt(new PdfImageXObject(
                 ImageDataFactory.create(createBinaryTransparentAWTImage(Color.red), null)), 36, 580);
 
         PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFile));

@@ -368,7 +368,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         PdfXObject xObj = SvgConverter.convertToXObject(ECLIPSESVGSTRING, doc, props);
 
         PdfCanvas canv = new PdfCanvas(page);
-        canv.addXObject(xObj, 0, 0);
+        canv.addXObjectAt(xObj, 0, 0);
 
         doc.close();
 
@@ -388,7 +388,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
         PdfXObject xObj = SvgConverter.convertToXObject(fis, doc, props);
 
         PdfCanvas canv = new PdfCanvas(page);
-        canv.addXObject(xObj, 0, 0);
+        canv.addXObjectAt(xObj, 0, 0);
 
         doc.close();
 

@@ -43,6 +43,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
@@ -53,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
@@ -139,7 +141,21 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             cleanUp(context);
 
             // Transformation already happened in AbstractSvgNodeRenderer, so no need to do a transformation here
-            context.getCurrentCanvas().addXObject(xObject, 0, 0);
+            addXObject(context.getCurrentCanvas(), xObject, 0, 0);
+        }
+    }
+
+    //TODO: DEVSIX-5731 Replace this workaround method with PdfCanvas::addXObjectAt
+    static void addXObject(PdfCanvas canvas, PdfXObject xObject, float x, float y) {
+        if (xObject instanceof PdfFormXObject) {
+            canvas.saveState();
+            canvas.concatMatrix(1, 0, 0, 1, x, y);
+            PdfName name = canvas.getResources().addForm((PdfFormXObject) xObject);
+            canvas.getContentStream().getOutputStream()
+                  .write(name).writeSpace().writeBytes(ByteUtils.getIsoBytes("Do\n"));
+            canvas.restoreState();
+        } else {
+            canvas.addXObjectAt(xObject, x, y);
         }
     }
 

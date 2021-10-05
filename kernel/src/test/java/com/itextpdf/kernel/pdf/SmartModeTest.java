@@ -231,7 +231,7 @@ public class SmartModeTest extends ExtendedITextTest {
                 PdfPage page = copyPdfX.addNewPage(new PageSize(ps));
                 PdfCanvas canvas = new PdfCanvas(page);
                 PdfFormXObject pageCopy = origPage.copyAsFormXObject(copyPdfX);
-                canvas.addXObject(pageCopy, 0, 0);
+                canvas.addXObjectAt(pageCopy, 0, 0);
             }
         }
 

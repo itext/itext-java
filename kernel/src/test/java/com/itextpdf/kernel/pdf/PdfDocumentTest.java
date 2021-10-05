@@ -483,7 +483,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         imageXObject.addAssociatedFile(PdfFileSpec
                 .createEmbeddedFileSpec(pdfDocument, "Associated File 1".getBytes(), "af_1.txt", PdfName.Data));
 
-        pageCanvas.addXObject(imageXObject, 40, 400);
+        pageCanvas.addXObjectAt(imageXObject, 40, 400);
 
         PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(200, 200));
         PdfCanvas formCanvas = new PdfCanvas(formXObject, pdfDocument);
@@ -497,7 +497,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         formXObject.addAssociatedFile(PdfFileSpec
                 .createEmbeddedFileSpec(pdfDocument, "Associated File 2".getBytes(), "af_2.txt", PdfName.Data));
 
-        pageCanvas.addXObject(formXObject, 40, 100);
+        pageCanvas.addXObjectAt(formXObject, 40, 100);
 
         pdfDocument.close();
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "add_associated_files02.pdf",

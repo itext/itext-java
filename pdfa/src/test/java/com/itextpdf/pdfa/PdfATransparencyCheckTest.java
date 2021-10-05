@@ -204,14 +204,14 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(form, pdfDocument);
         canvas.rectangle(10, 10, 30, 30);
         canvas.stroke();
-        canvas.addXObject(form1, 0, 0);
+        canvas.addXObjectAt(form1, 0, 0);
         canvas.release();
         form.flush();
 
         //Create page1 and add forms to the page.
         PdfPage page1 = pdfDocument.addNewPage();
         canvas = new PdfCanvas(page1);
-        canvas.addXObject(form, 0, 0);
+        canvas.addXObjectAt(form, 0, 0);
         canvas.release();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());

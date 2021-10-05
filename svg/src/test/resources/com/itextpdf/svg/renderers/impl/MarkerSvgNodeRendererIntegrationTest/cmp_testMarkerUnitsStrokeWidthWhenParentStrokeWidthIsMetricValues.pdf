@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191224161747+03'00')/ModDate(D:20191224161747+03'00')/Producer(iTextÆ 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211018115733+03'00')/ModDate(D:20211018115733+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -353,23 +352,23 @@ endobj
 xref
 0 15
 0000000000 65535 f 
-0000000226 00000 n 
-0000000528 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000517 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000438 00000 n 
-0000000579 00000 n 
-0000000762 00000 n 
-0000002792 00000 n 
-0000002965 00000 n 
-0000003139 00000 n 
-0000003313 00000 n 
-0000003487 00000 n 
-0000003661 00000 n 
+0000000427 00000 n 
+0000000568 00000 n 
+0000000751 00000 n 
+0000002781 00000 n 
+0000002954 00000 n 
+0000003128 00000 n 
+0000003302 00000 n 
+0000003476 00000 n 
+0000003650 00000 n 
 trailer
-<</ID [<33c3b9f06b3a657c9f315fbf9e6fe251><33c3b9f06b3a657c9f315fbf9e6fe251>]/Info 3 0 R/Root 1 0 R/Size 15>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<02ec1c2bb4adaab1c21f661a42af17cd><02ec1c2bb4adaab1c21f661a42af17cd>]/Info 3 0 R/Root 1 0 R/Size 15>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-3835
+3824
 %%EOF

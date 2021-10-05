@@ -1034,7 +1034,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         canvas.add(new Paragraph(txt));
 
         PdfCanvas canvas1 = new PdfCanvas(page1);
-        canvas1.addXObject(template, 10, 10);
+        canvas1.addXObjectAt(template, 10, 10);
 
         pdfDoc.close();
 
