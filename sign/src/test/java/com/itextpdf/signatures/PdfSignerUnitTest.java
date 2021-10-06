@@ -296,6 +296,92 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         Assert.assertEquals(fieldLock, signer.getFieldLockDict());
     }
 
+    @Test
+    public void setFieldNameNullForDefaultSignerTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
+        signer.setFieldName(null);
+        Assert.assertEquals("Signature1", signer.getFieldName());
+    }
+
+    @Test
+    public void keepFieldNameAfterSetToNullTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
+        signer.setFieldName("test field 222");
+        signer.setFieldName(null);
+        Assert.assertEquals("test field 222", signer.getFieldName());
+    }
+
+    @Test
+    public void setFieldNameToFieldWithSameNameAndNoSigTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createDocumentWithEmptyField()));
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+
+        Exception e = Assert.assertThrows(IllegalArgumentException.class, () -> signer.setFieldName("test_field"));
+        Assert.assertEquals(SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE, e.getMessage());
+
+        reader.close();
+    }
+
+    @Test
+    public void setFieldNameToSigFieldWithValueTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createDocumentWithSignatureWithTestValueField()));
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+
+        Exception e = Assert.assertThrows(IllegalArgumentException.class, () -> signer.setFieldName("test_field"));
+        Assert.assertEquals(SignExceptionMessageConstant.FIELD_ALREADY_SIGNED, e.getMessage());
+
+        reader.close();
+    }
+
+    @Test
+    public void setFieldNameToSigFieldWithoutWidgetsTest() throws IOException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createDocumentWithSignatureField()));
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+
+        signer.setFieldName("test_field");
+
+        Assert.assertEquals("test_field", signer.getFieldName());
+
+        reader.close();
+    }
+
+    private static byte[] createDocumentWithEmptyField() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
+        PdfFormField formField = PdfFormField.createEmptyField(pdfDocument).setFieldName("test_field");
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        acroForm.addField(formField);
+        pdfDocument.close();
+        return outputStream.toByteArray();
+    }
+
+    private static byte[] createDocumentWithSignatureWithTestValueField() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
+        PdfFormField formField = PdfFormField.createSignature(pdfDocument)
+                .setFieldName("test_field")
+                .setValue("test_value");
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        acroForm.addField(formField);
+        pdfDocument.close();
+        return outputStream.toByteArray();
+    }
+
+    private static byte[] createDocumentWithSignatureField() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
+        PdfFormField formField = PdfFormField.createSignature(pdfDocument)
+                .setFieldName("test_field");
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        acroForm.addField(formField);
+        pdfDocument.close();
+        return outputStream.toByteArray();
+    }
+
     private static byte[] createEncryptedDocumentWithoutWidgetAnnotation() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument document = new PdfDocument(new PdfWriter(outputStream,
