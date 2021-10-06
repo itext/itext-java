@@ -102,11 +102,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         pdfDoc3.close();
 
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult01.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedResult01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -123,11 +119,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         resultDocument.close();
         sourceDocument.close();
 
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergeDocumentOutlinesWithNullDestinationTest01.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergeDocumentOutlinesWithNullDestinationTest01.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -151,11 +143,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         merger.merge(pdfDoc, 1, 1).merge(pdfDoc1, 1, 1).merge(pdfDoc2, 1, 1).close();
 
-        CompareTool compareTool = new CompareTool();
-        String errorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult02.pdf", destinationFolder, "diff_");
-        if (errorMessage != null) {
-            Assert.fail(errorMessage);
-        }
+        Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergedResult02.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -246,29 +234,35 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
-    public void mergeTableWithEmptyTdTest() throws IOException, ParserConfigurationException, SAXException {
-        String filename = sourceFolder + "tableWithEmptyTd.pdf";
-        String resultFile = destinationFolder + "tableWithEmptyTdResult.pdf";
+    public void mergeTableWithEmptyTdTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        mergeAndCompareTagStructures("tableWithEmptyTd.pdf", 1, 1);
+    }
 
-        PdfReader reader = new PdfReader(filename);
+    @Test
+    public void mergeSplitTableWithEmptyTdTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        mergeAndCompareTagStructures("splitTableWithEmptyTd.pdf", 2, 2);
+    }
 
-        PdfDocument sourceDoc = new PdfDocument(reader);
-        PdfDocument output = new PdfDocument(new PdfWriter(resultFile));
-        output.setTagged();
-        PdfMerger merger = new PdfMerger(output).setCloseSourceDocuments(true);
-        merger.merge(sourceDoc, 1, sourceDoc.getNumberOfPages());
-        sourceDoc.close();
-        reader.close();
-        merger.close();
-        output.close();
+    @Test
+    public void mergeEmptyRowWithTagsTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        mergeAndCompareTagStructures("emptyRowWithTags.pdf", 1, 1);
+    }
 
-        CompareTool compareTool = new CompareTool();
-        String tagStructErrorMessage = compareTool.compareTagStructures(resultFile, sourceFolder + "cmp_tableWithEmptyTd.pdf");
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY))
+    public void trInsideTdTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("trInsideTdTable.pdf", 1, 1);
+    }
 
-        String errorMessage = tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
-        if (!errorMessage.isEmpty()) {
-            Assert.fail(errorMessage);
-        }
+    @Test
+    public void tdInsideTdTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("tdInsideTdTable.pdf", 1, 1);
+    }
+
+    @Test
+    // TODO DEVSIX-5974 Empty tr isn't copied.
+    public void emptyTrTableTest() throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+        mergeAndCompareTagStructures("emptyTrTable.pdf", 1, 1);
     }
 
     @Test
@@ -434,6 +428,27 @@ public class PdfMergerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(
                 destinationFolder + "infiniteLoopInOutlineStructure.pdf",
                 sourceFolder + "cmp_infiniteLoopInOutlineStructure.pdf", destinationFolder));
+    }
+
+    private static void mergeAndCompareTagStructures(String testName, int fromPage, int toPage)
+            throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        String src = sourceFolder + testName;
+        String dest = destinationFolder + testName;
+        String cmp = sourceFolder + "cmp_" + testName;
+
+        PdfReader reader = new PdfReader(src);
+
+        PdfDocument sourceDoc = new PdfDocument(reader);
+        PdfDocument output = new PdfDocument(new PdfWriter(dest));
+        output.setTagged();
+        PdfMerger merger = new PdfMerger(output).setCloseSourceDocuments(true);
+        merger.merge(sourceDoc, fromPage, toPage);
+        sourceDoc.close();
+        reader.close();
+        merger.close();
+        output.close();
+
+        Assert.assertNull(new CompareTool().compareTagStructures(dest, cmp));
     }
 
     private void mergePdfs(List<File> sources, String destination) throws IOException {

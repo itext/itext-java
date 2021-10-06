@@ -438,7 +438,9 @@ class StructureTreeCopier {
             }
         } else if (kid.isDictionary()) {
             PdfDictionary kidAsDict = (PdfDictionary) kid;
-            if (copyingParams.getObjectsToCopy().contains(kidAsDict)) {
+            // if element is TD and its parent is TR which was copied, then we copy it in any case
+            if (copyingParams.getObjectsToCopy().contains(kidAsDict) ||
+                    shouldTableElementBeCopied(kidAsDict, copiedParent)) {
                 boolean hasParent = kidAsDict.containsKey(PdfName.P);
                 PdfDictionary copiedKid = copyObject(kidAsDict, destPage, parentChangePg, copyingParams);
                 if (hasParent) {
@@ -463,6 +465,11 @@ class StructureTreeCopier {
             }
         }
         return null;
+    }
+
+    static boolean shouldTableElementBeCopied(PdfDictionary obj, PdfDictionary parent) {
+        return (PdfName.TD.equals(obj.get(PdfName.S)) || PdfName.TH.equals(obj.get(PdfName.S)))
+                && PdfName.TR.equals(parent.get(PdfName.S));
     }
 
     private static PdfDictionary copyNamespaceDict(PdfDictionary srcNsDict, StructElemCopyingParams copyingParams) {
