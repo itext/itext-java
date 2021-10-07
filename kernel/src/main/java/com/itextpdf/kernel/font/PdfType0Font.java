@@ -451,6 +451,8 @@ public class PdfType0Font extends PdfFont {
             if (TextUtil.isSurrogatePair(text, k)) {
                 val = TextUtil.convertToUtf32(text, k);
                 processed += 2;
+                // Since a pair is processed, need to skip next char as well
+                k += 1;
             } else {
                 val = text.charAt(k);
                 processed++;

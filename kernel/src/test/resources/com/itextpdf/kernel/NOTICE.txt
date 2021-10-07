@@ -1,0 +1,2 @@
+This software uses the following test resources under the following licenses:
+| NotoSansOldItalic-Regular.ttf | OFL-1.1 | LICENSE-OFL-1.1.txt | In development version of font based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"

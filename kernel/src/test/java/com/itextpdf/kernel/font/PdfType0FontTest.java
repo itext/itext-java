@@ -25,6 +25,7 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -35,6 +36,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -93,5 +96,17 @@ public class PdfType0FontTest extends ExtendedITextTest {
         Assert.assertEquals("Identity", cmap.getOrdering());
         Assert.assertEquals(0, cmap.getSupplement());
         Assert.assertEquals(PdfEncodings.IDENTITY_H, cmap.getCmapName());
+    }
+
+    @Test
+    public void appendThreeSurrogatePairsTest() throws IOException {
+        // this text contains three successive surrogate pairs, which should result in three glyphs
+        String textWithThreeSurrogatePairs = "\uD800\uDF10\uD800\uDF00\uD800\uDF11";
+        PdfFont type0Font =
+                PdfFontFactory.createFont(sourceFolder + "NotoSansOldItalic-Regular.ttf", PdfEncodings.IDENTITY_H);
+
+        List<Glyph> glyphs = new ArrayList<>();
+        type0Font.appendGlyphs(textWithThreeSurrogatePairs, 0, textWithThreeSurrogatePairs.length() - 1, glyphs);
+        Assert.assertEquals(3, glyphs.size());
     }
 }
