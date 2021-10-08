@@ -47,6 +47,7 @@ import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -57,18 +58,17 @@ import java.util.Collection;
 public class PathParsingTest extends ExtendedITextTest {
 
     @Test
-    public void pathParsingNoDOperatorTest() {
-        // Path objects must have a d attribute
-        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
-        path.setAttribute(SvgConstants.Attributes.STROKE, "black");
-
-        Assert.assertThrows(SvgProcessingException.class, () -> path.parsePathOperations());
-    }
-
-    @Test
     public void pathParsingOperatorEmptyTest() {
         PathSvgNodeRenderer path = new PathSvgNodeRenderer();
         path.setAttribute(SvgConstants.Attributes.D, "");
+        Collection<String> ops = path.parsePathOperations();
+        Assert.assertTrue(ops.isEmpty());
+    }
+
+    @Test
+    public void pathParsingOperatorDefaultValueTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttributesAndStyles(new HashMap<>());
         Collection<String> ops = path.parsePathOperations();
         Assert.assertTrue(ops.isEmpty());
     }

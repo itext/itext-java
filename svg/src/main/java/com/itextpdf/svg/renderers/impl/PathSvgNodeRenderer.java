@@ -84,7 +84,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
      * Find any occurrence of a letter that is not an operator
      */
     private static final String INVALID_OPERATOR_REGEX = "(?:(?![mzlhvcsqtae])\\p{L})";
-    private static Pattern invalidRegexPattern = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);
+    private static final Pattern INVALID_REGEX_PATTERN = Pattern.compile(INVALID_OPERATOR_REGEX, Pattern.CASE_INSENSITIVE);
 
     /**
      * The regular expression to split the <a href="https://www.w3.org/TR/SVG/paths.html#PathData">PathData attribute of
@@ -289,21 +289,21 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
 
 
     boolean containsInvalidAttributes(String attributes) {
-        return invalidRegexPattern.matcher(attributes).find();
+        return INVALID_REGEX_PATTERN.matcher(attributes).find();
     }
 
     Collection<String> parsePathOperations() {
         Collection<String> result = new ArrayList<>();
-        String attributes = attributesAndStyles.get(SvgConstants.Attributes.D);
-        if (attributes == null) {
-            throw new SvgProcessingException(SvgExceptionMessageConstant.PATH_OBJECT_MUST_HAVE_D_ATTRIBUTE);
+        String pathString = attributesAndStyles.get(SvgConstants.Attributes.D);
+        if (pathString == null) {
+            pathString = "";
         }
-        if (containsInvalidAttributes(attributes)) {
+        if (containsInvalidAttributes(pathString)) {
             throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_PATH_D_ATTRIBUTE_OPERATORS)
-                    .setMessageParams(attributes);
+                    .setMessageParams(pathString);
         }
 
-        String[] operators = splitPathStringIntoOperators(attributes);
+        String[] operators = splitPathStringIntoOperators(pathString);
 
         for (String inst : operators) {
             String instTrim = inst.trim();
