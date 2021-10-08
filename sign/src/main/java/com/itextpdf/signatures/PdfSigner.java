@@ -669,8 +669,9 @@ public class PdfSigner {
         InputStream data = getRangeStream();
         byte[] encodedSig = externalSignatureContainer.sign(data);
 
-        if (estimatedSize < encodedSig.length)
-            throw new IOException("Not enough space");
+        if (estimatedSize < encodedSig.length) {
+            throw new IOException(SignExceptionMessageConstant.NOT_ENOUGH_SPACE);
+        }
 
         byte[] paddedSig = new byte[estimatedSize];
         System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
@@ -1092,7 +1093,7 @@ public class PdfSigner {
                 bous.reset();
                 os.write(obj);
                 if (bous.size() > lit.getBytesCount())
-                    throw new IllegalArgumentException("The key is too big");
+                    throw new IllegalArgumentException(SignExceptionMessageConstant.TOO_BIG_KEY);
                 if (tempFile == null) {
                     System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int) bous.size());
                 } else {
@@ -1299,14 +1300,6 @@ public class PdfSigner {
 
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
-    }
-
-    private static StampingProperties initStampingProperties(boolean append) {
-        StampingProperties properties = new StampingProperties();
-        if (append) {
-            properties.useAppendMode();
-        }
-        return properties;
     }
 
     /**
