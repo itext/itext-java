@@ -50,7 +50,7 @@ public final class SignExceptionMessageConstant {
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
             + "data.";
-    public static final String NOT_ENOUGH_SPACE = "Not enough space";
+    public static final String NOT_ENOUGH_SPACE = "Not enough space.";
     public static final String SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT = "Signature "
             + "with name {0} is not the last. It doesn't cover the whole document.";
     public static final String THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME = "There is no field in the document "

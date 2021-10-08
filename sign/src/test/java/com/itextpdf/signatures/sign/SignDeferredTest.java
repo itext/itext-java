@@ -61,6 +61,7 @@ import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -120,6 +121,57 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         // validate result
         validateTemplateForSignedDeferredResult(output, sigFieldName, filter, subFilter, estimatedSize);
+    }
+
+    @Test
+    public void prepareDocForSignDeferredNotEnoughSizeTest() throws IOException, GeneralSecurityException {
+        String input = sourceFolder + "helloWorldDoc.pdf";
+
+        String sigFieldName = "DeferredSignature1";
+        PdfName filter = PdfName.Adobe_PPKLite;
+        PdfName subFilter = PdfName.Adbe_pkcs7_detached;
+
+        PdfReader reader = new PdfReader(input);
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance
+                .setLayer2Text("Signature field which signing is deferred.")
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1);
+        signer.setFieldName(sigFieldName);
+        IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
+
+        // This size is definitely not enough
+        int estimatedSize = -1;
+        Exception e = Assert.assertThrows(IOException.class,
+                () -> signer.signExternalContainer(external, estimatedSize));
+        Assert.assertEquals(SignExceptionMessageConstant.NOT_ENOUGH_SPACE, e.getMessage());
+    }
+
+    @Test
+    public void prepareDocForSignDeferredLittleSpaceTest() throws IOException {
+        String input = sourceFolder + "helloWorldDoc.pdf";
+
+        String sigFieldName = "DeferredSignature1";
+        PdfName filter = PdfName.Adobe_PPKLite;
+        PdfName subFilter = PdfName.Adbe_pkcs7_detached;
+
+        PdfReader reader = new PdfReader(input);
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance
+                .setLayer2Text("Signature field which signing is deferred.")
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1);
+        signer.setFieldName(sigFieldName);
+        IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
+
+        // This size is definitely not enough, however, the size check will pass.
+        // The test will fail lately on an invalid key
+        int estimatedSize = 0;
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> signer.signExternalContainer(external, estimatedSize));
+        Assert.assertEquals(SignExceptionMessageConstant.TOO_BIG_KEY, e.getMessage());
     }
 
     @Test
