@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
@@ -649,6 +650,36 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         outPdf.close();
 
         compareResult("copyTest01");
+    }
+
+    @Test
+    public void docWithSectInPdf2() throws IOException, ParserConfigurationException, SAXException,
+            InterruptedException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithSectInPdf2.pdf",
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDocument.setTagged();
+
+        Document document = new Document(pdfDocument);
+
+        Div section = new Div();
+        section.getAccessibilityProperties().setRole(StandardRoles.SECT);
+        Paragraph h1 = new Paragraph("This is a header");
+        h1.getAccessibilityProperties().setRole("H1");
+        section.add(h1);
+
+        section.add(new Paragraph("This is a paragraph."));
+        Paragraph para = new Paragraph("This is another paragraph, ");
+
+        Text emphasised = new Text("with semantic emphasis!");
+        emphasised.setUnderline();
+        emphasised.getAccessibilityProperties().setRole(StandardRoles.EM);
+        para.add(emphasised);
+        section.add(para);
+
+        document.add(section);
+        document.close();
+
+        compareResult("docWithSectInPdf2");
     }
 
     @Test
