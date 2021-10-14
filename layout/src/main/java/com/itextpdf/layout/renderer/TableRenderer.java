@@ -1510,43 +1510,31 @@ public class TableRenderer extends AbstractRenderer {
 
         // draw horizontal borders
 
-        // draw top border
-        if (isFooterRendererOfLargeTable) {
-            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(0, startX, y1,
-                    countedColumnWidth));
-        }
-        if (isTopTablePart) {
-            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(0, startX, startY,
-                    countedColumnWidth));
-        }
+        boolean shouldDrawTopBorder = isFooterRendererOfLargeTable || isTopTablePart;
 
-        // draw inner borders
-        if (!heights.isEmpty()) {
+        // if top border is already drawn, we should decrease ordinate
+        if (!heights.isEmpty() && !shouldDrawTopBorder) {
             y1 -= (float) heights.get(0);
         }
-        for (int i = 1; i < heights.size(); i++) {
+        for (int i = shouldDrawTopBorder ? 0 : 1; i < heights.size(); i++) {
             bordersHandler.drawHorizontalBorder(drawContext.getCanvas(),
                     new TableBorderDescriptor(i, startX, y1, countedColumnWidth));
-            if (i < heights.size()) {
-                y1 -= (float) heights.get(i);
-            }
+            y1 -= (float) heights.get(i);
         }
 
         // draw bottom border
-        // TODO DEVSIX-5867 Check hasFooter, so that two footers are not drawn
-        if (!isBottomTablePart && isComplete) {
-            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(),
-                    new TableBorderDescriptor(heights.size(), startX, y1, countedColumnWidth));
-        }
 
+        // Note for the second condition:
         //!isLastRendererForModelElement is a check that this is a split render. This is the case with the splitting of
         // one cell when part of the cell moves to the next page. Therefore, if such a splitting occurs, a bottom border
         // should be drawn. However, this should not be done for empty renderers that are also created during splitting,
         // but this splitting, if the table does not fit on the page and the next cell is added to the next page.
         // In this case, this code should not be processed, since the border in the above code has already been drawn.
-        if (isBottomTablePart && (isComplete || (!isLastRendererForModelElement && !isEmptyTableRenderer()))) {
-            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(
-                    heights.size(), startX, y1, countedColumnWidth));
+        // TODO DEVSIX-5867 Check hasFooter, so that two footers are not drawn
+        if ((!isBottomTablePart && isComplete)
+                || (isBottomTablePart && (isComplete || (!isLastRendererForModelElement && !isEmptyTableRenderer())))) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(),
+                    new TableBorderDescriptor(heights.size(), startX, y1, countedColumnWidth));
         }
 
         if (isTagged) {
