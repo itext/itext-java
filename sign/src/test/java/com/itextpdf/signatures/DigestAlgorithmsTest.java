@@ -75,6 +75,6 @@ public class DigestAlgorithmsTest extends ExtendedITextTest {
 
     @Test
     public void nullNameGetAllowedDigestTest() {
-        Assert.assertThrows(NullPointerException.class, () -> DigestAlgorithms.getAllowedDigest(null));
+        Assert.assertThrows(IllegalArgumentException.class, () -> DigestAlgorithms.getAllowedDigest(null));
     }
 }

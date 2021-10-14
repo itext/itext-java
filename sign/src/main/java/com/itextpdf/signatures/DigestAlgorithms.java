@@ -43,6 +43,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -255,6 +257,9 @@ public class DigestAlgorithms {
      * @return	An oid.
      */
     public static String getAllowedDigest(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException(SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
+        }
         return allowedDigests.get(name.toUpperCase());
     }
 }

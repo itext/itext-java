@@ -27,6 +27,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -90,17 +92,15 @@ public class BouncyCastleDigestUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-5800 throw an correct exception if there is no digest for an algorithm
     public void getMessageDigestNullTest() {
         IExternalDigest digest = new BouncyCastleDigest();
-        Assert.assertThrows(NullPointerException.class, () -> digest.getMessageDigest(null));
+        Assert.assertThrows(IllegalArgumentException.class, () -> digest.getMessageDigest(null));
     }
 
     @Test
-    // TODO DEVSIX-5800 throw an correct exception if there is no digest for an algorithm
     public void getMessageDigestUnknownTest() {
         IExternalDigest digest = new BouncyCastleDigest();
-        Assert.assertThrows(NullPointerException.class, () -> digest.getMessageDigest("unknown"));
+        Assert.assertThrows(NoSuchAlgorithmException.class, () -> digest.getMessageDigest("unknown"));
     }
 
     private static void getMessageDigestTest(String hashAlgorithm, String expectedDigestAlgorithm)
