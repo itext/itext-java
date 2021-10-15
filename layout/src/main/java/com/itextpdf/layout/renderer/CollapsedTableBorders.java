@@ -366,28 +366,7 @@ class CollapsedTableBorders extends TableBorders {
 
     // region lowlevel
     protected boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
-//        if (borderArray.size() <= i) {
-//            for (int count = borderArray.size(); count <= i; count++) {
-//                borderArray.add(new ArrayList<Border>());
-//            }
-//        }
         List<Border> borders = borderArray.get(i);
-//        if (borders.isEmpty()) {
-//            for (int count = 0; count < j; count++) {
-//                borders.add(null);
-//            }
-//            borders.add(borderToAdd);
-//            return true;
-//        }
-//        if (borders.size() == j) {
-//            borders.add(borderToAdd);
-//            return true;
-//        }
-//        if (borders.size() < j) {
-//            for (int count = borders.size(); count <= j; count++) {
-//                borders.add(count, null);
-//            }
-//        }
         Border neighbour = borders.get(j);
         if (neighbour == null) {
             borders.set(j, borderToAdd);
