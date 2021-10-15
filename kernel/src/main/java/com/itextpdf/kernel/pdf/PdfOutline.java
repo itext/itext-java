@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 
 import java.util.ArrayList;
@@ -144,6 +145,21 @@ public class PdfOutline {
     }
 
     /**
+     * Gets color for the outline entry's text, {@code C} key.
+     *
+     * @return color {@link Color}.
+     */
+    public Color getColor() {
+        PdfArray colorArray = content.getAsArray(PdfName.C);
+        if (colorArray == null) {
+            return null;
+        } else {
+            return Color.makeColor(PdfColorSpace.makeColorSpace(PdfName.DeviceRGB),
+                    colorArray.toFloatArray());
+        }
+    }
+
+    /**
      * Sets text style for the outline entry’s text, {@code F} key.
      *
      * @param style Could be either {@link #FLAG_BOLD} or {@link #FLAG_ITALIC}. Default value is {@code 0}.
@@ -152,6 +168,15 @@ public class PdfOutline {
         if (style == FLAG_BOLD || style == FLAG_ITALIC) {
             content.put(PdfName.F, new PdfNumber(style));
         }
+    }
+
+    /**
+     * Gets text style for the outline entry's text, {@code F} key.
+     *
+     * @return style value.
+     */
+    public Integer getStyle() {
+        return content.getAsInt(PdfName.F);
     }
 
     /**
@@ -222,6 +247,16 @@ public class PdfOutline {
             content.put(PdfName.Count, new PdfNumber(children.size()));
         else
             content.remove(PdfName.Count);
+    }
+
+    /**
+     * Defines if the outline is open or closed.
+     *
+     * @return true if open,false otherwise.
+     */
+    public boolean isOpen() {
+        Integer count = content.getAsInt(PdfName.Count);
+        return count == null || count >= 0;
     }
 
     /**

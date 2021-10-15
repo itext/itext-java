@@ -43,15 +43,21 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfOutline;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -449,6 +455,66 @@ public class PdfMergerTest extends ExtendedITextTest {
         output.close();
 
         Assert.assertNull(new CompareTool().compareTagStructures(dest, cmp));
+    }
+
+    @Test
+    public void mergeDocumentWithColorPropertyInOutlineTest() throws IOException, InterruptedException {
+        String firstDocument = sourceFolder + "firstDocumentWithColorPropertyInOutline.pdf";
+        String secondDocument = sourceFolder + "SecondDocumentWithColorPropertyInOutline.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeOutlinesWithColorProperty.pdf";
+        String mergedPdf = destinationFolder + "mergeOutlinesWithColorProperty.pdf";
+        try (PdfDocument merged = new PdfDocument(new PdfWriter(mergedPdf));
+                PdfDocument fileA = new PdfDocument(new PdfReader(firstDocument));
+                PdfDocument fileB = new PdfDocument(new PdfReader(secondDocument))) {
+            PdfMerger merger = new PdfMerger(merged, false, true);
+
+            merger.merge(fileA, 1, fileA.getNumberOfPages());
+            merger.merge(fileB, 1, fileB.getNumberOfPages());
+
+            merger.close();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedPdf, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    public void mergeDocumentWithStylePropertyInOutlineTest() throws IOException, InterruptedException {
+        String firstDocument = sourceFolder + "firstDocumentWithStylePropertyInOutline.pdf";
+        String secondDocument = sourceFolder + "secondDocumentWithStylePropertyInOutline.pdf";
+        String cmpPdf = sourceFolder + "cmp_mergeOutlineWithStyleProperty.pdf";
+        String mergedPdf = destinationFolder + "mergeOutlineWithStyleProperty.pdf";
+
+        try (PdfDocument documentA = new PdfDocument(new PdfReader(firstDocument));
+                PdfDocument documentB = new PdfDocument(new PdfReader(secondDocument));
+                PdfDocument merged = new PdfDocument(new PdfWriter(mergedPdf))) {
+            PdfMerger merger = new PdfMerger(merged, false, true);
+
+            merger.merge(documentA, 1, documentA.getNumberOfPages());
+            merger.merge(documentB, 1, documentB.getNumberOfPages());
+            merger.close();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void mergePdfDocumentsWithCopingOutlinesTest() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "firstDocumentWithOutlines.pdf";
+        String secondPdfDocument = sourceFolder + "secondDocumentWithOutlines.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeDocumentsWithOutlines.pdf";
+        String mergedDocument = destinationFolder + "mergeDocumentsWithOutlines.pdf";
+
+        try (PdfDocument documentA = new PdfDocument(new PdfReader(firstPdfDocument));
+                PdfDocument documentB = new PdfDocument(new PdfReader(secondPdfDocument));
+                PdfDocument mergedPdf = new PdfDocument(new PdfWriter(mergedDocument))) {
+            PdfMerger merger = new PdfMerger(mergedPdf, false, true);
+            merger.merge(documentA, 1, documentA.getNumberOfPages());
+            merger.merge(documentB, 1, documentB.getNumberOfPages());
+
+            merger.close();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
     private void mergePdfs(List<File> sources, String destination) throws IOException {

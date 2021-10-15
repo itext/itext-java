@@ -42,10 +42,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
@@ -56,17 +57,17 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest {
@@ -563,6 +564,36 @@ public class PdfOutlineTest extends ExtendedITextTest {
                     MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
                             first.indirectReference),
                     exception.getMessage());
+        }
+    }
+
+    @Test
+    public void setOutlinePropertiesTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+
+            PdfPage firstPage = pdfDocument.addNewPage();
+
+            PdfOutline rootOutline = pdfDocument.getOutlines(true);
+            PdfOutline outline = rootOutline.addOutline("Outline");
+
+            Assert.assertTrue(outline.isOpen());
+            Assert.assertNull(outline.getStyle());
+            Assert.assertNull(outline.getColor());
+
+            outline.getContent().put(PdfName.C, new PdfArray(ColorConstants.BLACK.getColorValue()));
+            outline.getContent().put(PdfName.F, new PdfNumber(2));
+            outline.getContent().put(PdfName.Count, new PdfNumber(4));
+
+            Assert.assertTrue(outline.isOpen());
+            Assert.assertEquals(new Integer(2), outline.getStyle());
+            Assert.assertEquals(ColorConstants.BLACK, outline.getColor());
+
+            outline.getContent().put(PdfName.Count, new PdfNumber(0));
+            Assert.assertTrue(outline.isOpen());
+
+            outline.getContent().put(PdfName.Count, new PdfNumber(-5));
+            Assert.assertFalse(outline.isOpen());
         }
     }
 }
