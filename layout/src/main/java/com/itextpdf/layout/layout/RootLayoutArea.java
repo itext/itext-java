@@ -45,6 +45,9 @@ package com.itextpdf.layout.layout;
 
 import com.itextpdf.kernel.geom.Rectangle;
 
+/**
+ * Represents the root layout area.
+ */
 public class RootLayoutArea extends LayoutArea implements Cloneable {
     /**
      * Indicates whether the area already has some placed content or not.
@@ -52,7 +55,10 @@ public class RootLayoutArea extends LayoutArea implements Cloneable {
     protected boolean emptyArea = true;
 
     /**
-     * {@inheritDoc}
+     * Creates the root layout area.
+     *
+     * @param pageNumber the value number of page
+     * @param bBox the bounding box
      */
     public RootLayoutArea(int pageNumber, Rectangle bBox) {
         super(pageNumber, bBox);

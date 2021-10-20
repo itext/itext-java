@@ -44,11 +44,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -587,6 +589,26 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void copyAnnotationWithoutSubtypeTest() throws IOException {
+        try (
+                ByteArrayOutputStream baos = createSourceDocumentWithEmptyAnnotation(new ByteArrayOutputStream());
+                PdfDocument documentToMerge = new PdfDocument(
+                        new PdfReader(
+                                new RandomAccessSourceFactory().createSource(baos.toByteArray()),
+                                new ReaderProperties()));
+                ByteArrayOutputStream resultantBaos = new ByteArrayOutputStream();
+                PdfDocument resultantDocument = new PdfDocument(new PdfWriter(resultantBaos))) {
+
+            // We do expect that the following line will not throw any NPE
+            PdfPage copiedPage = documentToMerge.getPage(1).copyTo(resultantDocument);
+            Assert.assertEquals(1, copiedPage.getAnnotations().size());
+            Assert.assertNull(copiedPage.getAnnotations().get(0).getSubtype());
+
+            resultantDocument.addPage(copiedPage);
+        }
+    }
+
+    @Test
     public void readPagesInBlocksTest() throws IOException {
         String srcFile = sourceFolder + "docWithBalancedPageTree.pdf";
         int maxAmountOfPagesReadAtATime = 0;
@@ -733,6 +755,15 @@ public class PdfPagesTest extends ExtendedITextTest {
             from = parents.get(i).getFrom() + parents.get(i).getCount();
         }
         return -1;
+    }
+
+    private static ByteArrayOutputStream createSourceDocumentWithEmptyAnnotation(ByteArrayOutputStream baos) {
+        try (PdfDocument sourceDocument = new PdfDocument(new PdfWriter(baos))) {
+            PdfPage page = sourceDocument.addNewPage();
+            PdfAnnotation annotation = PdfAnnotation.makeAnnotation(new PdfDictionary());
+            page.addAnnotation(annotation);
+            return baos;
+        }
     }
 
     private class CustomPdfReader extends PdfReader {

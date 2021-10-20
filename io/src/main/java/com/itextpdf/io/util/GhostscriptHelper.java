@@ -46,6 +46,8 @@ package com.itextpdf.io.util;
 import com.itextpdf.io.IoExceptionMessage;
 
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 /**
  * A utility class that is used as an interface to run 3rd-party tool Ghostscript.
@@ -67,8 +69,14 @@ public class GhostscriptHelper {
     static final String GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY = "gsExec";
 
     static final String GHOSTSCRIPT_KEYWORD = "GPL Ghostscript";
+    private static final String TEMP_FILE_PREFIX = "itext_gs_io_temp";
 
-    private static final String GHOSTSCRIPT_PARAMS = " -dSAFER -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 {0} -sOutputFile=\"{1}\" \"{2}\"";
+    private static final String RENDERED_IMAGE_EXTENSION = "png";
+    private static final String GHOSTSCRIPT_PARAMS = " -dSAFER -dNOPAUSE -dBATCH -sDEVICE="
+            + RENDERED_IMAGE_EXTENSION + "16m -r150 {0} -sOutputFile=\"{1}\" \"{2}\"";
+    private static final String PAGE_NUMBER_PATTERN = "%03d";
+
+    private static final Pattern PAGE_LIST_REGEX = Pattern.compile("^(\\d+,)*\\d+$");
 
     private String gsExec;
 
@@ -112,11 +120,17 @@ public class GhostscriptHelper {
     }
 
     /**
-     * Runs ghostscript to create images of pdfs.
+     * Runs Ghostscript to render the PDF's pages as PNG images.
      *
-     * @param pdf    Path to the pdf file.
-     * @param outDir Path to the output directory
-     * @param image  Path to the generated image
+     * @param pdf    Path to the PDF file to be rendered
+     * @param outDir Path to the output directory, in which the rendered pages will be stored
+     * @param image  String which defines the name of the resultant images. This string will be
+     *               concatenated with the number of the rendered page from the start of the
+     *               PDF in "-%03d" format, e.g. "-011" for the eleventh rendered page and so on.
+     *               This number may not correspond to the actual page number: for example,
+     *               if the passed pageList equals to "5,3", then images with postfixes "-001.png"
+     *               and "-002.png" will be created: the former for the third page, the latter
+     *               for the fifth page. "%" sign in the passed name is prohibited.
      *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing GhostScript.
@@ -127,14 +141,20 @@ public class GhostscriptHelper {
     }
 
     /**
-     * Runs ghostscript to create images of specified pages of pdfs.
+     * Runs Ghostscript to render the PDF's pages as PNG images.
      *
-     * @param pdf      Path to the pdf file.
-     * @param outDir   Path to the output directory
-     * @param image    Path to the generated image
-     * @param pageList String with numbers of the required pages to extract as image. Should be formatted as string with
-     *                 numbers, separated by commas, without whitespaces. Can be null, if it is required to extract
-     *                 all pages as images.
+     * @param pdf    Path to the PDF file to be rendered
+     * @param outDir Path to the output directory, in which the rendered pages will be stored
+     * @param image  String which defines the name of the resultant images. This string will be
+     *               concatenated with the number of the rendered page from the start of the
+     *               PDF in "-%03d" format, e.g. "-011" for the eleventh rendered page and so on.
+     *               This number may not correspond to the actual page number: for example,
+     *               if the passed pageList equals to "5,3", then images with postfixes "-001.png"
+     *               and "-002.png" will be created: the former for the third page, the latter
+     *               for the fifth page. "%" sign in the passed name is prohibited.
+     * @param pageList String with numbers of the required pages to be rendered as images.
+     *                 This string should be formatted as a string with numbers, separated by commas,
+     *                 without whitespaces. Can be null, if it is required to render all the PDF's pages.
      *
      * @throws IOException          if there are file's reading/writing issues
      * @throws InterruptedException if there is thread interruption while executing GhostScript.
@@ -145,12 +165,48 @@ public class GhostscriptHelper {
             throw new IllegalArgumentException(
                     IoExceptionMessage.CANNOT_OPEN_OUTPUT_DIRECTORY.replace("<filename>", pdf));
         }
+        if (!validateImageFilePattern(image)) {
+            throw new IllegalArgumentException("Invalid output image pattern: " + image);
+        }
+        if (!validatePageList(pageList)) {
+            throw new IllegalArgumentException("Invalid page list: " + pageList);
+        }
+        String formattedPageList = (pageList == null) ? "" : "-sPageList=<pagelist>".replace("<pagelist>", pageList);
 
-        pageList = (pageList == null) ? "" : "-sPageList=<pagelist>".replace("<pagelist>", pageList);
+        String replacementPdf = null;
+        String replacementImagesDirectory = null;
+        String[] temporaryOutputImages = null;
+        try {
+            replacementPdf = FileUtil.createTempCopy(pdf, TEMP_FILE_PREFIX, null);
+            replacementImagesDirectory = FileUtil.createTempDirectory(TEMP_FILE_PREFIX);
+            String currGsParams = MessageFormatUtil.format(GHOSTSCRIPT_PARAMS, formattedPageList,
+                    Paths.get(replacementImagesDirectory,
+                            TEMP_FILE_PREFIX + PAGE_NUMBER_PATTERN + "." + RENDERED_IMAGE_EXTENSION).toString(),
+                    replacementPdf);
 
-        String currGsParams = MessageFormatUtil.format(GHOSTSCRIPT_PARAMS, pageList, outDir + image, pdf);
-        if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
-            throw new GhostscriptExecutionException(IoExceptionMessage.GHOSTSCRIPT_FAILED.replace("<filename>", pdf));
+            if (!SystemUtil.runProcessAndWait(gsExec, currGsParams)) {
+                temporaryOutputImages = FileUtil
+                        .listFilesInDirectory(replacementImagesDirectory, false);
+                throw new GhostscriptExecutionException(
+                        IoExceptionMessage.GHOSTSCRIPT_FAILED.replace("<filename>", pdf));
+            }
+
+            temporaryOutputImages = FileUtil
+                    .listFilesInDirectory(replacementImagesDirectory, false);
+            if (null != temporaryOutputImages) {
+                for (int i = 0; i < temporaryOutputImages.length; i++) {
+                    FileUtil.copy(temporaryOutputImages[i],
+                            Paths.get(
+                                    outDir,
+                                    image + "-" + formatImageNumber(i + 1) + "." + RENDERED_IMAGE_EXTENSION
+                            ).toString());
+                }
+            }
+        } finally {
+            if (null != temporaryOutputImages) {
+                FileUtil.removeFiles(temporaryOutputImages);
+            }
+            FileUtil.removeFiles(new String[] {replacementImagesDirectory, replacementPdf});
         }
     }
 
@@ -167,5 +223,27 @@ public class GhostscriptHelper {
         public GhostscriptExecutionException(String msg) {
             super(msg);
         }
+    }
+
+    static boolean validatePageList(String pageList) {
+        return null == pageList
+                || PAGE_LIST_REGEX.matcher(pageList).matches();
+    }
+
+    static boolean validateImageFilePattern(String imageFilePattern) {
+        return null != imageFilePattern
+                && !imageFilePattern.trim().isEmpty()
+                && !imageFilePattern.contains("%");
+    }
+
+    static String formatImageNumber(int pageNumber) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int zeroFiller = pageNumber;
+        while (0 == zeroFiller / 100) {
+            stringBuilder.append('0');
+            zeroFiller *= 10;
+        }
+        stringBuilder.append(pageNumber);
+        return stringBuilder.toString();
     }
 }

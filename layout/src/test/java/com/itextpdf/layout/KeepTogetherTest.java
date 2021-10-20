@@ -1009,6 +1009,8 @@ public class KeepTogetherTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
+    // TODO DEVSIX-1092 There should be no path of the 15th row on the first page,
+    // since the layout box is only of 1 px height
     public void smallFloatInsideKeptTogetherTableTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_smallFloatInsideKeptTogetherTableTest01.pdf";
         String outFile = destinationFolder + "smallFloatInsideKeptTogetherTableTest01.pdf";

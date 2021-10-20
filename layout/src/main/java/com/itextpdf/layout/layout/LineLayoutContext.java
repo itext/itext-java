@@ -53,10 +53,23 @@ public class LineLayoutContext extends LayoutContext {
     private boolean floatOverflowedToNextPageWithNothing = false;
     private float textIndent;
 
+    /**
+     * Creates the context for content of a line.
+     *
+     * @param area for the content to be placed on
+     * @param marginsCollapseInfo the info about margins collapsing
+     * @param floatedRendererAreas list of {@link Rectangle} objects
+     * @param clippedHeight indicates whether the height is clipped or not
+     */
     public LineLayoutContext(LayoutArea area, MarginsCollapseInfo marginsCollapseInfo, List<Rectangle> floatedRendererAreas, boolean clippedHeight) {
         super(area, marginsCollapseInfo, floatedRendererAreas, clippedHeight);
     }
 
+    /**
+     * Creates the context for content of a line.
+     *
+     * @param layoutContext the context for content layouting
+     */
     public LineLayoutContext(LayoutContext layoutContext) {
         super(layoutContext.area, layoutContext.marginsCollapseInfo, layoutContext.floatRendererAreas, layoutContext.clippedHeight);
     }

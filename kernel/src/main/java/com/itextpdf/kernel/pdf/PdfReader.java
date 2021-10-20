@@ -130,8 +130,7 @@ public class PdfReader implements Closeable, Serializable {
      * @throws IOException if an I/O error occurs
      */
     public PdfReader(IRandomAccessSource byteSource, ReaderProperties properties) throws IOException {
-        this.properties = properties;
-        this.tokens = getOffsetTokeniser(byteSource);
+        this(byteSource, properties, false);
     }
 
     /**
@@ -143,7 +142,7 @@ public class PdfReader implements Closeable, Serializable {
      * @throws IOException on error
      */
     public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
-        this(new RandomAccessSourceFactory().createSource(is), properties);
+        this(new RandomAccessSourceFactory().createSource(is), properties, true);
     }
 
     /**
@@ -180,7 +179,8 @@ public class PdfReader implements Closeable, Serializable {
                 new RandomAccessSourceFactory()
                         .setForceRead(false)
                         .createBestSource(filename),
-                properties
+                properties,
+                true
         );
         this.sourcePath = filename;
     }
@@ -194,6 +194,11 @@ public class PdfReader implements Closeable, Serializable {
     public PdfReader(String filename) throws IOException {
         this(filename, new ReaderProperties());
 
+    }
+
+    PdfReader(IRandomAccessSource byteSource, ReaderProperties properties, boolean closeStream) throws IOException {
+        this.properties = properties;
+        this.tokens = getOffsetTokeniser(byteSource, closeStream);
     }
 
     /**
@@ -1303,6 +1308,10 @@ public class PdfReader implements Closeable, Serializable {
         }
     }
 
+    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource) throws IOException {
+        return getOffsetTokeniser(byteSource, true);
+    }
+
     /**
      * Utility method that checks the provided byte source to see if it has junk bytes at the beginning.  If junk bytes
      * are found, construct a tokeniser that ignores the junk.  Otherwise, construct a tokeniser for the byte source as it is
@@ -1311,7 +1320,8 @@ public class PdfReader implements Closeable, Serializable {
      * @return a tokeniser that is guaranteed to start at the PDF header
      * @throws IOException if there is a problem reading the byte source
      */
-    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource) throws IOException {
+    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource, boolean closeStream)
+            throws IOException {
         com.itextpdf.io.IOException possibleException = null;
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
         int offset;
@@ -1321,7 +1331,7 @@ public class PdfReader implements Closeable, Serializable {
             possibleException = ex;
             throw possibleException;
         } finally {
-            if (possibleException != null) {
+            if (possibleException != null && closeStream) {
                 tok.close();
             }
         }

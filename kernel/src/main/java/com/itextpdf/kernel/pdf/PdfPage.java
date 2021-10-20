@@ -402,7 +402,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
         copyInheritedProperties(page, toDocument);
         for (PdfAnnotation annot : getAnnotations()) {
-            if (annot.getSubtype().equals(PdfName.Link)) {
+            if (PdfName.Link.equals(annot.getSubtype())) {
                 getDocument().storeLinkAnnotation(page, (PdfLinkAnnotation) annot);
             } else {
                 PdfAnnotation newAnnot = PdfAnnotation.makeAnnotation(
@@ -1394,6 +1394,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
             PdfArray kids = newParent.getAsArray(PdfName.Kids);
             if (kids == null) {
+                // no kids are added here, since we do not know at this point which pages are to be copied,
+                // hence we do not know which annotations we should copy
                 newParent.put(PdfName.Kids, new PdfArray());
             }
             newField.put(PdfName.Parent, newParent);

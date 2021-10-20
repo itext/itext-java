@@ -254,7 +254,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 3)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 5)})
     //Logging is expected since there are duplicate field names
     //isReadOnly should be true after DEVSIX-2156
     public void flattenReadOnly() throws IOException {

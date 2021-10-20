@@ -43,6 +43,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.LogMessageConstant;
+import com.itextpdf.io.util.MessageFormatUtil;
+import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
@@ -52,6 +54,8 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
@@ -507,5 +511,57 @@ public class PdfOutlineTest extends ExtendedITextTest {
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void constructOutlinesNoParentTest() throws IOException {
+        try (
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.addNewPage();
+
+            PdfDictionary first = new PdfDictionary();
+            first.makeIndirect(pdfDocument);
+
+            PdfDictionary outlineDictionary = new PdfDictionary();
+            outlineDictionary.put(PdfName.First, first);
+
+            Exception exception = Assert.assertThrows(
+                    PdfException.class,
+                    () -> pdfDocument.getCatalog().constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
+            );
+            Assert.assertEquals(
+                    MessageFormatUtil.format(PdfException.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
+                            first.indirectReference),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void constructOutlinesNoTitleTest() throws IOException {
+        try (
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.addNewPage();
+
+            PdfDictionary first = new PdfDictionary();
+            first.makeIndirect(pdfDocument);
+
+            PdfDictionary outlineDictionary = new PdfDictionary();
+            outlineDictionary.makeIndirect(pdfDocument);
+
+            outlineDictionary.put(PdfName.First, first);
+            first.put(PdfName.Parent, outlineDictionary);
+
+            Exception exception = Assert.assertThrows(
+                    PdfException.class,
+                    () -> pdfDocument.getCatalog()
+                            .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
+            );
+            Assert.assertEquals(
+                    MessageFormatUtil.format(PdfException.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
+                            first.indirectReference),
+                    exception.getMessage());
+        }
     }
 }

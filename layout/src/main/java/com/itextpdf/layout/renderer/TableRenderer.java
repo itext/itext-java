@@ -65,8 +65,6 @@ import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -75,6 +73,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -493,11 +493,14 @@ public class TableRenderer extends AbstractRenderer {
             // the element which was the first to cause Layout.Nothing
             IRenderer firstCauseOfNothing = null;
 
-            // the width of the widest bottom border of the row
+            // In the next lines we pretend as if the current row will be the last on the current area:
+            // in this case it will be collapsed with the table's bottom border / the footer's top border
             bordersHandler.setFinishRow(rowRange.getStartRow() + row);
-            Border widestRowBottomBorder = bordersHandler.getWidestHorizontalBorder(rowRange.getStartRow() + row + 1);
-            bordersHandler.setFinishRow(rowRange.getFinishRow());
+            final List<Border> rowBottomBorderIfLastOnPage =
+                    bordersHandler.getHorizontalBorder(rowRange.getStartRow() + row + 1);
+            Border widestRowBottomBorder = TableBorderUtil.getWidestBorder(rowBottomBorderIfLastOnPage);
             float widestRowBottomBorderWidth = null == widestRowBottomBorder ? 0 : widestRowBottomBorder.getWidth();
+            bordersHandler.setFinishRow(rowRange.getFinishRow());
 
             // if cell is in the last row on the page, its borders shouldn't collapse with the next row borders
             while (cellProcessingQueue.size() > 0) {
@@ -540,8 +543,41 @@ public class TableRenderer extends AbstractRenderer {
                 float[] cellIndents = bordersHandler.getCellBorderIndents(currentCellInfo.finishRowInd, col,
                         rowspan, colspan);
                 if (!(bordersHandler instanceof SeparatedTableBorders)) {
+                    // Bottom indent to be applied consists of two parts which should be summed up:
+                    // a) half of the border of the current row (in case it is the last row on the area)
+                    // b) half of the widest possible bottom border (in case it is the last row on the area)
+                    //
+                    // The following "image" demonstrates the idea: C represents some content,
+                    // 1 represents border, 0 represents not occupied space, - represents
+                    // the middle of a horizontal border, | represents vertical border
+                    // (the latter could be of customized width as well, however, for the reasons
+                    // of this comment it could omitted)
+                    // CCCCC|CCCCC
+                    // CCCCC|11111
+                    // CCCCC|11111
+                    // 11111|11111
+                    // -----|-----
+                    // 11111|11111
+                    // 00000|11111
+                    // 00000|11111
+                    //
+                    // The question arises, however: what if the top border of the cell below is wider than the
+                    // bottom border of the table. This is already considered: when considering rowHeight
+                    // the width of the real collapsed border will be added to it.
+                    // It is quite important to understand that in case it is not possible
+                    // to add any other row, the current row should be collapsed with the table's bottom
+                    // footer's top borders rather than with the next row. If it is the case, iText
+                    // will revert collapsing to the one considered in the next calculations.
+
+                    // Be aware that if the col-th border of rowBottomBorderIfLastOnPage is null,
+                    // cellIndents[2] might not be null: imagine a table without borders,
+                    // a cell with no border (the current cell) and a cell below with some top border.
+                    // Nevertheless, a stated above we do not need to consider cellIndents[2] here.
+                    final float potentialWideCellBorder = null == rowBottomBorderIfLastOnPage.get(col)
+                            ? 0
+                            : rowBottomBorderIfLastOnPage.get(col).getWidth();
                     bordersHandler.applyCellIndents(cellArea.getBBox(), cellIndents[0], cellIndents[1],
-                            cellIndents[2] + widestRowBottomBorderWidth, cellIndents[3], false);
+                            potentialWideCellBorder + widestRowBottomBorderWidth, cellIndents[3], false);
                 }
                 // update cell width
                 cellWidth = cellArea.getBBox().getWidth();
@@ -745,7 +781,7 @@ public class TableRenderer extends AbstractRenderer {
                     // And now, when we possess such knowledge, we are performing the second attempt, but we need to nullify results
                     // from the previous attempt
                     if (bordersHandler instanceof CollapsedTableBorders) {
-                        ((CollapsedTableBorders)bordersHandler).setBottomBorderCollapseWith(null);
+                        ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(null, null);
                     }
                     bordersHandler.collapseTableWithFooter(footerRenderer.bordersHandler, hasContent || 0 != childRenderers.size());
 
@@ -852,7 +888,13 @@ public class TableRenderer extends AbstractRenderer {
                 }
                 // Apply borders if there is no footer
                 if (null == footerRenderer) {
-                    if (0 != this.childRenderers.size()) {
+                    // If split renderer does not have any rows, it can mean two things:
+                    // - either nothing is placed and the top border, which have been already applied,
+                    // should be reverted
+                    // - or the only placed row is placed partially.
+                    // In the latter case the number of added child renderers should equal to the number of the cells
+                    // in the current row (currChildRenderers stands for it)
+                    if (!splitResult[0].rows.isEmpty() || currChildRenderers.size() == childRenderers.size()) {
                         bordersHandler.applyBottomTableBorder(occupiedArea.getBBox(), layoutBox, false);
                     } else {
                         bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, true);
@@ -1008,10 +1050,6 @@ public class TableRenderer extends AbstractRenderer {
                 }
             }
         } else {
-            // the bottom border should be processed and placed lately
-            if (0 != heights.size()) {
-                heights.set(heights.size() - 1, heights.get(heights.size() - 1) - bottomTableBorderWidth / 2);
-            }
             if (null == footerRenderer) {
                 if (0 != childRenderers.size()) {
                     bordersHandler.applyBottomTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), false, true);
@@ -1418,7 +1456,7 @@ public class TableRenderer extends AbstractRenderer {
         }
 
 
-        // process halves of the borders here
+        // process halves of horizontal bounding borders
         if (childRenderers.size() == 0) {
             Border[] borders = bordersHandler.tableBoundingBorders;
             if (null != borders[0]) {
@@ -1450,56 +1488,72 @@ public class TableRenderer extends AbstractRenderer {
 
         if (bordersHandler instanceof CollapsedTableBorders) {
             if (hasFooter) {
-                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(footerRenderer.bordersHandler.getFirstHorizontalBorder());
+                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(
+                        footerRenderer.bordersHandler.getFirstHorizontalBorder(),
+                        ((CollapsedTableBorders) footerRenderer.bordersHandler)
+                                .getVerticalBordersCrossingTopHorizontalBorder());
             } else if (isBottomTablePart) {
-                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(null);
+                ((CollapsedTableBorders) bordersHandler).setBottomBorderCollapseWith(null, null);
             }
         }
         // we do not need to fix top border, because either this is header or the top border has been already written
         float y1 = startY;
-        if (isFooterRendererOfLargeTable) {
-            bordersHandler.drawHorizontalBorder(0, startX, y1, drawContext.getCanvas(), countedColumnWidth);
-        }
-        if (0 != heights.size()) {
-            y1 -= (float) heights.get(0);
-        }
-        for (int i = 1; i < heights.size(); i++) {
-            bordersHandler.drawHorizontalBorder(i, startX, y1, drawContext.getCanvas(), countedColumnWidth);
-            if (i < heights.size()) {
-                y1 -= (float) heights.get(i);
-            }
-        }
-        if (!isBottomTablePart && isComplete) {
-            bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
+
+        float[] heightsArray = new float[heights.size()];
+        for (int j = 0; j < heights.size(); j++) {
+            heightsArray[j] = heights.get(j);
         }
 
+        // draw vertical borders
         float x1 = startX;
-        if (countedColumnWidth.length > 0) {
-            x1 += countedColumnWidth[0];
-        }
-        for (int i = 1; i < bordersHandler.getNumberOfColumns(); i++) {
-            bordersHandler.drawVerticalBorder(i, startY, x1, drawContext.getCanvas(), heights);
+        for (int i = 0; i <= bordersHandler.getNumberOfColumns(); i++) {
+            bordersHandler.drawVerticalBorder(drawContext.getCanvas(),
+                    new TableBorderDescriptor(i, startY, x1, heightsArray));
             if (i < countedColumnWidth.length) {
                 x1 += countedColumnWidth[i];
             }
         }
 
-        // Draw bounding borders. Vertical borders are the last to draw in order to collapse with header / footer
-        if (isTopTablePart) {
-            bordersHandler.drawHorizontalBorder(0, startX, startY, drawContext.getCanvas(), countedColumnWidth);
+        // draw horizontal borders
+
+        // draw top border
+        if (isFooterRendererOfLargeTable) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(0, startX, y1,
+                    countedColumnWidth));
         }
+        if (isTopTablePart) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(0, startX, startY,
+                    countedColumnWidth));
+        }
+
+        // draw inner borders
+        if (!heights.isEmpty()) {
+            y1 -= (float) heights.get(0);
+        }
+        for (int i = 1; i < heights.size(); i++) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(),
+                    new TableBorderDescriptor(i, startX, y1, countedColumnWidth));
+            if (i < heights.size()) {
+                y1 -= (float) heights.get(i);
+            }
+        }
+
+        // draw bottom border
+        // TODO DEVSIX-5867 Check hasFooter, so that two footers are not drawn
+        if (!isBottomTablePart && isComplete) {
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(),
+                    new TableBorderDescriptor(heights.size(), startX, y1, countedColumnWidth));
+        }
+
         //!isLastRendererForModelElement is a check that this is a split render. This is the case with the splitting of
         // one cell when part of the cell moves to the next page. Therefore, if such a splitting occurs, a bottom border
         // should be drawn. However, this should not be done for empty renderers that are also created during splitting,
         // but this splitting, if the table does not fit on the page and the next cell is added to the next page.
         // In this case, this code should not be processed, since the border in the above code has already been drawn.
         if (isBottomTablePart && (isComplete || (!isLastRendererForModelElement && !isEmptyTableRenderer()))) {
-            bordersHandler.drawHorizontalBorder(heights.size(), startX, y1, drawContext.getCanvas(), countedColumnWidth);
+            bordersHandler.drawHorizontalBorder(drawContext.getCanvas(), new TableBorderDescriptor(
+                    heights.size(), startX, y1, countedColumnWidth));
         }
-        // draw left
-        bordersHandler.drawVerticalBorder(0, startY, startX, drawContext.getCanvas(), heights);
-        // draw right
-        bordersHandler.drawVerticalBorder(bordersHandler.getNumberOfColumns(), startY, x1, drawContext.getCanvas(), heights);
 
         if (isTagged) {
             drawContext.getCanvas().closeTag();
