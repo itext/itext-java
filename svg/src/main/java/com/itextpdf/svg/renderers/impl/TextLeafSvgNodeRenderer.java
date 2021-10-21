@@ -131,7 +131,12 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
             //TODO(DEVSIX-2507): Support for glyph by glyph handling of x, y and rotate
-            currentCanvas.moveText(context.getTextMove()[0], context.getTextMove()[1]);
+            if (context.getPreviousElementTextMove() == null) {
+                currentCanvas.moveText(context.getTextMove()[0], context.getTextMove()[1]);
+            } else {
+                currentCanvas.moveText(context.getPreviousElementTextMove()[0],
+                        context.getPreviousElementTextMove()[1]);
+            }
             currentCanvas.showText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
         }
     }

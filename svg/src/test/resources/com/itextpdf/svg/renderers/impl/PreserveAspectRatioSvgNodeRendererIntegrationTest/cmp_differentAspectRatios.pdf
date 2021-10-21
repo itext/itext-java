@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211025095152+03'00')/ModDate(D:20211025095152+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211104125748+03'00')/ModDate(D:20211104125748+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 337.5 225]/Length 4122/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 337.5 225]/Length 4006/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 337.5 225 re
 W
 n
@@ -47,18 +47,16 @@ q
 S
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 22.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (SVG to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 15 30 cm
@@ -110,18 +108,16 @@ Q
 Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 82.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (Viewport 1)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 7.5 90 cm
@@ -135,18 +131,16 @@ S
 Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 135 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (Viewport 2)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 15 142.5 cm
@@ -163,31 +157,27 @@ q
 1 0 0 1 75 45 cm
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (--------------- meet ---------------)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 q
 BT
-1 0 0 -1 149.21 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (xMin*)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -207,17 +197,15 @@ Q
 q
 1 0 0 1 52.5 0 cm
 q
+q
 BT
-1 0 0 -1 32 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (xMid*)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -238,17 +226,15 @@ Q
 q
 1 0 0 1 0 52.5 cm
 q
+q
 BT
-1 0 0 -1 32 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (xMax*)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -271,31 +257,27 @@ q
 1 0 0 1 187.5 45 cm
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (---------- meet ----------)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 q
 BT
-1 0 0 -1 109.25 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (*YMin)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -314,17 +296,15 @@ Q
 q
 1 0 0 1 37.5 0 cm
 q
+q
 BT
-1 0 0 -1 34.67 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (*YMid)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -344,17 +324,15 @@ Q
 q
 1 0 0 1 75 0 cm
 q
+q
 BT
-1 0 0 -1 34.67 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (*YMax)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -376,31 +354,27 @@ q
 1 0 0 1 75 165 cm
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (---------- slice ----------)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 q
 BT
-1 0 0 -1 107.92 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (xMin*)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -420,17 +394,15 @@ Q
 q
 1 0 0 1 37.5 0 cm
 q
+q
 BT
-1 0 0 -1 32 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (xMid*)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -451,17 +423,15 @@ Q
 q
 1 0 0 1 75 0 cm
 q
+q
 BT
-1 0 0 -1 32 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (xMax*)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -484,31 +454,27 @@ q
 1 0 0 1 187.5 165 cm
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (--------------- slice ---------------)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 q
 BT
-1 0 0 -1 147.88 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (*YMin)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -528,17 +494,15 @@ Q
 q
 1 0 0 1 52.5 0 cm
 q
+q
 BT
-1 0 0 -1 34.67 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (*YMid)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -559,17 +523,15 @@ Q
 q
 1 0 0 1 105 0 cm
 q
+q
 BT
-1 0 0 -1 34.67 -7.5 Tm
+1 0 0 -1 0 -7.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (*YMax)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -1250,21 +1212,21 @@ xref
 0000000427 00000 n 
 0000000568 00000 n 
 0000000753 00000 n 
-0000005148 00000 n 
-0000005923 00000 n 
-0000006707 00000 n 
-0000007498 00000 n 
-0000008286 00000 n 
-0000009075 00000 n 
-0000009861 00000 n 
-0000010641 00000 n 
-0000011429 00000 n 
-0000012213 00000 n 
-0000012989 00000 n 
-0000013774 00000 n 
+0000005032 00000 n 
+0000005807 00000 n 
+0000006591 00000 n 
+0000007382 00000 n 
+0000008170 00000 n 
+0000008959 00000 n 
+0000009745 00000 n 
+0000010525 00000 n 
+0000011313 00000 n 
+0000012097 00000 n 
+0000012873 00000 n 
+0000013658 00000 n 
 trailer
-<</ID [<2ff3cffc5d6cf8ad753468a689d9ad5a><2ff3cffc5d6cf8ad753468a689d9ad5a>]/Info 3 0 R/Root 1 0 R/Size 21>>
+<</ID [<1fb63bbe86c619935f4cbf29b964349f><1fb63bbe86c619935f4cbf29b964349f>]/Info 3 0 R/Root 1 0 R/Size 21>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-14556
+14440
 %%EOF

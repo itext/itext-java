@@ -392,6 +392,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         }
 
                         currentCanvas.setLineWidth(strokeWidth);
+
                         doStroke = true;
                     }
                 }

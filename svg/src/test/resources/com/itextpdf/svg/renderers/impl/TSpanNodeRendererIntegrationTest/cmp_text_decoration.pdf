@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018124623+03'00')/ModDate(D:20211018124623+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211103110558+03'00')/ModDate(D:20211103110558+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 900 300]/Length 733/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 900 300]/Length 851/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 900 300 re
 W
 n
@@ -52,109 +52,102 @@ q
 1 0 0 RG
 0.75 w
 q
+q
 BT
 1 0 0 -1 75 56.25 Tm
 2 Tr
-/F1 45 Tf
-q
 0 0 Td
+/F1 45 Tf
 (Normal text)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 75 123.75 Tm
 2 Tr
-/F1 45 Tf
-q
 0 0 Td
+/F1 45 Tf
 (Text with line-through)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 75 191.25 Tm
 2 Tr
-/F1 45 Tf
-q
 0 0 Td
+/F1 45 Tf
 (Underlined text)Tj
-n
-Q
 ET
-B
+Q
+Q
+q
+q
+BT
+1 0 0 -1 75 258.75 Tm
+2 Tr
+2 Tr
+/F1 45 Tf
+0 0 Td
+/F1 45 Tf
+(Each)Tj
+ET
 Q
 q
 BT
 1 0 0 -1 75 258.75 Tm
 2 Tr
-/F1 45 Tf
-q
 2 Tr
 /F1 45 Tf
-q
-0 0 Td
-(Each)Tj
-n
-Q
-B
-Q
-q
+89.96 0 Td
+/F1 45 Tf
 1 1 0 rg
 0.50196 0 0.50196 RG
+(word)Tj
+ET
+Q
+q
+BT
+1 0 0 -1 75 258.75 Tm
+2 Tr
 2 Tr
 /F1 45 Tf
-q
-89.96 0 Td
-(word)Tj
-n
-Q
-B
-Q
-q
+182.43 0 Td
+/F1 45 Tf
 1 1 0 rg
 0 0 0 RG
+(has)Tj
+ET
+Q
+q
+BT
+1 0 0 -1 75 258.75 Tm
+2 Tr
 2 Tr
 /F1 45 Tf
-q
-182.43 0 Td
-(has)Tj
-n
-Q
-B
-Q
-q
+242.41 0 Td
+/F1 45 Tf
 1 1 0 rg
 0 0.39216 0 RG
+(different)Tj
+ET
+Q
+q
+BT
+1 0 0 -1 75 258.75 Tm
+2 Tr
 2 Tr
 /F1 45 Tf
-q
-242.41 0 Td
-(different)Tj
-n
-Q
-B
-Q
-q
+397.35 0 Td
+/F1 45 Tf
 1 1 0 rg
 0 0 1 RG
-2 Tr
-/F1 45 Tf
-q
-397.35 0 Td
 (underlining)Tj
-n
-Q
-B
-Q
 ET
-B
+Q
 Q
 Q
 
@@ -172,8 +165,8 @@ xref
 0000000580 00000 n 
 0000000799 00000 n 
 trailer
-<</ID [<74b717aa2d65f22aee93aff502353568><74b717aa2d65f22aee93aff502353568>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<794323d80e83b0367d5b8b5e2cb2319f><794323d80e83b0367d5b8b5e2cb2319f>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-1656
+1774
 %%EOF

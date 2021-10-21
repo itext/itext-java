@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115239+03'00')/ModDate(D:20211018115239+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211103235824+03'00')/ModDate(D:20211103235824+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,297 +35,263 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 595 842]/Length 1785/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 595 842]/Length 1791/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 595 842 re
 W
 n
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 15 Tm
 0 Tr
 /F1 4.5 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 6)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 37.5 Tm
 0 Tr
 /F1 7.5 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 10)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 60 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (No font-size)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 82.5 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 12)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 105 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (css font-size 16)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 127.5 Tm
 0 Tr
 /F1 18 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 24)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 150 Tm
 0 Tr
 /F1 18 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 24px)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 172.5 Tm
 0 Tr
 /F1 24 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 24pt)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 195 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size -16)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 217.5 Tm
 0 Tr
 /F1 1.2 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 10%)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 240 Tm
 0 Tr
 /F1 6 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 50%)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 315 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 100%)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 412.5 Tm
 0 Tr
 /F1 18 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 150%)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 435 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 12pt)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 457.5 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 12px)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 480 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 12)Tj
-n
+ET
 Q
 q
+BT
+1 0 0 -1 15 480 Tm
+0 Tr
+/F1 9 Tf
 0 Tr
 /F1 18 Tf
-q
 42.74 0 Td
+0 0 0 rg
 (font-size 2em)Tj
-n
-Q
-f
-Q
 ET
-f
+Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 502.5 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size 12)Tj
-n
+ET
 Q
 q
+BT
+1 0 0 -1 15 502.5 Tm
+0 Tr
+/F1 9 Tf
 0 Tr
 /F1 24 Tf
-q
 42.74 0 Td
+0 0 0 rg
 (font-size 2rem)Tj
-n
-Q
-f
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 q
 BT
 1 0 0 -1 15 525 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (font-size -2em)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
-0 0 0 rg
+q
 BT
 1 0 0 -1 15 547.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
+0 0 0 rg
 (font-size -2rem)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -342,8 +308,8 @@ xref
 0000000568 00000 n 
 0000000751 00000 n 
 trailer
-<</ID [<9a641ffd7f7bc60e43d12b6d65b442cc><9a641ffd7f7bc60e43d12b6d65b442cc>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<c7e181d62521aca165e507165bf7f54d><c7e181d62521aca165e507165bf7f54d>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-2661
+2667
 %%EOF

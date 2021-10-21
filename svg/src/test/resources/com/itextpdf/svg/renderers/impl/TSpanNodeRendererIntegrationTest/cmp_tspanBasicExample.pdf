@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018124646+03'00')/ModDate(D:20211018124646+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211104000726+03'00')/ModDate(D:20211104000726+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -43,215 +43,220 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[-81.82 0 1881.82 900]/Length 2348/Resources<</Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-81.82 0 1881.82 900]/Length 2689/Resources<</Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -81.82 0 1963.64 900 re
 W
 n
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 7.5 7.5 Tm
 0 Tr
 /F1 18 Tf
-q
-1 0 0 rg
 0 Tr
 /F1 18 Tf
-q
 0 -7.5 Td
+1 0 0 rg
 (AAAAA tspan dy="10 20 30 40 50")Tj
-n
-Q
-f
+ET
 Q
 q
-1 0.64706 0 rg
+BT
+1 0 0 -1 7.5 7.5 Tm
 0 Tr
 /F1 18 Tf
-q
+0 Tr
+/F1 18 Tf
 270.32 -7.5 Td
+1 0.64706 0 rg
 (AAAAA tspan dx="10 20 30 40 50")Tj
-n
-Q
-f
-Q
 ET
-f
+Q
 Q
 Q
 q
 0 0 0 rg
+q
 q
 BT
 1 0 0 -1 7.5 150 Tm
 0 Tr
 /F1 24 Tf
-q
 0 0 Td
 (Here is a text with)Tj
-n
+ET
 Q
 q
+BT
+1 0 0 -1 7.5 150 Tm
 0 Tr
 /F1 24 Tf
-q
+0 Tr
+/F1 24 Tf
 175.97 0 Td
 (superscript)Tj
-n
-Q
-f
+ET
 Q
 q
-281.28 0 Td
-( and)Tj
-n
-Q
-q
+BT
+1 0 0 -1 7.5 150 Tm
 0 Tr
 /F1 24 Tf
+281.28 0 Td
+( and)Tj
+ET
+Q
 q
+BT
+1 0 0 -1 7.5 150 Tm
+0 Tr
+/F1 24 Tf
+0 Tr
+/F1 24 Tf
 321.94 0 Td
 (subscript)Tj
-n
-Q
-f
+ET
 Q
 q
+BT
+1 0 0 -1 7.5 150 Tm
+0 Tr
+/F1 24 Tf
 408.6 0 Td
 ( mixed with normal text.)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 0 0 0 rg
 q
-0 0 1 rg
+q
 BT
 1 0 0 -1 7.5 225 Tm
 0 Tr
 /F1 18 Tf
-q
 0 0 Td
+0 0 1 rg
 (Text with)Tj
-n
+ET
 Q
 q
-1 0 0 rg
-0 Tr
-/F2 18 Tf
-q
-71.5 37.5 Td
-( tspan dx="2em" dy="-50" font-weight="bold" fill="red)Tj
-n
-Q
-f
-Q
-q
-1 0 1 rg
-0 Tr
-/F3 18 Tf
-q
--52.52 18.75 Td
-( tspan dx="-550" dy="15" font-style="italic" fill="magenta")Tj
-n
-Q
-f
-Q
-q
-389.05 18.75 Td
-( and a)Tj
-n
-Q
-1 0 0 -1 45 240 Tm
-q
-0.50196 0 0.50196 rg
+BT
+1 0 0 -1 7.5 225 Tm
 0 Tr
 /F1 18 Tf
-q
-0 0 Td
-(AAAAAAAAA tspan x="60" y="320" fill="purple" rotate="10,45,90,115,145,0,15")Tj
-n
-Q
-1 0 0 -1 45 240 Tm
-f
-Q
-1 0 0 -1 45 240 Tm
+0 Tr
+/F2 18 Tf
+71.5 37.5 Td
+1 0 0 rg
+( tspan dx="2em" dy="-50" font-weight="bold" fill="red)Tj
 ET
-f
+Q
+q
+BT
+1 0 0 -1 7.5 225 Tm
+0 Tr
+/F1 18 Tf
+0 Tr
+/F3 18 Tf
+-52.52 18.75 Td
+1 0 1 rg
+( tspan dx="-550" dy="15" font-style="italic" fill="magenta")Tj
+ET
+Q
+q
+BT
+1 0 0 -1 7.5 225 Tm
+0 Tr
+/F1 18 Tf
+389.05 18.75 Td
+0 0 1 rg
+( and a)Tj
+ET
+Q
+q
+BT
+1 0 0 -1 7.5 225 Tm
+0 Tr
+/F1 18 Tf
+1 0 0 -1 45 240 Tm
+0 Tr
+/F1 18 Tf
+0 0 Td
+0.50196 0 0.50196 rg
+(AAAAAAAAA tspan x="60" y="320" fill="purple" rotate="10,45,90,115,145,0,15")Tj
+ET
+Q
 Q
 Q
 q
 0 0 0 rg
 q
-0.56471 0.93333 0.56471 rg
+q
 BT
 1 0 0 -1 7.5 300 Tm
 0 Tr
 /F1 18 Tf
-q
 0 0 Td
+0.56471 0.93333 0.56471 rg
 (Text with)Tj
-n
-Q
-1 0 0 -1 45 240 Tm
-1 0 0 -1 7.5 0 Tm
-q
-0 Tr
-/F1 18 Tf
-q
-0 -15 Td
-(--- tspan textLength="1000"-)Tj
-n
-Q
-1 0 0 -1 7.5 0 Tm
-f
-Q
-1 0 0 -1 7.5 0 Tm
-1 0 0 -1 7.5 0 Tm
-q
-0 Tr
-/F1 18 Tf
-q
-0 -15 Td
-(--- tspan textLength="500"-)Tj
-n
-Q
-1 0 0 -1 7.5 0 Tm
-f
-Q
-1 0 0 -1 7.5 0 Tm
-1 0 0 -1 7.5 0 Tm
-q
-0 Tr
-/F1 18 Tf
-q
-0 -15 Td
-(--- tspan textLength="200"-)Tj
-n
-Q
-1 0 0 -1 7.5 0 Tm
-f
-Q
-1 0 0 -1 7.5 0 Tm
-1 0 0 -1 7.5 0 Tm
-q
-0 Tr
-/F1 18 Tf
-q
-0 -15 Td
-(--- tspan textLength="-200"-)Tj
-n
-Q
-1 0 0 -1 7.5 0 Tm
-f
-Q
-1 0 0 -1 7.5 0 Tm
 ET
-f
+Q
+q
+BT
+1 0 0 -1 7.5 300 Tm
+0 Tr
+/F1 18 Tf
+1 0 0 -1 7.5 0 Tm
+0 Tr
+/F1 18 Tf
+0 -15 Td
+0.56471 0.93333 0.56471 rg
+(--- tspan textLength="1000"-)Tj
+ET
+Q
+q
+BT
+1 0 0 -1 7.5 300 Tm
+0 Tr
+/F1 18 Tf
+1 0 0 -1 7.5 0 Tm
+0 Tr
+/F1 18 Tf
+0 -15 Td
+0.56471 0.93333 0.56471 rg
+(--- tspan textLength="500"-)Tj
+ET
+Q
+q
+BT
+1 0 0 -1 7.5 300 Tm
+0 Tr
+/F1 18 Tf
+1 0 0 -1 7.5 0 Tm
+0 Tr
+/F1 18 Tf
+0 -15 Td
+0.56471 0.93333 0.56471 rg
+(--- tspan textLength="200"-)Tj
+ET
+Q
+q
+BT
+1 0 0 -1 7.5 300 Tm
+0 Tr
+/F1 18 Tf
+1 0 0 -1 7.5 0 Tm
+0 Tr
+/F1 18 Tf
+0 -15 Td
+0.56471 0.93333 0.56471 rg
+(--- tspan textLength="-200"-)Tj
+ET
+Q
 Q
 Q
 q
@@ -383,8 +388,8 @@ xref
 0000000760 00000 n 
 0000001000 00000 n 
 trailer
-<</ID [<ea7143f92f1b5e9a1c3ced9dc3cb7507><ea7143f92f1b5e9a1c3ced9dc3cb7507>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<585b9c37faa4cb2af4144da38da5efc7><585b9c37faa4cb2af4144da38da5efc7>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-3501
+3842
 %%EOF
