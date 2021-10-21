@@ -103,9 +103,13 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     @Override
     public ISvgNodeRenderer createDeepCopy() {
         TextSvgBranchRenderer copy = new TextSvgBranchRenderer();
+        fillCopy(copy);
+        return copy;
+    }
+
+    void fillCopy(TextSvgBranchRenderer copy) {
         deepCopyAttributesAndStyles(copy);
         deepCopyChildren(copy);
-        return copy;
     }
 
     public final void addChild(ISvgTextNodeRenderer child) {

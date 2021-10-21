@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
@@ -62,6 +63,13 @@ public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return getParent().getObjectBoundingBox(context);
+    }
+
+    @Override
+    public ISvgNodeRenderer createDeepCopy() {
+        TextSvgBranchRenderer copy = new TextSvgTSpanBranchRenderer();
+        fillCopy(copy);
+        return copy;
     }
 
     @Override
