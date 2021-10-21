@@ -78,6 +78,7 @@ public class SvgDrawContext {
 
     private AffineTransform lastTextTransform = new AffineTransform();
     private float[] textMove = new float[]{0.0f, 0.0f};
+    private float[] previousElementTextMove;
 
     /**
      * Create an instance of the context that is used to store information when converting SVG.
@@ -399,5 +400,13 @@ public class SvgDrawContext {
      */
     public void popPatternId() {
         this.patternIds.pop();
+    }
+
+    public void setPreviousElementTextMove(float[] previousElementTextMove) {
+        this.previousElementTextMove = previousElementTextMove;
+    }
+
+    public float[] getPreviousElementTextMove() {
+        return previousElementTextMove;
     }
 }

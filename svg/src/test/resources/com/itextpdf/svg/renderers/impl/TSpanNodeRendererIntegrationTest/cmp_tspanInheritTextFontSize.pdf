@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201006135209+03'00')/ModDate(D:20201006135209+03'00')/Producer(iText® 7.1.13-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808180446+03'00')/ModDate(D:20220808180446+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,48 +36,39 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 525 300]/Length 346/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525 300]/Length 297/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525 300 re
 W
 n
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 225 Tm
 0 Tr
 /F1 18 Tf
-q
 0 0 Td
 (Text with font-size="24")Tj
-n
+ET
 Q
-1 0 0 -1 150 150 Tm
 q
+BT
+1 0 0 -1 75 225 Tm
 0 Tr
 /F1 18 Tf
-q
+1 0 0 -1 150 150 Tm
+0 Tr
+/F1 18 Tf
 0 0 Td
 (Tspan with not set font-size;)Tj
-n
-Q
-1 0 0 -1 150 150 Tm
-q
 0 Tr
 /F1 18 Tf
-q
+0 Tr
+/F1 18 Tf
 204.98 0 Td
 ("nested" font-size)Tj
-n
-Q
-1 0 0 -1 150 150 Tm
-f
-Q
-1 0 0 -1 150 150 Tm
-f
-Q
-1 0 0 -1 150 150 Tm
 ET
-f
+Q
 Q
 
 endstream
@@ -94,8 +85,8 @@ xref
 0000000579 00000 n 
 0000000762 00000 n 
 trailer
-<</ID [<d063b4b29086745fe26309ce8b588173><d063b4b29086745fe26309ce8b588173>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.13-SNAPSHOT
+<</ID [<ada44909addaeb77e9164dbd822d8ee6><ada44909addaeb77e9164dbd822d8ee6>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.18-SNAPSHOT
 startxref
-1232
+1183
 %%EOF

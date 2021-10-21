@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20200617112615+03'00')/ModDate(D:20200617112615+03'00')/Producer(iText® 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808180243+03'00')/ModDate(D:20220808180243+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675.75 375.75]/Length 14215/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675.75 375.75]/Length 14003/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675.75 375.75 re
 W
 n
@@ -50,17 +50,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 7.5 187.05 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Life)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -74,17 +72,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 69 26.28 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Archaea)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -98,17 +94,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 153.75 10.3 Tm
 0 Tr
 /F1 4.5 Tf
-q
 0 0 Td
 (Crenarchaeota)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -122,17 +116,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 153.75 15.74 Tm
 0 Tr
 /F1 4.5 Tf
-q
 0 0 Td
 (Euryarchaeota)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -146,17 +138,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 153.75 21.18 Tm
 0 Tr
 /F1 4.5 Tf
-q
 0 0 Td
 (Korarchaeota)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -170,17 +160,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 153.75 26.62 Tm
 0 Tr
 /F1 4.5 Tf
-q
 0 0 Td
 (Nanoarchaeota)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -194,17 +182,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 153.75 32.06 Tm
 0 Tr
 /F1 4.5 Tf
-q
 0 0 Td
 (Thaumarchaeota)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -218,17 +204,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 69 134.07 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Eukarya)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -242,17 +226,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 43.01 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Amoebae)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -266,17 +248,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 49.2 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Plants)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -290,17 +270,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 55.38 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Chromalveolata)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -314,17 +292,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 134.92 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Opisthokonta)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -338,17 +314,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 259.5 126.67 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Animalia)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -362,17 +336,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 345 65.96 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Parazoa)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -386,17 +358,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 345 130.21 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Eumetazoa)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -410,17 +380,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 444 77.32 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Radiata)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -434,17 +402,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 444 133.53 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Bilateria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -458,17 +424,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 527.25 88.69 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Orthonectida)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -482,17 +446,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 527.25 99.33 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Rhombozoa)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -506,17 +468,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 527.25 104.5 Tm
 0 Tr
 /F1 4.5 Tf
-q
 0 0 Td
 (Acoelomorpha)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -530,17 +490,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 527.25 133.94 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Deuterostomia)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -554,17 +512,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 640.5 122.05 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Chordata)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -578,17 +534,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 640.5 134.52 Tm
 0 Tr
 /F1 3.75 Tf
-q
 0 0 Td
 (Hemichordata)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -602,17 +556,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 640.5 139.34 Tm
 0 Tr
 /F1 3.75 Tf
-q
 0 0 Td
 (Echinodermata)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -626,17 +578,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 640.5 144.16 Tm
 0 Tr
 /F1 3.75 Tf
-q
 0 0 Td
 (Xenoturbellida)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -650,17 +600,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 640.5 148.98 Tm
 0 Tr
 /F1 3.75 Tf
-q
 0 0 Td
 (Vetulicolia)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -674,17 +622,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 527.25 163.15 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Chaetognatha)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -698,17 +644,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 527.25 173.79 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Protostomia)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -722,17 +666,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 259.5 198.76 Tm
 0 Tr
 /F1 9.75 Tf
-q
 0 0 Td
 (Fungi)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -746,17 +688,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 210.02 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Rhizaria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -770,17 +710,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 216.21 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Excavata)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -794,17 +732,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 69 292.6 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Bacteria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -818,17 +754,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 226.87 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Proteobacteria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -842,17 +776,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 232.99 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Actinobacteria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -866,17 +798,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 239.12 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Tenericutes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -890,17 +820,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 245.25 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Aquificae)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -914,17 +842,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 251.37 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Deinococcus-Thermus)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -938,17 +864,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 257.5 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Fibrobacteres-Chl...)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -962,17 +886,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 263.63 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Fusobacteria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -986,17 +908,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 269.75 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Gemmatimonadetes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1010,17 +930,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 275.88 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Nitrospirae)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1034,17 +952,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 282.01 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Planctomycetes-Ve...)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1058,17 +974,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 288.13 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Firmicutes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1082,17 +996,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 294.26 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Spirochaetes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1106,17 +1018,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 300.39 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Synergistetes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1130,17 +1040,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 306.51 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Acidobacteria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1154,17 +1062,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 312.64 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Chloroflexi)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1178,17 +1084,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 318.77 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Chrysiogenetes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1202,17 +1106,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 324.89 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Cyanobacteria)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1226,17 +1128,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 331.02 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Deferribacteres)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1250,17 +1150,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 337.15 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Dictyoglomi)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1274,17 +1172,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 343.27 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Thermodesulfobact...)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95294 0.70196 0 rg
@@ -1298,17 +1194,15 @@ f
 Q
 q
 0.95294 0.70196 0 rg
+q
 BT
 1 0 0 -1 152.25 349.4 Tm
 0 Tr
 /F1 5.25 Tf
-q
 0 0 Td
 (Thermotogae)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 /Pattern cs
@@ -1353,13 +1247,13 @@ xref
 0000000442 00000 n 
 0000000583 00000 n 
 0000000775 00000 n 
-0000015143 00000 n 
-0000015236 00000 n 
-0000015339 00000 n 
-0000015426 00000 n 
+0000014931 00000 n 
+0000015024 00000 n 
+0000015127 00000 n 
+0000015214 00000 n 
 trailer
-<</ID [<6586b43afb61b524baafd8fcc21474ac><6586b43afb61b524baafd8fcc21474ac>]/Info 3 0 R/Root 1 0 R/Size 13>>
-%iText-7.1.12-SNAPSHOT
+<</ID [<e446bce1987c88a9e9fcb632cf4e247f><e446bce1987c88a9e9fcb632cf4e247f>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-7.1.18-SNAPSHOT
 startxref
-15498
+15286
 %%EOF

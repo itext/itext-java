@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201006142334+03'00')/ModDate(D:20201006142334+03'00')/Producer(iText® 7.1.13-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808181028+03'00')/ModDate(D:20220808181028+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 525 300]/Length 352/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525 300]/Length 344/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525 300 re
 W
 n
@@ -55,37 +55,33 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (The test passes when the gradient starts at half of the text)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 90 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (I.e. the left half of the text should be red)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 525 300]/Length 117/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525 300]/Length 113/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525 300 re
 W
 n
@@ -93,17 +89,15 @@ q
 /Pattern cs
 
 /P1 scn
+q
 BT
 1 0 0 -1 7.5 52.5 Tm
 0 Tr
 /F1 37.5 Tf
-q
 0 0 Td
 (some text)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -137,16 +131,16 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
-0000001260 00000 n 
-0000001523 00000 n 
-0000001618 00000 n 
-0000001722 00000 n 
-0000001837 00000 n 
-0000001909 00000 n 
-0000001987 00000 n 
+0000001252 00000 n 
+0000001511 00000 n 
+0000001606 00000 n 
+0000001710 00000 n 
+0000001825 00000 n 
+0000001897 00000 n 
+0000001975 00000 n 
 trailer
-<</ID [<fcfaaa5e97f8a3b18f23fab3db2bda63><fcfaaa5e97f8a3b18f23fab3db2bda63>]/Info 3 0 R/Root 1 0 R/Size 16>>
-%iText-7.1.13-SNAPSHOT
+<</ID [<836effa17d74f25968e992f3be8703df><836effa17d74f25968e992f3be8703df>]/Info 3 0 R/Root 1 0 R/Size 16>>
+%iText-7.1.18-SNAPSHOT
 startxref
-2065
+2053
 %%EOF

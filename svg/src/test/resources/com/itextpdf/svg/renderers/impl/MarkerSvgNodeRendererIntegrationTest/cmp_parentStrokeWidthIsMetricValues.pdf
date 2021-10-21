@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191224161747+03'00')/ModDate(D:20191224161747+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808180358+03'00')/ModDate(D:20220808180358+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 450]/Length 1828/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R/Fm5 13 0 R/Fm6 14 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 450]/Length 1804/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R/Fm5 13 0 R/Fm6 14 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 450 re
 W
 n
@@ -62,17 +62,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1px")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -95,17 +93,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 150 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1pt")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -131,17 +127,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1mm")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -165,17 +159,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1cm")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -199,17 +191,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1pc")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -233,17 +223,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 150 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3in")Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -361,15 +349,15 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
-0000002792 00000 n 
-0000002965 00000 n 
-0000003139 00000 n 
-0000003313 00000 n 
-0000003487 00000 n 
-0000003661 00000 n 
+0000002768 00000 n 
+0000002941 00000 n 
+0000003115 00000 n 
+0000003289 00000 n 
+0000003463 00000 n 
+0000003637 00000 n 
 trailer
-<</ID [<33c3b9f06b3a657c9f315fbf9e6fe251><33c3b9f06b3a657c9f315fbf9e6fe251>]/Info 3 0 R/Root 1 0 R/Size 15>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<0932c01d5313b64102b0f2a01590c03a><0932c01d5313b64102b0f2a01590c03a>]/Info 3 0 R/Root 1 0 R/Size 15>>
+%iText-7.1.18-SNAPSHOT
 startxref
-3835
+3811
 %%EOF

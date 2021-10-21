@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219144108+03'00')/ModDate(D:20191219144108+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20220808180251+03'00')/ModDate(D:20220808180251+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +39,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 375 225]/Length 9977/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 225]/Length 9889/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 375 225 re
 W
 n
@@ -73,17 +73,15 @@ q
 h
 W
 n
+q
 BT
 1 0 0 -1 154.48 15.76 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (XY Chart)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -215,17 +213,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 114.97 219.39 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (1)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -264,17 +260,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 159.91 219.39 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (2)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -313,17 +307,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 208.76 219.39 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (3)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -377,17 +369,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 51.82 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (10)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -424,17 +414,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 88.64 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (15)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -471,17 +459,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 125.45 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (20)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -518,17 +504,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 162.27 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (25)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -565,17 +549,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 199.09 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (30)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -612,17 +594,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 235.9 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (35)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -659,17 +639,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 272.72 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (40)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -706,17 +684,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 309.54 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (45)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -753,17 +729,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 346.36 184.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (50)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -800,17 +774,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 180.21 199.21 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Category)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -847,17 +819,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 29.59 173.18 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -894,17 +864,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 24.67 150.32 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (10)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -941,17 +909,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 24.67 127.46 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (20)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -988,17 +954,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 24.67 104.6 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (30)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -1035,17 +999,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 24.67 81.75 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (40)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -1082,17 +1044,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 24.67 58.89 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (50)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -1129,17 +1089,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 24.67 36.04 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (60)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -1177,17 +1135,15 @@ h
 W
 n
 0.25098 0.25098 0.25098 rg
+q
 BT
 1 0 0 -1 -0.1425 101.77 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Score)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -1616,13 +1572,13 @@ xref
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000528 00000 n 
 0000000438 00000 n 
+0000000527 00000 n 
 0000000668 00000 n 
 0000000851 00000 n 
 trailer
-<</ID [<57a4a5b4f1d1b8c68413f1e71bd946d9><57a4a5b4f1d1b8c68413f1e71bd946d9>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<1a13c02aaa85f0035b1d6bc557bd5649><1a13c02aaa85f0035b1d6bc557bd5649>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-7.1.18-SNAPSHOT
 startxref
-10962
+10874
 %%EOF

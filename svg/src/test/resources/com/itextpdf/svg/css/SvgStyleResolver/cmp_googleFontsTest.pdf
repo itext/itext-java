@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191008170706+03'00')/ModDate(D:20191008170706+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808181035+03'00')/ModDate(D:20220808181035+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,114 +36,100 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 375]/Length 996/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 375]/Length 968/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 375 re
 W
 n
 q
 1 0 0 1 15 15 cm
 0.06667 0.06667 0.06667 rg
+q
 BT
 1 0 0 -1 0 0 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Test for google font Roboto here)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 22.5 30 cm
 0.06667 0.06667 0.06667 rg
+q
 BT
 1 0 0 -1 0 0 Tm
 0 Tr
 /F1 18 Tf
-q
 0 0 Td
 (Test for google font Tangerine here)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 30 60 cm
 0.06667 0.06667 0.06667 rg
+q
 BT
 1 0 0 -1 0 0 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Test for google font Open Sans here)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 15 75 cm
 0.06667 0.06667 0.06667 rg
+q
 BT
 1 0 0 -1 0 0 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Test for google font Eater here)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 15 90 cm
 0.06667 0.06667 0.06667 rg
+q
 BT
 1 0 0 -1 0 0 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Test for google font Lobster here)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 15 105 cm
 0.06667 0.06667 0.06667 rg
+q
 BT
 1 0 0 -1 0 0 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Test for google font Pacifico here)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 0 0 1 15 120 cm
 0.06667 0.06667 0.06667 rg
+q
 BT
 1 0 0 -1 0 0 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Test for google font Sacramento here)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -152,16 +138,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000226 00000 n 
-0000000527 00000 n 
+0000000528 00000 n 
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000437 00000 n 
-0000000578 00000 n 
-0000000761 00000 n 
+0000000438 00000 n 
+0000000579 00000 n 
+0000000762 00000 n 
 trailer
-<</ID [<bb1220d4d7f16ba4186a6a6b22fef676><bb1220d4d7f16ba4186a6a6b22fef676>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<41adca346b703280b5a4f17da2fed32f><41adca346b703280b5a4f17da2fed32f>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.18-SNAPSHOT
 startxref
-1881
+1854
 %%EOF

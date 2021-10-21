@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201002171632+03'00')/ModDate(D:20201002171632+03'00')/Producer(iText® 7.1.13-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808180357+03'00')/ModDate(D:20220808180357+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 450]/Length 3350/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm2 14 0 R/Fm3 15 0 R/Fm4 16 0 R/Fm5 17 0 R/Fm6 18 0 R/Fm7 19 0 R/Fm8 20 0 R/Fm9 21 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 450]/Length 3298/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm2 14 0 R/Fm3 15 0 R/Fm4 16 0 R/Fm5 17 0 R/Fm6 18 0 R/Fm7 19 0 R/Fm8 20 0 R/Fm9 21 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 450 re
 W
 n
@@ -61,17 +61,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (refX,Y \(0,5\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -94,17 +92,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (refX,Y \(-5,-5\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -127,17 +123,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (refX,Y \(-5,0\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -160,17 +154,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 465 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (refX,Y \(0,-5\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -193,17 +185,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0em,2em\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -226,17 +216,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0px,5px\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -259,17 +247,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0pt,5pt\) \))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -292,17 +278,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 465 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0mm,5mm\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -326,17 +310,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 615 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0ex,5ex\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -359,17 +341,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 435 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0cm,0.5cm\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -392,17 +372,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 435 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0pc,2pc\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -425,17 +403,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 435 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0%,5%\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -459,17 +435,15 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 465 435 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (refX,Y \(0in,0.1in\))Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -706,22 +680,22 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
-0000004395 00000 n 
-0000004568 00000 n 
-0000004742 00000 n 
-0000004916 00000 n 
-0000005090 00000 n 
-0000005264 00000 n 
-0000005438 00000 n 
-0000005612 00000 n 
-0000005786 00000 n 
-0000005960 00000 n 
-0000006134 00000 n 
-0000006308 00000 n 
-0000006482 00000 n 
+0000004343 00000 n 
+0000004516 00000 n 
+0000004690 00000 n 
+0000004864 00000 n 
+0000005038 00000 n 
+0000005212 00000 n 
+0000005386 00000 n 
+0000005560 00000 n 
+0000005734 00000 n 
+0000005908 00000 n 
+0000006082 00000 n 
+0000006256 00000 n 
+0000006430 00000 n 
 trailer
-<</ID [<c84c186a21e41942c91e0b8c3082c4fc><c84c186a21e41942c91e0b8c3082c4fc>]/Info 3 0 R/Root 1 0 R/Size 22>>
-%iText-7.1.13-SNAPSHOT
+<</ID [<49908484820700744d25723ea11a3480><49908484820700744d25723ea11a3480>]/Info 3 0 R/Root 1 0 R/Size 22>>
+%iText-7.1.18-SNAPSHOT
 startxref
-6656
+6604
 %%EOF

@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191127162526+03'00')/ModDate(D:20191127162526+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808180406+03'00')/ModDate(D:20220808180406+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -74,111 +74,101 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 75 75]/Length 124/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 75 75]/Length 120/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 75 75 re
 W
 n
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 0 15 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Overflow is visible for SVG element.)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 75 75]/Length 132/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 75 75]/Length 123/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 75 75 re
 W
 n
 q
 0 0 0 rg
+q
 BT
-1 0 0 -1 179.98 26.25 Tm
+1 0 0 -1 0 26.25 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Overflow is initial for SVG element.)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 75 75]/Length 130/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 75 75]/Length 121/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 75 75 re
 W
 n
 q
 0 0 0 rg
+q
 BT
-1 0 0 -1 175.98 37.5 Tm
+1 0 0 -1 0 37.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Overflow is hidden for SVG element.)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 12 0 obj
-<</BBox[0 0 75 75]/Length 131/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 75 75]/Length 122/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 75 75 re
 W
 n
 q
 0 0 0 rg
+q
 BT
-1 0 0 -1 180.64 48.75 Tm
+1 0 0 -1 0 48.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Overflow is scroll for SVG element.)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 13 0 obj
-<</BBox[0 0 75 75]/Length 126/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 75 75]/Length 117/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 75 75 re
 W
 n
 q
 0 0 0 rg
+q
 BT
-1 0 0 -1 174.64 60 Tm
+1 0 0 -1 0 60 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Overflow is auto for SVG element.)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -195,13 +185,13 @@ xref
 0000000579 00000 n 
 0000000762 00000 n 
 0000001108 00000 n 
-0000001354 00000 n 
-0000001609 00000 n 
-0000001862 00000 n 
-0000002116 00000 n 
+0000001350 00000 n 
+0000001596 00000 n 
+0000001840 00000 n 
+0000002085 00000 n 
 trailer
-<</ID [<5e230b4623fb5dcd2ea946dfcb653d84><5e230b4623fb5dcd2ea946dfcb653d84>]/Info 3 0 R/Root 1 0 R/Size 14>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<b3840727ef35f077dc6270fc318f4786><b3840727ef35f077dc6270fc318f4786>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-7.1.18-SNAPSHOT
 startxref
-2365
+2325
 %%EOF

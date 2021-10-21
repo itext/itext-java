@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191112171927+03'00')/ModDate(D:20191112171927+03'00')/Producer(iText® 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808180440+03'00')/ModDate(D:20220808180440+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -193,7 +193,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 1125 750]/Length 466/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 462/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -217,17 +217,15 @@ h
 f
 Q
 q
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -261,7 +259,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 -375 1125 1125]/Length 470/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -375 1125 1125]/Length 466/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -375 1125 1500 re
 W
 n
@@ -285,17 +283,15 @@ h
 f
 Q
 q
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -329,7 +325,7 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[-562.5 0 1687.5 750]/Length 471/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-562.5 0 1687.5 750]/Length 467/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -562.5 0 2250 750 re
 W
 n
@@ -353,17 +349,15 @@ h
 f
 Q
 q
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -397,7 +391,7 @@ Q
 endstream
 endobj
 12 0 obj
-<</BBox[-562.5 0 1687.5 750]/Length 471/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-562.5 0 1687.5 750]/Length 467/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -562.5 0 2250 750 re
 W
 n
@@ -421,17 +415,15 @@ h
 f
 Q
 q
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -465,7 +457,7 @@ Q
 endstream
 endobj
 13 0 obj
-<</BBox[0 -375 1125 1125]/Length 470/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -375 1125 1125]/Length 466/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -375 1125 1500 re
 W
 n
@@ -489,17 +481,15 @@ h
 f
 Q
 q
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -533,7 +523,7 @@ Q
 endstream
 endobj
 14 0 obj
-<</BBox[0 0 1125 750]/Length 466/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 462/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -557,17 +547,15 @@ h
 f
 Q
 q
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -601,7 +589,7 @@ Q
 endstream
 endobj
 15 0 obj
-<</BBox[0 0 1125 750]/Length 466/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 462/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -625,17 +613,15 @@ h
 f
 Q
 q
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -672,23 +658,23 @@ xref
 0 16
 0000000000 65535 f 
 0000000228 00000 n 
-0000000529 00000 n 
+0000000530 00000 n 
 0000000273 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000439 00000 n 
-0000000580 00000 n 
-0000000765 00000 n 
-0000002042 00000 n 
-0000002633 00000 n 
-0000003233 00000 n 
-0000003837 00000 n 
-0000004441 00000 n 
-0000005041 00000 n 
-0000005633 00000 n 
+0000000440 00000 n 
+0000000581 00000 n 
+0000000766 00000 n 
+0000002043 00000 n 
+0000002630 00000 n 
+0000003226 00000 n 
+0000003826 00000 n 
+0000004426 00000 n 
+0000005022 00000 n 
+0000005610 00000 n 
 trailer
-<</ID [<06a040ab3afc72d8b0c21f96dcd03c39><06a040ab3afc72d8b0c21f96dcd03c39>]/Info 3 0 R/Root 1 0 R/Size 16>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<5b8b9cda343495cd343bb4f92a8e6f2b><5b8b9cda343495cd343bb4f92a8e6f2b>]/Info 3 0 R/Root 1 0 R/Size 16>>
+%iText-7.1.18-SNAPSHOT
 startxref
-6225
+6198
 %%EOF

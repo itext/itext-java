@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219144018+03'00')/ModDate(D:20191219144018+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20220808181056+03'00')/ModDate(D:20220808181056+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +39,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 3399/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 3351/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -52,17 +52,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Lengths of dinosaurs, in meters)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -299,177 +297,155 @@ q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 121.13 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -2.63 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 207.82 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (10)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 294.52 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (20)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 381.23 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (30)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 467.92 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (40)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 554.63 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (50)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 307.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 249.3 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 191.55 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (10)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 133.8 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (15)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 76.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (20)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -494,15 +470,15 @@ xref
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000528 00000 n 
 0000000438 00000 n 
+0000000527 00000 n 
 0000000668 00000 n 
 0000000851 00000 n 
-0000004420 00000 n 
-0000004446 00000 n 
+0000004372 00000 n 
+0000004398 00000 n 
 trailer
-<</ID [<624c98650d5c218f8c4f335771a9453a><624c98650d5c218f8c4f335771a9453a>]/Info 3 0 R/Root 1 0 R/Size 12>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<35902e418774a2603976497e8b792e2d><35902e418774a2603976497e8b792e2d>]/Info 3 0 R/Root 1 0 R/Size 12>>
+%iText-7.1.18-SNAPSHOT
 startxref
-4472
+4424
 %%EOF

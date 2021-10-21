@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="24cm" height="11cm" viewBox="0 0 600 600"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+
+
+  <text fill="green" x="10" y="200">
+    Text with
+    <tspan fill="blue">
+      nested-1 tspan
+      <tspan dx="-50" dy="50">
+        nested-2 tspan
+      </tspan>
+      nested-1 after
+    </tspan>
+    inside
+  </text>
+
+</svg>
