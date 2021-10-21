@@ -272,7 +272,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     currentCanvas.clip();
                 }
                 currentCanvas.endPath();
-            } else {
+            } else if (!(this instanceof ISvgTextNodeRenderer)) {
                 if (doFill && canElementFill()) {
                     String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
 
@@ -291,10 +291,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     }
                 } else if (doStroke) {
                     currentCanvas.stroke();
-                } else if (!TextSvgBranchRenderer.class.isInstance(this)) {
+                } else {
                     currentCanvas.endPath();
                 }
-
             }
             // Marker drawing
             if (this instanceof IMarkerCapable) {
