@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20190628121952+03'00')/ModDate(D:20190628121952+03'00')/Producer(iTextÆ 7.1.7-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211025095152+03'00')/ModDate(D:20211025095152+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,9 +35,13 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 337.5 225]/Length 3918/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 337.5 225]/Length 4122/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 337.5 225 re
+W
+n
 q
 0 0 1 RG
+0.75 w
 % rect
 0.75 0.75 336 223.5 re
 S
@@ -48,7 +51,7 @@ q
 BT
 1 0 0 -1 7.5 22.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (SVG to fit)Tj
@@ -63,6 +66,7 @@ q
 q
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -110,7 +114,7 @@ q
 BT
 1 0 0 -1 7.5 82.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (Viewport 1)Tj
@@ -124,6 +128,7 @@ q
 0 0 0 rg
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -134,7 +139,7 @@ q
 BT
 1 0 0 -1 7.5 135 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (Viewport 2)Tj
@@ -148,6 +153,7 @@ q
 0 0 0 rg
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -160,7 +166,7 @@ q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (--------------- meet ---------------)Tj
@@ -172,9 +178,9 @@ Q
 q
 q
 BT
-1 0 0 -1 83.93 -7.5 Tm
+1 0 0 -1 149.21 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (xMin*)Tj
@@ -185,12 +191,13 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 36.75 21.75 re
 S
 Q
 q
-1.67 0 0 0.75 0 0 cm
+0.75 0 0 0.75 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
@@ -201,9 +208,9 @@ q
 1 0 0 1 52.5 0 cm
 q
 BT
-1 0 0 -1 18 -7.5 Tm
+1 0 0 -1 32 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (xMid*)Tj
@@ -214,12 +221,14 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 36.75 21.75 re
 S
 Q
 q
-1.67 0 0 0.75 0 0 cm
+0.75 0 0 0.75 0 0 cm
+1 0 0 1 13.75 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm2 Do
@@ -230,9 +239,9 @@ q
 1 0 0 1 0 52.5 cm
 q
 BT
-1 0 0 -1 18 -7.5 Tm
+1 0 0 -1 32 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (xMax*)Tj
@@ -243,12 +252,14 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 36.75 21.75 re
 S
 Q
 q
-1.67 0 0 0.75 0 0 cm
+0.75 0 0 0.75 0 0 cm
+1 0 0 1 27.5 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm3 Do
@@ -263,7 +274,7 @@ q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (---------- meet ----------)Tj
@@ -275,9 +286,9 @@ Q
 q
 q
 BT
-1 0 0 -1 61.45 -7.5 Tm
+1 0 0 -1 109.25 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (*YMin)Tj
@@ -288,12 +299,12 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 21.75 44.25 re
 S
 Q
 q
-1 0 0 1.5 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm4 Do
@@ -304,9 +315,9 @@ q
 1 0 0 1 37.5 0 cm
 q
 BT
-1 0 0 -1 19.5 -7.5 Tm
+1 0 0 -1 34.67 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (*YMid)Tj
@@ -317,12 +328,13 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 21.75 44.25 re
 S
 Q
 q
-1 0 0 1.5 0 0 cm
+1 0 0 1 0 7.5 cm
 q
 1 0 0 1 0 0 cm
 /Fm5 Do
@@ -333,9 +345,9 @@ q
 1 0 0 1 75 0 cm
 q
 BT
-1 0 0 -1 19.5 -7.5 Tm
+1 0 0 -1 34.67 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (*YMax)Tj
@@ -346,12 +358,13 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 21.75 44.25 re
 S
 Q
 q
-1 0 0 1.5 0 0 cm
+1 0 0 1 0 15 cm
 q
 1 0 0 1 0 0 cm
 /Fm6 Do
@@ -366,7 +379,7 @@ q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (---------- slice ----------)Tj
@@ -378,9 +391,9 @@ Q
 q
 q
 BT
-1 0 0 -1 60.7 -7.5 Tm
+1 0 0 -1 107.92 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (xMin*)Tj
@@ -391,12 +404,13 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 21.75 44.25 re
 S
 Q
 q
-1 0 0 1.5 0 0 cm
+1.5 0 0 1.5 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm7 Do
@@ -407,9 +421,9 @@ q
 1 0 0 1 37.5 0 cm
 q
 BT
-1 0 0 -1 18 -7.5 Tm
+1 0 0 -1 32 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (xMid*)Tj
@@ -420,12 +434,14 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 21.75 44.25 re
 S
 Q
 q
-1 0 0 1.5 0 0 cm
+1.5 0 0 1.5 0 0 cm
+1 0 0 1 -3.75 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm8 Do
@@ -436,9 +452,9 @@ q
 1 0 0 1 75 0 cm
 q
 BT
-1 0 0 -1 18 -7.5 Tm
+1 0 0 -1 32 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (xMax*)Tj
@@ -449,12 +465,14 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 21.75 44.25 re
 S
 Q
 q
-1 0 0 1.5 0 0 cm
+1.5 0 0 1.5 0 0 cm
+1 0 0 1 -7.5 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm9 Do
@@ -469,7 +487,7 @@ q
 BT
 1 0 0 -1 0 -22.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (--------------- slice ---------------)Tj
@@ -481,9 +499,9 @@ Q
 q
 q
 BT
-1 0 0 -1 83.18 -7.5 Tm
+1 0 0 -1 147.88 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (*YMin)Tj
@@ -494,12 +512,13 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 36.75 21.75 re
 S
 Q
 q
-1.67 0 0 0.75 0 0 cm
+1.67 0 0 1.67 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm10 Do
@@ -510,9 +529,9 @@ q
 1 0 0 1 52.5 0 cm
 q
 BT
-1 0 0 -1 19.5 -7.5 Tm
+1 0 0 -1 34.67 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (*YMid)Tj
@@ -523,12 +542,14 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 36.75 21.75 re
 S
 Q
 q
-1.67 0 0 0.75 0 0 cm
+1.67 0 0 1.67 0 0 cm
+1 0 0 1 0 -8.25 cm
 q
 1 0 0 1 0 0 cm
 /Fm11 Do
@@ -539,9 +560,9 @@ q
 1 0 0 1 105 0 cm
 q
 BT
-1 0 0 -1 19.5 -7.5 Tm
+1 0 0 -1 34.67 -7.5 Tm
 0 Tr
-/F1 6.75 Tf
+/F1 12 Tf
 q
 0 0 Td
 (*YMax)Tj
@@ -552,12 +573,14 @@ f
 Q
 q
 0 0 1 RG
+0.75 w
 % rect
 0.375 0.375 36.75 21.75 re
 S
 Q
 q
-1.67 0 0 0.75 0 0 cm
+1.67 0 0 1.67 0 0 cm
+1 0 0 1 0 -16.5 cm
 q
 1 0 0 1 0 0 cm
 /Fm12 Do
@@ -569,14 +592,15 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 0 50 30]/Length 671/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 0 50 30 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -622,14 +646,15 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 0 22.5 13.5]/Length 675/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 0 22.5 13.5 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -675,14 +700,15 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 8.25 22.5 21.75]/Length 678/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 8.25 22.5 13.5 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -728,14 +754,15 @@ Q
 endstream
 endobj
 12 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 16.5 22.5 30]/Length 678/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 16.5 22.5 13.5 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -781,14 +808,15 @@ Q
 endstream
 endobj
 13 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[-13.75 0 36.25 30]/Length 676/Resources<<>>/Subtype/Form/Type/XObject>>stream
+-13.75 0 50 30 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -834,14 +862,15 @@ Q
 endstream
 endobj
 14 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[-27.5 0 22.5 30]/Length 675/Resources<<>>/Subtype/Form/Type/XObject>>stream
+-27.5 0 50 30 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -887,14 +916,15 @@ Q
 endstream
 endobj
 15 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 0 22.5 45]/Length 673/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 0 22.5 45 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -940,14 +970,15 @@ Q
 endstream
 endobj
 16 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 -7.5 22.5 37.5]/Length 676/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 -7.5 22.5 45 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -993,14 +1024,15 @@ Q
 endstream
 endobj
 17 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 -15 22.5 30]/Length 675/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 -15 22.5 45 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1046,14 +1078,15 @@ Q
 endstream
 endobj
 18 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[0 0 15 30]/Length 671/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 0 15 30 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1099,14 +1132,15 @@ Q
 endstream
 endobj
 19 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[3.75 0 18.75 30]/Length 674/Resources<<>>/Subtype/Form/Type/XObject>>stream
+3.75 0 15 30 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1152,14 +1186,15 @@ Q
 endstream
 endobj
 20 0 obj
-<</BBox[0 0 22.5 30]/Length 666/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 22.5 30 re
+<</BBox[7.5 0 22.5 30]/Length 673/Resources<<>>/Subtype/Form/Type/XObject>>stream
+7.5 0 15 30 re
 W
 n
 q
 0 0 0 rg
 q
 1 0 0 RG
+0.75 w
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1207,29 +1242,29 @@ endobj
 xref
 0 21
 0000000000 65535 f 
-0000000226 00000 n 
-0000000527 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000517 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000437 00000 n 
-0000000578 00000 n 
-0000000763 00000 n 
-0000004954 00000 n 
-0000005726 00000 n 
-0000006499 00000 n 
-0000007272 00000 n 
-0000008045 00000 n 
-0000008818 00000 n 
-0000009591 00000 n 
-0000010364 00000 n 
-0000011137 00000 n 
-0000011910 00000 n 
-0000012683 00000 n 
-0000013456 00000 n 
+0000000427 00000 n 
+0000000568 00000 n 
+0000000753 00000 n 
+0000005148 00000 n 
+0000005923 00000 n 
+0000006707 00000 n 
+0000007498 00000 n 
+0000008286 00000 n 
+0000009075 00000 n 
+0000009861 00000 n 
+0000010641 00000 n 
+0000011429 00000 n 
+0000012213 00000 n 
+0000012989 00000 n 
+0000013774 00000 n 
 trailer
-<</ID [<f4067043b60ddb0007b608f2af6fa618><f4067043b60ddb0007b608f2af6fa618>]/Info 3 0 R/Root 1 0 R/Size 21>>
-%iText-7.1.7-SNAPSHOT
+<</ID [<2ff3cffc5d6cf8ad753468a689d9ad5a><2ff3cffc5d6cf8ad753468a689d9ad5a>]/Info 3 0 R/Root 1 0 R/Size 21>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-14229
+14556
 %%EOF
