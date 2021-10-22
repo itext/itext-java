@@ -45,8 +45,7 @@ package com.itextpdf.styledxmlparser.css.parse.syntax;
 /**
  * {@link IParserState} implementation for the block state.
  */
-// TODO rename to BLOCK
-class PropertiesState implements IParserState {
+class BlockState implements IParserState {
 
     /**
      * The state machine that parses the CSS.
@@ -54,11 +53,11 @@ class PropertiesState implements IParserState {
     private CssParserStateController controller;
 
     /**
-     * Creates a new {@link PropertiesState} instance.
+     * Creates a new {@link BlockState} instance.
      *
      * @param controller the state machine that parses the CSS
      */
-    PropertiesState(CssParserStateController controller) {
+    BlockState(CssParserStateController controller) {
         this.controller = controller;
     }
 
