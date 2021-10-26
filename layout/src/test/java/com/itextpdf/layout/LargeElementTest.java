@@ -149,6 +149,95 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void largeTableWithEmptyLastRowTest() throws IOException, InterruptedException {
+        String testName = "largeTableWithEmptyLastRowTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(5), true);
+
+        doc.add(table);
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 5; j++) {
+                table.addCell(new Cell().add(new Paragraph(MessageFormatUtil.format("Cell {0}, {1}", i + 1, j + 1))));
+            }
+            if (i % 10 == 0) {
+                table.flush();
+            }
+        }
+        table.startNewRow();
+        table.complete();
+        doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().setBorder(new SolidBorder(ColorConstants.ORANGE, 2)).addCell("Is my occupied area correct?"));
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+   @Test
+    //TODO DEVSIX-6025 Unexpected NPE, when trying to flush after starting new row
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
+    })
+    public void flushingLargeTableAfterStartingNewRowTest() throws IOException, InterruptedException {
+        String testName = "flushingLargeTableAfterStartingNewRowTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(5), true);
+
+        doc.add(table);
+
+        table.addCell(new Cell().add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+        table.startNewRow();
+        Assert.assertThrows(NullPointerException.class, () -> table.flush());
+        table.complete();
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void largeTableWithCollapsedFooterTest() throws IOException, InterruptedException {
+        String testName = "largeTableWithCollapsedFooterTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(5), true);
+
+        doc.add(table);
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 5; j++) {
+                table.addCell(new Cell().add(new Paragraph(MessageFormatUtil.format("Cell {0}, {1}", i + 1, j + 1))));
+            }
+            if (i % 10 == 0) {
+                table.flush();
+            }
+        }
+        table.startNewRow();
+        Cell cell = new Cell(1, 5).add(new Paragraph("Collapsed footer"));
+        table.addFooterCell(cell);
+        table.complete();
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void largeTableWithHeaderFooterTest01A() throws IOException, InterruptedException {
         String testName = "largeTableWithHeaderFooterTest01A.pdf";
         String outFileName = destinationFolder + testName;
