@@ -3294,7 +3294,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO: update assertion DEVSIX-5983
     public void tableRelayoutTest() {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document doc = new Document(pdfDoc)) {
@@ -3306,7 +3305,7 @@ public class TableTest extends AbstractTableTest {
         table.setFixedLayout();
         Cell cell = new Cell();
         cell.setWidth(width);
-        cell.add(new Paragraph("Testing, FinancialProfessional Associate atgeorgewashington.gmail.com"));
+        cell.add(new Paragraph("Testing, FinancialProfessional Associate adasdasdasdasada.gmail.com"));
         table.addCell(cell);
         
         LayoutResult result = table.createRendererSubTree().setParent(doc.getRenderer())
@@ -3320,7 +3319,7 @@ public class TableTest extends AbstractTableTest {
 
         Rectangle tableRectRelayout = result.getOccupiedArea().getBBox();
 
-        Assert.assertFalse(tableRect.equalsWithEpsilon(tableRectRelayout));
+        Assert.assertTrue(tableRect.equalsWithEpsilon(tableRectRelayout));
         }
     }
 
