@@ -49,6 +49,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -81,6 +82,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -3289,6 +3291,37 @@ public class TableTest extends AbstractTableTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
                 sourceFolder + "cmp_" + fileName, destinationFolder));
+    }
+
+    @Test
+    // TODO: update assertion DEVSIX-5983
+    public void tableRelayoutTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document doc = new Document(pdfDoc)) {
+
+        float width = 142f;
+
+        Table table = new Table(1);
+        table.setWidth(width);
+        table.setFixedLayout();
+        Cell cell = new Cell();
+        cell.setWidth(width);
+        cell.add(new Paragraph("Testing, FinancialProfessional Associate atgeorgewashington.gmail.com"));
+        table.addCell(cell);
+        
+        LayoutResult result = table.createRendererSubTree().setParent(doc.getRenderer())
+                .layout(new LayoutContext(new LayoutArea(1,
+                        new Rectangle(0, 0, 10000, 10000.0F))));
+
+        Rectangle tableRect = result.getOccupiedArea().getBBox();
+
+        result = table.createRendererSubTree().setParent(doc.getRenderer()).layout(new LayoutContext(
+                new LayoutArea(1, new Rectangle(0, 0, 10000, 10000.0F))));
+
+        Rectangle tableRectRelayout = result.getOccupiedArea().getBBox();
+
+        Assert.assertFalse(tableRect.equalsWithEpsilon(tableRectRelayout));
+        }
     }
 
     private static class RotatedDocumentRenderer extends DocumentRenderer {
