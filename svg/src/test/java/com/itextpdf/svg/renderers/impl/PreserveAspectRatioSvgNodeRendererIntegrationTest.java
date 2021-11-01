@@ -42,14 +42,14 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
+import com.itextpdf.styledxmlparser.LogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
-
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -67,127 +67,136 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
 
     @Test
     public void aspectRatioPreservationMidXMidYMeetMinimalTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "aspectRatioPreservationMidXMidYMeetMinimalTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "MidXMidYMeetMinimalTest");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectDefaultAll() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxScalingTestPreserveAspectDefaultAll");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"PreserveAspectDefaultAll");
     }
 
     @Test
-    public void viewBoxWithoutSetPreserveAspectRatio() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxWithoutSetPreserveAspectRatio");
+    public void viewBoxWithoutSetPreserveAspectRatioTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatio");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 19)
+    })
+    public void differentAspectRatiosTest() throws IOException, InterruptedException {
+        //TODO: update cmp_ when DEVSIX-2250 fixed
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "differentAspectRatios");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectDefaultAllGroup() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectDefaultAllGroup");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectDefaultAllGroup");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspectMin() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestDoNotPreserveAspectMin");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "DoNotPreserveAspectMin");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspectAll() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestDoNotPreserveAspectAll");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "DoNotPreserveAspectAll");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspectMetricDimensionsMin() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestDoNotPreserveAspectMetricDimensionsMin");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "DoNotPreserveAspectMetricDimensionsMin");
     }
 
     @Test
     public void viewBoxScalingTestDoNotPreserveAspectMetricDimensionsAll() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestDoNotPreserveAspectMetricDimensionsAll");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "DoNotPreserveAspectMetricDimensionsAll");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectRatioXMinYMinMeetScaling() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectRatioXMinYMinMeetScaling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatioXMinYMinMeetScaling");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectRatioXMinYMidMeetScaling() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectRatioXMinYMidMeetScaling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatioXMinYMidMeetScaling");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectRatioXMinYMaxMeetScaling() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectRatioXMinYMaxMeetScaling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatioXMinYMaxMeetScaling");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectRatioXMidYMinMeetScaling() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectRatioXMidYMinMeetScaling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatioXMidYMinMeetScaling");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectRatioXMidYMaxMeetScaling() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectRatioXMidYMaxMeetScaling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatioXMidYMaxMeetScaling");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectRatioXMaxYMinMeetScaling() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectRatioXMaxYMinMeetScaling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatioXMaxYMinMeetScaling");
     }
 
     @Test
     public void viewBoxScalingTestPreserveAspectRatioXMaxYMidMeetScaling() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxScalingTestPreserveAspectRatioXMaxYMidMeetScaling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "PreserveAspectRatioXMaxYMidMeetScaling");
     }
 
     @Test
     public void viewBoxTranslationTestInnerZeroCoordinatesViewBox() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxTranslationTestInnerZeroCoordinatesViewBox");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "InnerZeroCoordinatesViewBox");
     }
 
     @Test
     public void viewBoxTranslationTestOuterZeroCoordinatesViewBox() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxTranslationTestOuterZeroCoordinatesViewBox");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "OuterZeroCoordinatesViewBox");
     }
 
     @Test
     public void viewBoxTranslationTestMultipleViewBoxes() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxTranslationTestMultipleViewBoxes");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "MultipleViewBoxes");
     }
 
     @Test
     //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed 
     public void svgTranslationYMinMeetTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMinMeetTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMinMeet");
     }
 
     @Test
     //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationYMidMeetTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMidMeetTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMidMeet");
     }
 
     @Test
     //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationYMaxMeetTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMaxMeetTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMaxMeet");
     }
 
     @Test
     //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationXMinMeetTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMinMeetTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMinMeet");
     }
 
     @Test
     //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationXMidMeetTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMidMeetTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMidMeet");
     }
 
     @Test
     //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationXMaxMeetTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMaxMeetTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMaxMeet");
     }
 }
