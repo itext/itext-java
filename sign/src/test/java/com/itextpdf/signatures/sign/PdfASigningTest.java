@@ -42,6 +42,7 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -61,6 +62,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -126,6 +128,22 @@ public class PdfASigningTest extends ExtendedITextTest {
         Assert.assertNull(SignaturesCompareTool.compareSignatures(dest, sourceFolder + "cmp_" + fileName));
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(67, 575, 155, 15))));
+    }
+
+    @Test
+    public void signingPdfA2DocumentTest() throws IOException, GeneralSecurityException {
+        String src = sourceFolder + "simplePdfA2Document.pdf";
+        String out = destinationFolder + "signedPdfA2Document.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(src));
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(out), new StampingProperties());
+        signer.setFieldLockDict(new PdfSigFieldLock());
+        signer.setCertificationLevel(PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new VeraPdfValidator().validate(out));
     }
 
 
