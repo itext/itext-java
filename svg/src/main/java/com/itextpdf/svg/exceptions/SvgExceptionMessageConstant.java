@@ -88,6 +88,7 @@ public final class SvgExceptionMessageConstant {
             "Points attribute {0} on polyline tag does not contain a valid set of points";
     public static final String QUADRATIC_CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 =
             "(x1 y1 x y)+ parameters are expected for quadratic curves. Got: {0}";
+    @Deprecated
     public static final String RENDERER_WITHOUT_OBJECT_BOUNDING_BOX = "The renderer has no object bounding box.";
     public static final String ROOT_SVG_NO_BBOX = "The root svg tag needs to have a bounding box defined.";
     public static final String TAG_PARAMETER_NULL = "Tag parameter must not be null";

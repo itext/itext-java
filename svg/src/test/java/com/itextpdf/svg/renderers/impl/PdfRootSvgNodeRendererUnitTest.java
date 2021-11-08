@@ -22,30 +22,21 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfRootSvgNodeRendererUnitTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void noObjectBoundingBoxTest() {
         ISvgNodeRenderer subTreeRoot = new SvgTagSvgNodeRenderer();
         PdfRootSvgNodeRenderer renderer = new PdfRootSvgNodeRenderer(subTreeRoot);
-
-        junitExpectedException.expect(UnsupportedOperationException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
-
-        renderer.getObjectBoundingBox(null);
+        Assert.assertNull(renderer.getObjectBoundingBox(null));
     }
 }

@@ -125,4 +125,9 @@ public class GroupSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void multipleTransformationsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleTransformations");
     }
+
+    @Test
+    public void fillGradientTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fillGradient");
+    }
 }

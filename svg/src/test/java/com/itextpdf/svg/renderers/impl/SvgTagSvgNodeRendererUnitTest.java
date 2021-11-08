@@ -48,24 +48,17 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
-
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void calculateNestedViewportSameAsParentTest() {
@@ -73,7 +66,8 @@ public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
 
         SvgDrawContext context = new SvgDrawContext(null, null);
 
-        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
+        PdfDocument document = new PdfDocument(
+                new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0)));
         document.addNewPage();
         PdfFormXObject pdfForm = new PdfFormXObject(expected);
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
@@ -90,7 +84,7 @@ public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void equalsOtherObjectNegativeTest(){
+    public void equalsOtherObjectNegativeTest() {
         SvgTagSvgNodeRenderer one = new SvgTagSvgNodeRenderer();
         CircleSvgNodeRenderer two = new CircleSvgNodeRenderer();
         Assert.assertFalse(one.equals(two));
@@ -99,10 +93,6 @@ public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
     @Test
     public void noObjectBoundingBoxTest() {
         SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
-
-        junitExpectedException.expect(UnsupportedOperationException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
-
-        renderer.getObjectBoundingBox(null);
+        Assert.assertNull(renderer.getObjectBoundingBox(null));
     }
 }

@@ -85,6 +85,9 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     @Override
     public Color createColor(SvgDrawContext context, Rectangle objectBoundingBox, float objectBoundingBoxMargin,
             float parentOpacity) {
+        if (objectBoundingBox == null) {
+            return null;
+        }
         if (!context.pushPatternId(getAttribute(Attributes.ID))) {
             // this means that pattern is cycled
             return null;
@@ -100,7 +103,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+        return null;
     }
 
     private PdfPattern.Tiling createTilingPattern(SvgDrawContext context,

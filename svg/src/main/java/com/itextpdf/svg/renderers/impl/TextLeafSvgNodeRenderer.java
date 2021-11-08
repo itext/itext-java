@@ -123,7 +123,7 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+        return null;
     }
 
     @Override
