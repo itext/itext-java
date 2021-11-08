@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115040+03'00')/ModDate(D:20211018115040+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174744+03'00')/ModDate(D:20211108174744+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 412.5 300]/Length 3300/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 412.5 300]/Length 3256/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 412.5 300 re
 W
 n
@@ -51,17 +51,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 78.75 42.15 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (My Average Day)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -91,17 +89,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 65.4 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Work)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -126,17 +122,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 79.65 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Eat)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -161,17 +155,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 93.9 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (TV)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -196,17 +188,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 108.15 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Gym)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -231,17 +221,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 122.4 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Sleep)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -272,17 +260,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 193.61 125.69 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (33.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -300,17 +286,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 189.3 195.83 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (8.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -329,17 +313,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 95.89 125.69 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (33.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -357,17 +339,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 105.45 195.83 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (8.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -385,17 +365,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 144.75 217.97 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (16.7%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -437,16 +415,16 @@ xref
 0000000516 00000 n 
 0000000657 00000 n 
 0000000842 00000 n 
-0000004369 00000 n 
-0000004395 00000 n 
-0000004421 00000 n 
-0000004447 00000 n 
-0000004473 00000 n 
-0000004499 00000 n 
-0000004525 00000 n 
+0000004325 00000 n 
+0000004351 00000 n 
+0000004377 00000 n 
+0000004403 00000 n 
+0000004429 00000 n 
+0000004455 00000 n 
+0000004481 00000 n 
 trailer
-<</ID [<4c93e580bd98bb91ec27f218624f5f6e><4c93e580bd98bb91ec27f218624f5f6e>]/Info 3 0 R/Root 1 0 R/Size 17>>
+<</ID [<36d90a139b1e11cedc0f64c7b4f06100><36d90a139b1e11cedc0f64c7b4f06100>]/Info 3 0 R/Root 1 0 R/Size 17>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-4551
+4507
 %%EOF

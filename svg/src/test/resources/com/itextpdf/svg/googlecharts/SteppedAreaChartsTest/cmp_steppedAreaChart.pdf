@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115102+03'00')/ModDate(D:20211018115102+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174759+03'00')/ModDate(D:20211108174759+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -41,7 +41,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 675 375]/Length 4140/Resources<</ExtGState<</Gs1 11 0 R/Gs10 12 0 R/Gs11 13 0 R/Gs12 14 0 R/Gs13 15 0 R/Gs14 16 0 R/Gs2 17 0 R/Gs3 18 0 R/Gs4 19 0 R/Gs5 20 0 R/Gs6 21 0 R/Gs7 22 0 R/Gs8 23 0 R/Gs9 24 0 R>>/Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 4072/Resources<</ExtGState<</Gs1 11 0 R/Gs10 12 0 R/Gs11 13 0 R/Gs12 14 0 R/Gs13 15 0 R/Gs14 16 0 R/Gs2 17 0 R/Gs3 18 0 R/Gs4 19 0 R/Gs5 20 0 R/Gs6 21 0 R/Gs7 22 0 R/Gs8 23 0 R/Gs9 24 0 R>>/Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -54,17 +54,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (The decline of 'The 39 Steps')Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -94,17 +92,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 590.25 80.93 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (IMDB)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -125,31 +121,27 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 590.25 98.18 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Rotten)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 590.25 111.68 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Tomatoes)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -361,187 +353,163 @@ q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 175.31 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -36.59 0 Td
 (Alfred Hitchcock)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 175.31 332.92 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -14 0 Td
 (\(1935\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 283.69 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -30.77 0 Td
 (Ralph Thomas)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 283.69 332.92 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -14 0 Td
 (\(1959\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 392.06 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -37.91 0 Td
 (Don Sharp \(1978\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 500.44 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -28.43 0 Td
 (James Hawes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 500.44 332.92 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -14 0 Td
 (\(2008\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 307.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 249.3 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 191.55 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (10)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 133.8 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (15)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 76.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (20)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -552,17 +520,15 @@ q
 q
 0 -1 1 0 -135.07 240.68 cm
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 52.8 187.88 Tm
 0 Tr
 /F3 10.5 Tf
-q
 -42.72 0 Td
 (Accumulated Rating)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -638,23 +604,23 @@ xref
 0000000606 00000 n 
 0000000748 00000 n 
 0000000932 00000 n 
-0000005389 00000 n 
-0000005415 00000 n 
-0000005443 00000 n 
-0000005471 00000 n 
-0000005499 00000 n 
-0000005527 00000 n 
-0000005553 00000 n 
-0000005579 00000 n 
-0000005605 00000 n 
-0000005631 00000 n 
-0000005657 00000 n 
-0000005685 00000 n 
-0000005713 00000 n 
-0000005741 00000 n 
+0000005321 00000 n 
+0000005347 00000 n 
+0000005375 00000 n 
+0000005403 00000 n 
+0000005431 00000 n 
+0000005459 00000 n 
+0000005485 00000 n 
+0000005511 00000 n 
+0000005537 00000 n 
+0000005563 00000 n 
+0000005589 00000 n 
+0000005617 00000 n 
+0000005645 00000 n 
+0000005673 00000 n 
 trailer
-<</ID [<6b669de3ee77f53f224609118571309e><6b669de3ee77f53f224609118571309e>]/Info 3 0 R/Root 1 0 R/Size 25>>
+<</ID [<f6e7498a388f7ca19a2f5d948ebdf80b><f6e7498a388f7ca19a2f5d948ebdf80b>]/Info 3 0 R/Root 1 0 R/Size 25>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-5769
+5701
 %%EOF

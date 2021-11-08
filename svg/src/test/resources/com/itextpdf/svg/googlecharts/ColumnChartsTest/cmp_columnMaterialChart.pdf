@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018114942+03'00')/ModDate(D:20211018114942+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174704+03'00')/ModDate(D:20211108174704+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 375]/Length 6970/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 375]/Length 6902/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 375 re
 W
 n
@@ -52,31 +52,27 @@ B
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 0 11.19 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Company Performance)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.74118 0.74118 0.74118 rg
+q
 BT
 1 0 0 -1 0 27 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Sales, Expenses, and Profit: 2014-2017)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.25882 0.52157 0.95686 rg
@@ -96,17 +92,15 @@ f
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 548.58 73.83 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Sales)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.85882 0.26667 0.21569 rg
@@ -126,17 +120,15 @@ f
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 548.58 100.22 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Expenses)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95686 0.70588 0 rg
@@ -156,17 +148,15 @@ f
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 548.58 126.61 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Profit)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -490,171 +480,147 @@ q
 0 0 0 rg
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 74.45 347.43 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (2014)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 200.82 347.43 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (2015)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 327.18 347.43 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (2016)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 453.55 347.43 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (2017)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.25882 0.25882 0.25882 rg
+q
 BT
 1 0 0 -1 264 372.12 Tm
 0 Tr
 /F1 9 Tf
-q
 -8.91 0 Td
 (Year)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 19.88 337.33 Tm
 0 Tr
 /F1 9 Tf
-q
 -5.05 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 19.88 292.09 Tm
 0 Tr
 /F1 9 Tf
-q
 -15.16 0 Td
 (200)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 19.88 246.83 Tm
 0 Tr
 /F1 9 Tf
-q
 -15.16 0 Td
 (400)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 19.88 201.58 Tm
 0 Tr
 /F1 9 Tf
-q
 -15.16 0 Td
 (600)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 19.88 156.34 Tm
 0 Tr
 /F1 9 Tf
-q
 -15.16 0 Td
 (800)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 19.88 111.08 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.7 0 Td
 (1K)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 19.88 65.83 Tm
 0 Tr
 /F1 9 Tf
-q
 -18.12 0 Td
 (1.2K)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -686,11 +652,11 @@ xref
 0000000427 00000 n 
 0000000568 00000 n 
 0000000751 00000 n 
-0000007881 00000 n 
-0000007906 00000 n 
+0000007813 00000 n 
+0000007838 00000 n 
 trailer
-<</ID [<e099dbe5a3ae2b89eab1399e384d9fb6><e099dbe5a3ae2b89eab1399e384d9fb6>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<0f1473a93cb2cee36c4ec2aa71ae62dd><0f1473a93cb2cee36c4ec2aa71ae62dd>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-7932
+7864
 %%EOF

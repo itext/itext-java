@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115315+03'00')/ModDate(D:20211018115315+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174902+03'00')/ModDate(D:20211108174902+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 750]/Length 2920/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 750]/Length 2824/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 750 re
 W
 n
@@ -48,31 +48,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 123.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Line element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -83,31 +79,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 123.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Line element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -118,31 +110,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 123.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Line element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
@@ -154,31 +142,27 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 292.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 303.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Polyline element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
@@ -190,31 +174,27 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 277.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polyline element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
@@ -226,31 +206,27 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 303.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polyline element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -263,31 +239,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 412.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 423.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polygon element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -300,31 +272,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 412.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 423.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polygon element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -338,31 +306,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 412.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 423.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polygon element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -375,31 +339,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 562.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 573.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Path element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -412,31 +372,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 562.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 573.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Path element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -449,31 +405,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 562.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 573.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Path element)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -490,8 +442,8 @@ xref
 0000000568 00000 n 
 0000000751 00000 n 
 trailer
-<</ID [<e32b031b6706f6f313a1ca2e541cf7a9><e32b031b6706f6f313a1ca2e541cf7a9>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<14e910a6f751d1ecd272ae152fbad6ed><14e910a6f751d1ecd272ae152fbad6ed>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-3796
+3700
 %%EOF

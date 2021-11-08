@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211103110558+03'00')/ModDate(D:20211103110558+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108175024+03'00')/ModDate(D:20211108175024+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -56,8 +56,8 @@ q
 BT
 1 0 0 -1 75 56.25 Tm
 2 Tr
-0 0 Td
 /F1 45 Tf
+0 0 Td
 (Normal text)Tj
 ET
 Q
@@ -67,8 +67,8 @@ q
 BT
 1 0 0 -1 75 123.75 Tm
 2 Tr
-0 0 Td
 /F1 45 Tf
+0 0 Td
 (Text with line-through)Tj
 ET
 Q
@@ -78,8 +78,8 @@ q
 BT
 1 0 0 -1 75 191.25 Tm
 2 Tr
-0 0 Td
 /F1 45 Tf
+0 0 Td
 (Underlined text)Tj
 ET
 Q
@@ -89,10 +89,10 @@ q
 BT
 1 0 0 -1 75 258.75 Tm
 2 Tr
+/F1 45 Tf
 2 Tr
 /F1 45 Tf
 0 0 Td
-/F1 45 Tf
 (Each)Tj
 ET
 Q
@@ -100,12 +100,12 @@ q
 BT
 1 0 0 -1 75 258.75 Tm
 2 Tr
-2 Tr
-/F1 45 Tf
-89.96 0 Td
 /F1 45 Tf
 1 1 0 rg
 0.50196 0 0.50196 RG
+2 Tr
+/F1 45 Tf
+89.96 0 Td
 (word)Tj
 ET
 Q
@@ -113,12 +113,12 @@ q
 BT
 1 0 0 -1 75 258.75 Tm
 2 Tr
-2 Tr
-/F1 45 Tf
-182.43 0 Td
 /F1 45 Tf
 1 1 0 rg
 0 0 0 RG
+2 Tr
+/F1 45 Tf
+182.43 0 Td
 (has)Tj
 ET
 Q
@@ -126,12 +126,12 @@ q
 BT
 1 0 0 -1 75 258.75 Tm
 2 Tr
-2 Tr
-/F1 45 Tf
-242.41 0 Td
 /F1 45 Tf
 1 1 0 rg
 0 0.39216 0 RG
+2 Tr
+/F1 45 Tf
+242.41 0 Td
 (different)Tj
 ET
 Q
@@ -139,12 +139,12 @@ q
 BT
 1 0 0 -1 75 258.75 Tm
 2 Tr
-2 Tr
-/F1 45 Tf
-397.35 0 Td
 /F1 45 Tf
 1 1 0 rg
 0 0 1 RG
+2 Tr
+/F1 45 Tf
+397.35 0 Td
 (underlining)Tj
 ET
 Q
@@ -165,7 +165,7 @@ xref
 0000000580 00000 n 
 0000000799 00000 n 
 trailer
-<</ID [<794323d80e83b0367d5b8b5e2cb2319f><794323d80e83b0367d5b8b5e2cb2319f>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<60b1464ceb3a116cf1c42f958af7342d><60b1464ceb3a116cf1c42f958af7342d>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
 1774

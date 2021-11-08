@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018120113+03'00')/ModDate(D:20211018120113+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108175017+03'00')/ModDate(D:20211108175017+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -156,7 +156,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 1125 750]/Length 243/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 239/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -179,23 +179,21 @@ f
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit - no aspect preservation)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 10 0 obj
-<</BBox[0 750 1125 1500]/Length 262/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 750 1125 1500]/Length 258/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 750 1125 750 re
 W
 n
@@ -219,23 +217,21 @@ f
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit - no aspect preservation)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 11 0 obj
-<</BBox[0 1500 1125 2250]/Length 264/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 1500 1125 2250]/Length 260/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 1500 1125 750 re
 W
 n
@@ -259,23 +255,21 @@ f
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit - no aspect preservation)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 12 0 obj
-<</BBox[0 4500 1125 5250]/Length 264/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 4500 1125 5250]/Length 260/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 4500 1125 750 re
 W
 n
@@ -299,23 +293,21 @@ f
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit - no aspect preservation)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 13 0 obj
-<</BBox[0 1312.5 1125 2062.5]/Length 268/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 1312.5 1125 2062.5]/Length 264/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 1312.5 1125 750 re
 W
 n
@@ -339,23 +331,21 @@ f
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit - no aspect preservation)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 14 0 obj
-<</BBox[0 8250 1125 9000]/Length 264/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 8250 1125 9000]/Length 260/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 8250 1125 750 re
 W
 n
@@ -379,23 +369,21 @@ f
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit - no aspect preservation)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 15 0 obj
-<</BBox[0 2250 1125 3000]/Length 264/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 2250 1125 3000]/Length 260/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 2250 1125 750 re
 W
 n
@@ -419,17 +407,15 @@ f
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 450 Tm
 0 Tr
 /F1 150 Tf
-q
 0 0 Td
 (Stretch to fit - no aspect preservation)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -446,15 +432,15 @@ xref
 0000000570 00000 n 
 0000000755 00000 n 
 0000001777 00000 n 
-0000002145 00000 n 
-0000002536 00000 n 
-0000002930 00000 n 
-0000003324 00000 n 
-0000003726 00000 n 
-0000004120 00000 n 
+0000002141 00000 n 
+0000002528 00000 n 
+0000002918 00000 n 
+0000003308 00000 n 
+0000003706 00000 n 
+0000004096 00000 n 
 trailer
-<</ID [<561ca71f1993b5607e9500fbd406ad5b><561ca71f1993b5607e9500fbd406ad5b>]/Info 3 0 R/Root 1 0 R/Size 16>>
+<</ID [<286fcde3d454f9a04d1cfe2f0f46bde3><286fcde3d454f9a04d1cfe2f0f46bde3>]/Info 3 0 R/Root 1 0 R/Size 16>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-4514
+4486
 %%EOF

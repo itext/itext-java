@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115105+03'00')/ModDate(D:20211018115105+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174801+03'00')/ModDate(D:20211108174801+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 150]/Length 2036/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 150]/Length 2004/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 150 re
 W
 n
@@ -149,45 +149,39 @@ S
 Q
 q
 0.30196 0.30196 0.30196 rg
+q
 BT
 1 0 0 -1 15 18.78 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -4.88 0 Td
 (1)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.30196 0.30196 0.30196 rg
+q
 BT
 1 0 0 -1 15 49.53 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -4.88 0 Td
 (2)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.30196 0.30196 0.30196 rg
+q
 BT
 1 0 0 -1 15 80.27 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -4.88 0 Td
 (3)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.60392 0.60392 0.60392 RG
@@ -200,30 +194,26 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 44.28 108.02 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -9.75 0 Td
 (1790)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 334.17 108.02 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -9.75 0 Td
 (1800)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -239,17 +229,15 @@ f
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 32.25 18.52 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (George Washington)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.85882 0.26667 0.21569 rg
@@ -259,17 +247,15 @@ f
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 258.92 49.27 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (John Adams)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.95686 0.70588 0 rg
@@ -279,17 +265,15 @@ f
 Q
 q
 0.12549 0.12549 0.12549 rg
+q
 BT
 1 0 0 -1 374.81 80.01 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Thomas Jefferson)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -319,8 +303,8 @@ xref
 0000000568 00000 n 
 0000000751 00000 n 
 trailer
-<</ID [<41ef8e05e9f712b4d40a7e74b94287f1><41ef8e05e9f712b4d40a7e74b94287f1>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<24c274d2161eff60d174caa8afe49859><24c274d2161eff60d174caa8afe49859>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-2912
+2880
 %%EOF

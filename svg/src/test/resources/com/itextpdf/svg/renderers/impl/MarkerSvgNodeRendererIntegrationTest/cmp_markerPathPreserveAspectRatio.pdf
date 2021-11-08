@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115713+03'00')/ModDate(D:20211018115713+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174934+03'00')/ModDate(D:20211108174934+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 450]/Length 12042/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 450]/Length 12018/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 450 re
 W
 n
@@ -49,17 +49,15 @@ q
 S
 Q
 q
+q
 BT
 1 0 0 -1 15 37.5 Tm
 0 Tr
 /F1 18.75 Tf
-q
 0 0 Td
 (PA: none)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.70711 -0.70711 0.70711 0.70711 187.5 75 cm
@@ -301,17 +299,15 @@ q
 S
 Q
 q
+q
 BT
 1 0 0 -1 15 37.5 Tm
 0 Tr
 /F1 18.75 Tf
-q
 0 0 Td
 (PA: MinXMinY meet)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.70711 -0.70711 0.70711 0.70711 187.5 75 cm
@@ -553,17 +549,15 @@ q
 S
 Q
 q
+q
 BT
 1 0 0 -1 15 37.5 Tm
 0 Tr
 /F1 18.75 Tf
-q
 0 0 Td
 (PA: MidXMidY meet)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.70711 -0.70711 0.70711 0.70711 187.5 75 cm
@@ -806,17 +800,15 @@ q
 S
 Q
 q
+q
 BT
 1 0 0 -1 15 18.75 Tm
 0 Tr
 /F1 18.75 Tf
-q
 0 0 Td
 (PA: none)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.70711 0.70711 -0.70711 0.70711 187.5 75 cm
@@ -1058,17 +1050,15 @@ q
 S
 Q
 q
+q
 BT
 1 0 0 -1 15 18.75 Tm
 0 Tr
 /F1 18.75 Tf
-q
 0 0 Td
 (PA: MinXMinY meet)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.70711 0.70711 -0.70711 0.70711 187.5 75 cm
@@ -1310,17 +1300,15 @@ q
 S
 Q
 q
+q
 BT
 1 0 0 -1 15 18.75 Tm
 0 Tr
 /F1 18.75 Tf
-q
 0 0 Td
 (PA: MidXMidY meet)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.70711 0.70711 -0.70711 0.70711 187.5 75 cm
@@ -3018,21 +3006,21 @@ xref
 0000000427 00000 n 
 0000000568 00000 n 
 0000000751 00000 n 
-0000013065 00000 n 
-0000014198 00000 n 
-0000015330 00000 n 
-0000016462 00000 n 
-0000017604 00000 n 
-0000018738 00000 n 
-0000019870 00000 n 
-0000021002 00000 n 
-0000022134 00000 n 
-0000023276 00000 n 
-0000024410 00000 n 
-0000025544 00000 n 
+0000013041 00000 n 
+0000014174 00000 n 
+0000015306 00000 n 
+0000016438 00000 n 
+0000017580 00000 n 
+0000018714 00000 n 
+0000019846 00000 n 
+0000020978 00000 n 
+0000022110 00000 n 
+0000023252 00000 n 
+0000024386 00000 n 
+0000025520 00000 n 
 trailer
-<</ID [<75719b4e2aa6de8639bcedfb96617815><75719b4e2aa6de8639bcedfb96617815>]/Info 3 0 R/Root 1 0 R/Size 21>>
+<</ID [<85297e5cb38d7f42d88e86291160889f><85297e5cb38d7f42d88e86291160889f>]/Info 3 0 R/Root 1 0 R/Size 21>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-26676
+26652
 %%EOF

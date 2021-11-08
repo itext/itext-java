@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115009+03'00')/ModDate(D:20211018115009+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174722+03'00')/ModDate(D:20211108174722+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 337.5 150]/Length 3955/Resources<</ExtGState<</Gs1 9 0 R/Gs10 10 0 R/Gs11 11 0 R/Gs2 12 0 R/Gs3 13 0 R/Gs4 14 0 R/Gs5 15 0 R/Gs6 16 0 R/Gs7 17 0 R/Gs8 18 0 R/Gs9 19 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 337.5 150]/Length 3927/Resources<</ExtGState<</Gs1 9 0 R/Gs10 10 0 R/Gs11 11 0 R/Gs2 12 0 R/Gs3 13 0 R/Gs4 14 0 R/Gs5 15 0 R/Gs6 16 0 R/Gs7 17 0 R/Gs8 18 0 R/Gs9 19 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 337.5 150 re
 W
 n
@@ -65,17 +65,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 229.5 35.51 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Business)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -100,17 +98,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 229.5 49.01 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Education)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -135,45 +131,39 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 229.5 62.51 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Social)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 229.5 73.01 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Sciences &)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 229.5 83.51 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (History)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -198,17 +188,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 229.5 97.01 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Health)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -233,17 +221,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 229.5 110.51 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (Psychology)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -461,20 +447,20 @@ xref
 0000000427 00000 n 
 0000000568 00000 n 
 0000000753 00000 n 
-0000004971 00000 n 
+0000004943 00000 n 
+0000004968 00000 n 
 0000004996 00000 n 
 0000005024 00000 n 
-0000005052 00000 n 
-0000005078 00000 n 
-0000005104 00000 n 
-0000005130 00000 n 
-0000005156 00000 n 
+0000005050 00000 n 
+0000005076 00000 n 
+0000005102 00000 n 
+0000005128 00000 n 
+0000005154 00000 n 
 0000005182 00000 n 
 0000005210 00000 n 
-0000005238 00000 n 
 trailer
-<</ID [<c97149a05b8c65f61c12db7ab1857539><c97149a05b8c65f61c12db7ab1857539>]/Info 3 0 R/Root 1 0 R/Size 20>>
+<</ID [<afd0da48abe2ad9c2fb27669fc940895><afd0da48abe2ad9c2fb27669fc940895>]/Info 3 0 R/Root 1 0 R/Size 20>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-5266
+5238
 %%EOF

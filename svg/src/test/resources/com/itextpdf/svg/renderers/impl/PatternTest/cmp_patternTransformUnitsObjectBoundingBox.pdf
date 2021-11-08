@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115933+03'00')/ModDate(D:20211018115933+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108175007+03'00')/ModDate(D:20211108175007+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,23 +35,21 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 450]/Length 563/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R/P3 11 0 R/P4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 450]/Length 555/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R/P3 11 0 R/P4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 450 re
 W
 n
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 11.25 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Here coordinates set in units of current coordinate system)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 /Pattern cs
@@ -75,17 +73,15 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 93.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Here coordinates set in range from 0.0 to 1.0)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 /Pattern cs
@@ -237,13 +233,13 @@ xref
 0000000427 00000 n 
 0000000568 00000 n 
 0000000751 00000 n 
-0000001489 00000 n 
-0000001916 00000 n 
-0000002344 00000 n 
-0000002773 00000 n 
+0000001481 00000 n 
+0000001908 00000 n 
+0000002336 00000 n 
+0000002765 00000 n 
 trailer
-<</ID [<1c7440ff58d56c962598f62f44d57c0e><1c7440ff58d56c962598f62f44d57c0e>]/Info 3 0 R/Root 1 0 R/Size 13>>
+<</ID [<867fc7e115cc116597950feb986cd245><867fc7e115cc116597950feb986cd245>]/Info 3 0 R/Root 1 0 R/Size 13>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-3202
+3194
 %%EOF

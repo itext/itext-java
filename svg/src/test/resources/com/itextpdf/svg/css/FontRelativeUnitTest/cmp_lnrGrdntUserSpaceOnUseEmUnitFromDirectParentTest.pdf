@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018114917+03'00')/ModDate(D:20211018114917+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108180038+03'00')/ModDate(D:20211108180038+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 525 300]/Length 244/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525 300]/Length 240/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525 300 re
 W
 n
@@ -54,23 +54,21 @@ Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (The test passes when the gradient starts at character "m" of the text)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 525 300]/Length 117/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525 300]/Length 113/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525 300 re
 W
 n
@@ -78,17 +76,15 @@ q
 /Pattern cs
 
 /P1 scn
+q
 BT
 1 0 0 -1 7.5 52.5 Tm
 0 Tr
 /F1 37.5 Tf
-q
 0 0 Td
 (some text)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -125,17 +121,17 @@ xref
 0000000427 00000 n 
 0000000568 00000 n 
 0000000751 00000 n 
-0000001141 00000 n 
-0000001404 00000 n 
-0000001467 00000 n 
-0000001580 00000 n 
-0000001713 00000 n 
-0000001785 00000 n 
-0000001863 00000 n 
-0000001941 00000 n 
+0000001137 00000 n 
+0000001396 00000 n 
+0000001459 00000 n 
+0000001572 00000 n 
+0000001705 00000 n 
+0000001777 00000 n 
+0000001855 00000 n 
+0000001933 00000 n 
 trailer
-<</ID [<b7966703694d6e54cc31cf04b78f69d3><b7966703694d6e54cc31cf04b78f69d3>]/Info 3 0 R/Root 1 0 R/Size 17>>
+<</ID [<6826fb3bcd09f18d9566d2753e84a9b5><6826fb3bcd09f18d9566d2753e84a9b5>]/Info 3 0 R/Root 1 0 R/Size 17>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-2013
+2005
 %%EOF

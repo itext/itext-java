@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211104000726+03'00')/ModDate(D:20211104000726+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108175044+03'00')/ModDate(D:20211108175044+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -43,7 +43,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[-81.82 0 1881.82 900]/Length 2689/Resources<</Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-81.82 0 1881.82 900]/Length 2572/Resources<</Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -81.82 0 1963.64 900 re
 W
 n
@@ -55,10 +55,10 @@ BT
 1 0 0 -1 7.5 7.5 Tm
 0 Tr
 /F1 18 Tf
+1 0 0 rg
 0 Tr
 /F1 18 Tf
 0 -7.5 Td
-1 0 0 rg
 (AAAAA tspan dy="10 20 30 40 50")Tj
 ET
 Q
@@ -67,10 +67,10 @@ BT
 1 0 0 -1 7.5 7.5 Tm
 0 Tr
 /F1 18 Tf
+1 0.64706 0 rg
 0 Tr
 /F1 18 Tf
 270.32 -7.5 Td
-1 0.64706 0 rg
 (AAAAA tspan dx="10 20 30 40 50")Tj
 ET
 Q
@@ -133,13 +133,13 @@ Q
 q
 0 0 0 rg
 q
+0 0 1 rg
 q
 BT
 1 0 0 -1 7.5 225 Tm
 0 Tr
 /F1 18 Tf
 0 0 Td
-0 0 1 rg
 (Text with)Tj
 ET
 Q
@@ -148,10 +148,10 @@ BT
 1 0 0 -1 7.5 225 Tm
 0 Tr
 /F1 18 Tf
+1 0 0 rg
 0 Tr
 /F2 18 Tf
 71.5 37.5 Td
-1 0 0 rg
 ( tspan dx="2em" dy="-50" font-weight="bold" fill="red)Tj
 ET
 Q
@@ -160,10 +160,10 @@ BT
 1 0 0 -1 7.5 225 Tm
 0 Tr
 /F1 18 Tf
+1 0 1 rg
 0 Tr
 /F3 18 Tf
 -52.52 18.75 Td
-1 0 1 rg
 ( tspan dx="-550" dy="15" font-style="italic" fill="magenta")Tj
 ET
 Q
@@ -173,7 +173,6 @@ BT
 0 Tr
 /F1 18 Tf
 389.05 18.75 Td
-0 0 1 rg
 ( and a)Tj
 ET
 Q
@@ -183,10 +182,10 @@ BT
 0 Tr
 /F1 18 Tf
 1 0 0 -1 45 240 Tm
+0.50196 0 0.50196 rg
 0 Tr
 /F1 18 Tf
 0 0 Td
-0.50196 0 0.50196 rg
 (AAAAAAAAA tspan x="60" y="320" fill="purple" rotate="10,45,90,115,145,0,15")Tj
 ET
 Q
@@ -195,13 +194,13 @@ Q
 q
 0 0 0 rg
 q
+0.56471 0.93333 0.56471 rg
 q
 BT
 1 0 0 -1 7.5 300 Tm
 0 Tr
 /F1 18 Tf
 0 0 Td
-0.56471 0.93333 0.56471 rg
 (Text with)Tj
 ET
 Q
@@ -214,7 +213,6 @@ BT
 0 Tr
 /F1 18 Tf
 0 -15 Td
-0.56471 0.93333 0.56471 rg
 (--- tspan textLength="1000"-)Tj
 ET
 Q
@@ -227,7 +225,6 @@ BT
 0 Tr
 /F1 18 Tf
 0 -15 Td
-0.56471 0.93333 0.56471 rg
 (--- tspan textLength="500"-)Tj
 ET
 Q
@@ -240,7 +237,6 @@ BT
 0 Tr
 /F1 18 Tf
 0 -15 Td
-0.56471 0.93333 0.56471 rg
 (--- tspan textLength="200"-)Tj
 ET
 Q
@@ -253,7 +249,6 @@ BT
 0 Tr
 /F1 18 Tf
 0 -15 Td
-0.56471 0.93333 0.56471 rg
 (--- tspan textLength="-200"-)Tj
 ET
 Q
@@ -388,8 +383,8 @@ xref
 0000000760 00000 n 
 0000001000 00000 n 
 trailer
-<</ID [<585b9c37faa4cb2af4144da38da5efc7><585b9c37faa4cb2af4144da38da5efc7>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<e1f59140ec10c73eb4d5255dd64a2d51><e1f59140ec10c73eb4d5255dd64a2d51>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-3842
+3725
 %%EOF

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115041+03'00')/ModDate(D:20211018115041+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174745+03'00')/ModDate(D:20211108174745+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 1207/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 1191/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -51,17 +51,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Swiss Language Use \(100 degree rotation\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -100,17 +98,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 415.3 190.66 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Italian)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -128,17 +124,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 384.1 127.83 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (French)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -158,17 +152,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 250.15 243.8 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (German)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -192,10 +184,10 @@ xref
 0000000516 00000 n 
 0000000657 00000 n 
 0000000840 00000 n 
-0000002206 00000 n 
+0000002190 00000 n 
 trailer
-<</ID [<d3db522d9a5e07a7870d7fceda10b1de><d3db522d9a5e07a7870d7fceda10b1de>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<af5ee0e4bf45aa6a8ae4df4b8f8a9401><af5ee0e4bf45aa6a8ae4df4b8f8a9401>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-2232
+2216
 %%EOF

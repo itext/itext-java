@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115058+03'00')/ModDate(D:20211018115058+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174756+03'00')/ModDate(D:20211108174756+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 4344/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 4312/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -51,17 +51,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Indian Language Use)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -100,17 +98,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 355.65 106.33 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Bengali)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -185,17 +181,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 308.71 96.41 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Urdu)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -213,17 +207,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 268.57 118.63 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Telugu)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -241,17 +233,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 243.56 151.8 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Tamil)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -313,17 +303,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 189.3 212.57 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Oriya)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -356,17 +344,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 216.53 255.07 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Marathi)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -469,17 +455,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 405.31 238.96 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Hindi)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -503,10 +487,10 @@ xref
 0000000516 00000 n 
 0000000657 00000 n 
 0000000840 00000 n 
-0000005343 00000 n 
+0000005311 00000 n 
 trailer
-<</ID [<e12fd7e7699d0f3ce1bc93f26851b966><e12fd7e7699d0f3ce1bc93f26851b966>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<77a7ac3e92e08a017ef17ddeac3925e6><77a7ac3e92e08a017ef17ddeac3925e6>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-5369
+5337
 %%EOF

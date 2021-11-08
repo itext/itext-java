@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115100+03'00')/ModDate(D:20211018115100+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174757+03'00')/ModDate(D:20211108174757+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675 375]/Length 3665/Resources<</ExtGState<</Gs1 9 0 R/Gs10 10 0 R/Gs11 11 0 R/Gs12 12 0 R/Gs2 13 0 R/Gs3 14 0 R/Gs4 15 0 R/Gs5 16 0 R/Gs6 17 0 R/Gs7 18 0 R/Gs8 19 0 R/Gs9 20 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 3609/Resources<</ExtGState<</Gs1 9 0 R/Gs10 10 0 R/Gs11 11 0 R/Gs12 12 0 R/Gs2 13 0 R/Gs3 14 0 R/Gs4 15 0 R/Gs5 16 0 R/Gs6 17 0 R/Gs7 18 0 R/Gs8 19 0 R/Gs9 20 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -65,17 +65,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 276 358.42 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Rotten Tomatoes)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -96,17 +94,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 397.5 358.42 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (IMDB)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -312,187 +308,163 @@ q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 175.31 319.42 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -36.59 0 Td
 (Alfred Hitchcock)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 175.31 332.92 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -14 0 Td
 (\(1935\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 283.69 319.42 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -30.77 0 Td
 (Ralph Thomas)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 283.69 332.92 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -14 0 Td
 (\(1959\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 392.06 319.42 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -37.91 0 Td
 (Don Sharp \(1978\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 500.44 319.42 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -28.43 0 Td
 (James Hawes)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 500.44 332.92 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -14 0 Td
 (\(2008\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 307.05 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -5.25 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 249.3 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -5.25 0 Td
 (5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 191.55 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -10.5 0 Td
 (10)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 133.8 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -10.5 0 Td
 (15)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 76.05 Tm
 0 Tr
 /F1 10.5 Tf
-q
 -10.5 0 Td
 (20)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -550,21 +522,21 @@ xref
 0000000427 00000 n 
 0000000568 00000 n 
 0000000751 00000 n 
-0000004689 00000 n 
+0000004633 00000 n 
+0000004658 00000 n 
+0000004686 00000 n 
 0000004714 00000 n 
 0000004742 00000 n 
-0000004770 00000 n 
-0000004798 00000 n 
-0000004824 00000 n 
-0000004850 00000 n 
+0000004768 00000 n 
+0000004794 00000 n 
+0000004820 00000 n 
+0000004848 00000 n 
 0000004876 00000 n 
 0000004904 00000 n 
 0000004932 00000 n 
-0000004960 00000 n 
-0000004988 00000 n 
 trailer
-<</ID [<ffd98fe7da05bef6062c63ccd0f8ec0e><ffd98fe7da05bef6062c63ccd0f8ec0e>]/Info 3 0 R/Root 1 0 R/Size 21>>
+<</ID [<fe44af99151bef42b428f4fa4dac64a6><fe44af99151bef42b428f4fa4dac64a6>]/Info 3 0 R/Root 1 0 R/Size 21>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-5016
+4960
 %%EOF

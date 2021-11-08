@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018114905+03'00')/ModDate(D:20211018114905+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108180033+03'00')/ModDate(D:20211108180033+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Courier/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 450 300]/Length 395/Resources<</Font<</F1 6 0 R/F2 7 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 383/Resources<</Font<</F1 6 0 R/F2 7 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 300 re
 W
 n
@@ -51,46 +51,40 @@ q
 /Pattern cs
 
 /P1 scn
+q
 BT
 1 0 0 -1 7.5 112.5 Tm
 0 Tr
 /F1 90 Tf
-q
 0 0 Td
 (iText)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 150 Tm
 0 Tr
 /F2 15 Tf
-q
 0 0 Td
 (Test passes when the end of the iText word is green)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 172.5 Tm
 0 Tr
 /F2 15 Tf
-q
 0 0 Td
 (Gradient x2="50em" should calculated from defs font-size)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -122,14 +116,14 @@ xref
 0000000513 00000 n 
 0000000654 00000 n 
 0000000837 00000 n 
-0000001387 00000 n 
-0000001450 00000 n 
-0000001562 00000 n 
-0000001663 00000 n 
-0000001741 00000 n 
+0000001375 00000 n 
+0000001438 00000 n 
+0000001550 00000 n 
+0000001651 00000 n 
+0000001729 00000 n 
 trailer
-<</ID [<7be07e4acb1f0b47e3252018c59793dc><7be07e4acb1f0b47e3252018c59793dc>]/Info 3 0 R/Root 1 0 R/Size 15>>
+<</ID [<9e0b12f83b7d7397f487c7904667a91e><9e0b12f83b7d7397f487c7904667a91e>]/Info 3 0 R/Root 1 0 R/Size 15>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-1819
+1807
 %%EOF

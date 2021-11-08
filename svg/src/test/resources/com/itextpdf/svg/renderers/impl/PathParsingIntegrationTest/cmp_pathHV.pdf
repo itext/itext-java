@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115815+03'00')/ModDate(D:20211018115815+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174958+03'00')/ModDate(D:20211108174958+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 300]/Length 732/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 300]/Length 720/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 300 re
 W
 n
@@ -55,17 +55,15 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 112.5 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Sample path with h and v stroke:black; fill:yellow)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.50196 0 0.50196 rg
@@ -83,17 +81,15 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 127.5 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Sample path with H and V stroke:red; fill:purple)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0.50196 0 rg
@@ -111,17 +107,15 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 142.5 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (Sample path with H, h, V and v stroke:black; fill:green)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -138,8 +132,8 @@ xref
 0000000568 00000 n 
 0000000751 00000 n 
 trailer
-<</ID [<428ea9418c184242945caef90d2a246b><428ea9418c184242945caef90d2a246b>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<ead34a7bf1c9a3e9d1c0cddb5d572547><ead34a7bf1c9a3e9d1c0cddb5d572547>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-1607
+1595
 %%EOF

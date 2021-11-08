@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018114954+03'00')/ModDate(D:20211018114954+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20211108174712+03'00')/ModDate(D:20211108174712+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675.75 375.75]/Length 181373/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675.75 375.75]/Length 181337/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675.75 375.75 re
 W
 n
@@ -14159,81 +14159,71 @@ Q
 q
 q
 0.06275 0.58824 0.09412 rg
+q
 BT
 1 0 0 -1 509.31 142.64 Tm
 0 Tr
 /F1 9 Tf
-q
 -12 0 Td
 (Russia)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.50196 0.7451 0.47843 rg
+q
 BT
 1 0 0 -1 247.55 282.66 Tm
 0 Tr
 /F1 6.75 Tf
-q
 -20.34 0 Td
 (South America)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.50196 0.7451 0.47843 rg
+q
 BT
 1 0 0 -1 341.48 184.26 Tm
 0 Tr
 /F1 6.75 Tf
-q
 -9.18 0 Td
 (France)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.50196 0.7451 0.47843 rg
+q
 BT
 1 0 0 -1 555.63 310.57 Tm
 0 Tr
 /F1 6.75 Tf
-q
 -12.37 0 Td
 (Australia)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.93725 0.90196 0.86275 rg
+q
 BT
 1 0 0 -1 164.77 157.11 Tm
 0 Tr
 /F1 2.25 Tf
-q
 -3.37 0 Td
 (Canada)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -14248,60 +14238,52 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 5.25 363.67 Tm
 2 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (500)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 5.25 363.67 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (500)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 212.5 363.67 Tm
 2 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (700)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 212.5 363.67 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (700)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -14325,8 +14307,8 @@ xref
 0000000568 00000 n 
 0000000760 00000 n 
 trailer
-<</ID [<46f7e3940f2585c39f29dd6f9aa2685f><46f7e3940f2585c39f29dd6f9aa2685f>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<8e61d8e2c561371aa7a0465f859c61be><8e61d8e2c561371aa7a0465f859c61be>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-7.2.1-SNAPSHOT
 startxref
-182266
+182230
 %%EOF
