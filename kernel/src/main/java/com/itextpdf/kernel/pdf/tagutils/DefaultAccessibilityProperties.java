@@ -44,14 +44,18 @@
 package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The class represents a default accessibility properties which correspond specified role. Accessibility
+ * properties are used to define properties of {@link PdfStructElem structure elements} in Tagged PDF documents.
+ */
 public class DefaultAccessibilityProperties extends AccessibilityProperties {
-
-
     protected String role;
     protected String language;
     protected String actualText;
@@ -64,6 +68,11 @@ public class DefaultAccessibilityProperties extends AccessibilityProperties {
     protected PdfNamespace namespace;
     protected List<TagTreePointer> refs = new ArrayList<>();
 
+    /**
+     * Instantiates a new {@link DefaultAccessibilityProperties} instance based on structure element role.
+     *
+     * @param role the structure element role
+     */
     public DefaultAccessibilityProperties(String role) {
         this.role = role;
     }
