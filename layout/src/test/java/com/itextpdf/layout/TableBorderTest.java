@@ -104,11 +104,10 @@ public class TableBorderTest extends AbstractTableTest {
         closeDocumentAndCompareOutputs(doc);
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
-    })
     @Test
-    @Ignore("DEVSIX-1124")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
+    })
     public void incompleteTableTest01() throws IOException, InterruptedException {
         fileName = "incompleteTableTest01.pdf";
         Document doc = createDocument();
@@ -125,12 +124,9 @@ public class TableBorderTest extends AbstractTableTest {
         // row 2, cell 1
         cell = new Cell().add(new Paragraph("Three"));
         table.addCell(cell);
-
         // row 3, cell 1
         cell = new Cell().add(new Paragraph("Four"));
         table.addCell(cell);
-
-
         doc.add(table);
 
         doc.add(new AreaBreak());
@@ -141,7 +137,6 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @Ignore("DEVSIX-1124")
     public void incompleteTableTest02() throws IOException, InterruptedException {
         fileName = "incompleteTableTest02.pdf";
         Document doc = createDocument();
