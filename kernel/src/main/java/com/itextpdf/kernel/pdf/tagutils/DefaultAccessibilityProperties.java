@@ -52,8 +52,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The class represents a default accessibility properties which correspond specified role. Accessibility
- * properties are used to define properties of {@link PdfStructElem structure elements} in Tagged PDF documents.
+ * The class represents a basic implementation of {@link AccessibilityProperties} that preserves specified
+ * accessibility properties. Accessibility properties are used to define properties of 
+ * {@link PdfStructElem structure elements} in Tagged PDF documents via {@link TagTreePointer} API.
  */
 public class DefaultAccessibilityProperties extends AccessibilityProperties {
     protected String role;
