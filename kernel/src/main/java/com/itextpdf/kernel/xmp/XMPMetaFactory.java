@@ -262,43 +262,59 @@ public final class XMPMetaFactory {
                     // Adobe XMP Core 5.0-jc001 DEBUG-<branch>.<changelist>, 2009 Jan 28 15:22:38-CET
                     final String message = "Adobe XMP Core 5.1.0-jc003";
 
-
-                    versionInfo = new XMPVersionInfo() {
-                        public int getMajor() {
-                            return major;
-                        }
-
-                        public int getMinor() {
-                            return minor;
-                        }
-
-                        public int getMicro() {
-                            return micro;
-                        }
-
-                        public boolean isDebug() {
-                            return debug;
-                        }
-
-                        public int getBuild() {
-                            return engBuild;
-                        }
-
-                        public String getMessage() {
-                            return message;
-                        }
-
-                        public String toString() {
-                            return message;
-                        }
-                    };
-
+                    versionInfo = new XMPVersionInfoImpl(major, minor, micro, engBuild, debug, message);
                 } catch (Throwable e) {
-                    // EMTPY, severe error would be detected during the tests
+                    // empty, severe error would be detected during the tests
                     System.out.println(e);
                 }
             }
             return versionInfo;
+        }
+    }
+
+    private static final class XMPVersionInfoImpl implements XMPVersionInfo {
+        private final int major;
+        private final int minor;
+        private final int micro;
+        private final int engBuild;
+        private final boolean debug;
+        private final String message;
+
+        public XMPVersionInfoImpl(int major, int minor, int micro, int engBuild, boolean debug, String message) {
+            this.major = major;
+            this.minor = minor;
+            this.micro = micro;
+            this.engBuild = engBuild;
+            this.debug = debug;
+            this.message = message;
+        }
+
+        public int getMajor() {
+            return major;
+        }
+
+        public int getMinor() {
+            return minor;
+        }
+
+        public int getMicro() {
+            return micro;
+        }
+
+        public boolean isDebug() {
+            return debug;
+        }
+
+        public int getBuild() {
+            return engBuild;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String toString() {
+            return message;
         }
     }
 }

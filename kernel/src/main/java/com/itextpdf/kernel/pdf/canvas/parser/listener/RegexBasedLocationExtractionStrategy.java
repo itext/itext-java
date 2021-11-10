@@ -62,7 +62,7 @@ import java.util.regex.Pattern;
  * This class is designed to search for the occurrences of a regular expression and return the resultant rectangles.
  */
 public class RegexBasedLocationExtractionStrategy implements ILocationExtractionStrategy {
-
+    private static final float EPS = 1.0E-4F;
     private Pattern pattern;
     private List<CharacterRenderInfo> parseResult = new ArrayList<>();
 
@@ -100,18 +100,7 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
          * This is to ensure that tests that use this functionality (for instance to generate pdf with
          * areas of interest highlighted) will not break when compared.
          */
-        java.util.Collections.sort(retval, new Comparator<IPdfTextLocation>() {
-            @Override
-            public int compare(IPdfTextLocation l1, IPdfTextLocation l2) {
-                Rectangle o1 = l1.getRectangle();
-                Rectangle o2 = l2.getRectangle();
-                if (o1.getY() == o2.getY()) {
-                    return o1.getX() == o2.getX() ? 0 : (o1.getX() < o2.getX() ? -1 : 1);
-                } else {
-                    return o1.getY() < o2.getY() ? -1 : 1;
-                }
-            }
-        });
+        Collections.sort(retval, new PdfTextLocationComparator());
 
         // ligatures can produces same rectangle
         removeDuplicates(retval);
@@ -213,5 +202,20 @@ public class RegexBasedLocationExtractionStrategy implements ILocationExtraction
             index--;
         }
         return indexMap.get(index);
+    }
+
+    private static final class PdfTextLocationComparator
+            implements Comparator<com.itextpdf.kernel.pdf.canvas.parser.listener.IPdfTextLocation> {
+        @Override
+        public int compare(com.itextpdf.kernel.pdf.canvas.parser.listener.IPdfTextLocation l1,
+                           com.itextpdf.kernel.pdf.canvas.parser.listener.IPdfTextLocation l2) {
+            Rectangle o1 = l1.getRectangle();
+            Rectangle o2 = l2.getRectangle();
+            if (Math.abs(o1.getY() - o2.getY()) < EPS) {
+                return Math.abs(o1.getX() - o2.getX()) < EPS ? 0 : ((o2.getX() - o1.getX()) > EPS ? -1 : 1);
+            } else {
+                return (o2.getY() - o1.getY()) > EPS ? -1 : 1;
+            }
+        }
     }
 }

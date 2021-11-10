@@ -37,7 +37,129 @@ import java.util.ArrayList;
  */
 abstract class HtmlTreeBuilderState {
 
-    public static HtmlTreeBuilderState Initial = new HtmlTreeBuilderState() {
+    public static HtmlTreeBuilderState Initial = new InitialBS();
+
+    public static HtmlTreeBuilderState BeforeHtml = new BeforeHtmlBS();
+
+    public static HtmlTreeBuilderState BeforeHead = new BeforeHeadBS();
+
+    public static HtmlTreeBuilderState InHead = new InHeadBS();
+
+    public static HtmlTreeBuilderState InHeadNoscript = new InHeadNoScriptBS();
+
+    public static HtmlTreeBuilderState AfterHead = new AfterHeadBS();
+
+    public static HtmlTreeBuilderState InBody = new InBodyBS();
+
+    public static HtmlTreeBuilderState Text = new TextBS();
+
+    public static HtmlTreeBuilderState InTable = new InTableBS();
+
+    public static HtmlTreeBuilderState InTableText = new InTableTextBS();
+
+    public static HtmlTreeBuilderState InCaption = new InCaptionBS();
+
+    public static HtmlTreeBuilderState InColumnGroup = new InColumnGroupBS();
+
+    public static HtmlTreeBuilderState InTableBody = new InTableBodyBS();
+
+    public static HtmlTreeBuilderState InRow = new InRowBS();
+
+    public static HtmlTreeBuilderState InCell = new InCellBS();
+
+    public static HtmlTreeBuilderState InSelect = new InSelectBS();
+
+    public static HtmlTreeBuilderState InSelectInTable = new InSelectInTableBS();
+
+    public static HtmlTreeBuilderState AfterBody = new AfterBodyBS();
+
+    public static HtmlTreeBuilderState InFrameset = new InFrameSetBS();
+
+    public static HtmlTreeBuilderState AfterFrameset = new AfterFrameSetBS();
+
+    public static HtmlTreeBuilderState AfterAfterBody = new AfterAfterBodyBS();
+
+    public static HtmlTreeBuilderState AfterAfterFrameset = new AfterAfterFrameSetBS();
+
+    public static HtmlTreeBuilderState ForeignContent = new ForeignContentBS();
+
+    private static final String nullString = String.valueOf('\u0000');
+
+    abstract boolean process(Token t, HtmlTreeBuilder tb);
+
+    private static boolean isWhitespace(Token t) {
+        if (t.isCharacter()) {
+            String data = t.asCharacter().getData();
+            return StringUtil.isBlank(data);
+        }
+        return false;
+    }
+
+    private static boolean isWhitespace(String data) {
+        return StringUtil.isBlank(data);
+    }
+
+    private static void handleRcData(Token.StartTag startTag, HtmlTreeBuilder tb) {
+        tb.tokeniser.transition(TokeniserState.Rcdata);
+        tb.markInsertionMode();
+        tb.transition(Text);
+        tb.insert(startTag);
+    }
+
+    private static void handleRawtext(Token.StartTag startTag, HtmlTreeBuilder tb) {
+        tb.tokeniser.transition(TokeniserState.Rawtext);
+        tb.markInsertionMode();
+        tb.transition(Text);
+        tb.insert(startTag);
+    }
+
+    // lists of tags to search through
+    static final class Constants {
+        static final String[] InHeadEmpty = new String[]{"base", "basefont", "bgsound", "command", "link"};
+        static final String[] InHeadRaw = new String[]{"noframes", "style"};
+        static final String[] InHeadEnd = new String[]{"body", "br", "html"};
+        static final String[] AfterHeadBody = new String[]{"body", "html"};
+        static final String[] BeforeHtmlToHead = new String[]{"body", "br", "head", "html", };
+        static final String[] InHeadNoScriptHead = new String[]{"basefont", "bgsound", "link", "meta", "noframes", "style"};
+        static final String[] InBodyStartToHead = new String[]{"base", "basefont", "bgsound", "command", "link", "meta", "noframes", "script", "style", "title"};
+        static final String[] InBodyStartPClosers = new String[]{"address", "article", "aside", "blockquote", "center", "details", "dir", "div", "dl",
+            "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "menu", "nav", "ol",
+            "p", "section", "summary", "ul"};
+        static final String[] Headings = new String[]{"h1", "h2", "h3", "h4", "h5", "h6"};
+        static final String[] InBodyStartLiBreakers = new String[]{"address", "div", "p"};
+        static final String[] DdDt = new String[]{"dd", "dt"};
+        static final String[] Formatters = new String[]{"b", "big", "code", "em", "font", "i", "s", "small", "strike", "strong", "tt", "u"};
+        static final String[] InBodyStartApplets = new String[]{"applet", "marquee", "object"};
+        static final String[] InBodyStartEmptyFormatters = new String[]{"area", "br", "embed", "img", "keygen", "wbr"};
+        static final String[] InBodyStartMedia = new String[]{"param", "source", "track"};
+        static final String[] InBodyStartInputAttribs = new String[]{"action", "name", "prompt"};
+        static final String[] InBodyStartDrop = new String[]{"caption", "col", "colgroup", "frame", "head", "tbody", "td", "tfoot", "th", "thead", "tr"};
+        static final String[] InBodyEndClosers = new String[]{"address", "article", "aside", "blockquote", "button", "center", "details", "dir", "div",
+            "dl", "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "listing", "menu",
+            "nav", "ol", "pre", "section", "summary", "ul"};
+        static final String[] InBodyEndAdoptionFormatters = new String[]{"a", "b", "big", "code", "em", "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"};
+        static final String[] InBodyEndTableFosters = new String[]{"table", "tbody", "tfoot", "thead", "tr"};
+        static final String[] InTableToBody = new String[]{"tbody", "tfoot", "thead"};
+        static final String[] InTableAddBody = new String[]{"td", "th", "tr"};
+        static final String[] InTableToHead = new String[]{"script", "style"};
+        static final String[] InCellNames = new String[]{"td", "th"};
+        static final String[] InCellBody = new String[]{"body", "caption", "col", "colgroup", "html"};
+        static final String[] InCellTable = new String[]{ "table", "tbody", "tfoot", "thead", "tr"};
+        static final String[] InCellCol = new String[]{"caption", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"};
+        static final String[] InTableEndErr = new String[]{"body", "caption", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"};
+        static final String[] InTableFoster = new String[]{"table", "tbody", "tfoot", "thead", "tr"};
+        static final String[] InTableBodyExit = new String[]{"caption", "col", "colgroup", "tbody", "tfoot", "thead"};
+        static final String[] InTableBodyEndIgnore = new String[]{"body", "caption", "col", "colgroup", "html", "td", "th", "tr"};
+        static final String[] InRowMissing = new String[]{"caption", "col", "colgroup", "tbody", "tfoot", "thead", "tr"};
+        static final String[] InRowIgnore = new String[]{"body", "caption", "col", "colgroup", "html", "td", "th"};
+        static final String[] InSelectEnd = new String[]{"input", "keygen", "textarea"};
+        static final String[] InSelecTableEnd = new String[]{"caption", "table", "tbody", "td", "tfoot", "th", "thead", "tr"};
+        static final String[] InTableEndIgnore = new String[]{"tbody", "tfoot", "thead"};
+        static final String[] InHeadNoscriptIgnore = new String[]{"head", "noscript"};
+        static final String[] InCaptionIgnore = new String[]{"body", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"};
+    }
+
+    private static final class InitialBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -64,9 +186,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState BeforeHtml = new HtmlTreeBuilderState() {
+    private static final class BeforeHtmlBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -100,9 +222,9 @@ abstract class HtmlTreeBuilderState {
             tb.transition(BeforeHead);
             return tb.process(t);
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState BeforeHead = new HtmlTreeBuilderState() {
+    private static final class BeforeHeadBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -135,9 +257,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InHead = new HtmlTreeBuilderState() {
+    private static final class InHeadBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -214,9 +336,9 @@ abstract class HtmlTreeBuilderState {
             tb.processEndTag("head");
             return tb.process(t);
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InHeadNoscript = new HtmlTreeBuilderState() {
+    private static final class InHeadNoScriptBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -253,9 +375,9 @@ abstract class HtmlTreeBuilderState {
             tb.insert(new Token.Character().data(t.toString()));
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState AfterHead = new HtmlTreeBuilderState() {
+    private static final class AfterHeadBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -311,9 +433,9 @@ abstract class HtmlTreeBuilderState {
             tb.framesetOk(true);
             return tb.process(t);
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InBody = new HtmlTreeBuilderState() {
+    private static final class InBodyBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -938,9 +1060,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState Text = new HtmlTreeBuilderState() {
+    private static final class TextBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -964,9 +1086,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InTable = new HtmlTreeBuilderState() {
+    private static final class InTableBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1070,9 +1192,9 @@ abstract class HtmlTreeBuilderState {
             }
             return processed;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InTableText = new HtmlTreeBuilderState() {
+    private static final class InTableTextBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1111,9 +1233,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InCaption = new HtmlTreeBuilderState() {
+    private static final class InCaptionBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1151,9 +1273,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InColumnGroup = new HtmlTreeBuilderState() {
+    private static final class InColumnGroupBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1214,9 +1336,9 @@ abstract class HtmlTreeBuilderState {
                 return tb.process(t);
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InTableBody = new HtmlTreeBuilderState() {
+    private static final class InTableBodyBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1284,9 +1406,9 @@ abstract class HtmlTreeBuilderState {
         private boolean anythingElse(Token t, HtmlTreeBuilder tb) {
             return tb.process(t, InTable);
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InRow = new HtmlTreeBuilderState() {
+    private static final class InRowBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1355,9 +1477,9 @@ abstract class HtmlTreeBuilderState {
             else
                 return false;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InCell = new HtmlTreeBuilderState() {
+    private static final class InCellBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1418,9 +1540,9 @@ abstract class HtmlTreeBuilderState {
             else
                 tb.processEndTag("th"); // only here if th or td in scope
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InSelect = new HtmlTreeBuilderState() {
+    private static final class InSelectBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1520,9 +1642,9 @@ abstract class HtmlTreeBuilderState {
             tb.error(this);
             return false;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InSelectInTable = new HtmlTreeBuilderState() {
+    private static final class InSelectInTableBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1545,9 +1667,9 @@ abstract class HtmlTreeBuilderState {
                 return tb.process(t, InSelect);
             }
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState AfterBody = new HtmlTreeBuilderState() {
+    private static final class AfterBodyBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1580,9 +1702,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState InFrameset = new HtmlTreeBuilderState() {
+    private static final class InFrameSetBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1635,9 +1757,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState AfterFrameset = new HtmlTreeBuilderState() {
+    private static final class AfterFrameSetBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1666,9 +1788,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState AfterAfterBody = new HtmlTreeBuilderState() {
+    private static final class AfterAfterBodyBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1695,9 +1817,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState AfterAfterFrameset = new HtmlTreeBuilderState() {
+    private static final class AfterAfterFrameSetBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1719,9 +1841,9 @@ abstract class HtmlTreeBuilderState {
             }
             return true;
         }
-    };
+    }
 
-    public static HtmlTreeBuilderState ForeignContent = new HtmlTreeBuilderState() {
+    private static final class ForeignContentBS extends HtmlTreeBuilderState {
 
         @Override
         public String toString() {
@@ -1731,81 +1853,5 @@ abstract class HtmlTreeBuilderState {
         boolean process(Token t, HtmlTreeBuilder tb) {
             return true;
         }
-    };
-
-    private static final String nullString = String.valueOf('\u0000');
-
-    abstract boolean process(Token t, HtmlTreeBuilder tb);
-
-    private static boolean isWhitespace(Token t) {
-        if (t.isCharacter()) {
-            String data = t.asCharacter().getData();
-            return StringUtil.isBlank(data);
-        }
-        return false;
-    }
-
-    private static boolean isWhitespace(String data) {
-        return StringUtil.isBlank(data);
-    }
-
-    private static void handleRcData(Token.StartTag startTag, HtmlTreeBuilder tb) {
-        tb.tokeniser.transition(TokeniserState.Rcdata);
-        tb.markInsertionMode();
-        tb.transition(Text);
-        tb.insert(startTag);
-    }
-
-    private static void handleRawtext(Token.StartTag startTag, HtmlTreeBuilder tb) {
-        tb.tokeniser.transition(TokeniserState.Rawtext);
-        tb.markInsertionMode();
-        tb.transition(Text);
-        tb.insert(startTag);
-    }
-
-    // lists of tags to search through
-    static final class Constants {
-        static final String[] InHeadEmpty = new String[]{"base", "basefont", "bgsound", "command", "link"};
-        static final String[] InHeadRaw = new String[]{"noframes", "style"};
-        static final String[] InHeadEnd = new String[]{"body", "br", "html"};
-        static final String[] AfterHeadBody = new String[]{"body", "html"};
-        static final String[] BeforeHtmlToHead = new String[]{"body", "br", "head", "html", };
-        static final String[] InHeadNoScriptHead = new String[]{"basefont", "bgsound", "link", "meta", "noframes", "style"};
-        static final String[] InBodyStartToHead = new String[]{"base", "basefont", "bgsound", "command", "link", "meta", "noframes", "script", "style", "title"};
-        static final String[] InBodyStartPClosers = new String[]{"address", "article", "aside", "blockquote", "center", "details", "dir", "div", "dl",
-            "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "menu", "nav", "ol",
-            "p", "section", "summary", "ul"};
-        static final String[] Headings = new String[]{"h1", "h2", "h3", "h4", "h5", "h6"};
-        static final String[] InBodyStartLiBreakers = new String[]{"address", "div", "p"};
-        static final String[] DdDt = new String[]{"dd", "dt"};
-        static final String[] Formatters = new String[]{"b", "big", "code", "em", "font", "i", "s", "small", "strike", "strong", "tt", "u"};
-        static final String[] InBodyStartApplets = new String[]{"applet", "marquee", "object"};
-        static final String[] InBodyStartEmptyFormatters = new String[]{"area", "br", "embed", "img", "keygen", "wbr"};
-        static final String[] InBodyStartMedia = new String[]{"param", "source", "track"};
-        static final String[] InBodyStartInputAttribs = new String[]{"action", "name", "prompt"};
-        static final String[] InBodyStartDrop = new String[]{"caption", "col", "colgroup", "frame", "head", "tbody", "td", "tfoot", "th", "thead", "tr"};
-        static final String[] InBodyEndClosers = new String[]{"address", "article", "aside", "blockquote", "button", "center", "details", "dir", "div",
-            "dl", "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "listing", "menu",
-            "nav", "ol", "pre", "section", "summary", "ul"};
-        static final String[] InBodyEndAdoptionFormatters = new String[]{"a", "b", "big", "code", "em", "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"};
-        static final String[] InBodyEndTableFosters = new String[]{"table", "tbody", "tfoot", "thead", "tr"};
-        static final String[] InTableToBody = new String[]{"tbody", "tfoot", "thead"};
-        static final String[] InTableAddBody = new String[]{"td", "th", "tr"};
-        static final String[] InTableToHead = new String[]{"script", "style"};
-        static final String[] InCellNames = new String[]{"td", "th"};
-        static final String[] InCellBody = new String[]{"body", "caption", "col", "colgroup", "html"};
-        static final String[] InCellTable = new String[]{ "table", "tbody", "tfoot", "thead", "tr"};
-        static final String[] InCellCol = new String[]{"caption", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"};
-        static final String[] InTableEndErr = new String[]{"body", "caption", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"};
-        static final String[] InTableFoster = new String[]{"table", "tbody", "tfoot", "thead", "tr"};
-        static final String[] InTableBodyExit = new String[]{"caption", "col", "colgroup", "tbody", "tfoot", "thead"};
-        static final String[] InTableBodyEndIgnore = new String[]{"body", "caption", "col", "colgroup", "html", "td", "th", "tr"};
-        static final String[] InRowMissing = new String[]{"caption", "col", "colgroup", "tbody", "tfoot", "thead", "tr"};
-        static final String[] InRowIgnore = new String[]{"body", "caption", "col", "colgroup", "html", "td", "th"};
-        static final String[] InSelectEnd = new String[]{"input", "keygen", "textarea"};
-        static final String[] InSelecTableEnd = new String[]{"caption", "table", "tbody", "td", "tfoot", "th", "thead", "tr"};
-        static final String[] InTableEndIgnore = new String[]{"tbody", "tfoot", "thead"};
-        static final String[] InHeadNoscriptIgnore = new String[]{"head", "noscript"};
-        static final String[] InCaptionIgnore = new String[]{"body", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"};
     }
 }

@@ -961,12 +961,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 canvas.setHorizontalScaling((float) horizontalScaling * 100);
             }
 
-            GlyphLine.IGlyphLineFilter filter = new GlyphLine.IGlyphLineFilter() {
-                @Override
-                public boolean accept(Glyph glyph) {
-                    return !noPrint(glyph);
-                }
-            };
+            GlyphLine.IGlyphLineFilter filter = new CustomGlyphLineFilter();
 
             boolean appearanceStreamLayout = Boolean.TRUE.equals(getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
 
@@ -1873,6 +1868,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         ScriptRange(Character.UnicodeScript script, int rangeEnd) {
             this.script = script;
             this.rangeEnd = rangeEnd;
+        }
+    }
+
+    private static final class CustomGlyphLineFilter implements GlyphLine.IGlyphLineFilter {
+        @Override
+        public boolean accept(Glyph glyph) {
+            return !noPrint(glyph);
         }
     }
 }

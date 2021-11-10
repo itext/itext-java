@@ -311,4 +311,435 @@ public class TokeniserStateTest extends ExtendedITextTest {
         doc = Jsoup.parse("<p foo=");
         Assert.assertEquals("<p foo></p>", doc.body().html());
     }
+
+    @Test
+    public void testRCDATAEndTagNameDiffTag() {
+        String body = "<textarea>data</textare >";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected token"));
+    }
+
+    @Test
+    public void testRCDATAEndTagNameValidSlash() {
+        String body = "<textarea>data</textarea/>";
+        Document doc = Jsoup.parse(body);
+        Elements els = doc.select("textarea");
+        Assert.assertEquals("data", els.text());
+    }
+
+    @Test
+    public void testRCDATAEndTagNameInvalidSlash() {
+        String body = "<textarea>data</textare/>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected token"));
+    }
+
+    @Test
+    public void scriptDataEscapeStartDashValid() {
+        String body = "<script><!-- text --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataEscapeStartDashInvalid() {
+        String body = "<script><!- text --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataEscapedEmpty() {
+        String body = "<script><!-- ";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void scriptDataEscapedStartTag() {
+        String body = "<script><!--<</script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataEscapedNullChar() {
+        String body = "<script><!--a\0";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void scriptDataEscapedDashEmpty() {
+        String body = "<script><!-- -";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void scriptDataEscapedDashStTag() {
+        String body = "<script><!-- -<</script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataEscapedDashNullChar() {
+        String body = "<script><!-- -\0";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void scriptDataEscapedDashDashEmpty() {
+        String body = "<script><!-- --";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void scriptDataEscapedDashDashStTag() {
+        String body = "<script><!-- --<</script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataEscapedDashDashNullChar() {
+        String body = "<script><!-- --\0";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void scriptDataEscapedEndTagOpen() {
+        String body = "<script><!-- --</---></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedNullChar() {
+        String body = "<script><!--<script><\0!-";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedEof() {
+        String body = "<script><!--<script><!-";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDash() {
+        String body = "<script><!--<script><!-- --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashStTag() {
+        String body = "<script><!--<script><!-< --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashNull() {
+        String body = "<script><!--<script><!-\0 --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashEof() {
+        String body = "<script><!--<script><!-";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashDefault() {
+        String body = "<script><!--<script><!-aaa --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashDash() {
+        String body = "<script><!--<script><!--- --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashDashStTag() {
+        String body = "<script><!--<script><!--< --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashDashNull() {
+        String body = "<script><!--<script><!--\0 --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashDashEof() {
+        String body = "<script><!--<script><!--";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void scriptDataDoubleEscapedDashDashDefault() {
+        String body = "<script><!--<script><!--aaa --></script>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void attributeNameStTag() {
+        String body = "<p name< />";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void afterAttributeNameEndTag() {
+        String body = "<p name > />";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void afterAttributeNameNull() {
+        String body = "<p name \0 />";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void afterAttributeNameEof() {
+        String body = "<p name ";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void afterAttributeNameStTag() {
+        String body = "<p name <";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void beforeAttributeNameClTag() {
+        String body = "<p name=></p>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void beforeAttributeNameStTag() {
+        String body = "<p name=<</p>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void attributeValueDoubleQuotedNull() {
+        String body = "<p name=\"\0\"></p>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void attributeValueSingleQuotedNull() {
+        String body = "<p name='\0'></p>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void attributeValueSingleUnquotedAmp() {
+        String body = "<p name=&a></p>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(0, errorList.size());
+    }
+
+    @Test
+    public void attributeValueSingleUnquotedNull() {
+        String body = "<p name=a\0></p>";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpected character"));
+    }
+
+    @Test
+    public void attributeValueSingleUnquotedEof() {
+        String body = "<p name=a";
+        ParseErrorList errorList = ParseErrorList.tracking(1);
+        Parser.parseFragment(body, null, "", errorList);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertTrue(errorList.get(0).getErrorMessage()
+                .contains("Unexpectedly reached end of file (EOF) in input state"));
+    }
+
+    @Test
+    public void tokeniserStateToStringTest() {
+        Assert.assertEquals("Data", TokeniserState.Data.toString());
+        Assert.assertEquals("CharacterReferenceInData", TokeniserState.CharacterReferenceInData.toString());
+        Assert.assertEquals("Rcdata", TokeniserState.Rcdata.toString());
+        Assert.assertEquals("CharacterReferenceInRcdata", TokeniserState.CharacterReferenceInRcdata.toString());
+        Assert.assertEquals("Rawtext", TokeniserState.Rawtext.toString());
+        Assert.assertEquals("ScriptData", TokeniserState.ScriptData.toString());
+        Assert.assertEquals("PLAINTEXT", TokeniserState.PLAINTEXT.toString());
+        Assert.assertEquals("TagOpen", TokeniserState.TagOpen.toString());
+        Assert.assertEquals("EndTagOpen", TokeniserState.EndTagOpen.toString());
+        Assert.assertEquals("TagName", TokeniserState.TagName.toString());
+        Assert.assertEquals("RcdataLessthanSign", TokeniserState.RcdataLessthanSign.toString());
+        Assert.assertEquals("RCDATAEndTagOpen", TokeniserState.RCDATAEndTagOpen.toString());
+        Assert.assertEquals("RCDATAEndTagName", TokeniserState.RCDATAEndTagName.toString());
+        Assert.assertEquals("RawtextLessthanSign", TokeniserState.RawtextLessthanSign.toString());
+        Assert.assertEquals("RawtextEndTagOpen", TokeniserState.RawtextEndTagOpen.toString());
+        Assert.assertEquals("RawtextEndTagName", TokeniserState.RawtextEndTagName.toString());
+        Assert.assertEquals("ScriptDataLessthanSign", TokeniserState.ScriptDataLessthanSign.toString());
+        Assert.assertEquals("ScriptDataEndTagOpen", TokeniserState.ScriptDataEndTagOpen.toString());
+        Assert.assertEquals("ScriptDataEndTagName", TokeniserState.ScriptDataEndTagName.toString());
+        Assert.assertEquals("ScriptDataEscapeStart", TokeniserState.ScriptDataEscapeStart.toString());
+        Assert.assertEquals("ScriptDataEscapeStartDash", TokeniserState.ScriptDataEscapeStartDash.toString());
+        Assert.assertEquals("ScriptDataEscaped", TokeniserState.ScriptDataEscaped.toString());
+        Assert.assertEquals("ScriptDataEscapedDash", TokeniserState.ScriptDataEscapedDash.toString());
+        Assert.assertEquals("ScriptDataEscapedDashDash", TokeniserState.ScriptDataEscapedDashDash.toString());
+        Assert.assertEquals("ScriptDataEscapedLessthanSign", TokeniserState.ScriptDataEscapedLessthanSign.toString());
+        Assert.assertEquals("ScriptDataEscapedEndTagOpen", TokeniserState.ScriptDataEscapedEndTagOpen.toString());
+        Assert.assertEquals("ScriptDataEscapedEndTagName", TokeniserState.ScriptDataEscapedEndTagName.toString());
+        Assert.assertEquals("ScriptDataDoubleEscapeStart", TokeniserState.ScriptDataDoubleEscapeStart.toString());
+        Assert.assertEquals("ScriptDataDoubleEscaped", TokeniserState.ScriptDataDoubleEscaped.toString());
+        Assert.assertEquals("ScriptDataDoubleEscapedDash", TokeniserState.ScriptDataDoubleEscapedDash.toString());
+        Assert.assertEquals("ScriptDataDoubleEscapedDashDash", TokeniserState.ScriptDataDoubleEscapedDashDash.toString());
+        Assert.assertEquals("ScriptDataDoubleEscapedLessthanSign", TokeniserState.ScriptDataDoubleEscapedLessthanSign.toString());
+        Assert.assertEquals("ScriptDataDoubleEscapeEnd", TokeniserState.ScriptDataDoubleEscapeEnd.toString());
+        Assert.assertEquals("BeforeAttributeName", TokeniserState.BeforeAttributeName.toString());
+        Assert.assertEquals("AttributeName", TokeniserState.AttributeName.toString());
+        Assert.assertEquals("AfterAttributeName", TokeniserState.AfterAttributeName.toString());
+        Assert.assertEquals("BeforeAttributeValue", TokeniserState.BeforeAttributeValue.toString());
+        Assert.assertEquals("AttributeValue_doubleQuoted", TokeniserState.AttributeValue_doubleQuoted.toString());
+        Assert.assertEquals("AttributeValue_singleQuoted", TokeniserState.AttributeValue_singleQuoted.toString());
+        Assert.assertEquals("AttributeValue_unquoted", TokeniserState.AttributeValue_unquoted.toString());
+        Assert.assertEquals("AfterAttributeValue_quoted", TokeniserState.AfterAttributeValue_quoted.toString());
+        Assert.assertEquals("SelfClosingStartTag", TokeniserState.SelfClosingStartTag.toString());
+        Assert.assertEquals("BogusComment", TokeniserState.BogusComment.toString());
+        Assert.assertEquals("MarkupDeclarationOpen", TokeniserState.MarkupDeclarationOpen.toString());
+        Assert.assertEquals("CommentStart", TokeniserState.CommentStart.toString());
+        Assert.assertEquals("CommentStartDash", TokeniserState.CommentStartDash.toString());
+        Assert.assertEquals("Comment", TokeniserState.Comment.toString());
+        Assert.assertEquals("CommentEndDash", TokeniserState.CommentEndDash.toString());
+        Assert.assertEquals("CommentEnd", TokeniserState.CommentEnd.toString());
+        Assert.assertEquals("CommentEndBang", TokeniserState.CommentEndBang.toString());
+        Assert.assertEquals("Doctype", TokeniserState.Doctype.toString());
+        Assert.assertEquals("BeforeDoctypeName", TokeniserState.BeforeDoctypeName.toString());
+        Assert.assertEquals("DoctypeName", TokeniserState.DoctypeName.toString());
+        Assert.assertEquals("AfterDoctypeName", TokeniserState.AfterDoctypeName.toString());
+        Assert.assertEquals("AfterDoctypePublicKeyword", TokeniserState.AfterDoctypePublicKeyword.toString());
+        Assert.assertEquals("BeforeDoctypePublicIdentifier", TokeniserState.BeforeDoctypePublicIdentifier.toString());
+        Assert.assertEquals("DoctypePublicIdentifier_doubleQuoted", TokeniserState.DoctypePublicIdentifier_doubleQuoted.toString());
+        Assert.assertEquals("DoctypePublicIdentifier_singleQuoted", TokeniserState.DoctypePublicIdentifier_singleQuoted.toString());
+        Assert.assertEquals("AfterDoctypePublicIdentifier", TokeniserState.AfterDoctypePublicIdentifier.toString());
+        Assert.assertEquals("BetweenDoctypePublicAndSystemIdentifiers", TokeniserState.BetweenDoctypePublicAndSystemIdentifiers.toString());
+        Assert.assertEquals("AfterDoctypeSystemKeyword", TokeniserState.AfterDoctypeSystemKeyword.toString());
+        Assert.assertEquals("BeforeDoctypeSystemIdentifier", TokeniserState.BeforeDoctypeSystemIdentifier.toString());
+        Assert.assertEquals("DoctypeSystemIdentifier_doubleQuoted", TokeniserState.DoctypeSystemIdentifier_doubleQuoted.toString());
+        Assert.assertEquals("DoctypeSystemIdentifier_singleQuoted", TokeniserState.DoctypeSystemIdentifier_singleQuoted.toString());
+        Assert.assertEquals("AfterDoctypeSystemIdentifier", TokeniserState.AfterDoctypeSystemIdentifier.toString());
+        Assert.assertEquals("BogusDoctype", TokeniserState.BogusDoctype.toString());
+        Assert.assertEquals("CdataSection", TokeniserState.CdataSection.toString());
+    }
 }
