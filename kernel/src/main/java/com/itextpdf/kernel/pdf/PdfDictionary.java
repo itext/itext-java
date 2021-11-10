@@ -43,13 +43,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.geom.Rectangle;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import com.itextpdf.kernel.geom.Rectangle;
 
 
 /**
@@ -61,7 +61,7 @@ import java.util.TreeMap;
  */
 public class PdfDictionary extends PdfObject {
 
-    private Map<PdfName, PdfObject> map = new TreeMap<>();
+	private final Map<PdfName, PdfObject> map = new TreeMap<>();
 
     /**
      * Creates a new PdfDictionary instance.
@@ -496,6 +496,6 @@ public class PdfDictionary extends PdfObject {
      * Release content of PdfDictionary.
      */
     protected void releaseContent() {
-        map = null;
+		map.clear();
     }
 }
