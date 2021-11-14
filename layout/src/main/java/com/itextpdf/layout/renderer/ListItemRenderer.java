@@ -135,7 +135,7 @@ public class ListItemRenderer extends DivRenderer {
 
         // It will be null in case of overflow (only the "split" part will contain symbol renderer.
         if (symbolRenderer != null && !symbolAddedInside) {
-            boolean isRtl = BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION));
+            boolean isRtl = BaseDirection.RIGHT_TO_LEFT == this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
             symbolRenderer.setParent(this);
             float x = isRtl ? occupiedArea.getBBox().getRight() : occupiedArea.getBBox().getLeft();
             ListSymbolPosition symbolPosition = (ListSymbolPosition) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_POSITION);
@@ -223,7 +223,8 @@ public class ListItemRenderer extends DivRenderer {
                 symbolRenderer.move(dxPosition, 0);
             }
 
-            if (symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()) {
+            if (!isRtl && symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()
+                || isRtl && symbolRenderer.getOccupiedArea().getBBox().getLeft() < parent.getOccupiedArea().getBBox().getRight()) {
                 beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);
                 endElementOpacityApplying(drawContext);
