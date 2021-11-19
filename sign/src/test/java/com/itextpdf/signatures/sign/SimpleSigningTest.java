@@ -44,6 +44,7 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.signatures.BouncyCastleDigest;
@@ -121,6 +122,51 @@ public class SimpleSigningTest extends ExtendedITextTest {
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
+    @Test
+    public void signWithoutPKeyTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "emptySignatureWithoutPKey.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signedWithoutPKey.pdf";
+        String outPdf = DESTINATION_FOLDER + "signedWithoutPKey.pdf";
+
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1",
+                "TestCity", rect, false, false, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+                getTestMap(rect)));
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+    @Test
+    public void signWithTempFileTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "simpleDocument.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signedWithTempFile.pdf";
+        String outPdf = DESTINATION_FOLDER + "signedWithTempFile.pdf";
+
+        String tempFileName = "tempFile";
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(srcFile),
+                new PdfWriter(outPdf), DESTINATION_FOLDER + tempFileName, new StampingProperties());
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+        signer.setFieldName("Signature1");
+
+        // Creating the appearance
+        createAppearance(signer, "Test 1", "TestCity", false, rect, 12f);
+
+        // Creating the signature
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+                getTestMap(rect)));
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
     protected void sign(String src, String name, String dest,
             Certificate[] chain, PrivateKey pk,
             String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
@@ -138,17 +184,7 @@ public class SimpleSigningTest extends ExtendedITextTest {
         signer.setCertificationLevel(certificationLevel);
 
         // Creating the appearance
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
-                .setReason(reason)
-                .setLocation(location)
-                .setReuseAppearance(setReuseAppearance);
-
-        if (rectangleForNewField != null) {
-            appearance.setPageRect(rectangleForNewField);
-        }
-        if (fontSize != null) {
-            appearance.setLayer2FontSize((float) fontSize);
-        }
+        createAppearance(signer, reason, location, setReuseAppearance, rectangleForNewField, fontSize);
 
         signer.setFieldName(name);
         // Creating the signature
@@ -160,5 +196,20 @@ public class SimpleSigningTest extends ExtendedITextTest {
         Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
         result.put(1, Arrays.asList(ignoredArea));
         return result;
+    }
+
+    private static void createAppearance(PdfSigner signer, String reason, String location, boolean setReuseAppearance,
+            Rectangle rectangleForNewField, Float fontSize) {
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
+                .setReason(reason)
+                .setLocation(location)
+                .setReuseAppearance(setReuseAppearance);
+
+        if (rectangleForNewField != null) {
+            appearance.setPageRect(rectangleForNewField);
+        }
+        if (fontSize != null) {
+            appearance.setLayer2FontSize((float) fontSize);
+        }
     }
 }
