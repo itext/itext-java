@@ -64,7 +64,6 @@ import java.util.List;
  */
 public class CertificateVerification {
 
-
     /**
      * The Logger instance.
      */
@@ -244,16 +243,14 @@ public class CertificateVerification {
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
-
                     SignUtils.isSignatureValid(ts, certStoreX509, provider);
                     return true;
                 } catch (Exception ex) {
                     exceptionsThrown.add(ex);
-
                 }
             }
         } catch (Exception e) {
-            exceptionsThrown.add(e);
+            LOGGER.error("Unexpected exception was thrown during keystore processing", e);
         }
 
         for (Exception ex : exceptionsThrown) {

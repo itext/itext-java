@@ -44,6 +44,9 @@ package com.itextpdf.signatures.verify;
 
 import com.itextpdf.signatures.CertificateVerification;
 import com.itextpdf.signatures.VerificationException;
+import com.itextpdf.signatures.testutils.client.TestTsaClient;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
@@ -53,12 +56,17 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.List;
+
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -91,5 +99,46 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         List<VerificationException> verificationExceptions = CertificateVerification.verifyCertificates(certChain, caKeyStore);
 
         Assert.assertTrue(verificationExceptions.isEmpty());
+    }
+
+    @Test
+    public void timestampCertificateAndKeyStoreCorrespondTest() throws Exception {
+        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
+
+        KeyStore caKeyStore = Pkcs12FileHelper.initStore(tsaCertFileName, password);
+
+        Assert.assertTrue(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = "certificate hash does not match certID hash."))
+    public void timestampCertificateAndKeyStoreDoNotCorrespondTest() throws Exception {
+        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
+        String notTsaCertFileName = certsSrc + "rootRsa.p12";
+
+        KeyStore caKeyStore = Pkcs12FileHelper.initStore(notTsaCertFileName, password);
+
+        Assert.assertFalse(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = "Unexpected exception was thrown during keystore processing"))
+    public void keyStoreWithoutCertificatesTest() throws Exception {
+        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
+
+        Assert.assertFalse(verifyTimestampCertificates(tsaCertFileName, null));
+    }
+
+    private static boolean verifyTimestampCertificates(String tsaClientCertificate, KeyStore caKeyStore) throws Exception {
+        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaClientCertificate, password);
+        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaClientCertificate, password, password);
+
+        TestTsaClient testTsaClient = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
+
+        byte[] tsaCertificateBytes = testTsaClient.getTimeStampToken(testTsaClient.getMessageDigest().digest());
+        TimeStampToken timeStampToken = new TimeStampToken(
+                ContentInfo.getInstance(ASN1Sequence.getInstance(tsaCertificateBytes)));
+
+        return CertificateVerification.verifyTimestampCertificates(timeStampToken, caKeyStore, null);
     }
 }
