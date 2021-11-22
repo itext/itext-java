@@ -45,7 +45,6 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
@@ -277,7 +276,6 @@ public class ResourceResolver {
     protected PdfXObject tryResolveUrlImageSource(String uri) {
         try {
             URL url = uriResolver.resolveAgainstBaseUri(uri);
-            url = UrlUtil.getFinalURL(url);
             String imageResolvedSrc = url.toExternalForm();
             PdfXObject imageXObject = imageCache.getImage(imageResolvedSrc);
             if (imageXObject == null) {
@@ -295,9 +293,9 @@ public class ResourceResolver {
     /**
      * Create a iText XObject based on the image stored at the passed location.
      *
-     * @param url location of the Image file
-     * @return {@link PdfXObject} containing the Image loaded in
-     * @throws Exception thrown if error occurred during fetching or constructing the image
+     * @param url location of the Image file.
+     * @return {@link PdfXObject} containing the Image loaded in.
+     * @throws Exception thrown if error occurred during fetching or constructing the image.
      */
     protected PdfXObject createImageByUrl(URL url) throws Exception {
         byte[] bytes = retriever.getByteArrayByUrl(url);
