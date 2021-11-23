@@ -444,6 +444,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             PdfObject obj = differences.get(k);
             if (obj.isNumber()) {
                 currentNumber = ((PdfNumber) obj).intValue();
+            } else if (currentNumber > SIMPLE_FONT_MAX_CHAR_CODE_VALUE) {
+                // Skip glyphs with id greater than 255
             } else {
                 String glyphName = ((PdfName) obj).getValue();
                 int unicode = fontEncoding.getUnicode(currentNumber);

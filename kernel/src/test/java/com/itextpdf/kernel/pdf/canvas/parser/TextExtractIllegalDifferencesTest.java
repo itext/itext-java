@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -59,10 +60,20 @@ import org.junit.experimental.categories.Category;
 public class TextExtractIllegalDifferencesTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/TextExtractIllegalDifferencesTest/";
+
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES))
     public void illegalDifference() throws IOException {
-        PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "illegalDifference.pdf"));
-        PdfTextExtractor.getTextFromPage(pdf.getFirstPage());
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "illegalDifference.pdf"))) {
+            AssertUtil.doesNotThrow(() -> PdfTextExtractor.getTextFromPage(pdf.getFirstPage()));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, count = 2))
+    public void illegalDifferenceType3Font() throws IOException {
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "illegalDifferenceType3Font.pdf"))) {
+            AssertUtil.doesNotThrow(() -> PdfTextExtractor.getTextFromPage(pdf.getFirstPage()));
+        }
     }
 }
