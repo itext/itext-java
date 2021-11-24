@@ -45,7 +45,11 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -223,8 +227,12 @@ public class ListItemRenderer extends DivRenderer {
                 symbolRenderer.move(dxPosition, 0);
             }
 
-            if (!isRtl && symbolRenderer.getOccupiedArea().getBBox().getRight() > parent.getOccupiedArea().getBBox().getLeft()
-                || isRtl && symbolRenderer.getOccupiedArea().getBBox().getLeft() < parent.getOccupiedArea().getBBox().getRight()) {
+            // consider page area without margins
+            Rectangle effectiveArea = obtainEffectiveArea(drawContext);
+
+            // symbols are not drawn here, because they are in page margins
+            if (!isRtl && symbolRenderer.getOccupiedArea().getBBox().getRight() > effectiveArea.getLeft()
+                || isRtl && symbolRenderer.getOccupiedArea().getBBox().getLeft() < effectiveArea.getRight()) {
                 beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);
                 endElementOpacityApplying(drawContext);
@@ -341,4 +349,23 @@ public class ListItemRenderer extends DivRenderer {
         return new float[] {0, 0};
     }
 
+    private Rectangle obtainEffectiveArea(DrawContext drawContext) {
+        PdfDocument pdfDocument = drawContext.getDocument();
+
+        // for the time being iText creates a single symbol renderer for a list.
+        // This renderer will be used for all the items across all the pages, which mean that it could
+        // be layouted at page i and used at page j, j>i.
+        int pageNumber = parent.getOccupiedArea().getPageNumber();
+        Rectangle pageSize;
+        if (pageNumber != 0) {
+            PdfPage page = pdfDocument.getPage(pageNumber);
+            pageSize = page.getPageSize();
+        } else {
+            pageSize = pdfDocument.getDefaultPageSize();
+        }
+
+        Document document = new Document(pdfDocument);
+        return new Rectangle(pageSize).applyMargins(document.getTopMargin(), document.getRightMargin(), document.getBottomMargin(),
+                                     document.getLeftMargin(), false);
+    }
 }
