@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
@@ -31,8 +32,10 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.cmap.CMapCharsetEncoder;
 import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
+import com.itextpdf.io.font.cmap.StandardCMapCharsets;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -292,11 +295,9 @@ public class PdfType0Font extends PdfFont {
         }
     }
 
-    @Override
-    public byte[] convertToBytes(String text) {
+    private byte[] convertToBytesUsingCMap(String text) {
         int len = text.length();
         ByteBuffer buffer = new ByteBuffer();
-        int i = 0;
         if (fontProgram.isFontSpecific()) {
             byte[] b = PdfEncodings.convertToBytes(text, "symboltt");
             len = b.length;
@@ -328,9 +329,43 @@ public class PdfType0Font extends PdfFont {
     }
 
     @Override
+    public byte[] convertToBytes(String text) {
+        CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder(cmapEncoding.getCmapName());
+        if (encoder == null) {
+            return this.convertToBytesUsingCMap(text);
+        } else {
+            return converToBytesUsingEncoder(text, encoder);
+        }
+    }
+
+    private byte[] converToBytesUsingEncoder(String text, CMapCharsetEncoder encoder) {
+        java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
+        int[] codePoints = TextUtil.convertToUtf32(text);
+        for (int cp : codePoints) {
+            try {
+                stream.write(encoder.encodeUnicodeCodePoint(cp));
+                Glyph glyph = getGlyph(cp);
+                if (glyph.getCode() > 0) {
+                    usedGlyphs.add(glyph.getCode());
+                }
+            } catch (IOException e) {
+                // can only be thrown when stream is closed
+                throw new ITextException(e);
+            }
+        }
+        return stream.toByteArray();
+    }
+
+    @Override
     public byte[] convertToBytes(GlyphLine glyphLine) {
-        if (glyphLine != null) {
-            // prepare and count total length in bytes
+        if (glyphLine == null) {
+            return new byte[0];
+        }
+        // NOTE: this isn't particularly efficient, but it demonstrates the principle behind CMap-less conversion
+        // (i.e. we only use the CMap's name to derive the correct encoding)
+        // Also, it will yield wrong results when used in an embedded setting where font features have been applied
+        CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder(cmapEncoding.getCmapName());
+        if (encoder == null) {
             int totalByteCount = 0;
             for (int i = glyphLine.start; i < glyphLine.end; i++) {
                 totalByteCount += cmapEncoding.getCmapBytesLength(glyphLine.get(i).getCode());
@@ -344,14 +379,32 @@ public class PdfType0Font extends PdfFont {
             }
             return bytes;
         } else {
-            return null;
+            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+            for (int i = glyphLine.start; i < glyphLine.end; i++) {
+                Glyph g = glyphLine.get(i);
+                usedGlyphs.add(g.getCode());
+                byte[] encodedBit = encoder.encodeUnicodeCodePoint(g.getUnicode());
+                try {
+                    baos.write(encodedBit);
+                } catch (IOException e) {
+                    // could only be thrown when the stream is closed
+                    throw new PdfException(e);
+                }
+            }
+            return baos.toByteArray();
         }
     }
 
     @Override
     public byte[] convertToBytes(Glyph glyph) {
         usedGlyphs.add(glyph.getCode());
-        return cmapEncoding.getCmapBytes(glyph.getCode());
+        CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder(cmapEncoding.getCmapName());
+        if (encoder == null) {
+            return cmapEncoding.getCmapBytes(glyph.getCode());
+        } else {
+            int cp = glyph.getUnicode();
+            return encoder.encodeUnicodeCodePoint(cp);
+        }
     }
 
     @Override
@@ -678,6 +731,7 @@ public class PdfType0Font extends PdfFont {
     }
 
     private void convertToBytes(Glyph glyph, ByteBuffer result) {
+        // NOTE: this should only ever be called with the identity CMap in RES-403
         int code = glyph.getCode();
         usedGlyphs.add(code);
         cmapEncoding.fillCmapBytes(code, result);
