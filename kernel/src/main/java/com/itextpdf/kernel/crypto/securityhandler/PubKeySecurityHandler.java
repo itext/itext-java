@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -250,7 +251,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         pkcs7input[23] = one;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ASN1OutputStream k = ASN1OutputStream.create(baos);
+        ASN1OutputStream k = ASN1OutputStream.create(baos, ASN1Encoding.DER);
         ASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate) certificate);
         k.writeObject(obj);
         cms = baos.toByteArray();
