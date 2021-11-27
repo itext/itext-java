@@ -136,8 +136,8 @@ public class CrlClientOnline implements ICrlClient {
         if (checkCert == null) {
             return null;
         }
-        List<URL> urllist = new ArrayList<>(urls);
-        if (urllist.size() == 0) {
+        List<URL> urlList = new ArrayList<>(urls);
+        if (urlList.size() == 0) {
             LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
             try {
                 if (url == null) {
@@ -146,14 +146,14 @@ public class CrlClientOnline implements ICrlClient {
                 if (url == null) {
                     throw new IllegalArgumentException("Passed url can not be null.");
                 }
-                urllist.add(new URL(url));
+                urlList.add(new URL(url));
                 LOGGER.info("Found CRL url: " + url);
             } catch (Exception e) {
                 LOGGER.info("Skipped CRL url: " + e.getMessage());
             }
         }
         List<byte[]> ar = new ArrayList<>();
-        for (URL urlt : urllist) {
+        for (URL urlt : urlList) {
             try {
                 LOGGER.info("Checking CRL: " + urlt);
                 InputStream inp = SignUtils.getHttpResponse(urlt);

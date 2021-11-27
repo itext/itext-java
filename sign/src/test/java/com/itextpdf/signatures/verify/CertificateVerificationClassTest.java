@@ -94,6 +94,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     // Such messageTemplate is equal to any log message. This is required for porting reasons.
     private static final String ANY_LOG_MESSAGE = "{0}";
+    private static final int COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME = -1;
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpass".toCharArray();
@@ -178,28 +179,30 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     public void clrWithGivenCertificateTest()
             throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
             UnrecoverableKeyException, CRLException {
-        final int COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME = -1;
+
         final String caCertFileName = CERTS_SRC + "rootRsa.p12";
         X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, PASSWORD)[0];
-        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert,
-                DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
-                        COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME));
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, PASSWORD, PASSWORD);
 
         final String checkCertFileName = CERTS_SRC + "signCertRsa01.p12";
         X509Certificate checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(checkCertFileName, PASSWORD)[0];
-        TestCrlBuilder crlForCheckBuilder = new TestCrlBuilder(caCert,
+
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey,
                 DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
                         COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME));
         crlBuilder.addCrlEntry(caCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
                         COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME),
                 CRLReason.keyCompromise);
+
+        TestCrlBuilder crlForCheckBuilder = new TestCrlBuilder(caCert, caPrivateKey,
+                DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
+                        COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME));
         crlForCheckBuilder.addCrlEntry(checkCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
                         COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME),
                 CRLReason.keyCompromise);
 
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, PASSWORD, PASSWORD);
-        TestCrlClient crlClient = new TestCrlClient(crlBuilder, caPrivateKey);
-        TestCrlClient crlForCheckClient = new TestCrlClient(crlForCheckBuilder, caPrivateKey);
+        TestCrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(crlBuilder);
+        TestCrlClient crlForCheckClient = new TestCrlClient().addBuilderForCertIssuer(crlForCheckBuilder);
 
         Collection<byte[]> crlBytesForRootCertCollection = crlClient.getEncoded(caCert, null);
         Collection<byte[]> crlBytesForCheckCertCollection = crlForCheckClient.getEncoded(checkCert, null);
@@ -239,12 +242,13 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         final String certForAddingToCrlName = CERTS_SRC + "signCertRsa01.p12";
         X509Certificate certForCrl = (X509Certificate) Pkcs12FileHelper.readFirstChain(certForAddingToCrlName,
                 PASSWORD)[0];
-        TestCrlBuilder crlForCheckBuilder = new TestCrlBuilder(certForCrl,
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(certForAddingToCrlName, PASSWORD, PASSWORD);
+
+        TestCrlBuilder crlForCheckBuilder = new TestCrlBuilder(certForCrl, caPrivateKey,
                 DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
                         COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME));
 
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootCertFileName, PASSWORD, PASSWORD);
-        TestCrlClient crlClient = new TestCrlClient(crlForCheckBuilder, caPrivateKey);
+        TestCrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(crlForCheckBuilder);
 
         Collection<byte[]> crlBytesForRootCertCollection = crlClient.getEncoded(certForCrl, null);
 

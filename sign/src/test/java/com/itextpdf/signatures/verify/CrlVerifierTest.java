@@ -79,15 +79,19 @@ public class CrlVerifierTest extends ExtendedITextTest {
 
     @Test
     public void validCrl01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(certsSrc + "rootRsa.p12", password)[0];
-        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
+        String caCertP12FileName = certsSrc + "rootRsa.p12";
+        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertP12FileName, password)[0];
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertP12FileName, password, password);
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
         Assert.assertTrue(verifyTest(crlBuilder));
     }
 
     @Test
     public void invalidRevokedCrl01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(certsSrc + "rootRsa.p12", password)[0];
-        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
+        String caCertP12FileName = certsSrc + "rootRsa.p12";
+        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertP12FileName, password)[0];
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertP12FileName, password, password);
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
 
         String checkCertFileName = certsSrc + "signCertRsa01.p12";
         X509Certificate checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(checkCertFileName, password)[0];
@@ -98,8 +102,10 @@ public class CrlVerifierTest extends ExtendedITextTest {
 
     @Test
     public void invalidOutdatedCrl01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(certsSrc + "rootRsa.p12", password)[0];
-        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -2));
+        String caCertP12FileName = certsSrc + "rootRsa.p12";
+        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertP12FileName, password)[0];
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertP12FileName, password, password);
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -2));
         crlBuilder.setNextUpdate(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
 
         Assert.assertFalse(verifyTest(crlBuilder));
@@ -108,12 +114,11 @@ public class CrlVerifierTest extends ExtendedITextTest {
     private boolean verifyTest(TestCrlBuilder crlBuilder) throws GeneralSecurityException, IOException {
         String caCertFileName = certsSrc + "rootRsa.p12";
         X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
         String checkCertFileName = certsSrc + "signCertRsa01.p12";
         X509Certificate checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(checkCertFileName, password)[0];
 
 
-        TestCrlClient crlClient = new TestCrlClient(crlBuilder, caPrivateKey);
+        TestCrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(crlBuilder);
         Collection<byte[]> crlBytesCollection = crlClient.getEncoded(checkCert, null);
 
         boolean verify = false;

@@ -820,17 +820,16 @@ public class PdfSigner {
         }
         List<byte[]> crlBytes = new ArrayList<>();
         for (ICrlClient cc : crlList) {
-            if (cc == null)
+            if (cc == null) {
                 continue;
+            }
             Collection<byte[]> b = cc.getEncoded((X509Certificate) cert, null);
-            if (b == null)
+            if (b == null) {
                 continue;
+            }
             crlBytes.addAll(b);
         }
-        if (crlBytes.size() == 0)
-            return null;
-        else
-            return crlBytes;
+        return crlBytes.size() == 0 ? null : crlBytes;
     }
 
     protected void addDeveloperExtension(PdfDeveloperExtension extension) {

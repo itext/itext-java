@@ -110,7 +110,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
             X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootCertPath, PASSWORD)[0];
             PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootCertPath, PASSWORD, PASSWORD);
 
-            verification.addVerification("TestSignature", null, new TestCrlClient(caCert, caPrivateKey),
+            verification.addVerification("TestSignature", null, new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey),
                     CertificateOption.SIGNING_CERTIFICATE, Level.CRL, CertificateInclusion.NO);
 
             verification.merge();

@@ -50,7 +50,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
@@ -58,144 +60,206 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-
 @Category(IntegrationTest.class)
 public class LtvSigTest extends ExtendedITextTest {
-    private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/LtvSigTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/LtvSigTest/";
+    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/LtvSigTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/LtvSigTest/";
 
-    private static final char[] password = "testpass".toCharArray();
+    private static final char[] PASSWORD = "testpass".toCharArray();
 
     @BeforeClass
     public static void before() {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void ltvEnabledTest01() throws IOException, GeneralSecurityException {
-        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
-        String caCertFileName = certsSrc + "rootRsa.p12";
-        String srcFileName = sourceFolder + "signedDoc.pdf";
-        String ltvFileName = destinationFolder + "ltvEnabledTest01.pdf";
-        String ltvTsFileName = destinationFolder + "ltvEnabledTsTest01.pdf";
+        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.p12";
+        String caCertP12FileName = CERTS_SRC + "rootRsa.p12";
+        String srcFileName = SOURCE_FOLDER + "signedDoc.pdf";
+        String ltvFileName = DESTINATION_FOLDER + "ltvEnabledTest01.pdf";
+        String ltvTsFileName = DESTINATION_FOLDER + "ltvEnabledTsTest01.pdf";
 
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+        TestCrlClient testCrlClient = prepareCrlClientForIssuer(caCertP12FileName);
+        TestOcspClient testOcspClient = prepareOcspClientForIssuer(caCertP12FileName);
+        TestTsaClient testTsa = prepareTsaClient(tsaCertP12FileName);
 
-        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        TestOcspClient testOcspClient = new TestOcspClient()
-                .addBuilderForCertIssuer(caCert, caPrivateKey);
-        TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
-
-        PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(ltvFileName), new StampingProperties().useAppendMode());
+        PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(ltvFileName),
+                new StampingProperties().useAppendMode());
         LtvVerification ltvVerification = new LtvVerification(document);
-        ltvVerification.addVerification("Signature1", testOcspClient, testCrlClient, LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL, LtvVerification.CertificateInclusion.YES);
+        ltvVerification.addVerification("Signature1", testOcspClient, testCrlClient,
+                LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL,
+                LtvVerification.CertificateInclusion.YES);
         ltvVerification.merge();
         document.close();
 
-        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName), new StampingProperties().useAppendMode());
+        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName),
+                new StampingProperties().useAppendMode());
         signer.timestamp(testTsa, "timestampSig1");
 
         basicCheckLtvDoc("ltvEnabledTsTest01.pdf", "timestampSig1");
 
         Assert.assertNull(
-                SignaturesCompareTool.compareSignatures(ltvTsFileName, sourceFolder + "cmp_ltvEnabledTsTest01.pdf"));
+                SignaturesCompareTool.compareSignatures(ltvTsFileName, SOURCE_FOLDER + "cmp_ltvEnabledTsTest01.pdf"));
     }
 
     @Test
-    public void ltvEnabledSingleSignatureTest01() throws IOException, GeneralSecurityException {
-        String signCertFileName = certsSrc + "signCertRsaWithChain.p12";
-        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
-        String intermediateCertFileName = certsSrc + "intermediateRsa.p12";
-        String caCertFileName = certsSrc + "rootRsa.p12";
-        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String ltvFileName = destinationFolder + "ltvEnabledSingleSignatureTest01.pdf";
+    public void ltvEnabledSingleSignatureNoCrlDataTest() throws IOException, GeneralSecurityException {
+        String signCertP12FileName = CERTS_SRC + "signCertRsaWithChain.p12";
+        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.p12";
+        String intermediateCertP12FileName = CERTS_SRC + "intermediateRsa.p12";
+        String caCertP12FileName = CERTS_SRC + "rootRsa.p12";
+        String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
+        String ltvFileName = DESTINATION_FOLDER + "ltvEnabledSingleSignatureNoCrlDataTest.pdf";
 
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
+        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertP12FileName, PASSWORD);
+        IExternalSignature pks = prepareSignatureHandler(signCertP12FileName);
+        TestTsaClient testTsa = prepareTsaClient(tsaCertP12FileName);
+        TestOcspClient testOcspClient = prepareOcspClientForIssuer(intermediateCertP12FileName, caCertP12FileName);
+        Collection<ICrlClient> crlNotAvailableList = Arrays.<ICrlClient>asList((ICrlClient)null, new ICrlClient() {
+            @Override
+            public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
+                return null;
+            }
+        });
 
-        X509Certificate intermediateCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(intermediateCertFileName, password)[0];
-        PrivateKey intermediatePrivateKey = Pkcs12FileHelper.readFirstKey(intermediateCertFileName, password, password);
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
-
-        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        TestOcspClient testOcspClient = new TestOcspClient()
-                .addBuilderForCertIssuer(intermediateCert, intermediatePrivateKey)
-                .addBuilderForCertIssuer(caCert, caPrivateKey);
-
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
-        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
-        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
-
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(ltvFileName), new StampingProperties());
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(ltvFileName),
+                new StampingProperties());
         signer.setFieldName("Signature1");
-        signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, testOcspClient, testTsa, 0, PdfSigner.CryptoStandard.CADES);
+
+        signer.signDetached(new BouncyCastleDigest(), pks, signChain, crlNotAvailableList, testOcspClient, testTsa, 0,
+                PdfSigner.CryptoStandard.CADES);
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(
-                ltvFileName, sourceFolder + "cmp_ltvEnabledSingleSignatureTest01.pdf"));
+                ltvFileName, SOURCE_FOLDER + "cmp_ltvEnabledSingleSignatureNoCrlDataTest.pdf"));
+    }
+
+    @Test
+    public void ltvEnabledSingleSignatureNoOcspDataTest() throws IOException, GeneralSecurityException {
+        String signCertP12FileName = CERTS_SRC + "signCertRsaWithChain.p12";
+        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.p12";
+        String intermediateCertP12FileName = CERTS_SRC + "intermediateRsa.p12";
+        String caCertP12FileName = CERTS_SRC + "rootRsa.p12";
+        String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
+        String ltvFileName = DESTINATION_FOLDER + "ltvEnabledSingleSignatureNoOcspDataTest.pdf";
+
+        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertP12FileName, PASSWORD);
+        IExternalSignature pks = prepareSignatureHandler(signCertP12FileName);
+        TestTsaClient testTsa = prepareTsaClient(tsaCertP12FileName);
+        TestCrlClient testCrlClient = prepareCrlClientForIssuer(caCertP12FileName, intermediateCertP12FileName);
+
+        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(ltvFileName),
+                new StampingProperties());
+        signer.setFieldName("Signature1");
+        signer.signDetached(new BouncyCastleDigest(), pks, signChain, Collections.<ICrlClient>singletonList(testCrlClient), null,
+                testTsa, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+                ltvFileName, SOURCE_FOLDER + "cmp_ltvEnabledSingleSignatureNoOcspDataTest.pdf"));
     }
 
     @Test
     public void secondLtvOriginalHasNoVri01() throws IOException, GeneralSecurityException {
-        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
-        String caCertFileName = certsSrc + "rootRsa.p12";
-        String srcFileName = sourceFolder + "ltvEnabledNoVriEntry.pdf";
-        String ltvFileName = destinationFolder + "secondLtvOriginalHasNoVri01.pdf";
-        String ltvTsFileName = destinationFolder + "secondLtvOriginalHasNoVriTs01.pdf";
+        String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
+        String caCertFileName = CERTS_SRC + "rootRsa.p12";
+        String srcFileName = SOURCE_FOLDER + "ltvEnabledNoVriEntry.pdf";
+        String ltvFileName = DESTINATION_FOLDER + "secondLtvOriginalHasNoVri01.pdf";
+        String ltvTsFileName = DESTINATION_FOLDER + "secondLtvOriginalHasNoVriTs01.pdf";
 
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+        TestCrlClient testCrlClient = prepareCrlClientForIssuer(caCertFileName);
+        TestOcspClient testOcspClient = prepareOcspClientForIssuer(caCertFileName);
+        TestTsaClient testTsa = prepareTsaClient(tsaCertFileName);
 
-        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-        TestOcspClient testOcspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
-        TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
-
-        PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(ltvFileName), new StampingProperties().useAppendMode());
+        PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(ltvFileName),
+                new StampingProperties().useAppendMode());
         LtvVerification ltvVerification = new LtvVerification(document);
-        ltvVerification.addVerification("timestampSig1", testOcspClient, testCrlClient, LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL, LtvVerification.CertificateInclusion.YES);
+        ltvVerification.addVerification("timestampSig1", testOcspClient, testCrlClient,
+                LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL,
+                LtvVerification.CertificateInclusion.YES);
         ltvVerification.merge();
         document.close();
 
-        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName), new StampingProperties().useAppendMode());
+        PdfSigner signer = new PdfSigner(new PdfReader(ltvFileName), new FileOutputStream(ltvTsFileName),
+                new StampingProperties().useAppendMode());
         signer.timestamp(testTsa, "timestampSig2");
 
         basicCheckLtvDoc("secondLtvOriginalHasNoVriTs01.pdf", "timestampSig2");
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(
-                ltvTsFileName, sourceFolder + "cmp_secondLtvOriginalHasNoVriTs01.pdf"));
+                ltvTsFileName, SOURCE_FOLDER + "cmp_secondLtvOriginalHasNoVriTs01.pdf"));
+    }
+
+    private static IExternalSignature prepareSignatureHandler(String signCertP12FileName)
+            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertP12FileName, PASSWORD, PASSWORD);
+        return new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+    }
+
+    private static TestCrlClient prepareCrlClientForIssuer(String... issuerCertP12FileNames)
+            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        TestCrlClient testCrlClient = new TestCrlClient();
+        for (String issuerP12File : issuerCertP12FileNames) {
+            X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(issuerP12File, PASSWORD)[0];
+            PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(issuerP12File, PASSWORD, PASSWORD);
+            testCrlClient.addBuilderForCertIssuer(caCert, caPrivateKey);
+        }
+        return testCrlClient;
+    }
+
+    private static TestOcspClient prepareOcspClientForIssuer(String... issuerCertP12FileNames)
+            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+
+        TestOcspClient ocspClient = new TestOcspClient();
+        for (String issuerP12File : issuerCertP12FileNames) {
+            X509Certificate issuerCertificate =
+                    (X509Certificate) Pkcs12FileHelper.readFirstChain(issuerP12File, PASSWORD)[0];
+            PrivateKey issuerPrivateKey = Pkcs12FileHelper.readFirstKey(issuerP12File, PASSWORD, PASSWORD);
+            ocspClient.addBuilderForCertIssuer(issuerCertificate, issuerPrivateKey);
+        }
+
+        return ocspClient;
+    }
+
+    private static TestTsaClient prepareTsaClient(String tsaCertP12FileName)
+            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertP12FileName, PASSWORD);
+        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertP12FileName, PASSWORD, PASSWORD);
+        return new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
     }
 
     private void basicCheckLtvDoc(String outFileName, String tsSigName) throws IOException, GeneralSecurityException {
-        PdfDocument outDocument = new PdfDocument(new PdfReader(destinationFolder + outFileName));
+        PdfDocument outDocument = new PdfDocument(new PdfReader(DESTINATION_FOLDER + outFileName));
         PdfDictionary dssDict = outDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         Assert.assertNotNull(dssDict);
         Assert.assertEquals(4, dssDict.size());
         outDocument.close();
 
-        PadesSigTest.basicCheckSignedDoc(destinationFolder + outFileName, tsSigName);
+        PadesSigTest.basicCheckSignedDoc(DESTINATION_FOLDER + outFileName, tsSigName);
     }
 }

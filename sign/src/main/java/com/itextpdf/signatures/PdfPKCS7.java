@@ -1063,8 +1063,9 @@ public class PdfPKCS7 {
                 if (haveCrl) {
                     ASN1EncodableVector v2 = new ASN1EncodableVector();
                     for (byte[] bCrl : crlBytes) {
-                        if (bCrl == null)
+                        if (bCrl == null) {
                             continue;
+                        }
                         ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream(bCrl));
                         v2.add(t.readObject());
                     }

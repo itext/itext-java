@@ -98,7 +98,7 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
         TestOcspClient testOcspClient = new TestOcspClient()
                 .addBuilderForCertIssuer(interCert, interPrivateKey)
                 .addBuilderForCertIssuer(caCert, caPrivateKey);
-        TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
+        TestCrlClient testCrlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
 
         addLtvInfo(srcFileName, ltvFileName, "Signature1", testOcspClient, testCrlClient);
         addLtvInfo(ltvFileName, ltvFileName2, "Signature2", testOcspClient, testCrlClient);
