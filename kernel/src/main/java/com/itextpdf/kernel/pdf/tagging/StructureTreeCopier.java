@@ -353,7 +353,6 @@ class StructureTreeCopier {
     private static PdfDictionary copyObject(PdfDictionary source, PdfDictionary destPage, boolean parentChangePg, StructElemCopyingParams copyingParams) {
         PdfDictionary copied;
         if (copyingParams.isCopyFromDestDocument()) {
-            //TODO: detect wether object is needed to be cloned at all
             copied = source.clone(ignoreKeysForClone);
             if (source.isIndirect()) {
                 copied.makeIndirect(copyingParams.getToDocument());
