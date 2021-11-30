@@ -770,7 +770,7 @@ public class PdfPKCS7 {
                 digest = sig.sign();
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            ASN1OutputStream dout = ASN1OutputStream.create(bOut);
             dout.writeObject(new DEROctetString(digest));
             dout.close();
 
@@ -926,7 +926,7 @@ public class PdfPKCS7 {
 
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            ASN1OutputStream dout = ASN1OutputStream.create(bOut);
             dout.writeObject(new DERSequence(whole));
             dout.close();
 
