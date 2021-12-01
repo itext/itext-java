@@ -75,30 +75,6 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
         super(pdfObject);
     }
 
-    private HashSet<PdfName> widgetEntries = new HashSet<PdfName>();
-
-    {
-        widgetEntries.add(PdfName.Subtype);
-        widgetEntries.add(PdfName.Type);
-        widgetEntries.add(PdfName.Rect);
-        widgetEntries.add(PdfName.Contents);
-        widgetEntries.add(PdfName.P);
-        widgetEntries.add(PdfName.NM);
-        widgetEntries.add(PdfName.M);
-        widgetEntries.add(PdfName.F);
-        widgetEntries.add(PdfName.AP);
-        widgetEntries.add(PdfName.AS);
-        widgetEntries.add(PdfName.Border);
-        widgetEntries.add(PdfName.C);
-        widgetEntries.add(PdfName.StructParent);
-        widgetEntries.add(PdfName.OC);
-        widgetEntries.add(PdfName.H);
-        widgetEntries.add(PdfName.MK);
-        widgetEntries.add(PdfName.A);
-        widgetEntries.add(PdfName.AA);
-        widgetEntries.add(PdfName.BS);
-    }
-
     @Override
     public PdfName getSubtype() {
         return PdfName.Widget;
@@ -133,22 +109,20 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
     }
 
     /**
-     * This method removes all widget annotation entries from the form field  the given annotation merged with.
+     * Remove widget annotation from AcroForm hierarchy.
      */
-    public void releaseFormFieldFromWidgetAnnotation(){
-        PdfDictionary annotDict = getPdfObject();
-        for (PdfName entry: widgetEntries) {
-            annotDict.remove(entry);
-        }
-        PdfDictionary parent = annotDict.getAsDictionary(PdfName.Parent);
-        if (parent != null && annotDict.size() == 1) {
+    public void releaseFormFieldFromWidgetAnnotation() {
+        PdfDictionary annotationDictionary = getPdfObject();
+        PdfDictionary parent = annotationDictionary.getAsDictionary(PdfName.Parent);
+        if (parent != null) {
             PdfArray kids = parent.getAsArray(PdfName.Kids);
-            kids.remove(annotDict);
-            if (kids.size() == 0) {
+            kids.remove(annotationDictionary);
+            if (kids.isEmpty()) {
                 parent.remove(PdfName.Kids);
             }
         }
     }
+
     /**
      * Set the visibility flags of the Widget annotation
      * Options are: HIDDEN, HIDDEN_BUT_PRINTABLE, VISIBLE, VISIBLE_BUT_DOES_NOT_PRINT
