@@ -75,6 +75,10 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class CertificateVerificationClassTest extends ExtendedITextTest {
+
+    // Such messageTemplate is equal to any log message. This is required for porting reasons.
+    private static final String ANY_LOG_MESSAGE = "{0}";
+
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] password = "testpass".toCharArray();
 
@@ -122,7 +126,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = "Unexpected exception was thrown during keystore processing"))
+    @LogMessages(messages = @LogMessage(messageTemplate = ANY_LOG_MESSAGE))
     public void keyStoreWithoutCertificatesTest() throws Exception {
         String tsaCertFileName = certsSrc + "tsCertRsa.p12";
 
