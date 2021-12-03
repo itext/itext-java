@@ -25,11 +25,12 @@ package com.itextpdf.commons.actions;
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.contexts.UnknownContext;
-import com.itextpdf.commons.exceptions.UnknownProductException;
-import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.commons.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.exceptions.ProductEventHandlerRepeatException;
+import com.itextpdf.commons.exceptions.UnknownProductException;
+import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.ArrayList;
@@ -47,7 +48,11 @@ import org.slf4j.LoggerFactory;
  */
 final class ProductEventHandler extends AbstractContextBasedEventHandler {
     static final ProductEventHandler INSTANCE = new ProductEventHandler();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductEventHandler.class);
+    // The constant has the following value for two reasons. First, to avoid the infinite loop.
+    // Second, to retry event processing several times for technical reasons.
+    private static final int MAX_EVENT_RETRY_COUNT = 4;
 
     private final ConcurrentHashMap<String, ITextProductEventProcessor> processors = new ConcurrentHashMap<>();
     private final WeakHashMap<SequenceId, List<AbstractProductProcessITextEvent>> events = new WeakHashMap<>();
@@ -63,24 +68,17 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
      */
     @Override
     protected void onAcceptedEvent(AbstractContextBasedITextEvent event) {
-        if (! (event instanceof AbstractProductProcessITextEvent)) {
-            return;
-        }
-        final AbstractProductProcessITextEvent productEvent = (AbstractProductProcessITextEvent) event;
-        final String productName = productEvent.getProductName();
-        final ITextProductEventProcessor productEventProcessor = getActiveProcessor(productName);
-        if (productEventProcessor == null) {
-            throw new UnknownProductException(
-                    MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, productName));
-        }
-        productEventProcessor.onEvent(productEvent);
-        if (productEvent.getSequenceId() != null) {
-            if (productEvent instanceof ConfirmEvent) {
-                wrapConfirmedEvent((ConfirmEvent) productEvent, productEventProcessor);
-            } else {
-                addEvent(productEvent.getSequenceId(), productEvent);
+        for (int i = 0; i < MAX_EVENT_RETRY_COUNT; i++) {
+            try {
+                tryProcessEvent(event);
+                // process succeeded
+                return;
+            } catch (ProductEventHandlerRepeatException repeatException) {
+                // ignore this exception to retry the processing
             }
         }
+        // the final processing retry
+        tryProcessEvent(event);
     }
 
     ITextProductEventProcessor addProcessor(ITextProductEventProcessor processor) {
@@ -135,6 +133,29 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
             }
 
             listOfEvents.add(event);
+        }
+    }
+
+    private void tryProcessEvent(AbstractContextBasedITextEvent event) {
+        if (! (event instanceof AbstractProductProcessITextEvent)) {
+            return;
+        }
+        final AbstractProductProcessITextEvent productEvent = (AbstractProductProcessITextEvent) event;
+        final String productName = productEvent.getProductName();
+        final ITextProductEventProcessor productEventProcessor = getActiveProcessor(productName);
+        if (productEventProcessor == null) {
+            throw new UnknownProductException(
+                    MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, productName));
+        }
+
+        productEventProcessor.onEvent(productEvent);
+
+        if (productEvent.getSequenceId() != null) {
+            if (productEvent instanceof ConfirmEvent) {
+                wrapConfirmedEvent((ConfirmEvent) productEvent, productEventProcessor);
+            } else {
+                addEvent(productEvent.getSequenceId(), productEvent);
+            }
         }
     }
 
