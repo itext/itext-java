@@ -191,7 +191,7 @@ public abstract class WrappedSamplesRunner {
         }
     }
 
-    private void runMain() throws IllegalAccessException, InvocationTargetException {
+    protected void runMain() throws IllegalAccessException, InvocationTargetException {
         Method mainMethod = getMain(sampleClass);
         if (mainMethod == null) {
             throw new IllegalArgumentException("Class must have main method.");
