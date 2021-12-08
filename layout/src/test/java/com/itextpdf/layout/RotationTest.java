@@ -60,6 +60,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
@@ -193,7 +194,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void staticTextRotationTest01() throws IOException, InterruptedException {
@@ -215,7 +216,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     @Test
     public void staticTextRotationTest02() throws IOException, InterruptedException {
@@ -237,7 +238,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void staticTextRotationTest03() throws IOException, InterruptedException {
@@ -294,7 +295,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     @Test
     public void splitTextRotationTest02() throws IOException, InterruptedException {
@@ -339,7 +340,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void rotationInfiniteLoopTest02() throws IOException, InterruptedException {
@@ -383,7 +384,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void tableRotationTest03() throws IOException, InterruptedException {
@@ -555,7 +556,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     @Test
     public void divRotationTest02() throws IOException, InterruptedException {
@@ -606,7 +607,7 @@ public class RotationTest extends ExtendedITextTest {
 
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     @Test
     public void listRotationTest02() throws IOException, InterruptedException {
@@ -681,7 +682,7 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)
     })
     @Test
     public void innerRotationTest02() throws IOException, InterruptedException {

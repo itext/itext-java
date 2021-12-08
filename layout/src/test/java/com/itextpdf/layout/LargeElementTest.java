@@ -61,6 +61,7 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DocumentRenderer;
@@ -710,7 +711,7 @@ public class LargeElementTest extends ExtendedITextTest {
 
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
     public void largeTableWithLayoutResultNothingTest02() throws IOException, InterruptedException {
         String testName = "largeTableWithLayoutResultNothingTest02.pdf";
         String outFileName = destinationFolder + testName;
@@ -959,7 +960,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // TODO DEVSIX-5866 at #complete left border is initialized as null
     public void largeTableWithCellBordersSplitTest() throws IOException, InterruptedException {
         String testName = "largeTableWithCellBordersSplitTest.pdf";
@@ -991,7 +992,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // TODO DEVSIX-5866 at #complete left border is initialized as null
     public void largeTableWithCellBordersSplitTest02() throws IOException, InterruptedException {
         String testName = "largeTableWithCellBordersSplitTest02.pdf";
@@ -1496,7 +1497,7 @@ public class LargeElementTest extends ExtendedITextTest {
 
     @Test
     // TODO DEVSIX-3953 Footer is not placed on the first page in case of large table, but fits the page for a usual table
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void largeTableFooterNotFitTest() throws IOException, InterruptedException {
         String testName = "largeTableFooterNotFitTest.pdf";
         String outFileName = destinationFolder + testName;

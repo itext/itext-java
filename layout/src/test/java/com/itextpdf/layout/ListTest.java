@@ -62,6 +62,7 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.ListSymbolAlignment;
 import com.itextpdf.layout.properties.Property;
@@ -194,7 +195,7 @@ public class ListTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 8, messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(count = 8, messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void addListOnShortPage1() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addListOnShortPage1.pdf";
@@ -230,7 +231,7 @@ public class ListTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 3, messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(count = 3, messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
             @LogMessage(count = 6, messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
     })
     public void addListOnShortPage2() throws IOException, InterruptedException {
@@ -592,7 +593,7 @@ public class ListTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void listSymbolForcedPlacement01() throws Exception {
         String outFileName = destinationFolder + "listSymbolForcedPlacement01.pdf";
         String cmpFileName = sourceFolder + "cmp_listSymbolForcedPlacement01.pdf";

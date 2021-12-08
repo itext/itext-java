@@ -59,6 +59,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.UnitValue;
@@ -146,7 +147,7 @@ public class MinWidthTest extends ExtendedITextTest {
 
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void divWithBigRotatedParagraph() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divBigRotatedParagraphTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divBigRotatedParagraphTest01.pdf";

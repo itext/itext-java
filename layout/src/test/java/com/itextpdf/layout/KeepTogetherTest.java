@@ -63,6 +63,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.ListNumberingType;
@@ -154,7 +155,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherParagraphTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherParagraphTest02.pdf";
@@ -258,7 +259,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherDivTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherDivTest02.pdf";
@@ -348,7 +349,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherDefaultTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherDefaultTest01.pdf";
@@ -393,7 +394,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherInlineDiv02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherInlineDiv02.pdf";
@@ -532,7 +533,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void updateHeightTest01() throws IOException, InterruptedException {
         String testName = "updateHeightTest01.pdf";
@@ -594,7 +595,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void fixedHeightOverflowTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_fixedHeightOverflowTest01.pdf";
@@ -622,7 +623,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void marginCollapseKeptTogetherDivGoesBackTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_marginCollapseKeptTogetherDivGoesBackTest01.pdf";
@@ -654,7 +655,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     // TODO DEVSIX-3995 The margin between the divs occupies 100 points instead of 300. After a fix the cmp should be updated
     public void marginCollapseKeptTogetherDivGoesBackTest02() throws IOException, InterruptedException {
@@ -686,7 +687,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherNotEmptyPageTest() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherNotEmptyPageTest.pdf";
@@ -717,7 +718,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherOnFirstInnerElementNotEmptyPageTest() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherOnFirstInnerElementNotEmptyPageTest.pdf";
@@ -809,7 +810,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     // TODO DEVSIX-4023 cmp should be updated
     public void keepTogetherOnSecondInnerElementNotEmptyPageTest() throws IOException, InterruptedException {
@@ -844,7 +845,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void smallFloatInsideKeptTogetherDivTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_smallFloatInsideKeptTogetherDivTest01.pdf";
@@ -863,7 +864,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void smallFloatInsideKeptTogetherDivTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_smallFloatInsideKeptTogetherDivTest02.pdf";
@@ -885,7 +886,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void smallFloatInsideKeptTogetherParagraphTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_smallFloatInsideKeptTogetherParagraphTest01.pdf";
@@ -904,7 +905,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void smallFloatInsideKeptTogetherParagraphTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_smallFloatInsideKeptTogetherParagraphTest02.pdf";
@@ -926,7 +927,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     // TODO DEVSIX-4023 cmp should be updated
     public void keepTogetherOnInnerElementTestEmptyPageTest() throws IOException, InterruptedException {
@@ -951,7 +952,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     // TODO DEVSIX-4023 cmp should be updated
     public void keepTogetherOnInnerElementMargin01EmptyPageTest() throws IOException, InterruptedException {
@@ -979,7 +980,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     // TODO DEVSIX-4023 cmp should be updated
     public void keepTogetherOnInnerElementMargin02EmptyPageTest() throws IOException, InterruptedException {
@@ -1007,7 +1008,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     // TODO DEVSIX-1092 There should be no path of the 15th row on the first page,
     // since the layout box is only of 1 px height
@@ -1029,7 +1030,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void smallFloatInsideKeptTogetherTableTest02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_smallFloatInsideKeptTogetherTableTest02.pdf";
@@ -1051,7 +1052,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherTreeWithParentNotFitOnDocumentTest() throws IOException, InterruptedException {
         String filename = "keepTogetherTreeWithParentNotFitOnDocument.pdf";
@@ -1083,7 +1084,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherSubTreeWithParentNotFitOnDocumentTest() throws IOException, InterruptedException {
         String filename = "keepTogetherSubTreeWithParentNotFitOnDocument.pdf";
@@ -1117,7 +1118,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherSubTreeWithChildKeepTogetherFalseAndParentNotFitOnDocumentTest()
             throws IOException, InterruptedException {
@@ -1152,7 +1153,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void keepTogetherTreeWithParentNotFitOnPageCanvasTest() throws IOException, InterruptedException {
         String filename = "keepTogetherTreeWithParentNotFitOnPageCanvas.pdf";
@@ -1226,7 +1227,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     //TODO: update cmp file when DEVSIX-4681 will be fixed
     public void floatingElementsInDivAndKeepTogetherElemTest() throws IOException, InterruptedException {
@@ -1266,7 +1267,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     //TODO: update cmp file when DEVSIX-4681 will be fixed
     public void floatingEmptyElementsInDivAndKeepTogetherElemTest() throws IOException, InterruptedException {

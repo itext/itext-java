@@ -62,6 +62,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
@@ -224,7 +225,7 @@ public class LinkTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void rotatedLinkInnerRotation() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "rotatedLinkInnerRotation.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLinkInnerRotation.pdf";

@@ -183,6 +183,11 @@ public final class IoLogMessageConstant {
     public static final String DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED = "During the construction of the ICC"
             + " profile, the {0} error with message \"{1}\" occurred, the ICC profile will not be installed in the "
             + "image.";
+
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
 
     public static final String ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED =

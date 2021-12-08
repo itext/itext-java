@@ -58,6 +58,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -733,7 +734,7 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void infiniteLoopTest01() throws IOException, InterruptedException {
         fileName = "infiniteLoopTest01.pdf";
@@ -881,7 +882,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void splitCellsTest03() throws IOException, InterruptedException {
         fileName = "splitCellsTest03.pdf";
         Document doc = createDocument();
@@ -1446,7 +1447,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06.pdf";
         Document doc = createDocument();
@@ -1473,7 +1474,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06A() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06A.pdf";
         outFileName = destinationFolder + fileName;
@@ -1533,7 +1534,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06B() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest06B.pdf";
         outFileName = destinationFolder + fileName;
@@ -2083,7 +2084,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void tableWithHeaderFooterTest20() throws IOException, InterruptedException {
         fileName = "tableWithHeaderFooterTest20.pdf";
         Document doc = createDocument();
@@ -2201,7 +2202,7 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void splitRowspanKeepTogetherTest() throws IOException, InterruptedException {
         fileName = "splitRowspanKeepTogetherTest.pdf";
         Document doc = createDocument();
@@ -2242,7 +2243,7 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 4),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 4),
             @LogMessage(messageTemplate = IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, count = 2),
 
     })

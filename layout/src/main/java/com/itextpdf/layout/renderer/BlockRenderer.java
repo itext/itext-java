@@ -58,6 +58,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.layout.PositionedLayoutContext;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -446,7 +447,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
                     LoggerFactory.getLogger(getClass())
-                            .warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                            .warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                                     "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);

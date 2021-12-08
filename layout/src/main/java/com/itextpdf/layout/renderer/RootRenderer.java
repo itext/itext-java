@@ -57,6 +57,7 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.layout.RootLayoutArea;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.properties.ClearPropertyValue;
@@ -168,7 +169,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                             ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                             result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
                             Logger logger = LoggerFactory.getLogger(RootRenderer.class);
-                            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                            logger.warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                         }
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
@@ -499,7 +500,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             overflowRenderer.setProperty(Property.FORCED_PLACEMENT, true);
             Logger logger = LoggerFactory.getLogger(RootRenderer.class);
             if (logger.isWarnEnabled()) {
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
+                logger.warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
             }
             return true;
         }
@@ -530,7 +531,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
         if (logger.isWarnEnabled()) {
             logger.warn(MessageFormatUtil.format(
-                    IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                    LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                     "KeepTogether property will be ignored."));
         }
         if (!rendererIsFloat) {

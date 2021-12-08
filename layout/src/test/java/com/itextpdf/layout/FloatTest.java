@@ -62,6 +62,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.FloatPropertyValue;
@@ -823,7 +824,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void clearancePageSplitFloatNothingInRoot01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInRoot01.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInRoot01.pdf";
@@ -912,7 +913,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void clearancePageSplitFloatNothingInBlock01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInBlock01.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInBlock01.pdf";
@@ -1073,7 +1074,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
     public void floatsOnPageSplit01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit01.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit01.pdf";
@@ -1140,7 +1141,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit04() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit04.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit04.pdf";
@@ -1246,7 +1247,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit06_03() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06_03.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit06_03.pdf";
@@ -1332,7 +1333,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit08_02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_02.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit08_02.pdf";
@@ -1365,7 +1366,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit08_03() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_03.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit08_03.pdf";
@@ -1422,7 +1423,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit10() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit10.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit10.pdf";
@@ -1446,7 +1447,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsOnPageSplit11() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit11.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit11.pdf";
@@ -1695,7 +1696,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsKeepTogetherOnPageSplit01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit01.pdf";
         String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit01.pdf";
@@ -1716,7 +1717,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsKeepTogetherOnPageSplit02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit02.pdf";
         String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit02.pdf";
@@ -1740,7 +1741,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
     public void floatsKeepTogetherOnPageSplit03() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit03.pdf";
         String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit03.pdf";
@@ -2088,7 +2089,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsFirstOnPageNotFit01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit01.pdf";
         String outFile = destinationFolder + "floatsFirstOnPageNotFit01.pdf";
@@ -2115,7 +2116,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsFirstOnPageNotFit02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit02.pdf";
         String outFile = destinationFolder + "floatsFirstOnPageNotFit02.pdf";
@@ -2142,7 +2143,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void floatsFirstOnPageNotFit03() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit03.pdf";
         String outFile = destinationFolder + "floatsFirstOnPageNotFit03.pdf";
@@ -3118,7 +3119,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void keepTogetherEnoughSpaceOnNewPageWithFloatTest() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
         String outFile = destinationFolder + "keepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
@@ -3133,7 +3134,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void keepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest()
             throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
@@ -3149,7 +3150,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
     public void keepTogetherNotEnoughSpaceOnNewEmptyPageTest() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
         String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
@@ -3164,7 +3165,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
     public void keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest.pdf";
         String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest.pdf";
@@ -3180,7 +3181,7 @@ public class FloatTest extends ExtendedITextTest {
 
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
         String outFile = destinationFolder + "innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
@@ -3195,7 +3196,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void innerKeepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest()
             throws IOException, InterruptedException {
         String cmpFileName =
@@ -3212,7 +3213,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
     public void innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
         String outFile = destinationFolder + "innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";

@@ -31,6 +31,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.ParagraphOrphansControl;
 import com.itextpdf.layout.properties.ParagraphWidowsControl;
 import com.itextpdf.layout.properties.Property;
@@ -250,13 +251,13 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void keepTogetherLargeParagraphOrphans() throws IOException, InterruptedException {
         runKeepTogether("keepTogetherLargeParagraphOrphans", true, true);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void keepTogetherLargeParagraphWidows() throws IOException, InterruptedException {
         runKeepTogether("keepTogetherLargeParagraphWidows", false, true);
     }
@@ -272,13 +273,13 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)})
     public void hugeInlineImageOrphans() throws IOException, InterruptedException {
         runHugeInlineImage("hugeInlineImageOrphans", true);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2),
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2),
             @LogMessage(messageTemplate = IoLogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED)})
     public void hugeInlineImageWidows() throws IOException, InterruptedException {
         runHugeInlineImage("hugeInlineImageWidows", false);
