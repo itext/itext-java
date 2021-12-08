@@ -3493,6 +3493,30 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void preciseFittingBoldSimulatedTextInCellsTest() throws IOException, InterruptedException {
+        String fileName = "preciseFittingBoldSimulatedTextInCells.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+            Document doc = new Document(pdfDocument)) {
+
+            int numberOfColumns = 9;
+            Table table = new Table(UnitValue.createPercentArray(numberOfColumns));
+            table.useAllAvailableWidth();
+            table.setFixedLayout();
+
+            for (int i = 0; i < numberOfColumns; i++) {
+                table.addCell(new Cell().add(new Paragraph("Description").setBold()));
+            }
+
+            doc.add(table);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
+    }
+
+    @Test
     public void tableRelayoutTest() {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document doc = new Document(pdfDoc)) {
