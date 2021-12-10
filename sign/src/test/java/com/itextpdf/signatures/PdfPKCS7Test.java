@@ -27,13 +27,19 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.sign.PadesSigTest;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
+import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -43,6 +49,7 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.Calendar;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
@@ -186,6 +193,38 @@ public class PdfPKCS7Test extends ExtendedITextTest {
                 TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(
                         DateTimeUtil.getCalendar(pkcs7.getOcsp().getProducedAt()))),
                 EPS);
+    }
+
+    @Test
+    public void verifyTimestampImprintSimpleSignatureTest() throws IOException, GeneralSecurityException {
+        PdfDocument outDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "simpleSignature.pdf"));
+        PdfPKCS7 pkcs7 = new SignatureUtil(outDocument).readSignatureData("Signature1");
+        Assert.assertFalse(pkcs7.verifyTimestampImprint());
+    }
+
+    @Test
+    public void verifyTimestampImprintTimeStampSignatureTest() throws IOException, GeneralSecurityException {
+        PdfDocument outDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "timeStampSignature.pdf"));
+        PdfPKCS7 pkcs7 = new SignatureUtil(outDocument).readSignatureData("timestampSig1");
+        Assert.assertFalse(pkcs7.verifyTimestampImprint());
+    }
+
+    @Test
+    public void verifyTimestampImprintEmbeddedTimeStampSignatureTest() throws IOException, GeneralSecurityException {
+        PdfDocument outDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "embeddedTimeStampSignature.pdf"));
+        PdfPKCS7 pkcs7 = new SignatureUtil(outDocument).readSignatureData("Signature1");
+        Assert.assertTrue(pkcs7.verifyTimestampImprint());
+    }
+
+    @Test
+    public void verifyTimestampImprintCorruptedTimeStampSignatureTest() throws IOException, GeneralSecurityException {
+        PdfDocument outDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "embeddedTimeStampCorruptedSignature.pdf"));
+        PdfPKCS7 pkcs7 = new SignatureUtil(outDocument).readSignatureData("Signature1");
+        Assert.assertTrue(pkcs7.verifyTimestampImprint());
     }
 
     // PdfPKCS7 is created here the same way it's done in PdfSigner#signDetached
