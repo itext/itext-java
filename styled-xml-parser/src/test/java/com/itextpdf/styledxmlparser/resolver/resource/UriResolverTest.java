@@ -45,16 +45,18 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
-
 @Category(UnitTest.class)
 public class UriResolverTest extends ExtendedITextTest {
+
+    private static final String SOURCE_FOLDER =
+            "./src/test/resources/com/itextpdfstyledxmlparser/resolver/resource/UriResolverTest/";
 
     @Test
     public void uriResolverTest01() throws MalformedURLException {
@@ -113,6 +115,15 @@ public class UriResolverTest extends ExtendedITextTest {
     }
 
     @Test
+    public void resolveAgainstBaseUriTest() throws MalformedURLException {
+        String baseUrl = "https://test";
+        UriResolver resolver = new UriResolver(SOURCE_FOLDER);
+        resolver.resolveAgainstBaseUri(baseUrl);
+        Assert.assertTrue(resolver.isLocalBaseUri());
+        Assert.assertTrue(resolver.getBaseUri().startsWith("file:"));
+    }
+
+    @Test
     public void uriResolverTest07() throws MalformedURLException {
         UriResolver resolver = new UriResolver("http://itextpdf.com/itext7");
         Assert.assertEquals("http://itextpdf.com/itext7", resolver.getBaseUri());
@@ -120,6 +131,7 @@ public class UriResolverTest extends ExtendedITextTest {
         Assert.assertEquals("http://itextpdf.com/folder2/innerTest2", resolver.resolveAgainstBaseUri("/folder2/innerTest2").toExternalForm());
         Assert.assertEquals("http://folder2.com/innerTest2", resolver.resolveAgainstBaseUri("//folder2.com/innerTest2").toExternalForm());
     }
+
     @Test
     public void uriResolverTest07A() throws MalformedURLException {
         String absolutePathRoot = Paths.get("").toAbsolutePath().getRoot().toUri().toURL().toString();
