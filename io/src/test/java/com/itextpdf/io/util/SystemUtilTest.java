@@ -39,6 +39,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import static com.itextpdf.io.util.ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE;
+import static com.itextpdf.io.util.ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY;
 
 @Category(UnitTest.class)
 public class SystemUtilTest extends ExtendedITextTest {
@@ -144,9 +146,9 @@ public class SystemUtilTest extends ExtendedITextTest {
 
     @Test
     public void runProcessAndWaitWithWorkingDirectoryTest() throws IOException, InterruptedException {
-        String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
+        String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {
-            imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
+            imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
         }
         String inputImage = "image.jpg";
         String cmpImage = "cmp_image.jpg";
@@ -162,6 +164,19 @@ public class SystemUtilTest extends ExtendedITextTest {
 
         Assert.assertFalse(result);
         Assert.assertTrue(FileUtil.fileExists(diff));
+    }
+
+    @Test
+    public void runProcessAndGetProcessInfoTest() throws IOException, InterruptedException {
+        String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
+        if (imageMagickPath == null) {
+            imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
+        }
+
+        ProcessInfo processInfo = SystemUtil.runProcessAndGetProcessInfo(imageMagickPath,"--version");
+
+        Assert.assertNotNull(processInfo);
+        Assert.assertEquals(0, processInfo.getExitCode());
     }
 
 
