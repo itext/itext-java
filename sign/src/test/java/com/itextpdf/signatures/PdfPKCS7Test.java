@@ -44,14 +44,18 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509CRL;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.Assert;
@@ -226,6 +230,26 @@ public class PdfPKCS7Test extends ExtendedITextTest {
                 new PdfReader(SOURCE_FOLDER + "embeddedTimeStampCorruptedSignature.pdf"));
         PdfPKCS7 pkcs7 = new SignatureUtil(outDocument).readSignatureData("Signature1");
         Assert.assertTrue(pkcs7.verifyTimestampImprint());
+    }
+
+    @Test
+    public void findCrlIsNotNullTest() throws IOException, CRLException {
+        PdfDocument outDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "singleSignatureNotEmptyCRL.pdf"));
+        SignatureUtil sigUtil = new SignatureUtil(outDocument);
+        PdfPKCS7 pkcs7 = sigUtil.readSignatureData("Signature1");
+        List<X509CRL> crls = pkcs7.getCRLs().stream().map(crl -> (X509CRL)crl).collect(Collectors.toList());
+        Assert.assertEquals(2, crls.size());
+        Assert.assertArrayEquals(crls.get(0).getEncoded(), Files.readAllBytes(Paths.get(SOURCE_FOLDER, "firstCrl.bin")));
+        Assert.assertArrayEquals(crls.get(1).getEncoded(), Files.readAllBytes(Paths.get(SOURCE_FOLDER, "secondCrl.bin")));
+    }
+
+    @Test
+    public void findCrlNullSequenceNoExceptionTest()
+            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
+        PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
+        pkcs7.findCRL(null);
+        Assert.assertTrue(pkcs7.getCRLs().isEmpty());
     }
 
     @Test

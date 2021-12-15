@@ -1318,7 +1318,7 @@ public class PdfPKCS7 {
     /**
      * Helper method that tries to construct the CRLs.
      */
-    private void findCRL(ASN1Sequence seq) {
+    void findCRL(ASN1Sequence seq) {
         try {
             crls = new ArrayList<>();
             for (int k = 0; k < seq.size(); ++k) {
