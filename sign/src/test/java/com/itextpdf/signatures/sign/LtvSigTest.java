@@ -153,7 +153,8 @@ public class LtvSigTest extends ExtendedITextTest {
         signer.setFieldName("Signature1");
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, testOcspClient, testTsa, 0, PdfSigner.CryptoStandard.CADES);
 
-        PadesSigTest.basicCheckSignedDoc(destinationFolder + "ltvEnabledSingleSignatureTest01.pdf", "Signature1");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+                ltvFileName, sourceFolder + "cmp_ltvEnabledSingleSignatureTest01.pdf"));
     }
 
     @Test
