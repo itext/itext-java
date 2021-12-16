@@ -1233,7 +1233,7 @@ public class PdfPKCS7 {
     /**
      * All the X.509 certificates used for the main signature.
      */
-    private Collection<Certificate> signCerts;
+    Collection<Certificate> signCerts;
 
     /**
      * The X.509 certificate that is used to sign the digest.
@@ -1336,7 +1336,7 @@ public class PdfPKCS7 {
     /**
      * BouncyCastle BasicOCSPResp
      */
-    private BasicOCSPResp basicResp;
+    BasicOCSPResp basicResp;
 
     /**
      * Gets the OCSP basic response if there is one.
