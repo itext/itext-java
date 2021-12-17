@@ -66,10 +66,11 @@ public class KeyStoreUtil {
         try {
             fin = new FileInputStream(file);
             KeyStore k;
-            if (provider == null)
+            if (provider == null) {
                 k = KeyStore.getInstance("JKS");
-            else
+            } else {
                 k = KeyStore.getInstance("JKS", provider);
+            }
             k.load(fin, null);
             return k;
         }
@@ -77,7 +78,12 @@ public class KeyStoreUtil {
             throw new PdfException(e);
         }
         finally {
-            try{if (fin != null) {fin.close();}}catch(Exception ex){}
+            try  {
+                if (fin != null) {
+                    fin.close();
+                }
+            } catch (Exception ex) {
+            }
         }
     }
 
@@ -89,5 +95,4 @@ public class KeyStoreUtil {
     public static KeyStore loadCacertsKeyStore() {
         return loadCacertsKeyStore(null);
     }
-
 }

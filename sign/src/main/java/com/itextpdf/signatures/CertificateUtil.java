@@ -165,8 +165,7 @@ public class CertificateUtil {
                         String AccessLocation =  getStringFromGeneralName(description);
                         if (AccessLocation == null) {
                             return "" ;
-                        }
-                        else {
+                        } else {
                             return AccessLocation ;
                         }
                     }
@@ -230,5 +229,4 @@ public class CertificateUtil {
         ASN1TaggedObject taggedObject = (ASN1TaggedObject) names ;
         return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets(), "ISO-8859-1");
     }
-
 }

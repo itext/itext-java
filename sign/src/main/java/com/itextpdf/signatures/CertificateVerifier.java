@@ -94,8 +94,9 @@ public class CertificateVerifier {
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException {
         // Check if the certificate is valid on the signDate
-        if (signDate != null)
+        if (signDate != null) {
             signCert.checkValidity(signDate);
+        }
         // Check if the signature is valid
         if (issuerCert != null) {
             signCert.verify(issuerCert.getPublicKey());

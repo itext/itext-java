@@ -133,16 +133,19 @@ public class CrlClientOnline implements ICrlClient {
      */
     @Override
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
-        if (checkCert == null)
+        if (checkCert == null) {
             return null;
+        }
         List<URL> urllist = new ArrayList<>(urls);
         if (urllist.size() == 0) {
             LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
             try {
-                if (url == null)
+                if (url == null) {
                     url = CertificateUtil.getCRLURL(checkCert);
-                if (url == null)
+                }
+                if (url == null) {
                     throw new IllegalArgumentException("Passed url can not be null.");
+                }
                 urllist.add(new URL(url));
                 LOGGER.info("Found CRL url: " + url);
             } catch (Exception e) {
@@ -158,8 +161,9 @@ public class CrlClientOnline implements ICrlClient {
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 while (true) {
                     int n = inp.read(buf, 0, buf.length);
-                    if (n <= 0)
+                    if (n <= 0) {
                         break;
+                    }
                     bout.write(buf, 0, n);
                 }
                 inp.close();

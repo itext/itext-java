@@ -190,7 +190,8 @@ public class LtvVerification {
      * is not available
      * @throws IOException signals that an I/O exception has occurred
      */
-    public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption, Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
+    public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
+            Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
         PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
@@ -214,7 +215,9 @@ public class LtvVerification {
                     LOGGER.info("OCSP added");
                 }
             }
-            if (crl != null && (level == Level.CRL || level == Level.OCSP_CRL || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
+            if (crl != null
+                    && (level == Level.CRL || level == Level.OCSP_CRL
+                        || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
                 Collection<byte[]> cims = crl.getEncoded(cert, null);
                 if (cims != null) {
                     for (byte[] cim : cims) {
@@ -236,8 +239,9 @@ public class LtvVerification {
                 vd.certs.add(cert.getEncoded());
             }
         }
-        if (vd.crls.size() == 0 && vd.ocsps.size() == 0)
+        if (vd.crls.size() == 0 && vd.ocsps.size() == 0) {
             return false;
+        }
         validated.put(getSignatureHashKey(signatureName), vd);
         return true;
     }
@@ -253,8 +257,9 @@ public class LtvVerification {
         X509Certificate parent;
         for (int i = 0; i < certs.length; i++) {
             parent = (X509Certificate)certs[i];
-            if (!cert.getIssuerDN().equals(parent.getSubjectDN()))
+            if (!cert.getIssuerDN().equals(parent.getSubjectDN())) {
                 continue;
+            }
             try {
                 cert.verify(parent.getPublicKey());
                 return parent;
@@ -277,7 +282,8 @@ public class LtvVerification {
      * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
      * is not available
      */
-    public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls, Collection<byte[]> certs) throws IOException, GeneralSecurityException {
+    public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls,
+            Collection<byte[]> certs) throws IOException, GeneralSecurityException {
         if (used)
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
         ValidationData vd = new ValidationData();
@@ -336,10 +342,11 @@ public class LtvVerification {
         used = true;
         PdfDictionary catalog = document.getCatalog().getPdfObject();
         PdfObject dss = catalog.get(PdfName.DSS);
-        if (dss == null)
+        if (dss == null) {
             createDss();
-        else
+        } else {
             updateDss();
+        }
     }
 
     private void updateDss() {

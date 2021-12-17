@@ -203,14 +203,14 @@ public class CertificateInfo {
                 for (int i = 0; i < set.size(); i++) {
                     ASN1Sequence s = (ASN1Sequence)set.getObjectAt(i);
                     String id = DefaultSymbols.get((ASN1ObjectIdentifier)s.getObjectAt(0));
-                    if (id == null)
-                        continue;
-                    List<String> vs = values.get(id);
-                    if (vs == null) {
-                        vs = new ArrayList<>();
-                        values.put(id, vs);
+                    if (id != null) {
+                        List<String> vs = values.get(id);
+                        if (vs == null) {
+                            vs = new ArrayList<>();
+                            values.put(id, vs);
+                        }
+                        vs.add(((ASN1String) s.getObjectAt(1)).getString());
                     }
-                    vs.add(((ASN1String)s.getObjectAt(1)).getString());
                 }
             }
         }
@@ -221,7 +221,7 @@ public class CertificateInfo {
          * @param dirName a directory name
          */
         public X500Name(String dirName) {
-            CertificateInfo.X509NameTokenizer   nTok = new CertificateInfo.X509NameTokenizer(dirName);
+            CertificateInfo.X509NameTokenizer nTok = new CertificateInfo.X509NameTokenizer(dirName);
 
             while (nTok.hasMoreTokens()) {
                 String  token = nTok.nextToken();
@@ -240,7 +240,6 @@ public class CertificateInfo {
                 }
                 vs.add(value);
             }
-
         }
 
         /**
@@ -251,7 +250,7 @@ public class CertificateInfo {
          */
         public String getField(String name) {
             List<String> vs = values.get(name);
-            return vs == null ? null : (String)vs.get(0);
+            return vs == null ? null : (String) vs.get(0);
         }
 
         /**
@@ -402,8 +401,9 @@ public class CertificateInfo {
      */
     public static X500Name getSubjectFields(X509Certificate cert) {
         try {
-            if (cert != null)
+            if (cert != null) {
                 return new X500Name((ASN1Sequence)CertificateInfo.getSubject(cert.getTBSCertificate()));
+            }
         }
         catch (Exception e) {
             throw new PdfException(e);
@@ -427,5 +427,4 @@ public class CertificateInfo {
             throw new PdfException(e);
         }
     }
-
 }

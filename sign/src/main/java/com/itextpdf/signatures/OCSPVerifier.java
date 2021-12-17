@@ -96,18 +96,19 @@ public class OCSPVerifier extends RootStoreVerifier {
      *
      * @return a list of <code>VerificationOK</code> objects.
      * The list will be empty if the certificate couldn't be verified.
-     * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate, java.security.cert.X509Certificate, java.util.Date)
+     * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate,
+     *        java.security.cert.X509Certificate, java.util.Date)
      */
-    public List<VerificationOK> verify(X509Certificate signCert,
-                                       X509Certificate issuerCert, Date signDate)
+    public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException {
         List<VerificationOK> result = new ArrayList<>();
         int validOCSPsFound = 0;
         // first check in the list of OCSP responses that was provided
         if (ocsps != null) {
             for (BasicOCSPResp ocspResp : ocsps) {
-                if (verify(ocspResp, signCert, issuerCert, signDate))
+                if (verify(ocspResp, signCert, issuerCert, signDate)) {
                     validOCSPsFound++;
+                }
             }
         }
         // then check online if allowed
@@ -120,10 +121,13 @@ public class OCSPVerifier extends RootStoreVerifier {
         }
         // show how many valid OCSP responses were found
         LOGGER.info("Valid OCSPs found: " + validOCSPsFound);
-        if (validOCSPsFound > 0)
-            result.add(new VerificationOK(signCert, this.getClass(), "Valid OCSPs Found: " + validOCSPsFound + (online ? " (online)" : "")));
-        if (verifier != null)
+        if (validOCSPsFound > 0) {
+            result.add(new VerificationOK(signCert, this.getClass(),
+                    "Valid OCSPs Found: " + validOCSPsFound + (online ? " (online)" : "")));
+        }
+        if (verifier != null) {
             result.addAll(verifier.verify(signCert, issuerCert, signDate));
+        }
         // verify using the previous verifier in the chain (if any)
         return result;
     }
@@ -133,7 +137,8 @@ public class OCSPVerifier extends RootStoreVerifier {
      * Verifies a certificate against a single OCSP response
      * @param ocspResp   the OCSP response
      * @param signCert   the certificate that needs to be checked
-     * @param issuerCert the certificate of CA (certificate that issued signCert). This certificate is considered trusted and valid by this method.
+     * @param issuerCert the certificate of CA (certificate that issued signCert). This certificate is considered trusted
+     *                   and valid by this method.
      * @param signDate   sign date
      *
      * @return {@code true}, in case successful check, otherwise false.
@@ -141,8 +146,9 @@ public class OCSPVerifier extends RootStoreVerifier {
      */
     public boolean verify(BasicOCSPResp ocspResp, X509Certificate signCert, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException {
-        if (ocspResp == null)
+        if (ocspResp == null) {
             return false;
+        }
         // Getting the responses
         SingleResp[] resp = ocspResp.getResponses();
         for (int i = 0; i < resp.length; i++) {
@@ -152,7 +158,9 @@ public class OCSPVerifier extends RootStoreVerifier {
             }
             // check if the issuer matches
             try {
-                if (issuerCert == null) issuerCert = signCert;
+                if (issuerCert == null) {
+                    issuerCert = signCert;
+                }
                 if (!SignUtils.checkIfIssuersMatch(resp[i].getCertID(), issuerCert)) {
                     LOGGER.info("OCSP: Issuers doesn't match.");
                     continue;
@@ -172,7 +180,8 @@ public class OCSPVerifier extends RootStoreVerifier {
                 }
             } else {
                 if (signDate.after(resp[i].getNextUpdate())) {
-                    LOGGER.info(MessageFormatUtil.format("OCSP no longer valid: {0} after {1}", signDate, resp[i].getNextUpdate()));
+                    LOGGER.info(MessageFormatUtil.format("OCSP no longer valid: {0} after {1}", signDate,
+                            resp[i].getNextUpdate()));
                     continue;
                 }
             }
@@ -197,7 +206,8 @@ public class OCSPVerifier extends RootStoreVerifier {
      *
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
      */
-    public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert, Date signDate) throws GeneralSecurityException {
+    public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert, Date signDate)
+            throws GeneralSecurityException {
         // OCSP response might be signed by the issuer certificate or
         // the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
         X509Certificate responderCert = null;
@@ -218,7 +228,8 @@ public class OCSPVerifier extends RootStoreVerifier {
                     List keyPurposes = null;
                     try {
                         keyPurposes = cert.getExtendedKeyUsage();
-                        if ((keyPurposes != null) && keyPurposes.contains(id_kp_OCSPSigning) && isSignatureValid(ocspResp, cert)) {
+                        if ((keyPurposes != null) && keyPurposes.contains(id_kp_OCSPSigning)
+                                && isSignatureValid(ocspResp, cert)) {
                             responderCert = cert;
                             break;
                         }

@@ -134,7 +134,8 @@ public class CertificateVerification {
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
-    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls, Calendar calendar) {
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore,
+            Collection<CRL> crls, Calendar calendar) {
         List<VerificationException> result = new ArrayList<>();
         for (int k = 0; k < certs.length; ++k) {
             X509Certificate cert = (X509Certificate) certs[k];
@@ -159,8 +160,9 @@ public class CertificateVerification {
             }
             int j;
             for (j = 0; j < certs.length; ++j) {
-                if (j == k)
+                if (j == k) {
                     continue;
+                }
                 X509Certificate certNext = (X509Certificate) certs[j];
                 try {
                     cert.verify(certNext.getPublicKey());
@@ -200,7 +202,8 @@ public class CertificateVerification {
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
-    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Calendar calendar) {
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore,
+            Calendar calendar) {
         return verifyCertificates(certs, keystore, null, calendar);
     }
 
@@ -261,9 +264,10 @@ public class CertificateVerification {
 
     private static void logExceptionMessages(List<Exception> exceptionsThrown) {
         for (Exception ex : exceptionsThrown) {
-            LOGGER.error(ex.getMessage() == null ?
-                    SignLogMessageConstant.EXCEPTION_WITHOUT_MESSAGE : ex.getMessage(), ex);
+            LOGGER.error(ex.getMessage() == null
+                        ? SignLogMessageConstant.EXCEPTION_WITHOUT_MESSAGE
+                        : ex.getMessage(),
+                    ex);
         }
     }
-
 }

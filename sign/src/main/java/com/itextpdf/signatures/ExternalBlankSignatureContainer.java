@@ -89,5 +89,4 @@ public class ExternalBlankSignatureContainer implements IExternalSignatureContai
     public void modifySigningDictionary(PdfDictionary signDic) {
         signDic.putAll(sigDic);
     }
-
 }

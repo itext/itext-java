@@ -231,10 +231,11 @@ public class DigestAlgorithms {
      */
     public static String getDigest(String oid) {
         String ret = digestNames.get(oid);
-        if (ret == null)
+        if (ret == null) {
             return oid;
-        else
+        } else {
             return ret;
+        }
     }
 
     /**
@@ -244,8 +245,9 @@ public class DigestAlgorithms {
      * @return normalized name
      */
     public static String normalizeDigestName(String algo) {
-        if (fixNames.containsKey(algo))
+        if (fixNames.containsKey(algo)) {
             return fixNames.get(algo);
+        }
         return algo;
     }
 
