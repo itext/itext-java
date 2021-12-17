@@ -62,8 +62,7 @@ public class RootStoreVerifier extends CertificateVerifier {
     /**
      * Creates a RootStoreVerifier in a chain of verifiers.
      *
-     * @param verifier
-     *            the next verifier in the chain
+     * @param verifier the next verifier in the chain
      */
     public RootStoreVerifier(CertificateVerifier verifier) {
         super(verifier);
@@ -72,8 +71,7 @@ public class RootStoreVerifier extends CertificateVerifier {
     /**
      * Sets the Key Store against which a certificate can be checked.
      *
-     * @param keyStore
-     *            a root store
+     * @param keyStore a root store
      */
     public void setRootStore(KeyStore keyStore) {
         this.rootStore = keyStore;
@@ -82,17 +80,14 @@ public class RootStoreVerifier extends CertificateVerifier {
     /**
      * Verifies a single certificate against a key store (if present).
      *
-     * @param signCert
-     *            the certificate to verify
-     * @param issuerCert
-     *            the issuer certificate
-     * @param signDate
-     *            the date the certificate needs to be valid
+     * @param signCert the certificate to verify
+     * @param issuerCert the issuer certificate
+     * @param signDate the date the certificate needs to be valid
      * @return a list of <code>VerificationOK</code> objects.
      * The list will be empty if the certificate couldn't be verified.
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert,
-                                       Date signDate) throws GeneralSecurityException {
+            Date signDate) throws GeneralSecurityException {
         // verify using the CertificateVerifier if root store is missing
         if (rootStore == null)
             return super.verify(signCert, issuerCert, signDate);
@@ -102,7 +97,8 @@ public class RootStoreVerifier extends CertificateVerifier {
             for (X509Certificate anchor : SignUtils.getCertificates(rootStore)) {
                 try {
                     signCert.verify(anchor.getPublicKey());
-                    result.add(new VerificationOK(signCert, this.getClass(), "Certificate verified against root store."));
+                    result.add(new VerificationOK(signCert, this.getClass(),
+                            "Certificate verified against root store."));
                     result.addAll(super.verify(signCert, issuerCert, signDate));
                     return result;
                 } catch (GeneralSecurityException e) {

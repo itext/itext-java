@@ -117,7 +117,6 @@ import org.bouncycastle.x509.util.StreamParsingException;
 final class SignUtils {
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
-
         if (algorithm.equals("EC")) {
             algorithm = "ECDSA";
         }
@@ -148,7 +147,8 @@ final class SignUtils {
         return externalDigest.getMessageDigest(hashAlgorithm);
     }
 
-    static MessageDigest getMessageDigest(String hashAlgorithm, String provider) throws NoSuchAlgorithmException, NoSuchProviderException {
+    static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
+            throws NoSuchAlgorithmException, NoSuchProviderException {
         if (provider == null || provider.startsWith("SunPKCS11") || provider.startsWith("SunMSCAPI")) {
             return MessageDigest.getInstance(DigestAlgorithms.normalizeDigestName(hashAlgorithm));
         } else {
@@ -181,7 +181,9 @@ final class SignUtils {
         OCSPReqBuilder gen = new OCSPReqBuilder();
         gen.addRequest(id);
 
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded()));
+        DEROctetString derOctetString = new DEROctetString(
+                new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded());
+        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, derOctetString);
         gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
         return gen.build();
     }
@@ -206,16 +208,20 @@ final class SignUtils {
 
     static boolean isSignatureValid(BasicOCSPResp validator, Certificate certStoreX509, String provider) throws OperatorCreationException, OCSPException {
         if (provider == null) provider = "BC";
-        return validator.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey()));
+        return validator.isSignatureValid(
+                new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey()));
     }
 
     static void isSignatureValid(TimeStampToken validator, X509Certificate certStoreX509, String provider) throws OperatorCreationException, TSPException {
-        if (provider == null) provider = "BC";
+        if (provider == null) {
+            provider = "BC";
+        }
         validator.validate(new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider).build(certStoreX509));
     }
 
     static boolean checkIfIssuersMatch(CertificateID certID, X509Certificate issuerCert) throws CertificateEncodingException, IOException, OCSPException {
-        return certID.matchesIssuer(new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider());
+        return certID.matchesIssuer(
+                new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider());
     }
 
     static Date add180Sec(Date date) {
@@ -328,7 +334,8 @@ final class SignUtils {
         return calendar;
     }
 
-    static Signature getSignatureHelper(String algorithm, String provider) throws NoSuchProviderException, NoSuchAlgorithmException {
+    static Signature getSignatureHelper(String algorithm, String provider)
+            throws NoSuchProviderException, NoSuchAlgorithmException {
         return provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
     }
 

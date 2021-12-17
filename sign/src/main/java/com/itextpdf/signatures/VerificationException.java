@@ -62,6 +62,8 @@ public class VerificationException extends GeneralSecurityException {
      * @param message is a reason of failure
      */
     public VerificationException(Certificate cert, String message) {
-        super(MessageFormatUtil.format("Certificate {0} failed: {1}", cert == null ? "Unknown" : ((X509Certificate) cert).getSubjectDN().getName(), message));
+        super(MessageFormatUtil.format("Certificate {0} failed: {1}", cert == null
+                ? "Unknown"
+                : ((X509Certificate) cert).getSubjectDN().getName(), message));
     }
 }

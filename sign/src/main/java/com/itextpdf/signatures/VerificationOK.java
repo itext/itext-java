@@ -66,7 +66,7 @@ public class VerificationOK {
      * @param message		the reason why the certificate could be verified
      */
     public VerificationOK(X509Certificate certificate,
-                          Class<? extends CertificateVerifier> verifierClass, String message) {
+            Class<? extends CertificateVerifier> verifierClass, String message) {
         this.certificate = certificate;
         this.verifierClass = verifierClass;
         this.message = message;

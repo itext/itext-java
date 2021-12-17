@@ -102,7 +102,8 @@ public class SignaturePolicyInfo {
      * @param policyUri the uri of the full policy description
      */
     public SignaturePolicyInfo(String policyIdentifier, String policyHashBase64, String policyDigestAlgorithm, String policyUri) {
-        this(policyIdentifier, policyHashBase64 != null ? Base64.decode(policyHashBase64) : null, policyDigestAlgorithm, policyUri);
+        this(policyIdentifier, policyHashBase64 != null ? Base64.decode(policyHashBase64) : null, policyDigestAlgorithm,
+                policyUri);
     }
 
     public String getPolicyIdentifier() {
@@ -135,10 +136,14 @@ public class SignaturePolicyInfo {
             spqi = new SigPolicyQualifierInfo(PKCSObjectIdentifiers.id_spq_ets_uri, new DERIA5String(this.policyUri));
         }
 
-        signaturePolicyIdentifier = new SignaturePolicyIdentifier(new SignaturePolicyId(ASN1ObjectIdentifier
-                .getInstance(new ASN1ObjectIdentifier(this.policyIdentifier.replace("urn:oid:", ""))),
-                new OtherHashAlgAndValue(new AlgorithmIdentifier(new ASN1ObjectIdentifier(algId)),
-                        new DEROctetString(this.policyHash)), SignUtils.createSigPolicyQualifiers(spqi)));
+        ASN1ObjectIdentifier identifier = ASN1ObjectIdentifier.getInstance(
+                new ASN1ObjectIdentifier(this.policyIdentifier.replace("urn:oid:", "")));
+        OtherHashAlgAndValue otherHashAlgAndValue = new OtherHashAlgAndValue(
+                new AlgorithmIdentifier(new ASN1ObjectIdentifier(algId)),
+                new DEROctetString(this.policyHash));
+        SignaturePolicyId signaturePolicyId = new SignaturePolicyId(identifier, otherHashAlgAndValue,
+                SignUtils.createSigPolicyQualifiers(spqi));
+        signaturePolicyIdentifier = new SignaturePolicyIdentifier(signaturePolicyId);
 
         return signaturePolicyIdentifier;
     }

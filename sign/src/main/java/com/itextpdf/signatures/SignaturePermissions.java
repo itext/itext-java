@@ -133,8 +133,9 @@ public class SignaturePermissions {
                     fieldLocks.add(new FieldLock(action, params.getAsArray(PdfName.Fields)));
                 }
                 PdfNumber p = params.getAsNumber(PdfName.P);
-                if (p == null)
+                if (p == null) {
                     continue;
+                }
                 switch (p.intValue()) {
                     default:
                         break;
