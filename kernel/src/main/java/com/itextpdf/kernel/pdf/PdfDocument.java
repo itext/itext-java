@@ -55,6 +55,7 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.events.FlushPdfDocumentEvent;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.events.EventDispatcher;
 import com.itextpdf.kernel.events.IEventDispatcher;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
@@ -954,7 +955,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
 
                     for (int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
-                        getPage(pageNum).flush();
+                        PdfPage page = getPage(pageNum);
+                        if (page != null) {
+                            page.flush();
+                        }
                     }
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(false);
@@ -2405,6 +2409,15 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 if (copiedDest != null) {
                     child.addDestination(copiedDest);
                 }
+                Integer copiedStyle = outline.getStyle();
+                if (copiedStyle != null) {
+                    child.setStyle(copiedStyle.intValue());
+                }
+                Color copiedColor = outline.getColor();
+                if (copiedColor != null) {
+                    child.setColor(copiedColor);
+                }
+                child.setOpen(outline.isOpen());
 
                 cloneOutlines(outlinesToCopy, child, outline, page2page, toDocument);
             }

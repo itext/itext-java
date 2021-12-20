@@ -43,6 +43,18 @@ public class ProductDataTest extends ExtendedITextTest {
     }
 
     @Test
+    public void productDataAnotherCreationTest() {
+        ProductData productData = new ProductData("publicProductName", "productName", "1.2", "4.0.0", 1900, 2100);
+
+        Assert.assertEquals("publicProductName", productData.getPublicProductName());
+        Assert.assertEquals("productName", productData.getProductName());
+        Assert.assertEquals("1.2", productData.getVersion());
+        Assert.assertEquals("4.0.0", productData.getMinCompatibleLicensingModuleVersion());
+        Assert.assertEquals(1900, productData.getSinceCopyrightYear());
+        Assert.assertEquals(2100, productData.getToCopyrightYear());
+    }
+
+    @Test
     public void equalsTest() {
         ProductData a = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);
         ProductData b = new ProductData("publicProductName", "productName", "1.2", 1900, 2100);

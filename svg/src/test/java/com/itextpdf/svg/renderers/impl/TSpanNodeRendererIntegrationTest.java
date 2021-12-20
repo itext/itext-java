@@ -229,4 +229,19 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void tspanInheritAncestorsTspanFontSizeTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanInheritAncestorsTspanFontSize");
     }
+
+    @Test
+    public void tspanNestedWithOffsets() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedWithOffsets");
+    }
+
+    @Test
+    public void tspanNestedRelativeOffsets() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedRelativeOffsets");
+    }
+
+    @Test
+    public void simpleNestedTspanTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleNestedTspan");
+    }
 }

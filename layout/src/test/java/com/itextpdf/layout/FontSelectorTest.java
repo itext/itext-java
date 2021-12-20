@@ -1063,6 +1063,24 @@ public class FontSelectorTest extends ExtendedITextTest {
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 
+    @Test
+    //TODO DEVSIX-6077 FontSelector: iText checks monospaceness before looking at font-family
+    public void monospaceFontIsNotSelectedInPreferenceToTestFamilyTest() {
+        FontSet set = new FontSet();
+        set.addFont(StandardFonts.COURIER);
+        set.addFont(StandardFonts.HELVETICA);
+
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add("test");
+        fontFamilies.add("monospace");
+
+        FontCharacteristics fc = new FontCharacteristics();
+
+        //Expected font is Courier
+        Assert.assertEquals("Helvetica",
+                new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
+    }
+
     private void checkSelector(Collection<FontInfo> fontInfoCollection, String fontFamily,
                                String expectedNormal, String expectedBold, String expectedItalic, String expectedBoldItalic) {
         List<String> fontFamilies = new ArrayList<>();

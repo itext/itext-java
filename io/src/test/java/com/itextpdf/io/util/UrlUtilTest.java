@@ -45,9 +45,13 @@ package com.itextpdf.io.util;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import org.junit.Assert;
@@ -65,7 +69,9 @@ public class UrlUtilTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
-    // Tests that after invocation of the getFinalURL method for local files, no handles are left open and the file is free to be removed
+
+    // Tests that after invocation of the getFinalURL method for local files, no handles are left open and the file
+    // is free to be removed.
     @Test
     public void getFinalURLDoesNotLockFileTest() throws IOException {
         File tempFile = FileUtil.createTempFile(destinationFolder);
@@ -73,6 +79,44 @@ public class UrlUtilTest extends ExtendedITextTest {
         UrlUtil.getFinalURL(UrlUtil.toURL(tempFile.getAbsolutePath()));
 
         Assert.assertTrue(FileUtil.deleteFile(tempFile));
+    }
+
+    // Tests, that getFinalConnection will be redirected some times for other urls, and initialUrl will be different
+    // from final url.
+    @Test
+    public void getFinalConnectionWhileRedirectingTest() throws IOException {
+        URL initialUrl = new URL("http://itextpdf.com");
+        URL expectedURL = new URL("https://itextpdf.com/en");
+        URLConnection finalConnection = null;
+
+        try {
+            finalConnection = UrlUtil.getFinalConnection(initialUrl);
+
+            Assert.assertNotNull(finalConnection);
+            Assert.assertNotEquals(initialUrl, finalConnection.getURL());
+            Assert.assertEquals(expectedURL, finalConnection.getURL());
+        } finally {
+            finalConnection.getInputStream().close();
+        }
+    }
+
+    // This test checks that when we pass invalid url and trying get stream related to final redirected url,exception
+    // would be thrown.
+    @Test
+    public void getInputStreamOfFinalConnectionThrowExceptionTest() throws IOException {
+        URL invalidUrl = new URL("http://itextpdf");
+
+        Assert.assertThrows(UnknownHostException.class, () -> UrlUtil.getInputStreamOfFinalConnection(invalidUrl));
+    }
+
+    // This test checks that when we pass valid url and trying get stream related to final redirected url, it would
+    // not be null.
+    @Test
+    public void getInputStreamOfFinalConnectionTest() throws IOException {
+        URL initialUrl = new URL("http://itextpdf.com");
+        InputStream streamOfFinalConnectionOfInvalidUrl = UrlUtil.getInputStreamOfFinalConnection(initialUrl);
+
+        Assert.assertNotNull(streamOfFinalConnectionOfInvalidUrl);
     }
 
     @Test

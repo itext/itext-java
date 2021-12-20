@@ -42,31 +42,36 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
 public class PdfOutlineTest extends ExtendedITextTest {
@@ -99,7 +104,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
-
+    
     @Test
     public void outlinesTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "iphone_user_guide.pdf"));
@@ -225,10 +230,18 @@ public class PdfOutlineTest extends ExtendedITextTest {
         String filename = "updateOutlineTitleInvalidParentLink.pdf";
         PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
-
-        Assert.assertThrows(NullPointerException.class,
-                () -> pdfDoc.getOutlines(false)
-        );
+        PdfOutline outlines = pdfDoc.getOutlines(true);
+        PdfOutline firstOutline = outlines.getAllChildren().get(0);
+        PdfOutline secondOutline = outlines.getAllChildren().get(1);
+        try {
+            Assert.assertEquals(2, outlines.getAllChildren().size());
+            Assert.assertEquals("First Page", firstOutline.getTitle());
+            Assert.assertEquals(outlines, firstOutline.getParent());
+            Assert.assertEquals("Second Page", secondOutline.getTitle());
+            Assert.assertEquals(outlines, secondOutline.getParent());
+        } finally {
+            pdfDoc.close();
+        }
     }
 
     @Test
@@ -526,15 +539,11 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
             PdfDictionary outlineDictionary = new PdfDictionary();
             outlineDictionary.put(PdfName.First, first);
+            outlineDictionary.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
+            first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
 
-            Exception exception = Assert.assertThrows(
-                    PdfException.class,
-                    () -> pdfDocument.getCatalog().constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
-            );
-            Assert.assertEquals(
-                    MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
-                            first.indirectReference),
-                    exception.getMessage());
+            AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
+                    .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>()));
         }
     }
 
@@ -563,6 +572,244 @@ public class PdfOutlineTest extends ExtendedITextTest {
                     MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
                             first.indirectReference),
                     exception.getMessage());
+        }
+    }
+
+    @Test
+    public void checkParentOfOutlinesTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.getCatalog().setPageMode(PdfName.UseOutlines);
+
+            PdfPage firstPage = pdfDocument.addNewPage();
+
+            PdfOutline rootOutline = pdfDocument.getOutlines(false);
+            PdfOutline firstOutline = rootOutline.addOutline("First outline");
+            PdfOutline firstSubOutline = firstOutline.addOutline("First suboutline");
+            PdfOutline secondSubOutline = firstOutline.addOutline("Second suboutline");
+            PdfOutline secondOutline = rootOutline.addOutline("SecondOutline");
+
+            firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
+
+            PdfOutline resultedRoot = pdfDocument.getOutlines(true);
+            Assert.assertEquals(2, resultedRoot.getAllChildren().size());
+            Assert.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(0).getParent());
+            Assert.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(1).getParent());
+
+            PdfOutline resultedFirstOutline = resultedRoot.getAllChildren().get(0);
+            Assert.assertEquals(2, resultedFirstOutline.getAllChildren().size());
+            Assert.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(0).getParent());
+            Assert.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(1).getParent());
+        }
+    }
+
+    @Test
+    public void checkNestedOutlinesParentTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.getCatalog().setPageMode(PdfName.UseOutlines);
+
+            PdfPage firstPage = pdfDocument.addNewPage();
+            PdfOutline rootOutline = pdfDocument.getOutlines(false);
+            PdfOutline firstOutline = rootOutline.addOutline("First outline");
+            PdfOutline secondOutline = firstOutline.addOutline("Second outline");
+            PdfOutline thirdOutline = secondOutline.addOutline("Third outline");
+
+            firstOutline.addDestination(PdfExplicitDestination.createFit(firstPage));
+
+            PdfOutline resultedRoot = pdfDocument.getOutlines(true);
+            Assert.assertEquals(1, resultedRoot.getAllChildren().size());
+            Assert.assertEquals(resultedRoot, resultedRoot.getAllChildren().get(0).getParent());
+
+            PdfOutline resultedFirstOutline = resultedRoot.getAllChildren().get(0);
+            Assert.assertEquals(1, resultedFirstOutline.getAllChildren().size());
+            Assert.assertEquals(resultedFirstOutline, resultedFirstOutline.getAllChildren().get(0).getParent());
+
+            PdfOutline resultedSecondOutline = resultedFirstOutline.getAllChildren().get(0);
+            Assert.assertEquals(1, resultedSecondOutline.getAllChildren().size());
+            Assert.assertEquals(resultedSecondOutline, resultedSecondOutline.getAllChildren().get(0).getParent());
+        }
+    }
+
+    @Test
+    public void setOutlinePropertiesTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+
+            PdfPage firstPage = pdfDocument.addNewPage();
+
+            PdfOutline rootOutline = pdfDocument.getOutlines(true);
+            PdfOutline outline = rootOutline.addOutline("Outline");
+
+            Assert.assertTrue(outline.isOpen());
+            Assert.assertNull(outline.getStyle());
+            Assert.assertNull(outline.getColor());
+
+            outline.getContent().put(PdfName.C, new PdfArray(ColorConstants.BLACK.getColorValue()));
+            outline.getContent().put(PdfName.F, new PdfNumber(2));
+            outline.getContent().put(PdfName.Count, new PdfNumber(4));
+
+            Assert.assertTrue(outline.isOpen());
+            Assert.assertEquals(new Integer(2), outline.getStyle());
+            Assert.assertEquals(ColorConstants.BLACK, outline.getColor());
+
+            outline.getContent().put(PdfName.Count, new PdfNumber(0));
+            Assert.assertTrue(outline.isOpen());
+
+            outline.getContent().put(PdfName.Count, new PdfNumber(-5));
+            Assert.assertFalse(outline.isOpen());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            KernelLogMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP))
+    public void checkPossibleInfiniteLoopWithSameNextAndPrevLinkTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+
+            pdfDocument.addNewPage();
+
+            PdfDictionary first = new PdfDictionary();
+            first.makeIndirect(pdfDocument);
+            PdfDictionary second = new PdfDictionary();
+            second.makeIndirect(pdfDocument);
+
+            PdfDictionary outlineDictionary = new PdfDictionary();
+            outlineDictionary.makeIndirect(pdfDocument);
+
+            outlineDictionary.put(PdfName.First, first);
+            outlineDictionary.put(PdfName.Last, second);
+            first.put(PdfName.Parent, outlineDictionary);
+            second.put(PdfName.Parent, outlineDictionary);
+            first.put(PdfName.Next, second);
+            first.put(PdfName.Prev, second);
+            second.put(PdfName.Next, first);
+            second.put(PdfName.Prev, first);
+            outlineDictionary.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
+            first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
+            second.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
+
+            AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
+                    .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>()));
+            PdfOutline resultedOutline = pdfDocument.getOutlines(false);
+            Assert.assertEquals(2, resultedOutline.getAllChildren().size());
+            Assert.assertEquals(resultedOutline.getAllChildren().get(1).getParent(),
+                    resultedOutline.getAllChildren().get(0).getParent());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            KernelLogMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP))
+    public void checkPossibleInfiniteLoopWithSameFirstAndLastLinkTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+
+            pdfDocument.addNewPage();
+
+            PdfDictionary first = new PdfDictionary();
+            first.makeIndirect(pdfDocument);
+
+            PdfDictionary outlineDictionary = new PdfDictionary();
+            outlineDictionary.makeIndirect(pdfDocument);
+
+            outlineDictionary.put(PdfName.First, first);
+            first.put(PdfName.Parent, outlineDictionary);
+            first.put(PdfName.First, outlineDictionary);
+            first.put(PdfName.Last, outlineDictionary);
+            outlineDictionary.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
+            first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
+
+            AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
+                    .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>()));
+            PdfOutline resultedOutline = pdfDocument.getOutlines(false);
+            Assert.assertEquals(1, resultedOutline.getAllChildren().size());
+            Assert.assertEquals(resultedOutline,
+                    resultedOutline.getAllChildren().get(0).getParent());
+        }
+    }
+
+    @Test
+    public void outlineNoParentLinkInConservativeModeTest() throws IOException {
+        try (
+                PdfDocument pdfDocument = new PdfDocument(
+                        new PdfReader(SOURCE_FOLDER + "outlinesNoParentLink.pdf"))) {
+            pdfDocument.getReader().setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+            Exception exception = Assert.assertThrows(PdfException.class, () -> pdfDocument.getOutlines(true));
+
+            //Hardcode indirectReference, cause there is no option to get this outline due to #getOutlines method
+            // will be thrown an exception.
+            Assert.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY, "9 0 R"),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void outlineHasInfiniteLoopInConservativeModeTest() throws IOException {
+        try (
+                PdfDocument pdfDocument = new PdfDocument(
+                        new PdfReader(SOURCE_FOLDER + "outlinesHaveInfiniteLoop.pdf"))) {
+            pdfDocument.getReader().setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+            Exception exception = Assert.assertThrows(PdfException.class, () -> pdfDocument.getOutlines(true));
+
+            //Hardcode indirectReference, cause there is no option to get this outline due to #getOutlines method
+            // will be thrown an exception.
+            Assert.assertEquals(
+                    MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP,
+                            "<</Dest [4 0 R /Fit ] /Next 10 0 R /Parent <<>> /Prev 10 0 R /Title First Page >>"),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void createOutlinesWithDifferentVariantsOfChildrenTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos))) {
+            pdfDocument.getCatalog().setPageMode(PdfName.UseOutlines);
+
+            PdfPage firstPage = pdfDocument.addNewPage();
+
+            PdfOutline a = pdfDocument.getOutlines(false);
+            PdfOutline b = a.addOutline("B");
+            PdfOutline e = b.addOutline("E");
+            PdfOutline f = e.addOutline("F");
+            PdfOutline d = b.addOutline("D");
+            PdfOutline c = a.addOutline("C");
+            PdfOutline g = f.addOutline("G");
+            PdfOutline h = f.addOutline("H");
+
+            a.addDestination(PdfExplicitDestination.createFit(firstPage));
+
+            PdfOutline resultedA = pdfDocument.getOutlines(true);
+
+            // Asserting children of root outline.
+            Assert.assertEquals(2, resultedA.getAllChildren().size());
+            Assert.assertEquals(resultedA, resultedA.getAllChildren().get(0).getParent());
+            Assert.assertEquals(resultedA, resultedA.getAllChildren().get(1).getParent());
+            Assert.assertTrue(resultedA.getAllChildren().get(1).getAllChildren().isEmpty());
+            Assert.assertEquals(2, resultedA.getAllChildren().get(0).getAllChildren().size());
+
+            //Asserting children of B outline after reconstructing.
+            PdfOutline resultedB = resultedA.getAllChildren().get(0);
+            Assert.assertEquals(resultedB, resultedB.getAllChildren().get(0).getParent());
+            Assert.assertEquals(resultedB, resultedB.getAllChildren().get(1).getParent());
+            Assert.assertTrue(resultedB.getAllChildren().get(1).getAllChildren().isEmpty());
+            Assert.assertEquals(1, resultedB.getAllChildren().get(0).getAllChildren().size());
+
+            //Asserting children of E outline after reconstructing.
+            PdfOutline resultedE = resultedB.getAllChildren().get(0);
+            Assert.assertEquals(resultedE, resultedE.getAllChildren().get(0).getParent());
+            Assert.assertEquals(2, resultedE.getAllChildren().get(0).getAllChildren().size());
+
+            //Asserting children of F outline after reconstructing.
+            PdfOutline resultedF = resultedE.getAllChildren().get(0);
+            Assert.assertEquals(resultedF, resultedF.getAllChildren().get(0).getParent());
+            Assert.assertEquals(resultedF, resultedF.getAllChildren().get(1).getParent());
+            Assert.assertTrue(resultedF.getAllChildren().get(0).getAllChildren().isEmpty());
+            Assert.assertTrue(resultedF.getAllChildren().get(1).getAllChildren().isEmpty());
         }
     }
 }

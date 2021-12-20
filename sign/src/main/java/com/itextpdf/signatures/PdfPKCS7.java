@@ -770,7 +770,7 @@ public class PdfPKCS7 {
                 digest = sig.sign();
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            ASN1OutputStream dout = ASN1OutputStream.create(bOut);
             dout.writeObject(new DEROctetString(digest));
             dout.close();
 
@@ -926,7 +926,7 @@ public class PdfPKCS7 {
 
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            ASN1OutputStream dout = ASN1OutputStream.create(bOut);
             dout.writeObject(new DERSequence(whole));
             dout.close();
 
@@ -1195,7 +1195,7 @@ public class PdfPKCS7 {
      * @throws GeneralSecurityException on error
      */
     public boolean verifyTimestampImprint() throws GeneralSecurityException {
-        // TODO ensure this method works correctly
+        // TODO DEVSIX-6011 ensure this method works correctly
         if (timeStampToken == null)
             return false;
         TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();

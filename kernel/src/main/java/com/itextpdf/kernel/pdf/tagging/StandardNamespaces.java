@@ -130,6 +130,8 @@ public final class StandardNamespaces {
                 StandardRoles.DOCUMENT,
                 StandardRoles.DOCUMENTFRAGMENT,
                 StandardRoles.PART,
+                StandardRoles.SECT,
+                StandardRoles.NONSTRUCT,
                 StandardRoles.DIV,
                 StandardRoles.ASIDE,
                 StandardRoles.TITLE,

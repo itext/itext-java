@@ -114,7 +114,7 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+        return null;
     }
 
     AffineTransform calculateTransformation(SvgDrawContext context){

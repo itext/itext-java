@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191112172020+03'00')/ModDate(D:20191112172020+03'00')/Producer(iTextÆ 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108175055+03'00')/ModDate(D:20211108175055+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 375 300]/Length 345/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 300]/Length 341/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 375 300 re
 W
 n
@@ -60,17 +59,15 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 0 26.25 Tm
 0 Tr
 /F1 26.25 Tf
-q
 0 0 Td
 (So many ideas.\\n So little time.)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -78,17 +75,17 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000226 00000 n 
-0000000527 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000517 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000437 00000 n 
-0000000578 00000 n 
-0000000761 00000 n 
+0000000427 00000 n 
+0000000568 00000 n 
+0000000751 00000 n 
 trailer
-<</ID [<638648c1bcde674470ff58e78cbabfab><638648c1bcde674470ff58e78cbabfab>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<e1e5675a23f4f6f14e167e6f031b3c8b><e1e5675a23f4f6f14e167e6f031b3c8b>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-1230
+1216
 %%EOF

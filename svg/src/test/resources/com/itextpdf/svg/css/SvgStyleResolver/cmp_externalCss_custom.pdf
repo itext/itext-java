@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20200529130019+03'00')/ModDate(D:20200529130019+03'00')/Producer(iTextÆ 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108180040+03'00')/ModDate(D:20211108180040+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -37,37 +36,33 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[-225 -225 225 225]/Length 11135/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-225 -225 225 225]/Length 11127/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -225 -225 450 450 re
 W
 n
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 -210 -202.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (SVG demonstration)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 -210 -187.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Move your mouse pointer over the flower.)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
@@ -866,17 +861,17 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000228 00000 n 
-0000000530 00000 n 
-0000000273 00000 n 
-0000000089 00000 n 
+0000000213 00000 n 
+0000000519 00000 n 
+0000000258 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000440 00000 n 
-0000000581 00000 n 
-0000000783 00000 n 
+0000000429 00000 n 
+0000000570 00000 n 
+0000000772 00000 n 
 trailer
-<</ID [<5779a65dbb8e2fed4c7fc8841d6e775f><5779a65dbb8e2fed4c7fc8841d6e775f>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.12-SNAPSHOT
+<</ID [<77426049c223a2d3543d18f53f8b2ada><77426049c223a2d3543d18f53f8b2ada>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-12050
+12031
 %%EOF

@@ -164,7 +164,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         //Create page1 and add forms to the page.
         PdfPage page1 = document.addNewPage();
         canvas = new PdfCanvas(page1);
-        canvas.addXObject(form, 0, 0).addXObject(form, 50, 0).addXObject(form, 0, 50).addXObject(form, 50, 50);
+        canvas.addXObjectAt(form, 0, 0).addXObjectAt(form, 50, 0).addXObjectAt(form, 0, 50).addXObjectAt(form, 50, 50);
         canvas.release();
 
         //Create form from the page1 and flush it.
@@ -177,10 +177,10 @@ public class PdfXObjectTest extends ExtendedITextTest{
         //Create page2 and add forms to the page.
         PdfPage page2 = document.addNewPage();
         canvas = new PdfCanvas(page2);
-        canvas.addXObject(form, 0, 0);
-        canvas.addXObject(form, 0, 200);
-        canvas.addXObject(form, 200, 0);
-        canvas.addXObject(form, 200, 200);
+        canvas.addXObjectAt(form, 0, 0);
+        canvas.addXObjectAt(form, 0, 200);
+        canvas.addXObjectAt(form, 200, 0);
+        canvas.addXObjectAt(form, 200, 200);
         canvas.release();
         page2.flush();
 

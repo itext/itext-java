@@ -31,6 +31,7 @@ public final class ProductData {
     private final String publicProductName;
     private final String productName;
     private final String version;
+    private final String minimalCompatibleLicenseKeyVersion;
     private final int sinceCopyrightYear;
     private final int toCopyrightYear;
 
@@ -45,9 +46,25 @@ public final class ProductData {
      */
     public ProductData(String publicProductName, String productName, String version, int sinceCopyrightYear,
             int toCopyrightYear) {
+        this(publicProductName, productName, version, null, sinceCopyrightYear, toCopyrightYear);
+    }
+
+    /**
+     * Creates a new instance of product data.
+     *
+     * @param publicProductName is a product name
+     * @param productName is a technical name of the product
+     * @param version is a version of the product
+     * @param minimalCompatibleLicenseKeyVersion is a minimal compatible version of licensekey library
+     * @param sinceCopyrightYear is the first year of a product development
+     * @param toCopyrightYear is a last year of a product development
+     */
+    public ProductData(String publicProductName, String productName, String version,
+            String minimalCompatibleLicenseKeyVersion, int sinceCopyrightYear, int toCopyrightYear) {
         this.publicProductName = publicProductName;
         this.productName = productName;
         this.version = version;
+        this.minimalCompatibleLicenseKeyVersion = minimalCompatibleLicenseKeyVersion;
         this.sinceCopyrightYear = sinceCopyrightYear;
         this.toCopyrightYear = toCopyrightYear;
     }
@@ -95,6 +112,15 @@ public final class ProductData {
      */
     public int getToCopyrightYear() {
         return toCopyrightYear;
+    }
+
+    /**
+     * Getter for the minimal compatible licensekey version.
+     *
+         * @return minimal compatible version of licensekey library.
+     */
+    public String getMinCompatibleLicensingModuleVersion() {
+        return minimalCompatibleLicenseKeyVersion;
     }
 
     @Override

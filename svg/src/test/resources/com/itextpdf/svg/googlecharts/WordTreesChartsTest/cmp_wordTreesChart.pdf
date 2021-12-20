@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219144059+03'00')/ModDate(D:20191219144059+03'00')/Producer(iTextÆ 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108174808+03'00')/ModDate(D:20211108174808+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675.75 375.75]/Length 4413/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675.75 375.75]/Length 4321/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675.75 375.75 re
 W
 n
@@ -49,17 +48,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 7.5 191.32 Tm
 0 Tr
 /F1 27 Tf
-q
 0 0 Td
 (cats)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -72,17 +69,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 102.75 96.76 Tm
 0 Tr
 /F1 27 Tf
-q
 0 0 Td
 (are)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -95,30 +90,26 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 187.5 44.63 Tm
 0 Tr
 /F1 27 Tf
-q
 0 0 Td
 (better)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 266.25 44.63 Tm
 0 Tr
 /F1 27 Tf
-q
 0 0 Td
 (than)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -131,17 +122,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 363.75 21.23 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (dogs)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -154,17 +143,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 363.75 39.68 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (hamsters)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -177,17 +164,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 363.75 58.13 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (kittens)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -200,17 +185,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 187.5 81.72 Tm
 0 Tr
 /F1 15.75 Tf
-q
 0 0 Td
 (awesome)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -223,30 +206,26 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 187.5 101.67 Tm
 0 Tr
 /F1 15.75 Tf
-q
 0 0 Td
 (people)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 240.75 101.67 Tm
 0 Tr
 /F1 15.75 Tf
-q
 0 0 Td
 (too)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -259,17 +238,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 187.5 121.62 Tm
 0 Tr
 /F1 15.75 Tf
-q
 0 0 Td
 (family)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -282,17 +259,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 187.5 141.58 Tm
 0 Tr
 /F1 15.75 Tf
-q
 0 0 Td
 (evil)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -305,17 +280,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 187.5 161.53 Tm
 0 Tr
 /F1 15.75 Tf
-q
 0 0 Td
 (weird)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -328,17 +301,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 102.75 240.36 Tm
 0 Tr
 /F1 27 Tf
-q
 0 0 Td
 (eat)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -351,17 +322,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 186 198.58 Tm
 0 Tr
 /F1 27 Tf
-q
 0 0 Td
 (kibble)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -374,17 +343,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 186 257.88 Tm
 0 Tr
 /F1 27 Tf
-q
 0 0 Td
 (mice)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -397,17 +364,15 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 102.75 309.99 Tm
 0 Tr
 /F1 16.5 Tf
-q
 0 0 Td
 (meowing)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -420,56 +385,48 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 102.75 330.5 Tm
 0 Tr
 /F1 16.5 Tf
-q
 0 0 Td
 (in)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 122.25 330.5 Tm
 0 Tr
 /F1 16.5 Tf
-q
 0 0 Td
 (the)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 152.25 330.5 Tm
 0 Tr
 /F1 16.5 Tf
-q
 0 0 Td
 (cradle)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 204 330.5 Tm
 0 Tr
 /F1 16.5 Tf
-q
 0 0 Td
 (lyrics)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.62745 0.62745 0.62745 rg
@@ -482,30 +439,26 @@ q
 f
 Q
 q
+q
 BT
 1 0 0 -1 102.75 351.02 Tm
 0 Tr
 /F1 16.5 Tf
-q
 0 0 Td
 (for)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 128.25 351.02 Tm
 0 Tr
 /F1 16.5 Tf
-q
 0 0 Td
 (adoption)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -522,17 +475,17 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000226 00000 n 
-0000000528 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000517 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000438 00000 n 
-0000000579 00000 n 
-0000000771 00000 n 
+0000000427 00000 n 
+0000000568 00000 n 
+0000000760 00000 n 
 trailer
-<</ID [<93ae570271a5887b942dad99079c1ecd><93ae570271a5887b942dad99079c1ecd>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<cc03f20ebc45be08a09e49d8d74a0697><cc03f20ebc45be08a09e49d8d74a0697>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-5315
+5212
 %%EOF

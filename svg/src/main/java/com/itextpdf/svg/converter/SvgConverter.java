@@ -752,14 +752,17 @@ public final class SvgConverter {
      * This method is kept private, because there is little purpose in exposing it.
      */
     private static void draw(PdfFormXObject pdfForm, PdfCanvas canvas) {
-        canvas.addXObject(pdfForm, 0, 0);
+        draw(pdfForm, canvas, 0, 0);
     }
 
     /*
      * This method is kept private, because there is little purpose in exposing it.
      */
-    private static void draw(PdfFormXObject pdfForm, PdfCanvas canvas, float x, float y) {
-        canvas.addXObject(pdfForm, x, y);
+    static void draw(PdfFormXObject pdfForm, PdfCanvas canvas, float x, float y) {
+        canvas.addXObjectAt(
+                pdfForm,
+                x + (pdfForm.getBBox() == null ? 0 : pdfForm.getBBox().getAsNumber(0).floatValue()),
+                y + (pdfForm.getBBox() == null ? 0 :pdfForm.getBBox().getAsNumber(1).floatValue()));
     }
 
     /**

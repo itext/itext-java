@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20200618144250+03'00')/ModDate(D:20200618144250+03'00')/Producer(iTextÆ 7.1.12-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108174919+03'00')/ModDate(D:20211108174919+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Courier/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 900]/Length 351/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R/P3 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 900]/Length 339/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R/P3 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 900 re
 W
 n
@@ -49,17 +48,15 @@ q
 /Pattern cs
 
 /P1 scn
+q
 BT
 1 0 0 -1 37.5 112.5 Tm
 0 Tr
 /F1 96 Tf
-q
 0 0 Td
 (iText)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -68,17 +65,15 @@ q
 /Pattern cs
 
 /P2 scn
+q
 BT
 1 0 0 -1 37.5 225 Tm
 0 Tr
 /F1 96 Tf
-q
 0 0 Td
 (iText)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -87,17 +82,15 @@ q
 /Pattern cs
 
 /P3 scn
+q
 BT
 1 0 0 -1 37.5 337.5 Tm
 0 Tr
 /F1 96 Tf
-q
 0 0 Td
 (iText)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 
@@ -160,35 +153,35 @@ endobj
 xref
 0 27
 0000000000 65535 f 
-0000000226 00000 n 
-0000000524 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000513 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000438 00000 n 
-0000000575 00000 n 
-0000000758 00000 n 
-0000001274 00000 n 
-0000001336 00000 n 
-0000001399 00000 n 
-0000001462 00000 n 
-0000001576 00000 n 
-0000001693 00000 n 
-0000001810 00000 n 
-0000001927 00000 n 
-0000002044 00000 n 
-0000002161 00000 n 
-0000002239 00000 n 
-0000002317 00000 n 
-0000002389 00000 n 
-0000002467 00000 n 
-0000002545 00000 n 
-0000002617 00000 n 
-0000002695 00000 n 
-0000002773 00000 n 
+0000000427 00000 n 
+0000000564 00000 n 
+0000000747 00000 n 
+0000001251 00000 n 
+0000001313 00000 n 
+0000001376 00000 n 
+0000001439 00000 n 
+0000001553 00000 n 
+0000001670 00000 n 
+0000001787 00000 n 
+0000001904 00000 n 
+0000002021 00000 n 
+0000002138 00000 n 
+0000002216 00000 n 
+0000002294 00000 n 
+0000002366 00000 n 
+0000002444 00000 n 
+0000002522 00000 n 
+0000002594 00000 n 
+0000002672 00000 n 
+0000002750 00000 n 
 trailer
-<</ID [<e7e8c12a0881eaaef56eb79912fd9e76><e7e8c12a0881eaaef56eb79912fd9e76>]/Info 3 0 R/Root 1 0 R/Size 27>>
-%iText-7.1.12-SNAPSHOT
+<</ID [<3a2e131384baa14e9509f154c56dceb4><3a2e131384baa14e9509f154c56dceb4>]/Info 3 0 R/Root 1 0 R/Size 27>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-2845
+2822
 %%EOF

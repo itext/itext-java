@@ -64,12 +64,12 @@ class SeparatedTableBorders extends TableBorders {
     }
 
     @Override
-    protected TableBorders drawHorizontalBorder(int i, float startX, float y1, PdfCanvas canvas, float[] countedColumnWidth) {
+    protected TableBorders drawHorizontalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor) {
         return this;
     }
 
     @Override
-    protected TableBorders drawVerticalBorder(int i, float startY, float x1, PdfCanvas canvas, List<Float> heights) {
+    protected TableBorders drawVerticalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor) {
         return this;
     }
 
@@ -222,28 +222,7 @@ class SeparatedTableBorders extends TableBorders {
     }
 
     protected boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
-//        if (borderArray.size() <= i) {
-//            for (int count = borderArray.size(); count <= i; count++) {
-//                borderArray.add(new ArrayList<Border>());
-//            }
-//        }
         List<Border> borders = borderArray.get(i);
-//        if (borders.isEmpty()) {
-//            for (int count = 0; count < j; count++) {
-//                borders.add(null);
-//            }
-//            borders.add(borderToAdd);
-//            return true;
-//        }
-//        if (borders.size() == j) {
-//            borders.add(borderToAdd);
-//            return true;
-//        }
-//        if (borders.size() < j) {
-//            for (int count = borders.size(); count <= j; count++) {
-//                borders.add(count, null);
-//            }
-//        }
         Border neighbour = borders.get(j);
         if (neighbour == null) {
             borders.set(j, borderToAdd);

@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,16 +15,16 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219172340+03'00')/ModDate(D:20191219172340+03'00')/Producer(iTextÆ 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108174720+03'00')/ModDate(D:20211108174720+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
-8 0 obj
-<</BaseFont/Times-Italic/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+6 0 obj
+<</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 7 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
-6 0 obj
-<</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+8 0 obj
+<</BaseFont/Times-Italic/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -42,7 +41,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 675 375]/Length 7314/Resources<</ExtGState<</Gs1 11 0 R/Gs10 12 0 R/Gs11 13 0 R/Gs12 14 0 R/Gs13 15 0 R/Gs14 16 0 R/Gs15 17 0 R/Gs16 18 0 R/Gs17 19 0 R/Gs18 20 0 R/Gs2 21 0 R/Gs3 22 0 R/Gs4 23 0 R/Gs5 24 0 R/Gs6 25 0 R/Gs7 26 0 R/Gs8 27 0 R/Gs9 28 0 R>>/Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 7182/Resources<</ExtGState<</Gs1 11 0 R/Gs10 12 0 R/Gs11 13 0 R/Gs12 14 0 R/Gs13 15 0 R/Gs14 16 0 R/Gs15 17 0 R/Gs16 18 0 R/Gs17 19 0 R/Gs18 20 0 R/Gs2 21 0 R/Gs3 22 0 R/Gs4 23 0 R/Gs5 24 0 R/Gs6 25 0 R/Gs7 26 0 R/Gs8 27 0 R/Gs9 28 0 R>>/Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -55,30 +54,26 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 39.67 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Correlation between life expectancy, fertility rate and population of some world)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (countries \(2010\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -108,17 +103,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 579.75 80.93 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (North America)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -139,17 +132,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 579.75 98.18 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Europe)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -170,17 +161,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 579.75 115.43 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Middle East)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -289,30 +278,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 404.85 227.34 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -8.25 0 Td
 (USA)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 404.85 227.34 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -8.25 0 Td
 (USA)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -332,30 +317,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 199.15 246.97 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -8.02 0 Td
 (RUS)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 199.15 246.97 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -8.02 0 Td
 (RUS)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -375,30 +356,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 442.78 253.9 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -8.48 0 Td
 (DEU)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 442.78 253.9 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -8.48 0 Td
 (DEU)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -418,30 +395,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 288.67 199.23 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -8.48 0 Td
 (EGY)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 288.67 199.23 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -8.48 0 Td
 (EGY)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -461,30 +434,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 283.47 240.81 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -7.1 0 Td
 (IRN)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 283.47 240.81 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -7.1 0 Td
 (IRN)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -504,30 +473,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 447.33 229.26 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -8.48 0 Td
 (GBR)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 447.33 229.26 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -8.48 0 Td
 (GBR)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -547,30 +512,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 460.56 241.97 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -8.71 0 Td
 (CAN)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 460.56 241.97 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -8.71 0 Td
 (CAN)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -590,30 +551,26 @@ q
 q
 1 1 1 RG
 2.25 w
+q
 BT
 1 0 0 -1 188.1 122.62 Tm
 2 Tr
 /F2 8.25 Tf
-q
 -7.1 0 Td
 (IRQ)Tj
-n
-Q
 ET
-B
 Q
+Q
+q
 q
 BT
 1 0 0 -1 188.1 122.62 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -7.1 0 Td
 (IRQ)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -650,161 +607,141 @@ q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 121.13 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (65)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 229.5 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (70)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 337.88 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (75)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 446.25 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (80)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 554.63 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (85)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 307.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -13.13 0 Td
 (0.0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 249.3 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -13.13 0 Td
 (1.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 191.55 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -13.13 0 Td
 (3.0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 133.8 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -13.13 0 Td
 (4.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 76.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -13.13 0 Td
 (6.0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -814,17 +751,15 @@ q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 337.88 351.67 Tm
 0 Tr
 /F3 10.5 Tf
-q
 -33.68 0 Td
 (Life Expectancy)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -838,17 +773,15 @@ q
 q
 0 -1 1 0 -136.57 239.18 cm
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 51.3 187.88 Tm
 0 Tr
 /F3 10.5 Tf
-q
 -28.15 0 Td
 (Fertility Rate)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -926,37 +859,37 @@ endobj
 xref
 0 29
 0000000000 65535 f 
-0000000226 00000 n 
-0000000708 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000697 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000619 00000 n 
-0000000529 00000 n 
-0000000438 00000 n 
-0000000759 00000 n 
-0000000943 00000 n 
-0000008622 00000 n 
-0000008648 00000 n 
-0000008676 00000 n 
-0000008704 00000 n 
-0000008732 00000 n 
-0000008760 00000 n 
-0000008788 00000 n 
-0000008816 00000 n 
-0000008844 00000 n 
-0000008870 00000 n 
-0000008896 00000 n 
-0000008922 00000 n 
-0000008948 00000 n 
-0000008974 00000 n 
-0000009000 00000 n 
-0000009026 00000 n 
-0000009054 00000 n 
-0000009082 00000 n 
+0000000427 00000 n 
+0000000516 00000 n 
+0000000606 00000 n 
+0000000748 00000 n 
+0000000932 00000 n 
+0000008479 00000 n 
+0000008505 00000 n 
+0000008533 00000 n 
+0000008561 00000 n 
+0000008589 00000 n 
+0000008617 00000 n 
+0000008645 00000 n 
+0000008673 00000 n 
+0000008701 00000 n 
+0000008727 00000 n 
+0000008753 00000 n 
+0000008779 00000 n 
+0000008805 00000 n 
+0000008831 00000 n 
+0000008857 00000 n 
+0000008883 00000 n 
+0000008911 00000 n 
+0000008939 00000 n 
 trailer
-<</ID [<a39e8cc0540c26e20ec555b878504303><a39e8cc0540c26e20ec555b878504303>]/Info 3 0 R/Root 1 0 R/Size 29>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<3237766cdb1afa07df30d6650e3d6f7e><3237766cdb1afa07df30d6650e3d6f7e>]/Info 3 0 R/Root 1 0 R/Size 29>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-9110
+8967
 %%EOF

@@ -88,7 +88,7 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+        return null;
     }
 
     // TODO: DEVSIX-4136 opacity is not supported now.

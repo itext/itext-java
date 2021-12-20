@@ -47,6 +47,8 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
@@ -91,7 +93,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      */
     protected PdfOCProperties ocProperties;
 
-    private static final String OutlineRoot = "Outlines";
+    private static final String ROOT_OUTLINE_TITLE = "Outlines";
 
     private PdfOutline outlines;
 
@@ -561,6 +563,91 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Construct {@link PdfCatalog dictionary} iteratively. Invalid pdf documents will be processed depending on {@link
+     * StrictnessLevel}, if it set to lenient, we will ignore and process invalid outline structure, otherwise {@link
+     * PdfException} will be thrown.
+     *
+     * @param outlineRoot {@link PdfOutline dictionary} root.
+     * @param names map containing the PdfObjects stored in the tree.
+     */
+    void constructOutlines(PdfDictionary outlineRoot, Map<String, PdfObject> names) {
+        if (outlineRoot == null) {
+            return;
+        }
+
+        PdfReader reader = getDocument().getReader();
+        final boolean isLenientLevel =
+                reader == null || StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel());
+        PdfDictionary current = outlineRoot.getAsDictionary(PdfName.First);
+
+        outlines = new PdfOutline(ROOT_OUTLINE_TITLE, outlineRoot, getDocument());
+        PdfOutline parentOutline = outlines;
+
+        Map<PdfOutline, PdfDictionary> nextUnprocessedChildForParentMap = new HashMap<>();
+        Set<PdfDictionary> alreadyVisitedOutlinesSet = new HashSet<>();
+
+        while (current != null) {
+            PdfDictionary parent = current.getAsDictionary(PdfName.Parent);
+            if (null == parent && !isLenientLevel) {
+                throw new PdfException(
+                        MessageFormatUtil.format(
+                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
+                                current.indirectReference));
+            }
+            PdfString title = current.getAsString(PdfName.Title);
+            if (null == title) {
+                throw new PdfException(
+                        MessageFormatUtil.format(
+                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
+                                current.indirectReference));
+            }
+            PdfOutline currentOutline = new PdfOutline(title.toUnicodeString(), current, parentOutline);
+            alreadyVisitedOutlinesSet.add(current);
+            addOutlineToPage(currentOutline, current, names);
+            parentOutline.getAllChildren().add(currentOutline);
+
+            PdfDictionary first = current.getAsDictionary(PdfName.First);
+            PdfDictionary next = current.getAsDictionary(PdfName.Next);
+            if (first != null) {
+                if (alreadyVisitedOutlinesSet.contains(first)) {
+                    if (!isLenientLevel) {
+                        throw new PdfException(MessageFormatUtil.format(
+                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, first));
+                    }
+                    LOGGER.warn(MessageFormatUtil.format(
+                            KernelLogMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, first));
+                    return;
+                }
+                // Down in hierarchy; when returning up, process `next`.
+                nextUnprocessedChildForParentMap.put(parentOutline, next);
+                parentOutline = currentOutline;
+                current = first;
+            } else if (next != null) {
+                if (alreadyVisitedOutlinesSet.contains(next)) {
+                    if (!isLenientLevel) {
+                        throw new PdfException(MessageFormatUtil.format(
+                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, next));
+                    }
+                    LOGGER.warn(MessageFormatUtil.format(
+                            KernelLogMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, next));
+                    return;
+                }
+                // Next sibling in hierarchy
+                current = next;
+            } else {
+                // Up in hierarchy using 'nextUnprocessedChildForParentMap'.
+                current = null;
+                while (current == null && parentOutline != null) {
+                    parentOutline = parentOutline.getParent();
+                    if (parentOutline != null) {
+                        current = nextUnprocessedChildForParentMap.get(parentOutline);
+                    }
+                }
+            }
+        }
+    }
+
     PdfDestination copyDestination(PdfObject dest, Map<PdfPage, PdfPage> page2page, PdfDocument toDocument) {
         if (null == dest) {
             return null;
@@ -658,46 +745,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    /**
-     * Get the next outline of the current node in the outline tree by looking for a child or sibling node.
-     * If there is no child or sibling of the current node {@link PdfCatalog#getParentNextOutline(PdfDictionary)} is called to get a hierarchical parent's next node. {@code null} is returned if one does not exist.
-     *
-     * @return the {@link PdfDictionary} object of the next outline if one exists, {@code null} otherwise.
-     */
-    private PdfDictionary getNextOutline(PdfDictionary first, PdfDictionary next, PdfDictionary parent) {
-        if (first != null) {
-            return first;
-        } else if (next != null) {
-            return next;
-        } else {
-            return getParentNextOutline(parent);
-        }
-
-    }
-
-    /**
-     * Gets the parent's next outline of the current node.
-     * If the parent does not have a next we look at the grand parent, great-grand parent, etc until we find a next node or reach the root at which point {@code null} is returned to signify there is no next node present.
-     *
-     * @return the {@link PdfDictionary} object of the next outline if one exists, {@code null} otherwise.
-     */
-    private PdfDictionary getParentNextOutline(PdfDictionary parent) {
-        if (parent == null) {
-            return null;
-        }
-        PdfDictionary current = null;
-        while (current == null) {
-            current = parent.getAsDictionary(PdfName.Next);
-            if (current == null) {
-                parent = parent.getAsDictionary(PdfName.Parent);
-                if (parent == null) {
-                    return null;
-                }
-            }
-        }
-        return current;
-    }
-
     private void addOutlineToPage(PdfOutline outline, PdfDictionary item, Map<String, PdfObject> names) {
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
@@ -721,50 +768,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Constructs {@link PdfCatalog#outlines} iteratively
-     */
-    void constructOutlines(PdfDictionary outlineRoot, Map<String, PdfObject> names) {
-        if (outlineRoot == null) {
-            return;
-        }
-        PdfDictionary first = outlineRoot.getAsDictionary(PdfName.First);
-        PdfDictionary current = first;
-        HashMap<PdfDictionary, PdfOutline> parentOutlineMap = new HashMap<>();
-
-        outlines = new PdfOutline(OutlineRoot, outlineRoot, getDocument());
-        PdfOutline parentOutline = outlines;
-        parentOutlineMap.put(outlineRoot, parentOutline);
-
-        while (current != null) {
-            first = current.getAsDictionary(PdfName.First);
-            PdfDictionary next = current.getAsDictionary(PdfName.Next);
-            PdfDictionary parent = current.getAsDictionary(PdfName.Parent);
-            if (null == parent) {
-                throw new PdfException(
-                        MessageFormatUtil.format(
-                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_PARENT_ENTRY,
-                                current.indirectReference));
-            }
-            PdfString title = current.getAsString(PdfName.Title);
-            if (null == title) {
-                throw new PdfException(
-                        MessageFormatUtil.format(
-                                KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
-                                current.indirectReference));
-            }
-            parentOutline = parentOutlineMap.get(parent);
-            PdfOutline currentOutline = new PdfOutline(title.toUnicodeString(), current, parentOutline);
-            addOutlineToPage(currentOutline, current, names);
-            parentOutline.getAllChildren().add(currentOutline);
-
-            if (first != null) {
-                parentOutlineMap.put(current, currentOutline);
-            }
-            current = getNextOutline(first, next, parent);
         }
     }
 }

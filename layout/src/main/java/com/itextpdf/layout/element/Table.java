@@ -576,7 +576,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
             rows.add(new Cell[columnWidths.length]);
         }
         return this;
-        //TODO when rendering starts, make sure, that last row is not empty.
     }
 
     /**

@@ -42,20 +42,31 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1OutputStream;
 
 /**
  * This file is a helper class for internal usage only.
- * Be aware that it's API and functionality may be changed in future.
+ * Be aware that it's API and functionality may be changed in the future.
  */
 public class CryptoUtil {
+
+    private CryptoUtil() {
+
+    }
+
     public static Certificate readPublicCertificate(InputStream is) throws CertificateException {
         return CertificateFactory.getInstance("X.509").generateCertificate(is);
     }
@@ -64,5 +75,23 @@ public class CryptoUtil {
         KeyStore keystore = KeyStore.getInstance("PKCS12");
         keystore.load(keyStore, pkPassword);
         return (PrivateKey) keystore.getKey(pkAlias, pkPassword);
+    }
+
+    /**
+     * Creates {@link ASN1OutputStream} instance and asserts for unexpected ASN1 encodings.
+     *
+     * @param outputStream the underlying stream
+     * @param asn1Encoding ASN1 encoding that will be used for writing. Only DER and BER are allowed as values.
+     *                     See also {@link ASN1Encoding}.
+     *
+     * @return an {@link ASN1OutputStream} instance. Exact stream implementation is chosen based on passed encoding.
+     */
+    public static ASN1OutputStream createAsn1OutputStream(OutputStream outputStream, String asn1Encoding) {
+        if (!ASN1Encoding.DER.equals(asn1Encoding) && !ASN1Encoding.BER.equals(asn1Encoding)) {
+            throw new UnsupportedOperationException(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_ASN1_ENCODING, asn1Encoding)
+            );
+        }
+        return ASN1OutputStream.create(outputStream, asn1Encoding);
     }
 }

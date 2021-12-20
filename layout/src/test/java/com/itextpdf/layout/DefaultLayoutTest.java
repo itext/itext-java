@@ -61,6 +61,7 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -188,7 +189,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(count = 1, messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(count = 1, messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void addParagraphOnShortPage1() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addParagraphOnShortPage1.pdf";
@@ -213,7 +214,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void addParagraphOnShortPage2() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addParagraphOnShortPage2.pdf";
@@ -234,7 +235,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void addWordOnShortPageTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "addWordOnShortPageTest01.pdf";

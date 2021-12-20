@@ -42,14 +42,18 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -361,5 +365,22 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
                 () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function),
                         currentColorSpaces, true, false)
         );
+    }
+
+    @Test
+    public void checkColorShadingTest() {
+        PdfDictionary patternDict = new PdfDictionary();
+        patternDict.put(PdfName.ExtGState, new PdfDictionary());
+        PdfPattern.Shading pattern = new PdfPattern.Shading(patternDict);
+
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.ColorSpace, PdfName.DeviceCMYK);
+        pattern.setShading(dictionary);
+
+        Color color = new PatternColor(pattern);
+
+        AssertUtil.doesNotThrow(() -> {
+            pdfA2Checker.checkColor(color, new PdfDictionary(), true, null);
+        });
     }
 }

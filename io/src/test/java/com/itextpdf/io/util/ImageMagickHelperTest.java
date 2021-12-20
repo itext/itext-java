@@ -51,6 +51,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -347,6 +349,83 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         } finally {
             StandardOutUtil.restoreStandardOut(storedPrintStream);
         }
+    }
+
+    @Test
+    public void compareEqualImagesAndGetResult() throws InterruptedException, IOException {
+        String image = SOURCE_FOLDER + "image.png";
+        String diff = DESTINATION_FOLDER + "diff_equalImages_result.png";
+
+        ImageMagickCompareResult result = new ImageMagickHelper().runImageMagickImageCompareAndGetResult(
+                image,
+                image,
+                diff,
+                "1");
+
+        Assert.assertTrue(result.isComparingResultSuccessful());
+        Assert.assertEquals(0, result.getDiffPixels());
+    }
+
+    @Test
+    public void compareDifferentImagesAndGetResult() throws InterruptedException, IOException {
+        String image = SOURCE_FOLDER + "image.png";
+        String image2 = SOURCE_FOLDER + "Im1_1.jpg";
+        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+
+        ImageMagickCompareResult result = new ImageMagickHelper().runImageMagickImageCompareAndGetResult(
+                image,
+                image2,
+                diff, "1");
+
+        Assert.assertFalse(result.isComparingResultSuccessful());
+    }
+
+    @Test
+    public void runImageMagickImageCompareEqualWithThreshold() throws IOException, InterruptedException {
+        String image = SOURCE_FOLDER + "image.png";
+        String image2 = SOURCE_FOLDER + "image.png";
+        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+
+        boolean result = new ImageMagickHelper().runImageMagickImageCompareWithThreshold(
+                image,
+                image2,
+                diff,
+                "0",
+                0);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void runImageMagickImageCompareWithEnoughThreshold() throws IOException, InterruptedException {
+        String image = SOURCE_FOLDER + "image.png";
+        String image2 = SOURCE_FOLDER + "Im1_1.jpg";
+        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+
+        boolean result = new ImageMagickHelper().runImageMagickImageCompareWithThreshold(
+                image,
+                image2,
+                diff,
+                "20",
+                2000000);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void runImageMagickImageCompareWithNotEnoughThreshold() throws IOException, InterruptedException {
+        String image = SOURCE_FOLDER + "image.png";
+        String image2 = SOURCE_FOLDER + "Im1_1.jpg";
+        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+
+        boolean result = new ImageMagickHelper().runImageMagickImageCompareWithThreshold(
+                image,
+                image2,
+                diff,
+                "20",
+                2000);
+
+        Assert.assertFalse(result);
     }
 
 }

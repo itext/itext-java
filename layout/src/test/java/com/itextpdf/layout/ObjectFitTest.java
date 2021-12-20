@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -32,6 +31,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BorderRadius;
 import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.test.ExtendedITextTest;
@@ -195,7 +195,7 @@ public class ObjectFitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
     })
     // TODO DEVSIX-4286 object-fit property combined with rotation is not processed correctly
     public void containWithRotationObjectsFitTest() throws IOException, InterruptedException {

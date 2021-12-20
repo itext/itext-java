@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,13 +15,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191008171449+03'00')/ModDate(D:20191008171449+03'00')/Producer(iTextÆ 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20211108174743+03'00')/ModDate(D:20211108174743+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 262.5 225]/Length 2824/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R/Gs8 17 0 R/Gs9 18 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 262.5 225]/Length 2764/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R/Gs8 17 0 R/Gs9 18 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 262.5 225 re
 W
 n
@@ -52,30 +51,26 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 57.75 11.25 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Weather)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 52.5 21.75 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (\(No. of regions in brackets\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -101,17 +96,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 152.23 69.25 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (27.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -129,17 +122,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 155.43 120.61 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (13.6%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -157,17 +148,15 @@ q
 B
 Q
 q
+q
 BT
 1 0 0 -1 77.62 90.51 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (44.8%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -184,17 +173,15 @@ q
 B
 Q
 q
+q
 BT
 1 0 0 -1 125.44 145.16 Tm
 0 Tr
 /F1 8.25 Tf
-q
 0 0 Td
 (14.2%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -202,32 +189,28 @@ q
 q
 q
 q
+q
 BT
 1 0 0 -1 258.75 59.96 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -24.3 0 Td
 (Cloudy)Tj
-n
-Q
 ET
-f
 Q
 Q
+Q
+q
 q
 q
 BT
 1 0 0 -1 258.75 73.31 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -9.62 0 Td
 (\(9\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -253,45 +236,39 @@ Q
 q
 q
 q
+q
 BT
 1 0 0 -1 258.75 103.16 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -35.98 0 Td
 (Amount of)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 258.75 113.96 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -38.27 0 Td
 (Sunny days)Tj
-n
-Q
 ET
-f
 Q
 Q
+Q
+q
 q
 q
 BT
 1 0 0 -1 258.75 127.31 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -9.62 0 Td
 (\(6\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -317,32 +294,28 @@ Q
 q
 q
 q
+q
 BT
 1 0 0 -1 258.75 140.21 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -44.23 0 Td
 (Partly cloudy)Tj
-n
-Q
 ET
-f
 Q
 Q
+Q
+q
 q
 q
 BT
 1 0 0 -1 258.75 153.56 Tm
 0 Tr
 /F2 8.25 Tf
-q
 -13.74 0 Td
 (\(11\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -368,32 +341,28 @@ Q
 q
 q
 q
+q
 BT
 1 0 0 -1 3.75 83.21 Tm
 0 Tr
 /F2 8.25 Tf
-q
 0 0 Td
 (Rainfall)Tj
-n
-Q
 ET
-f
 Q
 Q
+Q
+q
 q
 q
 BT
 1 0 0 -1 3.75 96.56 Tm
 0 Tr
 /F2 8.25 Tf
-q
 0 0 Td
 (\(24\))Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -453,27 +422,27 @@ endobj
 xref
 0 19
 0000000000 65535 f 
-0000000226 00000 n 
-0000000616 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000606 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000527 00000 n 
-0000000437 00000 n 
-0000000667 00000 n 
-0000000852 00000 n 
-0000003925 00000 n 
-0000003951 00000 n 
-0000003979 00000 n 
-0000004007 00000 n 
-0000004035 00000 n 
-0000004063 00000 n 
-0000004091 00000 n 
-0000004119 00000 n 
-0000004147 00000 n 
+0000000427 00000 n 
+0000000516 00000 n 
+0000000657 00000 n 
+0000000842 00000 n 
+0000003855 00000 n 
+0000003881 00000 n 
+0000003909 00000 n 
+0000003937 00000 n 
+0000003965 00000 n 
+0000003993 00000 n 
+0000004021 00000 n 
+0000004049 00000 n 
+0000004077 00000 n 
 trailer
-<</ID [<021512228280b21a5ffb988118ac0542><021512228280b21a5ffb988118ac0542>]/Info 3 0 R/Root 1 0 R/Size 19>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<5df28311fa6715fff0880a1b04d0c1e4><5df28311fa6715fff0880a1b04d0c1e4>]/Info 3 0 R/Root 1 0 R/Size 19>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-4175
+4105
 %%EOF

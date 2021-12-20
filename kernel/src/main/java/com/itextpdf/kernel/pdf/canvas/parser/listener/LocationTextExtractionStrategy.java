@@ -82,11 +82,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      * Creates a new text extraction renderer.
      */
     public LocationTextExtractionStrategy() {
-        this(new ITextChunkLocationStrategy() {
-            public ITextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline) {
-                return new TextChunkLocationDefaultImp(baseline.getStartPoint(), baseline.getEndPoint(), renderInfo.getSingleSpaceWidth());
-            }
-        });
+        this(new ITextChunkLocationStrategyImpl());
     }
 
     /**
@@ -347,6 +343,16 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
     private static class TextChunkMarks {
         List<TextChunk> preceding = new ArrayList<>();
         List<TextChunk> succeeding = new ArrayList<>();
+    }
+
+    private static final class ITextChunkLocationStrategyImpl 
+            implements LocationTextExtractionStrategy.ITextChunkLocationStrategy {
+
+        @Override
+        public ITextChunkLocation createLocation(TextRenderInfo renderInfo, LineSegment baseline) {
+            return new TextChunkLocationDefaultImp(baseline.getStartPoint(), baseline.getEndPoint(),
+                    renderInfo.getSingleSpaceWidth());
+        }
     }
 
 }

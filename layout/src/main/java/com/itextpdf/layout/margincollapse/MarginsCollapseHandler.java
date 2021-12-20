@@ -207,8 +207,8 @@ public class MarginsCollapseHandler {
     }
 
     public void startMarginsCollapse(Rectangle parentBBox) {
-        collapseInfo.getCollapseBefore().joinMargin(getModelTopMargin(renderer));
-        collapseInfo.getCollapseAfter().joinMargin(getModelBottomMargin(renderer));
+        collapseInfo.getCollapseBefore().joinMargin(defineTopMarginValueForCollapse(renderer));
+        collapseInfo.getCollapseAfter().joinMargin(defineBottomMarginValueForCollapse(renderer));
 
         if (!firstChildMarginAdjoinedToParent(renderer)) {
             float topIndent = collapseInfo.getCollapseBefore().getCollapsedMarginsSize();
@@ -253,7 +253,7 @@ public class MarginsCollapseHandler {
         } else {
             ownCollapseAfter = new MarginsCollapse();
         }
-        ownCollapseAfter.joinMargin(getModelBottomMargin(renderer));
+        ownCollapseAfter.joinMargin(defineBottomMarginValueForCollapse(renderer));
         collapseInfo.setOwnCollapseAfter(ownCollapseAfter);
 
         if (collapseInfo.isSelfCollapsing()) {
@@ -544,33 +544,19 @@ public class MarginsCollapseHandler {
     }
 
     private static boolean hasTopPadding(IRenderer renderer) {
-        UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(Property.PADDING_TOP);
-        if (null != padding && !padding.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                    Property.PADDING_TOP));
-        }
-        return padding != null && padding.getValue() > 0;
+        return MarginsCollapseHandler.hasPadding(renderer, Property.PADDING_TOP);
     }
 
     private static boolean hasBottomPadding(IRenderer renderer) {
-        UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(Property.PADDING_BOTTOM);
-        if (null != padding && !padding.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                    Property.PADDING_BOTTOM));
-        }
-        return padding != null && padding.getValue() > 0;
+        return MarginsCollapseHandler.hasPadding(renderer, Property.PADDING_BOTTOM);
     }
 
     private static boolean hasTopBorders(IRenderer renderer) {
-        IPropertyContainer modelElement = renderer.getModelElement();
-        return modelElement.hasProperty(Property.BORDER_TOP) || modelElement.hasProperty(Property.BORDER);
+        return MarginsCollapseHandler.hasBorders(renderer, Property.BORDER_TOP);
     }
 
     private static boolean hasBottomBorders(IRenderer renderer) {
-        IPropertyContainer modelElement = renderer.getModelElement();
-        return modelElement.hasProperty(Property.BORDER_BOTTOM) || modelElement.hasProperty(Property.BORDER);
+        return MarginsCollapseHandler.hasBorders(renderer, Property.BORDER_BOTTOM);
     }
 
     private static boolean rendererIsFloated(IRenderer renderer) {
@@ -581,41 +567,56 @@ public class MarginsCollapseHandler {
         return floatPropertyValue != null && !floatPropertyValue.equals(FloatPropertyValue.NONE);
     }
 
-    private static float getModelTopMargin(IRenderer renderer) {
-        UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(Property.MARGIN_TOP);
-        if (null != marginUV && !marginUV.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                    Property.MARGIN_TOP));
-        }
-        // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
-        return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;
+    private static float defineTopMarginValueForCollapse(IRenderer renderer) {
+        return MarginsCollapseHandler.defineMarginValueForCollapse(renderer, Property.MARGIN_TOP);
     }
 
     private static void ignoreModelTopMargin(IRenderer renderer) {
-        renderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0f));
+        MarginsCollapseHandler.overrideModelTopMargin(renderer, 0f);
     }
 
     private static void overrideModelTopMargin(IRenderer renderer, float collapsedMargins) {
-        renderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(collapsedMargins));
+        MarginsCollapseHandler.overrideModelMargin(renderer, Property.MARGIN_TOP, collapsedMargins);
     }
 
-    private static float getModelBottomMargin(IRenderer renderer) {
-        UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(Property.MARGIN_BOTTOM);
-        if (null != marginUV && !marginUV.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                    Property.MARGIN_TOP));
-        }
-        // TODO Concerning "renderer instanceof CellRenderer" check: may be try to apply more general solution in future
-        return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;
+    private static float defineBottomMarginValueForCollapse(IRenderer renderer) {
+        return MarginsCollapseHandler.defineMarginValueForCollapse(renderer, Property.MARGIN_BOTTOM);
     }
 
     private static void ignoreModelBottomMargin(IRenderer renderer) {
-        renderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0f));
+        MarginsCollapseHandler.overrideModelBottomMargin(renderer, 0f);
     }
 
     private static void overrideModelBottomMargin(IRenderer renderer, float collapsedMargins) {
-        renderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(collapsedMargins));
+        MarginsCollapseHandler.overrideModelMargin(renderer, Property.MARGIN_BOTTOM, collapsedMargins);
+    }
+
+    private static float defineMarginValueForCollapse(IRenderer renderer, int property) {
+        UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(property);
+        if (null != marginUV && !marginUV.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    property));
+        }
+        return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;
+    }
+
+    private static void overrideModelMargin(IRenderer renderer, int property, float collapsedMargins) {
+        renderer.setProperty(property, UnitValue.createPointValue(collapsedMargins));
+    }
+
+    private static boolean hasPadding(IRenderer renderer, int property) {
+        UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(property);
+        if (null != padding && !padding.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    property));
+        }
+        return padding != null && padding.getValue() > 0;
+    }
+
+    private static boolean hasBorders(IRenderer renderer, int property) {
+        IPropertyContainer modelElement = renderer.getModelElement();
+        return modelElement.hasProperty(property) || modelElement.hasProperty(Property.BORDER);
     }
 }

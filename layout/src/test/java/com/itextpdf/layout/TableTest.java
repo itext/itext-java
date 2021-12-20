@@ -42,8 +42,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
@@ -67,6 +67,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.CaptionSide;
@@ -80,13 +81,12 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class TableTest extends AbstractTableTest {
@@ -540,8 +540,40 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
+    public void wideFirstCellBorderDoesntAffectSecondCellTest() throws IOException, InterruptedException {
+        String testName = "wideFirstCellBorderDoesntAffectSecondCellTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. "
+                + TEXT_CONTENT + "5. " + TEXT_CONTENT + "6. " + TEXT_CONTENT + "7. " + TEXT_CONTENT + "8. "
+                + TEXT_CONTENT + "9. " + TEXT_CONTENT;
+
+        Table table = new Table(new float[] {250, 250})
+                .addCell(new Cell().add(new Paragraph("cell 1, 1")))
+                .addCell(new Cell().add(new Paragraph("cell 1, 2")).setBorder(new SolidBorder(ColorConstants.RED, 100)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 1\n" + longTextContent)))
+                .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
+        doc.add(table);
+        doc.close();
+        Assert.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest17() throws IOException, InterruptedException {
         String testName = "tableTest17.pdf";
@@ -571,7 +603,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest18() throws IOException, InterruptedException {
         String testName = "tableTest18.pdf";
@@ -603,7 +635,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest19() throws IOException, InterruptedException {
         String testName = "tableTest19.pdf";
@@ -634,7 +666,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest20() throws IOException, InterruptedException {
         String testName = "tableTest20.pdf";
@@ -661,7 +693,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void simpleTableTest21() throws IOException, InterruptedException {
         String testName = "tableTest21.pdf";
@@ -1022,7 +1054,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     @Test
     public void toLargeElementWithKeepTogetherPropertyInTableTest01() throws IOException, InterruptedException {
@@ -1052,7 +1084,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
 
     @Test
@@ -1182,7 +1214,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     @Test
     public void splitTableOnShortPage() throws IOException, InterruptedException {
@@ -1609,7 +1641,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void bigFooterTest01() throws IOException, InterruptedException {
         String testName = "bigFooterTest01.pdf";
         String outFileName = destinationFolder + testName;
@@ -1629,7 +1661,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void bigFooterTest02() throws IOException, InterruptedException {
         String testName = "bigFooterTest02.pdf";
         String outFileName = destinationFolder + testName;
@@ -1987,7 +2019,7 @@ public class TableTest extends AbstractTableTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE),
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void tableNothingResultTest() throws IOException, InterruptedException {
         String testName = "tableNothingResultTest.pdf";
@@ -2008,6 +2040,200 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void tableWithEmptyLastRowTest() throws IOException, InterruptedException {
+        String testName = "tableWithEmptyLastRowTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
+        table.addCell(new Cell().add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+        startSeveralEmptyRows(table);
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+	@Test
+	@LogMessages(messages = {
+	        @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING)
+    })
+	public void tableWithEmptyRowsBetweenFullRowsTest() throws IOException, InterruptedException {
+		String testName = "tableWithEmptyRowsBetweenFullRowsTest.pdf";
+		String outFileName = destinationFolder + testName;
+		String cmpFileName = sourceFolder + "cmp_" + testName;
+
+		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+		Document doc = new Document(pdfDoc);
+
+		Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
+		table.addCell(new Cell().add(new Paragraph("Hello")));
+		table.addCell(new Cell().add(new Paragraph("World")));
+		startSeveralEmptyRows(table);
+		table.addCell(new Cell().add(new Paragraph("Hello")));
+		table.addCell(new Cell().add(new Paragraph("World")));
+		doc.add(table);
+
+		doc.close();
+		Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+	}
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 2),
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void tableWithEmptyRowAfterJustOneCellTest() throws IOException, InterruptedException {
+        String testName = "tableWithEmptyRowAfterJustOneCellTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(3);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j <= i; j++) {
+                table.addCell(new Cell().add(new Paragraph("Hello")));
+            }
+            startSeveralEmptyRows(table);
+        }
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 39),
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void tableWithAlternatingRowsTest() throws IOException, InterruptedException {
+        String testName = "tableWithAlternatingRowsTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
+        for (int i = 0; i < 40; i++) {
+            table.addCell(new Cell().add(new Paragraph("Hello")));
+            table.addCell(new Cell().add(new Paragraph("World")));
+            startSeveralEmptyRows(table);
+        }
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    public void coloredTableWithColoredCellsTest() throws IOException, InterruptedException {
+        String testName = "coloredTableWithColoredCellsTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
+        table.setBackgroundColor(ColorConstants.RED);
+        for (int i = 0; i < 40; i++) {
+            table.addCell(new Cell().add(new Paragraph("Hello")).setBackgroundColor(ColorConstants.GREEN));
+            table.startNewRow();
+        }
+        table.addCell(new Cell().add(new Paragraph("Hello")).setBackgroundColor(ColorConstants.GREEN));
+        table.addCell(new Cell().add(new Paragraph("World")).setBackgroundColor(ColorConstants.GREEN));
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 2)
+    })
+    public void tableWithEmptyRowsAndSeparatedBordersTest() throws IOException, InterruptedException {
+        String testName = "tableWithEmptyRowsAndSeparatedBordersTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.addCell(new Cell().add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+        startSeveralEmptyRows(table);
+        table.addCell(new Cell().add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    // TODO DEVSIX-6020:Border-collapsing doesn't work in case startNewRow has been called
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING)
+    })
+    public void tableWithCollapsedBordersTest() throws IOException, InterruptedException {
+        String testName = "tableWithCollapsedBordersTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
+        table.addCell(new Cell().add(new Paragraph("Hello")).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
+        table.addCell(new Cell().add(new Paragraph("World")).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
+        startSeveralEmptyRows(table);
+        table.addCell(new Cell().add(new Paragraph("Hello")).setBorderTop(new SolidBorder(ColorConstants.RED, 20)));
+        table.addCell(new Cell().add(new Paragraph("World")).setBorderTop(new SolidBorder(ColorConstants.RED, 20)));
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
+    })
+    public void tableWithCollapsedBordersAndFooterTest() throws IOException, InterruptedException {
+        String testName = "tableWithCollapsedBordersAndFooterTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
+        table.addCell(new Cell().add(new Paragraph("Hello")).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
+        table.addCell(new Cell().add(new Paragraph("World")).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)));
+        startSeveralEmptyRows(table);
+        table.addFooterCell(new Cell().add(new Paragraph("Hello")).setBorderTop(new SolidBorder(ColorConstants.RED, 20)));
+        table.addFooterCell(new Cell().add(new Paragraph("World")).setBorderTop(new SolidBorder(ColorConstants.RED, 20)));
+        doc.add(table);
+
+        doc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
     }
 
@@ -2164,7 +2390,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // When the test was created, only first line of text was displayed on the first page
     public void nestedTableLostContent() throws IOException, InterruptedException {
         String testName = "nestedTableLostContent.pdf";
@@ -2191,7 +2417,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     // When the test was created, an exception was thrown due to min-max width calculations for an inner table.
     // At some point isOriginalNonSplitRenderer was true for a parent renderer but false for the inner table renderer
     public void nestedTableMinMaxWidthException() throws IOException, InterruptedException {
@@ -3054,7 +3280,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void infiniteLoopOnUnfitCellAndBigRowspanTest() throws IOException, InterruptedException {
         String testName = "infiniteLoopOnUnfitCellAndBigRowspanTest.pdf";
@@ -3088,7 +3314,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
             @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
     })
     public void firstRowNotFitBigRowspanTest() throws IOException, InterruptedException {
@@ -3193,7 +3419,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarNothingTest() throws IOException, InterruptedException {
@@ -3229,6 +3455,71 @@ public class TableTest extends AbstractTableTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
                 sourceFolder + "cmp_" + filename, destinationFolder));
+    }
+
+    @Test
+    // TODO DEVSIX-5916 The first cell's width is the same as the second one's, however, it's not respected
+    public void setWidthShouldBeRespectedTest() throws IOException, InterruptedException {
+        String fileName = "setWidthShouldBeRespectedTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+        Document doc = new Document(pdfDocument, new PageSize(842, 1400));
+
+        Table table = new Table(2);
+        table.setBorder(new SolidBorder(ColorConstants.GREEN, 90f));
+
+        Cell cell;
+        cell = new Cell().add(new Paragraph("100pt"));
+        cell.setBorder(new SolidBorder(ColorConstants.BLUE, 20f));
+        cell.setWidth(100).setMargin(0).setPadding(0);
+        table.addCell(cell);
+
+        cell = new Cell().add(new Paragraph("100pt"));
+        cell.setBorder(new SolidBorder(ColorConstants.RED, 120f));
+        cell.setWidth(100).setMargin(0).setPadding(0);
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
+    }
+
+    //creates 2 empty lines, where 2 is random number
+    private static void startSeveralEmptyRows(Table table) {
+        table.startNewRow();
+        table.startNewRow();
+    }
+
+    @Test
+    public void tableRelayoutTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document doc = new Document(pdfDoc)) {
+
+        float width = 142f;
+
+        Table table = new Table(1);
+        table.setWidth(width);
+        table.setFixedLayout();
+        Cell cell = new Cell();
+        cell.setWidth(width);
+        cell.add(new Paragraph("Testing, FinancialProfessional Associate adasdasdasdasada.gmail.com"));
+        table.addCell(cell);
+
+        LayoutResult result = table.createRendererSubTree().setParent(doc.getRenderer())
+                .layout(new LayoutContext(new LayoutArea(1,
+                        new Rectangle(0, 0, 10000, 10000.0F))));
+
+        Rectangle tableRect = result.getOccupiedArea().getBBox();
+
+        result = table.createRendererSubTree().setParent(doc.getRenderer()).layout(new LayoutContext(
+                new LayoutArea(1, new Rectangle(0, 0, 10000, 10000.0F))));
+
+        Rectangle tableRectRelayout = result.getOccupiedArea().getBBox();
+
+        Assert.assertTrue(tableRect.equalsWithEpsilon(tableRectRelayout));
+        }
     }
 
     private static class RotatedDocumentRenderer extends DocumentRenderer {

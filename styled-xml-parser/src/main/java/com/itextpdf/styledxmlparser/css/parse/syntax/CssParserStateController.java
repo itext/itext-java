@@ -163,7 +163,7 @@ public final class CssParserStateController {
         commendInnerState = new CommentInnerState(this);
         unknownState = new UnknownState(this);
         ruleState = new RuleState(this);
-        propertiesState = new PropertiesState(this);
+        propertiesState = new BlockState(this);
         atRuleBlockState = new AtRuleBlockState(this);
         conditionalGroupAtRuleBlockState = new ConditionalGroupAtRuleBlockState(this);
 

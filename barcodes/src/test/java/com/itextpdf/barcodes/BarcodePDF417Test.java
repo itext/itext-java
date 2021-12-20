@@ -238,7 +238,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcode.setCode(text);
         PdfFormXObject xObject = barcode.createFormXObject(document);
 
-        canvas.addXObject(xObject, 10, 650);
+        canvas.addXObjectAt(xObject, 10, 650);
 
         document.close();
 

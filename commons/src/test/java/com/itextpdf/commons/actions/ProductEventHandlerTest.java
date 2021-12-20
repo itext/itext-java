@@ -24,34 +24,37 @@ package com.itextpdf.commons.actions;
 
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
+import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
+import com.itextpdf.commons.exceptions.ProductEventHandlerRepeatException;
 import com.itextpdf.commons.exceptions.UnknownProductException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class ProductEventHandlerTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    @Before
+    public void clearProcessors() {
+        ProductEventHandler.INSTANCE.clearProcessors();
+    }
 
     @Test
     public void unknownProductTest() {
         ProductEventHandler handler = ProductEventHandler.INSTANCE;
 
-        junitExpectedException.expect(UnknownProductException.class);
-        junitExpectedException.expectMessage(
-                MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, "Unknown Product"));
-
-        handler.onAcceptedEvent(new ITextTestEvent(new SequenceId(), null, "test-event",
-                "Unknown Product"));
+        AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test-event", "Unknown Product");
+        Exception ex = Assert.assertThrows(UnknownProductException.class,
+                () -> handler.onAcceptedEvent(event));
+        Assert.assertEquals(MessageFormatUtil.format(UnknownProductException.UNKNOWN_PRODUCT, "Unknown Product"),
+                ex.getMessage());
     }
 
     @Test
@@ -113,5 +116,76 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         Assert.assertEquals(1, handler.getEvents(sequenceId).size());
         Assert.assertTrue(handler.getEvents(sequenceId).get(0) instanceof ConfirmedEventWrapper);
         Assert.assertEquals(event, ((ConfirmedEventWrapper) handler.getEvents(sequenceId).get(0)).getEvent());
+    }
+
+    @Test
+    public void repeatEventHandlingWithFiveExceptionOnProcessingTest() {
+        ProductEventHandler handler = ProductEventHandler.INSTANCE;
+
+        handler.addProcessor(new RepeatEventProcessor(5));
+
+        AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test",
+                ProductNameConstant.ITEXT_CORE);
+
+        Exception e = Assert.assertThrows(ProductEventHandlerRepeatException.class,
+                () -> handler.onAcceptedEvent(event));
+        Assert.assertEquals("customMessage5", e.getMessage());
+    }
+
+    @Test
+    public void repeatEventHandlingWithFourExceptionOnProcessingTest() {
+        ProductEventHandler handler = ProductEventHandler.INSTANCE;
+
+        handler.addProcessor(new RepeatEventProcessor(4));
+
+        AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test",
+                ProductNameConstant.ITEXT_CORE);
+
+        AssertUtil.doesNotThrow(() -> handler.onAcceptedEvent(event));
+    }
+
+    @Test
+    public void repeatEventHandlingWithOneExceptionOnProcessingTest() {
+        ProductEventHandler handler = ProductEventHandler.INSTANCE;
+
+        handler.addProcessor(new RepeatEventProcessor(1));
+
+        AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test",
+                ProductNameConstant.ITEXT_CORE);
+
+        AssertUtil.doesNotThrow(() -> handler.onAcceptedEvent(event));
+    }
+
+    private static class RepeatEventProcessor implements ITextProductEventProcessor {
+        private final int exceptionsCount;
+        private int exceptionCounter = 0;
+
+        public RepeatEventProcessor(int exceptionsCount) {
+            this.exceptionsCount = exceptionsCount;
+        }
+
+        @Override
+        public void onEvent(AbstractProductProcessITextEvent event) {
+            if (exceptionCounter < exceptionsCount) {
+                exceptionCounter++;
+                throw new ProductEventHandlerRepeatException("customMessage" + exceptionCounter);
+            }
+
+        }
+
+        @Override
+        public String getProductName() {
+            return ProductNameConstant.ITEXT_CORE;
+        }
+
+        @Override
+        public String getUsageType() {
+            return "someUsage";
+        }
+
+        @Override
+        public String getProducer() {
+            return "someProducer";
+        }
     }
 }

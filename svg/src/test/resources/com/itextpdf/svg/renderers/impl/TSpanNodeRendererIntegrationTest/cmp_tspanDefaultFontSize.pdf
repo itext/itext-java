@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201006134959+03'00')/ModDate(D:20201006134959+03'00')/Producer(iTextÆ 7.1.13-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108175031+03'00')/ModDate(D:20211108175031+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,36 +35,33 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 300]/Length 246/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 234/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 300 re
 W
 n
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 75 225 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Text with default font-size)Tj
-n
+ET
 Q
-1 0 0 -1 150 150 Tm
 q
+BT
+1 0 0 -1 75 225 Tm
 0 Tr
 /F1 12 Tf
-q
+1 0 0 -1 150 150 Tm
+0 Tr
+/F1 12 Tf
 0 0 Td
 (Tspan with not set font-size)Tj
-n
-Q
-1 0 0 -1 150 150 Tm
-f
-Q
-1 0 0 -1 150 150 Tm
 ET
-f
+Q
 Q
 
 endstream
@@ -73,17 +69,17 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000226 00000 n 
-0000000528 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000517 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000438 00000 n 
-0000000579 00000 n 
-0000000762 00000 n 
+0000000427 00000 n 
+0000000568 00000 n 
+0000000751 00000 n 
 trailer
-<</ID [<11999d999ed4dd1e701843e04b1199c0><11999d999ed4dd1e701843e04b1199c0>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.13-SNAPSHOT
+<</ID [<85f86e21847033cec2667f2eb038cae8><85f86e21847033cec2667f2eb038cae8>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-1132
+1109
 %%EOF

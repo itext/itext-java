@@ -165,6 +165,19 @@ public class SystemUtilTest extends ExtendedITextTest {
         Assert.assertTrue(FileUtil.fileExists(diff));
     }
 
+    @Test
+    public void runProcessAndGetProcessInfoTest() throws IOException, InterruptedException {
+        String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
+        if (imageMagickPath == null) {
+            imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
+        }
+
+        ProcessInfo processInfo = SystemUtil.runProcessAndGetProcessInfo(imageMagickPath,"--version");
+
+        Assert.assertNotNull(processInfo);
+        Assert.assertEquals(0, processInfo.getExitCode());
+    }
+
 
     static class TestProcess extends Process {
 

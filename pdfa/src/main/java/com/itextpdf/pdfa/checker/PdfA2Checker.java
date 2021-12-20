@@ -55,6 +55,7 @@ import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -73,7 +74,6 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 
 import java.util.Collections;
 import org.slf4j.Logger;
@@ -188,11 +188,7 @@ public class PdfA2Checker extends PdfA1Checker {
                 PdfObject colorSpace = shadingDictionary.get(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace), currentColorSpaces, true, true);
                 final PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
-                CanvasGraphicsState gState = new CanvasGraphicsState() {
-                    {
-                        updateFromExtGState(new PdfExtGState(extGStateDict));
-                    }
-                };
+                CanvasGraphicsState gState = new UpdateCanvasGraphicsState(extGStateDict);
                 checkExtGState(gState, contentStream);
             } else if (pattern instanceof PdfPattern.Tiling) {
                 checkContentStream((PdfStream) pattern.getPdfObject());
@@ -1082,6 +1078,12 @@ public class PdfA2Checker extends PdfA1Checker {
                     checkFormXObject(type3Glyph.getContentStream(), contentStream);
                 }
             }
+        }
+    }
+
+    private static final class UpdateCanvasGraphicsState extends CanvasGraphicsState {
+        public UpdateCanvasGraphicsState(PdfDictionary extGStateDict) {
+            updateFromExtGState(new PdfExtGState(extGStateDict));
         }
     }
 }

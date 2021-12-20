@@ -44,13 +44,27 @@
 package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -67,18 +81,6 @@ import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.TBSCertificateStructure;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Aiken Sam (aikensam@ieee.org)
@@ -250,7 +252,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         pkcs7input[23] = one;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ASN1OutputStream k = ASN1OutputStream.create(baos);
+        ASN1OutputStream k = CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.DER);
         ASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate) certificate);
         k.writeObject(obj);
         cms = baos.toByteArray();

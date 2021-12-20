@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219145416+03'00')/ModDate(D:20191219145416+03'00')/Producer(iTextÆ 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108174734+03'00')/ModDate(D:20211108174734+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 7 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -39,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 8613/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 8569/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -52,17 +51,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Bar/area interval chart)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -507,161 +504,141 @@ q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 121.13 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (0.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 229.5 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (2.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 337.88 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (4.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 446.25 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (6.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 554.63 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (8.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 307.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 249.3 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (40)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 191.55 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (80)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 133.8 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -15.75 0 Td
 (120)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 76.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -15.75 0 Td
 (160)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -687,22 +664,22 @@ endobj
 xref
 0 14
 0000000000 65535 f 
-0000000226 00000 n 
-0000000617 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000606 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000528 00000 n 
-0000000438 00000 n 
-0000000668 00000 n 
-0000000851 00000 n 
-0000009656 00000 n 
-0000009682 00000 n 
-0000009708 00000 n 
-0000009736 00000 n 
+0000000517 00000 n 
+0000000427 00000 n 
+0000000657 00000 n 
+0000000840 00000 n 
+0000009601 00000 n 
+0000009627 00000 n 
+0000009653 00000 n 
+0000009681 00000 n 
 trailer
-<</ID [<16f06a8ee924faa407a325f959aba1a8><16f06a8ee924faa407a325f959aba1a8>]/Info 3 0 R/Root 1 0 R/Size 14>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<e39af9dbf27140ef223c7197cd06fe7c><e39af9dbf27140ef223c7197cd06fe7c>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-9764
+9709
 %%EOF

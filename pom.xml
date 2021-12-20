@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.2.0</version>
+  <version>7.2.1</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -72,7 +72,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.68</bouncycastle.version>
+    <bouncycastle.version>1.69</bouncycastle.version>
     <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
@@ -83,7 +83,7 @@
     <javadoc.version>3.0.1</javadoc.version>
     <junit.version>4.13.2</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
-    <logback.version>1.2.3</logback.version>
+    <logback.version>1.2.4</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
@@ -93,7 +93,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <skipTests>true</skipTests>
-    <slf4j.version>1.7.30</slf4j.version>
+    <slf4j.version>1.7.31</slf4j.version>
     <slowtests>com.itextpdf.test.annotations.type.SlowTest</slowtests>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>

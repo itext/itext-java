@@ -55,6 +55,7 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -90,6 +91,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         String signCertFileName = certsSrc + "signCertRsa01.p12";
         String outFileName = destinationFolder + "sequentialSignOfFileWithAnnots.pdf";
         String srcFileName = sourceFolder + "signedWithAnnots.pdf";
+        String cmpFileName = sourceFolder + "cmp_sequentialSignOfFileWithAnnots.pdf";
 
         Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
         PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
@@ -107,6 +109,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         PadesSigTest.basicCheckSignedDoc(outFileName, signatureName);
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -114,6 +117,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         String signCertFileName = certsSrc + "signCertRsa01.p12";
         String outFileName = destinationFolder + "secondSignOfTagged.pdf";
         String srcFileName = sourceFolder + "taggedAndSignedDoc.pdf";
+        String cmpFileName = sourceFolder + "cmp_secondSignOfTagged.pdf";
 
         Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
 
@@ -159,5 +163,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
             // objects in StructTreeRoot to ensure that it won't be changed.
             Assert.assertNotEquals(resourceStrElemNumber, outStrElemNumber);
         }
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 }

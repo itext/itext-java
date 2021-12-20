@@ -219,16 +219,7 @@ public class ListRenderer extends BlockRenderer {
                 final String constantFont = (numberingType == ListNumberingType.GREEK_LOWER || numberingType == ListNumberingType.GREEK_UPPER) ?
                         StandardFonts.SYMBOL : StandardFonts.ZAPFDINGBATS;
 
-                textRenderer = new TextRenderer(textElement) {
-                    @Override
-                    public void draw(DrawContext drawContext) {
-                        try {
-                            setProperty(Property.FONT, PdfFontFactory.createFont(constantFont));
-                        } catch (IOException ignored) {
-                        }
-                        super.draw(drawContext);
-                    }
-                };
+                textRenderer = new ConstantFontTextRenderer(textElement, constantFont);
                 try {
                     textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(constantFont));
                 } catch (IOException exc) {
@@ -402,5 +393,24 @@ public class ListRenderer extends BlockRenderer {
             }
         }
         return null;
+    }
+
+    private static final class ConstantFontTextRenderer extends TextRenderer {
+        private String constantFontName;
+
+        public ConstantFontTextRenderer(Text textElement, String font) {
+            super(textElement);
+            constantFontName = font;
+        }
+
+        @Override
+        public void draw(DrawContext drawContext) {
+            try {
+                setProperty(Property.FONT, PdfFontFactory.createFont(constantFontName));
+            } catch (IOException ignored) {
+                // Do nothing
+            }
+            super.draw(drawContext);
+        }
     }
 }

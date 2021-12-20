@@ -44,6 +44,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
@@ -796,7 +797,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void nbspCannotBeFitAndMakesTheFirstChunkTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
@@ -820,7 +821,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";

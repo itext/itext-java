@@ -2020,6 +2020,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    /**
+     * Sets the border style for the field.
+     *
+     * @param style the new border style.
+     * @return the edited field
+     */
     public PdfFormField setBorderStyle(PdfDictionary style) {
         getWidgets().get(0).setBorderStyle(style);
         regenerateField();
@@ -2275,10 +2281,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
+    /**
+     * Gets the {@link PdfDocument} that owns that form field.
+     *
+     * @return the {@link PdfDocument} that owns that form field.
+     */
     protected PdfDocument getDocument() {
         return getPdfObject().getIndirectReference().getDocument();
     }
 
+    /**
+     * Gets a {@link Rectangle} that matches the current size and position of this form field.
+     *
+     * @param field current form field.
+     * @return a {@link Rectangle} that matches the current size and position of this form field.
+     */
     protected Rectangle getRect(PdfDictionary field) {
         PdfArray rect = field.getAsArray(PdfName.Rect);
         if (rect == null) {
@@ -2292,6 +2309,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return rect != null ? rect.toRectangle() : null;
     }
 
+    /**
+     * Convert {@link String} multidimensional array of combo box or list options to {@link PdfArray}.
+     *
+     * @param options Two-dimensional array of options.
+     * @return a {@link PdfArray} that contains all the options.
+     */
     protected static PdfArray processOptions(String[][] options) {
         PdfArray array = new PdfArray();
         for (String[] option : options) {
@@ -2302,6 +2325,12 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         return array;
     }
 
+    /**
+     * Convert {@link String} array of combo box or list options to {@link PdfArray}.
+     *
+     * @param options array of options.
+     * @return a {@link PdfArray} that contains all the options.
+     */
     protected static PdfArray processOptions(String[] options) {
         PdfArray array = new PdfArray();
         for (String option : options) {

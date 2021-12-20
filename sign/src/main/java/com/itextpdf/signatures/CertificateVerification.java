@@ -44,6 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.slf4j.Logger;
@@ -64,11 +65,10 @@ import java.util.List;
  */
 public class CertificateVerification {
 
-
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateVerification.class);
 
     /**
      * Verifies a single certificate for the current date.
@@ -217,7 +217,9 @@ public class CertificateVerification {
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
-                    return SignUtils.isSignatureValid(ocsp, certStoreX509, provider);
+                    if (SignUtils.isSignatureValid(ocsp, certStoreX509, provider)) {
+                        return true;
+                    }
                 } catch (Exception ex) {
                     exceptionsThrown.add(ex);
                 }
@@ -225,9 +227,8 @@ public class CertificateVerification {
         } catch (Exception e) {
             exceptionsThrown.add(e);
         }
-        for (Exception ex : exceptionsThrown) {
-            LOGGER.error(ex.getMessage(), ex);
-        }
+
+        logExceptionMessages(exceptionsThrown);
         return false;
     }
 
@@ -244,22 +245,25 @@ public class CertificateVerification {
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                 try {
-
                     SignUtils.isSignatureValid(ts, certStoreX509, provider);
                     return true;
                 } catch (Exception ex) {
                     exceptionsThrown.add(ex);
-
                 }
             }
         } catch (Exception e) {
             exceptionsThrown.add(e);
         }
 
-        for (Exception ex : exceptionsThrown) {
-            LOGGER.error(ex.getMessage(), ex);
-        }
+        logExceptionMessages(exceptionsThrown);
         return false;
+    }
+
+    private static void logExceptionMessages(List<Exception> exceptionsThrown) {
+        for (Exception ex : exceptionsThrown) {
+            LOGGER.error(ex.getMessage() == null ?
+                    SignLogMessageConstant.EXCEPTION_WITHOUT_MESSAGE : ex.getMessage(), ex);
+        }
     }
 
 }

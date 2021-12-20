@@ -24,6 +24,7 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
 
@@ -90,7 +91,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
                             url));
             return null;
         }
-        return new LimitedInputStream(url.openStream(), resourceSizeByteLimit);
+        return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url), resourceSizeByteLimit);
     }
 
     /**

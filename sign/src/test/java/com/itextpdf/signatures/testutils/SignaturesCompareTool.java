@@ -53,7 +53,12 @@ import com.itextpdf.signatures.SignatureUtil;
 import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import com.itextpdf.test.ITextTest;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -65,9 +70,20 @@ import org.bouncycastle.asn1.util.ASN1Dump;
 
 public class SignaturesCompareTool {
     private static final String OID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
+
+    // Timestamp related ids
     private static final String OID_SIGNED_DATA = "1.2.840.113549.1.7.2";
+    private static final String OID_TST_INFO = "1.2.840.113549.1.9.16.1.4";
+    private static final String OID_SIGNING_TIME = "1.2.840.113549.1.9.5";
+    private static final String OID_SIGNATURE_TIMESTAMP_ATTRIBUTE = "1.2.840.113549.1.9.16.2.14";
+
+    public static String compareSignatures(String dest, String cmp) {
+        return compareSignatures(dest, cmp, new ReaderProperties(), new ReaderProperties());
+    }
 
     public static String compareSignatures(String dest, String cmp, ReaderProperties destProperties, ReaderProperties cmpProperties) {
+        ITextTest.printOutCmpPdfNameAndDir(dest, cmp);
+
         StringBuilder errorText = new StringBuilder();
 
         try (PdfDocument outDocument = new PdfDocument(new PdfReader(dest, destProperties));
@@ -82,99 +98,17 @@ public class SignaturesCompareTool {
 
             List<String> signatures = cmpSigUtil.getSignatureNames();
             for (String sig : signatures) {
-                boolean isFailed = false;
                 ASN1Sequence outSignedData = (ASN1Sequence) getSignatureContent(sig, outSigUtil);
                 ASN1Sequence cmpSignedData = (ASN1Sequence) getSignatureContent(sig, cmpSigUtil);
-                if (outSignedData.size() != cmpSignedData.size() || outSignedData.size() != 2) {
-                    addError(errorText, "Signature top level elements count is incorrect (should be exactly 2):",
-                            String.valueOf(outSignedData.size()),
-                            String.valueOf(cmpSignedData.size()));
-                    isFailed = true;
-                }
 
-                ASN1ObjectIdentifier outObjId = (ASN1ObjectIdentifier) outSignedData.getObjectAt(0);
-                ASN1ObjectIdentifier cmpObjId = (ASN1ObjectIdentifier) cmpSignedData.getObjectAt(0);
-                if (!outObjId.equals(cmpObjId) || !outObjId.getId().equals(OID_SIGNED_DATA)) {
-                    addError(errorText, "Signatures object identifier is incorrect (should be "
-                                    + OID_SIGNED_DATA  + ")",
-                            String.valueOf(outObjId.getId()),
-                            String.valueOf(cmpObjId.getId()));
-                    isFailed = true;
-                }
+                boolean isEqual = compareSignatureObjects(outSignedData, cmpSignedData, errorText);
 
-                ASN1Sequence outContent = (ASN1Sequence) ((ASN1TaggedObject) outSignedData.getObjectAt(1)).getObject();
-                ASN1Sequence cmpContent = (ASN1Sequence) ((ASN1TaggedObject) cmpSignedData.getObjectAt(1)).getObject();
-                if (outContent.size() != cmpContent.size()) {
-                    addError(errorText, "Signatures base elements counts are different",
-                            String.valueOf(outContent.size()),
-                            String.valueOf(cmpContent.size()));
-                    isFailed = true;
-                }
-
-                int signerInfoIndex = getSignerInfoIndex(cmpContent);
-                if (outContent.getObjectAt(signerInfoIndex) instanceof ASN1TaggedObject) {
-                    addError(errorText, "SignerInfo object indexes are different", null, null);
-                    isFailed = true;
-                }
-
-                for (int i = 0; i < cmpContent.size(); i++) {
-
-                    // SignerInfo objects will be compared separately
-                    if (i == signerInfoIndex) {
-                        continue;
-                    }
-
-                    if (!cmpContent.getObjectAt(i).equals(outContent.getObjectAt(i))) {
-                        addError(errorText, "SignedData objects are different", null, null);
-                        isFailed = true;
-                    }
-                }
-
-                ASN1Set cmpSignerInfos = (ASN1Set) cmpContent.getObjectAt(signerInfoIndex);
-                ASN1Set outSignerInfos = (ASN1Set) outContent.getObjectAt(signerInfoIndex);
-
-                // Currently, iText signature validation mechanism do not support signatures,
-                // containing more than one SignerInfo entry. However, it is still valid signature.
-                if (cmpSignerInfos.size() != outSignerInfos.size() || cmpSignerInfos.size() != 1) {
-                    addError(errorText, "Incorrect SignerInfos objects count", String.valueOf(outSignerInfos.size()),
-                            String.valueOf(cmpSignerInfos.size()));
-                    isFailed = true;
-                }
-
-                ASN1Sequence outSignerInfo = (ASN1Sequence) cmpSignerInfos.getObjectAt(0);
-                ASN1Sequence cmpSignerInfo = (ASN1Sequence) outSignerInfos.getObjectAt(0);
-                if (cmpSignerInfo.size() != outSignerInfo.size()) {
-                    addError(errorText, "Incorrect SignerInfo entries count", String.valueOf(outSignerInfo.size()),
-                            String.valueOf(cmpSignerInfo.size()));
-                    isFailed = true;
-                }
-
-                for (int i = 0; i < cmpSignerInfo.size(); i++) {
-
-                    // Skipping comparison of ASN1OctetString fields in SignerInfo. SignerInfo is expected to have
-                    // a single field of ASN1OctetString which is SignatureValue, that is expected to be
-                    // different in each signature instance.
-                    if (outSignerInfo.getObjectAt(i) instanceof ASN1OctetString) {
-                        if (cmpSignerInfo.getObjectAt(i) instanceof ASN1OctetString) {
-                            continue;
-                        } else {
-                            addError(errorText, "Signature values indexes are different!", null, null);
-                            isFailed = true;
-                        }
-                    }
-
-                    if (!isFailed) {
-                        isFailed = compareAsn1Structures(outSignerInfo.getObjectAt(i).toASN1Primitive(),
-                                cmpSignerInfo.getObjectAt(i).toASN1Primitive(), errorText);
-                    }
-                }
-
-                if (isFailed) {
+                if (!isEqual) {
                     String sigFileName = dest.substring(0, dest.lastIndexOf("."));
-                    String outSigFile = sigFileName + "_out.txt";
-                    String cmpSigFile = sigFileName + "_cmp.txt";
-                    writeToFile(outSigFile, sig + "\n" + ASN1Dump.dumpAsString(outSignedData, true)+ "\n");
-                    writeToFile(cmpSigFile, sig + "\n" + ASN1Dump.dumpAsString(cmpSignedData, true)+ "\n");
+                    String outSigFile = sigFileName + "_" + sig + "_out.txt";
+                    String cmpSigFile = sigFileName + "_" + sig + "_cmp.txt";
+                    writeToFile(outSigFile, sig + "\n" + ASN1Dump.dumpAsString(outSignedData, true) + "\n");
+                    writeToFile(cmpSigFile, sig + "\n" + ASN1Dump.dumpAsString(cmpSignedData, true) + "\n");
 
                     errorText.insert(0, "See signature output files: \nout: "
                             + UrlUtil.getNormalizedFileUriString(outSigFile) + "\ncmp: "
@@ -185,26 +119,186 @@ public class SignaturesCompareTool {
             errorText.append(e.getMessage());
         }
 
-        if (!errorText.toString().isEmpty()) {
-            return errorText.toString();
+        return errorText.toString().isEmpty() ? null : errorText.toString();
+    }
+
+    private static boolean compareSignatureObjects(ASN1Sequence outSignedData, ASN1Sequence cmpSignedData, StringBuilder errorText) {
+        if (outSignedData.size() != cmpSignedData.size() || outSignedData.size() != 2) {
+            addError(errorText, "Signature top level elements count is incorrect (should be exactly 2):",
+                    String.valueOf(outSignedData.size()),
+                    String.valueOf(cmpSignedData.size()));
+            return false;
+        }
+
+        ASN1ObjectIdentifier outObjId = (ASN1ObjectIdentifier) outSignedData.getObjectAt(0);
+        ASN1ObjectIdentifier cmpObjId = (ASN1ObjectIdentifier) cmpSignedData.getObjectAt(0);
+        if (!outObjId.equals(cmpObjId) || !outObjId.getId().equals(OID_SIGNED_DATA)) {
+            addError(errorText, "Signatures object identifier is incorrect (should be "
+                            + OID_SIGNED_DATA  + ")",
+                    String.valueOf(outObjId.getId()),
+                    String.valueOf(cmpObjId.getId()));
+            return false;
+        }
+
+        ASN1Sequence outContent = (ASN1Sequence) ((ASN1TaggedObject) outSignedData.getObjectAt(1)).getObject();
+        ASN1Sequence cmpContent = (ASN1Sequence) ((ASN1TaggedObject) cmpSignedData.getObjectAt(1)).getObject();
+        if (outContent.size() != cmpContent.size()) {
+            addError(errorText, "Signatures base elements counts are different",
+                    String.valueOf(outContent.size()),
+                    String.valueOf(cmpContent.size()));
+            return false;
+        }
+
+        int signerInfoIndex = getSignerInfoIndex(cmpContent);
+        if (!(outContent.getObjectAt(signerInfoIndex) instanceof ASN1Set)) {
+            addError(errorText, "SignerInfo object indexes are different", null, null);
+            return false;
+        }
+
+        for (int i = 0; i < cmpContent.size(); i++) {
+
+            // SignerInfo objects will be compared separately
+            if (i == signerInfoIndex) {
+                continue;
+            }
+
+            // Sequences and sets related to timestamp token info should be ignored.
+            if (OID_TST_INFO.equals(getASN1ObjectId(cmpContent.getObjectAt(i).toASN1Primitive())) &&
+                    OID_TST_INFO.equals(getASN1ObjectId(outContent.getObjectAt(i).toASN1Primitive()))) {
+                continue;
+            }
+
+            if (!cmpContent.getObjectAt(i).equals(outContent.getObjectAt(i))) {
+                addError(errorText, "SignedData objects are different", null, null);
+                return false;
+            }
+        }
+
+        ASN1Set cmpSignerInfos = (ASN1Set) cmpContent.getObjectAt(signerInfoIndex);
+        ASN1Set outSignerInfos = (ASN1Set) outContent.getObjectAt(signerInfoIndex);
+
+        // Currently, iText signature validation mechanism do not support signatures,
+        // containing more than one SignerInfo entry. However, it is still valid signature.
+        if (cmpSignerInfos.size() != outSignerInfos.size() || cmpSignerInfos.size() != 1) {
+            addError(errorText, "Incorrect SignerInfos objects count", String.valueOf(outSignerInfos.size()),
+                    String.valueOf(cmpSignerInfos.size()));
+            return false;
+        }
+
+        ASN1Sequence outSignerInfo = (ASN1Sequence) cmpSignerInfos.getObjectAt(0);
+        ASN1Sequence cmpSignerInfo = (ASN1Sequence) outSignerInfos.getObjectAt(0);
+        if (cmpSignerInfo.size() != outSignerInfo.size()) {
+            addError(errorText, "Incorrect SignerInfo entries count", String.valueOf(outSignerInfo.size()),
+                    String.valueOf(cmpSignerInfo.size()));
+            return false;
+        }
+
+        for (int i = 0; i < cmpSignerInfo.size(); i++) {
+
+            // Skipping comparison of ASN1OctetString fields in SignerInfo. SignerInfo is expected to have
+            // a single field of ASN1OctetString which is SignatureValue, that is expected to be
+            // different in each signature instance.
+            if (outSignerInfo.getObjectAt(i) instanceof ASN1OctetString) {
+                if (cmpSignerInfo.getObjectAt(i) instanceof ASN1OctetString) {
+                    continue;
+                } else {
+                    addError(errorText, "Signature values indexes are different!", null, null);
+                    return false;
+                }
+            }
+
+            if (!compareAsn1Structures(
+                    outSignerInfo.getObjectAt(i).toASN1Primitive(),
+                    cmpSignerInfo.getObjectAt(i).toASN1Primitive(), errorText)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean compareAsn1Structures(ASN1Primitive out, ASN1Primitive cmp, StringBuilder errorText) {
+        if (!out.getClass().equals(cmp.getClass())) {
+            addError(errorText, "ASN1 objects types are different", out.getClass().getName(),
+                    cmp.getClass().getName());
+            return false;
+        }
+
+        if (cmp instanceof ASN1TaggedObject) {
+            return compareAsn1Structures(
+                    ((ASN1TaggedObject) cmp).getObject(), ((ASN1TaggedObject) out).getObject(), errorText);
+        } else if (cmp instanceof ASN1Sequence) {
+            if (!compareContainers(((ASN1Sequence) out).toArray(), ((ASN1Sequence) cmp).toArray(), errorText)) {
+                addError(errorText, "ASN1Sequence objects are different", null, null);
+                return false;
+            }
+        } else if (cmp instanceof ASN1Set) {
+            if (!compareContainers(((ASN1Set) out).toArray(), ((ASN1Set) cmp).toArray(), errorText)) {
+                addError(errorText, "ASN1Set objects are different", null, null);
+                return false;
+            }
         } else {
-            return null;
+            if (!cmp.equals(out)) {
+                addError(errorText, "ASN1 objects are different",
+                        ASN1Dump.dumpAsString(out, true), ASN1Dump.dumpAsString(cmp, true));
+                return false;
+            }
         }
+        return true;
     }
 
-    public static String compareSignatures(String dest, String cmp) {
-        return compareSignatures(dest, cmp, new ReaderProperties(), new ReaderProperties());
+    private static boolean compareContainers(ASN1Encodable[] outArray,
+                                             ASN1Encodable[] cmpArray, StringBuilder errorText) {
+        if (cmpArray.length != outArray.length) {
+            addError(errorText, "Container lengths are different",
+                    Integer.toString(outArray.length), Integer.toString(cmpArray.length));
+            return false;
+        }
+
+        String cmpASN1ObjectId = getASN1ObjectId(cmpArray);
+        String outASN1ObjectId = getASN1ObjectId(outArray);
+        if (!Objects.equals(cmpASN1ObjectId, outASN1ObjectId)) {
+            addError(errorText, "Containers ids are different", outASN1ObjectId, cmpASN1ObjectId);
+            return false;
+        }
+
+        // Message digest, timestamp token info and signing time should be ignored during comparing.
+        if (OID_MESSAGE_DIGEST.equals(cmpASN1ObjectId) ||
+                OID_TST_INFO.equals(cmpASN1ObjectId) || OID_SIGNING_TIME.equals(cmpASN1ObjectId)) {
+            return true;
+        }
+        // Signature timestamp attribute (nested timestamp signature) should be processed as separated signature.
+        if (OID_SIGNATURE_TIMESTAMP_ATTRIBUTE.equals(cmpASN1ObjectId)) {
+            return compareTimestampAttributes(outArray, cmpArray, errorText);
+        }
+        for (int i = 0; i < cmpArray.length; i++) {
+            if (!compareAsn1Structures(outArray[i].toASN1Primitive(), cmpArray[i].toASN1Primitive(), errorText)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    private static void writeToFile(String path, String content) throws IOException {
-        try (FileWriter writer = new FileWriter(path, true)) {
-            writer.write(content);
+    private static boolean compareTimestampAttributes(ASN1Encodable[] out, ASN1Encodable[] cmp, StringBuilder errorText) {
+        if (cmp.length == 2) {
+            if (cmp[1] instanceof ASN1Set && out[1] instanceof ASN1Set) {
+                ASN1Primitive outSequence = ((ASN1Set) out[1]).getObjectAt(0).toASN1Primitive();
+                ASN1Primitive cmpSequence = ((ASN1Set) cmp[1]).getObjectAt(0).toASN1Primitive();
+
+                if (outSequence instanceof ASN1Sequence && cmpSequence instanceof ASN1Sequence) {
+                    return compareSignatureObjects((ASN1Sequence) outSequence, (ASN1Sequence) cmpSequence, errorText);
+                }
+            }
         }
+
+        addError(errorText,
+                "Signature timestamp attribute structure is invalid", Arrays.toString(out), Arrays.toString(cmp));
+        return false;
     }
 
     private static int getSignerInfoIndex(ASN1Sequence baseElement) {
         for (int i = 3; i < baseElement.size(); i++) {
-            if (!(baseElement.getObjectAt(i) instanceof ASN1TaggedObject)) {
+            if (baseElement.getObjectAt(i) instanceof ASN1Set) {
                 return i;
             }
         }
@@ -212,67 +306,34 @@ public class SignaturesCompareTool {
         throw new IllegalStateException("SignerInfo entry has not been found.");
     }
 
-    private static boolean compareAsn1Structures(ASN1Primitive out, ASN1Primitive cmp, StringBuilder errorText) {
-        boolean isFailed = false;
-        if (!out.getClass().equals(cmp.getClass())) {
-            addError(errorText, "ASN1 objects types are different", out.getClass().getName(),
-                    cmp.getClass().getName());
-            isFailed = true;
+    private static String getASN1ObjectId(ASN1Primitive primitive) {
+        if (primitive instanceof ASN1Sequence) {
+            return getASN1ObjectId(((ASN1Sequence) primitive).toArray());
         }
-
-        if (cmp instanceof ASN1TaggedObject || cmp instanceof ASN1Sequence) {
-            ASN1Sequence cmpObject;
-            ASN1Sequence outObject;
-            if (cmp instanceof ASN1TaggedObject) {
-                ASN1TaggedObject cmpTag = (ASN1TaggedObject) cmp;
-                ASN1TaggedObject outTag = (ASN1TaggedObject) out;
-                if (!(cmpTag.getObject() instanceof ASN1Sequence)) {
-                    if (!cmpTag.getObject().equals(outTag.getObject())) {
-                        addError(errorText, "ASN1 objects are different", ASN1Dump.dumpAsString(outTag, true),
-                                ASN1Dump.dumpAsString(cmpTag, true));
-                        isFailed = true;
-                    }
-
-                    return isFailed;
-                }
-
-                cmpObject = (ASN1Sequence) (cmpTag).getObject();
-                outObject = (ASN1Sequence) (outTag).getObject();
-            } else {
-                cmpObject = (ASN1Sequence) cmp;
-                outObject = (ASN1Sequence) out;
-            }
-
-            if (cmpObject.getObjectAt(0) instanceof ASN1ObjectIdentifier) {
-                ASN1ObjectIdentifier objectIdentifier = (ASN1ObjectIdentifier) (cmpObject.getObjectAt(0));
-
-                // Message digest should be ignored during comparing
-                if (objectIdentifier.getId().equals(OID_MESSAGE_DIGEST)) {
-                    return isFailed;
-                }
-            }
-            for (int i = 0; i < cmpObject.size(); i++) {
-                if (!isFailed) {
-                    isFailed = compareAsn1Structures(outObject.getObjectAt(i).toASN1Primitive(),
-                            cmpObject.getObjectAt(i).toASN1Primitive(), errorText);
-                }
-            }
-        } else if (cmp instanceof ASN1Set) {
-            ASN1Set cmpSet = (ASN1Set) cmp;
-            ASN1Set outSet = (ASN1Set) out;
-            if (!isFailed) {
-                isFailed = compareAsn1Structures(cmpSet.getObjectAt(0).toASN1Primitive(),
-                        outSet.getObjectAt(0).toASN1Primitive(), errorText);
-            }
-        } else {
-            if (!cmp.equals(out)) {
-                addError(errorText, "ASN1 objects are different", ASN1Dump.dumpAsString(out, true),
-                        ASN1Dump.dumpAsString(cmp, true));
-                isFailed = true;
-            }
+        if (primitive instanceof ASN1Set) {
+            return getASN1ObjectId(((ASN1Set) primitive).toArray());
         }
+        return null;
+    }
 
-        return isFailed;
+    private static String getASN1ObjectId(ASN1Encodable[] primitives) {
+        if (primitives.length != 0 && primitives[0] instanceof ASN1ObjectIdentifier) {
+            return ((ASN1ObjectIdentifier) primitives[0]).getId();
+        }
+        return null;
+    }
+
+    private static ASN1Primitive getSignatureContent(String signatureName, SignatureUtil util) throws IOException {
+        PdfSignature signature = util.getSignature(signatureName);
+        byte[] contents = signature.getContents().getValueBytes();
+        ASN1InputStream inputStream = new ASN1InputStream(new ByteArrayInputStream(contents));
+        return inputStream.readObject();
+    }
+
+    private static void writeToFile(String path, String content) throws IOException {
+        try (FileWriter writer = new FileWriter(path, true)) {
+            writer.write(content);
+        }
     }
 
     private static void addError(StringBuilder errorBuilder, String errorText, String out, String cmp) {
@@ -286,12 +347,5 @@ public class SignaturesCompareTool {
         }
 
         errorBuilder.append("\n\n");
-    }
-
-    private static ASN1Primitive getSignatureContent(String signatureName, SignatureUtil util) throws IOException {
-        PdfSignature signature = util.getSignature(signatureName);
-        byte[] contents = signature.getContents().getValueBytes();
-        ASN1InputStream inputStream = new ASN1InputStream(new ByteArrayInputStream(contents));
-        return inputStream.readObject();
     }
 }

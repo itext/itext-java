@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191112171809+03'00')/ModDate(D:20191112171809+03'00')/Producer(iTextÆ 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108174907+03'00')/ModDate(D:20211108174907+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 1200 1200]/Length 1193/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 1200]/Length 1185/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1200 1200 re
 W
 n
@@ -78,17 +77,15 @@ f
 Q
 Q
 q
+q
 BT
 1 0 0 -1 615 101.25 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Without a clipping path applied to the inner group)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -140,17 +137,15 @@ Q
 Q
 Q
 q
+q
 BT
 1 0 0 -1 615 101.25 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (With a clipping path applied to the inner group)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 
@@ -159,17 +154,17 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000230 00000 n 
-0000000531 00000 n 
-0000000275 00000 n 
-0000000089 00000 n 
+0000000215 00000 n 
+0000000521 00000 n 
+0000000260 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000441 00000 n 
-0000000582 00000 n 
-0000000768 00000 n 
+0000000431 00000 n 
+0000000572 00000 n 
+0000000758 00000 n 
 trailer
-<</ID [<e129e0b90d6fee4bba35c9cef1243b75><e129e0b90d6fee4bba35c9cef1243b75>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<e662a9237ea305af6b76111247eb0d61><e662a9237ea305af6b76111247eb0d61>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-2088
+2070
 %%EOF

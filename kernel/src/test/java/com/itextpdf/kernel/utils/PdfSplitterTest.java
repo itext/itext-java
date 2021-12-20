@@ -256,4 +256,26 @@ public class PdfSplitterTest extends ExtendedITextTest{
                                                                  sourceFolder + "cmp/" + "cmp_splitBySize_part" + i + ".pdf", destinationFolder, "diff_"));
         }
     }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY , count = 10)
+    })
+    public void splitByPageCountTest() throws IOException {
+        String inputFileName =  sourceFolder + "iphone_user_guide.pdf";
+        try (PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName))) {
+            PdfSplitter splitter = new PdfSplitter(inputPdfDoc);
+
+            int pagesCount = inputPdfDoc.getNumberOfPages();
+            int pagesCountInSplitDoc = 13;
+
+            List<PdfDocument> splitDocuments = splitter.splitByPageCount(pagesCountInSplitDoc);
+
+            for (PdfDocument doc : splitDocuments) {
+                doc.close();
+            }
+
+            Assert.assertEquals(pagesCount / pagesCountInSplitDoc, splitDocuments.size());
+        }
+    }
 }

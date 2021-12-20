@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191104135554+03'00')/ModDate(D:20191104135554+03'00')/Producer(iTextÆ 7.1.9-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20211108174902+03'00')/ModDate(D:20211108174902+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 750]/Length 2920/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 750]/Length 2824/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 750 re
 W
 n
@@ -49,31 +48,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 123.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Line element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -84,31 +79,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 123.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Line element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -119,31 +110,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 112.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 123.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Line element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
@@ -155,31 +142,27 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 292.5 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (stroke-width="1em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 303.75 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Polyline element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
@@ -191,31 +174,27 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 277.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polyline element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
@@ -227,31 +206,27 @@ B
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 292.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 303.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polyline element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -264,31 +239,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 412.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 423.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polygon element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -301,31 +272,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 412.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="1em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 423.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polygon element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -339,31 +306,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 412.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 423.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Polygon element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -376,31 +339,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 562.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3em")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 15 573.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Path element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -413,31 +372,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 562.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3ex")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 165 573.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Path element)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 1 RG
@@ -450,31 +405,27 @@ S
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 562.5 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (stroke-width="0.3%")Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 315 573.75 Tm
 0 Tr
 /F1 15 Tf
-q
 0 0 Td
 (Path element)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -482,17 +433,17 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000226 00000 n 
-0000000527 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000517 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000437 00000 n 
-0000000578 00000 n 
-0000000761 00000 n 
+0000000427 00000 n 
+0000000568 00000 n 
+0000000751 00000 n 
 trailer
-<</ID [<71945a92a41980c0f0a0476a5a048aee><71945a92a41980c0f0a0476a5a048aee>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.9-SNAPSHOT
+<</ID [<14e910a6f751d1ecd272ae152fbad6ed><14e910a6f751d1ecd272ae152fbad6ed>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-3806
+3700
 %%EOF

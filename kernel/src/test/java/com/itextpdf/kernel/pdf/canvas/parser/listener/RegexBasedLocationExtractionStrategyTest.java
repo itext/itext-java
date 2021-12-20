@@ -333,4 +333,16 @@ public class RegexBasedLocationExtractionStrategyTest extends ExtendedITextTest 
 
         Assert.assertEquals(0, locations.size());
     }
+
+    @Test
+    public void sortCompareTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "sortCompare.pdf"))) {
+            RegexBasedLocationExtractionStrategy extractionStrategy = new RegexBasedLocationExtractionStrategy("a");
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(extractionStrategy);
+            pdfCanvasProcessor.processPageContent(pdfDocument.getPage(1));
+            pdfCanvasProcessor.processPageContent(pdfDocument.getPage(2));
+            List<IPdfTextLocation> locations = new ArrayList<>(extractionStrategy.getResultantLocations());
+            Assert.assertEquals(13, locations.size());
+        }
+    }
 }

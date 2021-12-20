@@ -873,7 +873,9 @@ public class PdfSignatureAppearance {
         napp.getResources().addForm(topLayer, new PdfName("FRM"));
 
         canvas = new PdfCanvas(napp, document);
-        canvas.addXObject(topLayer, 0, 0);
+        canvas.addXObjectAt(topLayer,
+                topLayer.getBBox().getAsNumber(0).floatValue(),
+                topLayer.getBBox().getAsNumber(1).floatValue());
 
         return napp;
     }

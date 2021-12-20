@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,13 +15,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219144021+03'00')/ModDate(D:20191219144021+03'00')/Producer(iTextÆ 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20211108174723+03'00')/ModDate(D:20211108174723+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 3679/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 3635/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -52,17 +51,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (My Daily Activities)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -92,17 +89,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 420.75 80.93 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Work)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -127,17 +122,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 420.75 98.18 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Eat)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -162,17 +155,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 420.75 115.43 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Commute)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -197,17 +188,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 420.75 132.68 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Watch TV)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -232,17 +221,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 420.75 149.93 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Sleep)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -275,17 +262,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 328.63 180.26 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (45.8%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -306,17 +291,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 168.77 137.27 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (29.2%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -335,17 +318,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 163.35 237.91 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (8.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -364,17 +345,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 195.92 273.47 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (8.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -393,17 +372,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 243 290.99 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (8.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -436,25 +413,25 @@ endobj
 xref
 0 17
 0000000000 65535 f 
-0000000226 00000 n 
-0000000617 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000606 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000528 00000 n 
-0000000438 00000 n 
-0000000668 00000 n 
-0000000851 00000 n 
-0000004755 00000 n 
-0000004781 00000 n 
-0000004807 00000 n 
-0000004833 00000 n 
-0000004859 00000 n 
-0000004885 00000 n 
-0000004911 00000 n 
+0000000427 00000 n 
+0000000516 00000 n 
+0000000657 00000 n 
+0000000840 00000 n 
+0000004700 00000 n 
+0000004726 00000 n 
+0000004752 00000 n 
+0000004778 00000 n 
+0000004804 00000 n 
+0000004830 00000 n 
+0000004856 00000 n 
 trailer
-<</ID [<cb0c28d10bdc3f50e96ccf7253d67df1><cb0c28d10bdc3f50e96ccf7253d67df1>]/Info 3 0 R/Root 1 0 R/Size 17>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<dcd5b2720d329d3e1e307f9facd85041><dcd5b2720d329d3e1e307f9facd85041>]/Info 3 0 R/Root 1 0 R/Size 17>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-4937
+4882
 %%EOF

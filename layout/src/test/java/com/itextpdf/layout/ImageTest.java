@@ -64,6 +64,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BorderRadius;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
@@ -254,7 +255,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest07() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest07.pdf";
@@ -277,7 +278,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest08() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest08.pdf";
@@ -302,7 +303,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest09() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest09.pdf";
@@ -416,7 +417,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest15() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest15.pdf";
@@ -459,7 +460,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test()
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 50)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 50)
     })
     public void imageTest17() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest17.pdf";
@@ -593,7 +594,7 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1))
     public void imageTest22() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_imageTest22.pdf";
         String outFile = destinationFolder + "imageTest22.pdf";
@@ -947,7 +948,7 @@ public class ImageTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3)})
     public void createTiffImageTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "createTiffImageTest.pdf";
         String cmpFileName = sourceFolder + "cmp_createTiffImageTest.pdf";

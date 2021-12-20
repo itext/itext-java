@@ -45,10 +45,12 @@ package com.itextpdf.signatures.sign;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -92,6 +94,9 @@ public class TimestampSigTest extends ExtendedITextTest {
         signer.timestamp(testTsa, "timestampSig1");
 
         PadesSigTest.basicCheckSignedDoc(destinationFolder + "timestampTest01.pdf", "timestampSig1");
+
+        Assert.assertNull(
+                SignaturesCompareTool.compareSignatures(outFileName, sourceFolder + "cmp_timestampTest01.pdf"));
     }
 
 

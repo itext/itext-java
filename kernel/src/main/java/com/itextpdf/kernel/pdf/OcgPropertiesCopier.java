@@ -115,24 +115,25 @@ final class OcgPropertiesCopier {
                                 fromAnnotDict.getAsDictionary(PdfName.OC), fromUsedOcgs, toOcProperties);
 
                         OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getNormalAppearanceObject(),
-                                fromAnnot.getNormalAppearanceObject(), fromUsedOcgs, toOcProperties);
+                                fromAnnot.getNormalAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
                         OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getRolloverAppearanceObject(),
-                                fromAnnot.getRolloverAppearanceObject(), fromUsedOcgs, toOcProperties);
+                                fromAnnot.getRolloverAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
                         OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toAnnot.getDownAppearanceObject(),
-                                fromAnnot.getDownAppearanceObject(), fromUsedOcgs, toOcProperties);
+                                fromAnnot.getDownAppearanceObject(), fromUsedOcgs, toOcProperties, new HashSet<>());
                     }
                 }
             }
 
             final PdfDictionary toResources = toPage.getPdfObject().getAsDictionary(PdfName.Resources);
             final PdfDictionary fromResources = fromPage.getPdfObject().getAsDictionary(PdfName.Resources);
-            OcgPropertiesCopier.getUsedNonFlushedOCGsFromResources(toResources, fromResources, fromUsedOcgs, toOcProperties);
+            OcgPropertiesCopier.getUsedNonFlushedOCGsFromResources(toResources, fromResources, fromUsedOcgs,
+                    toOcProperties, new HashSet<>());
         }
         return fromUsedOcgs;
     }
 
     private static void getUsedNonFlushedOCGsFromResources(PdfDictionary toResources, PdfDictionary fromResources,
-            Set<PdfIndirectReference> fromUsedOcgs, PdfDictionary toOcProperties) {
+            Set<PdfIndirectReference> fromUsedOcgs, PdfDictionary toOcProperties, Set<PdfObject> visitedObjects) {
         if (toResources != null && !toResources.isFlushed()) {
             // Copy OCGs from properties
             final PdfDictionary toProperties = toResources.getAsDictionary(PdfName.Properties);
@@ -148,12 +149,19 @@ final class OcgPropertiesCopier {
             // Copy OCGs from xObject
             final PdfDictionary toXObject = toResources.getAsDictionary(PdfName.XObject);
             final PdfDictionary fromXObject = fromResources.getAsDictionary(PdfName.XObject);
-            OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toXObject, fromXObject, fromUsedOcgs, toOcProperties);
+            OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toXObject, fromXObject, fromUsedOcgs, toOcProperties,
+                    visitedObjects);
         }
     }
 
     private static void getUsedNonFlushedOCGsFromXObject(PdfDictionary toXObject, PdfDictionary fromXObject,
-            Set<PdfIndirectReference> fromUsedOcgs, PdfDictionary toOcProperties) {
+            Set<PdfIndirectReference> fromUsedOcgs, PdfDictionary toOcProperties, Set<PdfObject> visitedObjects) {
+        //Resolving cycled properties, by memorizing the visited objects
+        if (visitedObjects.contains(fromXObject)) {
+            return;
+        }
+        visitedObjects.add(fromXObject);
+
         if (toXObject != null && !toXObject.isFlushed()) {
             if (toXObject.isStream() && !toXObject.isFlushed()) {
                 final PdfStream toStream = (PdfStream) toXObject;
@@ -161,7 +169,7 @@ final class OcgPropertiesCopier {
                 OcgPropertiesCopier.getUsedNonFlushedOCGsFromOcDict(toStream.getAsDictionary(PdfName.OC),
                         fromStream.getAsDictionary(PdfName.OC), fromUsedOcgs, toOcProperties);
                 OcgPropertiesCopier.getUsedNonFlushedOCGsFromResources(toStream.getAsDictionary(PdfName.Resources),
-                                fromStream.getAsDictionary(PdfName.Resources), fromUsedOcgs, toOcProperties);
+                        fromStream.getAsDictionary(PdfName.Resources), fromUsedOcgs, toOcProperties, visitedObjects);
             } else {
                 for (final PdfName name : toXObject.keySet()) {
                     final PdfObject toCurrObj = toXObject.get(name);
@@ -169,7 +177,8 @@ final class OcgPropertiesCopier {
                     if (toCurrObj.isStream() && !toCurrObj.isFlushed()) {
                         final PdfStream toStream = (PdfStream) toCurrObj;
                         final PdfStream fromStream = (PdfStream) fromCurrObj;
-                        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toStream, fromStream, fromUsedOcgs, toOcProperties);
+                        OcgPropertiesCopier.getUsedNonFlushedOCGsFromXObject(toStream, fromStream, fromUsedOcgs,
+                                toOcProperties, visitedObjects);
                     }
                 }
             }

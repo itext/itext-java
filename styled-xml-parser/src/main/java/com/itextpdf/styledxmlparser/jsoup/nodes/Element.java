@@ -1259,31 +1259,7 @@ public class Element extends Node {
      */
     public String text() {
         final StringBuilder accum = StringUtil.borrowBuilder();
-        NodeTraversor.traverse(new NodeVisitor() {
-            public void head(Node node, int depth) {
-                if (node instanceof TextNode) {
-                    TextNode textNode = (TextNode) node;
-                    appendNormalisedText(accum, textNode);
-                } else if (node instanceof Element) {
-                    Element element = (Element) node;
-                    if (accum.length() > 0 &&
-                        (element.isBlock() || element.tag.getName().equals("br")) &&
-                        !TextNode.lastCharIsWhitespace(accum))
-                        accum.append(' ');
-                }
-            }
-
-            public void tail(Node node, int depth) {
-                // make sure there is a space between block tags and immediately following text nodes <div>One</div>Two should be "One Two".
-                if (node instanceof Element) {
-                    Element element = (Element) node;
-                    if (element.isBlock() && (node.nextSibling() instanceof TextNode) && !TextNode.lastCharIsWhitespace(accum))
-                        accum.append(' ');
-                }
-
-            }
-        }, this);
-
+        NodeTraversor.traverse(new TextNodeVisitor(accum), this);
         return StringUtil.releaseBuilder(accum).trim();
     }
 
@@ -1296,17 +1272,7 @@ public class Element extends Node {
      */
     public String wholeText() {
         final StringBuilder accum = StringUtil.borrowBuilder();
-        NodeTraversor.traverse(new NodeVisitor() {
-            public void head(Node node, int depth) {
-                if (node instanceof TextNode) {
-                    TextNode textNode = (TextNode) node;
-                    accum.append(textNode.getWholeText());
-                }
-            }
-
-            public void tail(Node node, int depth) {
-            }
-        }, this);
+        NodeTraversor.traverse(new WholeTextNodeVisitor(accum), this);
 
         return StringUtil.releaseBuilder(accum);
     }
@@ -1755,5 +1721,56 @@ public class Element extends Node {
             && (parent == null || parent.isBlock())
             && previousSibling() != null
             && !out.outline();
+    }
+
+    private static final class TextNodeVisitor implements NodeVisitor {
+        private StringBuilder accum;
+
+        TextNodeVisitor(StringBuilder accum) {
+            this.accum = accum;
+        }
+
+        public void head(Node node, int depth) {
+            if (node instanceof TextNode) {
+                TextNode textNode = (TextNode) node;
+                appendNormalisedText(accum, textNode);
+            } else if (node instanceof Element) {
+                Element element = (Element) node;
+                if (accum.length() > 0 &&
+                        (element.isBlock() || element.tag.getName().equals("br")) &&
+                        !TextNode.lastCharIsWhitespace(accum))
+                    accum.append(' ');
+            }
+        }
+
+        public void tail(Node node, int depth) {
+            // make sure there is a space between block tags and immediately
+            // following text nodes <div>One</div>Two should be "One Two".
+            if (node instanceof Element) {
+                Element element = (Element) node;
+                if (element.isBlock() && (node.nextSibling() instanceof TextNode)
+                        && !TextNode.lastCharIsWhitespace(accum))
+                    accum.append(' ');
+            }
+
+        }
+    }
+
+    private static final class WholeTextNodeVisitor implements NodeVisitor {
+        private StringBuilder accum;
+
+        WholeTextNodeVisitor(StringBuilder accum) {
+            this.accum = accum;
+        }
+
+        public void head(Node node, int depth) {
+            if (node instanceof TextNode) {
+                TextNode textNode = (TextNode) node;
+                accum.append(textNode.getWholeText());
+            }
+        }
+
+        public void tail(Node node, int depth) {
+        }
     }
 }

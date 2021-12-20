@@ -85,6 +85,10 @@ public final class IoLogMessageConstant {
                     + "as finished. Consider using com.itextpdf.layout.tagging.LayoutTaggingHelper#replaceKidHint "
                     + "method for replacing not yet finished kid hint of a finished parent hint.";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String CANNOT_ADD_KID_HINT_WHICH_IS_ALREADY_ADDED_TO_ANOTHER_PARENT =
             "Layout tagging hints addition failed: cannot add a kid hint to a new parent if it is already added to "
                     + "another parent. Consider using com.itextpdf.layout.tagging.LayoutTaggingHelper#moveHint method "
@@ -168,6 +172,10 @@ public final class IoLogMessageConstant {
 
     public static final String DOCUMENT_IDS_ARE_CORRUPTED = "The document original and/or modified id is corrupted";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String DOCUMENT_SERIALIZATION_EXCEPTION_RAISED = "Unhandled exception while serialization";
 
     public static final String DOCUMENT_VERSION_IN_CATALOG_CORRUPTED = "The document version specified in catalog is "
@@ -175,6 +183,11 @@ public final class IoLogMessageConstant {
     public static final String DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED = "During the construction of the ICC"
             + " profile, the {0} error with message \"{1}\" occurred, the ICC profile will not be installed in the "
             + "image.";
+
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
 
     public static final String ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED =
@@ -304,6 +317,10 @@ public final class IoLogMessageConstant {
     public static final String INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED =
             "Inline block element does not fit into parent element and will be clipped";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String INPUT_STREAM_CONTENT_IS_LOST_ON_PDFSTREAM_SERIALIZATION =
             "PdfStream contains not null input stream. It's content will be lost in serialized object.";
 
@@ -452,8 +469,16 @@ public final class IoLogMessageConstant {
     public static final String TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH =
             "Table width is more than expected due to min width of cell(s).";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String TAGGING_HINT_NOT_FINISHED_BEFORE_CLOSE = "Tagging hint wasn't finished before closing.";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String TAG_STRUCTURE_CONTEXT_WILL_BE_REINITIALIZED_ON_SERIALIZATION =
             "Tag structure context is not null and will be reinitialized in the copy of document. The copy may lose "
                     + "some data";
@@ -481,18 +506,34 @@ public final class IoLogMessageConstant {
                     + "this means that element was added to the Canvas instance that was created not with constructor "
                     + "taking PdfPage as argument. Not processed property: {0}";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String UNABLE_TO_INTERRUPT_THREAD = "Unable to interrupt a thread";
 
     public static final String UNABLE_TO_INVERT_GRADIENT_TRANSFORMATION = "Unable to invert gradient transformation, "
             + "ignoring it";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String UNABLE_TO_REGISTER_EVENT_DATA_HANDLER_SHUTDOWN_HOOK =
             "Unable to register event data handler shutdown hook because of security reasons.";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String UNABLE_TO_SEARCH_FOR_EVENT_CONTEXT =
             "It is impossible to retrieve event context because of the security reasons. Event counting may behave in "
                     + "unexpected way";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String UNABLE_TO_UNREGISTER_EVENT_DATA_HANDLER_SHUTDOWN_HOOK =
             "Unable to unregister event data handler shutdown hook because of security permissions";
 
@@ -507,6 +548,10 @@ public final class IoLogMessageConstant {
     public static final String UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB =
             "Unknown color format: must be rgb or rrggbb.";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String UNKNOWN_DIGEST_METHOD =
             "Unknown digest method. Valid values are MD5, SHA1 SHA256, SHA384, SHA512 and RIPEMD160.";
 
@@ -542,6 +587,10 @@ public final class IoLogMessageConstant {
 
     public static final String XFDF_NO_F_OBJECT_TO_COMPARE = "Xfdf no f object to compare.";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String XFDF_OUTPUT_STREAM_CORRUPTED = "Xfdf output stream is corrupted.";
 
     public static final String XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE = "Xfdf unsupported attribute type";

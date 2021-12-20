@@ -63,5 +63,7 @@ public final class IoExceptionMessage {
                     + " environment variable to a CLI command that can run the Ghostscript application. See BUILDING.MD in the root of the repository for more details.";
     public static final String GHOSTSCRIPT_FAILED = "GhostScript failed for <filename>";
     public static final String CANNOT_OPEN_OUTPUT_DIRECTORY = "Cannot open output directory for <filename>";
-
+    public static final String IMAGE_MAGICK_OUTPUT_IS_NULL = "ImageMagick process output is null.";
+    public static final String IMAGE_MAGICK_PROCESS_EXECUTION_FAILED =
+            "ImageMagick process execution finished with errors: ";
 }

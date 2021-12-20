@@ -176,7 +176,6 @@ public class PdfSigner {
      * The crypto dictionary.
      */
     protected PdfSignature cryptoDictionary;
-    private PdfName digestMethod;
 
     /**
      * Holds value of property signatureEvent.
@@ -454,6 +453,9 @@ public class PdfSigner {
      * @param document The PdfDocument
      */
     protected void setDocument(PdfDocument document) {
+        if (null == document.getReader()) {
+            throw new IllegalArgumentException(SignExceptionMessageConstant.DOCUMENT_MUST_HAVE_READER);
+        }
         this.document = document;
     }
 
@@ -592,7 +594,6 @@ public class PdfSigner {
         dic.setContact(appearance.getContact());
         dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
         cryptoDictionary = dic;
-        digestMethod = getHashAlgorithmNameInCompatibleForPdfForm(hashAlgorithm);
 
         Map<PdfName, Integer> exc = new HashMap<>();
         exc.put(PdfName.Contents, estimatedSize * 2 + 2);
@@ -666,8 +667,9 @@ public class PdfSigner {
         InputStream data = getRangeStream();
         byte[] encodedSig = externalSignatureContainer.sign(data);
 
-        if (estimatedSize < encodedSig.length)
-            throw new IOException("Not enough space");
+        if (estimatedSize < encodedSig.length) {
+            throw new IOException(SignExceptionMessageConstant.NOT_ENOUGH_SPACE);
+        }
 
         byte[] paddedSig = new byte[estimatedSize];
         System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
@@ -1089,7 +1091,7 @@ public class PdfSigner {
                 bous.reset();
                 os.write(obj);
                 if (bous.size() > lit.getBytesCount())
-                    throw new IllegalArgumentException("The key is too big");
+                    throw new IllegalArgumentException(SignExceptionMessageConstant.TOO_BIG_KEY);
                 if (tempFile == null) {
                     System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int) bous.size());
                 } else {
@@ -1159,7 +1161,6 @@ public class PdfSigner {
         reference.put(PdfName.TransformMethod, PdfName.DocMDP);
         reference.put(PdfName.Type, PdfName.SigRef);
         reference.put(PdfName.TransformParams, transformParams);
-        setDigestParamToSigRefIfNeeded(reference);
         reference.put(PdfName.Data, document.getTrailer().get(PdfName.Root));
         PdfArray types = new PdfArray();
         types.add(reference);
@@ -1182,7 +1183,6 @@ public class PdfSigner {
         reference.put(PdfName.TransformMethod, PdfName.FieldMDP);
         reference.put(PdfName.Type, PdfName.SigRef);
         reference.put(PdfName.TransformParams, transformParams);
-        setDigestParamToSigRefIfNeeded(reference);
         reference.put(PdfName.Data, document.getTrailer().get(PdfName.Root));
         PdfArray types = crypto.getPdfObject().getAsArray(PdfName.Reference);
         if (types == null) {
@@ -1260,50 +1260,8 @@ public class PdfSigner {
         return pageNumber;
     }
 
-    private void setDigestParamToSigRefIfNeeded(PdfDictionary reference) {
-        if (document.getPdfVersion().compareTo(PdfVersion.PDF_1_6) < 0) {
-            // Don't really know what to say about this if-clause code.
-            // Let's leave it, assuming that it is reasoned in some very specific way, until opposite is not proven.
-
-            reference.put(PdfName.DigestValue, new PdfString("aa"));
-            PdfArray loc = new PdfArray();
-            loc.add(new PdfNumber(0));
-            loc.add(new PdfNumber(0));
-            reference.put(PdfName.DigestLocation, loc);
-            reference.put(PdfName.DigestMethod, PdfName.MD5);
-
-        } else if (isDocumentPdf2()) {
-            if (digestMethod != null) {
-                reference.put(PdfName.DigestMethod, digestMethod);
-            } else {
-                Logger logger = LoggerFactory.getLogger(PdfSigner.class);
-                logger.error(IoLogMessageConstant.UNKNOWN_DIGEST_METHOD);
-            }
-        }
-    }
-
-    private PdfName getHashAlgorithmNameInCompatibleForPdfForm(String hashAlgorithm) {
-        PdfName pdfCompatibleName = null;
-        String hashAlgOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
-        if (hashAlgOid != null) {
-            String hashAlgorithmNameInCompatibleForPdfForm = DigestAlgorithms.getDigest(hashAlgOid);
-            if (hashAlgorithmNameInCompatibleForPdfForm != null) {
-                pdfCompatibleName = new PdfName(hashAlgorithmNameInCompatibleForPdfForm);
-            }
-        }
-        return pdfCompatibleName;
-    }
-
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
-    }
-
-    private static StampingProperties initStampingProperties(boolean append) {
-        StampingProperties properties = new StampingProperties();
-        if (append) {
-            properties.useAppendMode();
-        }
-        return properties;
     }
 
     /**

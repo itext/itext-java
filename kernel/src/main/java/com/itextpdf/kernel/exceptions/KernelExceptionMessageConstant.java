@@ -29,20 +29,20 @@ public final class KernelExceptionMessageConstant {
     public static final String AMOUNT_OF_BYTES_LESS_THAN_ZERO =
             "Amount of bytes in the PDF document cannot be less than zero";
     public static final String ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE = "Annotation shall have reference to page.";
-    public static final String APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_IS_POSSIBLE = "Append "
-            + "mode requires a document without errors, even if recovery is possible.";
+    public static final String APPEND_MODE_REQUIRES_A_DOCUMENT_WITHOUT_ERRORS_EVEN_IF_RECOVERY_IS_POSSIBLE =
+            "Append mode requires a document without errors, even if recovery is possible.";
     public static final String BAD_CERTIFICATE_AND_KEY = "Bad public key certificate and/or private key.";
-    public static final String BAD_USER_PASSWORD = "Bad user password. Password is not provided or wrong password "
-            + "provided. Correct password should be passed to PdfReader constructor with properties. "
-            + "See ReaderProperties#setPassword() method.";
+    public static final String BAD_USER_PASSWORD =
+            "Bad user password. Password is not provided or wrong password provided. Correct password should be passed "
+                    + "to PdfReader constructor with properties. See ReaderProperties#setPassword() method.";
     public static final String CANNOT_ADD_KID_TO_THE_FLUSHED_ELEMENT = "Cannot add kid to the flushed element.";
-    public static final String CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS = "{0} cannot be embedded due to "
-            + "licensing restrictions.";
+    public static final String CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS =
+            "{0} cannot be embedded due to licensing restrictions.";
     public static final String CANNOT_CLOSE_DOCUMENT = "Cannot close document.";
-    public static final String CANNOT_CLOSE_DOCUMENT_WITH_ALREADY_FLUSHED_PDF_CATALOG = "Cannot close document with "
-            + "already flushed PDF Catalog.";
-    public static final String CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS = "Cannot convert PdfArray to an "
-            + "array of booleans";
+    public static final String CANNOT_CLOSE_DOCUMENT_WITH_ALREADY_FLUSHED_PDF_CATALOG =
+            "Cannot close document with already flushed PDF Catalog.";
+    public static final String CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS =
+            "Cannot convert PdfArray to an array of booleans";
     public static final String CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY = "Cannot convert PdfArray to an array "
             + "of doubles.";
     public static final String CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY = "Cannot convert PdfArray to an array "
@@ -122,6 +122,9 @@ public final class KernelExceptionMessageConstant {
     public static final String CONTENT_STREAM_MUST_NOT_INVOKE_OPERATORS_THAT_SPECIFY_COLORS_OR_OTHER_COLOR_RELATED_PARAMETERS =
             "Content stream must not invoke operators that specify colors or other color related parameters in "
                     + "the graphics state.";
+    public static final String CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP =
+            "Document outline dictionary is corrupted: some outline (PDF object: \"{0}\") has wrong first/next link "
+                    + "entry.";
     public static final String CORRUPTED_OUTLINE_NO_PARENT_ENTRY =
             "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required parent entry.";
     public static final String CORRUPTED_OUTLINE_NO_TITLE_ENTRY =
@@ -315,10 +318,12 @@ public final class KernelExceptionMessageConstant {
     public static final String UNKNOWN_ENCRYPTION_TYPE_V = "Unknown encryption type V == {0}.";
     public static final String UNKNOWN_GRAPHICS_STATE_DICTIONARY = "{0} is an unknown graphics state dictionary.";
     public static final String UNKNOWN_PDF_EXCEPTION = "Unknown PdfException.";
+    public static final String UNSUPPORTED_ASN1_ENCODING =
+            "Unknown ASN1-encoding {0}. Only DER and BER encodings are supported!";
     public static final String UNSUPPORTED_FONT_EMBEDDING_STRATEGY = "Unsupported font embedding strategy.";
     public static final String UNSUPPORTED_XOBJECT_TYPE = "Unsupported XObject type.";
-    public static final String WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT = ""
-            + "When adding object reference to the tag tree, it must be connected to not flushed object.";
+    public static final String WHEN_ADDING_OBJECT_REFERENCE_TO_THE_TAG_TREE_IT_MUST_BE_CONNECTED_TO_NOT_FLUSHED_OBJECT =
+            "When adding object reference to the tag tree, it must be connected to not flushed object.";
     public static final String WHITE_POINT_IS_INCORRECTLY_SPECIFIED = "White point is incorrectly specified.";
     public static final String WMF_IMAGE_EXCEPTION = "WMF image exception.";
     public static final String WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS = "Wrong media box size: {0}. Need at least 4 "

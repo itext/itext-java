@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.css.parse;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.exceptions.StyledXmlParserExceptionMessage;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.selector.item.CssAttributeSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssClassSelectorItem;
@@ -129,7 +130,9 @@ public final class CssSelectorParser {
                 case '>':
                 case '~':
                     if (selectorItems.size() == 0) {
-                        throw new IllegalArgumentException(MessageFormatUtil.format("Invalid token detected in the start of the selector string: {0}", firstChar));
+                        throw new IllegalArgumentException(MessageFormatUtil.format(
+                                StyledXmlParserExceptionMessage.INVALID_TOKEN_AT_THE_BEGINNING_OF_SELECTOR,
+                                firstChar));
                     }
                     ICssSelectorItem lastItem = selectorItems.get(selectorItems.size() - 1);
                     CssSeparatorSelectorItem curItem = new CssSeparatorSelectorItem(firstChar);

@@ -54,6 +54,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
@@ -117,6 +118,9 @@ public class LtvSigTest extends ExtendedITextTest {
         signer.timestamp(testTsa, "timestampSig1");
 
         basicCheckLtvDoc("ltvEnabledTsTest01.pdf", "timestampSig1");
+
+        Assert.assertNull(
+                SignaturesCompareTool.compareSignatures(ltvTsFileName, sourceFolder + "cmp_ltvEnabledTsTest01.pdf"));
     }
 
     @Test
@@ -179,6 +183,9 @@ public class LtvSigTest extends ExtendedITextTest {
         signer.timestamp(testTsa, "timestampSig2");
 
         basicCheckLtvDoc("secondLtvOriginalHasNoVriTs01.pdf", "timestampSig2");
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+                ltvTsFileName, sourceFolder + "cmp_secondLtvOriginalHasNoVriTs01.pdf"));
     }
 
     private void basicCheckLtvDoc(String outFileName, String tsSigName) throws IOException, GeneralSecurityException {

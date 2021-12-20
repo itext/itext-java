@@ -169,12 +169,7 @@ public class PdfSplitter {
     public List<PdfDocument> splitByPageNumbers(List<Integer> pageNumbers) {
         final List<PdfDocument> splitDocuments = new ArrayList<>();
 
-        splitByPageNumbers(pageNumbers, new IDocumentReadyListener() {
-            @Override
-            public void documentReady(PdfDocument pdfDocument, PageRange pageRange) {
-                splitDocuments.add(pdfDocument);
-            }
-        });
+        splitByPageNumbers(pageNumbers, new SplitReadyListener(splitDocuments));
 
         return splitDocuments;
     }
@@ -206,12 +201,7 @@ public class PdfSplitter {
     public List<PdfDocument> splitByPageCount(int pageCount) {
         final List<PdfDocument> splitDocuments = new ArrayList<>();
 
-        splitByPageCount(pageCount, new IDocumentReadyListener() {
-            @Override
-            public void documentReady(PdfDocument pdfDocument, PageRange pageRange) {
-                splitDocuments.add(pdfDocument);
-            }
-        });
+        splitByPageCount(pageCount, new SplitReadyListener(splitDocuments));
 
         return splitDocuments;
     }
@@ -407,5 +397,19 @@ public class PdfSplitter {
 
     private long xrefLength(int size) {
         return 20L * (size + 1);
+    }
+
+    private static final class SplitReadyListener implements IDocumentReadyListener {
+
+        private List<PdfDocument> splitDocuments;
+
+        public SplitReadyListener(List<PdfDocument> splitDocuments) {
+            this.splitDocuments = splitDocuments;
+        }
+
+        @Override
+        public void documentReady(PdfDocument pdfDocument, PageRange pageRange) {
+            splitDocuments.add(pdfDocument);
+        }
     }
 }

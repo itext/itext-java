@@ -1,9 +1,8 @@
 %PDF-1.7
 %‚„œ”
 5 0 obj
-<</Length 27>>stream
+<</Length 12>>stream
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -16,13 +15,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20190809145045+02'00')/ModDate(D:20190809145045+02'00')/Producer(iTextÆ 7.1.8-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20211108174706+03'00')/ModDate(D:20211108174706+03'00')/Producer(iTextÆ Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 824.25 206.25]/Length 8460/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 824.25 206.25]/Length 8348/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 824.25 206.25 re
 W
 n
@@ -138,199 +137,169 @@ q
 S
 Q
 q
+q
 BT
 1 0 0 -1 120.66 204.9 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -12.46 0 Td
 (13:45)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 170.91 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:50)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 221.16 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:55)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 271.41 204.9 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -12.46 0 Td
 (14:00)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 321.66 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:05)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 371.91 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:10)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 422.17 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:15)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 472.42 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:20)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 522.67 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:25)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 572.92 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:30)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 623.17 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:35)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 673.42 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:40)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 723.67 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:45)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 773.93 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -6.77 0 Td
 (:50)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 824.18 204.9 Tm
 0 Tr
 /F2 9.75 Tf
-q
 -13.55 0 Td
 (:55)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -618,87 +587,75 @@ q
 0 0 0 rg
 q
 0.36863 0.59216 0.96471 rg
+q
 BT
 1 0 0 -1 88.63 19.36 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -64.74 0 Td
 (Listen to music)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.85882 0.26667 0.21569 rg
+q
 BT
 1 0 0 -1 88.63 50.86 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -74.68 0 Td
 (Walk to train stop)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.94902 0.65098 0 rg
+q
 BT
 1 0 0 -1 88.63 82.36 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -56.3 0 Td
 (Wait for train)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.05882 0.61569 0.3451 rg
+q
 BT
 1 0 0 -1 88.63 113.86 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -41.32 0 Td
 (Train ride)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.85882 0.26667 0.21569 rg
+q
 BT
 1 0 0 -1 88.63 145.36 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -56.89 0 Td
 (Walk to work)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.67059 0.27843 0.73725 rg
+q
 BT
 1 0 0 -1 88.63 176.86 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -69.71 0 Td
 (Sit down at desk)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -724,101 +681,87 @@ B
 Q
 q
 0.25882 0.25882 0.25882 rg
+q
 BT
 1 0 0 -1 593.75 48.61 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Listen to music: 13:43:00.431 - 14:53:00.431)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 593.75 75.61 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Duration:)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 785.4 75.61 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -31.79 0 Td
 (1h 10m)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 593.75 98.86 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Percent done:)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 785.4 98.86 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -27.12 0 Td
 (100 %)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 593.75 122.11 Tm
 0 Tr
 /F2 10.5 Tf
-q
 0 0 Td
 (Resource:)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.36863 0.59216 0.96471 rg
+q
 BT
 1 0 0 -1 785.4 122.11 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -25.08 0 Td
 (music)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -828,18 +771,18 @@ endobj
 xref
 0 10
 0000000000 65535 f 
-0000000226 00000 n 
-0000000616 00000 n 
-0000000271 00000 n 
-0000000089 00000 n 
+0000000211 00000 n 
+0000000606 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
 0000000015 00000 n 
-0000000527 00000 n 
-0000000437 00000 n 
-0000000667 00000 n 
-0000000859 00000 n 
+0000000427 00000 n 
+0000000516 00000 n 
+0000000657 00000 n 
+0000000849 00000 n 
 trailer
-<</ID [<711e23284aae94dce8596a75d350add5><711e23284aae94dce8596a75d350add5>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-7.1.8-SNAPSHOT
+<</ID [<67d2255e7d71e35067bb90ac0791bb38><67d2255e7d71e35067bb90ac0791bb38>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-7.2.1-SNAPSHOT
 startxref
-9459
+9337
 %%EOF

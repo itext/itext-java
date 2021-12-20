@@ -139,6 +139,6 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        throw new UnsupportedOperationException(SvgExceptionMessageConstant.RENDERER_WITHOUT_OBJECT_BOUNDING_BOX);
+        return null;
     }
 }

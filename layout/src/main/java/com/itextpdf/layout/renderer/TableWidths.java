@@ -837,12 +837,22 @@ final class TableWidths {
 
     static private final UnitValue ZeroWidth = UnitValue.createPointValue(0);
 
+    /**
+     * Gets width of the cell, adding paddings and extra spacing if necessary.
+     *
+     * @param cell renderer from which width will be taken.
+     *             Note that this method will not change original width of the element.
+     * @param zeroIsValid defines if 0 width is valid
+     * @return increased width of the renderer
+     */
     private UnitValue getCellWidth(CellRenderer cell, boolean zeroIsValid) {
-        UnitValue widthValue = cell.<UnitValue>getProperty(Property.WIDTH);
+        UnitValue widthValue = new UnitValue(cell.getProperty(Property.WIDTH, UnitValue.createPointValue(-1)));
         //zero has special meaning in fixed layout, we shall not add padding to zero value
-        if (widthValue == null || widthValue.getValue() < 0) {
+        if (widthValue.getValue() < -AbstractRenderer.EPS) {
             return null;
-        } else if (widthValue.getValue() == 0) {
+        }
+
+        if (widthValue.getValue() < AbstractRenderer.EPS) {
             return zeroIsValid ? ZeroWidth : null;
         } else if (widthValue.isPercentValue()) {
             return widthValue;

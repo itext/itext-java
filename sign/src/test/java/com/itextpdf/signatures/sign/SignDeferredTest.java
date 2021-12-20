@@ -61,15 +61,12 @@ import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -80,6 +77,11 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class SignDeferredTest extends ExtendedITextTest {
@@ -122,6 +124,57 @@ public class SignDeferredTest extends ExtendedITextTest {
     }
 
     @Test
+    public void prepareDocForSignDeferredNotEnoughSizeTest() throws IOException, GeneralSecurityException {
+        String input = sourceFolder + "helloWorldDoc.pdf";
+
+        String sigFieldName = "DeferredSignature1";
+        PdfName filter = PdfName.Adobe_PPKLite;
+        PdfName subFilter = PdfName.Adbe_pkcs7_detached;
+
+        PdfReader reader = new PdfReader(input);
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance
+                .setLayer2Text("Signature field which signing is deferred.")
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1);
+        signer.setFieldName(sigFieldName);
+        IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
+
+        // This size is definitely not enough
+        int estimatedSize = -1;
+        Exception e = Assert.assertThrows(IOException.class,
+                () -> signer.signExternalContainer(external, estimatedSize));
+        Assert.assertEquals(SignExceptionMessageConstant.NOT_ENOUGH_SPACE, e.getMessage());
+    }
+
+    @Test
+    public void prepareDocForSignDeferredLittleSpaceTest() throws IOException {
+        String input = sourceFolder + "helloWorldDoc.pdf";
+
+        String sigFieldName = "DeferredSignature1";
+        PdfName filter = PdfName.Adobe_PPKLite;
+        PdfName subFilter = PdfName.Adbe_pkcs7_detached;
+
+        PdfReader reader = new PdfReader(input);
+        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance
+                .setLayer2Text("Signature field which signing is deferred.")
+                .setPageRect(new Rectangle(36, 600, 200, 100))
+                .setPageNumber(1);
+        signer.setFieldName(sigFieldName);
+        IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
+
+        // This size is definitely not enough, however, the size check will pass.
+        // The test will fail lately on an invalid key
+        int estimatedSize = 0;
+        Exception e = Assert.assertThrows(IllegalArgumentException.class,
+                () -> signer.signExternalContainer(external, estimatedSize));
+        Assert.assertEquals(SignExceptionMessageConstant.TOO_BIG_KEY, e.getMessage());
+    }
+
+    @Test
     public void deferredHashCalcAndSignTest01() throws IOException, GeneralSecurityException, InterruptedException {
         String srcFileName = sourceFolder + "templateForSignCMSDeferred.pdf";
         String outFileName = destinationFolder + "deferredHashCalcAndSignTest01.pdf";
@@ -143,6 +196,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         // validate result
         PadesSigTest.basicCheckSignedDoc(outFileName, sigFieldName);
         Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     @Test
@@ -193,6 +247,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         // validate result
         PadesSigTest.basicCheckSignedDoc(outFileName, sigFieldName);
         Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
     static void validateTemplateForSignedDeferredResult(String output, String sigFieldName, PdfName filter, PdfName subFilter, int estimatedSize) throws IOException {
