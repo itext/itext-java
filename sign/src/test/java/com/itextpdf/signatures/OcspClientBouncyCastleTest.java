@@ -127,6 +127,12 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         Assert.assertNull(castle.getOcspResponse(null, null, ocspServiceUrl));
     }
 
+    @Test
+    public void getOcspResponseWhenUrlCertIsNullTest() {
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        Assert.assertThrows(ConnectException.class,
+                () -> castle.getOcspResponse(checkCert, rootCert, null));
+    }
 
     @Test
     @LogMessages(messages = {
