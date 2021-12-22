@@ -28,7 +28,7 @@ package com.itextpdf.commons.actions.data;
 public final class CommonsProductData {
     static final String COMMONS_PUBLIC_PRODUCT_NAME = "Commons";
     static final String COMMONS_PRODUCT_NAME = "commons";
-    static final String COMMONS_VERSION = "7.2.1-SNAPSHOT";
+    static final String COMMONS_VERSION = "7.2.2-SNAPSHOT";
     static final int COMMONS_COPYRIGHT_SINCE = 2000;
     static final int COMMONS_COPYRIGHT_TO = 2021;
 
