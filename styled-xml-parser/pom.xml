@@ -10,6 +10,9 @@
   <name>iText 7 - Styled XML Parser</name>
   <description>Styled XML parser is used by iText7 modules to parse HTML and XML</description>
   <url>https://itextpdf.com/</url>
+  <properties>
+    <automatic.module.name>com.itextpdf.styledxmlparser</automatic.module.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

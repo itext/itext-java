@@ -72,6 +72,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
+    <automatic.module.name>com.itextpdf.root</automatic.module.name>
     <bouncycastle.version>1.69</bouncycastle.version>
     <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
@@ -86,7 +87,7 @@
     <logback.version>1.2.4</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.jar.version>3.1.0</maven.jar.version>
+    <maven.jar.version>3.2.0</maven.jar.version>
     <maven.source.version>3.0.1</maven.source.version>
     <performancetests>com.itextpdf.test.annotations.type.PerformanceTest</performancetests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -232,7 +233,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -249,6 +250,14 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>${maven.jar.version}</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>${automatic.module.name}</Automatic-Module-Name>
+            </manifestEntries>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>

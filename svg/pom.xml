@@ -10,6 +10,9 @@
   <name>iText 7 - SVG</name>
   <description>svg is a module for iText7 that allows you to integrate SVG images in your PDF creation and manipulation process</description>
   <url>https://itextpdf.com/</url>
+  <properties>
+    <automatic.module.name>com.itextpdf.svg</automatic.module.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

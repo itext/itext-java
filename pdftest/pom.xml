@@ -10,6 +10,7 @@
   <name>iText 7 - pdftest</name>
   <url>https://itextpdf.com/</url>
   <properties>
+    <automatic.module.name>com.itextpdf.pdftest</automatic.module.name>
     <sonar.skip>true</sonar.skip>
     <verapdf.version>1.18.8</verapdf.version>
   </properties>

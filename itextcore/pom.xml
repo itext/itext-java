@@ -53,6 +53,9 @@
     <system>jenkins-ci</system>
     <url>https://jenkins.itextsupport.com/</url>
   </ciManagement>
+  <properties>
+    <automatic.module.name>com.itextpdf.itextcore</automatic.module.name>
+  </properties>
   <repositories>
     <repository>
       <releases>
