@@ -43,10 +43,10 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -54,11 +54,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.signatures.LtvVerification.CertificateOption;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -70,8 +66,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import static com.itextpdf.signatures.LtvVerification.CertificateOption;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPException;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Verifies the signatures in an LTV document.
@@ -115,6 +114,7 @@ public class LtvVerifier extends RootStoreVerifier {
         super(null);
         initLtvVerifier(document);
     }
+
     public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
         super(null);
         this.securityProviderCode = securityProviderCode;
