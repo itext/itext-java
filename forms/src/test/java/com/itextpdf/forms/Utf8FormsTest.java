@@ -44,6 +44,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -108,8 +109,9 @@ public class Utf8FormsTest extends ExtendedITextTest {
     public void writeUtf8FieldNameAndValue() throws java.io.IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "writeUtf8FieldNameAndValue.pdf"));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        PdfTextFormField field = PdfTextFormField.createText(pdfDoc,
-                new Rectangle(99, 753, 425, 15), "", "");
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "")
+                .setWidgetRectangle(new Rectangle(99, 753, 425, 15)).createText();
+        field.setValue("");
         field.setFont(PdfFontFactory.createFont(FONT, PdfEncodings.IDENTITY_H));
         //  لا
         field.put(PdfName.T, new PdfString("\u0644\u0627", PdfEncodings.UTF8));

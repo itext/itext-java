@@ -45,6 +45,8 @@ package com.itextpdf.forms;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
@@ -118,14 +120,20 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                                 .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
         pdfDoc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        PdfTextFormField textField1 = PdfFormField.createText(pdfDoc, new Rectangle(100, 600, 200, 30), "Name", "Enter your name");
+        PdfTextFormField textField1 = new TextFormFieldBuilder(pdfDoc, "Name")
+                .setWidgetRectangle(new Rectangle(100, 600, 200, 30)).createText();
+        textField1.setValue("Enter your name");
         form.addField(textField1);
-        PdfTextFormField textField2 = PdfFormField.createText(pdfDoc, new Rectangle(100, 550, 200, 30), "Surname", "Enter your surname");
+        PdfTextFormField textField2 = new TextFormFieldBuilder(pdfDoc, "Surname")
+                .setWidgetRectangle(new Rectangle(100, 550, 200, 30)).createText();
+        textField2.setValue("Enter your surname");
         form.addField(textField2);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "Sex", "Male");
-        PdfFormField.createRadioButton(pdfDoc, new Rectangle(100, 530, 10, 10), group, "Male");
-        PdfFormField.createRadioButton(pdfDoc, new Rectangle(120, 530, 10, 10), group, "Female");
+        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "Sex")
+                .createRadioGroup();
+        group.setValue("Male");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(100, 530, 10, 10)).createRadioButton(group, "Male");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(120, 530, 10, 10)).createRadioButton(group, "Female");
         form.addField(group);
 
         pdfDoc.close();
@@ -152,14 +160,20 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                                 .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
         pdfDoc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        PdfTextFormField textField1 = PdfFormField.createText(pdfDoc, new Rectangle(100, 600, 200, 30), "Name", "Enter your name");
+        PdfTextFormField textField1 = new TextFormFieldBuilder(pdfDoc, "Name")
+                .setWidgetRectangle(new Rectangle(100, 600, 200, 30)).createText();
+        textField1.setValue("Enter your name");
         form.addField(textField1);
-        PdfTextFormField textField2 = PdfFormField.createText(pdfDoc, new Rectangle(100, 550, 200, 30), "Surname", "Enter your surname");
+        PdfTextFormField textField2 = new TextFormFieldBuilder(pdfDoc, "Surname")
+                .setWidgetRectangle(new Rectangle(100, 550, 200, 30)).createText();
+        textField2.setValue("Enter your surname");
         form.addField(textField2);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "Sex", "Male");
-        PdfFormField.createRadioButton(pdfDoc, new Rectangle(100, 530, 10, 10), group, "Male");
-        PdfFormField.createRadioButton(pdfDoc, new Rectangle(120, 530, 10, 10), group, "Female");
+        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "Sex")
+                .createRadioGroup();
+        group.setValue("Male");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(100, 530, 10, 10)).createRadioButton(group, "Male");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(120, 530, 10, 10)).createRadioButton(group, "Female");
         form.addField(group);
 
         pdfDoc.close();

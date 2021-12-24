@@ -48,6 +48,8 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
@@ -1020,8 +1022,7 @@ public class PdfSigner {
         PdfWidgetAnnotation widget = new PdfWidgetAnnotation(appearance.getPageRect());
         widget.setFlags(PdfAnnotation.PRINT | PdfAnnotation.LOCKED);
 
-        PdfSignatureFormField sigField = PdfFormField.createSignature(document);
-        sigField.setFieldName(name);
+        PdfSignatureFormField sigField = new SignatureFormFieldBuilder(document, name).createSignature();
         sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
         sigField.addKid(widget);
 

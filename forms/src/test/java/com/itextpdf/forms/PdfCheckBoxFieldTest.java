@@ -42,6 +42,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -145,16 +146,21 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
         pdfDoc.addNewPage();
-        addCheckBox(pdfDoc, 0, 730, 10, PdfFormField
-                .createCheckBox(pdfDoc, new Rectangle(50, 730, 10, 10), "cb_1", "YES", PdfFormField.TYPE_CIRCLE));
-        addCheckBox(pdfDoc, 0, 700, 10, PdfFormField
-                .createCheckBox(pdfDoc, new Rectangle(50, 700, 10, 10), "cb_2", "YES", PdfFormField.TYPE_CROSS));
-        addCheckBox(pdfDoc, 0, 670, 10, PdfFormField
-                .createCheckBox(pdfDoc, new Rectangle(50, 670, 10, 10), "cb_3", "YES", PdfFormField.TYPE_DIAMOND));
-        addCheckBox(pdfDoc, 0, 640, 10, PdfFormField
-                .createCheckBox(pdfDoc, new Rectangle(50, 640, 10, 10), "cb_4", "YES", PdfFormField.TYPE_SQUARE));
-        addCheckBox(pdfDoc, 0, 610, 10, PdfFormField
-                .createCheckBox(pdfDoc, new Rectangle(50, 610, 10, 10), "cb_5", "YES", PdfFormField.TYPE_STAR));
+        addCheckBox(pdfDoc, 0, 730, 10, new CheckBoxFormFieldBuilder(pdfDoc, "cb_1")
+                .setWidgetRectangle(new Rectangle(50, 730, 10, 10)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_CIRCLE).setValue("YES"));
+        addCheckBox(pdfDoc, 0, 700, 10, new CheckBoxFormFieldBuilder(pdfDoc, "cb_2")
+                .setWidgetRectangle(new Rectangle(50, 700, 10, 10)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_CROSS).setValue("YES"));
+        addCheckBox(pdfDoc, 0, 670, 10, new CheckBoxFormFieldBuilder(pdfDoc, "cb_3")
+                .setWidgetRectangle(new Rectangle(50, 670, 10, 10)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_DIAMOND).setValue("YES"));
+        addCheckBox(pdfDoc, 0, 640, 10, new CheckBoxFormFieldBuilder(pdfDoc, "cb_4")
+                .setWidgetRectangle(new Rectangle(50, 640, 10, 10)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_SQUARE).setValue("YES"));
+        addCheckBox(pdfDoc, 0, 610, 10, new CheckBoxFormFieldBuilder(pdfDoc, "cb_5")
+                .setWidgetRectangle(new Rectangle(50, 610, 10, 10)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_STAR).setValue("YES"));
 
         pdfDoc.close();
 
@@ -227,9 +233,9 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
     private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, float checkBoxH)
             throws IOException {
         Rectangle rect = new Rectangle(50, yPos, checkBoxW, checkBoxH);
-        addCheckBox(pdfDoc, fontSize, yPos, checkBoxW, PdfFormField.createCheckBox(pdfDoc, rect,
-                MessageFormatUtil.format("cb_fs_{0}_{1}_{2}", fontSize, checkBoxW, checkBoxH), "YES",
-                PdfFormField.TYPE_CHECK));
+        addCheckBox(pdfDoc, fontSize, yPos, checkBoxW, new CheckBoxFormFieldBuilder(pdfDoc, MessageFormatUtil.format("cb_fs_{0}_{1}_{2}", fontSize, checkBoxW, checkBoxH))
+                .setWidgetRectangle(rect).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_CHECK).setValue("YES"));
     }
 
     private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, PdfFormField checkBox)

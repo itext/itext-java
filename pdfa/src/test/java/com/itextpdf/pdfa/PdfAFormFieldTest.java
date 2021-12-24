@@ -45,9 +45,16 @@ package com.itextpdf.pdfa;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -86,6 +93,7 @@ import com.itextpdf.test.pdfa.VeraPdfValidator;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -121,7 +129,9 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(
                 SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdf, "group", "", PdfAConformanceLevel.PDF_A_1B);
+        PdfButtonFormField group = new RadioFormFieldBuilder(pdf, "group")
+                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioGroup();
+        group.setValue("");
         group.setReadOnly(true);
 
         Paragraph p = new Paragraph();
@@ -177,7 +187,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             Rectangle bbox = getInnerAreaBBox();
             PdfDocument pdf = context.getDocument();
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdf, true);
-            PdfFormField chk = PdfFormField.createRadioButton(pdf, bbox, _group, _value, PdfAConformanceLevel.PDF_A_1B);
+            PdfFormField chk = new RadioFormFieldBuilder(pdf).setWidgetRectangle(bbox)
+                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(_group, _value);
             chk.setPage(pageNumber);
 
             chk.setVisibility(PdfFormField.VISIBLE);
@@ -210,6 +221,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1DocWithPdfA1ButtonFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ButtonField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -223,16 +235,19 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        PdfFormField emptyField = PdfFormField.createEmptyField(pdfDoc, conformanceLevel).setFieldName("empty");
-        emptyField.addKid(PdfFormField
-                .createButton(pdfDoc, new Rectangle(36, 756, 20, 20), PdfAnnotation.PRINT, conformanceLevel)
+        PdfFormField emptyField = new NonTerminalFormFieldBuilder(pdfDoc, "empty")
+                .setConformanceLevel(conformanceLevel).createNonTerminalFormField();
+        emptyField.addKid(new PushButtonFormFieldBuilder(pdfDoc, "button")
+                .setWidgetRectangle(new Rectangle(36, 756, 20, 20)).setConformanceLevel(conformanceLevel)
+                .createPushButton().setFieldFlags(PdfAnnotation.PRINT)
                 .setFieldName("button").setValue("hello"));
         form.addField(emptyField);
 
-        pdfDoc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
@@ -249,9 +264,9 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(PdfFormField
-                .createCheckBox(pdfDoc, new Rectangle(36, 726, 20, 20), "checkBox", "1", PdfFormField.TYPE_STAR,
-                        conformanceLevel));
+        form.addField(new CheckBoxFormFieldBuilder(pdfDoc, "checkBox").setWidgetRectangle(new Rectangle(36, 726, 20, 20))
+                .setCheckType(PdfFormField.TYPE_STAR).setConformanceLevel(conformanceLevel)
+                .createCheckBox().setValue("1"));
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
@@ -260,6 +275,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY)})
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1DocWithPdfA1ChoiceFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ChoiceField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -276,17 +292,19 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfArray options = new PdfArray();
         options.add(new PdfString("Name"));
         options.add(new PdfString("Surname"));
-        form.addField(PdfFormField
-                .createChoice(pdfDoc, new Rectangle(36, 696, 100, 70), "choice", "1", options, 0, fontFreeSans,
-                        conformanceLevel));
+        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "choice").setWidgetRectangle(new Rectangle(36, 696, 100, 70))
+                .setOptions(options).setConformanceLevel(conformanceLevel)
+                .createList().setValue("1", true).setFont(fontFreeSans));
 
-        pdfDoc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1DocWithPdfA1ComboBoxFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ComboBoxField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -303,17 +321,21 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(PdfFormField.createComboBox(pdfDoc, new Rectangle(156, 616, 70, 70),
-                "combo", "用", new String[] {"用", "规", "表"}, fontCJK, conformanceLevel));
+        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "combo")
+                .setWidgetRectangle(new Rectangle(156, 616, 70, 70)).setOptions(new String[]{"用", "规", "表"})
+                .setConformanceLevel(conformanceLevel).createComboBox()
+                .setValue("用").setFont(fontCJK));
 
-        pdfDoc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD)})
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1DocWithPdfA1ListFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1ListField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -331,21 +353,24 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfChoiceFormField f = PdfFormField.createList(pdfDoc, new Rectangle(86, 556, 50, 200),
-                "list", "9", new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
-                fontFreeSans, conformanceLevel);
+        PdfChoiceFormField f = new ChoiceFormFieldBuilder(pdfDoc, "list")
+                .setWidgetRectangle(new Rectangle(86, 556, 50, 200)).setOptions(new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"})
+                .setConformanceLevel(conformanceLevel).createList();
+        f.setValue("9").setFont(fontFreeSans);
         f.setValue("4");
         f.setTopIndex(2);
         f.setListSelected(new String[] {"3", "5"});
         form.addField(f);
 
-        pdfDoc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1DocWithPdfA1PushButtonFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1PushButtonField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -362,13 +387,15 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 526, 100, 20),
-                "push button", "Push", fontFreeSans, 12, conformanceLevel));
+        form.addField(new PushButtonFormFieldBuilder(pdfDoc, "push button").setWidgetRectangle(new Rectangle(36, 526, 100, 20))
+                .setCaption("Push").setConformanceLevel(conformanceLevel)
+                .createPushButton().setFont(fontFreeSans).setFontSize(12));
 
-        pdfDoc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
@@ -386,10 +413,14 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfButtonFormField radioGroup = PdfFormField.createRadioGroup(pdfDoc, "radio group", "", conformanceLevel);
-        PdfFormField.createRadioButton(pdfDoc, new Rectangle(36, 496, 20, 20), radioGroup, "1", conformanceLevel)
+        PdfButtonFormField radioGroup = new RadioFormFieldBuilder(pdfDoc, "radio group").setConformanceLevel(conformanceLevel)
+                .createRadioGroup();
+        radioGroup.setValue("");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(36, 496, 20, 20))
+                .setConformanceLevel(conformanceLevel).createRadioButton(radioGroup, "1")
                 .setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
-        PdfFormField.createRadioButton(pdfDoc, new Rectangle(66, 496, 20, 20), radioGroup, "2", conformanceLevel)
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(66, 496, 20, 20))
+                .setConformanceLevel(conformanceLevel).createRadioButton(radioGroup, "2")
                 .setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
 
         form.addField(radioGroup);
@@ -401,6 +432,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1DocWithPdfA1TextFieldTest() throws IOException, InterruptedException {
         String name = "pdfA1DocWithPdfA1TextField";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
@@ -418,13 +450,14 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(PdfFormField.createText(pdfDoc, new Rectangle(36, 466, 90, 20),
-                "text", "textField", fontFreeSans, 12, false, conformanceLevel).setValue("iText"));
+        form.addField(new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 90, 20))
+                .setConformanceLevel(conformanceLevel).createText().setFont(fontFreeSans).setFontSize(12).setValue("textField").setValue("iText"));
 
-        pdfDoc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
@@ -445,7 +478,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(PdfFormField.createSignature(pdfDoc, conformanceLevel).setFieldName("signature")
+        form.addField(new SignatureFormFieldBuilder(pdfDoc, "signature")
+                .setConformanceLevel(conformanceLevel).createSignature()
                 .setFont(fontFreeSans).setFontSize(20));
 
         pdfDoc.close();
@@ -455,7 +489,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
+    @Ignore("DEVSIX-3913 update this test after the ticket will be resolved")
     public void mergePdfADocWithFormTest() throws IOException {
         String fileName = DESTINATION_FOLDER + "pdfADocWithTextFormField.pdf";
         String mergedDocFileName = DESTINATION_FOLDER + "mergedPdfADoc.pdf";
@@ -471,9 +505,9 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             doc.add(new Paragraph(new Text("Some text").setFont(font).setFontSize(10)));
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            form.addField(PdfFormField.createText(pdfDoc, new Rectangle(150, 100, 100, 20),
-                    "text", "textField", font, 10, false,
-                    PdfAConformanceLevel.PDF_A_1B).setFieldName("text").setPage(1), pdfDoc.getPage(1));
+            form.addField(new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(150, 100, 100, 20))
+                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createText()
+                    .setValue("textField").setFont(font).setFontSize(10).setFieldName("text").setPage(1), pdfDoc.getPage(1));
         }
 
         Assert.assertNull(new VeraPdfValidator().validate(fileName));

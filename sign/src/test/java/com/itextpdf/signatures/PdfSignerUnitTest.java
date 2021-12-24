@@ -29,8 +29,10 @@ import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
+import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -443,7 +445,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     private static byte[] createDocumentWithEmptyField() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
-        PdfFormField formField = PdfFormField.createEmptyField(pdfDocument).setFieldName("test_field");
+        PdfFormField formField = new NonTerminalFormFieldBuilder(pdfDocument, "test_field").createNonTerminalFormField();
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
         acroForm.addField(formField);
         pdfDocument.close();
@@ -453,8 +455,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     private static byte[] createDocumentWithSignatureWithTestValueField(String fieldName, String fieldValue) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
-        PdfFormField formField = PdfFormField.createSignature(pdfDocument)
-                .setFieldName(fieldName)
+        PdfFormField formField = new SignatureFormFieldBuilder(pdfDocument, fieldName).createSignature()
                 .setValue(fieldValue);
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
         acroForm.addField(formField);
@@ -465,8 +466,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     private static byte[] createDocumentWithSignatureField(String fieldName) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
-        PdfFormField formField = PdfFormField.createSignature(pdfDocument)
-                .setFieldName(fieldName);
+        PdfFormField formField = new SignatureFormFieldBuilder(pdfDocument, fieldName).createSignature();
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
         acroForm.addField(formField);
         pdfDocument.close();

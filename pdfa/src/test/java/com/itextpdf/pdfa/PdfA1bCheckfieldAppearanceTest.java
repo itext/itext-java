@@ -43,6 +43,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -85,7 +86,9 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100,500,50,50), "name", "Off", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
+                .setCheckType(PdfFormField.TYPE_CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
+                .createCheckBox().setValue("Off");
         chk.setBorderColor(ColorConstants.BLACK);
         chk.setBorderWidth(1);
         form.addField(chk);
@@ -106,7 +109,9 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        PdfFormField chk = PdfFormField.createCheckBox(doc, new Rectangle(100,500,50,50), "name", "On", PdfFormField.TYPE_CHECK, PdfAConformanceLevel.PDF_A_1B);
+        PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
+                .setCheckType(PdfFormField.TYPE_CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
+                .createCheckBox().setValue("On");
         chk.setBorderColor(ColorConstants.BLACK);
         chk.setBorderWidth(1);
         form.addField(chk);

@@ -42,8 +42,11 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -107,7 +110,8 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         pdfDoc.initializeOutlines();
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
-        acroForm.addField(PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1"));
+        acroForm.addField(new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
+                .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox().setValue("1", true));
 
         PdfDocument docToCopyFrom = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms07.pdf"));
         docToCopyFrom.copyPagesTo(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
@@ -216,7 +220,8 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
+        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
+                .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Capcha").createPushButton();
 
         TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
         tagPointer.moveToKid(StandardRoles.DIV);
@@ -231,15 +236,20 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
+        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "TestGroup")
+                .createRadioGroup();
+        group.setValue("1", true);
 
-        PdfFormField.createRadioButton(pdfDoc, rect, group, "1");
-        PdfFormField.createRadioButton(pdfDoc, rect1, group, "2");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect).createRadioButton(group, "1");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group, "2");
 
         acroForm.addField(group);
 
-        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
-        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1");
+        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
+                .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Capcha").createPushButton();
+        PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
+                .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox();
+        checkBox.setValue("1", true);
 
         acroForm.addField(pushButton);
         acroForm.addField(checkBox);

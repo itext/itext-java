@@ -44,6 +44,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.IPdfPageExtraCopier;
@@ -248,10 +249,9 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
         existingField.getPdfObject().remove(PdfName.T);
         existingField.getPdfObject().remove(PdfName.P);
-        PdfFormField mergedField = PdfFormField.createEmptyField(documentTo);
-        mergedField.
-                put(PdfName.FT, existingField.getFormType()).
-                put(PdfName.T, fieldName);
+        PdfFormField mergedField =
+                new NonTerminalFormFieldBuilder(documentTo, fieldName.toUnicodeString()).createNonTerminalFormField();
+        mergedField.put(PdfName.FT, existingField.getFormType());
         PdfDictionary parent = existingField.getParent();
         if (parent != null) {
             mergedField.put(PdfName.Parent, parent);

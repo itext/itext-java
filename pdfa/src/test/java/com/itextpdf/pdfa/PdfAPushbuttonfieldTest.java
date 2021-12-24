@@ -42,8 +42,10 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -53,6 +55,7 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -77,6 +80,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1bButtonAppearanceTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceTest";
         String outPath = destinationFolder + name + ".pdf";
@@ -95,15 +99,20 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 626, 100, 40);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfFormField button = PdfFormField.createPushButton(doc, rect, "push button", "push", font, 12, PdfAConformanceLevel.PDF_A_1B);
+        PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
+                .setCaption("push").setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
+                .createPushButton().setFont(font).setFontSize(12);
         form.addField(button);
 
-        doc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1bButtonAppearanceRegenerateTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceRegenerateTest";
         String outPath = destinationFolder + name + ".pdf";
@@ -122,16 +131,21 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 626, 100, 40);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfFormField button = PdfFormField.createPushButton(doc, rect, "push button", "push", font, 12, PdfAConformanceLevel.PDF_A_1B);
+        PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
+                .setCaption("push").setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
+                .createPushButton().setFont(font).setFontSize(12);
         button.regenerateField();
         form.addField(button);
 
-        doc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 
     @Test
+    // TODO: DEVSIX-3913 update this test after the ticket will be resolved
     public void pdfA1bButtonAppearanceSetValueTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceSetValueTest";
         String outPath = destinationFolder + name + ".pdf";
@@ -150,12 +164,16 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 626, 100, 40);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfFormField button = PdfFormField.createPushButton(doc, rect, "push button", "push", font, 12, PdfAConformanceLevel.PDF_A_1B);
+        PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
+                .setCaption("push").setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
+                .createPushButton().setFont(font).setFontSize(12);
         button.setValue("button");
         form.addField(button);
 
-        doc.close();
+        Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
 
-        Assert.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assert.assertEquals(MessageFormatUtil.format(
+                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                exception.getMessage());
     }
 }

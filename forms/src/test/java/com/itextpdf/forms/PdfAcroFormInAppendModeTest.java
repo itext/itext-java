@@ -22,7 +22,10 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
+import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -59,11 +62,9 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
                 new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
-        PdfFormField field = PdfFormField.createCheckBox(
-                outputDoc,
-                new Rectangle(10, 10, 24, 24),
-                "checkboxname", "On",
-                PdfFormField.TYPE_CHECK);
+        PdfFormField field = new CheckBoxFormFieldBuilder(outputDoc, "checkboxname")
+                .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_CHECK).setValue("On");
         PdfAcroForm.getAcroForm(outputDoc, true).addField(field);
         outputDoc.close();
         compareWithCmp(outputFile);
@@ -86,10 +87,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         String inputFile = "in_removeKidTest.pdf";
         PdfDocument inDoc = new PdfDocument(new PdfWriter(DESTINATION_DIR + inputFile));
         inDoc.addNewPage();
-        PdfFormField root = PdfFormField.createEmptyField(inDoc);
-        root.setFieldName("root");
-        PdfFormField child = PdfFormField.createEmptyField(inDoc);
-        child.setFieldName("child");
+        PdfFormField root = new NonTerminalFormFieldBuilder(inDoc, "root").createNonTerminalFormField();
+        PdfFormField child = new NonTerminalFormFieldBuilder(inDoc, "child").createNonTerminalFormField();
         root.addKid(child);
         PdfAcroForm.getAcroForm(inDoc, true).addField(root);
         inDoc.close();
@@ -112,8 +111,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
                 new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
-        PdfFormField newField = PdfFormField
-                .createText(outputDoc, new Rectangle(20, 160, 100, 20), "newfield", "new field");
+        PdfFormField newField = new TextFormFieldBuilder(outputDoc, "newfield").setWidgetRectangle(new Rectangle(20, 160, 100, 20))
+                .createText().setValue("new field");
         PdfAcroForm.getAcroForm(outputDoc, true).replaceField("textfield1", newField);
         outputDoc.close();
         compareWithCmp(outputFile);
@@ -126,11 +125,9 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(INPUT_FILE_WITH_INDIRECT_FIELDS_ARRAY),
                 new PdfWriter(DESTINATION_DIR + outputFile), new StampingProperties().useAppendMode());
 
-        PdfFormField field = PdfFormField.createCheckBox(
-                document,
-                new Rectangle(10, 10, 24, 24),
-                "checkboxname", "On",
-                PdfFormField.TYPE_CHECK);
+        PdfFormField field = new CheckBoxFormFieldBuilder(document, "checkboxname")
+                .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_CHECK).setValue("On");
 
         // Get an existing acroform and add new field to it
         PdfAcroForm.getAcroForm(document, false).addField(field);
@@ -160,10 +157,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         // Creating input document
         PdfDocument inDoc = new PdfDocument(new PdfWriter(DESTINATION_DIR + inputFile));
         inDoc.addNewPage();
-        PdfFormField root = PdfFormField.createEmptyField(inDoc);
-        root.setFieldName("root");
-        PdfFormField child = PdfFormField.createEmptyField(inDoc);
-        child.setFieldName("child");
+        PdfFormField root = new NonTerminalFormFieldBuilder(inDoc, "root").createNonTerminalFormField();
+        PdfFormField child = new NonTerminalFormFieldBuilder(inDoc, "child").createNonTerminalFormField();
         root.addKid(child);
         PdfAcroForm.getAcroForm(inDoc, true).addField(root);
         // make kids array indirect
@@ -188,11 +183,9 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         PdfDocument outputDoc = new PdfDocument(new PdfReader(inputFile),
                 new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
-        PdfFormField field = PdfFormField.createCheckBox(
-                outputDoc,
-                new Rectangle(10, 10, 24, 24),
-                "checkboxname", "On",
-                PdfFormField.TYPE_CHECK);
+        PdfFormField field = new CheckBoxFormFieldBuilder(outputDoc, "checkboxname")
+                .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
+                .setCheckType(PdfFormField.TYPE_CHECK).setValue("On");
         PdfAcroForm.getAcroForm(outputDoc, true).addField(field);
         outputDoc.close();
         compareWithCmp(outputFile);

@@ -45,6 +45,7 @@ package com.itextpdf.forms.widget;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -85,32 +86,32 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
 
-            PdfFormField simpleField = PdfTextFormField.createText(doc,
-                    new Rectangle(300, 300, 200, 100), "simpleField");
+            PdfFormField simpleField = new TextFormFieldBuilder(doc, "simpleField")
+                    .setWidgetRectangle(new Rectangle(300, 300, 200, 100)).createText();
             simpleField.regenerateField();
 
-            PdfFormField insetField = PdfTextFormField.createText(doc,
-                    new Rectangle(50, 600, 200, 100), "insetField");
+            PdfFormField insetField = new TextFormFieldBuilder(doc, "insetField")
+                    .setWidgetRectangle(new Rectangle(50, 600, 200, 100)).createText();
             insetField.getWidgets().get(0).setBorderStyle(PdfName.I);
             insetField.setBorderWidth(3f).setBorderColor(DeviceRgb.RED).regenerateField();
 
-            PdfFormField underlineField = PdfTextFormField.createText(doc,
-                    new Rectangle(300, 600, 200, 100), "underlineField");
+            PdfFormField underlineField = new TextFormFieldBuilder(doc, "underlineField")
+                    .setWidgetRectangle(new Rectangle(300, 600, 200, 100)).createText();
             underlineField.getWidgets().get(0).setBorderStyle(PdfName.U);
             underlineField.setBorderWidth(3f).setBorderColor(DeviceRgb.RED).regenerateField();
 
-            PdfFormField solidField = PdfTextFormField.createText(doc,
-                    new Rectangle(50, 450, 200, 100), "solidField");
+            PdfFormField solidField = new TextFormFieldBuilder(doc, "solidField")
+                    .setWidgetRectangle(new Rectangle(50, 450, 200, 100)).createText();
             solidField.getWidgets().get(0).setBorderStyle(PdfName.S);
             solidField.setBorderWidth(3f).setBorderColor(DeviceRgb.RED).regenerateField();
 
-            PdfFormField dashField = PdfTextFormField.createText(doc,
-                    new Rectangle(300, 450, 200, 100), "dashField");
+            PdfFormField dashField = new TextFormFieldBuilder(doc, "dashField")
+                    .setWidgetRectangle(new Rectangle(300, 450, 200, 100)).createText();
             dashField.getWidgets().get(0).setBorderStyle(PdfName.D);
             dashField.setBorderWidth(3f).setBorderColor(DeviceRgb.RED).regenerateField();
 
-            PdfFormField beveledField = PdfTextFormField.createText(doc,
-                    new Rectangle(50, 300, 200, 100), "beveledField");
+            PdfFormField beveledField = new TextFormFieldBuilder(doc, "beveledField")
+                    .setWidgetRectangle(new Rectangle(50, 300, 200, 100)).createText();
             beveledField.getWidgets().get(0).setBorderStyle(PdfName.B);
             beveledField.setBorderWidth(3f).setBorderColor(DeviceRgb.RED).regenerateField();
 
@@ -132,8 +133,8 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-            PdfFormField formField = PdfTextFormField.createText(doc,
-                    new Rectangle(100, 600, 200, 100), "formField");
+            PdfFormField formField = new TextFormFieldBuilder(doc, "formField")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 100)).createText();
             formField.getWidgets().get(0).setBorderStyle(PdfName.B);
             formField.setBorderWidth(3f).setBackgroundColor(DeviceRgb.GREEN).setBorderColor(DeviceRgb.RED);
             formField.regenerateField();
@@ -150,8 +151,8 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-            PdfFormField formField = PdfTextFormField.createText(doc,
-                    new Rectangle(100, 600, 200, 100), "formField");
+            PdfFormField formField = new TextFormFieldBuilder(doc, "formField")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 100)).createText();
             formField.getWidgets().get(0).setBorderStyle(PdfName.D);
             formField.setBorderWidth(3f).setBorderColor(DeviceRgb.RED).setBackgroundColor(DeviceRgb.GREEN);
             formField.regenerateField();
@@ -170,26 +171,26 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
 
-            PdfFormField insetFormField = PdfTextFormField.createText(doc,
-                    new Rectangle(90, 600, 200, 100), "insetFormField");
+            PdfFormField insetFormField = new TextFormFieldBuilder(doc, "insetFormField")
+                    .setWidgetRectangle(new Rectangle(90, 600, 200, 100)).createText();
             insetFormField.getWidgets().get(0).setBorderStyle(PdfName.I);
             insetFormField.setBorderWidth(15f).setBorderColor(DeviceRgb.RED)
                     .setValue("Text after border").regenerateField();
 
-            PdfFormField solidFormField = PdfTextFormField.createText(doc,
-                    new Rectangle(300, 600, 200, 100), "solidFormField");
+            PdfFormField solidFormField = new TextFormFieldBuilder(doc, "solidFormField")
+                    .setWidgetRectangle(new Rectangle(300, 600, 200, 100)).createText();
             solidFormField.getWidgets().get(0).setBorderStyle(PdfName.S);
             solidFormField.setBorderWidth(15f).setBorderColor(DeviceRgb.RED)
                     .setValue("Text after border").regenerateField();
 
-            PdfFormField underlineFormField = PdfTextFormField.createText(doc,
-                    new Rectangle(90, 450, 200, 100), "underlineFormField");
+            PdfFormField underlineFormField = new TextFormFieldBuilder(doc, "underlineFormField")
+                    .setWidgetRectangle(new Rectangle(90, 450, 200, 100)).createText();
             underlineFormField.getWidgets().get(0).setBorderStyle(PdfName.U);
             underlineFormField.setBorderWidth(15f).setBorderColor(DeviceRgb.RED)
                     .setValue("Text after border").regenerateField();
 
-            PdfFormField simpleFormField = PdfTextFormField.createText(doc,
-                    new Rectangle(300, 450, 200, 100), "formField1");
+            PdfFormField simpleFormField = new TextFormFieldBuilder(doc, "formField1")
+                    .setWidgetRectangle(new Rectangle(300, 450, 200, 100)).createText();
             simpleFormField.setBorderWidth(15f);
             simpleFormField.setValue("Text after border").regenerateField();
 
@@ -228,18 +229,18 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
 
-            PdfFormField formField1 = PdfTextFormField.createText(doc,
-                    new Rectangle(100, 600, 100, 50), "firstField", "Hello, iText!");
+            PdfFormField formField1 = new TextFormFieldBuilder(doc, "firstField").setWidgetRectangle(new Rectangle(100, 600, 100, 50))
+                    .createText().setValue("Hello, iText!");
             formField1.getWidgets().get(0).setBorderStyle(PdfAnnotation.STYLE_BEVELED);
             formField1.setBorderWidth(2).setBorderColor(ColorConstants.BLUE);
 
-            PdfFormField formField2 = PdfTextFormField.createText(doc,
-                    new Rectangle(100, 500, 100, 50), "secondField", "Hello, iText!");
+            PdfFormField formField2 = new TextFormFieldBuilder(doc, "secondField").setWidgetRectangle(new Rectangle(100, 500, 100, 50))
+                    .createText().setValue("Hello, iText!");
             formField2.getWidgets().get(0).setBorderStyle(PdfAnnotation.STYLE_UNDERLINE);
             formField2.setBorderWidth(2).setBorderColor(ColorConstants.BLUE);
 
-            PdfFormField formField3 = PdfTextFormField.createText(doc,
-                    new Rectangle(100, 400, 100, 50), "thirdField", "Hello, iText!");
+            PdfFormField formField3 = new TextFormFieldBuilder(doc, "thirdField").setWidgetRectangle(new Rectangle(100, 400, 100, 50))
+                    .createText().setValue("Hello, iText!");
             formField3.getWidgets().get(0).setBorderStyle(PdfAnnotation.STYLE_INSET);
             formField3.setBorderWidth(2).setBorderColor(ColorConstants.BLUE);
 

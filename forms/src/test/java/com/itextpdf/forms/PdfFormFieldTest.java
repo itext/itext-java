@@ -42,10 +42,17 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -126,7 +133,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         Rectangle rect = new Rectangle(210, 490, 150, 22);
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "fieldName", "some value");
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "fieldName")
+                .setWidgetRectangle(rect).createText();
+        field.setValue("some value");
         form.addField(field);
 
         pdfDoc.close();
@@ -148,7 +157,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
 
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "TestField", "some value");
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "TestField")
+                .setWidgetRectangle(rect).createText();
+        field.setValue("some value");
 
         form.addField(field, page);
 
@@ -171,7 +182,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
 
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "TestField", "some value in courier font", PdfFontFactory.createFont(StandardFonts.COURIER), 10);
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "TestField").setWidgetRectangle(rect).createText();
+        field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER)).setFontSize(10).setValue("some value in courier font");
 
         form.addField(field, page);
 
@@ -195,7 +207,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 300, 22);
 
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, rect, "TestField", "        value with leading space");
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "TestField")
+                .setWidgetRectangle(rect).createText();
+        field.setValue("        value with leading space");
 
         form.addField(field, page);
 
@@ -249,13 +263,17 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(210, 490, 150, 20);
 
         String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
-        PdfChoiceFormField choice = PdfFormField.createComboBox(pdfDoc, rect, "TestField", "First Item", options);
+        PdfChoiceFormField choice = new ChoiceFormFieldBuilder(pdfDoc, "TestField")
+                .setWidgetRectangle(rect).setOptions(options).createComboBox();
+        choice.setValue("First Item", true);
 
         form.addField(choice);
 
         Rectangle rect1 = new Rectangle(210, 250, 150, 90);
 
-        PdfChoiceFormField choice1 = PdfFormField.createList(pdfDoc, rect1, "TestField1", "Second Item", options);
+        PdfChoiceFormField choice1 = new ChoiceFormFieldBuilder(pdfDoc, "TestField1")
+                .setWidgetRectangle(rect1).setOptions(options).createList();
+        choice1.setValue("Second Item", true);
         choice1.setMultiSelect(true);
         form.addField(choice1);
 
@@ -278,15 +296,20 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
+        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "TestGroup")
+                .createRadioGroup();
+        group.setValue("1", true);
 
-        PdfFormField.createRadioButton(pdfDoc, rect, group, "1");
-        PdfFormField.createRadioButton(pdfDoc, rect1, group, "2");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect).createRadioButton(group, "1");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group, "2");
 
         form.addField(group);
 
-        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
-        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1");
+        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
+                .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Capcha").createPushButton();
+        PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
+                .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox();
+        checkBox.setValue("1", true);
 
         form.addField(pushButton);
         form.addField(checkBox);
@@ -312,10 +335,12 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
+        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "TestGroup")
+                .createRadioGroup();
+        group.setValue("1", true);
 
-        PdfFormField.createRadioButton(pdfDoc, rect1, group, "1");
-        PdfFormField.createRadioButton(pdfDoc, rect2, group, "2");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group, "1");
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group, "2");
 
         form.addField(group);
 
@@ -336,14 +361,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group2 = PdfFormField.createRadioGroup(pdfDoc, "TestGroup2", "1");
+        PdfButtonFormField group2 = new RadioFormFieldBuilder(pdfDoc, "TestGroup2")
+                .createRadioGroup();
+        group2.setValue("1", true);
 
-        PdfFormField.createRadioButton(pdfDoc, rect1, group2, "1")
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group2, "1")
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormField.VISIBLE);
 
 
-        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group2, "2")
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormField.VISIBLE);
 
@@ -366,14 +393,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group2 = PdfFormField.createRadioGroup(pdfDoc, "TestGroup2", "1");
+        PdfButtonFormField group2 = new RadioFormFieldBuilder(pdfDoc, "TestGroup2")
+                .createRadioGroup();
+        group2.setValue("1", true);
 
-        PdfFormField.createRadioButton(pdfDoc, rect1, group2, "1")
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group2, "1")
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormField.VISIBLE);
 
 
-        PdfFormField.createRadioButton(pdfDoc, rect2, group2, "2")
+        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group2, "2")
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormField.VISIBLE);
 
@@ -429,14 +458,14 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfFormField root = PdfFormField.createEmptyField(pdfDoc);
-        root.setFieldName("root");
+        PdfFormField root = new NonTerminalFormFieldBuilder(pdfDoc, "root").createNonTerminalFormField();
 
-        PdfFormField child = PdfFormField.createEmptyField(pdfDoc);
-        child.setFieldName("child");
+        PdfFormField child = new NonTerminalFormFieldBuilder(pdfDoc, "child").createNonTerminalFormField();
         root.addKid(child);
 
-        PdfTextFormField text1 = PdfFormField.createText(pdfDoc, new Rectangle(100, 700, 200, 20), "text1", "test");
+        PdfTextFormField text1 = new TextFormFieldBuilder(pdfDoc, "text1")
+                .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+        text1.setValue("test");
         child.addKid(text1);
 
         form.addField(root);
@@ -504,7 +533,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfFormField field = PdfFormField.createText(pdfDoc, new Rectangle(36, 786, 80, 20), "name", "TestValueAndALittleMore");
+        PdfFormField field = new TextFormFieldBuilder(pdfDoc, "name").setWidgetRectangle(new Rectangle(36, 786, 80, 20))
+                .createText().setValue("TestValueAndALittleMore");
         form.addField(field.setFontSizeAutoScale());
 
         pdfDoc.close();
@@ -582,7 +612,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDoc.addNewPage().flush();
         pdfDoc.addNewPage();
 
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, new Rectangle(100, 100, 300, 20), "name", "");
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "name")
+                .setWidgetRectangle(new Rectangle(100, 100, 300, 20)).createText();
+        field.setValue("");
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.addField(field);
 
@@ -822,7 +854,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 patternArray.add(new PdfNumber(10));
             if (i > 0)
                 borderDict.put(PdfName.D, patternArray);
-            fields[i] = PdfTextFormField.createText(pdfDoc, new Rectangle(10, y -= 70, 200, 50), names[i], names[i]);
+            fields[i] = new TextFormFieldBuilder(pdfDoc, names[i])
+                    .setWidgetRectangle(new Rectangle(10, y -= 70, 200, 50)).createText();
+            fields[i].setValue(names[i]);
             acroForm.addField(fields[i]);
             fields[i].setBorderStyle(borderDict);
             fields[i].setBorderWidth(3);
@@ -849,7 +883,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfTextFormField textField = PdfFormField.createText(pdfDoc, new Rectangle(100, 500, 200, 200), "text");
+        PdfTextFormField textField = new TextFormFieldBuilder(pdfDoc, "text")
+                .setWidgetRectangle(new Rectangle(100, 500, 200, 200)).createText();
         textField.setComb(true);
 
         // The line below should throw an exception, because the Comb flag may be set only if the MaxLen entry is present in the text field dictionary
@@ -921,7 +956,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         String itext = "itextpdf";
 
-        PdfButtonFormField button = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 500, 200, 200), itext, itext);
+        PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
+                .setWidgetRectangle(new Rectangle(36, 500, 200, 200)).setCaption(itext).createPushButton();
         button.setFontSize(0);
         button.setBackgroundColor(ColorConstants.GRAY);
         button.setValue(itext);
@@ -1023,8 +1059,11 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         PdfTextFormField[] fields = new PdfTextFormField[4];
-        for (int i = 0; i < 4; i++)
-            fields[i] = PdfFormField.createText(pdfDoc, new Rectangle(90, 700 - i * 100, 150, 22), "black" + i, "black");
+        for (int i = 0; i < 4; i++) {
+            fields[i] = new TextFormFieldBuilder(pdfDoc, "black" + i)
+                    .setWidgetRectangle(new Rectangle(90, 700 - i * 100, 150, 22)).createText();
+            fields[i].setValue("black");
+        }
         form.addField(fields[0]);
         form.addField(fields[1]);
         Document doc = new Document(pdfDoc);
@@ -1052,30 +1091,41 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         pdfDoc.addNewPage();
-        PdfFormField emptyField = PdfFormField.createEmptyField(pdfDoc).setFieldName("empty");
+        PdfFormField emptyField = new NonTerminalFormFieldBuilder(pdfDoc, "empty").createNonTerminalFormField();
         form.addField(emptyField);
         PdfArray options = new PdfArray();
         options.add(new PdfString("1"));
         options.add(new PdfString("2"));
-        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(36, 696, 20, 20), "choice", "1", options, 0));
+        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "choice")
+                .setWidgetRectangle(new Rectangle(36, 696, 20, 20)).setOptions(options).createList().setValue("1", true));
         // combo
-        form.addField(PdfFormField.createComboBox(pdfDoc, new Rectangle(36, 666, 20, 20), "list", "1", new String[]{"1", "2", "3"}));
+        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "list")
+                .setWidgetRectangle(new Rectangle(36, 666, 20, 20)).setOptions(new String[]{"1", "2", "3"})
+                .createComboBox().setValue("1", true));
         // list
-        PdfChoiceFormField f = PdfFormField.createList(pdfDoc, new Rectangle(36, 556, 50, 100), "combo", "9", new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"});
+        PdfChoiceFormField f = new ChoiceFormFieldBuilder(pdfDoc, "combo")
+                .setWidgetRectangle(new Rectangle(36, 556, 50, 100)).setOptions(new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}).createList();
+        f.setValue("9", true);
         f.setValue("4");
         f.setTopIndex(2);
         f.setListSelected(new String[]{"3", "5"});
         form.addField(f);
         // push button
-        form.addField(PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 526, 80, 20), "push button", "push"));
+        form.addField(new PushButtonFormFieldBuilder(pdfDoc, "push button")
+                .setWidgetRectangle(new Rectangle(36, 526, 80, 20)).setCaption("push").createPushButton());
         // radio button
-        PdfButtonFormField radioGroup = PdfFormField.createRadioGroup(pdfDoc, "radio group", "1");
-        form.addField(PdfFormField.createRadioButton(pdfDoc, new Rectangle(36, 496, 20, 20), radioGroup, "1").setFieldName("radio 1"));
-        form.addField(PdfFormField.createRadioButton(pdfDoc, new Rectangle(66, 496, 20, 20), radioGroup, "2").setFieldName("radio 2"));
+        PdfButtonFormField radioGroup = new RadioFormFieldBuilder(pdfDoc, "radio group")
+                .createRadioGroup();
+        radioGroup.setValue("1", true);
+        form.addField(new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(36, 496, 20, 20))
+                .createRadioButton(radioGroup, "1").setFieldName("radio 1"));
+        form.addField(new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(66, 496, 20, 20))
+                .createRadioButton(radioGroup, "2").setFieldName("radio 2"));
         // signature
-        form.addField(PdfFormField.createSignature(pdfDoc).setFieldName("signature").setValue("Signature").setFontSize(20));
+        form.addField(new SignatureFormFieldBuilder(pdfDoc, "signature").createSignature().setValue("Signature").setFontSize(20));
         // text
-        form.addField(PdfFormField.createText(pdfDoc, new Rectangle(36, 466, 80, 20), "text", "text").setValue("la la land"));
+        form.addField(new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 80, 20))
+                .createText().setValue("text").setValue("la la land"));
 
         pdfDoc.close();
 
@@ -1089,10 +1139,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDoc.addNewPage();
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        form.addField(PdfFormField.createText(pdfDoc,
-                new Rectangle(36, 400, 100, 40),
-                "text_helvetica",
-                "Helvetica"));
+        form.addField(new TextFormFieldBuilder(pdfDoc, "text_helvetica").setWidgetRectangle(new Rectangle(36, 400, 100, 40))
+                .createText().setValue("Helvetica"));
 
 
         PdfFont noto = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
@@ -1107,10 +1155,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 "ṢșȘßẞtTťŤṫṪţŢțȚŧŦuUúÚùÙûÛǔǓůŮüÜűŰũŨųŲūŪủỦưƯứ" +
                 "ỨừỪữỮửỬựỰụỤvVwWẃẂẁẀŵŴẅẄxXẍẌyYýÝỳỲŷŶÿŸỹỸẏẎȳȲỷỶ" +
                 "ỵỴzZźŹẑẐžŽżŻẓẒʒƷǯǮþÞŉ";
-        PdfFormField textField = PdfFormField.createText(pdfDoc,
-                new Rectangle(36, 500, 400, 300),
-                "text",
-                value, noto, 12, true);
+        PdfFormField textField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 500, 400, 300))
+                .createMultilineText().setFont(noto).setFontSize(12).setValue(value);
 
         form.addField(textField);
 
@@ -1161,7 +1207,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String fieldName = "field1";
         int pageNum = 2;
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        PdfTextFormField field1 = PdfFormField.createText(pdfDoc, new Rectangle(90, 700, 150, 22), fieldName, "new field");
+        PdfTextFormField field1 = new TextFormFieldBuilder(pdfDoc, fieldName)
+                .setWidgetRectangle(new Rectangle(90, 700, 150, 22)).createText();
+        field1.setValue("new field");
         field1.setPage(pageNum);
         form.addField(field1);
 
@@ -1194,7 +1242,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
         for (int x = offSet; x < (offSet + 3); x++) {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
-            PdfFormField field = PdfFormField.createText(pdfDoc, rect, "f-" + x, "", font, 12.0f);
+            PdfFormField field = new TextFormFieldBuilder(pdfDoc, "f-" + x).setWidgetRectangle(rect)
+                    .createText().setFont(font).setFontSize(12.0f).setValue("");
             field.setJustification(PdfFormField.ALIGN_RIGHT);
             if (text != null) {
                 field.setValue(text);
@@ -1215,7 +1264,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void setFont3Ways() throws IOException, InterruptedException {
+    public void setFont2Ways() throws IOException, InterruptedException {
         String filename = destinationFolder + "setFont3Ways.pdf";
         String cmpFilename = sourceFolder + "cmp_setFont3Ways.pdf";
         String testString = "Don't cry over spilt milk";
@@ -1227,18 +1276,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         Rectangle rect1 = new Rectangle(10, 700, 200, 25);
         Rectangle rect2 = new Rectangle(30, 600, 200, 25);
-        Rectangle rect3 = new Rectangle(50, 500, 200, 25);
 
-        PdfButtonFormField pushButton1 = PdfFormField.createPushButton(pdfDocument, rect1, "Name1", testString, font, 12);
+        PdfButtonFormField pushButton1 = new PushButtonFormFieldBuilder(pdfDocument, "Name1")
+                .setWidgetRectangle(rect1).setCaption(testString).createPushButton();
+        pushButton1.setFont(font).setFontSize(12);
         form.addField(pushButton1);
 
-        PdfButtonFormField pushButton2 = PdfFormField.createPushButton(pdfDocument, rect2, "Name2", testString);
+        PdfButtonFormField pushButton2 = new PushButtonFormFieldBuilder(pdfDocument, "Name2")
+                .setWidgetRectangle(rect2).setCaption(testString).createPushButton();
         pushButton2.setFontAndSize(font, 12f);
         form.addField(pushButton2);
-
-        PdfButtonFormField pushButton3 = PdfFormField.createPushButton(pdfDocument, rect3, "Name3", testString);
-        pushButton3.setFont(font).setFontSize(12);
-        form.addField(pushButton3);
 
         pdfDocument.close();
 
@@ -1295,8 +1342,12 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
 
         PdfFormField[] fields = new PdfFormField[]{
-                PdfFormField.createComboBox(pdfDoc, new Rectangle(110, 750, 150, 20), "TestField", "First Item", options),
-                PdfFormField.createList(pdfDoc, new Rectangle(310, 650, 150, 90), "TestField1", "Second Item", options)};
+                new ChoiceFormFieldBuilder(pdfDoc, "TestField")
+                        .setWidgetRectangle(new Rectangle(110, 750, 150, 20)).setOptions(options)
+                        .createComboBox().setValue("First Item"),
+                new ChoiceFormFieldBuilder(pdfDoc, "TestField1")
+                        .setWidgetRectangle(new Rectangle(310, 650, 150, 90)).setOptions(options)
+                        .createList().setValue("Second Item")};
 
         for (PdfFormField field : fields) {
             field.setFontSize(0);
@@ -1324,10 +1375,10 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         options.add(new PdfString("Second Item", PdfEncodings.UNICODE_BIG));
         options.add(new PdfString("Third Item", PdfEncodings.UNICODE_BIG));
 
-        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(110, 750, 150, 20),
-                "TestField", "First Item", null, 0, options, PdfChoiceFormField.FF_COMBO, null));
-        form.addField(PdfFormField.createChoice(pdfDoc, new Rectangle(310, 650, 150, 90),
-                "TestField1", "Second Item", null, 0, options, 0, null));
+        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "TestField").setWidgetRectangle(new Rectangle(110, 750, 150, 20))
+                .setOptions(options).createComboBox().setValue("First Item", true));
+        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "TestField1").setWidgetRectangle(new Rectangle(310, 650, 150, 90))
+                .setOptions(options).createList().setValue("Second Item", true));
 
         pdfDoc.close();
 
@@ -1345,15 +1396,17 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfTextFormField field = PdfFormField.createText(pdfDoc, new Rectangle(50, 700, 500, 120), "single",
-                "Does this text overlap the border?");
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "single")
+                .setWidgetRectangle(new Rectangle(50, 700, 500, 120)).createText();
+        field.setValue("Does this text overlap the border?");
         field.setFontSize(20);
         field.setBorderColor(ColorConstants.RED);
         field.setBorderWidth(50);
         form.addField(field);
 
-        PdfTextFormField field2 = PdfFormField.createText(pdfDoc, new Rectangle(50, 600, 500, 80), "singleAuto",
-                "Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
+        PdfTextFormField field2 = new TextFormFieldBuilder(pdfDoc, "singleAuto")
+                .setWidgetRectangle(new Rectangle(50, 600, 500, 80)).createText();
+        field2.setValue("Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
         field2.setFontSize(0);
         field2.setBorderColor(ColorConstants.RED);
         field2.setBorderWidth(20);
