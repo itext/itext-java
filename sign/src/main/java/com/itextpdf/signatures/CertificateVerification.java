@@ -64,6 +64,9 @@ import java.util.List;
  * This class consists of some methods that allow you to verify certificates.
  */
 public class CertificateVerification {
+    public static final String HAS_UNSUPPORTED_EXTENSIONS = "Has unsupported critical extension";
+    public static final String CERTIFICATE_REVOKED = "Certificate revoked";
+
 
     /**
      * The Logger instance.
@@ -85,15 +88,16 @@ public class CertificateVerification {
     /**
      * Verifies a single certificate.
      *
-     * @param cert     the certificate to verify
-     * @param crls     the certificate revocation list or <CODE>null</CODE>
+     * @param cert the certificate to verify
+     * @param crls the certificate revocation list or <CODE>null</CODE>
      * @param calendar the date, shall not be null
      * @return a <CODE>String</CODE> with the error description or <CODE>null</CODE>
      * if no error
      */
     public static String verifyCertificate(X509Certificate cert, Collection<CRL> crls, Calendar calendar) {
-        if (SignUtils.hasUnsupportedCriticalExtension(cert))
-            return "Has unsupported critical extension";
+        if (SignUtils.hasUnsupportedCriticalExtension(cert)) {
+            return CertificateVerification.HAS_UNSUPPORTED_EXTENSIONS;
+        }
         try {
             cert.checkValidity(calendar.getTime());
         } catch (Exception e) {
@@ -101,8 +105,9 @@ public class CertificateVerification {
         }
         if (crls != null) {
             for (CRL crl : crls) {
-                if (crl.isRevoked(cert))
-                    return "Certificate revoked";
+                if (crl.isRevoked(cert)) {
+                    return CertificateVerification.CERTIFICATE_REVOKED;
+                }
             }
         }
         return null;
