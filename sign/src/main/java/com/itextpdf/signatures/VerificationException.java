@@ -44,6 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
@@ -62,8 +63,7 @@ public class VerificationException extends GeneralSecurityException {
      * @param message is a reason of failure
      */
     public VerificationException(Certificate cert, String message) {
-        super(MessageFormatUtil.format("Certificate {0} failed: {1}", cert == null
-                ? "Unknown"
-                : ((X509Certificate) cert).getSubjectDN().getName(), message));
+        super(MessageFormatUtil.format(SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
+                cert == null ? "Unknown" : ((X509Certificate) cert).getSubjectDN().getName(), message));
     }
 }

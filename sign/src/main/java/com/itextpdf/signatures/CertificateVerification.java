@@ -44,6 +44,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.tsp.TimeStampToken;
@@ -145,13 +146,15 @@ public class CertificateVerification {
         for (int k = 0; k < certs.length; ++k) {
             X509Certificate cert = (X509Certificate) certs[k];
             String err = verifyCertificate(cert, crls, calendar);
-            if (err != null)
+            if (err != null) {
                 result.add(new VerificationException(cert, err));
+            }
             try {
                 for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
                     try {
-                        if (verifyCertificate(certStoreX509, crls, calendar) != null)
+                        if (verifyCertificate(certStoreX509, crls, calendar) != null) {
                             continue;
+                        }
                         try {
                             cert.verify(certStoreX509.getPublicKey());
                             return result;
@@ -159,11 +162,11 @@ public class CertificateVerification {
                             // do nothing and continue
                         }
                     } catch (Exception ex) {
-                        // do nothing
+                        // Do nothing.
                     }
                 }
             } catch (Exception e) {
-                // do nothing
+                // Do nothing.
             }
             int j;
             for (j = 0; j < certs.length; ++j) {
@@ -175,15 +178,18 @@ public class CertificateVerification {
                     cert.verify(certNext.getPublicKey());
                     break;
                 } catch (Exception e) {
-                    // do nothing
+                    // Do nothing.
                 }
             }
             if (j == certs.length) {
-                result.add(new VerificationException(cert, "Cannot be verified against the KeyStore or the certificate chain"));
+                result.add(new VerificationException(cert,
+                        SignExceptionMessageConstant.CANNOT_BE_VERIFIED_CERTIFICATE_CHAIN));
             }
         }
-        if (result.size() == 0)
-            result.add(new VerificationException((Certificate) null, "Invalid state. Possible circular certificate chain"));
+        if (result.size() == 0) {
+            result.add(new VerificationException((Certificate) null,
+                    SignExceptionMessageConstant.INVALID_STATE_WHILE_CHECKING_CERT_CHAIN));
+        }
         return result;
     }
 

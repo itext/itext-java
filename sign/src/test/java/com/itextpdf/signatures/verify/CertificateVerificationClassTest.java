@@ -43,9 +43,11 @@
 package com.itextpdf.signatures.verify;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateVerification;
 import com.itextpdf.signatures.SignaturesTestUtils;
 import com.itextpdf.signatures.VerificationException;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
@@ -224,6 +226,112 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         final String verificationResult = CertificateVerification.verifyCertificate(rootCert, Collections.<CRL>emptyList());
 
         Assert.assertNull(verificationResult);
+    }
+
+    @Test
+    public void validCertWithCrlDoesNotContainCertTest()
+            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
+            UnrecoverableKeyException, CRLException {
+        final int COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME = -1;
+        final String rootCertFileName = CERTS_SRC + "rootRsa.p12";
+        X509Certificate rootCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootCertFileName, PASSWORD)[0];
+
+        final String certForAddingToCrlName = CERTS_SRC + "signCertRsa01.p12";
+        X509Certificate certForCrl = (X509Certificate) Pkcs12FileHelper.readFirstChain(certForAddingToCrlName,
+                PASSWORD)[0];
+        TestCrlBuilder crlForCheckBuilder = new TestCrlBuilder(certForCrl,
+                DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
+                        COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME));
+
+        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootCertFileName, PASSWORD, PASSWORD);
+        TestCrlClient crlClient = new TestCrlClient(crlForCheckBuilder, caPrivateKey);
+
+        Collection<byte[]> crlBytesForRootCertCollection = crlClient.getEncoded(certForCrl, null);
+
+        final List<CRL> crls = new ArrayList<>();
+        for (byte[] crlBytes : crlBytesForRootCertCollection) {
+            crls.add(SignTestPortUtil.parseCrlFromStream(new ByteArrayInputStream(crlBytes)));
+        }
+
+        Assert.assertNull(CertificateVerification.verifyCertificate(rootCert, crls));
+    }
+
+    @Test
+    public void emptyCertChainTest() {
+        Certificate[] emptyCertChain = new Certificate[] {};
+        final String expectedResult = MessageFormatUtil.format("Certificate Unknown failed: {0}",
+                SignExceptionMessageConstant.INVALID_STATE_WHILE_CHECKING_CERT_CHAIN);
+
+        List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(emptyCertChain,
+                null, (Collection<CRL>) null);
+
+        Assert.assertEquals(1, resultedExceptionList.size());
+        Assert.assertEquals(expectedResult, resultedExceptionList.get(0).getMessage());
+    }
+
+    @Test
+    public void validCertChainWithEmptyKeyStoreTest()
+            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
+            NoSuchProviderException {
+        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithChain.p12";
+        final String emptyCertChain = CERTS_SRC + "emptyCertChain.p12";
+
+        Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
+        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD);
+
+        List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
+                emptyKeyStore, (Collection<CRL>) null);
+
+        final String expectedResult = MessageFormatUtil.format(
+                SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
+                ((X509Certificate) validCertChain[2]).getSubjectDN().getName(),
+                SignExceptionMessageConstant.CANNOT_BE_VERIFIED_CERTIFICATE_CHAIN);
+
+        Assert.assertEquals(1, resultedExceptionList.size());
+        Assert.assertEquals(expectedResult, resultedExceptionList.get(0).getMessage());
+    }
+
+    @Test
+    public void validCertChainWithRootCertAsKeyStoreTest()
+            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
+            NoSuchProviderException {
+        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithChain.p12";
+        final String emptyCertChain = CERTS_SRC + "rootRsa.p12";
+
+        Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
+        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD);
+
+        List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
+                emptyKeyStore, (Collection<CRL>) null);
+
+        Assert.assertEquals(0, resultedExceptionList.size());
+    }
+
+    @Test
+    public void certChainWithExpiredCertTest()
+            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithExpiredChain.p12";
+
+        Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
+
+        X509Certificate expectedExpiredCert = (X509Certificate) validCertChain[1];
+        final String expiredCertName = expectedExpiredCert.getSubjectDN().getName();
+        X509Certificate rootCert = (X509Certificate) validCertChain[2];
+        final String rootCertName = rootCert.getSubjectDN().getName();
+
+        List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
+                null, (Collection<CRL>) null);
+
+        Assert.assertEquals(2, resultedExceptionList.size());
+        final String expectedFirstResultMessage = MessageFormatUtil.format(
+                SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
+                expiredCertName, SignaturesTestUtils.getExpiredMessage(expectedExpiredCert));
+        final String expectedSecondResultMessage = MessageFormatUtil.format(
+                SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
+                rootCertName, SignExceptionMessageConstant.CANNOT_BE_VERIFIED_CERTIFICATE_CHAIN);
+
+        Assert.assertEquals(expectedFirstResultMessage, resultedExceptionList.get(0).getMessage());
+        Assert.assertEquals(expectedSecondResultMessage, resultedExceptionList.get(1).getMessage());
     }
 
     private static boolean verifyTimestampCertificates(String tsaClientCertificate, KeyStore caKeyStore) throws Exception {

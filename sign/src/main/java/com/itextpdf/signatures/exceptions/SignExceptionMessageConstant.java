@@ -33,9 +33,12 @@ public final class SignExceptionMessageConstant {
     public static final String CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT = "Cannot decode PKCS#7 SignedData object.";
     public static final String CANNOT_FIND_SIGNING_CERTIFICATE_WITH_THIS_SERIAL = "Cannot find signing certificate "
             + "with serial {0}.";
+    public static final String CANNOT_BE_VERIFIED_CERTIFICATE_CHAIN = "Cannot be verified against the KeyStore or the "
+            + "certificate chain.";
     public static final String CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS = "Certification "
             + "signature creation failed. Document shall not contain any certification or approval signatures before "
             + "signing with certification signature.";
+    public static final String CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE = "Certificate {0} failed: {1}";
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
@@ -45,6 +48,8 @@ public final class SignExceptionMessageConstant {
     public static final String FIELD_NAMES_CANNOT_CONTAIN_A_DOT = "Field names cannot contain a dot.";
     public static final String FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE = "Field type is not a signature field type.";
     public static final String INVALID_HTTP_RESPONSE = "Invalid http response {0}.";
+    public static final String INVALID_STATE_WHILE_CHECKING_CERT_CHAIN = "Invalid state. Possible circular "
+            + "certificate chain.";
     public static final String INVALID_TSA_RESPONSE = "Invalid TSA {0} response code {1}.";
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
