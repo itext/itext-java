@@ -507,8 +507,9 @@ public class PdfSigner {
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
-    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
-            ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
+            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+            CryptoStandard sigtype) throws IOException, GeneralSecurityException {
         signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
                 (SignaturePolicyIdentifier) null);
     }
@@ -531,8 +532,9 @@ public class PdfSigner {
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
-    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
-            ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
+            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+            CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
         signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
                 signaturePolicy.toSignaturePolicyIdentifier());
     }
@@ -555,8 +557,9 @@ public class PdfSigner {
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
-    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
-            ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyIdentifier signaturePolicy) throws IOException, GeneralSecurityException {
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
+            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+            CryptoStandard sigtype, SignaturePolicyIdentifier signaturePolicy) throws IOException, GeneralSecurityException {
         if (closed) {
             throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
         }
@@ -628,8 +631,9 @@ public class PdfSigner {
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, sigtype, tsaClient, ocspList, crlBytes);
 
-        if (estimatedSize < encodedSig.length)
+        if (estimatedSize < encodedSig.length) {
             throw new IOException("Not enough space");
+        }
 
         byte[] paddedSig = new byte[estimatedSize];
         System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
@@ -1071,7 +1075,8 @@ public class PdfSigner {
      */
     protected InputStream getRangeStream() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
-        return new RASInputStream(fac.createRanged(getUnderlyingSource(), range));
+        IRandomAccessSource randomAccessSource = fac.createRanged(getUnderlyingSource(), range);
+        return new RASInputStream(randomAccessSource);
     }
 
     /**

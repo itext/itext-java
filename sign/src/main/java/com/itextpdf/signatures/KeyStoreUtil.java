@@ -83,6 +83,7 @@ public class KeyStoreUtil {
                     fin.close();
                 }
             } catch (Exception ex) {
+                // do nothing
             }
         }
     }

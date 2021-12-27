@@ -401,8 +401,7 @@ public class LtvVerifier extends RootStoreVerifier {
         if (pkcs7.verifySignatureIntegrityAndAuthenticity()) {
             LOGGER.info("The signed document has not been modified.");
             return pkcs7;
-        }
-        else {
+        } else {
             throw new VerificationException((Certificate) null, "The document was altered after the final signature was applied.");
         }
     }

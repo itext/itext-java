@@ -866,8 +866,8 @@ public class PdfPKCS7 {
             //
             v = new ASN1EncodableVector();
             for (Object element : certs) {
-                ASN1InputStream tempstream
-                        = new ASN1InputStream(new ByteArrayInputStream(((X509Certificate) element).getEncoded()));
+                ASN1InputStream tempstream = new ASN1InputStream(
+                        new ByteArrayInputStream(((X509Certificate) element).getEncoded()));
                 v.add(tempstream.readObject());
             }
 
@@ -1322,7 +1322,8 @@ public class PdfPKCS7 {
         try {
             crls = new ArrayList<>();
             for (int k = 0; k < seq.size(); ++k) {
-                ByteArrayInputStream ar = new ByteArrayInputStream(seq.getObjectAt(k).toASN1Primitive().getEncoded(ASN1Encoding.DER));
+                ByteArrayInputStream ar = new ByteArrayInputStream(
+                        seq.getObjectAt(k).toASN1Primitive().getEncoded(ASN1Encoding.DER));
                 X509CRL crl = (X509CRL) SignUtils.parseCrlFromStream(ar);
                 crls.add(crl);
             }
@@ -1363,7 +1364,8 @@ public class PdfPKCS7 {
             CertificateID cid = sr.getCertID();
             X509Certificate sigcer = getSigningCertificate();
             X509Certificate isscer = cs[1];
-            CertificateID tis = SignUtils.generateCertificateId(isscer, sigcer.getSerialNumber(), cid.getHashAlgOID());
+            CertificateID tis = SignUtils.generateCertificateId(isscer, sigcer.getSerialNumber(),
+                    cid.getHashAlgOID());
             return tis.equals(cid);
         } catch (Exception ignored) {
         }
@@ -1398,8 +1400,9 @@ public class PdfPKCS7 {
                         seq = (ASN1Sequence) tag.getObject();
                         ret = false;
                         break;
-                    } else
+                    } else {
                         return;
+                    }
                 }
             }
             if (ret)

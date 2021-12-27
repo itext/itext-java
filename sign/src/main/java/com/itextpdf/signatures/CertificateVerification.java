@@ -151,12 +151,14 @@ public class CertificateVerification {
                             cert.verify(certStoreX509.getPublicKey());
                             return result;
                         } catch (Exception e) {
-                            continue;
+                            // do nothing and continue
                         }
                     } catch (Exception ex) {
+                        // do nothing
                     }
                 }
             } catch (Exception e) {
+                // do nothing
             }
             int j;
             for (j = 0; j < certs.length; ++j) {
@@ -168,6 +170,7 @@ public class CertificateVerification {
                     cert.verify(certNext.getPublicKey());
                     break;
                 } catch (Exception e) {
+                    // do nothing
                 }
             }
             if (j == certs.length) {

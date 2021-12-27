@@ -170,7 +170,8 @@ public class CrlClientOnline implements ICrlClient {
                 ar.add(bout.toByteArray());
                 LOGGER.info("Added CRL found at: " + urlt);
             } catch (Exception e) {
-                LOGGER.info(MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, e.getMessage()));
+                LOGGER.info(MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT,
+                        e.getMessage()));
             }
         }
         return ar;

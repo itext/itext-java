@@ -260,7 +260,8 @@ public class DigestAlgorithms {
      */
     public static String getAllowedDigest(String name) {
         if (name == null) {
-            throw new IllegalArgumentException(SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
+            throw new IllegalArgumentException(
+                    SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
         }
         return allowedDigests.get(name.toUpperCase());
     }

@@ -156,13 +156,13 @@ public class CertificateUtil {
             for (int i = 0; i < AccessDescriptions.size(); i++) {
                 ASN1Sequence AccessDescription = (ASN1Sequence) AccessDescriptions.getObjectAt(i);
                 if ( AccessDescription.size() != 2 ) {
-                    continue;
+                    // do nothing and continue
                 }
                 else if (AccessDescription.getObjectAt(0) instanceof ASN1ObjectIdentifier) {
                     ASN1ObjectIdentifier id = (ASN1ObjectIdentifier)AccessDescription.getObjectAt(0);
                     if (SecurityIDs.ID_OCSP.equals(id.getId())) {
                         ASN1Primitive description = (ASN1Primitive)AccessDescription.getObjectAt(1);
-                        String AccessLocation =  getStringFromGeneralName(description);
+                        String AccessLocation = getStringFromGeneralName(description);
                         if (AccessLocation == null) {
                             return "" ;
                         } else {

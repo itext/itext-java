@@ -77,7 +77,8 @@ public class SignaturePolicyInfo {
      * @param policyDigestAlgorithm the digestion algorithm of the signature policy
      * @param policyUri the uri of the full policy description
      */
-    public SignaturePolicyInfo(String policyIdentifier, byte[] policyHash, String policyDigestAlgorithm, String policyUri) {
+    public SignaturePolicyInfo(String policyIdentifier, byte[] policyHash, String policyDigestAlgorithm,
+            String policyUri) {
         if (policyIdentifier == null || policyIdentifier.length() == 0) {
             throw new IllegalArgumentException("Policy identifier cannot be null");
         }
@@ -101,9 +102,10 @@ public class SignaturePolicyInfo {
      * @param policyDigestAlgorithm the digestion algorithm of the signature policy
      * @param policyUri the uri of the full policy description
      */
-    public SignaturePolicyInfo(String policyIdentifier, String policyHashBase64, String policyDigestAlgorithm, String policyUri) {
-        this(policyIdentifier, policyHashBase64 != null ? Base64.decode(policyHashBase64) : null, policyDigestAlgorithm,
-                policyUri);
+    public SignaturePolicyInfo(String policyIdentifier, String policyHashBase64, String policyDigestAlgorithm,
+            String policyUri) {
+        this(policyIdentifier, policyHashBase64 != null ? Base64.decode(policyHashBase64) : null,
+                policyDigestAlgorithm, policyUri);
     }
 
     public String getPolicyIdentifier() {
@@ -133,7 +135,8 @@ public class SignaturePolicyInfo {
         SigPolicyQualifierInfo spqi = null;
 
         if (this.policyUri != null && this.policyUri.length() > 0) {
-            spqi = new SigPolicyQualifierInfo(PKCSObjectIdentifiers.id_spq_ets_uri, new DERIA5String(this.policyUri));
+            spqi = new SigPolicyQualifierInfo(PKCSObjectIdentifiers.id_spq_ets_uri,
+                    new DERIA5String(this.policyUri));
         }
 
         ASN1ObjectIdentifier identifier = ASN1ObjectIdentifier.getInstance(

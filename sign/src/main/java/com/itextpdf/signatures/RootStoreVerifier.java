@@ -102,7 +102,7 @@ public class RootStoreVerifier extends CertificateVerifier {
                     result.addAll(super.verify(signCert, issuerCert, signDate));
                     return result;
                 } catch (GeneralSecurityException e) {
-                    continue;
+                    // do nothing and continue
                 }
             }
             result.addAll(super.verify(signCert, issuerCert, signDate));

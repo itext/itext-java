@@ -165,11 +165,7 @@ public class CRLVerifier extends RootStoreVerifier {
             }
             LOGGER.info("Getting CRL from " + crlurl);
             return (X509CRL) SignUtils.parseCrlFromStream(new URL(crlurl).openStream());
-        }
-        catch(IOException e) {
-            return null;
-        }
-        catch(GeneralSecurityException e) {
+        } catch (IOException | GeneralSecurityException e) {
             return null;
         }
     }
@@ -201,12 +197,12 @@ public class CRLVerifier extends RootStoreVerifier {
                     crl.verify(anchor.getPublicKey());
                     return true;
                 } catch (GeneralSecurityException e) {
-                    continue;
+                    // do nothing and continue
                 }
             }
         }
         catch (GeneralSecurityException e) {
-            return false;
+            // do nothing and return false at the end
         }
         return false;
     }

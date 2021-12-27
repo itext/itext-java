@@ -274,8 +274,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                             throw new VerificationException(issuerCert, "Authorized OCSP responder certificate was revoked.");
                         }
                     } else {
-                        Logger logger = LoggerFactory.getLogger(OCSPVerifier.class);
-                        logger.error("Authorized OCSP responder certificate revocation status cannot be checked");
+                        LOGGER.error("Authorized OCSP responder certificate revocation status cannot be checked");
                         // TODO DEVSIX-5207 throw exception starting from iText version 7.2, but only after OCSPVerifier
                         // would allow explicit setting revocation check end points/provide revocation data
                     }

@@ -69,5 +69,7 @@ public final class SignExceptionMessageConstant {
     public static final String UNKNOWN_KEY_ALGORITHM = "Unknown key algorithm: {0}.";
     public static final String VERIFICATION_ALREADY_OUTPUT = "Verification already output.";
 
-    private SignExceptionMessageConstant(){}
+    private SignExceptionMessageConstant(){
+        // Private constructor will prevent the instantiation of this class directly
+    }
 }
