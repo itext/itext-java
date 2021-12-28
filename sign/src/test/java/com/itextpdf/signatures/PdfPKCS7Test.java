@@ -24,11 +24,14 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
+import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
@@ -51,11 +54,13 @@ import java.security.cert.X509CRL;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.Assert;
@@ -296,6 +301,51 @@ public class PdfPKCS7Test extends ExtendedITextTest {
                 Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
         pkcs7.signCerts = Arrays.asList(new Certificate[]{null, null});
         Assert.assertFalse(pkcs7.isRevocationValid());
+    }
+
+    @Test
+    public void getEncodedPkcs1Test()
+            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
+        String hashAlgorithm = DigestAlgorithms.SHA256;
+        PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
+        byte[] bytes = pkcs7.getEncodedPKCS1();
+        byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs1.txt"));
+        ASN1OctetString outOctetString = ASN1OctetString.getInstance(bytes);
+        ASN1OctetString cmpOctetString = ASN1OctetString.getInstance(cmpBytes);
+        Assert.assertEquals(outOctetString, cmpOctetString);
+    }
+
+    @Test
+    public void getEncodedPkcs1NullPrivateKeyTest()
+            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
+        String hashAlgorithm = DigestAlgorithms.SHA256;
+        PdfPKCS7 pkcs7 = new PdfPKCS7(null, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
+        Exception exception = Assert.assertThrows(PdfException.class, () -> pkcs7.getEncodedPKCS1());
+        Assert.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
+    public void getEncodedPkcs7UnknownExceptionTest()
+            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
+        String hashAlgorithm = DigestAlgorithms.SHA256;
+        PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
+        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(chain), pk);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pkcs7.getEncodedPKCS7(null, CryptoStandard.CMS, testTsa, null, null));
+        Assert.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, exception.getMessage());
+    }
+
+    @Test
+    public void getEncodedPkcs7Test()
+            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
+        String hashAlgorithm = DigestAlgorithms.SHA256;
+        PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
+        byte[] bytes = pkcs7.getEncodedPKCS7();
+        byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs7.txt"));
+        ASN1Primitive outStream = ASN1Primitive.fromByteArray(bytes);
+        ASN1Primitive cmpStream = ASN1Primitive.fromByteArray(cmpBytes);
+        Assert.assertEquals("SHA256withRSA", pkcs7.getDigestAlgorithm());
+        Assert.assertEquals(outStream, cmpStream);
     }
 
     // PdfPKCS7 is created here the same way it's done in PdfSigner#signDetached
