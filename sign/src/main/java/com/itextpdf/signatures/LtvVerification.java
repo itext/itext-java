@@ -59,17 +59,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.ocsp.OCSPResponse;
-import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
-import org.bouncycastle.asn1.ocsp.ResponseBytes;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -84,6 +73,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.ocsp.OCSPResponse;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.asn1.ocsp.ResponseBytes;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Add verification according to PAdES-LTV (part 4).
@@ -360,7 +361,7 @@ public class LtvVerification {
         dss.remove(PdfName.CRLs);
         dss.remove(PdfName.Certs);
         PdfDictionary vrim = dss.getAsDictionary(PdfName.VRI);
-        //delete old validations
+        // delete old validations
         if (vrim != null) {
             for (PdfName n : vrim.keySet()) {
                 if (validated.containsKey(n)) {
@@ -389,25 +390,19 @@ public class LtvVerification {
     }
 
     private static void deleteOldReferences(PdfArray all, PdfArray toDelete) {
-        if (all == null || toDelete == null)
+        if (all == null || toDelete == null) {
             return;
+        }
+
         for (PdfObject pi : toDelete) {
-            PdfIndirectReference pir = pi.getIndirectReference();
+            final PdfIndirectReference pir = pi.getIndirectReference();
 
-            if (pir == null) {
-                continue;
-            }
+            for (int i = 0; i < all.size(); i++) {
+                final PdfIndirectReference pod = all.get(i).getIndirectReference();
 
-            for (int k = 0; k < all.size(); ++k) {
-                PdfIndirectReference pod = all.get(k).getIndirectReference();
-
-                if (pod == null) {
-                    continue;
-                }
-
-                if (pir.getObjNumber() == pod.getObjNumber()) {
-                    all.remove(k);
-                    --k;
+                if (Objects.equals(pir, pod)) {
+                    all.remove(i);
+                    i--;
                 }
             }
         }
