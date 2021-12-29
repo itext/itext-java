@@ -43,6 +43,7 @@
  */
 package com.itextpdf.signatures.testutils;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -53,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.test.ITextTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
@@ -63,8 +65,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import com.itextpdf.test.ITextTest;
+import java.util.stream.Collectors;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
@@ -76,7 +77,6 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ASN1UTCTime;
-import org.bouncycastle.asn1.DERGeneralizedTime;
 import org.bouncycastle.asn1.util.ASN1Dump;
 
 public class SignaturesCompareTool {
@@ -85,6 +85,7 @@ public class SignaturesCompareTool {
     private static final String OID_TST_INFO = "1.2.840.113549.1.9.16.1.4";
     private static final String OID_SIGNING_TIME = "1.2.840.113549.1.9.5";
     private static final String OID_SIGNATURE_TIMESTAMP_ATTRIBUTE = "1.2.840.113549.1.9.16.2.14";
+    private static final String OID_ADBE_REVOCATION_INFO_ARCHIVAL = "1.2.840.113583.1.1.8";
     private static final String OID_OCSP_RESPONSE = "1.3.6.1.5.5.7.48.1.1";
     private static final String OID_OCSP_NONCE_EXTENSION = "1.3.6.1.5.5.7.48.1.2";
 
@@ -123,7 +124,7 @@ public class SignaturesCompareTool {
                 ASN1Sequence outSignedData = (ASN1Sequence) getSignatureContent(sig, outSigUtil);
                 ASN1Sequence cmpSignedData = (ASN1Sequence) getSignatureContent(sig, cmpSigUtil);
 
-                boolean isEqual = compareSignatureObjects(outSignedData, cmpSignedData, errorText);
+                boolean isEqual = compareSignedData(outSignedData, cmpSignedData, errorText);
 
                 if (!isEqual) {
                     createTxtFilesFromAsn1Sequences(outSignedData, cmpSignedData, dest, sig, errorText);
@@ -236,7 +237,19 @@ public class SignaturesCompareTool {
         return compareSequencesWithSignatureValue(parsedOutResponse, parsedCmpResponse, errorText);
     }
 
-    private static boolean compareSignatureObjects(ASN1Sequence outSignedData, ASN1Sequence cmpSignedData,
+    /**
+     * SignedData is top-level CMS-object for signatures, see "5.1. SignedData Type" at
+     * https://datatracker.ietf.org/doc/html/rfc5652#section-5.1 .
+     *
+     * @param outSignedData current output signed data
+     * @param cmpSignedData reference signed data used for comparison as a ground truth
+     * @param errorText     string builder in order to accumulate errors
+     *
+     * @return true if signed data objects are the similar, false otherwise
+     *
+     * @throws IOException is thrown if object data parsing failed
+     */
+    private static boolean compareSignedData(ASN1Sequence outSignedData, ASN1Sequence cmpSignedData,
                                                    StringBuilder errorText) throws IOException {
         if (outSignedData.size() != cmpSignedData.size() || outSignedData.size() != 2) {
             addError(errorText, "Signature top level elements count is incorrect (should be exactly 2):",
@@ -300,8 +313,8 @@ public class SignaturesCompareTool {
             return false;
         }
 
-        ASN1Sequence outSignerInfo = (ASN1Sequence) cmpSignerInfos.getObjectAt(0);
-        ASN1Sequence cmpSignerInfo = (ASN1Sequence) outSignerInfos.getObjectAt(0);
+        ASN1Sequence outSignerInfo = (ASN1Sequence) outSignerInfos.getObjectAt(0);
+        ASN1Sequence cmpSignerInfo = (ASN1Sequence) cmpSignerInfos.getObjectAt(0);
 
         return compareSequencesWithSignatureValue(outSignerInfo, cmpSignerInfo, errorText);
     }
@@ -346,15 +359,15 @@ public class SignaturesCompareTool {
 
         if (cmp instanceof ASN1TaggedObject) {
             return compareAsn1Structures(
-                    ((ASN1TaggedObject) cmp).getObject(), ((ASN1TaggedObject) out).getObject(), errorText);
+                    ((ASN1TaggedObject) out).getObject(), ((ASN1TaggedObject) cmp).getObject(), errorText);
         } else if (cmp instanceof ASN1Sequence) {
             if (!compareContainers(((ASN1Sequence) out).toArray(), ((ASN1Sequence) cmp).toArray(), errorText)) {
-                addError(errorText, "ASN1Sequence objects are different", null, null);
+                addError(errorText, "ASN1Sequence objects are different");
                 return false;
             }
         } else if (cmp instanceof ASN1Set) {
             if (!compareContainers(((ASN1Set) out).toArray(), ((ASN1Set) cmp).toArray(), errorText)) {
-                addError(errorText, "ASN1Set objects are different", null, null);
+                addError(errorText, "ASN1Set objects are different");
                 return false;
             }
         } else if (cmp instanceof ASN1GeneralizedTime || cmp instanceof ASN1UTCTime) {
@@ -394,12 +407,117 @@ public class SignaturesCompareTool {
         if (OID_OCSP_RESPONSE.equals(cmpASN1ObjectId)) {
             return compareOcspResponses(outArray, cmpArray, errorText);
         }
+        if (OID_ADBE_REVOCATION_INFO_ARCHIVAL.equals(cmpASN1ObjectId)) {
+            return compareRevocationInfoArchivalAttribute(outArray, cmpArray, errorText);
+        }
         for (int i = 0; i < cmpArray.length; i++) {
             if (!compareAsn1Structures(outArray[i].toASN1Primitive(), cmpArray[i].toASN1Primitive(), errorText)) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * See ISO 32000-2, 12.8.3.3.2 "Revocation of CMS-based signatures"
+     *
+     * @param out       out signature revocation info attribute value
+     * @param cmp       cmp signature revocation info attribute value
+     * @param errorText string builder in order to accumulate errors
+     *
+     * @return true if signed data objects are the similar, false otherwise
+     */
+    private static boolean compareRevocationInfoArchivalAttribute(ASN1Encodable[] out, ASN1Encodable[] cmp,
+            StringBuilder errorText) throws IOException {
+        String structureIsInvalidError = "Signature revocation info archival attribute structure is invalid";
+        if (!isExpectedRevocationInfoArchivalAttributeStructure(out)
+                || !isExpectedRevocationInfoArchivalAttributeStructure(cmp)) {
+            addError(errorText, structureIsInvalidError,
+                    String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
+                    String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
+            return false;
+        }
+
+        ASN1Sequence outSequence = ((ASN1Sequence) ((ASN1Set) out[1]).getObjectAt(0).toASN1Primitive());
+        ASN1Sequence cmpSequence = ((ASN1Sequence) ((ASN1Set) cmp[1]).getObjectAt(0).toASN1Primitive());
+        if (outSequence.size() != cmpSequence.size()) {
+            addError(errorText,
+                    "Signature revocation info archival attributes have different sets of revocation info types (different sizes)",
+                    String.valueOf(outSequence.size()), String.valueOf(cmpSequence.size()));
+            return false;
+        }
+
+        for (int i = 0; i < outSequence.size(); i++) {
+            if (!(outSequence.getObjectAt(i) instanceof ASN1TaggedObject)
+                    || !(cmpSequence.getObjectAt(i) instanceof ASN1TaggedObject)) {
+                addError(errorText, structureIsInvalidError,
+                        String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
+                        String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
+                return false;
+            }
+            ASN1TaggedObject outTaggedObject = (ASN1TaggedObject) outSequence.getObjectAt(i);
+            ASN1TaggedObject cmpTaggedObject = (ASN1TaggedObject) cmpSequence.getObjectAt(i);
+            if (outTaggedObject.getTagNo() != cmpTaggedObject.getTagNo()) {
+                addError(errorText,
+                        "Signature revocation info archival attributes have different tagged objects tag numbers",
+                        String.valueOf(outTaggedObject.getTagNo()), String.valueOf(cmpTaggedObject.getTagNo()));
+                return false;
+            }
+
+            if (!(outTaggedObject.getObject() instanceof ASN1Sequence)
+                    || !(cmpTaggedObject.getObject() instanceof ASN1Sequence)) {
+                addError(errorText, structureIsInvalidError,
+                        String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
+                        String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
+                return false;
+            }
+
+            // revocation entries can be either CRLs or OCSPs in most cases
+            ASN1Sequence outRevocationEntries = (ASN1Sequence) outTaggedObject.getObject();
+            ASN1Sequence cmpRevocationEntries = (ASN1Sequence) cmpTaggedObject.getObject();
+            if (outRevocationEntries.size() != cmpRevocationEntries.size()) {
+                addError(errorText,
+                        "Signature revocation info archival attributes have different number of entries",
+                        String.valueOf(outRevocationEntries.size()), String.valueOf(cmpRevocationEntries.size()));
+                return false;
+            }
+
+            if (outTaggedObject.getTagNo() == 0) {
+                // CRL revocation info case
+                for (int j = 0; j < outRevocationEntries.size(); j++) {
+                    if (!(outRevocationEntries.getObjectAt(j) instanceof ASN1Sequence)
+                            || !(outRevocationEntries.getObjectAt(j) instanceof ASN1Sequence)) {
+                        addError(errorText,
+                                "Signature revocation info attribute has unexpected CRL entry type",
+                                outRevocationEntries.getObjectAt(j).getClass().getName().toString(),
+                                cmpRevocationEntries.getObjectAt(j).getClass().getName().toString());
+                        return false;
+                    }
+                    if (!compareSequencesWithSignatureValue(
+                            ((ASN1Sequence) outRevocationEntries.getObjectAt(j)),
+                            ((ASN1Sequence) cmpRevocationEntries.getObjectAt(j)), errorText)) {
+                        addError(errorText,
+                                MessageFormatUtil.format(
+                                        "Signature revocation info attribute CRLs at {0} are different",
+                                        String.valueOf(j)));
+                        return false;
+                    }
+                }
+            } else {
+                if (!compareAsn1Structures(outRevocationEntries, cmpRevocationEntries, errorText)) {
+                    addError(errorText, "Revocation info attribute entries are different");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isExpectedRevocationInfoArchivalAttributeStructure(ASN1Encodable[] container) {
+        return container.length == 2
+                && container[1] instanceof ASN1Set
+                && ((ASN1Set) container[1]).size() == 1
+                && ((ASN1Set) container[1]).getObjectAt(0).toASN1Primitive() instanceof ASN1Sequence;
     }
 
     private static boolean compareTimestampAttributes(ASN1Encodable[] out, ASN1Encodable[] cmp,
@@ -410,13 +528,14 @@ public class SignaturesCompareTool {
                 ASN1Primitive cmpSequence = ((ASN1Set) cmp[1]).getObjectAt(0).toASN1Primitive();
 
                 if (outSequence instanceof ASN1Sequence && cmpSequence instanceof ASN1Sequence) {
-                    return compareSignatureObjects((ASN1Sequence) outSequence, (ASN1Sequence) cmpSequence, errorText);
+                    return compareSignedData((ASN1Sequence) outSequence, (ASN1Sequence) cmpSequence, errorText);
                 }
             }
         }
 
-        addError(errorText,
-                "Signature timestamp attribute structure is invalid", Arrays.toString(out), Arrays.toString(cmp));
+        addError(errorText, "Signature timestamp attribute structure is invalid",
+                String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
+                String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
         return false;
     }
 
