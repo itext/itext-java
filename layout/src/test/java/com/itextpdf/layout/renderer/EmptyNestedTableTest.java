@@ -71,6 +71,7 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO DEVSIX-6255 Implementation of the application border attributes for cells
     public void buildEmptyTable() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "emptyNestedTableTest.pdf";
