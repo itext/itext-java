@@ -481,7 +481,7 @@
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
-            <version>0.14.4</version>
+            <version>0.15.4</version>
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -496,8 +496,6 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
-              <!-- TODO DEVSIX-5576 Enable japicmp after major release -->
-              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
