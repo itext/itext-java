@@ -55,6 +55,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
@@ -63,10 +64,13 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Map;
 
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
+
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -724,6 +728,10 @@ public class PdfReader implements Closeable {
         }
         try {
             readXref();
+        } catch (XrefCycledReferencesException ex) {
+            // Throws an exception when xref stream has cycled references(due to lack of opportunity to fix such an
+            // issue) or xref tables have cycled references and PdfReader.StrictnessLevel set to CONSERVATIVE.
+            throw ex;
         } catch (RuntimeException ex) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
             logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, ex);
@@ -961,11 +969,13 @@ public class PdfReader implements Closeable {
     protected void readXref() throws IOException {
         tokens.seek(tokens.getStartxref());
         tokens.nextToken();
-        if (!tokens.tokenValueEqualsTo(PdfTokenizer.Startxref))
+        if (!tokens.tokenValueEqualsTo(PdfTokenizer.Startxref)) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND, tokens);
+        }
         tokens.nextToken();
-        if (tokens.getTokenType() != PdfTokenizer.TokenType.Number)
+        if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_STARTXREF_IS_NOT_FOLLOWED_BY_A_NUMBER, tokens);
+        }
         long startxref = tokens.getLongValue();
         lastXref = startxref;
         eofPos = tokens.getPosition();
@@ -974,7 +984,10 @@ public class PdfReader implements Closeable {
                 xrefStm = true;
                 return;
             }
+        } catch (XrefCycledReferencesException cycledReferencesException) {
+            throw cycledReferencesException;
         } catch (Exception ignored) {
+            // Do nothing.
         }
         // clear xref because of possible issues at reading xref stream.
         pdfDocument.getXref().clear();
@@ -982,19 +995,30 @@ public class PdfReader implements Closeable {
         tokens.seek(startxref);
         trailer = readXrefSection();
 
-        //  Prev key - integer value
-        //  (Present only if the file has more than one cross-reference section; shall be an indirect reference)
+        //  Prev key - integer value.
+        //  (Present only if the file has more than one cross-reference section; shall be an indirect reference).
         // The byte offset in the decoded stream from the beginning of the file
         // to the beginning of the previous cross-reference section.
         PdfDictionary trailer2 = trailer;
+        final Set<Long> alreadyVisitedXrefTables = new HashSet<>();
         while (true) {
+            alreadyVisitedXrefTables.add(startxref);
             PdfNumber prev = (PdfNumber) trailer2.get(PdfName.Prev);
-            if (prev == null)
+            if (prev == null) {
                 break;
-            if (prev.longValue() == startxref)
-                throw new PdfException(KernelExceptionMessageConstant.
-                        TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION);
-            startxref = prev.longValue();
+            }
+            long prevXrefOffset = prev.longValue();
+            if (alreadyVisitedXrefTables.contains(prevXrefOffset)) {
+                if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
+                    // Throw the exception to rebuild xref table, it'll be caught in method above.
+                    throw new PdfException(KernelExceptionMessageConstant.
+                            TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION);
+                } else {
+                    throw new XrefCycledReferencesException(
+                            KernelExceptionMessageConstant.XREF_TABLE_HAS_CYCLED_REFERENCES);
+                }
+            }
+            startxref = prevXrefOffset;
             tokens.seek(startxref);
             trailer2 = readXrefSection();
         }
@@ -1098,6 +1122,7 @@ public class PdfReader implements Closeable {
     }
 
     protected boolean readXrefStream(long ptr) throws IOException {
+        final Set<Long> alreadyVisitedXrefStreams = new HashSet<>();
         while (ptr != -1) {
             tokens.seek(ptr);
             if (!tokens.nextToken()) {
@@ -1112,6 +1137,7 @@ public class PdfReader implements Closeable {
             if (!tokens.nextToken() || !tokens.tokenValueEqualsTo(PdfTokenizer.Obj)) {
                 return false;
             }
+            alreadyVisitedXrefStreams.add(ptr);
             PdfXrefTable xref = pdfDocument.getXref();
             PdfObject object = readObject(false);
             PdfStream xrefStream;
@@ -1208,6 +1234,10 @@ public class PdfReader implements Closeable {
                 }
             }
             ptr = prev;
+            if (alreadyVisitedXrefStreams.contains(ptr)) {
+                throw new XrefCycledReferencesException(
+                        KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES);
+            }
         }
         return true;
     }

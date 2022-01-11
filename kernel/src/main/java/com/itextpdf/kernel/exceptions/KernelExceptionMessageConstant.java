@@ -328,7 +328,11 @@ public final class KernelExceptionMessageConstant {
     public static final String WMF_IMAGE_EXCEPTION = "WMF image exception.";
     public static final String WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS = "Wrong media box size: {0}. Need at least 4 "
             + "arguments";
+    public static final String XREF_TABLE_HAS_CYCLED_REFERENCES =
+            "Xref table has cycled references. Prev pointer indicates an already visited xref table.";
     public static final String XREF_SUBSECTION_NOT_FOUND = "xref subsection not found.";
+    public static final String XREF_STREAM_HAS_CYCLED_REFERENCES =
+            "Xref stream has cycled references. Prev pointer indicates an already visited xref stream.";
     public static final String YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You have to "
             + "define a boolean array for this collection sort dictionary.";
     public static final String YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX = "You must set a value before adding a "
