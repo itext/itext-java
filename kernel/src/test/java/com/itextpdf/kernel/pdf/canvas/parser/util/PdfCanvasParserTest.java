@@ -22,9 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.util;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -35,12 +37,11 @@ import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -78,5 +79,25 @@ public class PdfCanvasParserTest extends ExtendedITextTest {
 
         Assert.assertTrue(new CompareTool().compareArrays(cmpArray,
                 (((PdfDictionary) actual.get(1)).getAsArray(new PdfName("ColorantsDef")))));
+    }
+
+    @Test
+    public void parseArrayTest() throws IOException {
+        String inputFileName = sourceFolder + "innerArraysInContentStreamWithEndDictToken.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName));
+
+        byte[] docInBytes = pdfDocument.getFirstPage().getContentBytes();
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+
+        PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(factory.createSource(docInBytes)));
+        PdfResources resources = pdfDocument.getPage(1).getResources();
+        PdfCanvasParser ps = new PdfCanvasParser(tokeniser, resources);
+
+         Exception exception = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> ps.parse(null));
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"),
+                exception.getCause().getMessage());
     }
 }

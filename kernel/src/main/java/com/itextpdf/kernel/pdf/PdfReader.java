@@ -65,6 +65,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.itextpdf.kernel.xmp.XMPException;
@@ -942,9 +943,11 @@ public class PdfReader implements Closeable {
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                    tokens.throwError(KernelExceptionMessageConstant.UNEXPECTED_GT_GT);
+                    tokens.throwError(MessageFormatUtil.
+                            format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"));
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                    tokens.throwError(KernelExceptionMessageConstant.UNEXPECTED_CLOSE_BRACKET);
+                    tokens.throwError(MessageFormatUtil.
+                            format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "]"));
             }
             dic.put(name, obj);
         }
@@ -956,10 +959,10 @@ public class PdfReader implements Closeable {
         while (true) {
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
-                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                    break;
-                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                    tokens.throwError(KernelExceptionMessageConstant.UNEXPECTED_GT_GT);
+                if (tokens.getTokenType() != PdfTokenizer.TokenType.EndArray) {
+                    processArrayReadError();
+                }
+                break;
             }
             array.add(obj);
         }
@@ -1318,6 +1321,17 @@ public class PdfReader implements Closeable {
 
     boolean isMemorySavingMode() {
         return memorySavingMode;
+    }
+
+    private void processArrayReadError() {
+        final String error = MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN,
+                new String(tokens.getByteContent(), StandardCharsets.UTF_8));
+        if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
+            final Logger logger = LoggerFactory.getLogger(PdfReader.class);
+            logger.error(error);
+        } else {
+            tokens.throwError(error);
+        }
     }
 
     private void readDecryptObj() {
