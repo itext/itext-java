@@ -2050,6 +2050,150 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN)
+    })
+    public void endDicInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayEndDictToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    public void endArrayClosingBracketInsteadOfEndDicTest() {
+        String fileName = sourceFolder + "endArrayClosingBracketInsteadOfEndDic.pdf";
+        Exception exception = Assert.assertThrows(com.itextpdf.io.IOException.class,
+                () -> new PdfDocument(new PdfReader(fileName)));
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "]"),
+                exception.getCause().getMessage());
+    }
+
+    @Test
+    public void endDicClosingBracketInsideTheDicTest() {
+        String fileName = sourceFolder + "endDicClosingBracketInsideTheDic.pdf";
+        Exception exception = Assert.assertThrows(com.itextpdf.io.IOException.class,
+                () -> new PdfDocument(new PdfReader(fileName)));
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"),
+                exception.getCause().getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN)
+    })
+    public void eofInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayEOFToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN)
+    })
+    public void endObjInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayEndObjToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+    })
+    public void nameInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayNameToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN)
+    })
+    public void objInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayObjToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN)
+    })
+    public void refInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayRefToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN, count = 2)
+    })
+    public void startArrayInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayStartArrayToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelExceptionMessageConstant.UNEXPECTED_TOKEN),
+            @LogMessage(messageTemplate = LogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)
+    })
+    public void stringInsteadOfArrayClosingBracketTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayStringToken.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(fileName));
+        PdfArray actual = (PdfArray) document.getPdfObject(4);
+        PdfArray expected = new PdfArray(new float[]{5, 10, 15, 20});
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
+    @Test
+    public void closingArrayBracketMissingConservativeTest() throws IOException {
+        String fileName = sourceFolder + "invalidArrayObjToken.pdf";
+        PdfReader reader = new PdfReader(fileName);
+        reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+        PdfDocument document = new PdfDocument(reader);
+        Exception exception = Assert.assertThrows(com.itextpdf.io.IOException.class,
+                () -> document.getPdfObject(4));
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "obj"),
+                exception.getCause().getMessage());
+    }
+
     private static File copyFileForTest(String fileName, String copiedFileName) throws IOException {
         File copiedFile = new File(copiedFileName);
         Files.copy(Paths.get(fileName), Paths.get(copiedFileName));

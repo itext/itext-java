@@ -43,8 +43,10 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.util;
 
+import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -173,10 +175,12 @@ public class PdfCanvasParser {
         PdfArray array = new PdfArray();
         while (true) {
             PdfObject obj = readObject();
-            if (!obj.isArray() && tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray)
+            if (!obj.isArray() && tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray) {
                 break;
-            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic && obj.getType() != PdfObject.DICTIONARY)
-                tokeniser.throwError(PdfException.UnexpectedGtGt);
+            }
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic && obj.getType() != PdfObject.DICTIONARY) {
+                tokeniser.throwError(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"));
+            }
             array.add(obj);
         }
         return array;
