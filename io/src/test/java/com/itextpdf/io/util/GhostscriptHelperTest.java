@@ -64,7 +64,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
 
     // In some of the test we will check whether Ghostscript has printed its help message to the console.
     // The value of this threshold should be definitely less than the length of the help message.
-    private static final int SYSTEM_OUT_LENGTH_LIMIT = 400;
+    private static final int SYSTEM_OUT_LENGTH_LIMIT = 450;
 
     @Before
     public void setUp() {
