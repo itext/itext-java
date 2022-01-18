@@ -54,15 +54,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class InlineImageParsingUtilsTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void iccBasedCsTest() {
@@ -104,12 +100,11 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
     @Test
     public void csInDictAsNameNullTest() {
         PdfName colorSpace = PdfName.ICCBased;
-
         PdfDictionary dictionary = new PdfDictionary();
-
-        junitExpectedException.expect(InlineImageParseException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"));
-        InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary);
+        Exception exception = Assert.assertThrows(InlineImageParseException.class,
+                () -> InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"),
+                exception.getMessage());
     }
 
     @Test
@@ -124,9 +119,10 @@ public class InlineImageParsingUtilsTest extends ExtendedITextTest {
         array.add(stream);
         dictionary.put(colorSpace, array);
 
-        junitExpectedException.expect(InlineImageParseException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"));
-        InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary);
+        Exception exception = Assert.assertThrows(InlineImageParseException.class,
+                () -> InlineImageParsingUtils.getComponentsPerPixel(colorSpace, dictionary));
+        Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE, "/ICCBased"),
+                exception.getMessage());
     }
 
     @Test

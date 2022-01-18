@@ -42,8 +42,8 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -56,34 +56,29 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
 public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
 
     @Before
     public void setUp() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void taggedPdfReaderToolTest01() throws IOException, ParserConfigurationException, SAXException {
         String filename = "iphone_user_guide.pdf";
 
-        String outXmlPath = destinationFolder + "outXml01.xml";
-        String cmpXmlPath = sourceFolder + "cmpXml01.xml";
+        String outXmlPath = DESTINATION_FOLDER + "outXml01.xml";
+        String cmpXmlPath = SOURCE_FOLDER + "cmpXml01.xml";
 
-        PdfReader reader = new PdfReader(sourceFolder + filename);
+        PdfReader reader = new PdfReader(SOURCE_FOLDER + filename);
 
         try (FileOutputStream outXml = new FileOutputStream(outXmlPath);
              PdfDocument document = new PdfDocument(reader)) {
@@ -101,16 +96,16 @@ public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
     @Test
     public void noStructTreeRootInDocTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT);
-
-        String outXmlPath = destinationFolder + "noStructTreeRootInDoc.xml";
+        String outXmlPath = DESTINATION_FOLDER + "noStructTreeRootInDoc.xml";
 
         try {
             PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
             TaggedPdfReaderTool tool = new TaggedPdfReaderTool(pdfDocument);
             try (FileOutputStream outXml = new FileOutputStream(outXmlPath)) {
-                tool.convertToXml(outXml, "UTF-8");
+                Exception exception = Assert.assertThrows(PdfException.class,
+                        () -> tool.convertToXml(outXml, "UTF-8"));
+                Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_DOES_NOT_CONTAIN_STRUCT_TREE_ROOT,
+                        exception.getMessage());
             }
         } catch (IOException e) {
             Assert.fail("IOException is not expected to be triggered");

@@ -22,14 +22,14 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.actions.sequence.SequenceIdManager;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -46,30 +46,25 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class DocumentTest extends ExtendedITextTest {
-    private static final TestConfigurationEvent CONFIGURATION_ACCESS = new TestConfigurationEvent();
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private static final TestConfigurationEvent CONFIGURATION_ACCESS = new TestConfigurationEvent();
 
     @Test
     public void executeActionInClosedDocTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException
-                .expectMessage(LayoutExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION);
-
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
         Paragraph paragraph = new Paragraph("test");
         document.add(paragraph);
         document.close();
-        document.checkClosingStatus();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> document.checkClosingStatus());
+        Assert.assertEquals(LayoutExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION,
+                exception.getMessage());
     }
 
     @Test

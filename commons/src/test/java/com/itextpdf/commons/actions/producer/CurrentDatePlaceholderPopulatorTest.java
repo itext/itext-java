@@ -31,24 +31,19 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Date;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
     private final CurrentDatePlaceholderPopulator populator = new CurrentDatePlaceholderPopulator();
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void nullTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"));
-
-        populator.populate(null, null);
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(null, null));
+        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"),
+                exception.getMessage());
     }
 
     @Test
@@ -89,26 +84,26 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
 
     @Test
     public void plainTextEndlessQuotationErrorTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(CommonsExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION);
-
-        populator.populate(null, "'plain text");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(null, "'plain text"));
+        Assert.assertEquals(CommonsExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION,
+                exception.getMessage());
     }
 
     @Test
     public void plainTextMultipleQuotationsEndlessQuotationErrorTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(CommonsExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION);
-
-        populator.populate(null, "'plain'' ''text");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(null, "'plain'' ''text"));
+        Assert.assertEquals(CommonsExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION,
+                exception.getMessage());
     }
 
     @Test
     public void plainTextEscapedApostropheEndlessQuotationErrorTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(CommonsExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION);
-
-        populator.populate(null, "'plain text\\'");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(null, "'plain text\\'"));
+        Assert.assertEquals(CommonsExceptionMessageConstant.PATTERN_CONTAINS_OPEN_QUOTATION,
+                exception.getMessage());
     }
 
     @Test
@@ -128,25 +123,25 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
 
     @Test
     public void unexpectedLetterComponentTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "t"));
-
-        populator.populate(null, "dd MM tyy yyyy HH");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(null, "dd MM tyy yyyy HH"));
+        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "t"),
+                exception.getMessage());
     }
 
     @Test
     public void unexpectedLongComponentTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "MMMMM"));
-
-        populator.populate(null, "dd MMMMM yy yyyy HH");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(null, "dd MMMMM yy yyyy HH"));
+        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "MMMMM"),
+                exception.getMessage());
     }
 
     @Test
     public void unexpectedShortComponentTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "y"));
-
-        populator.populate(null, "dd MM y yyyy HH");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(null, "dd MM y yyyy HH"));
+        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_COMPONENT, "y"),
+                exception.getMessage());
     }
 }

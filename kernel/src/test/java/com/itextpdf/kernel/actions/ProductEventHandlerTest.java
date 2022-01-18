@@ -33,18 +33,13 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class ProductEventHandlerTest extends ExtendedITextTest {
 
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/actions/";
 
     @Test
     public void documentIdBasedEventTest() throws IOException {

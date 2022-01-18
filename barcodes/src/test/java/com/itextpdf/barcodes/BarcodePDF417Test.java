@@ -42,11 +42,11 @@
  */
 package com.itextpdf.barcodes;
 
+import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -63,28 +63,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class BarcodePDF417Test extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodePDF417/";
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/barcodes/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/barcodes/BarcodePDF417/";
     
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode417_01.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -101,14 +97,15 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode417_02.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
-        PdfReader reader = new PdfReader(sourceFolder + "DocumentWithTrueTypeFont1.pdf");
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfReader reader = new PdfReader(SOURCE_FOLDER + "DocumentWithTrueTypeFont1.pdf");
         PdfDocument document = new PdfDocument(reader, writer);
 
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());
@@ -124,13 +121,14 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void macroPDF417Test01() throws IOException, InterruptedException {
         String filename = "barcode417Macro_01.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDocument = new PdfDocument(writer);
 
         PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -140,7 +138,8 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -195,7 +194,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417CreateAWTImageTest() throws IOException, InterruptedException {
         String filename = "barcode417CreateAWTImageTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -216,14 +215,14 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
     @Test
     public void barcode417XObjectTest() throws IOException, InterruptedException {
         String filename = "barcode417XObjectTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -242,8 +241,8 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
     @Test
@@ -273,7 +272,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417CodeReuseTest() throws IOException, InterruptedException {
         String filename = "barcode417CodeReuseTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -295,14 +294,14 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
     @Test
     public void barcode417NumbersTest() throws IOException, InterruptedException {
         String filename = "barcode417NumbersTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -315,14 +314,14 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
     @Test
     public void barcode417ByteLessThanSixSizeNumbersTest() throws IOException, InterruptedException {
         String filename = "barcode417ByteLessThanSixSizeNumbersTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -335,14 +334,14 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
     @Test
     public void barcode417ByteMoreThanSixSizeNumbersTest() throws IOException, InterruptedException {
         String filename = "barcode417ByteMoreThanSixSizeNumbersTest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -355,8 +354,8 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
     @Test
@@ -460,36 +459,33 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
     @Test
     public void lenCodewordsIsNotEnoughTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE);
-
         BarcodePDF417 barcodePDF417 = new BarcodePDF417();
         barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
-        barcodePDF417.paintCode();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> barcodePDF417.paintCode());
+        Assert.assertEquals(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test
     public void lenCodewordsIsTooSmallTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE);
-
         BarcodePDF417 barcodePDF417 = new BarcodePDF417();
         barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
         // lenCodeWords should be bigger than 1
         barcodePDF417.setLenCodewords(0);
-        barcodePDF417.paintCode();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> barcodePDF417.paintCode());
+        Assert.assertEquals(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test
     public void lenCodewordsMoreThanMaxDataCodewordsTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE);
-
         BarcodePDF417 barcodePDF417 = new BarcodePDF417();
         barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
         // lenCodeWords should be smaller than MAX_DATA_CODEWORDS
         barcodePDF417.setLenCodewords(927);
-        barcodePDF417.paintCode();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> barcodePDF417.paintCode());
+        Assert.assertEquals(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     private PdfFormXObject createMacroBarcodePart(PdfDocument document, String text, float mh, float mw, int segmentId) {

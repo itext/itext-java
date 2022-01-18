@@ -22,10 +22,10 @@
  */
 package com.itextpdf.commons.actions;
 
+import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.ecosystem.TestConfigurationEvent;
 import com.itextpdf.commons.exceptions.AggregatedException;
-import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -34,16 +34,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class EventManagerTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     @LogMessages(messages = {
@@ -86,13 +81,12 @@ public class EventManagerTest extends ExtendedITextTest {
         EventManager eventManager = EventManager.getInstance();
         IEventHandler handler1 = new ThrowArithmeticExpHandler();
         eventManager.register(handler1);
-
         try {
             SequenceId sequenceId = new SequenceId();
-
-            junitExpectedException.expect(ArithmeticException.class);
-            junitExpectedException.expectMessage("ThrowArithmeticExpHandler");
-            eventManager.onEvent(new ITextTestEvent(sequenceId, null, "test-event", ProductNameConstant.ITEXT_CORE));
+            Exception exception = Assert.assertThrows(ArithmeticException.class,
+                    () -> eventManager.onEvent(
+                            new ITextTestEvent(sequenceId, null, "test-event", ProductNameConstant.ITEXT_CORE)));
+            Assert.assertEquals("ThrowArithmeticExpHandler", exception.getMessage());
         } finally {
             eventManager.unregister(handler1);
         }

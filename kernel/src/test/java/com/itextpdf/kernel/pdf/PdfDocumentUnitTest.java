@@ -23,12 +23,12 @@
 
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.font.AdobeGlyphList;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.font.AdobeGlyphList;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
@@ -44,17 +44,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfDocumentUnitTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentUnitTest/";
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentUnitTest/";
 
     @Test
     @LogMessages(messages = {
@@ -221,7 +217,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void pdfDocumentInstanceNoWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
 
         Assert.assertNull(pdfDocument.info);
         Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
@@ -235,7 +231,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     @Test
     public void pdfDocumentInstanceWriterInfoAndConformanceLevelInitialization() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream()));
+                new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream()));
 
         Assert.assertNotNull(pdfDocument.info);
         Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
@@ -248,7 +244,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void extendedPdfDocumentNoWriterInfoAndConformanceLevelInitialization() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf")) {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf")) {
             // This class instance extends pdfDocument
         };
 
@@ -265,7 +261,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     @Test
     public void extendedPdfDocumentWriterInfoAndConformanceLevelInitialization() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream())) {
+                new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"), new PdfWriter(new ByteArrayOutputStream())) {
             // This class instance extends pdfDocument
         };
 
@@ -281,7 +277,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void getDocumentInfoAlreadyClosedTest() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
         pdfDocument.close();
 
         Assert.assertThrows(PdfException.class, () -> pdfDocument.getDocumentInfo());
@@ -289,7 +285,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void getDocumentInfoNotInitializedTest() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
 
         Assert.assertNull(pdfDocument.info);
         Assert.assertNotNull(pdfDocument.getDocumentInfo());
@@ -299,7 +295,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void getPdfAConformanceLevelNotInitializedTest() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "pdfWithMetadata.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
 
         Assert.assertNull(pdfDocument.reader.pdfAConformanceLevel);
         Assert.assertNotNull(pdfDocument.reader.getPdfAConformanceLevel());
@@ -356,111 +352,100 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void cannotGetTagStructureForUntaggedDocumentTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT);
-
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        pdfDoc.getTagStructureContext();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc.getTagStructureContext());
+        Assert.assertEquals(KernelExceptionMessageConstant.MUST_BE_A_TAGGED_DOCUMENT, exception.getMessage());
     }
 
     @Test
     public void cannotAddPageAfterDocumentIsClosedTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException
-                .expectMessage(KernelExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION);
-
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage(1);
         pdfDoc.close();
-        pdfDoc.addNewPage(2);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc.addNewPage(2));
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_CLOSED_IT_IS_IMPOSSIBLE_TO_EXECUTE_ACTION,
+                exception.getMessage());
     }
 
     @Test
     public void cannotMovePageToZeroPositionTest() {
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        junitExpectedException.expectMessage(
-                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 0));
-
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
-        pdfDoc.movePage(1, 0);
+        Exception exception = Assert.assertThrows(IndexOutOfBoundsException.class,
+                () -> pdfDoc.movePage(1, 0));
+        Assert.assertEquals(
+                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 0),
+                exception.getMessage());
     }
 
     @Test
     public void cannotMovePageToNegativePosition() {
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        junitExpectedException.expectMessage(
-                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, -1));
-
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
-        pdfDoc.movePage(1, -1);
+        Exception exception = Assert.assertThrows(IndexOutOfBoundsException.class,
+                () -> pdfDoc.movePage(1, -1));
+        Assert.assertEquals(
+                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, -1),
+                exception.getMessage());
     }
 
     @Test
     public void cannotMovePageToOneMorePositionThanPagesNumberTest() {
-        junitExpectedException.expect(IndexOutOfBoundsException.class);
-        junitExpectedException.expectMessage(
-                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 3));
-
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc.addNewPage();
-        pdfDoc.movePage(1, 3);
+        Exception exception = Assert.assertThrows(IndexOutOfBoundsException.class,
+                () -> pdfDoc.movePage(1, 3));
+        Assert.assertEquals(
+                MessageFormatUtil.format(KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, 3),
+                exception.getMessage());
     }
 
     @Test
-    public void cannotAddPageToAnotherDocumentTest01() {
+    public void cannotAddPageToAnotherDocumentTest() {
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc1.addNewPage(1);
-
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc2.checkAndAddPage(1, pdfDoc1.getPage(1)));
+        Assert.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
-                pdfDoc1,
-                1,
-                pdfDoc2));
-
-        pdfDoc2.checkAndAddPage(1, pdfDoc1.getPage(1));
+                pdfDoc1, 1, pdfDoc2), exception.getMessage());
     }
 
     @Test
-    public void cannotAddPageToAnotherDocumentTest02() {
+    public void cannotAddPageToAnotherDocTest() {
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDoc1.addNewPage(1);
-
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc2.checkAndAddPage(pdfDoc1.getPage(1)));
+        Assert.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT,
-                pdfDoc1,
-                1,
-                pdfDoc2));
-
-        pdfDoc2.checkAndAddPage(pdfDoc1.getPage(1));
+                pdfDoc1, 1, pdfDoc2), exception.getMessage());
     }
 
     @Test
     public void cannotSetEncryptedPayloadInReadingModeTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(
-                KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_DOCUMENT_OPENED_IN_READING_MODE);
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "setEncryptedPayloadInReadingModeTest.pdf"));
-        pdfDoc.setEncryptedPayload(null);
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "setEncryptedPayloadInReadingModeTest.pdf"));
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc.setEncryptedPayload(null));
+        Assert.assertEquals(
+                KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_DOCUMENT_OPENED_IN_READING_MODE,
+                exception.getMessage());
     }
 
     @Test
     public void cannotSetEncryptedPayloadToEncryptedDocTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(
-                KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
-
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setStandardEncryption(new byte[] {}, new byte[] {}, 1, 1);
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(), writerProperties));
         PdfFileSpec fs = PdfFileSpec
-                .createExternalFileSpec(pdfDoc, sourceFolder + "testPath");
-        pdfDoc.setEncryptedPayload(fs);
+                .createExternalFileSpec(pdfDoc, SOURCE_FOLDER + "testPath");
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfDoc.setEncryptedPayload(fs));
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT,
+                exception.getMessage());
     }
 }

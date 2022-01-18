@@ -57,29 +57,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(IntegrationTest.class)
 public class BarcodeCodabarTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/Codabar/";
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/barcodes/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/barcodes/Codabar/";
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "codabar.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -94,51 +89,47 @@ public class BarcodeCodabarTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool()
-                .compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder,
+                .compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER,
                         "diff_"));
     }
 
     @Test
     public void barcodeHasNoAbcdAsStartCharacterTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(
-                BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER);
-
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
-        codabar.getBarsCodabar("qbcd");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> codabar.getBarsCodabar("qbcd"));
+        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
+                exception.getMessage());
     }
 
     @Test
     public void barcodeHasNoAbcdAsStopCharacterTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(
-                BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER);
-
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
-        codabar.getBarsCodabar("abcf");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> codabar.getBarsCodabar("abcf"));
+        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
+                exception.getMessage());
     }
 
     @Test
     public void barcodeHasNoAbcdAsStartAndStopCharacterTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(
-                BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER);
-
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
-        codabar.getBarsCodabar("qbcq");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> codabar.getBarsCodabar("qbcq"));
+        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
+                exception.getMessage());
     }
 
     @Test
     public void barcodeHasNoStartAndStopCharacterTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(
-                BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_AT_LEAST_START_AND_STOP_CHARACTER);
-
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
-        codabar.getBarsCodabar("");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> codabar.getBarsCodabar(""));
+        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_AT_LEAST_START_AND_STOP_CHARACTER,
+                exception.getMessage());
     }
 }
