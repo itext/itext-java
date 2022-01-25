@@ -44,11 +44,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.exceptions.IoExceptionMessage;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.exceptions.InvalidXRefPrevException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -2221,6 +2223,53 @@ public class PdfReaderTest extends ExtendedITextTest {
                 () -> document.getPdfObject(4));
         Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "obj"),
                 exception.getCause().getMessage());
+    }
+
+    @Test
+    public void readRASInputStreamClosedTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "hello.pdf";
+        try (InputStream pdfStream = new FileInputStream(fileName)) {
+
+            IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
+                    .extractOrCreateSource(pdfStream);
+            RASInputStream rasInputStream = new RASInputStream(randomAccessSource);
+
+            randomAccessSource.close();
+
+            Exception e = Assert.assertThrows(IllegalStateException.class,
+                    () -> new PdfReader(rasInputStream));
+            Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+        }
+    }
+
+    @Test
+    public void readRASInputStreamTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "hello.pdf";
+        try (InputStream pdfStream = new FileInputStream(fileName)) {
+            IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
+                    .extractOrCreateSource(pdfStream);
+            RASInputStream rasInputStream = new RASInputStream(randomAccessSource);
+
+            try (PdfReader reader = new PdfReader(rasInputStream)) {
+                randomAccessSource.close();
+                Exception e = Assert.assertThrows(IllegalStateException.class, () -> new PdfDocument(reader));
+                Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+            }
+        }
+    }
+
+    @Test
+    public void readRASInputStreamValidTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "hello.pdf";
+        try (InputStream pdfStream = new FileInputStream(fileName)) {
+            IRandomAccessSource randomAccessSource = new RandomAccessSourceFactory()
+                    .extractOrCreateSource(pdfStream);
+            RASInputStream rasInputStream = new RASInputStream(randomAccessSource);
+
+            try (PdfReader reader = new PdfReader(rasInputStream)) {
+                AssertUtil.doesNotThrow(() -> new PdfDocument(reader));
+            }
+        }
     }
 
     private static File copyFileForTest(String fileName, String copiedFileName) throws IOException {

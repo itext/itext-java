@@ -140,10 +140,37 @@ public final class RandomAccessSourceFactory {
     }
 
     /**
-     * Creates a {@link IRandomAccessSource} based on an {@link InputStream}.  The full content of the InputStream is read into memory and used
+     * Creates or extracts a {@link IRandomAccessSource} based on an {@link InputStream}.
+     *
+     * <p>
+     * If the InputStream is an instance of {@link RASInputStream} then extracts the source from it.
+     * Otherwise The full content of the InputStream is read into memory and used
      * as the source for the {@link IRandomAccessSource}
+     *
      * @param inputStream the stream to read from
+     *
+     * @return the newly created or extracted {@link IRandomAccessSource}
+     *
+     * @throws java.io.IOException in case of any I/O error.
+     */
+    public IRandomAccessSource extractOrCreateSource(InputStream inputStream) throws java.io.IOException {
+        if (inputStream instanceof RASInputStream) {
+            return ((RASInputStream) inputStream).getSource();
+        }
+        return createSource(StreamUtil.inputStreamToArray(inputStream));
+    }
+
+    /**
+     * Creates a {@link IRandomAccessSource} based on an {@link InputStream}.
+     *
+     * <p>
+     * The full content of the InputStream is read into memory and used
+     * as the source for the {@link IRandomAccessSource}
+     *
+     * @param inputStream the stream to read from
+     *
      * @return the newly created {@link IRandomAccessSource}
+     *
      * @throws java.io.IOException in case of any I/O error.
      */
     public IRandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
@@ -168,7 +195,6 @@ public final class RandomAccessSourceFactory {
                     || filename.startsWith("http://")
                     || filename.startsWith("https://")
                     || filename.startsWith("jar:")
-                    || filename.startsWith("wsjar:")
                     || filename.startsWith("wsjar:")
                     || filename.startsWith("vfszip:")) {
                 return createSource(new URL(filename));

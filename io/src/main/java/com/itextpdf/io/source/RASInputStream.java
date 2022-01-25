@@ -70,6 +70,15 @@ public class RASInputStream extends InputStream {
     }
 
     /**
+     * Gets the source
+     *
+     * @return an instance of {@link IRandomAccessSource}
+     */
+    public IRandomAccessSource getSource() {
+        return source;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

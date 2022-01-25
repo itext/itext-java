@@ -66,4 +66,5 @@ public final class IoExceptionMessage {
     public static final String IMAGE_MAGICK_OUTPUT_IS_NULL = "ImageMagick process output is null.";
     public static final String IMAGE_MAGICK_PROCESS_EXECUTION_FAILED =
             "ImageMagick process execution finished with errors: ";
+    public static final String ALREADY_CLOSED = "Already closed";
 }

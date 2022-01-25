@@ -48,6 +48,7 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.PdfTokenizer;
+import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
@@ -138,13 +139,15 @@ public class PdfReader implements Closeable {
     /**
      * Reads and parses a PDF document.
      *
-     * @param is         the {@code InputStream} containing the document. The stream is read to the
-     *                   end but is not closed.
+     * @param is         the {@code InputStream} containing the document. If the inputStream is an instance of
+     *                   {@link RASInputStream} then the {@link IRandomAccessSource} would be extracted. Otherwise the stream
+     *                   is read to the end but is not closed.
      * @param properties properties of the created reader
+     *
      * @throws IOException on error
      */
     public PdfReader(InputStream is, ReaderProperties properties) throws IOException {
-        this(new RandomAccessSourceFactory().createSource(is), properties, true);
+        this(new RandomAccessSourceFactory().extractOrCreateSource(is), properties, true);
     }
 
     /**
@@ -161,8 +164,10 @@ public class PdfReader implements Closeable {
     /**
      * Reads and parses a PDF document.
      *
-     * @param is the {@code InputStream} containing the document. the {@code InputStream} containing the document. The stream is read to the
-     *                   end but is not closed.
+     * @param is the {@code InputStream} containing the document. If the inputStream is an instance of
+     *           {@link RASInputStream} then the {@link IRandomAccessSource} would be extracted. Otherwise the stream
+     *           is read to the end but is not closed.
+     *
      * @throws IOException on error
      */
     public PdfReader(InputStream is) throws IOException {

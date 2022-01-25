@@ -45,6 +45,7 @@ import org.junit.experimental.categories.Category;
 public class LtvVerifierIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerifierIntegrationTest/";
 
+
     @BeforeClass
     public static void before() {
         Security.addProvider(new BouncyCastleProvider());
@@ -260,6 +261,25 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
                     verificationOK.certificate.getSubjectDN().getName());
             Assert.assertEquals("Root certificate passed without checking", verificationOK.message);
+        }
+    }
+
+    @Test
+    public void switchBetweenSeveralRevisionsTest() throws IOException, GeneralSecurityException {
+        String testInput = SOURCE_FOLDER + "severalConsequentSignatures.pdf";
+
+        try(PdfReader pdfReader = new PdfReader(testInput); PdfDocument pdfDoc = new PdfDocument(pdfReader)) {
+
+            LtvVerifier ltvVerifier = new LtvVerifier(pdfDoc);
+
+            Assert.assertEquals("timestampSig2", ltvVerifier.signatureName);
+            ltvVerifier.switchToPreviousRevision();
+            Assert.assertEquals("Signature2", ltvVerifier.signatureName);
+            ltvVerifier.switchToPreviousRevision();
+            Assert.assertEquals("timestampSig1", ltvVerifier.signatureName);
+            ltvVerifier.switchToPreviousRevision();
+            Assert.assertEquals("Signature1", ltvVerifier.signatureName);
+            ltvVerifier.switchToPreviousRevision();
         }
     }
 }
