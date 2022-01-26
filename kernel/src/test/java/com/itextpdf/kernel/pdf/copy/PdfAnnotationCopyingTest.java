@@ -153,7 +153,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
         copyLinksGoToActionTest(outFilePath, true, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, destinationFolder));
     }
 
     @Test
@@ -164,7 +164,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
         copyLinksGoToActionTest(outFilePath, false, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, destinationFolder));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
         copyLinksGoToActionTest(outFilePath, false, true);
 
-        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, destinationFolder));
     }
 
     private void copyLinksGoToActionTest(String dest, boolean isTheSameLinks, boolean diffDisplayOptions)

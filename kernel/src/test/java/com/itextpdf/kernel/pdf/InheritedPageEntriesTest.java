@@ -31,7 +31,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import javax.swing.text.Document;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
