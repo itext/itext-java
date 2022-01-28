@@ -80,18 +80,12 @@ public class FontProgramTest extends ExtendedITextTest {
     public void registerDirectoryOpenTypeTest() {
         FontProgramFactory.clearRegisteredFonts();
         FontProgramFactory.clearRegisteredFontFamilies();
-        int cacheSize = -1;
-        try {
-            Field f = FontCache.class.getDeclaredField("fontCache");
-            f.setAccessible(true);
-            Map<FontCacheKey, FontProgram> cachedFonts = ((Map<FontCacheKey, FontProgram>) f.get(null));
-            cachedFonts.clear();
-            FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
-            cacheSize = cachedFonts.size();
-        } catch (Exception e) { }
+        FontCache.clearSavedFonts();
+        FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
+
         Assert.assertEquals(43, FontProgramFactory.getRegisteredFonts().size());
+        Assert.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/otf/FreeSansBold.ttf"));
         Assert.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans lihavoitu"));
-        Assert.assertEquals(0, cacheSize);
     }
 
     @Test
