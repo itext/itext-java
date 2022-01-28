@@ -98,8 +98,8 @@ public class XfdfObjectFactory {
         XfdfObject resultXfdf = new XfdfObject();
         FieldsObject xfdfFields = new FieldsObject();
 
-        if (form != null && form.getFormFields() != null && !form.getFormFields().isEmpty()) {
-            for (String fieldName : form.getFormFields().keySet()) {
+        if (form != null && form.getDirectFormFields() != null && !form.getDirectFormFields().isEmpty()) {
+            for (String fieldName : form.getAllFormFields().keySet()) {
                 String delims = ".";
                 StringTokenizer st = new StringTokenizer(fieldName, delims);
                 List<String> nameParts = new ArrayList<>();

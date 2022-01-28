@@ -1216,7 +1216,7 @@ public class PdfSigner {
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, false);
         if (acroForm != null) {
-            for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
+            for (Map.Entry<String, PdfFormField> entry : acroForm.getAllFormFields().entrySet()) {
                 PdfDictionary fieldDict = entry.getValue().getPdfObject();
                 if (!PdfName.Sig.equals(fieldDict.get(PdfName.FT)))
                     continue;

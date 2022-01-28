@@ -263,7 +263,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(doc, false);
 
-            Map<String, PdfFormField> fields = form.getFormFields();
+            Map<String, PdfFormField> fields = form.getAllFormFields();
             fields.get("firstField").setValue("New Value 1");
             fields.get("secondField").setValue("New Value 2");
             fields.get("thirdField").setValue("New Value 3");

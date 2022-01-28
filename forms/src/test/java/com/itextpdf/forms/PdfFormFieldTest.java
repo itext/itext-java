@@ -118,12 +118,12 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         PdfFormField field = fields.get("Text1");
 
-        Assert.assertTrue(fields.size() == 6);
-        Assert.assertTrue(field.getFieldName().toUnicodeString().equals("Text1"));
-        Assert.assertTrue(field.getValue().toString().equals("TestField"));
+        Assert.assertEquals(4, fields.size());
+        Assert.assertEquals("Text1", field.getFieldName().toUnicodeString());
+        Assert.assertEquals("TestField", field.getValue().toString());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        Map<String, PdfFormField> formFields = form.getFormFields();
+        Map<String, PdfFormField> formFields = form.getAllFormFields();
         // 帐号1: account number 1
         String fieldName = "\u5E10\u53F71";
         Assert.assertEquals(fieldName, formFields.keySet().toArray(new String[1])[0]);
@@ -470,7 +470,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         form.addField(root);
 
-        Assert.assertEquals(3, form.getFormFields().size());
+        Assert.assertEquals(3, form.getAllFormFields().size());
     }
 
     @Test
@@ -485,7 +485,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         PdfFormField field = fields.get("Text1");
 
         field.setValue("New value size must be 8");
@@ -510,7 +510,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         PdfFormField field = fields.get("Text1");
 
         field.setValue("New value size must be 8").setFontSize(8);
@@ -567,6 +567,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO DEVSIX-6467 The parent's formField value is set to children
     public void regenerateAppearance() throws IOException, InterruptedException {
         String input = "regenerateAppearance.pdf";
         String output = "regenerateAppearance.pdf";
@@ -575,7 +576,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 new StampingProperties().useAppendMode());
         PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
         int i = 1;
-        for (Map.Entry<String, PdfFormField> entry : acro.getFormFields().entrySet()) {
+        for (Map.Entry<String, PdfFormField> entry : acro.getAllFormFields().entrySet()) {
             if (entry.getKey().contains("field")) {
                 PdfFormField field = entry.getValue();
                 field.setValue("test" + i++, false);
@@ -639,7 +640,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         PdfFormField field = fields.get("Text1");
 
         field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
@@ -670,7 +671,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("Text1").setValue("New field value");
         fields.get("Text2").setValue("New field value");
         fields.get("Text3").setValue("New field value");
@@ -1258,7 +1259,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     private void fillAcroForm(PdfDocument pdfDocument, String text) {
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
-        for (PdfFormField field : acroForm.getFormFields().values()) {
+        for (PdfFormField field : acroForm.getAllFormFields().values()) {
             field.setValue(text);
         }
     }
@@ -1307,7 +1308,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         form.setNeedAppearances(true);
 
         PdfFormField field;
-        for (Map.Entry<String, PdfFormField> entry : form.getFormFields().entrySet()) {
+        for (Map.Entry<String, PdfFormField> entry : form.getAllFormFields().entrySet()) {
             field = entry.getValue();
             field.setValue(line1);
         }
@@ -1319,6 +1320,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO DEVSIX-6346 Handle form fields without names more carefully
     public void fillUnmergedTextFormField() throws IOException, InterruptedException {
         String file = sourceFolder + "fillUnmergedTextFormField.pdf";
         String outfile = destinationFolder + "fillUnmergedTextFormField.pdf";

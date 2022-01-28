@@ -969,6 +969,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     //TODO  DEVSIX-3215
     public void xfdfButton() throws IOException, ParserConfigurationException, SAXException, TransformerException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfButton.pdf")));
+
         String xfdfFilename = destinationFolder + "xfdfButton.xfdf";
         String pdfDocumentName = "xfdfButton.pdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();

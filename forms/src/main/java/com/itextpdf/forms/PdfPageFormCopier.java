@@ -105,11 +105,11 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         PdfDictionary dict = formFrom.getPdfObject().copyTo(documentTo, excludedKeys, false);
         formTo.getPdfObject().mergeDifferent(dict);
 
-        Map<String, PdfFormField> fieldsFrom = formFrom.getFormFields();
+        Map<String, PdfFormField> fieldsFrom = formFrom.getAllFormFields();
         if (fieldsFrom.size() <= 0) {
             return;
         }
-        Map<String, PdfFormField> fieldsTo = formTo.getFormFields();
+        Map<String, PdfFormField> fieldsTo = formTo.getDirectFormFields();
 
         List<PdfAnnotation> annots = toPage.getAnnotations();
 
@@ -185,7 +185,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 PdfFormField existingField = fieldsTo.get(fieldName.toUnicodeString());
                 if (existingField != null) {
                     PdfFormField mergedField = mergeFieldsWithTheSameName(field);
-                    formTo.getFormFields().put(mergedField.getFieldName().toUnicodeString(), mergedField);
+                    formTo.getDirectFormFields().put(mergedField.getFieldName().toUnicodeString(), mergedField);
                 } else {
                     HashSet<String> existingFields = new HashSet<>();
                     getAllFieldNames(formTo.getFields(), existingFields);
@@ -297,6 +297,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 parent.put(PdfName.Kids, new PdfArray(fieldDic));
             } else {
                 kids.add(fieldDic);
+                field.setChildField(makeFormField(fieldDic));
             }
         }
 
@@ -344,7 +345,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                         }
                         fieldsTo.put(kidField.getFieldName().toUnicodeString(), kidField);
                         PdfFormField mergedField = mergeFieldsWithTheSameName(field);
-                        formTo.getFormFields().put(mergedField.getFieldName().toUnicodeString(), mergedField);
+                        formTo.getDirectFormFields().put(mergedField.getFieldName().toUnicodeString(), mergedField);
                         return;
                     }
                 }

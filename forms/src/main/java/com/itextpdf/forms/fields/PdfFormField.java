@@ -219,6 +219,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     static final int DA_COLOR = 2;
 
+    private List<PdfFormField> childFields = new ArrayList<>();
+    private PdfFormField parent;
     protected String text;
     protected ImageData img;
     protected PdfFont font;
@@ -245,6 +247,23 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         ensureObjectIsAddedToDocument(pdfObject);
         setForbidRelease();
         retrieveStyles();
+        createKids(pdfObject);
+    }
+
+    private void createKids(PdfDictionary pdfObject) {
+        PdfArray kidsArray = pdfObject.getAsArray(PdfName.Kids);
+        if (kidsArray != null) {
+            for (PdfObject kid : kidsArray) {
+                PdfFormField childField = makeFormField(kid, getDocument());
+                if (childField != null) {
+                    this.setChildField(childField);
+                } else {
+                     Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
+                     logger.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
+                             pdfObject.getIndirectReference() == null ? pdfObject : pdfObject.getIndirectReference()));
+                }
+            }
+        }
     }
 
     /**
@@ -457,16 +476,46 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * @return the edited field
      */
     public PdfFormField setParent(PdfFormField parent) {
-        return put(PdfName.Parent, parent.getPdfObject());
+        this.parent = parent;
+        if (!(parent.getPdfObject()).equals(this.getParent())) {
+            return put(PdfName.Parent, parent.getPdfObject());
+
+        }
+        return this;
     }
 
     /**
      * Gets the parent dictionary.
      *
-     * @return another form field that this field belongs to, usually a group field
+     * @return another form field that this field belongs to.
      */
     public PdfDictionary getParent() {
         return getPdfObject().getAsDictionary(PdfName.Parent);
+    }
+
+    /**
+     * Gets the parent field.
+     *
+     * @return another form field that this field belongs to.
+     */
+    public PdfFormField getParentField() {
+        return this.parent;
+    }
+
+    /**
+     * removes the childField object of this field.
+     *
+     * @param fieldName a {@link PdfFormField}, that needs to be removed from form field children.
+     */
+    public void removeChild(PdfFormField fieldName) {
+        childFields.remove(fieldName);
+        PdfArray kids = getPdfObject().getAsArray(PdfName.Kids);
+        if (kids != null) {
+            kids.remove(fieldName.getPdfObject());
+            if (kids.isEmpty()) {
+                getPdfObject().remove(PdfName.Kids);
+            }
+        }
     }
 
     /**
@@ -476,6 +525,47 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfArray getKids() {
         return getPdfObject().getAsArray(PdfName.Kids);
+    }
+
+    /**
+     * Gets the childFields of this object.
+     *
+     * @return the children of the current field.
+     */
+    public List<PdfFormField> getChildFields() {
+        return Collections.unmodifiableList(childFields);
+    }
+
+    /**
+     * Gets all childFields of this object, including the children of the children.
+     *
+     * @return the children of the current field and their children.
+     */
+    public List<PdfFormField> getAllChildFields() {
+        List<PdfFormField> kids = this.getChildFields();
+        List<PdfFormField> allKids = new ArrayList<>(kids);
+        for (PdfFormField formField : kids) {
+            if (formField.getKids() != null) {
+                allKids.addAll(formField.getAllChildFields());
+            }
+        }
+        return allKids;
+    }
+
+    /**
+     * Gets the child field of form field.
+     *
+     * @param fieldName a {@link String}, name of the received field.
+     * @return the child of the current field as a {@link PdfFormField}
+     */
+    public PdfFormField getChildField(String fieldName) {
+        for (PdfFormField field : this.getChildFields()) {
+            PdfString partialFieldName = field.getPartialFieldName();
+            if (partialFieldName != null && partialFieldName.toUnicodeString().equals(fieldName)) {
+                return field;
+            }
+        }
+        return null;
     }
 
     /**
@@ -492,8 +582,21 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             kids = new PdfArray();
         }
         kids.add(kid.getPdfObject());
+        this.childFields.add(kid);
 
         return put(PdfName.Kids, kids);
+    }
+
+    /**
+     * Adds a field to the children of the current field.
+     *
+     * @param kid the field, which should become a child
+     * @return the kid itself
+     */
+    public PdfFormField setChildField(PdfFormField kid) {
+        kid.setParent(this);
+        this.childFields.add(kid);
+        return kid;
     }
 
     /**
@@ -505,12 +608,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfFormField addKid(PdfWidgetAnnotation kid) {
         kid.setParent(getPdfObject());
-        PdfArray kids = getKids();
-        if (kids == null) {
-            kids = new PdfArray();
-        }
-        kids.add(kid.getPdfObject());
-        return put(PdfName.Kids, kids);
+        PdfDictionary pdfObject = kid.getPdfObject();
+        pdfObject.makeIndirect(this.getDocument());
+        PdfFormField field = makeFormField(pdfObject, this.getDocument());
+        return addKid(field);
     }
 
     /**
@@ -532,7 +633,10 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         String parentName = "";
         PdfDictionary parent = getParent();
         if (parent != null) {
-            PdfFormField parentField = PdfFormField.makeFormField(getParent(), getDocument());
+            PdfFormField parentField = getParentField();
+            if (parentField == null) {
+                parentField = PdfFormField.makeFormField(getParent(), getDocument());
+            }
             PdfString pName = parentField.getFieldName();
             if (pName != null) {
                 parentName = pName.toUnicodeString() + ".";
@@ -543,6 +647,15 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             name = new PdfString(parentName + name.toUnicodeString(), PdfEncodings.UNICODE_BIG);
         }
         return name;
+    }
+
+    /**
+     * Gets the current field partial name.
+     *
+     * @return the current field partial name, as a {@link PdfString}
+     */
+    public PdfString getPartialFieldName() {
+        return getPdfObject().getAsString(PdfName.T);
     }
 
     /**
@@ -954,7 +1067,6 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
     public float getFontSize() {
         return fontSize;
     }
-
 
     /**
      * Gets the current font of the form field.
@@ -1457,6 +1569,14 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
      * This method should be called instead of direct call to {@link PdfObject#release()} if the wrapper is used.
      */
     public void release() {
+        List<PdfFormField> fieldKids = this.getAllChildFields();
+        if (fieldKids != null) {
+            for (PdfFormField fieldKid : fieldKids) {
+                fieldKid.release();
+            }
+        }
+        childFields.clear();
+        childFields = null;
         unsetForbidRelease();
         getPdfObject().release();
     }

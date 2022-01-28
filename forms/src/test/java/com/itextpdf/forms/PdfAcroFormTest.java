@@ -22,7 +22,12 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -40,6 +45,9 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -47,110 +55,286 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class PdfAcroFormTest extends ExtendedITextTest {
 
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfAcroFormTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfAcroFormTest/";
+
+
     @Test
     public void setSignatureFlagsTest() {
-        PdfDocument outputDoc = createDocument();
+        try(PdfDocument outputDoc = createDocument()) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            acroForm.setSignatureFlags(65);
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        acroForm.setSignatureFlags(65);
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject sigFlags = acroForm.getPdfObject().get(PdfName.SigFlags);
+            outputDoc.close();
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject sigFlags = acroForm.getPdfObject().get(PdfName.SigFlags);
-        outputDoc.close();
+            Assert.assertEquals(new PdfNumber(65), sigFlags);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
+    }
 
-        Assert.assertEquals(new PdfNumber(65), sigFlags);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+    @Test
+    public void addChildToFormFieldTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            acroForm.addField(field);
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText();
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
+                    .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText();
+            root.addKid(child);
+            acroForm.addField(root);
+            Assert.assertEquals(2, acroForm.fields.size());
+            PdfArray fieldKids = root.getKids();
+            Assert.assertEquals(2, fieldKids.size());
+        }
+    }
+
+    @Test
+    public void addChildToWidgetTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfArray options = new PdfArray();
+            options.add(new PdfString("1"));
+            options.add(new PdfString("2"));
+            PdfTextFormField text = new TextFormFieldBuilder(outputDoc, "text")
+                    .setWidgetRectangle(new Rectangle(36, 696, 20, 20)).createText();
+            PdfTextFormField childText = new TextFormFieldBuilder(outputDoc, "childText")
+                    .setWidgetRectangle(new Rectangle(36, 696, 20, 20)).createText();
+            text.addKid(childText);
+            acroForm.addField(text);
+            Assert.assertEquals(1, acroForm.fields.size());
+            List<PdfFormField> fieldKids = text.getChildFields();
+            Assert.assertEquals(2, fieldKids.size());
+        }
+    }
+
+    @Test
+    public void getFormFieldChildTest() {
+        try(PdfDocument outputDoc = createDocument()) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            acroForm.addField(field);
+
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText();
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText();
+            root.addKid(child);
+            acroForm.addField(root);
+            PdfFormField childField = acroForm.getField("root.child");
+            Assert.assertEquals("root.child", childField.getFieldName().toString());
+        }
+    }
+
+    @Test
+    public void getFormFieldWithEqualChildNamesTest() {
+        try(PdfDocument outputDoc = createDocument()) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            acroForm.addField(field);
+
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText();
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "field")
+                    .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText();
+            PdfFormField child1 = new TextFormFieldBuilder(outputDoc, "field")
+                    .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText();
+            PdfFormField child2 = new TextFormFieldBuilder(outputDoc, "another_name")
+                    .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText();
+            child1.addKid(child2);
+            child.addKid(child1);
+            root.addKid(child);
+            acroForm.addField(root);
+            PdfFormField childField = acroForm.getField("root.field.field.another_name");
+            Assert.assertEquals("root.field.field.another_name", childField.getFieldName().toString());
+        }
+    }
+
+    @Test
+    public void changeFieldNameTest() {
+        try(PdfDocument outputDoc = createDocument()) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            acroForm.addField(field);
+
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText();
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
+                    .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText();
+            root.addKid(child);
+            acroForm.addField(root);
+            acroForm.getField("root").setFieldName("diff");
+            PdfFormField childField = PdfAcroForm.getAcroForm(outputDoc, true).getField("diff.child");
+            Assert.assertEquals("diff.child", childField.getFieldName().toString());
+        }
+    }
+
+    @Test
+    public void removeChildFromFormFieldTest() throws FileNotFoundException {
+        try(PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText().setValue("text1");
+            acroForm.addField(field);
+
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText().setValue("root");
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
+                    .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText().setValue("child");
+            PdfFormField child1 = new TextFormFieldBuilder(outputDoc, "aaaaa")
+                    .setWidgetRectangle(new Rectangle(100, 400, 200, 20)).createText().setValue("aaaaa");
+            PdfFormField child2 = new TextFormFieldBuilder(outputDoc, "bbbbb")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("bbbbb");
+            child1.addKid(child2);
+            child.addKid(child1);
+            root.addKid(child);
+            acroForm.addField(root);
+            acroForm.removeField("root.child.aaaaa");
+            Assert.assertEquals(2, acroForm.fields.size());
+            Assert.assertEquals(2, root.getKids().size());
+        }
+    }
+
+    @Test
+    public void getChildFromFormFieldWithDifferentAmountOfChildrenTest() throws FileNotFoundException {
+        try(PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText().setValue("text1");
+            acroForm.addField(field);
+
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText().setValue("root");
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
+                    .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText().setValue("child");
+            PdfFormField child1 = new TextFormFieldBuilder(outputDoc, "aaaaa")
+                    .setWidgetRectangle(new Rectangle(100, 400, 200, 20)).createText().setValue("aaaaa");
+            PdfFormField child2 = new TextFormFieldBuilder(outputDoc, "bbbbb")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("bbbbb");
+            PdfFormField child3 = new TextFormFieldBuilder(outputDoc, "child1")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("child1");
+            PdfFormField child4 = new TextFormFieldBuilder(outputDoc, "child2")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("child2");
+            PdfFormField child5 = new TextFormFieldBuilder(outputDoc, "child2")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("child2");
+            child1.addKid(child2);
+            child1.addKid(child3);
+            child1.addKid(child4);
+            child4.addKid(child5);
+            child.addKid(child1);
+            root.addKid(child);
+            acroForm.addField(root);
+            PdfFormField childField = acroForm.getField("root.child.aaaaa.child2");
+            Assert.assertEquals("root.child.aaaaa.child2", childField.getFieldName().toString());
+
+            Assert.assertEquals(2, acroForm.fields.size());
+            Assert.assertEquals(2, root.getKids().size());
+        }
     }
 
     @Test
     public void setCalculationOrderTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        PdfArray calculationOrderArray = new PdfArray(new int[] {1, 0});
-        acroForm.setCalculationOrder(calculationOrderArray);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfArray calculationOrderArray = new PdfArray(new int[] {1, 0});
+            acroForm.setCalculationOrder(calculationOrderArray);
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject calculationOrder = acroForm.getPdfObject().get(PdfName.CO);
-        outputDoc.close();
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject calculationOrder = acroForm.getPdfObject().get(PdfName.CO);
+            outputDoc.close();
 
-        Assert.assertEquals(calculationOrderArray, calculationOrder);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertEquals(calculationOrderArray, calculationOrder);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     @Test
     public void setDefaultAppearanceTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        acroForm.setDefaultAppearance("default appearance");
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            acroForm.setDefaultAppearance("default appearance");
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject calculationOrder = acroForm.getPdfObject().get(PdfName.DA);
-        outputDoc.close();
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject calculationOrder = acroForm.getPdfObject().get(PdfName.DA);
+            outputDoc.close();
 
-        Assert.assertEquals(new PdfString("default appearance"), calculationOrder);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertEquals(new PdfString("default appearance"), calculationOrder);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     @Test
     public void setDefaultJustificationTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        acroForm.setDefaultJustification(14);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            acroForm.setDefaultJustification(14);
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject defaultJustification = acroForm.getPdfObject().get(PdfName.Q);
-        outputDoc.close();
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject defaultJustification = acroForm.getPdfObject().get(PdfName.Q);
+            outputDoc.close();
 
-        Assert.assertEquals(new PdfNumber(14), defaultJustification);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertEquals(new PdfNumber(14), defaultJustification);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     @Test
     public void setDefaultResourcesTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
 
-        PdfDictionary dictionary = new PdfDictionary();
-        PdfAcroForm.getAcroForm(outputDoc, true).setDefaultResources(dictionary);
+            PdfDictionary dictionary = new PdfDictionary();
+            PdfAcroForm.getAcroForm(outputDoc, true).setDefaultResources(dictionary);
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject defaultResourcesDict = acroForm.getPdfObject().get(PdfName.DR);
-        outputDoc.close();
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject defaultResourcesDict = acroForm.getPdfObject().get(PdfName.DR);
+            outputDoc.close();
 
-        Assert.assertEquals(dictionary, defaultResourcesDict);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertEquals(dictionary, defaultResourcesDict);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     @Test
     public void setNeedAppearancesTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        acroForm.setNeedAppearances(false);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            acroForm.setNeedAppearances(false);
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject needAppearance = acroForm.getPdfObject().get(PdfName.NeedAppearances);
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject needAppearance = acroForm.getPdfObject().get(PdfName.NeedAppearances);
 
-        outputDoc.close();
+            outputDoc.close();
 
-        Assert.assertEquals(new PdfBoolean(false), needAppearance);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertEquals(new PdfBoolean(false), needAppearance);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     @Test
@@ -177,58 +361,61 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
     @Test
     public void setGenerateAppearanceTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        acroForm.setNeedAppearances(false);
-        acroForm.setGenerateAppearance(true);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            acroForm.setNeedAppearances(false);
+            acroForm.setGenerateAppearance(true);
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        boolean isGenerateAppearance = acroForm.isGenerateAppearance();
-        Object needAppearances = acroForm.getPdfObject().get(PdfName.NeedAppearances);
-        outputDoc.close();
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            boolean isGenerateAppearance = acroForm.isGenerateAppearance();
+            Object needAppearances = acroForm.getPdfObject().get(PdfName.NeedAppearances);
+            outputDoc.close();
 
-        Assert.assertNull(needAppearances);
-        Assert.assertTrue(isGenerateAppearance);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertNull(needAppearances);
+            Assert.assertTrue(isGenerateAppearance);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     @Test
     public void setXFAResourcePdfArrayTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        PdfArray array = new PdfArray();
-        acroForm.setXFAResource(array);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfArray array = new PdfArray();
+            acroForm.setXFAResource(array);
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject xfaObject = acroForm.getPdfObject().get(PdfName.XFA);
-        outputDoc.close();
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject xfaObject = acroForm.getPdfObject().get(PdfName.XFA);
+            outputDoc.close();
 
-        Assert.assertEquals(array, xfaObject);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertEquals(array, xfaObject);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     @Test
     public void setXFAResourcePdfStreamTest() {
-        PdfDocument outputDoc = createDocument();
+        try (PdfDocument outputDoc = createDocument()) {
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-        PdfStream stream = new PdfStream();
-        acroForm.setXFAResource(stream);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfStream stream = new PdfStream();
+            acroForm.setXFAResource(stream);
 
-        boolean isModified = acroForm.getPdfObject().isModified();
-        boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
-        PdfObject xfaObject = acroForm.getPdfObject().get(PdfName.XFA);
-        outputDoc.close();
+            boolean isModified = acroForm.getPdfObject().isModified();
+            boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
+            PdfObject xfaObject = acroForm.getPdfObject().get(PdfName.XFA);
+            outputDoc.close();
 
-        Assert.assertEquals(stream, xfaObject);
-        Assert.assertTrue(isModified);
-        Assert.assertTrue(isReleaseForbidden);
+            Assert.assertEquals(stream, xfaObject);
+            Assert.assertTrue(isModified);
+            Assert.assertTrue(isReleaseForbidden);
+        }
     }
 
     private static PdfDocument createDocument() {

@@ -63,8 +63,6 @@ import org.junit.experimental.categories.Category;
 
 import java.util.Map;
 
-import static com.itextpdf.test.ITextTest.createDestinationFolder;
-
 @Category(UnitTest.class)
 public class Utf8FormsTest extends ExtendedITextTest {
 
@@ -82,7 +80,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
         String filename = sourceFolder + "utf-8-field-name.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        Map<String,PdfFormField> fields = form.getFormFields();
+        Map<String,PdfFormField> fields = form.getAllFormFields();
         pdfDoc.close();
         for (String fldName : fields.keySet()) {
             //  لا
@@ -96,7 +94,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
         String filename = sourceFolder + "utf-8-text-annot.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        Map<String,PdfFormField> fields = form.getFormFields();
+        Map<String,PdfFormField> fields = form.getAllFormFields();
         pdfDoc.close();
         for (String fldName : fields.keySet()) {
             //  福昕 福昕UTF8

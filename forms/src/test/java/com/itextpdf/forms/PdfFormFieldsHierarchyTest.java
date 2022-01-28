@@ -50,6 +50,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO DEVSIX-6467 The parent's formField value is set to children
     public void fillingFormWithKidsTest() throws IOException, InterruptedException {
         String srcPdf = sourceFolder + "formWithKids.pdf";
         String cmpPdf = sourceFolder + "cmp_fillingFormWithKidsTest.pdf";
@@ -59,7 +60,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
 
-        Map<String, PdfFormField> formFields = acroForm.getFormFields();
+        Map<String, PdfFormField> formFields = acroForm.getAllFormFields();
 
         for (String key : formFields.keySet()) {
             PdfFormField field = acroForm.getField(key);
@@ -84,7 +85,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
 
         fields.get("field_1").setValue("1111 2222 3333 4444");
         fields.get("field_2").setValue("1111 2222 3333 4444");
@@ -105,10 +106,8 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
-
-        fields.get("root.child.text1").setValue("surname surname surname surname surname");
-        fields.get("root.child.text2").setValue("surname surname surname surname surname");
+        form.getField("root.child.text1").setValue("surname surname surname surname surname");
+        form.getField("root.child.text2").setValue("surname surname surname surname surname");
 
         pdfDoc.close();
 
@@ -127,7 +126,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.setGenerateAppearance(false);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("root").setValue("Deutschland");
 
         form.flattenFields();

@@ -43,11 +43,11 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -72,15 +72,17 @@ import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the static form technology AcroForm on a PDF file.
@@ -150,7 +152,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     private PdfAcroForm(PdfDictionary pdfObject, PdfDocument pdfDocument) {
         super(pdfObject);
         document = pdfDocument;
-        getFormFields();
+        fields = populateFormFieldsMap(getFields());
         xfaForm = new XfaForm(pdfObject);
     }
 
@@ -162,6 +164,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     private PdfAcroForm(PdfArray fields) {
         this(createAcroFormDictionaryByFields(fields), null);
+        this.fields = populateFormFieldsMap(getFields());
         setForbidRelease();
     }
 
@@ -235,15 +238,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         fieldsArray.setModified();
 
         fields.put(field.getFieldName().toUnicodeString(), field);
-        if (field.getKids() != null) {
-            iterateFields(field.getKids(), fields);
-        }
 
         if (fieldDic.containsKey(PdfName.Subtype) && page != null) {
             PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDic);
             addWidgetAnnotationToPage(page, annot);
         }
-        
+
         setModified();
     }
 
@@ -275,15 +275,57 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets the {@link PdfFormField form field}s as a {@link Map}.
+     * Gets the high-level{@link PdfFormField form field}s as a {@link Map}.
      *
      * @return a map of field names and their associated {@link PdfFormField form field} objects
      */
-    public Map<String, PdfFormField> getFormFields() {
+    public Map<String, PdfFormField> getDirectFormFields() {
         if (fields.size() == 0) {
-            fields = iterateFields(getFields());
+            fields = populateFormFieldsMap(getFields());
         }
+        //TODO DEVSIX-6504 Fix copyField logic.
         return fields;
+    }
+
+    /**
+     * Gets all {@link PdfFormField form field}s as a {@link Map} including fields kids.
+     *
+     * @return a map of field names and their associated {@link PdfFormField form field} objects
+     */
+    public Map<String, PdfFormField> getAllFormFields() {
+        if (fields.size() == 0) {
+            fields = populateFormFieldsMap(getFields());
+        }
+        Map<String, PdfFormField> allFields = new HashMap<>();
+        allFields.putAll(fields);
+        for (Entry<String, PdfFormField> field : fields.entrySet()) {
+            List<PdfFormField> kids = field.getValue().getAllChildFields();
+            for (PdfFormField kid : kids) {
+                //TODO DEVSIX-6346 Handle form fields without names more carefully
+                if (kid.getFieldName() != null) {
+                    allFields.put(kid.getFieldName().toUnicodeString(), kid);
+                }
+            }
+        }
+        return allFields;
+    }
+
+    /**
+     * Gets all {@link PdfFormField form field}s as a {@link Set} including fields kids and nameless fields.
+     *
+     * @return a set of {@link PdfFormField form field} objects
+     */
+    public Set<PdfFormField> getAllFormFieldsWithoutNames() {
+        if (fields.size() == 0) {
+            fields = populateFormFieldsMap(getFields());
+        }
+        Set<PdfFormField> allFields = new LinkedHashSet<>();
+        for (Entry<String, PdfFormField> field : fields.entrySet()) {
+            allFields.add(field.getValue());
+            List<PdfFormField> kids = field.getValue().getAllChildFields();
+            allFields.addAll(kids);
+        }
+        return allFields;
     }
 
     /**
@@ -573,7 +615,17 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * isn't present
      */
     public PdfFormField getField(String fieldName) {
-        return fields.get(fieldName);
+        if (fields.get(fieldName) != null) {
+            return fields.get(fieldName);
+        }
+        String[] splitFields = fieldName.split("\\.");
+        PdfFormField parentFormField = fields.get(splitFields[0]);
+        PdfFormField kidField = parentFormField;
+        for (int i = 1; i < splitFields.length; i++) {
+            kidField = parentFormField.getChildField(splitFields[i]);
+            parentFormField = kidField;
+        }
+        return kidField;
     }
 
     /**
@@ -623,9 +675,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             throw new PdfException(FormsExceptionMessageConstant.FIELD_FLATTENING_IS_NOT_SUPPORTED_IN_APPEND_MODE);
         }
         Set<PdfFormField> fields;
-        if (fieldsForFlattening.size() == 0) {
+        if (fieldsForFlattening.isEmpty()) {
             this.fields.clear();
-            fields = new LinkedHashSet<>(getFormFields().values());
+            //This alternate addition of fields is used due to incorrect handling of fields without names.
+            //Must be replaced with getAllFormFields() after DEVSIX-6346
+            fields = getAllFormFieldsWithoutNames();
         } else {
             fields = new LinkedHashSet<>();
             for (PdfFormField field : fieldsForFlattening) {
@@ -775,10 +829,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
 
         PdfDictionary parent = field.getParent();
+        PdfFormField parentField = field.getParentField();
         if (parent != null) {
             PdfArray kids = parent.getAsArray(PdfName.Kids);
+            if (parentField != null) {
+                parentField.removeChild(field);
+            }
             kids.remove(fieldObject);
-            fields.remove(fieldName);
             kids.setModified();
             parent.setModified();
             return true;
@@ -802,7 +859,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param fieldName the name of the {@link PdfFormField form field} to be flattened
      */
     public void partialFormFlattening(String fieldName) {
-        PdfFormField field = getFormFields().get(fieldName);
+        PdfFormField field = getAllFormFields().get(fieldName);
         if (field != null) {
             fieldsForFlattening.add(field);
         }
@@ -815,13 +872,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param newName the new name of the field. Must not be used currently.
      */
     public void renameField(String oldName, String newName) {
-        Map<String, PdfFormField> fields = getFormFields();
-        if (fields.containsKey(newName)) {
-            return;
-        }
+        getField(oldName).setFieldName(newName);
         PdfFormField field = fields.get(oldName);
         if (field != null) {
-            field.setFieldName(newName);
             fields.remove(oldName);
             fields.put(newName, field);
         }
@@ -874,7 +927,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return false;
     }
 
-    private Map<String, PdfFormField> iterateFields(PdfArray array, Map<String, PdfFormField> fields) {
+    private Map<String, PdfFormField> populateFormFieldsMap(PdfArray array) {
+        Map<String, PdfFormField> fields = new LinkedHashMap<>();
         int index = 1;
         for (PdfObject field : array) {
             if (field.isFlushed()) {
@@ -890,11 +944,17 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfString fieldName = formField.getFieldName();
             String name;
             if (fieldName == null) {
-                PdfFormField parentField = PdfFormField.makeFormField(formField.getParent(), document);
+                PdfFormField parentField = formField.getParentField();
+                if (parentField == null) {
+                    parentField = PdfFormField.makeFormField(formField.getParent(), document);
+                }
                 while (fieldName == null) {
                     fieldName = parentField.getFieldName();
                     if (fieldName == null) {
-                        parentField = PdfFormField.makeFormField(parentField.getParent(), document);
+                        parentField = formField.getParentField();
+                        if (parentField == null) {
+                            parentField = PdfFormField.makeFormField(formField.getParent(), document);
+                        }
                     }
                 }
                 name = fieldName.toUnicodeString() + "." + index;
@@ -903,16 +963,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 name = fieldName.toUnicodeString();
             }
             fields.put(name, formField);
-            if (formField.getKids() != null) {
-                iterateFields(formField.getKids(), fields);
-            }
         }
 
         return fields;
-    }
-
-    private Map<String, PdfFormField> iterateFields(PdfArray array) {
-        return iterateFields(array, new LinkedHashMap<String, PdfFormField>());
     }
 
     private PdfDictionary processKids(PdfArray kids, PdfDictionary parent, PdfPage page) {
@@ -1032,10 +1085,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public void release() {
         unsetForbidRelease();
         getPdfObject().release();
-        for (PdfFormField field : fields.values()) {
-            field.release();
+        if (fields != null) {
+            for (PdfFormField field : fields.values()) {
+                field.release();
+            }
+            fields.clear();
+            fields = null;
         }
-        fields = null;
     }
 
     @Override

@@ -105,7 +105,7 @@ class XfdfReader {
     private void mergeFields(FieldsObject fieldsObject, PdfAcroForm form) {
         if (fieldsObject != null && fieldsObject.getFieldList() != null && !fieldsObject.getFieldList().isEmpty()) {
 
-            Map<String, PdfFormField> formFields = form.getFormFields();
+            Map<String, PdfFormField> formFields = form.getAllFormFields();
 
             for (FieldObject xfdfField : fieldsObject.getFieldList()) {
                 String name = xfdfField.getName();

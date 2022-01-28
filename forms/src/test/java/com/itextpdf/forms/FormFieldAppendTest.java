@@ -79,7 +79,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        for (PdfFormField field : form.getFormFields().values()) {
+        for (PdfFormField field : form.getAllFormFields().values()) {
             field.setValue("Test");
         }
 
@@ -108,7 +108,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        for (PdfFormField field : form.getFormFields().values()) {
+        for (PdfFormField field : form.getAllFormFields().values()) {
             field.setValue("Different");
         }
 

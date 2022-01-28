@@ -56,6 +56,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -170,7 +171,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(destDoc, false);
         Assert.assertEquals(1, form.getFields().size());
         Assert.assertNotNull(form.getField("Name1"));
-        Assert.assertNotNull(form.getField("Name1.1"));
 
         destDoc.close();
     }
@@ -381,6 +381,8 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 64)
     })
+    //TODO DEVSIX-6345 Equal form fields full names
+    @Ignore("DEVSIX-6345")
     public void copyFieldsTest09() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
         String destFilename = destinationFolder + "copyFields09.pdf";

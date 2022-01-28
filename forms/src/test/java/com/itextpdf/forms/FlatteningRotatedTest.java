@@ -84,7 +84,7 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
                 PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
                 PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-                for (PdfFormField field : form.getFormFields().values()) {
+                for (PdfFormField field : form.getAllFormFields().values()) {
                     field.setValue("Test");
                 }
                 form.flattenFields();

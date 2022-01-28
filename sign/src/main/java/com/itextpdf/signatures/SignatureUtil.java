@@ -249,7 +249,7 @@ public class SignatureUtil {
         getSignatureNames();
         List<String> sigs = new ArrayList<>();
         if (acroForm != null) {
-            for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
+            for (Map.Entry<String, PdfFormField> entry : acroForm.getAllFormFields().entrySet()) {
                 PdfFormField field = entry.getValue();
                 PdfDictionary merged = field.getPdfObject();
                 if (!PdfName.Sig.equals(merged.getAsName(PdfName.FT))) {
@@ -343,7 +343,7 @@ public class SignatureUtil {
         }
 
         List<Object[]> sorter = new ArrayList<>();
-        for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
+        for (Map.Entry<String, PdfFormField> entry : acroForm.getAllFormFields().entrySet()) {
             PdfFormField field = entry.getValue();
             PdfDictionary merged = field.getPdfObject();
             if (!PdfName.Sig.equals(merged.get(PdfName.FT))) {

@@ -38,8 +38,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -66,7 +64,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPdf), new PdfWriter(outPdf));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("First field").setValue("name name name ");
         fields.get("Second field").setValue("surname surname surname surname surname surname");
         pdfDoc.close();

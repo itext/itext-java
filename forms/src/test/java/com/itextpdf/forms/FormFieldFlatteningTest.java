@@ -99,7 +99,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         PdfDocument outPdfDoc = new PdfDocument(new PdfReader(outPdfName));
         PdfAcroForm outPdfForm = PdfAcroForm.getAcroForm(outPdfDoc, false);
 
-        Assert.assertEquals(2, outPdfForm.getFormFields().size());
+        Assert.assertEquals(2, outPdfForm.getAllFormFields().size());
 
         outPdfDoc.close();
     }
@@ -212,7 +212,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        for (PdfFormField field : form.getFormFields().values()) {
+        for (PdfFormField field : form.getAllFormFields().values()) {
             if (field instanceof PdfTextFormField) {
                 String newValue;
                 if (field.isMultiline()) {
@@ -262,7 +262,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         pdfInnerDoc.close();
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
         boolean isReadOnly = true;
-        for (PdfFormField field : form.getFormFields().values()) {
+        for (PdfFormField field : form.getAllFormFields().values()) {
             isReadOnly = (isReadOnly && field.isReadOnly());
         }
         pdfDoc.close();
