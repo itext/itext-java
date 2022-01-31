@@ -51,15 +51,18 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
     @Test
     public void parseDateAndGetUtcMillisFromEpochTest() {
-        Calendar parsedDate = DateTimeUtil.getCalendar(DateTimeUtil.parseWithDefaultPattern("2020-05-05"));
+        Date date = DateTimeUtil.parseWithDefaultPattern("2020-05-05");
+        Calendar parsedDate = DateTimeUtil.getCalendar(date);
+
         double millisFromEpochTo2020_05_05 = DateTimeUtil.getUtcMillisFromEpoch(parsedDate);
 
-        long offset = DateTimeUtil.getCurrentTimeZoneOffset();
+        long offset = DateTimeUtil.getCurrentTimeZoneOffset(date);
+
         Assert.assertEquals(1588636800000d - offset, millisFromEpochTo2020_05_05, ZERO_DELTA);
     }
 
     @Test
-    public void compareUtcMillisFromEpochWithNullParamAndCurrentTimeTest() throws InterruptedException {
+    public void compareUtcMillisFromEpochWithNullParamAndCurrentTimeTest() {
         double getUtcMillisFromEpochWithNullParam = DateTimeUtil.getUtcMillisFromEpoch(null);
         double millisFromEpochToCurrentTime = DateTimeUtil.getUtcMillisFromEpoch(DateTimeUtil.getCurrentTimeCalendar());
 
@@ -68,9 +71,17 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
     @Test
     public void parseDateAndGetRelativeTimeTest() {
-        double relativeTime = DateTimeUtil.getRelativeTime(DateTimeUtil.parseWithDefaultPattern("2020-05-05"));
+        Date date = DateTimeUtil.parseWithDefaultPattern("2020-05-05");
+        double relativeTime = DateTimeUtil.getRelativeTime(date);
 
-        long offset = DateTimeUtil.getCurrentTimeZoneOffset();
+        long offset = DateTimeUtil.getCurrentTimeZoneOffset(date);
+
         Assert.assertEquals(1588636800000d - offset, relativeTime, ZERO_DELTA);
+    }
+
+    @Test
+    public void getCurrentTimeZoneOffsetTest() {
+        Assert.assertEquals(DateTimeUtil.getCurrentTimeZoneOffset(DateTimeUtil.getCurrentTimeDate()),
+                DateTimeUtil.getCurrentTimeZoneOffset());
     }
 }
