@@ -9,6 +9,9 @@
   <artifactId>pdfa</artifactId>
   <name>iText 7 - pdfa</name>
   <url>https://itextpdf.com/</url>
+  <properties>
+    <automatic.module.name>com.itextpdf.pdfa</automatic.module.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

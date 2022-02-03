@@ -16,6 +16,7 @@
     </license>
   </licenses>
   <properties>
+    <automatic.module.name>com.itextpdf.io.font.asian</automatic.module.name>
     <sonar.skip>true</sonar.skip>
   </properties>
   <build>

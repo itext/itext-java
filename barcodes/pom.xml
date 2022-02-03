@@ -9,6 +9,9 @@
   <artifactId>barcodes</artifactId>
   <name>iText 7 - barcodes</name>
   <url>https://itextpdf.com/</url>
+  <properties>
+    <automatic.module.name>com.itextpdf.barcodes</automatic.module.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

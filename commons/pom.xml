@@ -10,6 +10,9 @@
   <name>iText 7 - commons</name>
   <url>https://itextpdf.com/</url>
 
+  <properties>
+    <automatic.module.name>com.itextpdf.commons</automatic.module.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

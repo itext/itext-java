@@ -9,6 +9,9 @@
   <artifactId>forms</artifactId>
   <name>iText 7 - forms</name>
   <url>https://itextpdf.com/</url>
+  <properties>
+    <automatic.module.name>com.itextpdf.forms</automatic.module.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
