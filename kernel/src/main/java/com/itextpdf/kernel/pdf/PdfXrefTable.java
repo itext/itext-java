@@ -75,6 +75,7 @@ public class PdfXrefTable {
     private PdfIndirectReference[] xref;
     private int count = 0;
     private boolean readingCompleted;
+    private MemoryLimitsAwareHandler memoryLimitsAwareHandler;
 
     /**
      * Free references linked list is stored in a form of a map, where:
@@ -83,17 +84,59 @@ public class PdfXrefTable {
      */
     private final TreeMap<Integer, PdfIndirectReference> freeReferencesLinkedList;
 
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     * Capacity and {@link MemoryLimitsAwareHandler} instance would be set by default values.
+     */
     public PdfXrefTable() {
         this(INITIAL_CAPACITY);
     }
 
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     *
+     * @param capacity initial capacity of xref table.
+     */
     public PdfXrefTable(int capacity) {
+        this(capacity, null);
+    }
+
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     *
+     * @param memoryLimitsAwareHandler custom {@link MemoryLimitsAwareHandler} to set.
+     */
+    public PdfXrefTable(MemoryLimitsAwareHandler memoryLimitsAwareHandler) {
+        this(INITIAL_CAPACITY, memoryLimitsAwareHandler);
+    }
+
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     *
+     * @param capacity initial capacity of xref table.
+     * @param memoryLimitsAwareHandler memoryLimitsAwareHandler custom {@link MemoryLimitsAwareHandler} to set.
+     */
+    public PdfXrefTable(int capacity, MemoryLimitsAwareHandler memoryLimitsAwareHandler) {
         if (capacity < 1) {
-            capacity = INITIAL_CAPACITY;
+            capacity = memoryLimitsAwareHandler == null ? INITIAL_CAPACITY
+                    : Math.min(INITIAL_CAPACITY, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
         }
-        xref = new PdfIndirectReference[capacity];
-        freeReferencesLinkedList = new TreeMap<>();
+        this.memoryLimitsAwareHandler = memoryLimitsAwareHandler;
+        if (this.memoryLimitsAwareHandler != null) {
+            this.memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacity);
+        }
+        this.xref = new PdfIndirectReference[capacity];
+        this.freeReferencesLinkedList = new TreeMap<>();
         add((PdfIndirectReference) new PdfIndirectReference(null, 0, MAX_GENERATION, 0).setState(PdfObject.FREE));
+    }
+
+    /**
+     * Sets custom {@link MemoryLimitsAwareHandler}.
+     *
+     * @param memoryLimitsAwareHandler instance to set.
+     */
+    public void setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler memoryLimitsAwareHandler) {
+        this.memoryLimitsAwareHandler = memoryLimitsAwareHandler;
     }
 
     /**
@@ -214,6 +257,15 @@ public class PdfXrefTable {
             reference.genNr++;
         }
 
+    }
+
+    /**
+     * Gets the capacity of xref stream.
+     *
+     * @return the capacity of xref stream.
+     */
+    protected int getCapacity() {
+        return xref.length;
     }
 
     /**
@@ -592,8 +644,11 @@ public class PdfXrefTable {
     }
 
     private void extendXref(int capacity) {
+        if (this.memoryLimitsAwareHandler != null) {
+            this.memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacity);
+        }
         PdfIndirectReference[] newXref = new PdfIndirectReference[capacity];
-        System.arraycopy(xref, 0, newXref, 0, xref.length);
-        xref = newXref;
+        System.arraycopy(this.xref, 0, newXref, 0, this.xref.length);
+        this.xref = newXref;
     }
 }

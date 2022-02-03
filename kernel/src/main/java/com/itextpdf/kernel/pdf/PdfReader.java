@@ -52,6 +52,7 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -729,9 +730,10 @@ public class PdfReader implements Closeable {
         }
         try {
             readXref();
-        } catch (XrefCycledReferencesException ex) {
+        } catch (XrefCycledReferencesException | MemoryLimitsAwareException ex) {
             // Throws an exception when xref stream has cycled references(due to lack of opportunity to fix such an
             // issue) or xref tables have cycled references and PdfReader.StrictnessLevel set to CONSERVATIVE.
+            // Also throw an exception when xref structure size exceeds jvm memory limit.
             throw ex;
         } catch (RuntimeException ex) {
             Logger logger = LoggerFactory.getLogger(PdfReader.class);
@@ -987,8 +989,8 @@ public class PdfReader implements Closeable {
                 xrefStm = true;
                 return;
             }
-        } catch (XrefCycledReferencesException cycledReferencesException) {
-            throw cycledReferencesException;
+        } catch (XrefCycledReferencesException | MemoryLimitsAwareException exceptionWhileReadingXrefStream) {
+            throw exceptionWhileReadingXrefStream;
         } catch (Exception ignored) {
             // Do nothing.
         }

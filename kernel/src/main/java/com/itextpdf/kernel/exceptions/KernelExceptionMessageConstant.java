@@ -336,6 +336,9 @@ public final class KernelExceptionMessageConstant {
     public static final String XREF_SUBSECTION_NOT_FOUND = "xref subsection not found.";
     public static final String XREF_STREAM_HAS_CYCLED_REFERENCES =
             "Xref stream has cycled references. Prev pointer indicates an already visited xref stream.";
+    public static final String XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT = "Xref structure contains too many elements "
+            + "and may cause OOM exception. You can increase number of elements by setting custom "
+            + "MemoryLimitsAwareHandler.";
     public static final String YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You have to "
             + "define a boolean array for this collection sort dictionary.";
     public static final String YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX = "You must set a value before adding a "

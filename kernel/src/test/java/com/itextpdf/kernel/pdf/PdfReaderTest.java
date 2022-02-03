@@ -50,6 +50,7 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
@@ -2342,6 +2343,16 @@ public class PdfReaderTest extends ExtendedITextTest {
 
             Assert.assertEquals(StrictnessLevel.CONSERVATIVE, pdfReader.getStrictnessLevel());
             Assert.assertEquals(KernelExceptionMessageConstant.XREF_TABLE_HAS_CYCLED_REFERENCES, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void checkXrefStreamInvalidSize() throws IOException {
+        final String fileName = SOURCE_FOLDER + "xrefStreamInvalidSize.pdf";
+
+        try (PdfReader reader = new PdfReader(fileName)) {
+            Exception ex = Assert.assertThrows(MemoryLimitsAwareException.class, () -> new PdfDocument(reader));
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
         }
     }
 

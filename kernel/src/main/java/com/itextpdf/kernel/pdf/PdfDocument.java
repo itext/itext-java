@@ -1958,6 +1958,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 if (null == memoryLimitsAwareHandler) {
                     memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(reader.tokens.getSafeFile().length());
                 }
+                xref.setMemoryLimitsAwareHandler(memoryLimitsAwareHandler);
                 reader.readPdf();
                 if (reader.decrypt != null && reader.decrypt.isEmbeddedFilesOnly()) {
                     encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();

@@ -47,22 +47,49 @@ import com.itextpdf.io.source.ByteUtils;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * A {@code PdfNumber}-class is the PDF-equivalent of a {@code Double}-object.
+ * 
+ * <p>
+ * PDF provides two types of numeric objects: integer and real. Integer objects represent mathematical integers. Real
+ * objects represent mathematical real numbers. The range and precision of numbers may be limited by the internal
+ * representations used in the computer on which the PDF processor is running.
+ * An integer shall be written as one or more decimal digits optionally preceded by a sign. The value shall be
+ * interpreted as a signed decimal integer and shall be converted to an integer object.
+ * A real value shall be written as one or more decimal digits with an optional sign and a leading, trailing, or
+ * embedded period (decimal point).
+ */
 public class PdfNumber extends PdfPrimitiveObject {
 
 
     private double value;
     private boolean isDouble;
 
+    /**
+     * Creates an instance of {@link PdfNumber} and sets value.
+     *
+     * @param value double value to set
+     */
     public PdfNumber(double value) {
         super();
         setValue(value);
     }
 
+    /**
+     * Creates an instance of {@link PdfNumber} and sets value.
+     *
+     * @param value int value to set
+     */
     public PdfNumber(int value) {
         super();
         setValue(value);
     }
 
+    /**
+     * Creates an instance of {@link PdfNumber} with provided content.
+     *
+     * @param content byte array content to set
+     */
     public PdfNumber(byte[] content) {
         super(content);
         this.isDouble = true;
@@ -78,44 +105,90 @@ public class PdfNumber extends PdfPrimitiveObject {
         return NUMBER;
     }
 
+    /**
+     * Returns value of current instance of {@link PdfNumber}.
+     *
+     * @return value of {@link PdfNumber} instance
+     */
     public double getValue() {
         if (java.lang.Double.isNaN(value))
             generateValue();
         return value;
     }
 
+    /**
+     * Returns double value of current instance of {@link PdfNumber}.
+     *
+     * @return double value of {@link PdfNumber} instance
+     */
     public double doubleValue() {
         return getValue();
     }
 
+    /**
+     * Returns value and converts it to float.
+     *
+     * @return value converted to float
+     */
     public float floatValue() {
         return (float) getValue();
     }
 
+    /**
+     * Returns value and converts it to long.
+     *
+     * @return value converted to long
+     */
     public long longValue() {
         return (long) getValue();
     }
 
+    /**
+     * Returns value and converts it to an int. If value surpasses {@link Integer#MAX_VALUE}, {@link Integer#MAX_VALUE}
+     * would be return.
+     *
+     * @return value converted to int
+     */
     public int intValue() {
-        return (int) getValue();
+        if (getValue() > (double) Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        } else {
+            return (int) getValue();
+        }
     }
 
+    /**
+     * Sets value and convert it to double.
+     *
+     * @param value to set
+     */
     public void setValue(int value) {
         this.value = value;
         this.isDouble = false;
         this.content = null;
     }
 
+    /**
+     * Sets value.
+     *
+     * @param value to set
+     */
     public void setValue(double value) {
         this.value = value;
         this.isDouble = true;
         this.content = null;
     }
 
+    /**
+     * Increments current value.
+     */
     public void increment() {
         setValue(++value);
     }
 
+    /**
+     * Decrements current value.
+     */
     public void decrement() {
         setValue(--value);
     }
@@ -144,6 +217,7 @@ public class PdfNumber extends PdfPrimitiveObject {
 
     /**
      * Checks if string representation of the value contains decimal point.
+     *
      * @return true if contains so the number must be real not integer
      */
     public boolean hasDecimalPoint() {
