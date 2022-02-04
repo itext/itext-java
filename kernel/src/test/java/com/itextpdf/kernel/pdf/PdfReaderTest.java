@@ -44,11 +44,13 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.exceptions.InvalidXRefPrevException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -61,6 +63,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -2356,6 +2359,165 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void checkXrefPrevWithDifferentTypesTest() throws IOException {
+        final PdfNumber numberXrefPrev = new PdfNumber(20);
+        final PdfString stringXrefPrev = new PdfString("iText", PdfEncodings.UNICODE_BIG);
+        final PdfIndirectReference indirectReferenceXrefPrev = new PdfIndirectReference(null, 41);
+        final PdfIndirectReference indirectReferenceToString = new PdfIndirectReference(null, 42);
+        indirectReferenceXrefPrev.setRefersTo(numberXrefPrev);
+        indirectReferenceToString.setRefersTo(stringXrefPrev);
+
+        try (PdfReader reader = new PdfReader(new ByteArrayInputStream(createPdfDocumentForTest()))) {
+            reader.setStrictnessLevel(StrictnessLevel.LENIENT);
+
+            AssertUtil.doesNotThrow(() -> reader.getXrefPrev(numberXrefPrev));
+
+            AssertUtil.doesNotThrow(() -> reader.getXrefPrev(indirectReferenceXrefPrev));
+
+            // Check string xref prev with StrictnessLevel#LENIENT.
+            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+                    () -> reader.getXrefPrev(stringXrefPrev));
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+
+            // Check indirect reference to string xref prev with StrictnessLevel#LENIENT.
+            exception = Assert.assertThrows(InvalidXRefPrevException.class,
+                    () -> reader.getXrefPrev(indirectReferenceToString));
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void checkXrefPrevWithDifferentTypesConservativeModeTest() throws IOException {
+        final PdfNumber numberXrefPrev = new PdfNumber(20);
+        final PdfString stringXrefPrev = new PdfString("iText", PdfEncodings.UNICODE_BIG);
+        final PdfIndirectReference indirectReferenceXrefPrev = new PdfIndirectReference(null, 41);
+        final PdfIndirectReference indirectReferenceToString = new PdfIndirectReference(null, 42);
+        indirectReferenceXrefPrev.setRefersTo(numberXrefPrev);
+        indirectReferenceToString.setRefersTo(stringXrefPrev);
+
+        try (PdfReader reader = new PdfReader(new ByteArrayInputStream(createPdfDocumentForTest()))) {
+            reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+
+            AssertUtil.doesNotThrow(() -> reader.getXrefPrev(numberXrefPrev));
+
+            // Check indirect reference to number xref prev with StrictnessLevel#CONSERVATIVE.
+            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+                    () -> reader.getXrefPrev(indirectReferenceXrefPrev));
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+
+            // Check string xref prev with StrictnessLevel#CONSERVATIVE.
+            exception = Assert.assertThrows(InvalidXRefPrevException.class,
+                    () -> reader.getXrefPrev(stringXrefPrev));
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+
+            // Check indirect reference to string xref prev with StrictnessLevel#CONSERVATIVE.
+            exception = Assert.assertThrows(InvalidXRefPrevException.class,
+                    () -> reader.getXrefPrev(indirectReferenceToString));
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void readDocumentWithIndirectPrevTest() throws IOException {
+        final String fileName = SOURCE_FOLDER + "indirectPrev.pdf";
+        final String outputName = DESTINATION_FOLDER + "documentWithIndirectPrev.pdf";
+
+        // Open pdf doc and check that xref prev is indirect.
+        try (PdfReader reader = new PdfReader(fileName);
+                PdfDocument document = new PdfDocument(reader)) {
+            final PdfDictionary documentTrailer = document.getTrailer();
+            Assert.assertTrue(documentTrailer.get(PdfName.Prev, false).isIndirectReference());
+        }
+
+        // Read/write pdf document to rewrite xref structure.
+        try (PdfReader reader = new PdfReader(fileName);
+                PdfWriter writer = new PdfWriter(outputName);
+                PdfDocument document = new PdfDocument(reader, writer)) {
+        }
+
+        // Read and check that in created pdf we have valid xref prev.
+        try (PdfReader reader = new PdfReader(outputName);
+                PdfDocument document = new PdfDocument(reader)) {
+            PdfDictionary trailer = document.getTrailer();
+            Assert.assertNull(trailer.get(PdfName.Prev, false));
+        }
+    }
+
+    @Test
+    public void notChangeInvalidPrevInAppendModeTest() throws IOException {
+        final String fileName = SOURCE_FOLDER + "indirectPrev.pdf";
+        final String outputName = DESTINATION_FOLDER + "invalidPrevAppendMode.pdf";
+
+        // Read document and check that we have indirect prev.
+        try (PdfReader reader = new PdfReader(fileName);
+                PdfDocument document = new PdfDocument(reader)) {
+            final PdfDictionary documentTrailer = document.getTrailer();
+            Assert.assertTrue(documentTrailer.get(PdfName.Prev, false).isIndirectReference());
+        }
+
+        // Read and write document in append mode to not change previous xref prev.
+        final StampingProperties properties = new StampingProperties().useAppendMode();
+        try (PdfReader reader = new PdfReader(fileName);
+                PdfWriter writer = new PdfWriter(outputName);
+                PdfDocument document = new PdfDocument(reader, writer, properties)) {
+            document.addNewPage();
+        }
+
+        // Read resulted document and check, that previous xref prev doesn't change and current is pdfNumber.
+        try (PdfReader reader = new PdfReader(outputName);
+                PdfDocument document = new PdfDocument(reader)) {
+            final PdfDictionary trailer = document.getTrailer();
+            Assert.assertFalse(trailer.get(PdfName.Prev, false).isIndirectReference());
+            PdfNumber prevPointer = (PdfNumber) trailer.get(PdfName.Prev);
+            reader.tokens.seek(prevPointer.longValue());
+            final PdfDictionary previousTrailer = reader.readXrefSection();
+            Assert.assertTrue(previousTrailer.get(PdfName.Prev, false).isIndirectReference());
+        }
+    }
+
+    @Test
+    public void readPdfInvalidPrevConservativeModeTest() throws IOException {
+        final String fileName = SOURCE_FOLDER + "indirectPrev.pdf";
+
+        // Simply open document with StrictnessLevel#CONSERVATIVE.
+        try (PdfReader reader = new PdfReader(fileName)) {
+            reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class, () -> new PdfDocument(reader));
+
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+        }
+
+        // Open document for read/write with stamping properties and StrictnessLevel#CONSERVATIVE.
+        final StampingProperties properties = new StampingProperties().useAppendMode();
+        try (PdfReader reader = new PdfReader(fileName);
+                PdfWriter writer = new PdfWriter(new ByteArrayOutputStream())) {
+            reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+                    () -> new PdfDocument(reader, writer, properties));
+
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+        }
+
+        // Open document for read/write without stamping properties but with StrictnessLevel#CONSERVATIVE.
+        try (PdfReader reader = new PdfReader(fileName);
+                PdfWriter writer = new PdfWriter(new ByteArrayOutputStream())) {
+            reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+            Exception exception = Assert.assertThrows(InvalidXRefPrevException.class,
+                    () -> new PdfDocument(reader, writer));
+
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT,
+                    exception.getMessage());
+        }
+    }
+
     /**
      * Returns the current memory use.
      *
@@ -2395,5 +2557,14 @@ public class PdfReaderTest extends ExtendedITextTest {
         HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
         tmpMap.put(new PdfName("b"), new PdfName("c"));
         return new PdfDictionary(tmpMap);
+    }
+
+    private static byte[] createPdfDocumentForTest() throws IOException {
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (final PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos))) {
+                pdfDoc.addNewPage();
+            }
+            return baos.toByteArray();
+        }
     }
 }

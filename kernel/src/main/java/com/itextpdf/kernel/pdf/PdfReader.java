@@ -52,6 +52,7 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.InvalidXRefPrevException;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
@@ -730,16 +731,20 @@ public class PdfReader implements Closeable {
         }
         try {
             readXref();
-        } catch (XrefCycledReferencesException | MemoryLimitsAwareException ex) {
+        } catch (XrefCycledReferencesException | MemoryLimitsAwareException | InvalidXRefPrevException ex) {
             // Throws an exception when xref stream has cycled references(due to lack of opportunity to fix such an
             // issue) or xref tables have cycled references and PdfReader.StrictnessLevel set to CONSERVATIVE.
             // Also throw an exception when xref structure size exceeds jvm memory limit.
             throw ex;
         } catch (RuntimeException ex) {
-            Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, ex);
+            if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
+                Logger logger = LoggerFactory.getLogger(PdfReader.class);
+                logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT, ex);
 
-            rebuildXref();
+                rebuildXref();
+            } else {
+                throw ex;
+            }
         }
         pdfDocument.getXref().markReadingCompleted();
         readDecryptObj();
@@ -989,7 +994,9 @@ public class PdfReader implements Closeable {
                 xrefStm = true;
                 return;
             }
-        } catch (XrefCycledReferencesException | MemoryLimitsAwareException exceptionWhileReadingXrefStream) {
+        } catch (XrefCycledReferencesException
+                | MemoryLimitsAwareException
+                | InvalidXRefPrevException exceptionWhileReadingXrefStream) {
             throw exceptionWhileReadingXrefStream;
         } catch (Exception ignored) {
             // Do nothing.
@@ -1008,7 +1015,7 @@ public class PdfReader implements Closeable {
         final Set<Long> alreadyVisitedXrefTables = new HashSet<>();
         while (true) {
             alreadyVisitedXrefTables.add(startxref);
-            PdfNumber prev = (PdfNumber) trailer2.get(PdfName.Prev);
+            PdfNumber prev = getXrefPrev(trailer2.get(PdfName.Prev, false));
             if (prev == null) {
                 break;
             }
@@ -1175,7 +1182,7 @@ public class PdfReader implements Closeable {
             }
             PdfArray w = xrefStream.getAsArray(PdfName.W);
             long prev = -1;
-            obj = xrefStream.get(PdfName.Prev);
+            obj = getXrefPrev(xrefStream.get(PdfName.Prev, false));
             if (obj != null)
                 prev = ((PdfNumber) obj).longValue();
             xref.setCapacity(size);
@@ -1321,6 +1328,26 @@ public class PdfReader implements Closeable {
             throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
     }
 
+    protected PdfNumber getXrefPrev(PdfObject prevObjectToCheck) {
+        if (prevObjectToCheck == null) {
+            return null;
+        }
+
+        if (prevObjectToCheck.getType() == PdfObject.NUMBER) {
+            return (PdfNumber) prevObjectToCheck;
+        } else {
+            if (prevObjectToCheck.getType() == PdfObject.INDIRECT_REFERENCE &&
+                    StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
+                final PdfObject value = ((PdfIndirectReference) prevObjectToCheck).getRefersTo(true);
+                if (value != null && value.getType() == PdfObject.NUMBER) {
+                    return (PdfNumber) value;
+                }
+            }
+            throw new InvalidXRefPrevException(
+                    KernelExceptionMessageConstant.XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT);
+        }
+    }
+
     boolean isMemorySavingMode() {
         return memorySavingMode;
     }
@@ -1357,33 +1384,6 @@ public class PdfReader implements Closeable {
         } else {
             throw new UnsupportedSecurityHandlerException(MessageFormatUtil.format(UnsupportedSecurityHandlerException.UnsupportedSecurityHandler, filter));
         }
-    }
-
-    /**
-     * Utility method that checks the provided byte source to see if it has junk bytes at the beginning.  If junk bytes
-     * are found, construct a tokeniser that ignores the junk.  Otherwise, construct a tokeniser for the byte source as it is
-     *
-     * @param byteSource the source to check
-     * @return a tokeniser that is guaranteed to start at the PDF header
-     * @throws IOException if there is a problem reading the byte source
-     */
-    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource, boolean closeStream)
-            throws IOException {
-        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
-        int offset;
-        try {
-            offset = tok.getHeaderOffset();
-        } catch (com.itextpdf.io.exceptions.IOException ex) {
-            if (closeStream) {
-                tok.close();
-            }
-            throw ex;
-        }
-        if (offset != 0) {
-            IRandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
-            tok = new PdfTokenizer(new RandomAccessFileOrArray(offsetSource));
-        }
-        return tok;
     }
 
     private PdfObject readObject(PdfIndirectReference reference, boolean fixXref) {
@@ -1495,6 +1495,33 @@ public class PdfReader implements Closeable {
         } else {
             return new PdfNull();
         }
+    }
+
+    /**
+     * Utility method that checks the provided byte source to see if it has junk bytes at the beginning.  If junk bytes
+     * are found, construct a tokeniser that ignores the junk.  Otherwise, construct a tokeniser for the byte source as it is
+     *
+     * @param byteSource the source to check
+     * @return a tokeniser that is guaranteed to start at the PDF header
+     * @throws IOException if there is a problem reading the byte source
+     */
+    private static PdfTokenizer getOffsetTokeniser(IRandomAccessSource byteSource, boolean closeStream)
+            throws IOException {
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(byteSource));
+        int offset;
+        try {
+            offset = tok.getHeaderOffset();
+        } catch (com.itextpdf.io.exceptions.IOException ex) {
+            if (closeStream) {
+                tok.close();
+            }
+            throw ex;
+        }
+        if (offset != 0) {
+            IRandomAccessSource offsetSource = new WindowRandomAccessSource(byteSource, offset);
+            tok = new PdfTokenizer(new RandomAccessFileOrArray(offsetSource));
+        }
+        return tok;
     }
 
     protected static class ReusableRandomAccessSource implements IRandomAccessSource {

@@ -255,6 +255,10 @@ public final class KernelExceptionMessageConstant {
     public static final String PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT = "Pdf indirect object belongs to "
             + "other PDF document. Copy object to current pdf document.";
     public static final String PDF_VERSION_IS_NOT_VALID = "PDF version is not valid.";
+    public static final String PNG_FILTER_UNKNOWN = "PNG filter unknown.";
+    public static final String PRINT_SCALING_ENFORCE_ENTRY_INVALID = "/PrintScaling shall may appear in the Enforce "
+            + "array only if the corresponding entry in the viewer preferences dictionary specifies a valid value "
+            + "other than AppDefault";
     public static final String REF_ARRAY_ITEMS_IN_STRUCTURE_ELEMENT_DICTIONARY_SHALL_BE_INDIRECT_OBJECTS = "Ref array "
             + "items in structure element dictionary shall be indirect objects.";
     public static final String REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS = "Requested page number {0} is out of bounds.";
@@ -262,10 +266,6 @@ public final class KernelExceptionMessageConstant {
             + "role.";
     public static final String ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE = "Role \"{0}\" in namespace {1} "
             + "is not mapped to any standard role.";
-    public static final String PNG_FILTER_UNKNOWN = "PNG filter unknown.";
-    public static final String PRINT_SCALING_ENFORCE_ENTRY_INVALID = "/PrintScaling shall may appear in the Enforce "
-            + "array only if the corresponding entry in the viewer preferences dictionary specifies a valid value "
-            + "other than AppDefault";
     public static final String RESOURCES_CANNOT_BE_NULL = "Resources cannot be null.";
     public static final String RESOURCES_DO_NOT_CONTAIN_EXTGSTATE_ENTRY_UNABLE_TO_PROCESS_THIS_OPERATOR = "Resources "
             + "do not contain ExtGState entry. Unable to process operator {0}.";
@@ -331,14 +331,16 @@ public final class KernelExceptionMessageConstant {
     public static final String WMF_IMAGE_EXCEPTION = "WMF image exception.";
     public static final String WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS = "Wrong media box size: {0}. Need at least 4 "
             + "arguments";
-    public static final String XREF_TABLE_HAS_CYCLED_REFERENCES =
-            "Xref table has cycled references. Prev pointer indicates an already visited xref table.";
+    public static final String XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT = "Prev pointer in xref structure shall be "
+            + "direct number object.";
     public static final String XREF_SUBSECTION_NOT_FOUND = "xref subsection not found.";
     public static final String XREF_STREAM_HAS_CYCLED_REFERENCES =
             "Xref stream has cycled references. Prev pointer indicates an already visited xref stream.";
     public static final String XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT = "Xref structure contains too many elements "
             + "and may cause OOM exception. You can increase number of elements by setting custom "
             + "MemoryLimitsAwareHandler.";
+    public static final String XREF_TABLE_HAS_CYCLED_REFERENCES =
+            "Xref table has cycled references. Prev pointer indicates an already visited xref table.";
     public static final String YOU_HAVE_TO_DEFINE_A_BOOLEAN_ARRAY_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You have to "
             + "define a boolean array for this collection sort dictionary.";
     public static final String YOU_MUST_SET_A_VALUE_BEFORE_ADDING_A_PREFIX = "You must set a value before adding a "

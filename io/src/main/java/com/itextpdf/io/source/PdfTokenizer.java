@@ -689,8 +689,10 @@ public class PdfTokenizer implements Closeable {
 
     /**
      * Checks whether {@code line} equals to 'trailer'.
-     * @param line for check.
-     * @return true, if line is equals tio 'trailer', otherwise false.
+     *
+     * @param line for check
+     *
+     * @return true, if line is equals to 'trailer', otherwise false
      */
     public static boolean checkTrailer(ByteBuffer line) {
         if (Trailer.length > line.size())
