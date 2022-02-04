@@ -106,6 +106,7 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.renderer.MetaInfoContainer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -117,6 +118,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -2432,6 +2434,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, 0, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
+        setMetaInfoToCanvas(modelCanvas);
+
         Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
         paragraphStyle.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
         if (color != null)
@@ -2489,6 +2493,8 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         Canvas modelCanvas = new Canvas(canvas, areaRect);
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
 
+        setMetaInfoToCanvas(modelCanvas);
+
         Paragraph paragraph = createParagraphForTextFieldValue(value).setFont(font)
                 .setMargin(0)
                 .setPadding(3)
@@ -2545,6 +2551,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
         Canvas modelCanvas = new Canvas(canvas, new Rectangle(3, 0, Math.max(0, width - widthBorder), Math.max(0, height - heightBorder)));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
+
+        setMetaInfoToCanvas(modelCanvas);
+
         Div div = new Div();
         if(getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
             div.setVerticalAlignment(VerticalAlignment.MIDDLE);
@@ -2865,6 +2874,9 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 setVerticalAlignment(VerticalAlignment.MIDDLE);
         Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, width, 2 * height));
         modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, true);
+
+        setMetaInfoToCanvas(modelCanvas);
+
         modelCanvas.showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER, VerticalAlignment.MIDDLE);
     }
 
@@ -2919,6 +2931,13 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
             case TYPE_STAR:
                 DrawingUtil.drawPdfAStar(canvas, width, height);
                 break;
+        }
+    }
+
+    static void setMetaInfoToCanvas(Canvas canvas) {
+        MetaInfoContainer metaInfo = FormsMetaInfoStaticContainer.getMetaInfoForLayout();
+        if (metaInfo != null) {
+            canvas.setProperty(Property.META_INFO, metaInfo);
         }
     }
 

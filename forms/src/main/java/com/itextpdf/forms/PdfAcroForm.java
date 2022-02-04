@@ -87,6 +87,8 @@ import java.util.Set;
  */
 public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfAcroForm.class);
+
     /**
      * To be used with {@link #setSignatureFlags}.
      * <br>
@@ -137,7 +139,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     private PdfDictionary defaultResources;
     private Set<PdfFormField> fieldsForFlattening = new LinkedHashSet<>();
     private XfaForm xfaForm;
-    private static Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
 
     /**
      * Creates a PdfAcroForm as a wrapper of a dictionary.
@@ -720,7 +721,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             } else {
-                logger.error(IoLogMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
+                LOGGER.error(IoLogMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
             }
 
             PdfArray fFields = getFields();
@@ -861,7 +862,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     protected PdfArray getFields() {
         PdfArray fields = getPdfObject().getAsArray(PdfName.Fields);
         if (fields == null) {
-            logger.warn(IoLogMessageConstant.NO_FIELDS_IN_ACROFORM);
+            LOGGER.warn(IoLogMessageConstant.NO_FIELDS_IN_ACROFORM);
             fields = new PdfArray();
             getPdfObject().put(PdfName.Fields, fields);
         }
@@ -877,12 +878,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         int index = 1;
         for (PdfObject field : array) {
             if (field.isFlushed()) {
-                logger.info(IoLogMessageConstant.FORM_FIELD_WAS_FLUSHED);
+                LOGGER.info(IoLogMessageConstant.FORM_FIELD_WAS_FLUSHED);
                 continue;
             }
             PdfFormField formField = PdfFormField.makeFormField(field, document);
             if (formField == null) {
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
                         field.getIndirectReference() == null ? field : field.getIndirectReference()));
                 continue;
             }

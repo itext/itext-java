@@ -22,12 +22,20 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfResources;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.renderer.MetaInfoContainer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -46,5 +54,33 @@ public class PdfFormFieldUnitTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfException.class,
                 () -> pdfFormField.getRect(pdfDictionary));
         Assert.assertEquals(FormsExceptionMessageConstant.WRONG_FORM_FIELD_ADD_ANNOTATION_TO_THE_FIELD, exception.getMessage());
+    }
+
+    @Test
+    public void setMetaInfoToCanvasMetaInfoUsedTest() {
+        Canvas canvas = createCanvas();
+        MetaInfoContainer metaInfoContainer = new MetaInfoContainer(new IMetaInfo() {
+        });
+        FormsMetaInfoStaticContainer.useMetaInfoDuringTheAction(metaInfoContainer,
+                () -> PdfFormField.setMetaInfoToCanvas(canvas));
+
+        Assert.assertSame(metaInfoContainer, canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
+    }
+
+    @Test
+    public void setMetaInfoToCanvasMetaInfoNotUsedTest() {
+        Canvas canvas = createCanvas();
+        PdfFormField.setMetaInfoToCanvas(canvas);
+
+        Assert.assertNull(canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
+    }
+
+    private static Canvas createCanvas() {
+        try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfStream stream = (PdfStream) new PdfStream().makeIndirect(document);
+            PdfResources resources = new PdfResources();
+            PdfCanvas pdfCanvas = new PdfCanvas(stream, resources, document);
+            return new Canvas(pdfCanvas, new Rectangle(100, 100));
+        }
     }
 }
