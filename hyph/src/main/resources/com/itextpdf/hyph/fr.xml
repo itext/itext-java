@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- Created by Carlos Villegas from Lout's french.lh,
      converted to ISO-LATIN-1 and added back the
@@ -58,16 +58,16 @@ wW
 xX
 yY
 zZ
-àÀ
-âÂ
-çÇ
-èÈ
-éÉ
-êÊ
-îÎ
-ïÏ
-ôÔ
-ûÛ
+Ã Ã€
+Ã¢Ã‚
+Ã§Ã‡
+Ã¨Ãˆ
+Ã©Ã‰
+ÃªÃŠ
+Ã®ÃŽ
+Ã¯Ã
+Ã´Ã”
+Ã»Ã›
 &#x0153;&#x0152; <!-- oe OE ligatures -->
 </classes>
 <patterns>
@@ -123,11 +123,11 @@ zZ
 2'2
 .a4
 'a4
-.â4
-'â4
-                    .ab3réa
-                    'ab3réa
-                    a1è2dre
+.Ã¢4
+'Ã¢4
+                    .ab3rÃ©a
+                    'ab3rÃ©a
+                    a1Ã¨2dre
                     .ae3s4ch
                     'ae3s4ch
                     1alcool
@@ -136,21 +136,21 @@ zZ
                     'amino1a2c
                     .ana3s4tr
                     'ana3s4tr
-                    1a2nesthési
+                    1a2nesthÃ©si
                     .anti1a2
                     'anti1a2
                     .anti1e2
                     'anti1e2
-                    .anti1é2
+                    .anti1Ã©2
                     .anti2enne
                     'anti2enne
-                    'anti1é2
+                    'anti1Ã©2
                     .anti1s2
                     'anti1s2
                     .apo2s3ta
                     'apo2s3ta
                     apo2s3tr
-                    archi1é2pis
+                    archi1Ã©2pis
                     .as2ta
                     'as2ta
                     a2s3tro
@@ -160,17 +160,17 @@ zZ
 %==================-%======================-%
 %%b -->
 1ba
-1bâ
+1bÃ¢
                     .bai2se3main <!-- % hyphen disappeared from french  5/2/94 -->
 1be
-1bé
-1bè
-1bê
+1bÃ©
+1bÃ¨
+1bÃª
 4be.
 4bes.
 2bent. <!-- % mute syllable: tombent (df) 22/02/94 -->
 1bi
-1bî0 <!-- % final zero essential to terminate cs -->
+1bÃ®0 <!-- % final zero essential to terminate cs -->
                     .bi1a2c
                     .bi1a2t <!-- % like .tri1a2t for tri-athlon bg 12/27/93 -->
                     .bi1au
@@ -182,13 +182,13 @@ zZ
 4bles.
 2blent. <!-- % mute syllable: troublent (df) 28/02/94 -->
 1bo
-1bô
+1bÃ´
 1b2r
 4bre.
 4bres.
 2brent. <!-- % mute syllable: palabrent (df) 28/02/94 -->
 1bu
-1bû
+1bÃ»
 1by
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
@@ -196,21 +196,21 @@ zZ
 <!-- %%c -->
 1\cc
 1ca
-1câ
+1cÃ¢
 ca3ou3t2 <!-- % pour caoutchou... added 3/1/94 df-bg -->
 1ce
-1cé
-1cè
-1cê
+1cÃ©
+1cÃ¨
+1cÃª
 4ce.
 4ces.
 <!-- % words ending with -cent (df) 22/02/94 -->
         2cent.
       ja3cent.
       ac3cent.
-     é3cent.
+     Ã©3cent.
   munifi3cent.
-  réti3cent.
+  rÃ©ti3cent.
 privatdo3cent.
     inno3cent.
       es3cent.
@@ -225,13 +225,13 @@ privatdo3cent.
 4che.
 4ches.
 2chent. <!-- % mute syllable: touchent (df) 22/02/94 -->
-                    .chè2vre3feuille <!-- % hyphen disappeared from french 5/2/94 -->
+                    .chÃ¨2vre3feuille <!-- % hyphen disappeared from french 5/2/94 -->
 2chg
 ch2l
 4chle.
 4chles.
                     chlo2r3a2c
-                    chlo2r3é2t
+                    chlo2r3Ã©2t
 2chm
 2chn
 2chp
@@ -242,7 +242,7 @@ ch2r
 2cht
 2chw
 1ci
-1cî0 <!-- % final zero essential to terminate cs -->
+1cÃ®0 <!-- % final zero essential to terminate cs -->
                     .ci2s1alp
 1c2k
 4ck.
@@ -261,7 +261,7 @@ ch2r
 4cles.
 2clent. <!-- % mute syllable: encerclent (df) 28/02/94 -->
 1co
-1cô
+1cÃ´
                     co1acc
                     co1acq
                     co1a2d
@@ -271,14 +271,14 @@ ch2r
                     co1assur
                     co1au
                     co1ax
-                    co1é2
+                    co1Ã©2
                     co1ef
                     co1en
                     co1ex
                     .con4  <!-- % missing from nb list -->
                     .cons4 <!-- % missing from nb list -->
                     .contre1s2c
-                    .contre3maî0tre <!-- % hyphen disappeared from french 5/2/94 -->
+                    .contre3maÃ®0tre <!-- % hyphen disappeared from french 5/2/94 -->
                     co2nurb
                     .co1o2
                     .co2o3lie
@@ -287,7 +287,7 @@ ch2r
 4cres.
 2crent. <!-- % mute syllable: massacrent (df) 28/02/94 -->
 1cu
-1cû
+1cÃ»
 1cy
 .cul4 <!-- % == as .con4 .cons4 (march 92) -->
 <!-- %==================-%======================-% -->
@@ -296,19 +296,19 @@ ch2r
 <!-- %%d -->
 1d'
 1da
-1dâ
+1dÃ¢
                     .dacryo1a2
 d1d2h
 1de
-1dé
-1dè
-1dê
+1dÃ©
+1dÃ¨
+1dÃª
 4de.
 4des.
 <!-- % words ending with -dent (df) 22/02/94 -->
       2dent.
-déca3dent.
-   é3dent.
+dÃ©ca3dent.
+   Ã©3dent.
    cci3dent.
   inci3dent.
  confi3dent.
@@ -319,53 +319,53 @@ déca3dent.
   impu3dent.
    pru3dent.
 <!-- % -->
-                    .dé1a2
-                    .dé1io
-                    .dé1o2
-                    .dé2s <!-- % originaly in JD file -->
-                    <!-- %.dé2s1a2 removed 09/17/92 because wrong for the -->
+                    .dÃ©1a2
+                    .dÃ©1io
+                    .dÃ©1o2
+                    .dÃ©2s <!-- % originaly in JD file -->
+                    <!-- %.dÃ©2s1a2 removed 09/17/92 because wrong for the -->
                     <!-- % original JD 500 words test -->
-                    .dé3s2a3cr
-                    .dés2a3m <!-- % .dés2a2mi introduced 09/17/92 bec. i -->
-                               <!-- % can't see why désamidonner ran in JD. -->
-                               <!-- % Moved to .dés2a3m df 12/27/93. -->
-                    .dé3s2a3tell
-                    .dé3s2astr
-                    .dé3s2c <!-- % 1 moved 3 due to .dé2s 09/17/92 -->
-                    <!-- %.dé2s1e2 removed 09/17/92 because wrong for the -->
+                    .dÃ©3s2a3cr
+                    .dÃ©s2a3m <!-- % .dÃ©s2a2mi introduced 09/17/92 bec. i -->
+                               <!-- % can't see why dÃ©samidonner ran in JD. -->
+                               <!-- % Moved to .dÃ©s2a3m df 12/27/93. -->
+                    .dÃ©3s2a3tell
+                    .dÃ©3s2astr
+                    .dÃ©3s2c <!-- % 1 moved 3 due to .dÃ©2s 09/17/92 -->
+                    <!-- %.dÃ©2s1e2 removed 09/17/92 because wrong for the -->
                     <!-- % original JD 500 words test -->
-                    .dé2s1é2
-                    .dé3s2é3gr
-                    .dé3s2ensib
-                    .dé3s2ert
-                    .dé3s2exu
-                    <!-- %.dé2s3h removed 09/17/92 because wrong for the -->
+                    .dÃ©2s1Ã©2
+                    .dÃ©3s2Ã©3gr
+                    .dÃ©3s2ensib
+                    .dÃ©3s2ert
+                    .dÃ©3s2exu
+                    <!-- %.dÃ©2s3h removed 09/17/92 because wrong for the -->
                     <!-- % original JD 500 words test -->
-                    .dé2s1i2
-                    .dé3s2i3d
-                    .dé3s2i3gn
-                    .dé3s2i3li
-                    .dé3s2i3nen
-                    .dé3s2invo
-                    .dé3s2i3r
-                    .dé3s2ist
-                    <!-- %.dé2s1o2 removed 09/17/92 because wrong for the -->
+                    .dÃ©2s1i2
+                    .dÃ©3s2i3d
+                    .dÃ©3s2i3gn
+                    .dÃ©3s2i3li
+                    .dÃ©3s2i3nen
+                    .dÃ©3s2invo
+                    .dÃ©3s2i3r
+                    .dÃ©3s2ist
+                    <!-- %.dÃ©2s1o2 removed 09/17/92 because wrong for the -->
                     <!-- % original JD 500 words test -->
-                    .dé3s2o3dé
-                    .dé3s2o3l
-                    .dé3s2o3pil
-                    .dé3s2orm
-                    .dé3s2orp
-                    .dé3s2oufr
-                    .dé3s2p <!-- % 1 moved 3 due to .dé2s 09/17/92 -->
-                    .dé3s2t <!-- % 1 moved 3 due to .dé2s 09/17/92 -->
-                    .dé2s1u2n
+                    .dÃ©3s2o3dÃ©
+                    .dÃ©3s2o3l
+                    .dÃ©3s2o3pil
+                    .dÃ©3s2orm
+                    .dÃ©3s2orp
+                    .dÃ©3s2oufr
+                    .dÃ©3s2p <!-- % 1 moved 3 due to .dÃ©2s 09/17/92 -->
+                    .dÃ©3s2t <!-- % 1 moved 3 due to .dÃ©2s 09/17/92 -->
+                    .dÃ©2s1u2n
                     3d2hal
                     3d2houd
 1di
-1dî0 <!-- % final zero essential to terminate cs -->
+1dÃ®0 <!-- % final zero essential to terminate cs -->
                     di2s3cop
-                    .di1a2cé
+                    .di1a2cÃ©
                     .di1a2cid
                     dia2g3n
                     .di1ald
@@ -375,14 +375,14 @@ déca3dent.
                     .di2s3h
 2dlent. <!-- % mute syllable: jodlent (df) 28/02/94 -->
 1do
-1dô
+1dÃ´
 1d2r
 4dre.
 4dres.
 2drent. <!-- % mute syllable: engendrent (df) 28/02/94 -->
 d1s2
 1du
-1dû
+1dÃ»
 1dy
                     .dy2s3
                     .dy2s1a2
@@ -395,24 +395,24 @@ d1s2
 <!-- %%e -->
 .e4
 'e4
-.ê4
-'ê4
-.é4
-'é4
-.è4
-'è4
-                    1é2drie
-                    1é2drique
-                    1é2lectr
-                    1é2lément
+.Ãª4
+'Ãª4
+.Ã©4
+'Ã©4
+.Ã¨4
+'Ã¨4
+                    1Ã©2drie
+                    1Ã©2drique
+                    1Ã©2lectr
+                    1Ã©2lÃ©ment
                     .en1a2
                     'en1a2
-                    1é2nerg
+                    1Ã©2nerg
                     e2n1i2vr
                     .en1o2
                     'en1o2
-                    épi2s3cop
-                    épi3s4cope
+                    Ã©pi2s3cop
+                    Ã©pi3s4cope
                     e2s3cop
                     .eu2r1a2
                     'eu2r1a2
@@ -425,46 +425,46 @@ d1s2
 <!-- %==================-%======================-% -->
 <!-- %%f -->
 1fa
-1fâ
+1fÃ¢
 1fe
-1fé
-1fè
-1fê
+1fÃ©
+1fÃ¨
+1fÃª
 4fe.
 4fes.
 2fent. <!-- % mute syllable: agrafent chauffent (df) 22/02/94 -->
 <!-- % -->
 1fi
-1fî0 <!-- % final zero essential to terminate cs -->
+1fÃ®0 <!-- % final zero essential to terminate cs -->
 1f2l
 4fle.
 4fles.
 2flent. <!-- % mute syllable: gonflent (df) 28/02/94 -->
 1fo
-1fô
+1fÃ´
 1f2r
 4fre.
 4fres.
 2frent. <!-- % mute syllable: balafrent (df) 28/02/94 -->
 f1s2
 1fu
-1fû
+1fÃ»
 1fy
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
 <!-- %==================-%======================-% -->
 <!-- %%g -->
 1ga
-1gâ
+1gÃ¢
 1ge
-1gé
-1gè
-1gê
+1gÃ©
+1gÃ¨
+1gÃª
 4ge.
 4ges.
 <!-- % words ending with -gent (df) 22/02/94 -->
        2gent.
-   ré3gent.
+   rÃ©3gent.
   entre3gent.
    indi3gent.
    dili3gent.
@@ -477,7 +477,7 @@ intelli3gent.
     'ar3gent.
     ser3gent.
     ter3gent.
-résur3gent.
+rÃ©sur3gent.
 <!-- % -->
 1g2ha
 1g2he
@@ -485,7 +485,7 @@ résur3gent.
 1g2ho
 1g2hy
 1gi
-1gî0 <!-- % final zero essential to terminate cs -->
+1gÃ®0 <!-- % final zero essential to terminate cs -->
 1g2l
 4gle.
 4gles.
@@ -497,13 +497,13 @@ résur3gent.
 4gnes.
 2gnent. <!-- % mute syllable: accompagnent (df) 28/02/94 -->
 1go
-1gô
+1gÃ´
 1g2r
 4gre.
 4gres.
 2grent. <!-- % mute syllable: immigrent (df) 28/02/94 -->
 1gu
-1gû
+1gÃ»
 g1s2
 4gue.
 4gues.
@@ -518,25 +518,25 @@ g1s2
 <!-- %==================-%======================-% -->
 <!-- %%h -->
 1ha
-1hâ
+1hÃ¢
 1he
-1hé
-1hè
-1hê
-                    hémi1é
-                    hémo1p2t
+1hÃ©
+1hÃ¨
+1hÃª
+                    hÃ©mi1Ã©
+                    hÃ©mo1p2t
 4he.
 4hes.
 1hi
-1hî0 <!-- % final zero essential to terminate cs -->
+1hÃ®0 <!-- % final zero essential to terminate cs -->
 1ho
-1hô
+1hÃ´
 1hu
-1hû
+1hÃ»
 1hy
                     hypera2
                     hypere2
-                    hyperé2
+                    hyperÃ©2
                     hyperi2
                     hypero2
                     hypers2
@@ -544,7 +544,7 @@ g1s2
                     hyperu2
                     hypo1a2
                     hypo1e2 <!-- % missing from nb list -->
-                    hypo1é2
+                    hypo1Ã©2
                     hypo1i2
                     hypo1o2
                     hypo1s2
@@ -555,11 +555,11 @@ g1s2
 <!-- %%i -->
 .i4
 'i4
-.î4
-'î4
+.Ã®4
+'Ã®4
                     i1algi
                     i1arthr
-                    i1è2dre
+                    i1Ã¨2dre
 <!-- % ill patterns missing from nb list -->
     il2l 
    cil3l
@@ -572,7 +572,7 @@ g1s2
      l3lion
    mil3l
    mil4let
-émil4l
+Ã©mil4l
  semil4l
   rmil4l
  armil5l
@@ -610,14 +610,14 @@ chevil4l
                     'in2augur
                     .in1e2
                     'in1e2
-                    .in1é2
-                    'in1é2
+                    .in1Ã©2
+                    'in1Ã©2
                     .in2effab <!-- % missing from nb list -->
                     'in2effab
-                    .in2é3lucta
-                    'in2é3lucta
-                    .in2é3narra
-                    'in2é3narra
+                    .in2Ã©3lucta
+                    'in2Ã©3lucta
+                    .in2Ã©3narra
+                    'in2Ã©3narra
                     .in2ept
                     'in2ept
                     .in2er
@@ -645,8 +645,8 @@ chevil4l
                     'intera2
                     .intere2
                     'intere2
-                    .interé2
-                    'interé2
+                    .interÃ©2
+                    'interÃ©2
                     .interi2
                     'interi2
                     .intero2
@@ -673,17 +673,17 @@ chevil4l
 2jk
 4je.
 4jes.
-2jent. <!-- % mute syllable: galèjent (df) 22/02/94 -->
+2jent. <!-- % mute syllable: galÃ¨jent (df) 22/02/94 -->
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
 <!-- %==================-%======================-% -->
 <!-- %%k -->
 1ka
-1kâ
+1kÃ¢
 1ke
-1ké
-1kè
-1kê
+1kÃ©
+1kÃ¨
+1kÃª
 4ke.
 4kes.
 2kent. <!-- % mute syllable: jerkent (df) 22/02/94 -->
@@ -691,32 +691,32 @@ chevil4l
 4kh.
 .kh4
 1ki
-1kî0 <!-- % final zero essential to terminate cs -->
+1kÃ®0 <!-- % final zero essential to terminate cs -->
 1ko
-1kô
+1kÃ´
 1k2r
 1ku
-1kû
+1kÃ»
 1ky
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
 <!-- %==================-%======================-% -->
 <!-- %%l -->
 1la
-1lâ
-1là
+1lÃ¢
+1lÃ 
                     la2w3re
 1le
-1lé
-1lè
-1lê
+1lÃ©
+1lÃ¨
+1lÃª
 4le.
 4les.
 <!-- % words ending with -lent (df) 22/02/94 -->
         2lent.
      .ta3lent.
      iva3lent.
-équiva4lent.
+Ã©quiva4lent.
   monova3lent.
   polyva3lent.
       re3lent.
@@ -725,7 +725,7 @@ chevil4l
     inso3lent.
    turbu3lent.
    succu3lent.
-  fécu3lent.
+  fÃ©cu3lent.
    trucu3lent.
      opu3lent.
    corpu3lent.
@@ -733,24 +733,24 @@ chevil4l
    sporu4lent.
 <!-- % -->
 1li
-1lî0 <!-- % final zero essential to terminate cs -->
+1lÃ®0 <!-- % final zero essential to terminate cs -->
 1lo
-1lô
+1lÃ´
 l1s2t
 1lu
-1lû
+1lÃ»
 1ly
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
 <!-- %==================-%======================-% -->
 <!-- %%m -->
 1ma
-1mâ
+1mÃ¢
                     .ma2c3k
                     .macro1s2c
                     .ma2l1a2dres
                     .ma2l1a2dro
-                    .ma2l1aisé
+                    .ma2l1aisÃ©
                     .ma2l1ap
                     .ma2l1a2v
                     .ma2l1en
@@ -759,46 +759,46 @@ l1s2t
                     .ma2l1o2d
                     .ma2r1x <!-- % nb (jbb: ?) -->
 1me
-1mé
-1mè
-1mê
-                    .mé2g1oh
-                    .mé2sa <!-- % missing from nb list -->
-                    .mé3san <!-- % missing from nb list -->
-                    .mé2s1es
-                    .mé2s1i
-                    .mé2s1u2s
-                    .méta1s2ta
+1mÃ©
+1mÃ¨
+1mÃª
+                    .mÃ©2g1oh
+                    .mÃ©2sa <!-- % missing from nb list -->
+                    .mÃ©3san <!-- % missing from nb list -->
+                    .mÃ©2s1es
+                    .mÃ©2s1i
+                    .mÃ©2s1u2s
+                    .mÃ©ta1s2ta
 4me.
 4mes.
 <!-- % words ending with -ment (df) 22/02/94 -->
-      â2ment.
+      Ã¢2ment.
        da2ment.
        fa2ment.
    amalga2ment.
       cla2ment.
        ra2ment.
-tempéra3ment.
+tempÃ©ra3ment.
        ta2ment.
     testa3ment.
       qua2ment.
-      è2ment.
-   carê2ment.
+      Ã¨2ment.
+   carÃª2ment.
  diaphrag2ment.
      ryth2ment.
        ai2ment.
       rai3ment.
-   abî2ment.
-    éci2ment.
+   abÃ®2ment.
+    Ã©ci2ment.
      vidi2ment.
     subli2ment.
-    éli2ment.
+    Ã©li2ment.
      reli2ment.
        mi2ment.
       ani2ment.
      veni2ment.
        ri2ment.
-  détri3ment.
+  dÃ©tri3ment.
     nutri3ment.
      inti2ment.
      esti2ment.
@@ -808,7 +808,7 @@ tempéra3ment.
      .gem2ment.
        om2ment.
      .com3ment.
-      ô2ment.
+      Ã´2ment.
     slalo2ment.
      chro2ment.
        to2ment.
@@ -821,7 +821,7 @@ tempéra3ment.
        or2ment.
        as2ment.
        au2ment.
-    écu2ment.
+    Ã©cu2ment.
        fu2ment.
        hu2ment.
     fichu3ment.
@@ -833,60 +833,60 @@ tempéra3ment.
        tu2ment.
 <!-- % -->
 1mi
-1mî0 <!-- % final zero essential to terminate cs -->
+1mÃ®0 <!-- % final zero essential to terminate cs -->
                     .milli1am
-                    1m2némo
-                    1m2nès
-                    1m2nési
+                    1m2nÃ©mo
+                    1m2nÃ¨s
+                    1m2nÃ©si
 1mo
-1mô
+1mÃ´
                     .mono1a2
                     .mono1e2
-                    .mono1é2
+                    .mono1Ã©2
                     .mono1i2
-                    .mono1ï2dé
+                    .mono1Ã¯2dÃ©
                     .mono1o2
                     .mono1u2
                     .mono1s2
-                    mon2t3réal <!-- % missing from nb list -->
+                    mon2t3rÃ©al <!-- % missing from nb list -->
 m1s2
 1mu
-1mû
+1mÃ»
 1my
-                    moye2n1â2g
+                    moye2n1Ã¢2g
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
 <!-- %==================-%======================-% -->
 <!-- %%n -->
 1na
-1nâ
+1nÃ¢
 1ne
-1né
-1nè
-1nê
+1nÃ©
+1nÃ¨
+1nÃª
 4ne.
 4nes.
 <!-- % words ending with -nent (df) 22/02/94 -->
           2nent. <!-- % fric-tionnent - syllable muette - bg 27/12/93 -->
-    réma3nent.
+    rÃ©ma3nent.
       imma3nent.
      perma3nent.
-    .émi3nent.
-préémi3nent.
-  proémi3nent.
-  surémi3nent.
+    .Ã©mi3nent.
+prÃ©Ã©mi3nent.
+  proÃ©mi3nent.
+  surÃ©mi3nent.
       immi3nent.
      conti3nent.
      perti3nent.
      absti3nent.
 <!-- % -->
 1ni
-1nî0 <!-- % final zero essential to terminate cs -->
+1nÃ®0 <!-- % final zero essential to terminate cs -->
 1no
-1nô
+1nÃ´
                     .no2n1obs
 1nu
-1nû
+1nÃ»
                     n3s2at.
                     n3s2ats.
 n1x
@@ -897,19 +897,19 @@ n1x
 <!-- %%o -->
 .o4
 'o4
-'ô4
-.ô4
+'Ã´4
+.Ã´4
 <!-- %'\"o2 % mjf % deleted 3/1/94 df-bg -->
                     o2b3long
                     1octet <!-- % missing from nb list -->
                     o1d2l
-                    o1è2dre
+                    o1Ã¨2dre
                     o1ioni
                     ombud2s3
                     omni1s2
                     o1s2tas
                     o1s2tat
-                    o1s2téro
+                    o1s2tÃ©ro
                     o1s2tim
                     o1s2tom
                     o1s2trad
@@ -925,22 +925,22 @@ n1x
 <!-- %==================-%======================-% -->
 <!-- %%p -->
 1pa
-1pâ
-                    paléo1é2
+1pÃ¢
+                    palÃ©o1Ã©2
                     .pa2n1a2f
-                    .pa2n1a2mé
+                    .pa2n1a2mÃ©
                     .pa2n1a2ra
                     .pa2n1is
                     .pa2n1o2ph
                     .pa2n1opt
                     .pa2r1a2che
-                    .pa2r1a2chè
+                    .pa2r1a2chÃ¨
                     .para1s2
-                    .pa2r3hé
+                    .pa2r3hÃ©
 1pe
-1pé
-1pè
-1pê
+1pÃ©
+1pÃ¨
+1pÃª
 4pe.
 4pes.
 <!-- % words ending with -pent (df) 22/02/94 -->
@@ -952,20 +952,20 @@ ser3pent.
 <!-- % -->
                     .pen2ta <!-- % pent- or penta- but never pen-ta bg 12/27/93 -->
                     per3h
-                    pé2nul <!-- % pé2n1ul moved back 09/17/92 to JD def. -->
+                    pÃ©2nul <!-- % pÃ©2n1ul moved back 09/17/92 to JD def. -->
                     .pe4r
                     .per1a2
                     .per1e2
-                    .per1é2
+                    .per1Ã©2
                     .per1i2
                     .per1o2
                     .per1u2
-                    pé1r2é2q <!-- % 2r1 moved 09/17/92 to 1r2(it was a typo) -->
-                    .péri1os
-                    .péri1s2
-                    .péri2s3s
-                    .péri2s3ta
-                    .péri1u2
+                    pÃ©1r2Ã©2q <!-- % 2r1 moved 09/17/92 to 1r2(it was a typo) -->
+                    .pÃ©ri1os
+                    .pÃ©ri1s2
+                    .pÃ©ri2s3s
+                    .pÃ©ri2s3ta
+                    .pÃ©ri1u2
 1p2h
 .ph4
 4ph.
@@ -983,27 +983,27 @@ ph2r
 4phres.
 2phs
 2pht
-                    3ph2talé
+                    3ph2talÃ©
                     3ph2tis
 <!-- %%%% Here is an example of a pb involving phonetic and etymologic patterns 5/94 -->
 <!-- %%%%                .phyto3ph2 % originaly, but wrong for phy-toph-thora   9/92 -->
 <!-- %%%%                .phy2topha % for -pharmacie but wrong for phyto-biol.. 5/94 -->
 1pi
-1pî0 <!-- % final zero essential to terminate cs -->
+1pÃ®0 <!-- % final zero essential to terminate cs -->
 1p2l
 4ple.
 4ples.
 2plent. <!-- % mute syllable: accouplent (df) 28/02/94 -->
                     .pluri1a
-                    1p2né
+                    1p2nÃ©
                     1p2neu
 1po
-1pô
+1pÃ´
                     po1astre
                     poly1a2
                     poly1e2
-                    poly1é2
-                    poly1è2
+                    poly1Ã©2
+                    poly1Ã¨2
                     poly1i2
                     poly1o2
                     poly1s2
@@ -1018,26 +1018,26 @@ ph2r
 4pre.
 4pres.
 2prent. <!-- % mute syllable: empourprent (df) 28/02/94 -->
-                    .pré1a2
-                    .pré2a3la <!-- % missing from nb list -->
-                    .pré2au
-                    .pré1é2
-                    .pré1e2
-                    .pré1i2
-                    .pré1o2
-                    .pré1u2
-                    .pré1s2
-                    .pro1é2
-                    .pro1s2cé
+                    .prÃ©1a2
+                    .prÃ©2a3la <!-- % missing from nb list -->
+                    .prÃ©2au
+                    .prÃ©1Ã©2
+                    .prÃ©1e2
+                    .prÃ©1i2
+                    .prÃ©1o2
+                    .prÃ©1u2
+                    .prÃ©1s2
+                    .pro1Ã©2
+                    .pro1s2cÃ©
                     pro2s3tat
                     .prou3d2h
                     1p2sych
                     .psycho1a2n
-                    1p2tèr
-                    1p2tér
+                    1p2tÃ¨r
+                    1p2tÃ©r
 1pu
                     .pud1d2l
-1pû
+1pÃ»
 1py
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
@@ -1048,33 +1048,33 @@ ph2r
 4ques.
 <!-- % words ending with -quent (df) 22/02/94 -->
         2quent.
-     é3quent.
-   élo3quent.
+     Ã©3quent.
+   Ã©lo3quent.
 grandilo3quent.
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
 <!-- %==================-%======================-% -->
 <!-- %%r -->
 1ra
-1râ
+1rÃ¢
                     radio1a2 <!-- % missing from nb list -->
 1re
-1ré
-1rè
-1rê
-                    .ré1a2
-                    .ré2a3le
-                    .ré2a3lis
-                    .ré2a3lit
-                    .ré2aux
-                    .ré1é2
-                    .ré1e2
-                    .ré2el
-                    .ré2er
-                    .ré2èr
-                    .ré1i2
-                    .ré2i3fi
-                    .ré1o2
+1rÃ©
+1rÃ¨
+1rÃª
+                    .rÃ©1a2
+                    .rÃ©2a3le
+                    .rÃ©2a3lis
+                    .rÃ©2a3lit
+                    .rÃ©2aux
+                    .rÃ©1Ã©2
+                    .rÃ©1e2
+                    .rÃ©2el
+                    .rÃ©2er
+                    .rÃ©2Ã¨r
+                    .rÃ©1i2
+                    .rÃ©2i3fi
+                    .rÃ©1o2
                     .re1s2
                     .re2s3cap
                     .re2s3cisi <!-- % for res-cision  09/17/92 (missing from nb) -->
@@ -1092,8 +1092,8 @@ grandilo3quent.
                     .re3s4tag
                     .re3s4tand
                     .re3s4tat
-                    .re3s4tén
-                    .re3s4tér
+                    .re3s4tÃ©n
+                    .re3s4tÃ©r
                     .re3s4tim
                     .re3s4tip
                     .re3s4toc
@@ -1104,18 +1104,18 @@ grandilo3quent.
                     .re4s5trin
                     .re3s4tu
                     .re3s4ty
-                    .réu2 <!-- %.ré1u2 % pattern rejected 12/2/92 -->
-                            <!-- % (don't hyphenate as ré-union nor réu-nion) -->
-                    .ré2uss
-                    .rétro1a2
+                    .rÃ©u2 <!-- %.rÃ©1u2 % pattern rejected 12/2/92 -->
+                            <!-- % (don't hyphenate as rÃ©-union nor rÃ©u-nion) -->
+                    .rÃ©2uss
+                    .rÃ©tro1a2
 4re.
 4res.
 <!-- % words ending with -rent (df) 22/02/94 -->
-       2rent. <!-- % es-pèrent - syllable muette - bg 27/12/93 -->
+       2rent. <!-- % es-pÃ¨rent - syllable muette - bg 27/12/93 -->
     .pa3rent.
    appa3rent.
 transpa3rent.
-    é3rent.
+    Ã©3rent.
     tor3rent.
     cur3rent.
 <!-- % -->
@@ -1125,25 +1125,25 @@ transpa3rent.
                     2r3heur
                     2r3hydr
 1ri
-1rî0 <!-- % final zero essential to terminate cs -->
+1rÃ®0 <!-- % final zero essential to terminate cs -->
 1ro
-1rô
+1rÃ´
 1ru
-1rû
+1rÃ»
 1ry
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
 <!-- %==================-%======================-% -->
 <!-- %%s -->
 1sa
-1sâ
+1sÃ¢
 .sch4
                     1s2caph
-                    1s2clér
+                    1s2clÃ©r
                     1s2cop
  1s2ch
 e2s3ch
-i2s3ché
+i2s3chÃ©
 i2s3chia
 i2s3chio
 4sch.
@@ -1151,16 +1151,16 @@ i2s3chio
 4sches.
 2schs
 1se
-1sé
-1sè
-1sê
+1sÃ©
+1sÃ¨
+1sÃª
                     sesqui1a2
 4se.
 4ses.
 <!-- % words ending with -sent (df) 22/02/94 -->
      2sent. <!-- % massent - syllable muette - bg 27/12/93 -->
    ab3sent.
-pré3sent.
+prÃ©3sent.
  .res3sent.
 <!-- % -->
 .seu2le <!-- % jbb -->
@@ -1175,21 +1175,21 @@ pré3sent.
 2shr
 2shs
 1si
-1sî0 <!-- % final zero essential to terminate cs -->
+1sÃ®0 <!-- % final zero essential to terminate cs -->
                     1s2lav
                     1s2lov
 1so
-1sô
+1sÃ´
                     1s2patia
                     1s2perm
                     1s2por
-                    1s2phèr
-                    1s2phér
+                    1s2phÃ¨r
+                    1s2phÃ©r
                     1s2piel
                     1s2piros
                     1s2tandard
                     1s2tein
-                    stéréo1s2
+                    stÃ©rÃ©o1s2
                     1s2tigm
                     1s2tock
                     1s2tomos
@@ -1197,11 +1197,11 @@ pré3sent.
                     1s2tructu
                     1s2tyle
 1su
-1sû
+1sÃ»
                     .su2b1a2
                     .su3b2alt
-                    .su2b1é2
-                    .su3b2é3r
+                    .su2b1Ã©2
+                    .su3b2Ã©3r
                     .su2b1in
                     .su2b3limin
                     .su2b3lin
@@ -1218,7 +1218,7 @@ pré3sent.
                     .su3r2eau
                     .su3r2ell
                     .su3r2et
-                    .su2r1é2
+                    .su2r1Ã©2
                     .su2r3h
                     .su2r1i2m
                     .su2r1inf
@@ -1231,31 +1231,31 @@ pré3sent.
 <!-- %==================-%======================-% -->
 <!-- %%t -->
 1ta
-1tâ
-1tà
+1tÃ¢
+1tÃ 
                     tachy1a2
                     tchin3t2
 1te
-1té
-1tè
-1tê
-                    télé1e2
-                    télé1i2
-                    télé1o2b
-                    télé1o2p
-                    télé1s2
+1tÃ©
+1tÃ¨
+1tÃª
+                    tÃ©lÃ©1e2
+                    tÃ©lÃ©1i2
+                    tÃ©lÃ©1o2b
+                    tÃ©lÃ©1o2p
+                    tÃ©lÃ©1s2
 4te.
 4tes.
 <!-- % words ending with -tent (df) 22/02/94 -->
         2tent. <!-- % mentent - syllable muette - bg 27/12/93 -->
      .la3tent.
      .pa3tent.
- compé3tent.
-   éni3tent.
- mécon3tent.
+ compÃ©3tent.
+   Ã©ni3tent.
+ mÃ©con3tent.
   omnipo3tent.
 ventripo3tent.
-équipo3tent.
+Ã©quipo3tent.
     impo3tent.
      mit3tent.
 <!-- % -->
@@ -1274,9 +1274,9 @@ th2r
 4thres.
 2ths
 1ti
-1tî0 <!-- % final zero essential to terminate cs -->
+1tÃ®0 <!-- % final zero essential to terminate cs -->
 1to
-1tô
+1tÃ´
 1t2r
                     tran2s1a2
                     tran3s2act
@@ -1294,7 +1294,7 @@ th2r
                     .tri1o2n
                     t1t2l
 1tu
-1tû
+1tÃ»
 tung2s3
 1ty
 <!-- %==================-%======================-% -->
@@ -1303,8 +1303,8 @@ tung2s3
 <!-- %%u -->
 .u4
 'u4
-.û4
-'û4
+.Ã»4
+'Ã»4
                     uni1o2v
                     uni1a2x
                     u2s3tr
@@ -1313,12 +1313,12 @@ tung2s3
 <!-- %==================-%======================-% -->
 <!-- %%v -->
 1va
-1vâ
+1vÃ¢
 1ve
-1vé
-1vè
-1vê
-                    vélo1s2ki
+1vÃ©
+1vÃ¨
+1vÃª
+                    vÃ©lo1s2ki
 4ve.
 4ves.
 <!-- % words ending with -vent (df) 22/02/94 -->
@@ -1327,16 +1327,16 @@ conni3vent.
  .sou3vent.
 <!-- % -->
 1vi
-1vî0 <!-- % final zero essential to terminate cs -->
+1vÃ®0 <!-- % final zero essential to terminate cs -->
 1vo
-1vô
+1vÃ´
                     vol2t1amp
 1v2r
 4vre.
 4vres.
 2vrent. <!-- % mute syllable: recouvrent (df) 28/02/94 -->
 1vu
-1vû
+1vÃ»
 1vy
 <!-- %==================-%======================-% -->
 <!-- % phonetic patterns % etymological patterns % -->
@@ -1371,8 +1371,8 @@ conni3vent.
 <!-- %%z -->
 1za
 1ze
-1zé
-1zè
+1zÃ©
+1zÃ¨
 4ze.
 4zes.
 <!-- % words ending with -zent (df) 22/02/94 -->

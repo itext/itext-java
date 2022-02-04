@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Constructed by Jarno Elovirta from fi8hyph.tex file:
 
 % fi8hyph.tex, based on fihyph.tex
@@ -53,8 +53,8 @@ wW
 xX
 yY
 zZ
-äÄ
-öÖ
+Ã¤Ã„
+Ã¶Ã–
 </classes>
 <patterns>
 1be
@@ -68,8 +68,8 @@ zZ
 1do
 1du
 1dy
-1dä
-1dö
+1dÃ¤
+1dÃ¶
 1fa
 1fe
 1fi
@@ -82,96 +82,96 @@ zZ
 1go
 1gu
 1gy
-1gä
-1gö
+1gÃ¤
+1gÃ¶
 1ha
 1he
 1hi
 1ho
 1hu
 1hy
-1hä
-1hö
+1hÃ¤
+1hÃ¶
 1ja
 1je
 1ji
 1jo
 1ju
 1jy
-1jä
-1jö
+1jÃ¤
+1jÃ¶
 1ka
 1ke
 1ki
 1ko
 1ku
 1ky
-1kä
-1kö
+1kÃ¤
+1kÃ¶
 1la
 1le
 1li
 1lo
 1lu
 1ly
-1lä
-1lö
+1lÃ¤
+1lÃ¶
 1ma
 1me
 1mi
 1mo
 1mu
 1my
-1mä
-1mö
+1mÃ¤
+1mÃ¶
 1na
 1ne
 1ni
 1no
 1nu
 1ny
-1nä
-1nö
+1nÃ¤
+1nÃ¶
 1pa
 1pe
 1pi
 1po
 1pu
 1py
-1pä
-1pö
+1pÃ¤
+1pÃ¶
 1ra
 1re
 1ri
 1ro
 1ru
 1ry
-1rä
-1rö
+1rÃ¤
+1rÃ¶
 1sa
 1se
 1si
 1so
 1su
 1sy
-1sä
-1sö
+1sÃ¤
+1sÃ¶
 1ta
 1te
 1ti
 1to
 1tu
 1ty
-1tä
-1tö
+1tÃ¤
+1tÃ¶
 1va
 1ve
 1vi
 1vo
 1vu
 1vy
-1vä
-1vö
+1vÃ¤
+1vÃ¶
 <!-- % ======= Some common words borrowed from other languages ======= -->
 <!-- % ======= This part could be updated from time to time    ======= -->
 <!-- % -->
@@ -180,29 +180,29 @@ zZ
 <!-- %  ====== Some special cases occuring with compound words only ==== -->
 <!-- %  ====== There still remains well known problem as 'kaivos\-aukko' etc. -->
 <!-- %a1y   (common in borrowed words) -->
-ä2y
+Ã¤2y
 y1a2
 y1o2
 o1y
-ö2y
+Ã¶2y
 u1y2
 y1u2
-ö3a2
-ö3o2
-ä3a2
-ä3o2
-ä1u2
-ö1u2
-a1ä    <!-- % (a1ä2 ei mahdollinen!) -->
-a1ö
-o1ä
-o1ö
-u1ä2
-u1ö2
-ä2ä
-ö2ö
-ä2ö
-ö2ä
+Ã¶3a2
+Ã¶3o2
+Ã¤3a2
+Ã¤3o2
+Ã¤1u2
+Ã¶1u2
+a1Ã¤    <!-- % (a1Ã¤2 ei mahdollinen!) -->
+a1Ã¶
+o1Ã¤
+o1Ã¶
+u1Ã¤2
+u1Ã¶2
+Ã¤2Ã¤
+Ã¶2Ã¶
+Ã¤2Ã¶
+Ã¶2Ã¤
 <!-- %    lyhyt/pitka -vokaalipareja, tavallisesti sanarajalla -->
 aa1i2    <!-- % maa-ikkuna -->
 aa1e2
@@ -228,13 +228,13 @@ a1uu     <!-- % kala-uuni -->
 i1uu     <!-- % ravi-uutiset -->
 e1uu     <!-- % virhe-uutinen -->
 o1uu     <!-- % radio-uutiset -->
-ää1i
-ää1e
-ää3y
-i1ää
-e1ää
-y1ää
-i1öö  <!-- % yhti-öön etc. -->
+Ã¤Ã¤1i
+Ã¤Ã¤1e
+Ã¤Ã¤3y
+i1Ã¤Ã¤
+e1Ã¤Ã¤
+y1Ã¤Ã¤
+i1Ã¶Ã¶  <!-- % yhti-Ã¶Ã¶n etc. -->
 <!-- %i1eu     % keski-eurooppalainen -->
 <!-- %          vokaalikolmikkoja etc.  yhdyssanojen rajoissa -->
 <!-- % =======- vowel triples by Fred Karlsson -->
@@ -274,9 +274,9 @@ uo1a
 <!-- % uo1i % ambiguous -->
 uo1u
 <!-- %   ================ End of vowel triples ==================== -->
-e1ö2
-ö1e2
-.ä2     <!-- % don't hyphenate  ä-lyllinen etc. -->
+e1Ã¶2
+Ã¶1e2
+.Ã¤2     <!-- % don't hyphenate  Ã¤-lyllinen etc. -->
 <!-- % -->
 <!-- % The following patterns contain no general scientific rule. They -->
 <!-- % are selected more or less intuitively to solve problems -->
