@@ -271,6 +271,7 @@ public final class KernelExceptionMessageConstant {
             + "do not contain ExtGState entry. Unable to process operator {0}.";
     public static final String SHADING_TYPE_NOT_FOUND = "Shading type not found.";
     public static final String STDCF_NOT_FOUND_ENCRYPTION = "/StdCF not found (encryption)";
+    public static final String STREAM_SHALL_END_WITH_ENDSTREAM = "Stream shall end with endstream keyword.";
     public static final String STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT = "StructParent index not found in "
             + "tagged object.";
     public static final String STRUCTURE_ELEMENT_IN_STRUCTURE_DESTINATION_SHALL_BE_AN_INDIRECT_OBJECT = "Structure "

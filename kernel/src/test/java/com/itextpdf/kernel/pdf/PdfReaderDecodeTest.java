@@ -60,12 +60,12 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfReaderDecodeTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderDecodeTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderDecodeTest/";
 
     @Test
     public void noMemoryHandlerTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-                FileInputStream is = new FileInputStream(sourceFolder + "stream")) {
+                FileInputStream is = new FileInputStream(SOURCE_FOLDER + "stream")) {
             byte[] b = new byte[51];
             is.read(b);
 
@@ -98,7 +98,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
     })
     public void defaultMemoryHandlerTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf"),
+                new PdfReader(SOURCE_FOLDER + "timing.pdf"),
                 new PdfWriter(new ByteArrayOutputStream()))) {
             PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
             byte[] b = stream.getBytes(false);
@@ -129,7 +129,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         handler.setMaxSizeOfSingleDecompressedPdfStream(1000);
 
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf",
+                new PdfReader(SOURCE_FOLDER + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
                 new PdfWriter(new ByteArrayOutputStream()))) {
 
@@ -166,7 +166,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         handler.setMaxSizeOfSingleDecompressedPdfStream(20);
 
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf",
+                new PdfReader(SOURCE_FOLDER + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
                 new PdfWriter(new ByteArrayOutputStream()))) {
 
@@ -176,10 +176,10 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             PdfArray array = new PdfArray();
             stream.put(PdfName.Filter, array);
 
-            // Limit is reached, but the stream has no filters. Therefore we don't consider ot to be suspicious
+            // Limit is reached, but the stream has no filters. Therefore, we don't consider it to be suspicious.
             Assert.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
 
-            // Limit is reached, but the stream has only one filter. Therefore we don't consider ot to be suspicious
+            // Limit is reached, but the stream has only one filter. Therefore, we don't consider it to be suspicious.
             array.add(PdfName.Fl);
             Assert.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
         }
@@ -200,7 +200,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         handler.setMaxSizeOfSingleDecompressedPdfStream(20);
 
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf",
+                new PdfReader(SOURCE_FOLDER + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
                 new PdfWriter(new ByteArrayOutputStream()))) {
 
@@ -211,7 +211,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             stream.put(PdfName.Filter, array);
             array.add(PdfName.Fl);
 
-            // Limit is reached, and the stream with one filter is considered to be suspicious
+            // Limit is reached, and the stream with one filter is considered to be suspicious.
             Exception e = Assert.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
@@ -235,7 +235,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         handler.setMaxSizeOfSingleDecompressedPdfStream(20);
 
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf",
+                new PdfReader(SOURCE_FOLDER + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
                 new PdfWriter(new ByteArrayOutputStream()))) {
 
@@ -247,8 +247,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             array.add(PdfName.Fl);
             array.add(PdfName.Fl);
 
-            // Limit is reached but the stream with several copies of the filter is not considered
-            // to be suspicious
+            // Limit is reached but the stream with several copies of the filter is not considered to be suspicious.
             PdfReader.decodeBytes(b, stream);
         }
     }
@@ -279,7 +278,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         handler.setMaxSizeOfDecompressedPdfStreamsSum(100000);
 
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf",
+                new PdfReader(SOURCE_FOLDER + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
                 new PdfWriter(new ByteArrayOutputStream()))) {
 
@@ -303,7 +302,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         handler.setMaxSizeOfDecompressedPdfStreamsSum(1500000);
 
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf",
+                new PdfReader(SOURCE_FOLDER + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
                 new PdfWriter(new ByteArrayOutputStream()))) {
 
@@ -324,7 +323,7 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
         handler.setMaxSizeOfSingleDecompressedPdfStream(1500000);
 
         try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(sourceFolder + "timing.pdf",
+                new PdfReader(SOURCE_FOLDER + "timing.pdf",
                         new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
                 new PdfWriter(new ByteArrayOutputStream()))) {
 
