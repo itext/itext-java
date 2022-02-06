@@ -50,7 +50,11 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.FileUtil;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -2045,7 +2049,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             Assert.assertEquals(-1, pdfStream.read());
         }
     }
-    
+
     private static File copyFileForTest(String fileName, String copiedFileName) throws IOException {
         File copiedFile = new File(copiedFileName);
         Files.copy(Paths.get(fileName), Paths.get(copiedFileName));
@@ -2061,6 +2065,45 @@ public class PdfReaderTest extends ExtendedITextTest {
     private void readingNotCompletedTest(PdfReader reader) {
         Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
         Assert.assertEquals(PdfException.DocumentHasNotBeenReadYet, e.getMessage());
+    }
+
+    @Test
+    public void streamWithoutEndstreamKeywordTest() throws IOException, XMPException {
+        final String fileName = sourceFolder + "NoEndstreamKeyword.pdf";
+        try (PdfReader reader = new PdfReader(fileName)) {
+            reader.setStrictnessLevel(StrictnessLevel.LENIENT);
+            try (PdfDocument document = new PdfDocument(reader)) {
+                final PdfCatalog catalog = new PdfCatalog((PdfDictionary) reader.trailer
+                        .get(PdfName.Root, true));
+                final PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+                final int xmpMetadataStreamLength = ((PdfNumber) xmpMetadataStream.get(PdfName.Length)).intValue();
+
+                // 27600 is actual invalid length of stream. In reader StrictnessLevel#LENIENT we expect, that this
+                // length will be fixed.
+                Assert.assertNotEquals(27600, xmpMetadataStreamLength);
+
+                // 3090 is expected length of the stream after fix.
+                Assert.assertEquals(3090, xmpMetadataStreamLength);
+            }
+        }
+    }
+
+    @Test
+    public void streamWithoutEndstreamKeywordConservativeModeTest() throws IOException, XMPException {
+        final String fileName = sourceFolder + "NoEndstreamKeyword.pdf";
+        try (PdfReader reader = new PdfReader(fileName)) {
+            reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
+
+            Exception exception = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
+            Assert.assertEquals(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM, exception.getMessage());
+
+            PdfCatalog catalog = new PdfCatalog((PdfDictionary) reader.trailer.get(PdfName.Root, true));
+            PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
+
+            // 27600 is actual invalid length of stream. In reader StrictnessLevel#CONSERVATIVE we expect, that
+            // exception would be thrown and length wouldn't be fixed.
+            Assert.assertEquals(27600, ((PdfNumber) xmpMetadataStream.get(PdfName.Length)).intValue());
+        }
     }
 
     /**

@@ -54,6 +54,7 @@ import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
@@ -381,8 +382,9 @@ public class PdfReader implements Closeable, Serializable {
      */
     public byte[] readStreamBytesRaw(PdfStream stream) throws IOException {
         PdfName type = stream.getAsName(PdfName.Type);
-        if (!PdfName.XRefStm.equals(type) && !PdfName.ObjStm.equals(type))
+        if (!PdfName.XRef.equals(type) && !PdfName.ObjStm.equals(type)) {
             checkPdfStreamLength(stream);
+        }
         long offset = stream.getOffset();
         if (offset <= 0)
             return null;
@@ -392,7 +394,7 @@ public class PdfReader implements Closeable, Serializable {
         RandomAccessFileOrArray file = tokens.getSafeFile();
         byte[] bytes = null;
         try {
-            file.seek(stream.getOffset());
+            file.seek(offset);
             bytes = new byte[length];
             file.readFully(bytes);
             boolean embeddedStream = pdfDocument.doesStreamBelongToEmbeddedFile(stream);
@@ -1416,10 +1418,13 @@ public class PdfReader implements Closeable, Serializable {
                 line.reset();
 
                 // added boolean because of mailing list issue (17 Feb. 2014)
-                if (!tokens.readLineSegment(line, false))
+                if (!tokens.readLineSegment(line, false)) {
+                    if (!StrictnessLevel.CONSERVATIVE.isStricter(this.strictnessLevel)) {
+                        throw new PdfException(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM);
+                    }
                     break;
+                }
                 if (line.startsWith(endstream)) {
-                    streamLength = (int) (pos - start);
                     break;
                 } else if (line.startsWith(endobj)) {
                     tokens.seek(pos - 16);
@@ -1427,10 +1432,10 @@ public class PdfReader implements Closeable, Serializable {
                     int index = s.indexOf(endstream1);
                     if (index >= 0)
                         pos = pos - 16 + index;
-                    streamLength = (int) (pos - start);
                     break;
                 }
             }
+            streamLength = (int) (pos - start);
             tokens.seek(pos - 2);
             if (tokens.read() == 13) {
                 streamLength--;
