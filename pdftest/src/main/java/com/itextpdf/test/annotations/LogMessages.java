@@ -62,10 +62,14 @@ public @interface LogMessages {
     LogMessage[] messages();
     
     /**
-     * Whether or not the {@link LogListener} algorithm should be ignored. If
+     * Defines whether the {@link LogListener} algorithm should be ignored. If
      * ignored, no checks will be done on the log messages for this test.
+     *
+     * Note that even if you set this parameter to {@code true}, you still have to specify
+     * all potential log messages in {@link LogMessage} annotations for now, otherwise
+     * {@link LogListener} will report issues.
      * 
-     * Defaults to false.
+     * Defaults to {@code false}.
      * 
      * @return whether to ignore the {@link LogListener} algorithm
      */
