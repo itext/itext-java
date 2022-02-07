@@ -153,88 +153,25 @@ public class PdfXrefTable {
     }
 
     /**
-     * Change the state of the cross-reference table to mark that reading of the document
-     * was completed.
-     */
-    void markReadingCompleted() {
-        readingCompleted = true;
-    }
-
-    /**
-     * Check if reading of the document was completed.
+     * Convenience method to write the fingerprint preceding the trailer.
+     * The fingerprint contains information on iText products used in the generation or manipulation
+     * of an outputted PDF file.
      *
-     * @return true if reading was completed and false otherwise
+     * @param document pdfDocument to write the fingerprint to
      */
-    boolean isReadingCompleted() {
-        return readingCompleted;
-    }
+    protected static void writeKeyInfo(PdfDocument document) {
+        PdfWriter writer = document.getWriter();
 
-    /**
-     * Set up appropriate state for the free references list.
-     *
-     * @param pdfDocument is the current {@link PdfDocument document}
-     */
-    void initFreeReferencesList(PdfDocument pdfDocument) {
-        freeReferencesLinkedList.clear();
-
-        // ensure zero object is free
-        xref[0].setState(PdfObject.FREE);
-        TreeSet<Integer> freeReferences = new TreeSet<>();
-        for (int i = 1; i < size(); ++i) {
-            PdfIndirectReference ref = xref[i];
-            if (ref == null || ref.isFree()) {
-                freeReferences.add(i);
+        final Collection<ProductData> products = document.getFingerPrint().getProducts();
+        if (products.isEmpty()) {
+            writer.writeString(MessageFormatUtil
+                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
+        } else {
+            for (ProductData productData : products) {
+                writer.writeString(MessageFormatUtil
+                        .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
             }
         }
-
-        PdfIndirectReference prevFreeRef = xref[0];
-        while (!freeReferences.<Integer>isEmpty()) {
-            int currFreeRefObjNr = -1;
-            if (prevFreeRef.getOffset() <= Integer.MAX_VALUE) {
-                currFreeRefObjNr = (int) prevFreeRef.getOffset();
-            }
-            if (!freeReferences.contains(currFreeRefObjNr) || xref[currFreeRefObjNr] == null) {
-                break;
-            }
-
-            freeReferencesLinkedList.put(currFreeRefObjNr, prevFreeRef);
-            prevFreeRef = xref[currFreeRefObjNr];
-            freeReferences.remove(currFreeRefObjNr);
-        }
-
-        while (!freeReferences.<Integer>isEmpty()) {
-            int next = freeReferences.pollFirst();
-            if (xref[next] == null) {
-                if (pdfDocument.properties.appendMode) {
-                    continue;
-                }
-                xref[next] = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, next, 0).setState(PdfObject.FREE).setState(PdfObject.MODIFIED);
-            } else if (xref[next].getGenNumber() == MAX_GENERATION && xref[next].getOffset() == 0) {
-                continue;
-            }
-            if (prevFreeRef.getOffset() != (long)next) {
-                ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(next);
-            }
-            freeReferencesLinkedList.put(next, prevFreeRef);
-            prevFreeRef = xref[next];
-        }
-
-        if (prevFreeRef.getOffset() != 0) {
-            ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(0);
-        }
-        freeReferencesLinkedList.put(0, prevFreeRef);
-    }
-
-    /**
-     * Method is used for object streams to avoid reuse existed references.
-     *
-     * @param document is the current {@link PdfDocument document}
-     * @return created indirect reference to the object stream
-     */
-    PdfIndirectReference createNewIndirectReference(PdfDocument document) {
-        PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
-        add(reference);
-        return (PdfIndirectReference) reference.setState(PdfObject.MODIFIED);
     }
 
     /**
@@ -440,6 +377,91 @@ public class PdfXrefTable {
     }
 
     /**
+     * Change the state of the cross-reference table to mark that reading of the document
+     * was completed.
+     */
+    void markReadingCompleted() {
+        readingCompleted = true;
+    }
+
+    /**
+     * Check if reading of the document was completed.
+     *
+     * @return true if reading was completed and false otherwise
+     */
+    boolean isReadingCompleted() {
+        return readingCompleted;
+    }
+
+    /**
+     * Set up appropriate state for the free references list.
+     *
+     * @param pdfDocument is the current {@link PdfDocument document}
+     */
+    void initFreeReferencesList(PdfDocument pdfDocument) {
+        freeReferencesLinkedList.clear();
+
+        // ensure zero object is free
+        xref[0].setState(PdfObject.FREE);
+        TreeSet<Integer> freeReferences = new TreeSet<>();
+        for (int i = 1; i < size(); ++i) {
+            PdfIndirectReference ref = xref[i];
+            if (ref == null || ref.isFree()) {
+                freeReferences.add(i);
+            }
+        }
+
+        PdfIndirectReference prevFreeRef = xref[0];
+        while (!freeReferences.<Integer>isEmpty()) {
+            int currFreeRefObjNr = -1;
+            if (prevFreeRef.getOffset() <= Integer.MAX_VALUE) {
+                currFreeRefObjNr = (int) prevFreeRef.getOffset();
+            }
+            if (!freeReferences.contains(currFreeRefObjNr) || xref[currFreeRefObjNr] == null) {
+                break;
+            }
+
+            freeReferencesLinkedList.put(currFreeRefObjNr, prevFreeRef);
+            prevFreeRef = xref[currFreeRefObjNr];
+            freeReferences.remove(currFreeRefObjNr);
+        }
+
+        while (!freeReferences.<Integer>isEmpty()) {
+            int next = freeReferences.pollFirst();
+            if (xref[next] == null) {
+                if (pdfDocument.properties.appendMode) {
+                    continue;
+                }
+                xref[next] = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, next, 0).setState(PdfObject.FREE).setState(PdfObject.MODIFIED);
+            } else if (xref[next].getGenNumber() == MAX_GENERATION && xref[next].getOffset() == 0) {
+                continue;
+            }
+            if (prevFreeRef.getOffset() != (long)next) {
+                ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(next);
+            }
+            freeReferencesLinkedList.put(next, prevFreeRef);
+            prevFreeRef = xref[next];
+        }
+
+        if (prevFreeRef.getOffset() != 0) {
+            ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(0);
+        }
+        freeReferencesLinkedList.put(0, prevFreeRef);
+    }
+
+    /**
+     * Method is used for object streams to avoid reuse existed references.
+     *
+     * @param document is the current {@link PdfDocument document}
+     * @return created indirect reference to the object stream
+     */
+    PdfIndirectReference createNewIndirectReference(PdfDocument document) {
+        PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
+        add(reference);
+        return (PdfIndirectReference) reference.setState(PdfObject.MODIFIED);
+    }
+
+    /**
      * Clear the state of the cross-reference table.
      */
     void clear() {
@@ -501,28 +523,6 @@ public class PdfXrefTable {
             mask >>= 8;
         }
         return size;
-    }
-
-    /**
-     * Convenience method to write the fingerprint preceding the trailer.
-     * The fingerprint contains information on iText products used in the generation or manipulation
-     * of an outputted PDF file.
-     *
-     * @param document pdfDocument to write the fingerprint to
-     */
-    protected static void writeKeyInfo(PdfDocument document) {
-        PdfWriter writer = document.getWriter();
-
-        final Collection<ProductData> products = document.getFingerPrint().getProducts();
-        if (products.isEmpty()) {
-            writer.writeString(MessageFormatUtil
-                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
-        } else {
-            for (ProductData productData : products) {
-                writer.writeString(MessageFormatUtil
-                        .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
-            }
-        }
     }
 
     private void appendNewRefToFreeList(PdfIndirectReference reference) {
