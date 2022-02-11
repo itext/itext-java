@@ -45,13 +45,11 @@ public class MessageFormatUtilTest extends ExtendedITextTest {
     private String pattern;
     private Object[] arguments;
 
-
     public MessageFormatUtilTest(Object expectedResult, Object pattern, Object arguments, Object name) {
         this.expectedResult = (String)expectedResult;
         this.pattern = (String)pattern;
         this.arguments = (Object[]) arguments;
     }
-
 
     @Parameterized.Parameters(name = "{index}: {3} format: {1}; {0}")
     public static Iterable<Object[]> dataSource() {
@@ -60,12 +58,12 @@ public class MessageFormatUtilTest extends ExtendedITextTest {
                 {"Message with 'single quotes'", "Message with 'single quotes'", new Object[0],"test with single quotes"},
                 {"Message with ''doubled single quotes''", "Message with ''doubled single quotes''", new Object[0],"test with doubled single quotes"},
                 {"Message with {curly braces} and a parameter {I'm between curly braces too}", "Message with {{curly braces}} and a parameter {{{0}}}", new Object[]{"I'm between curly braces too"},"Test with curly braces"},
-                {"Message with {{multiple curly braces}}", "Message with {{{{multiple curly braces}}}}", new Object[]{},"Test with multiple curly braces"},
-                {"Message with {Value between brackets} and {{Value between double brackets}}", "Message with {{{0}}} and {{{{{1}}}}}", new Object[]{"Value between brackets", "Value between double brackets"},"Test with multiple curly braces"},
-                {"Lets go wild 'value 1', {value 2}, '{value 3}', {'{value 4}'}", "Lets go wild '{0}', {{{1}}}, '{{{2}}}', {{'{{{3}}}'}}", new Object[]{"value 1", "value 2","value 3","value 4"},"Some of all"},
-                {"{'{value}'}", "{{'{{{0}}}'}}", new Object[]{"value"},"Mix om multiple brackets and quotes 1"},
                 {"'{value}'", "'{{{0}}}'", new Object[]{"value"},"Mix om multiple brackets and quotes 1"},
-                {"a '{'{123}'}''' b", "a '{{'{{{0}}}'}}''' b",  new Object[]{123},"Mix om multiple brackets and quotes 1"},
+                {"'value'", "'{0}'", new Object[]{"value"},"Mix of brackets and quotes"},
+                {"{'0'}", "{{'0'}}", new Object[0],"Mix of multiple brackets and quotes 2"},
+                {"single opening brace {0 test" , "single opening brace {{0 test", new Object[0],"Test single opening brace"},
+                {"single closing  brace 0} test", "single closing  brace 0}} test", new Object[0],"Test single closing brace"},
+                {"single opening + closing  brace {  test  }", "single opening + closing  brace {{  {0}  }}", new Object[]{"test"},"Test single opening and closing brace"},
         });
     }
 
@@ -73,5 +71,4 @@ public class MessageFormatUtilTest extends ExtendedITextTest {
     public void testFormatting() {
         Assert.assertEquals(expectedResult, MessageFormatUtil.format(pattern, arguments));
     }
-
 }

@@ -61,82 +61,31 @@ public final class MessageFormatUtil {
      * Indexed arguments can be referred with {index},
      * to escape curly braces you have to double them.
      *
+     * <p>
+     * Only basic escaping is allowed, single quotes in a set of curly braces are not supported and
+     * multiple escaped braces in a row are also not supported
+     * 
+     * <p>
+     * Allowed {{{0}}}
+     * Allowed '{0}'
+     * Allowed '{{{0}}}'
+     *
+     * <p>
+     * Not allowed {{'{0}'}}
+     * Not allowed {{{{{0}}}}}
+     *
      * @param pattern   to format
      * @param arguments arguments
      *
      * @return The formatted string
      */
     public static String format(String pattern, Object... arguments) {
-        boolean mustClose = false;
-        StringBuilder result = new StringBuilder(pattern.length());
-        int i = 0;
-        int n = pattern.length();
-        while (i < n) {
-            char current = pattern.charAt(i);
-            switch (current) {
-                case '{': {
-                    int curlyCount = 0;
-                    int j;
-                    for (j = i; j < n && pattern.charAt(j) == '{'; j++, curlyCount++)
-                        ;
-                    i += curlyCount - 1;
-                    if (curlyCount > 1) {
-                        if (!mustClose) {
-                            result.append("'");
-                        }
-                        while (curlyCount >= 2) {
-                            result.append('{');
-                            curlyCount -= 2;
-                        }
-                        mustClose = true;
-                    }
-                    if (curlyCount == 1) {
-                        if (mustClose) {
-                            result.append('\'');
-                        }
-                        result.append('{');
-                        mustClose = false;
-                    }
-                }
-                break;
-                case '}': {
-                    int curlyCount = 0;
-                    int j;
-                    for (j = i; j < n && pattern.charAt(j) == '}'; j++, curlyCount++)
-                        ;
-                    i += curlyCount - 1;
-                    if (curlyCount % 2 == 1) {
-                        if (mustClose) {
-                            result.append('\'');
-                        }
-                        result.append('}');
-                        mustClose = false;
-                    }
-                    if (curlyCount > 1) {
-                        result.append("'");
-                        while (curlyCount >= 2) {
-                            result.append('}');
-                            curlyCount -= 2;
-                        }
-                        mustClose = true;
-                    }
-                }
-                break;
-                case '\'':
-                    result.append("''");
-                    break;
-                default:
-                    if (mustClose) {
-                        result.append('\'');
-                        mustClose = false;
-                    }
-                    result.append(current);
-            }
-            i++;
-        }
-        if (mustClose) {
-            result.append('\'');
-        }
-        return new MessageFormat(result.toString(), Locale.ROOT).format(arguments);
+        return new MessageFormat(
+                pattern.replace("'", "''")
+                        .replace("{{{","'{'{" )
+                        .replace("}}}","}'}'" )
+                        .replace("{{","'{'" )
+                        .replace("}}","'}'" )
+                ,Locale.ROOT).format(arguments);
     }
 }
