@@ -56,7 +56,87 @@ public final class MessageFormatUtil {
         // Empty constructor.
     }
 
+    /**
+     * This method provides a generic way for formatting strings.
+     * Indexed arguments can be referred with {index},
+     * to escape curly braces you have to double them.
+     *
+     * @param pattern   to format
+     * @param arguments arguments
+     *
+     * @return The formatted string
+     */
     public static String format(String pattern, Object... arguments) {
-        return new MessageFormat(pattern, Locale.ROOT).format(arguments);
+        boolean mustClose = false;
+        StringBuilder result = new StringBuilder(pattern.length());
+        int i = 0;
+        int n = pattern.length();
+        while (i < n) {
+            char current = pattern.charAt(i);
+            switch (current) {
+                case '{': {
+                    int curlyCount = 0;
+                    int j;
+                    for (j = i; j < n && pattern.charAt(j) == '{'; j++, curlyCount++)
+                        ;
+                    i += curlyCount - 1;
+                    if (curlyCount > 1) {
+                        if (!mustClose) {
+                            result.append("'");
+                        }
+                        while (curlyCount >= 2) {
+                            result.append('{');
+                            curlyCount -= 2;
+                        }
+                        mustClose = true;
+                    }
+                    if (curlyCount == 1) {
+                        if (mustClose) {
+                            result.append('\'');
+                        }
+                        result.append('{');
+                        mustClose = false;
+                    }
+                }
+                break;
+                case '}': {
+                    int curlyCount = 0;
+                    int j;
+                    for (j = i; j < n && pattern.charAt(j) == '}'; j++, curlyCount++)
+                        ;
+                    i += curlyCount - 1;
+                    if (curlyCount % 2 == 1) {
+                        if (mustClose) {
+                            result.append('\'');
+                        }
+                        result.append('}');
+                        mustClose = false;
+                    }
+                    if (curlyCount > 1) {
+                        result.append("'");
+                        while (curlyCount >= 2) {
+                            result.append('}');
+                            curlyCount -= 2;
+                        }
+                        mustClose = true;
+                    }
+                }
+                break;
+                case '\'':
+                    result.append("''");
+                    break;
+                default:
+                    if (mustClose) {
+                        result.append('\'');
+                        mustClose = false;
+                    }
+                    result.append(current);
+            }
+            i++;
+        }
+        if (mustClose) {
+            result.append('\'');
+        }
+        return new MessageFormat(result.toString(), Locale.ROOT).format(arguments);
     }
 }
