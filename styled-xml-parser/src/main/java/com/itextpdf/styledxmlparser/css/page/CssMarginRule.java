@@ -72,6 +72,7 @@ public class CssMarginRule extends CssNestedAtRule {
      */
     @Override
     public void addBodyCssDeclarations(List<CssDeclaration> cssDeclarations) {
+        // TODO DEVSIX-6364 Fix the body declarations duplication for each pageSelector part
         for (ICssSelector pageSelector : pageSelectors) {
             this.body.add(new CssNonStandardRuleSet(new CssPageMarginBoxSelector(getRuleName(), pageSelector), cssDeclarations));
         }
