@@ -344,7 +344,7 @@ public final class CssParserStateController {
     void finishAtRuleBlock() {
         List<CssDeclaration> storedProps = storedPropertiesWithoutSelector.pop();
         CssNestedAtRule atRule = nestedAtRules.pop();
-        if (isCurrentRuleSupported) {
+        if (isCurrentRuleSupported ) {
             processFinishedAtRuleBlock(atRule);
             if (!storedProps.isEmpty()) {
                 atRule.addBodyCssDeclarations(storedProps);
