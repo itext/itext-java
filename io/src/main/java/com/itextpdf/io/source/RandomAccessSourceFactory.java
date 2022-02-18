@@ -60,11 +60,15 @@ import java.nio.channels.FileChannel;
  */
 public final class RandomAccessSourceFactory {
 
+    /**
+     * The default value for the forceRead flag
+     */
+    private static boolean forceReadDefaultValue = false;
 
     /**
      * Whether the full content of the source should be read into memory at construction
      */
-    private boolean forceRead = false;
+    private boolean forceRead = forceReadDefaultValue;
 
     /**
      * Whether {@link java.io.RandomAccessFile} should be used instead of a {@link java.nio.channels.FileChannel}, where applicable
@@ -80,6 +84,14 @@ public final class RandomAccessSourceFactory {
      * Creates a factory that will give preference to accessing the underling data source using memory mapped files
      */
     public RandomAccessSourceFactory() {
+    }
+
+    /**
+     * Determines the default value for the forceRead flag
+     * @param forceRead true if by default the full content will be read, false otherwise
+     */
+    public static void setForceReadDefaultValue(boolean forceRead) {
+        forceReadDefaultValue = forceRead;
     }
 
     /**
