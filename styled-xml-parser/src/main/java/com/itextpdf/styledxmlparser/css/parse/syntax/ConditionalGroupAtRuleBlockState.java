@@ -65,7 +65,6 @@ class ConditionalGroupAtRuleBlockState implements IParserState {
      * @see com.itextpdf.styledxmlparser.css.parse.syntax.IParserState#process(char)
      */
     @Override
-    // TODO use UnknownState?
     public void process(char ch) {
         if (ch == '/') {
             controller.enterCommentStartState();
