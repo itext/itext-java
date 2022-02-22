@@ -130,7 +130,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "textAutoscaleTest02.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        Rectangle rect = new Rectangle(36, 648, 100, 50);
+        Rectangle rect = new Rectangle(36, 648, 150, 50);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.DESCRIPTION);
 
         assertAppearanceFontSize(dest, 6.83f);
