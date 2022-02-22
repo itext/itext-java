@@ -186,9 +186,21 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
 
         String fileName = baseUri + "itis.jpg";
-        String expectedURL = UrlUtil.toNormalizedURI(fileName).toString();
+        final String expectedUrl = UrlUtil.toNormalizedURI(fileName).toString();
+        String expectedUrlAnotherValidVersion;
 
-        Assert.assertEquals(expectedURL, attr.get("xlink:href"));
+        if (expectedUrl.startsWith("file:///")) {
+            expectedUrlAnotherValidVersion = "file:/" + expectedUrl.substring("file:///".length());
+        } else if (expectedUrl.startsWith("file:/")) {
+            expectedUrlAnotherValidVersion = "file:///" + expectedUrl.substring("file:/".length());
+        } else {
+            expectedUrlAnotherValidVersion = expectedUrl;
+        }
+
+        final String url = attr.get("xlink:href");
+
+        // Both variants(namely with triple and single slashes) are valid.
+        Assert.assertTrue(expectedUrl.equals(url) || expectedUrlAnotherValidVersion.equals(url));
     }
 
     @Test

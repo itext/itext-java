@@ -275,11 +275,14 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         SvgTagSvgNodeRenderer rootActual = (SvgTagSvgNodeRenderer) processor().process(root, props).getRootRenderer();
 
         String fileName = resolvedBaseUrl + "/img.png";
-        String expectedURL  = UrlUtil.toNormalizedURI(fileName).toString();
+        final String expectedURL = UrlUtil.toNormalizedURI(fileName).toString();
+        final String expectedURLAnotherValidVersion = createAnotherValidUrlVersion(expectedURL);
 
         ISvgNodeRenderer imageRendered = rootActual.getChildren().get(0);
         String url = imageRendered.getAttribute(SvgConstants.Attributes.XLINK_HREF);
-        Assert.assertEquals(expectedURL, url);
+
+        // Both variants(namely with triple and single slashes) are valid.
+        Assert.assertTrue(expectedURL.equals(url) || expectedURLAnotherValidVersion.equals(url));
     }
 
     @Test
@@ -290,12 +293,14 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         SvgTagSvgNodeRenderer rootActual = (SvgTagSvgNodeRenderer) processor().process(root, props).getRootRenderer();
 
         String fileName = baseUrl + "/img.png";
-        String expectedURL  = UrlUtil.toNormalizedURI(fileName).toString();
+        final String expectedURL = UrlUtil.toNormalizedURI(fileName).toString();
+        final String expectedURLAnotherValidVersion = createAnotherValidUrlVersion(expectedURL);
 
         ISvgNodeRenderer imageRendered = rootActual.getChildren().get(0);
         String url = imageRendered.getAttribute(SvgConstants.Attributes.XLINK_HREF);
 
-        Assert.assertEquals(expectedURL, url);
+        // Both variants(namely with triple and single slashes) are valid.
+        Assert.assertTrue(expectedURL.equals(url) || expectedURLAnotherValidVersion.equals(url));
     }
 
     private INode createSvgContainingImage() {
@@ -306,6 +311,16 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         INode root = new JsoupElementNode(jsoupSVGRoot);
         root.addChild(new JsoupElementNode(jsoupSVGImage));
         return root;
+    }
+
+    private static String createAnotherValidUrlVersion(String url) {
+        if (url.startsWith("file:///")) {
+            return "file:/" + url.substring("file:///".length());
+        } else if (url.startsWith("file:/")) {
+            return "file:///" + url.substring("file:/".length());
+        } else {
+            return url;
+        }
     }
 
     private static ISvgProcessor processor() {

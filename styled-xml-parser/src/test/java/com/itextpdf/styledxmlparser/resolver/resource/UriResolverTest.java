@@ -237,13 +237,28 @@ public class UriResolverTest extends ExtendedITextTest {
         UriResolver resolver = new UriResolver("base/uri/index.html");
         String runFolder = Paths.get("").toUri().toURL().toExternalForm();
         Assert.assertEquals(runFolder + "base/uri/index.html", resolver.getBaseUri());
-        Assert.assertEquals("file:/c:/test/folder/img.txt", resolver.resolveAgainstBaseUri("file:/c:/test/folder/img.txt").toExternalForm());
-        Assert.assertEquals("file://c:/test/folder/img.txt", resolver.resolveAgainstBaseUri("file://c:/test/folder/img.txt").toExternalForm());
-        Assert.assertEquals("file:/c:/test/folder/data.jpg", resolver.resolveAgainstBaseUri("file:///c:/test/folder/data.jpg").toExternalForm());
+
+        final String firstUriResolvingResult = resolver.resolveAgainstBaseUri("file:/c:/test/folder/img.txt")
+                .toExternalForm();
+        final String expectedUriWithSingleSlash = "file:/c:/test/folder/img.txt";
+        final String expectedUriWithTripleSlash = "file:///c:/test/folder/img.txt";
+
+        // Both variants(namely with triple and single slashes) are valid.
+        Assert.assertTrue(expectedUriWithSingleSlash.equals(firstUriResolvingResult)
+                || expectedUriWithTripleSlash.equals(firstUriResolvingResult));
+
+        Assert.assertEquals("file://c:/test/folder/img.txt",
+                resolver.resolveAgainstBaseUri("file://c:/test/folder/img.txt").toExternalForm());
+
+        final String thirdUriResolvingResult = resolver.resolveAgainstBaseUri("file:///c:/test/folder/img.txt")
+                .toExternalForm();
+        // Result of resolving uri with triple slash should be the same as if it contained single slash.
+        Assert.assertEquals(firstUriResolvingResult, thirdUriResolvingResult);
 
         // It is windows specific to assume this to work. On unix it shall fail, as it will assume that it is
         // an absolute URI with scheme 'c', and will not recognize this scheme.
-        // Assert.assertEquals("file:/c:/test/folder/data.jpg", resolver.resolveAgainstBaseUri("c:/test/folder/data.jpg").toExternalForm());
+        // Assert.assertEquals("file:/c:/test/folder/data.jpg", resolver.resolveAgainstBaseUri("c:/test/folder/data
+        // .jpg").toExternalForm());
     }
 
     @Test
