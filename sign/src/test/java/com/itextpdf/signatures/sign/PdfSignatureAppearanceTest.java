@@ -128,7 +128,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (This test fails because of an extra newline, which is the result of different datetime display conventions)
     public void textAutoscaleTest02() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest02.pdf";
         String dest = DESTINATION_FOLDER + fileName;
