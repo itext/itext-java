@@ -61,6 +61,11 @@ public class UnknownContext implements IContext {
 
     private final boolean allowEvents;
 
+    /**
+     * Creates a fallback {@link IContext}.
+     *
+     * @param allowEvents defines whether the context allows all events or not
+     */
     public UnknownContext(boolean allowEvents) {
         this.allowEvents = allowEvents;
     }

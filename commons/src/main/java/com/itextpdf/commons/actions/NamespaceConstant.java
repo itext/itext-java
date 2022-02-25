@@ -47,6 +47,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class that stores namespaces of iText open source products.
+ */
 public final class NamespaceConstant {
     
     public static final String ITEXT = "com.itextpdf";

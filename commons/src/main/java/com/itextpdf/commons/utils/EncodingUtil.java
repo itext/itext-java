@@ -58,11 +58,19 @@ import java.nio.charset.CodingErrorAction;
 public final class EncodingUtil {
     private static final String UTF8 = "UTF-8";
 
-
-
     private EncodingUtil() {
     }
 
+    /**
+     * Converts to byte array an array of chars, taking the provided encoding into account.
+     *
+     * @param chars an array of chars to be converted to bytes
+     * @param encoding the encoding to be taken into account while converting the provided array of chars
+     *
+     * @return the resultant array of bytes
+     *
+     * @throws CharacterCodingException if anything goes wrong while encoding
+     */
     public static byte[] convertToBytes(char[] chars, String encoding) throws CharacterCodingException {
         Charset cc = Charset.forName(encoding);
         CharsetEncoder ce = cc.newEncoder();
@@ -81,6 +89,16 @@ public final class EncodingUtil {
         return br;
     }
 
+    /**
+     * Converts to String an array of bytes, taking the provided encoding into account.
+     *
+     * @param bytes an array of bytes to be converted to String
+     * @param encoding the encoding to be taken into account while converting the provided bytes
+     *
+     * @return the resultant string
+     *
+     * @throws UnsupportedEncodingException if anything goes wrong while encoding
+     */
     public static String convertToString(byte[] bytes, String encoding) throws UnsupportedEncodingException {
         if (bytes[0] == (byte) 0xEF && bytes[1] == (byte) 0xBB
                 && bytes[2] == (byte) 0xBF && encoding.equals(EncodingUtil.UTF8)) {

@@ -25,10 +25,18 @@ package com.itextpdf.commons.actions.processors;
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 
+/**
+ * Abstract class with some standard functionality for product event processing.
+ */
 public abstract class AbstractITextProductEventProcessor implements ITextProductEventProcessor {
 
     private final String productName;
 
+    /**
+     * Creates a new instance of an abstract processor for the provided product.
+     *
+     * @param productName the product which will be handled by this processor
+     */
     public AbstractITextProductEventProcessor(String productName) {
         if (productName == null) {
             throw new IllegalArgumentException(CommonsExceptionMessageConstant.PRODUCT_NAME_CAN_NOT_BE_NULL);

@@ -78,6 +78,11 @@ public final class FileUtil {
     private FileUtil() {
     }
 
+    /**
+     * Gets the default windows font directory.
+     *
+     * @return the default windows font directory
+     */
     public static String getFontsDir() {
         try {
             String winDir = System.getenv("windir");
@@ -90,6 +95,13 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Checks whether there is a file at the provided path.
+     *
+     * @param path the path to the file to be checked on existence
+     *
+     * @return {@code true} if such a file exists, otherwise {@code false}
+     */
     public static boolean fileExists(String path) {
         if (path != null) {
             File f = new File(path);
@@ -97,6 +109,14 @@ public final class FileUtil {
         }
         return false;
     }
+
+    /**
+     * Checks whether there is a directory at the provided path.
+     *
+     * @param path the path to the directory to be checked on existence
+     *
+     * @return {@code true} if such a directory exists, otherwise {@code false}
+     */
 
     public static boolean directoryExists(String path) {
         if (path != null) {
@@ -106,6 +126,14 @@ public final class FileUtil {
         return false;
     }
 
+    /**
+     * Lists all the files located at the provided directory.
+     *
+     * @param path path to the directory
+     * @param recursive if {@code true}, files from all the subdirectories will be returned
+     *
+     * @return all the files located at the provided directory
+     */
     public static String[] listFilesInDirectory(String path, boolean recursive) {
         if (path != null) {
             File root = new File(path);
@@ -129,6 +157,14 @@ public final class FileUtil {
         return null;
     }
 
+    /**
+     * Lists all the files located at the provided directory, which are accepted by the provided filter.
+     *
+     * @param outPath  path to the directory
+     * @param fileFilter filter to accept files to be listed
+     *
+     * @return all the files located at the provided directory, which are accepted by the provided filter
+     */
     public static File[] listFilesInDirectoryByFilter(String outPath, FileFilter fileFilter) {
         File[] result = null;
         if (outPath != null && !outPath.isEmpty()) {
@@ -173,6 +209,16 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Creates a temporary file at the provided path.
+     *
+     * @param path path to the temporary file to be created. If it is a directory, then the temporary file
+     *             will be created at this directory
+     *
+     * @return the created temporary file
+     *
+     * @throws IOException signals that an I/O exception has occurred
+     */
     public static File createTempFile(String path) throws IOException {
         File tempFile = new File(path);
         if (tempFile.isDirectory()) {
@@ -193,6 +239,11 @@ public final class FileUtil {
         return new RandomAccessFile(tempFile, "rw");
     }
 
+    /**
+     * Creates a directory at the provided path.
+     *
+     * @param outPath path to the directory to be created
+     */
     public static void createDirectories(String outPath) {
         new File(outPath).mkdirs();
     }
@@ -298,7 +349,7 @@ public final class FileUtil {
      *
      * @param paths paths to files, which should be removed
      *
-     * @return true if all the files have been successfully removed, false otherwise
+     * @return {@code true} if all the files have been successfully removed, {@code false} otherwise
      */
     public static boolean removeFiles(String[] paths) {
         boolean allFilesAreRemoved = true;
