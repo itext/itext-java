@@ -42,7 +42,9 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -63,19 +65,19 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfImageXObjectTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void addFlushedImageXObjectToCanvas() throws IOException, InterruptedException {
-        String filename = destinationFolder + "addFlushedImageXObjectToCanvas.pdf";
-        String cmpfile = sourceFolder + "cmp_addFlushedImageXObjectToCanvas.pdf";
-        String image = sourceFolder + "image.png";
+        String filename = DESTINATION_FOLDER + "addFlushedImageXObjectToCanvas.pdf";
+        String cmpfile = SOURCE_FOLDER + "cmp_addFlushedImageXObjectToCanvas.pdf";
+        String image = SOURCE_FOLDER + "image.png";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
@@ -88,77 +90,122 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50, 500, 200, 200));
         pdfDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpfile, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpfile, DESTINATION_FOLDER));
     }
 
     @Test
     public void indexedColorPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "indexed.pdf",
-                sourceFolder + "cmp_indexed.pdf",
-                sourceFolder + "indexed.png");
+        convertAndCompare(DESTINATION_FOLDER + "indexed.pdf",
+                SOURCE_FOLDER + "cmp_indexed.pdf",
+                SOURCE_FOLDER + "indexed.png");
     }
 
     @Test
     public void indexedColorSimpleTransparencyPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "indexedSimpleTransparency.pdf",
-                sourceFolder + "cmp_indexedSimpleTransparency.pdf",
-                sourceFolder + "indexedSimpleTransparency.png");
+        convertAndCompare(DESTINATION_FOLDER + "indexedSimpleTransparency.pdf",
+                SOURCE_FOLDER + "cmp_indexedSimpleTransparency.pdf",
+                SOURCE_FOLDER + "indexedSimpleTransparency.png");
     }
 
     @Test
     public void grayPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "grayscale16Bpc.pdf",
-                sourceFolder + "cmp_grayscale16Bpc.pdf",
-                sourceFolder + "grayscale16Bpc.png");
+        convertAndCompare(DESTINATION_FOLDER + "grayscale16Bpc.pdf",
+                SOURCE_FOLDER + "cmp_grayscale16Bpc.pdf",
+                SOURCE_FOLDER + "grayscale16Bpc.png");
     }
 
     @Test
     public void grayAlphaPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "graya8Bpc.pdf",
-                sourceFolder + "cmp_graya8Bpc.pdf",
-                sourceFolder + "graya8Bpc.png");
+        convertAndCompare(DESTINATION_FOLDER + "graya8Bpc.pdf",
+                SOURCE_FOLDER + "cmp_graya8Bpc.pdf",
+                SOURCE_FOLDER + "graya8Bpc.png");
     }
 
     @Test
     public void grayAlphaPngWithoutEmbeddedProfileImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "graya8BpcWithoutProfile.pdf",
-                sourceFolder + "cmp_graya8BpcWithoutProfile.pdf",
-                sourceFolder + "graya8BpcWithoutProfile.png");
+        convertAndCompare(DESTINATION_FOLDER + "graya8BpcWithoutProfile.pdf",
+                SOURCE_FOLDER + "cmp_graya8BpcWithoutProfile.pdf",
+                SOURCE_FOLDER + "graya8BpcWithoutProfile.png");
     }
 
     @Test
     public void graySimpleTransparencyPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "grayscaleSimpleTransparencyImage.pdf",
-                sourceFolder + "cmp_grayscaleSimpleTransparencyImage.pdf",
-                sourceFolder + "grayscaleSimpleTransparencyImage.png");
+        convertAndCompare(DESTINATION_FOLDER + "grayscaleSimpleTransparencyImage.pdf",
+                SOURCE_FOLDER + "cmp_grayscaleSimpleTransparencyImage.pdf",
+                SOURCE_FOLDER + "grayscaleSimpleTransparencyImage.png");
     }
 
     @Test
     public void rgbPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "rgb16Bpc.pdf",
-                sourceFolder + "cmp_rgb16Bpc.pdf",
-                sourceFolder + "rgb16Bpc.png");
+        convertAndCompare(DESTINATION_FOLDER + "rgb16Bpc.pdf",
+                SOURCE_FOLDER + "cmp_rgb16Bpc.pdf",
+                SOURCE_FOLDER + "rgb16Bpc.png");
     }
 
     @Test
     public void rgbAlphaPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "rgba16Bpc.pdf",
-                sourceFolder + "cmp_rgba16Bpc.pdf",
-                sourceFolder + "rgba16Bpc.png");
+        convertAndCompare(DESTINATION_FOLDER + "rgba16Bpc.pdf",
+                SOURCE_FOLDER + "cmp_rgba16Bpc.pdf",
+                SOURCE_FOLDER + "rgba16Bpc.png");
     }
 
     @Test
     public void rgbSimpleTransparencyPngImageXObjectTest() throws IOException {
-        convertAndCompare(destinationFolder + "rgbSimpleTransparencyImage.pdf",
-                sourceFolder + "cmp_rgbSimpleTransparencyImage.pdf",
-                sourceFolder + "rgbSimpleTransparencyImage.png");
+        convertAndCompare(DESTINATION_FOLDER + "rgbSimpleTransparencyImage.pdf",
+                SOURCE_FOLDER + "cmp_rgbSimpleTransparencyImage.pdf",
+                SOURCE_FOLDER + "rgbSimpleTransparencyImage.png");
     }
 
     @Test
     public void sRgbImageTest() throws IOException {
-        convertAndCompare(destinationFolder + "sRGBImage.pdf",
-                sourceFolder + "cmp_sRGBImage.pdf",
-                sourceFolder + "sRGBImage.png");
+        convertAndCompare(DESTINATION_FOLDER + "sRGBImage.pdf",
+                SOURCE_FOLDER + "cmp_sRGBImage.pdf",
+                SOURCE_FOLDER + "sRGBImage.png");
+    }
+
+    @Test
+    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    public void group3CompressionTiffImageTest() {
+        String image = SOURCE_FOLDER + "group3CompressionImage.tif";
+
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> ImageDataFactory.create(UrlUtil.toURL(image)));
+
+        Assert.assertEquals(MessageFormatUtil.format(
+                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+    }
+
+    @Test
+    public void group3CompTiffImgRecoverErrorAndDirectTest() throws IOException, InterruptedException {
+        String filename = DESTINATION_FOLDER + "group3CompTiffImgRecoverErrorAndDirect.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_group3CompTiffImgRecoverErrorAndDirect.pdf";
+        String image = SOURCE_FOLDER + "group3CompressionImage.tif";
+
+        try (PdfWriter writer = new PdfWriter(filename);
+                PdfDocument pdfDoc = new PdfDocument(writer)) {
+
+            PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.createTiff(UrlUtil.toURL(image),
+                    true, 1, true));
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+
+            canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50, 500, 200, 200));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFile, DESTINATION_FOLDER));
+    }
+
+    @Test
+    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    public void group3CompTiffImgNoRecoverErrorAndNotDirectTest() {
+        String image = SOURCE_FOLDER + "group3CompressionImage.tif";
+
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> ImageDataFactory.createTiff(UrlUtil.toURL(image),
+                        false, 1, false));
+
+        Assert.assertEquals(MessageFormatUtil.format(
+                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
     }
 
     private void convertAndCompare(String outFilename, String cmpFilename, String imageFilename)
