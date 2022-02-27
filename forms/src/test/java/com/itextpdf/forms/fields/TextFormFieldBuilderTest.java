@@ -1,0 +1,137 @@
+package com.itextpdf.forms.fields;
+
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+
+@Category(UnitTest.class)
+public class TextFormFieldBuilderTest extends ExtendedITextTest {
+    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    private static final String DUMMY_NAME = "dummy name";
+    private static final Rectangle DUMMY_RECTANGLE = new Rectangle(7, 11, 13, 17);
+
+    @Test
+    public void constructorTest() {
+        TextFormFieldBuilder builder = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+
+        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+    }
+
+    @Test
+    public void createTextWithWidgetTest() {
+        PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).createText();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+
+        compareTexts(expectedDictionary, textFormField, true);
+    }
+
+    @Test
+    public void createTextWithoutWidgetTest() {
+        PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createText();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+
+        compareTexts(expectedDictionary, textFormField, false);
+    }
+
+    @Test
+    public void createTextWithConformanceLevelTest() {
+        PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A).createText();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+
+        compareTexts(expectedDictionary, textFormField, true);
+    }
+
+    @Test
+    public void createMultilineTextWithWidgetTest() {
+        PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).createMultilineText();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(PdfTextFormField.FF_MULTILINE));
+
+        compareTexts(expectedDictionary, textFormField, true);
+    }
+
+    @Test
+    public void createMultilineTextWithoutWidgetTest() {
+        PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createMultilineText();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(PdfTextFormField.FF_MULTILINE));
+
+        compareTexts(expectedDictionary, textFormField, false);
+    }
+
+    @Test
+    public void createMultilineTextWithConformanceLevelTest() {
+        PdfTextFormField textFormField = new TextFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .createMultilineText();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(PdfTextFormField.FF_MULTILINE));
+
+        compareTexts(expectedDictionary, textFormField, true);
+    }
+
+    private static void compareTexts(PdfDictionary expectedDictionary,
+                                     PdfTextFormField textFormField, boolean widgetExpected) {
+        List<PdfWidgetAnnotation> widgets = textFormField.getWidgets();
+
+        if (widgetExpected) {
+            Assert.assertEquals(1, widgets.size());
+
+            PdfWidgetAnnotation annotation = widgets.get(0);
+
+            Assert.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
+
+            PdfArray kids = new PdfArray();
+            kids.add(annotation.getPdfObject());
+            putIfAbsent(expectedDictionary, PdfName.Kids, kids);
+        } else {
+            Assert.assertEquals(0, widgets.size());
+        }
+
+        putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Tx);
+        putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
+        putIfAbsent(expectedDictionary, PdfName.V, new PdfString(""));
+        putIfAbsent(expectedDictionary, PdfName.DA, new PdfString("/F1 12 Tf"));
+
+        expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
+        textFormField.makeIndirect(DUMMY_DOCUMENT);
+        Assert.assertNull(
+                new CompareTool().compareDictionariesStructure(expectedDictionary, textFormField.getPdfObject()));
+    }
+
+    private static void putIfAbsent(PdfDictionary dictionary, PdfName name, PdfObject value) {
+        if (!dictionary.containsKey(name)) {
+            dictionary.put(name, value);
+        }
+    }
+}

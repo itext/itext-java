@@ -1,0 +1,226 @@
+package com.itextpdf.forms.fields;
+
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.List;
+
+@Category(UnitTest.class)
+public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
+    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    private static final String DUMMY_NAME = "dummy name";
+    private static final Rectangle DUMMY_RECTANGLE = new Rectangle(7, 11, 13, 17);
+    private static final PdfArray DUMMY_OPTIONS = new PdfArray(Arrays.asList("option1", "option2", "option3"), false);
+
+    @Test
+    public void constructorTest() {
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+
+        Assert.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assert.assertSame(DUMMY_NAME, builder.getFormFieldName());
+    }
+
+    @Test
+    public void setGetOptionsAsPdfArrayTest() {
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+
+        builder.setOptions(DUMMY_OPTIONS);
+
+        Assert.assertSame(DUMMY_OPTIONS, builder.getOptions());
+    }
+
+    @Test
+    public void setGetOptionsAsStringArrayTest() {
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+
+        String[] options = new String[]{"option1", "option2", "option3"};
+
+        builder.setOptions(options);
+
+        for (int i = 0; i < options.length; ++i) {
+            Assert.assertEquals(
+                    new PdfString(options[i], PdfEncodings.UNICODE_BIG), builder.getOptions().getAsString(i));
+        }
+    }
+
+    @Test
+    public void setGetOptionsAsTwoDimensionalStringArrayTest() {
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+
+        String[][] options = new String[][]{
+                new String[]{"option1", "option2"}, new String[]{"option3", "option4"}};
+        builder.setOptions(options);
+
+        for (int i = 0; i < options.length; ++i) {
+            for (int j = 0; j < options[i].length; ++j) {
+                Assert.assertEquals(
+                        new PdfString(options[i][j], PdfEncodings.UNICODE_BIG),
+                        builder.getOptions().getAsArray(i).getAsString(j));
+            }
+        }
+    }
+
+    @Test
+    public void setGetOptionsAsIllegalTwoDimensionalStringArrayTest() {
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+
+        String[][] options = new String[][]{new String[]{"option1", "option2", "option3"}};
+
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class, () -> builder.setOptions(options));
+        Assert.assertEquals(FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS, exception.getMessage());
+    }
+
+    @Test
+    public void createComboBoxWithWidgetTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).createComboBox();
+
+        compareChoices(new PdfDictionary(), choiceFormField, true);
+    }
+
+    @Test
+    public void createComboBoxWithoutWidgetTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createComboBox();
+
+        compareChoices(new PdfDictionary(), choiceFormField, false);
+    }
+
+    @Test
+    public void createComboBoxWithConformanceLevelTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setConformanceLevel(PdfAConformanceLevel.PDF_A_1A)
+                .createComboBox();
+
+        compareChoices(new PdfDictionary(), choiceFormField, true);
+    }
+
+    @Test
+    public void createComboBoxWithOptionsTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setOptions(DUMMY_OPTIONS).createComboBox();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Opt, DUMMY_OPTIONS);
+
+        compareChoices(expectedDictionary, choiceFormField, true);
+    }
+
+    @Test
+    public void createComboBoxWithoutOptionsTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).createComboBox();
+
+        compareChoices(new PdfDictionary(), choiceFormField, true);
+    }
+
+    @Test
+    public void createListWithWidgetTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).createList();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+
+        compareChoices(expectedDictionary, choiceFormField, true);
+    }
+
+    @Test
+    public void createListWithoutWidgetTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createList();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+
+        compareChoices(expectedDictionary, choiceFormField, false);
+    }
+
+    @Test
+    public void createListWithConformanceLevelTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE)
+                .setConformanceLevel(PdfAConformanceLevel.PDF_A_1A).createList();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+
+        compareChoices(expectedDictionary, choiceFormField, true);
+    }
+
+    @Test
+    public void createListWithOptionsTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).setOptions(DUMMY_OPTIONS).createList();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+        expectedDictionary.put(PdfName.Opt, DUMMY_OPTIONS);
+
+        compareChoices(expectedDictionary, choiceFormField, true);
+    }
+
+    @Test
+    public void createListWithoutOptionsTest() {
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+                .setWidgetRectangle(DUMMY_RECTANGLE).createList();
+
+        PdfDictionary expectedDictionary = new PdfDictionary();
+        expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
+
+        compareChoices(expectedDictionary, choiceFormField, true);
+    }
+
+    private static void compareChoices(PdfDictionary expectedDictionary,
+                                       PdfChoiceFormField choiceFormField, boolean widgetExpected) {
+        List<PdfWidgetAnnotation> widgets = choiceFormField.getWidgets();
+
+        if (widgetExpected) {
+            Assert.assertEquals(1, widgets.size());
+
+            PdfWidgetAnnotation annotation = widgets.get(0);
+
+            Assert.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
+
+            PdfArray kids = new PdfArray();
+            kids.add(annotation.getPdfObject());
+            putIfAbsent(expectedDictionary, PdfName.Kids, kids);
+        } else {
+            Assert.assertEquals(0, widgets.size());
+        }
+
+        putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Ch);
+        putIfAbsent(expectedDictionary, PdfName.Ff, new PdfNumber(PdfChoiceFormField.FF_COMBO));
+        putIfAbsent(expectedDictionary, PdfName.Opt, new PdfArray());
+        putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
+        putIfAbsent(expectedDictionary, PdfName.V, new PdfArray());
+
+        expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
+        choiceFormField.makeIndirect(DUMMY_DOCUMENT);
+        Assert.assertNull(
+                new CompareTool().compareDictionariesStructure(expectedDictionary, choiceFormField.getPdfObject()));
+    }
+
+    private static void putIfAbsent(PdfDictionary dictionary, PdfName name, PdfObject value) {
+        if (!dictionary.containsKey(name)) {
+            dictionary.put(name, value);
+        }
+    }
+}
