@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.ByteBuffer}.  This class takes steps to ensure
  * that the byte buffer
- * is completely freed from memory during {@link ByteBufferRandomAccessSource#close()}
+ * is completely freed from memory during {@link ByteBufferRandomAccessSource#close()} if unmapping functionality is enabled
  */
 class ByteBufferRandomAccessSource implements IRandomAccessSource {
 
@@ -77,9 +77,16 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
     }
 
     /**
-     * Enables unmapping hack
+     * Enables ByteBuffer memory unmapping hack
      */
-    public static void disableUnmapping() {
+    public static void enableByteBufferMemoryUnmapping() {
+        allowUnmapping = false;
+    }
+
+    /**
+     * Disables ByteBuffer memory unmapping hack
+     */
+    public static void disableByteBufferMemoryUnmapping() {
         allowUnmapping = false;
     }
 
@@ -140,7 +147,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
 
     /**
      * @see java.io.RandomAccessFile#close()
-     * Cleans the mapped bytebuffers and closes the channel
+     * Cleans the mapped bytebuffers and closes the channel if unmapping functionality is enabled
      */
     public void close() throws java.io.IOException {
         if (allowUnmapping) {
