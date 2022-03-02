@@ -42,14 +42,21 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
@@ -106,5 +113,24 @@ public class PdfStructTreeRootTest extends ExtendedITextTest {
         for (PdfStructElem kidsOfStructTreeRootKid : kidsOfStructTreeRootKids) {
             Assert.assertTrue(kidsOfStructTreeRootKid.isFlushed());
         }
+    }
+
+    @Test
+    public void idTreeIsLazyTest() throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(os).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.setTagged();
+
+        pdfDoc.addNewPage().getFirstContentStream().setData("q Q".getBytes(StandardCharsets.UTF_8));
+
+        pdfDoc.getStructTreeRoot().getIdTree();
+        pdfDoc.close();
+
+        // we've retrieved the ID tree but not used it -> it should be left out in the resulting file
+        PdfReader r = new PdfReader(new ByteArrayInputStream(os.toByteArray()));
+        PdfDocument readPdfDoc = new PdfDocument(r);
+        Assert.assertFalse(readPdfDoc.getStructTreeRoot().getPdfObject().containsKey(PdfName.IDTree));
+
     }
 }

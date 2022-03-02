@@ -61,7 +61,7 @@ import java.util.List;
 class BackedAccessibilityProperties extends AccessibilityProperties {
 
 
-    private TagTreePointer pointerToBackingElem;
+    private final TagTreePointer pointerToBackingElem;
 
     BackedAccessibilityProperties(TagTreePointer pointerToBackingElem) {
         this.pointerToBackingElem = new TagTreePointer(pointerToBackingElem);
@@ -211,6 +211,25 @@ class BackedAccessibilityProperties extends AccessibilityProperties {
             refsList.add(new TagTreePointer(ref, pointerToBackingElem.getDocument()));
         }
         return Collections.unmodifiableList(refsList);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getStructureElementId() {
+        PdfString value = this.getBackingElem().getStructureElementId();
+        return value == null ? null : value.getValueBytes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties setStructureElementId(byte[] id) {
+        PdfString value = id == null ? null : new PdfString(id).setHexWriting(true);
+        this.getBackingElem().setStructureElementId(value);
+        return this;
     }
 
     @Override

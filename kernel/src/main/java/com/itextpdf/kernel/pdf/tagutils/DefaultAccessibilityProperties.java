@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,6 +69,8 @@ public class DefaultAccessibilityProperties extends AccessibilityProperties {
     protected String phoneticAlphabet;
     protected PdfNamespace namespace;
     protected List<TagTreePointer> refs = new ArrayList<>();
+
+    private byte[] structElemId;
 
     /**
      * Instantiates a new {@link DefaultAccessibilityProperties} instance based on structure element role.
@@ -211,4 +214,20 @@ public class DefaultAccessibilityProperties extends AccessibilityProperties {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getStructureElementId() {
+        return this.structElemId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties setStructureElementId(byte[] id) {
+        this.structElemId = Arrays.copyOf(id, id.length);
+        return this;
+    }
 }

@@ -44,6 +44,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.exceptions.ExceptionUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
@@ -52,6 +53,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructIdTree;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -61,10 +63,17 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
@@ -859,6 +868,320 @@ public class TagTreePointerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void structureElementWithIdTest() throws Exception {
+        String outfName = "structureElementWithIdTest.pdf";
+        FileOutputStream fos = new FileOutputStream(destinationFolder + outfName);
+        PdfWriter writer = new PdfWriter(fos).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        compareResult(outfName, "cmp_" + outfName, "diff01_");
+    }
+
+    @Test
+    public void structureElementWithIdFromPropsTest() throws IOException {
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos1);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        PdfPage page1 = document.addNewPage();
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPageForTagging(page1);
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
+        canvas.beginText()
+                .setFontAndSize(standardFont, 24)
+                .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        // create a tag with an ID, some attributes and other properties
+        DefaultAccessibilityProperties spanProps = new DefaultAccessibilityProperties(StandardRoles.SPAN);
+        spanProps.setStructureElementIdString("hello-element");
+        PdfStructureAttributes attrs = new PdfStructureAttributes("Layout");
+        attrs.addEnumAttribute("Placement", "Inline");
+        spanProps.addAttributes(attrs);
+        spanProps.setActualText("Hello!");
+        spanProps.setAlternateDescription("This is a piece of sample text");
+
+        tagPointer.addTag(StandardRoles.P).addTag(spanProps);
+        canvas.openTag(tagPointer.getTagReference())
+                .showText("Hello!")
+                .closeTag();
+        tagPointer.moveToParent();
+
+        page1.flush();
+        document.close();
+
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos1.toByteArray()));
+                PdfDocument documentToModify = new PdfDocument(r)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrHello = ctx
+                    .getTagPointerById("hello-element".getBytes(StandardCharsets.UTF_8));
+            PdfStructureAttributes layoutAttrs = ptrHello.getProperties().getAttributesList().get(0);
+            assertEquals("Inline", layoutAttrs.getAttributeAsEnum("Placement"));
+        }
+    }
+
+    @Test
+    public void retrieveStructureElementsByIdTest() throws Exception {
+        String infName = "cmp_structureElementWithIdTest.pdf";
+        // check that we can retrieve the IDs in the output
+        PdfReader r = new PdfReader(sourceFolder + infName);
+        PdfDocument readPdfDoc = new PdfDocument(r);
+        TagStructureContext ctx = readPdfDoc.getTagStructureContext();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        TagTreePointer ptrHello = ctx.getTagPointerByIdString("hello-element");
+        assertArrayEquals(ptrHello.getProperties().getStructureElementId(), helloId);
+    }
+
+    @Test
+    public void structureElementWithoutIdTest() throws Exception {
+        String infName = "cmp_structureElementWithIdTest.pdf";
+        PdfReader r = new PdfReader(sourceFolder + infName);
+        PdfDocument readPdfDoc = new PdfDocument(r);
+        TagStructureContext ctx = readPdfDoc.getTagStructureContext();
+
+        TagTreePointer ptrHello = ctx.getTagPointerByIdString("hello-element");
+        // the parent is a P without ID -> we should get null
+        ptrHello.moveToParent();
+        assertNull(ptrHello.getProperties().getStructureElementId());
+    }
+
+    @Test
+    public void disambiguateStructureElementsByIdTest() throws Exception {
+        String infName = "cmp_structureElementWithIdTest.pdf";
+        PdfReader r = new PdfReader(sourceFolder + infName);
+        PdfDocument readPdfDoc = new PdfDocument(r);
+        TagStructureContext ctx = readPdfDoc.getTagStructureContext();
+
+        TagTreePointer ptrHello = ctx.getTagPointerByIdString("hello-element");
+        TagTreePointer ptrWorld = ctx.getTagPointerByIdString("world-element");
+        assertFalse(ptrHello.isPointingToSameTag(ptrWorld));
+    }
+
+    @Test
+    public void structureElementWithNonexistentIdTest() throws Exception {
+        String infName = "cmp_structureElementWithIdTest.pdf";
+        PdfReader r = new PdfReader(sourceFolder + infName);
+        PdfDocument readPdfDoc = new PdfDocument(r);
+        TagStructureContext ctx = readPdfDoc.getTagStructureContext();
+        TagTreePointer ptrNone = ctx.getTagPointerById("nonexistent-element".getBytes(StandardCharsets.UTF_8));
+        assertNull(ptrNone);
+    }
+
+    @Test
+    public void structureElementRemoveIdTest() throws Exception {
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos1);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos1.toByteArray()));
+            PdfWriter w = new PdfWriter(baos2);
+            PdfDocument documentToModify = new PdfDocument(r, w)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
+            // remove the ID
+            ptrHello.getProperties().setStructureElementId(null);
+            assertNull(ctx.getTagPointerById(helloId));
+        }
+    }
+
+    @Test
+    public void structureElementRemoveIdNoopTest() throws Exception {
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos1);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos1.toByteArray()));
+                PdfWriter w = new PdfWriter(baos2);
+                PdfDocument pdfDoc = new PdfDocument(r, w)) {
+            PdfStructIdTree tree = pdfDoc.getStructTreeRoot().getIdTree();
+            tree.removeEntry(new PdfString("i-dont-exist"));
+            assertFalse(tree.isModified());
+        }
+    }
+
+    @Test
+    public void structureElementRemoveIdStringTest() throws Exception {
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos1);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos1.toByteArray()));
+                PdfWriter w = new PdfWriter(baos2);
+                PdfDocument documentToModify = new PdfDocument(r, w)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
+            // remove the ID
+            ptrHello.getProperties().setStructureElementIdString(null);
+            assertNull(ctx.getTagPointerById(helloId));
+        }
+    }
+
+    @Test
+    public void structureElementRemoveIdPersist() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        addAndRemoveId(baos);
+        // check if the changes were properly persisted
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos.toByteArray()));
+                PdfDocument documentRead = new PdfDocument(r)) {
+
+            TagStructureContext ctx = documentRead.getTagStructureContext();
+            assertNull(ctx.getTagPointerByIdString("hello-element"));
+        }
+    }
+
+    @Test
+    public void structureElementRemoveIdPersistNoCollateralDamage() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        addAndRemoveId(baos);
+        // check if the changes were properly persisted
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos.toByteArray()));
+                PdfDocument documentRead = new PdfDocument(r)) {
+
+            TagStructureContext ctx = documentRead.getTagStructureContext();
+            byte[] id = "world-element".getBytes(StandardCharsets.UTF_8);
+            byte[] retrieved = ctx.getTagPointerById(id).getProperties().getStructureElementId();
+            assertArrayEquals(id, retrieved);
+        }
+    }
+
+    @Test
+    public void structureElementModifyIdTest() throws Exception {
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos1);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        byte[] helloId2 = "hello2-element".getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos1.toByteArray()));
+            PdfWriter w = new PdfWriter(baos2);
+            PdfDocument documentToModify = new PdfDocument(r, w)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
+            // modify the ID to a new value
+            ptrHello.getProperties().setStructureElementId(helloId2);
+            assertTrue(ptrHello.isPointingToSameTag(ctx.getTagPointerById(helloId2)));
+        }
+    }
+
+    @Test
+    public void structureElementModifyIdNoopTest() throws Exception {
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos1);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos1.toByteArray()));
+                PdfWriter w = new PdfWriter(baos2);
+                PdfDocument documentToModify = new PdfDocument(r, w)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
+            ptrHello.getProperties().setStructureElementId(helloId);
+            assertFalse(documentToModify.getStructTreeRoot().getIdTree().isModified());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 1)})
+    public void structureElementClobberIdWarning() throws Exception {
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos1);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        byte[] worldId = "world-element".getBytes(StandardCharsets.UTF_8);
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos1.toByteArray()));
+                PdfWriter w = new PdfWriter(baos2);
+                PdfDocument documentToModify = new PdfDocument(r, w)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrWorld = ctx.getTagPointerById(worldId);
+            // modify the ID to a new value
+            ptrWorld.getProperties().setStructureElementId(helloId);
+            // this should clobber the old value and trigger a warning
+            assertTrue(ptrWorld.isPointingToSameTag(ctx.getTagPointerById(helloId)));
+        }
+    }
+
+    @Test
+    public void structureElementModifyIdNewRegistered() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        addAndModifyStructElemId(baos);
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos.toByteArray()));
+                PdfDocument documentRead = new PdfDocument(r)) {
+
+            TagStructureContext ctx = documentRead.getTagStructureContext();
+            byte[] id = "hello2-element".getBytes(StandardCharsets.UTF_8);
+            byte[] retrieved = ctx.getTagPointerById(id).getProperties().getStructureElementId();
+            assertArrayEquals(id, retrieved);
+        }
+    }
+
+    @Test
+    public void structureElementModifyIdOldRemoved() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        addAndModifyStructElemId(baos);
+        // check if the changes were properly persisted
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos.toByteArray()));
+                PdfDocument documentRead = new PdfDocument(r)) {
+
+            TagStructureContext ctx = documentRead.getTagStructureContext();
+            assertNull(ctx.getTagPointerByIdString("hello-element"));
+        }
+    }
+
+    @Test
+    public void structureElementModifyIdNoCollateralDamage() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        addAndModifyStructElemId(baos);
+        // check if the changes were properly persisted
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(baos.toByteArray()));
+                PdfDocument documentRead = new PdfDocument(r)) {
+
+            TagStructureContext ctx = documentRead.getTagStructureContext();
+            byte[] id = "world-element".getBytes(StandardCharsets.UTF_8);
+            byte[] retrieved = ctx.getTagPointerById(id).getProperties().getStructureElementId();
+            assertArrayEquals(id, retrieved);
+        }
+    }
+
+    @Test
     public void accessibleAttributesInsertionTest01() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocumentWithAttributes.pdf");
         PdfWriter writer = new PdfWriter(destinationFolder + "accessibleAttributesInsertionTest01.pdf");
@@ -1045,6 +1368,83 @@ public class TagTreePointerTest extends ExtendedITextTest {
         errorMessage += contentDifferences == null ? "" : contentDifferences;
         if (!errorMessage.isEmpty()) {
             fail(errorMessage);
+        }
+    }
+
+    private static void addContentWithIds(PdfDocument document) throws IOException {
+
+        PdfPage page1 = document.addNewPage();
+        TagTreePointer tagPointer = new TagTreePointer(document);
+        tagPointer.setPageForTagging(page1);
+
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        PdfFont standardFont = PdfFontFactory.createFont(StandardFonts.COURIER);
+        canvas.beginText()
+                .setFontAndSize(standardFont, 24)
+                .setTextMatrix(1, 0, 0, 1, 32, 512);
+
+        DefaultAccessibilityProperties paraProps
+                = new DefaultAccessibilityProperties(StandardRoles.P);
+        tagPointer.addTag(paraProps).addTag(StandardRoles.SPAN);
+
+        tagPointer.getProperties().setStructureElementIdString("hello-element");
+        canvas.openTag(tagPointer.getTagReference())
+                .showText("Hello ")
+                .closeTag();
+        tagPointer.moveToParent().addTag(StandardRoles.SPAN);
+
+        tagPointer.getProperties().setStructureElementIdString("world-element");
+        canvas.setFontAndSize(standardFont, 30)
+                .openTag(tagPointer.getTagReference())
+                .showText("World")
+                .closeTag();
+
+        tagPointer.moveToParent();
+
+        canvas.endText().release();
+
+        page1.flush();
+    }
+
+    private void addAndRemoveId(OutputStream baos) throws Exception {
+        ByteArrayOutputStream preBaos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(preBaos);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(preBaos.toByteArray()));
+                PdfWriter w = new PdfWriter(baos);
+                PdfDocument documentToModify = new PdfDocument(r, w)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
+            // remove the ID
+            ptrHello.getProperties().setStructureElementId(null);
+        }
+    }
+
+    private void addAndModifyStructElemId(OutputStream baos) throws Exception {
+        ByteArrayOutputStream preBaos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(preBaos);
+        PdfDocument document = new PdfDocument(writer);
+        document.setTagged();
+        addContentWithIds(document);
+        document.close();
+
+        byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
+        byte[] helloId2 = "hello2-element".getBytes(StandardCharsets.UTF_8);
+        try(PdfReader r = new PdfReader(new ByteArrayInputStream(preBaos.toByteArray()));
+                PdfWriter w = new PdfWriter(baos);
+                PdfDocument documentToModify = new PdfDocument(r, w)) {
+
+            TagStructureContext ctx = documentToModify.getTagStructureContext();
+            TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
+            // modify the ID to a new value
+            ptrHello.getProperties().setStructureElementId(helloId2);
         }
     }
 }

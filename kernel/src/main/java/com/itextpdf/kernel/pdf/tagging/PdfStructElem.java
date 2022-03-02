@@ -170,6 +170,42 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
         put(PdfName.E, e);
     }
 
+    /**
+     * Gets the structure element's ID string, if it has one.
+     *
+     * @return the structure element's ID string, or null if there is none
+     */
+    public PdfString getStructureElementId() {
+        return getPdfObject().getAsString(PdfName.ID);
+    }
+
+    /**
+     * Sets the structure element's ID string.
+     * This value can be used by other structure elements to reference this one.
+     *
+     * @param id the element's ID string to be set
+     */
+    public void setStructureElementId(PdfString id) {
+        PdfStructIdTree idTree = getDocument().getStructTreeRoot().getIdTree();
+        if(id == null) {
+            PdfObject orig = getPdfObject().remove(PdfName.ID);
+            if(orig instanceof PdfString) {
+                idTree.removeEntry((PdfString) orig);
+            }
+        } else {
+            PdfObject orig = getPdfObject().get(PdfName.ID);
+            if(id.equals(orig)) {
+                // nothing to do, the ID is already set to the appropriate value
+                return;
+            }
+            if(orig instanceof PdfString) {
+                idTree.removeEntry((PdfString) orig);
+            }
+            idTree.addEntry(id, this.getPdfObject());
+            getPdfObject().put(PdfName.ID, id);
+        }
+    }
+
     @Override
     public PdfName getRole() {
         return getPdfObject().getAsName(PdfName.S);

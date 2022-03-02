@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -333,5 +334,47 @@ public abstract class AccessibilityProperties {
      */
     public List<PdfStructureAttributes> getAttributesList() {
         return Collections.<PdfStructureAttributes>emptyList();
+    }
+
+    /**
+     * Gets the associated structure element's ID string, if it has one.
+     *
+     * <p>
+     * See also {@link PdfStructElem#getStructureElementId()}.
+     *
+     * @return the structure element's ID string, or null if there is none
+     */
+    public byte[] getStructureElementId() {
+        return null;
+    }
+
+    /**
+     * Sets the associated structure element's ID. Passing {@code null} removes the ID.
+     *
+     * <p>
+     * See also {@link PdfStructElem#setStructureElementId(PdfString)}.
+     *
+     * @param id the element's ID to be set
+     *
+     * @return this {@link AccessibilityProperties} instance
+     */
+    public AccessibilityProperties setStructureElementId(byte[] id) {
+        return this;
+    }
+
+    /**
+     * Sets the associated structure element's ID. Passing {@code null} removes the ID.
+     * If non-null, the argument will be encoded in UTF-8 (without BOM), since ID
+     * strings are considered binary data in PDF.
+     *
+     * <p>
+     * See also {@link PdfStructElem#setStructureElementId(PdfString)}.
+     *
+     * @param id the element's ID to be set
+     *
+     * @return this {@link AccessibilityProperties} instance
+     */
+    public AccessibilityProperties setStructureElementIdString(String id) {
+        return this.setStructureElementId(id == null ? null : id.getBytes(StandardCharsets.UTF_8));
     }
 }

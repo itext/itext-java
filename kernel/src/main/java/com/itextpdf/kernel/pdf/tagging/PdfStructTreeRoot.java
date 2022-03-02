@@ -77,6 +77,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     private PdfDocument document;
     private ParentTreeHandler parentTreeHandler;
+    private PdfStructIdTree idTree = null;
 
     private static Map<String, PdfName> staticRoleNames = new ConcurrentHashMap<>();
 
@@ -354,6 +355,9 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         }
         getPdfObject().put(PdfName.ParentTree, getParentTreeHandler().buildParentTree());
         getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber((int) getDocument().getNextStructParentIndex()));
+        if(this.idTree != null && this.idTree.isModified()) {
+            getPdfObject().put(PdfName.IDTree, this.idTree.buildTree().makeIndirect(getDocument()));
+        }
         if (!getDocument().isAppendMode()) {
             flushAllKids(this);
         }
@@ -474,6 +478,30 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
             getPdfObject().put(PdfName.AF, afArray);
         }
         return afArray;
+    }
+
+    /**
+     * Returns the document's structure element ID tree wrapped in a {@link PdfStructIdTree}
+     * object. If no such tree exists, it is initialized. The initialization happens lazily,
+     * and does not trigger any PDF object changes unless populated.
+     *
+     * @return the {@link PdfStructIdTree} of the document
+     */
+    public PdfStructIdTree getIdTree() {
+        if(this.idTree == null) {
+            // Attempt to parse the ID tree in the document if there is one
+            PdfDictionary idTreeDict = this.getPdfObject().getAsDictionary(PdfName.IDTree);
+            if (idTreeDict == null) {
+                // No tree found -> initialise one
+                // Don't call setModified() here, registering the first ID will
+                // take care of that for us.
+                // The ID tree will be registered at flush time.
+                this.idTree = new PdfStructIdTree(document);
+            } else {
+                this.idTree = PdfStructIdTree.readFromDictionary(document, idTreeDict);
+            }
+        }
+        return this.idTree;
     }
 
     ParentTreeHandler getParentTreeHandler() {

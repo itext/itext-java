@@ -64,6 +64,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -511,6 +512,28 @@ public class TagStructureContext {
      */
     public PdfStructElem getPointerStructElem(TagTreePointer pointer) {
         return pointer.getCurrentStructElem();
+    }
+
+    /**
+     * Retrieve a pointer to a structure element by ID.
+     *
+     * @param id  the ID of the element to retrieve
+     * @return a {@link TagTreePointer} to the element in question, or null if there is none.
+     */
+    public TagTreePointer getTagPointerById(byte[] id) {
+        PdfStructElem elem = document.getStructTreeRoot().getIdTree().getStructElemById(id);
+        return elem == null ? null : new TagTreePointer(document).setCurrentStructElem(elem);
+    }
+
+    /**
+     * Retrieve a pointer to a structure element by ID. * The ID will be encoded as a
+     * UTF-8 string and passed to {@link TagStructureContext#getTagPointerById(byte[])}.
+     *
+     * @param id  the ID of the element to retrieve
+     * @return a {@link TagTreePointer} to the element in question, or null if there is none.
+     */
+    public TagTreePointer getTagPointerByIdString(String id) {
+        return this.getTagPointerById(id.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

@@ -96,6 +96,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;
@@ -135,6 +136,30 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         document.close();
 
         compareResult("textInParagraphTest01.pdf", "cmp_textInParagraphTest01.pdf");
+    }
+
+    @Test
+    public void textInParagraphTestWithIds() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "textInParagraphTestWithIds.pdf"));
+        pdfDocument.setTagged();
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = createParagraph1();
+        p.getAccessibilityProperties()
+                .setStructureElementId("hello".getBytes(StandardCharsets.UTF_8));
+        document.add(p);
+
+        for (int i = 0; i < 26; ++i) {
+            Paragraph q = createParagraph2();
+            q.getAccessibilityProperties()
+                    .setStructureElementIdString("para" + i);
+            document.add(q);
+        }
+
+        document.close();
+
+        compareResult("textInParagraphTestWithIds.pdf", "cmp_textInParagraphTestWithIds.pdf");
     }
 
     @Test
