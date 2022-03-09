@@ -689,7 +689,9 @@ public class PdfType0Font extends PdfFont {
             if (ttf.isCff()) {
                 byte[] cffBytes;
                 if (subset) {
-                    cffBytes = new CFFFontSubset(ttf.getFontStreamBytes(), usedGlyphs).Process();
+                    byte[] bytes = ttf.getFontStreamBytes();
+                    Set<Integer> usedGids = ttf.mapGlyphsCidsToGids(usedGlyphs);
+                    cffBytes = new CFFFontSubset(bytes, usedGids).Process();
                 } else {
                     cffBytes = ttf.getFontStreamBytes();
                 }

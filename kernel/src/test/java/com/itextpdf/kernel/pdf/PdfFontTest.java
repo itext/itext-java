@@ -1782,14 +1782,13 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-1653
-    public void SourceHanSerifKRRegularTest() throws IOException, InterruptedException {
+    public void sourceHanSerifKRRegularTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSerifKRRegularTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularTest.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf", "Identity-H");
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf");
         //font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -1802,19 +1801,18 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
     }
 
     @Test
-    // TODO DEVSIX-1653
-    public void SourceHanSerifKRRegularFullTest() throws IOException, InterruptedException {
+    public void sourceHanSerifKRRegularFullTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "SourceHanSerifKRRegularFullTest.pdf";
         String cmpFilename = sourceFolder + "cmp_SourceHanSerifKRRegularFullTest.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
         // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf", "Identity-H");
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceHanSerifKR-Regular.otf");
         font.setSubset(false);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -1827,7 +1825,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 .restoreState();
 
         doc.close();
-        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
     }
 
     @Test

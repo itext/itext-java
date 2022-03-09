@@ -27,26 +27,72 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class TrueTypeFontTest extends ExtendedITextTest {
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/font/TrueTypeFontTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
 
     @Test
     public void notoSansJpCmapTest() throws IOException, InterruptedException {
         // 信
         char jpChar = '\u4FE1';
 
-        FontProgram fontProgram = FontProgramFactory.createFont(sourceFolder + "NotoSansJP-Regular.otf");
+        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansJP-Regular_charsetDataFormat0.otf");
         Glyph glyph = fontProgram.getGlyph(jpChar);
 
         Assert.assertArrayEquals(new char[] {jpChar}, glyph.getUnicodeChars());
         Assert.assertEquals(20449, glyph.getUnicode());
+        Assert.assertEquals(10195, glyph.getCode());
+    }
 
-        // TODO DEVSIX-5767 actual expected value is 0x27d3
-        Assert.assertEquals(0x0a72, glyph.getCode());
+    @Test
+    public void notoSansScCmapTest() throws IOException {
+        // 易
+        char chChar = '\u6613';
+
+        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+        Glyph glyph = fontProgram.getGlyph(chChar);
+
+        Assert.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
+        Assert.assertEquals(26131, glyph.getUnicode());
+        Assert.assertEquals(20292, glyph.getCode());
+    }
+
+    @Test
+    public void notoSansTcCmapTest() throws IOException {
+        // 易
+        char chChar = '\u6613';
+
+        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansTC-Regular.otf");
+        Glyph glyph = fontProgram.getGlyph(chChar);
+
+        Assert.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
+        Assert.assertEquals(26131, glyph.getUnicode());
+        Assert.assertEquals(20292, glyph.getCode());
+    }
+
+    @Test
+    public void notoSansScMapGlyphsCidsToGidsTest() throws IOException {
+        // 易
+        char chChar = '\u6613';
+        int charCidInFont = 20292;
+        int charGidInFont = 14890;
+
+        TrueTypeFont trueTypeFontProgram = (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+
+        HashSet<Integer> glyphs = new HashSet<>(Collections.singletonList(charCidInFont));
+        Set<Integer> actualResult = trueTypeFontProgram.mapGlyphsCidsToGids(glyphs);
+
+        Assert.assertEquals(1, actualResult.size());
+        Assert.assertTrue(actualResult.contains(charGidInFont));
     }
 }

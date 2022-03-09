@@ -49,8 +49,6 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import java.util.Arrays;
 
 public class Glyph {
-
-
     private static final char REPLACEMENT_CHARACTER = '\ufffd';
     private static final char[] REPLACEMENT_CHARACTERS = new char[] {REPLACEMENT_CHARACTER};
     private static final String REPLACEMENT_CHARACTER_STRING = String.valueOf(REPLACEMENT_CHARACTER);
