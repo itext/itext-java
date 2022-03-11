@@ -41,64 +41,26 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.utils.ICopyFilter;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 /**
- * Representation of the null object in the PDF specification.
+ * A filter class to be used while copying pdf components.
  */
-public class PdfNull extends PdfPrimitiveObject {
-
-
-	public static final PdfNull PDF_NULL = new PdfNull(true);
-    private static final byte[] NullContent = ByteUtils.getIsoBytes("null");
+public interface ICopyFilter {
 
     /**
-     * Creates a PdfNull instance.
+     * Verifies whether a PdfObject should be copied in the copying flow.
+     * The filter class has to take care of alternative ways to process the PdfObject if needed.
+     * When more than one filter should be used, it is upon the user to chain them together.
+     *
+     * @param newParent the parent in the target of the PdfObject to be checked
+     * @param name      the name of the PdfObject if the parent is a PdfDictionary
+     * @param value     the PdfObject toi be checked
+     *
+     * @return true, the PdfObject will be copied, false it will not be copied
      */
-    public PdfNull() {
-        super();
-    }
-
-    private PdfNull(boolean directOnly) {
-        super(directOnly);
-    }
-
-    @Override
-    public byte getType() {
-        return NULL;
-    }
-
-    @Override
-    public String toString() {
-        return "null";
-    }
-
-    @Override
-    protected void generateContent() {
-        content = NullContent;
-    }
-
-    //Here we create new object, because if we use static object it can cause unpredictable behavior during copy objects
-    @Override
-    protected PdfObject newInstance() {
-        return new PdfNull();
-    }
-
-    @Override
-    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
-
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return this == obj || obj != null && getClass() == obj.getClass();
-    }
-
-    @Override
-    public int hashCode() {
-        return 0;
-    }
+    boolean shouldProcess(PdfObject newParent, PdfName name, PdfObject value);
 }

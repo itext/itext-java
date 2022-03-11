@@ -41,64 +41,30 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.kernel.utils.ICopyFilter;
+import com.itextpdf.kernel.pdf.PdfObject;
 
 /**
- * Representation of the null object in the PDF specification.
+ * A no-op {@link ICopyFilter} instance, used as default.
  */
-public class PdfNull extends PdfPrimitiveObject {
+public final class NullCopyFilter implements ICopyFilter {
+    private static final NullCopyFilter INSTANCE = new NullCopyFilter();
 
-
-	public static final PdfNull PDF_NULL = new PdfNull(true);
-    private static final byte[] NullContent = ByteUtils.getIsoBytes("null");
+    private NullCopyFilter() {
+    }
 
     /**
-     * Creates a PdfNull instance.
+     * Getter for an instance of {@link NullCopyFilter}.
+     *
+     * @return NullCopyFilter instance
      */
-    public PdfNull() {
-        super();
-    }
-
-    private PdfNull(boolean directOnly) {
-        super(directOnly);
+    public static NullCopyFilter getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public byte getType() {
-        return NULL;
-    }
-
-    @Override
-    public String toString() {
-        return "null";
-    }
-
-    @Override
-    protected void generateContent() {
-        content = NullContent;
-    }
-
-    //Here we create new object, because if we use static object it can cause unpredictable behavior during copy objects
-    @Override
-    protected PdfObject newInstance() {
-        return new PdfNull();
-    }
-
-    @Override
-    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
-
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return this == obj || obj != null && getClass() == obj.getClass();
-    }
-
-    @Override
-    public int hashCode() {
-        return 0;
+    public boolean shouldProcess(PdfObject newParent, com.itextpdf.kernel.pdf.PdfName name, PdfObject value) {
+        return true;
     }
 }

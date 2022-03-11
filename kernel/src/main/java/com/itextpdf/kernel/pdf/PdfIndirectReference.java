@@ -44,11 +44,12 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.utils.ICopyFilter;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
 
 
-	private static final int LENGTH_OF_INDIRECTS_CHAIN = 31;
+    private static final int LENGTH_OF_INDIRECTS_CHAIN = 31;
 
     /**
      * Object number.
@@ -124,17 +125,19 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      */
     public PdfObject getRefersTo(boolean recursively) {
         if (!recursively) {
-            if (refersTo == null && !checkState(FLUSHED) && !checkState(MODIFIED) && !checkState(FREE) && getReader() != null) {
+            if (refersTo == null && !checkState(FLUSHED) && !checkState(MODIFIED) && !checkState(FREE)
+                    && getReader() != null) {
                 refersTo = getReader().readObject(this);
             }
             return refersTo;
         } else {
             PdfObject currentRefersTo = getRefersTo(false);
             for (int i = 0; i < LENGTH_OF_INDIRECTS_CHAIN; i++) {
-                if (currentRefersTo instanceof PdfIndirectReference)
+                if (currentRefersTo instanceof PdfIndirectReference) {
                     currentRefersTo = ((PdfIndirectReference) currentRefersTo).getRefersTo(false);
-                else
+                } else {
                     break;
+                }
             }
             return currentRefersTo;
         }
@@ -163,7 +166,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * @return object index in a document. If refersTo object is not in object stream then -1.
      */
     public int getIndex() {
-        return objectStreamNumber == 0 ? -1 : (int)offsetOrIndex;
+        return objectStreamNumber == 0 ? -1 : (int) offsetOrIndex;
     }
 
     @Override
@@ -236,6 +239,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * Checks if this {@link PdfIndirectReference} instance corresponds to free indirect reference.
      * Indirect reference might be in a free state either because it was read as such from the opened existing
      * PDF document or because it was set free via {@link PdfIndirectReference#setFree()} method.
+     *
      * @return {@code true} if this {@link PdfIndirectReference} is free, {@code false} otherwise.
      */
     public boolean isFree() {
@@ -269,7 +273,8 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (checkState(READ_ONLY)) {
             states.append("ReadOnly; ");
         }
-        return MessageFormatUtil.format("{0} {1} R{2}", Integer.toString(getObjNumber()), Integer.toString(getGenNumber()), states.substring(0, states.length() - 1));
+        return MessageFormatUtil.format("{0} {1} R{2}", Integer.toString(getObjNumber()),
+                Integer.toString(getGenNumber()), states.substring(0, states.length() - 1));
     }
 
     /**
@@ -278,8 +283,9 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * @return PdfWriter.
      */
     protected PdfWriter getWriter() {
-        if (getDocument() != null)
+        if (getDocument() != null) {
             return getDocument().getWriter();
+        }
         return null;
     }
 
@@ -289,8 +295,9 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * @return PdfReader.
      */
     protected PdfReader getReader() {
-        if (getDocument() != null)
+        if (getDocument() != null) {
             return getDocument().getReader();
+        }
         return null;
     }
 
@@ -300,12 +307,18 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
     }
 
     @Override
+    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
+
+    }
+
+    @Override
     protected void copyContent(PdfObject from, PdfDocument document) {
 
     }
 
     /**
      * Sets special states of current object.
+     *
      * @param state special flag of current object
      */
     protected PdfObject setState(short state) {
