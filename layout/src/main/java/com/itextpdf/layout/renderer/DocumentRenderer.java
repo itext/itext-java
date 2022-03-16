@@ -195,7 +195,7 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     /**
-     * Ensures that PDF document has n pages. If document has less pages,
+     * Ensures that PDF document has n pages. If document has fewer pages,
      * adds new pages by calling {@link #addNewPage(PageSize)} method.
      *
      * @param n the expected number of pages if document
