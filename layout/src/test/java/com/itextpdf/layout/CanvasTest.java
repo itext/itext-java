@@ -62,7 +62,10 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Link;
+import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.testutil.TestConfigurationEvent;
 import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
@@ -138,6 +141,63 @@ public class CanvasTest extends ExtendedITextTest {
                         new Link("Google link!", PdfAction.createURI("https://www.google.com"))
                                 .setUnderline()
                                 .setFontColor(ColorConstants.BLUE)));
+        canvas.close();
+        pdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void listItemWithoutMarginsInCanvasTest() throws IOException, InterruptedException {
+        String testName = "listItemWithoutMarginsInCanvasTest";
+        String out = DESTINATION_FOLDER + testName + ".pdf";
+        String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfPage page = pdf.addNewPage();
+        Rectangle pageSize = page.getPageSize();
+
+        Canvas canvas = new Canvas(page, pageSize);
+        com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List();
+        list.setListSymbol(ListNumberingType.DECIMAL);
+        list.add(new ListItem("list item 1"));
+        list.add(new ListItem("list item 2"));
+        canvas.add(list);
+        canvas.close();
+        pdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void notApplyingMarginsInCanvasTest() throws IOException, InterruptedException {
+        String testName = "notApplyingMarginsInCanvasTest";
+        String out = DESTINATION_FOLDER + testName + ".pdf";
+        String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfPage page = pdf.addNewPage();
+        Rectangle pageSize = page.getPageSize();
+
+        Canvas canvas = new Canvas(page, pageSize);
+        canvas.setProperty(Property.MARGIN_LEFT, 36);
+        canvas.add(new Paragraph("Hello"));
+        canvas.close();
+        pdf.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(out, cmp, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void nullableMarginsInCanvasRendererTest() throws IOException, InterruptedException {
+        String testName = "nullableMarginsInCanvasRenderer";
+        String out = DESTINATION_FOLDER + testName + ".pdf";
+        String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfPage page = pdf.addNewPage();
+        Rectangle pageSize = page.getPageSize();
+
+        Canvas canvas = new Canvas(page, pageSize);
+        canvas.setProperty(Property.MARGIN_LEFT, null);
+        canvas.add(new Paragraph("Hello"));
         canvas.close();
         pdf.close();
 
