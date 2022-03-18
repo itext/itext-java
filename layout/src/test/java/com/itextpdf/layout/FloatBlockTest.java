@@ -22,8 +22,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -63,6 +63,7 @@ public class FloatBlockTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatImageInDivClearNoneTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatImageInDivClearNone.pdf";
@@ -82,6 +83,7 @@ public class FloatBlockTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatImageInDivClearBothTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatImageInDivClearBoth.pdf";
@@ -101,6 +103,7 @@ public class FloatBlockTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatImageDifferentSizeInDivTest()
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String cmpFileName = sourceFolder + "cmp_floatImageDifferentSizeInDiv.pdf";

@@ -24,19 +24,20 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class ProviderDigestUnitTest extends ExtendedITextTest {
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
     public void getMessageDigestSunPKCS11SHA1Test() throws GeneralSecurityException {
         ProviderDigest providerDigest = new ProviderDigest("SunPKCS11");
         MessageDigest digest = providerDigest.getMessageDigest(DigestAlgorithms.SHA1);
@@ -46,6 +47,7 @@ public class ProviderDigestUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
     public void getMessageDigestSUNSHA256Test() throws GeneralSecurityException {
         ProviderDigest providerDigest = new ProviderDigest("SUN");
         MessageDigest digest = providerDigest.getMessageDigest(DigestAlgorithms.SHA256);

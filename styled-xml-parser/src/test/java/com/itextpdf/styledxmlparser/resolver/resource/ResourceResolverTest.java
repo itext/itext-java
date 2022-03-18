@@ -43,22 +43,22 @@
 package com.itextpdf.styledxmlparser.resolver.resource;
 
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.nio.file.Files;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.nio.file.Paths;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -152,6 +152,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6456 fix the java.net.URLConnection#getHeaderField which is used by UrlUtil)
     public void malformedResourceNameTest07() throws IOException {
         String fileName = "%23%5B%5D@!$&'()+,;=._~-/styles09.css";
 

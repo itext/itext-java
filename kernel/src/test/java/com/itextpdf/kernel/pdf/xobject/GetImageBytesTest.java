@@ -42,12 +42,12 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -70,7 +70,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -95,16 +94,19 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testAscii85Filters() throws Exception {
         testFile("ASCII85_RunLengthDecode.pdf", "Im9", "png");
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testCcittFilters() throws Exception {
         testFile("ccittfaxdecode.pdf", "background0", "png");
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testFlateDecodeFilters() throws Exception {
         // TODO DEVSIX-2941: extracted indexed devicegray RunLengthDecode gets color inverted
         testFile("flatedecode_runlengthdecode.pdf", "Im9", "png");
@@ -138,6 +140,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testFlateRgbIcc() throws Exception {
         testFile("img_rgb_icc.pdf", "Im1", "png");
     }
@@ -148,6 +151,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testFlateCalRgb() throws Exception {
         testFile("img_calrgb.pdf", "Im1", "png");
     }

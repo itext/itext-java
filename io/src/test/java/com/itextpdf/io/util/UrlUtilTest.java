@@ -84,6 +84,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     // Tests, that getFinalConnection will be redirected some times for other urls, and initialUrl will be different
     // from final url.
     @Test
+    // Android-Ignore (TODO DEVSIX-6440 fix problem with URL resolving)
     public void getFinalConnectionWhileRedirectingTest() throws IOException {
         URL initialUrl = new URL("http://itextpdf.com");
         URL expectedURL = new URL("https://itextpdf.com/en");
@@ -103,6 +104,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     // This test checks that when we pass invalid url and trying get stream related to final redirected url,exception
     // would be thrown.
     @Test
+    // Android-Ignore (TODO DEVSIX-6440 fix problem with URL resolving)
     public void getInputStreamOfFinalConnectionThrowExceptionTest() throws IOException {
         URL invalidUrl = new URL("http://itextpdf");
 
@@ -112,6 +114,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     // This test checks that when we pass valid url and trying get stream related to final redirected url, it would
     // not be null.
     @Test
+    // Android-Ignore (TODO DEVSIX-6440 fix problem with URL resolving)
     public void getInputStreamOfFinalConnectionTest() throws IOException {
         URL initialUrl = new URL("http://itextpdf.com");
         InputStream streamOfFinalConnectionOfInvalidUrl = UrlUtil.getInputStreamOfFinalConnection(initialUrl);

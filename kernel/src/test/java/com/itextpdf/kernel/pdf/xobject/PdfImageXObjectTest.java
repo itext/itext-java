@@ -122,6 +122,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void grayAlphaPngWithoutEmbeddedProfileImageXObjectTest() throws IOException {
         convertAndCompare(DESTINATION_FOLDER + "graya8BpcWithoutProfile.pdf",
                 SOURCE_FOLDER + "cmp_graya8BpcWithoutProfile.pdf",
@@ -129,6 +130,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void graySimpleTransparencyPngImageXObjectTest() throws IOException {
         convertAndCompare(DESTINATION_FOLDER + "grayscaleSimpleTransparencyImage.pdf",
                 SOURCE_FOLDER + "cmp_grayscaleSimpleTransparencyImage.pdf",
@@ -150,6 +152,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void rgbSimpleTransparencyPngImageXObjectTest() throws IOException {
         convertAndCompare(DESTINATION_FOLDER + "rgbSimpleTransparencyImage.pdf",
                 SOURCE_FOLDER + "cmp_rgbSimpleTransparencyImage.pdf",
@@ -157,6 +160,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void sRgbImageTest() throws IOException {
         convertAndCompare(DESTINATION_FOLDER + "sRGBImage.pdf",
                 SOURCE_FOLDER + "cmp_sRGBImage.pdf",
