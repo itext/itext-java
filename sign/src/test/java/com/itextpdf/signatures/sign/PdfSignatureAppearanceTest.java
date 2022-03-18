@@ -42,9 +42,9 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -353,6 +353,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void layer0Test() throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
         String fileName = "layer0Test.pdf";
@@ -402,6 +403,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void layer0WithImageTest() throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
         String fileName = "layer0WithImageTest.pdf";
@@ -429,6 +431,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void layer0WithImageAndPositiveImageScaleTest() throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
         String fileName = "layer0WithImageAndPositiveImageScaleTest.pdf";
@@ -457,6 +460,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void layer0WithImageAndNegativeImageScaleTest() throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
         String fileName = "layer0WithImageAndNegativeImageScale.pdf";
@@ -485,6 +489,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void layer2Test() throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
         String fileName = "layer2Test.pdf";

@@ -49,6 +49,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -56,7 +57,6 @@ import java.nio.charset.StandardCharsets;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.Collections;
 import org.junit.Assert;
@@ -100,6 +100,7 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void runLengthEncodingTest01() throws IOException {
         String srcFile = sourceFolder + "runLengthEncodedImages.pdf";
 

@@ -151,6 +151,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6447 fix different X509Certificate#checkValidity behavior)
     public void expiredCertificateTest()
             throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
 
@@ -312,6 +313,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6447 fix different X509Certificate#checkValidity behavior)
     public void certChainWithExpiredCertTest()
             throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
         final String validCertChainFileName = CERTS_SRC + "signCertRsaWithExpiredChain.p12";
