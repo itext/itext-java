@@ -53,14 +53,14 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 
 @Category(IntegrationTest.class)
 public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTest {
@@ -143,6 +143,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void testAppliedClipPathRenderer() {
         AbstractBranchSvgNodeRenderer clipPathRenderer = new ClipPathSvgNodeRenderer();
         clipPathRenderer.setAttribute(SvgConstants.Attributes.ID, "randomString");
@@ -177,6 +178,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void testAppliedGroupClipPathRenderer() {
         AbstractBranchSvgNodeRenderer clipPathRenderer = new ClipPathSvgNodeRenderer();
         clipPathRenderer.setAttribute(SvgConstants.Attributes.ID, "randomString");
@@ -216,6 +218,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void testEoAppliedGroupClipPathRenderer() {
         AbstractBranchSvgNodeRenderer clipPathRenderer = new ClipPathSvgNodeRenderer();
         clipPathRenderer.setAttribute(SvgConstants.Attributes.ID, "randomString");

@@ -42,8 +42,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -74,16 +74,15 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.MessageFormat;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.MessageFormat;
 
 @Category(IntegrationTest.class)
 public class LayoutTaggingPdf2Test extends ExtendedITextTest {
@@ -98,6 +97,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void simpleDocDefault() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "simpleDocDefault.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -120,6 +120,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void simpleDocNullNsByDefault() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "simpleDocNullNsByDefault.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -142,6 +143,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void simpleDocExplicitlyOldStdNs() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "simpleDocExplicitlyOldStdNs.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -166,6 +168,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void customRolesMappingPdf2() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "customRolesMappingPdf2.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -209,6 +212,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void customRolesMappingPdf17() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "customRolesMappingPdf17.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -252,6 +256,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void docWithExplicitAndImplicitDefaultNsAtTheSameTime() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithExplicitAndImplicitDefaultNsAtTheSameTime.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -390,6 +395,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void docWithInvalidMapping04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping04.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -443,6 +449,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void docWithInvalidMapping06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping06.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -523,6 +530,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void docWithInvalidMapping09() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping09.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -543,6 +551,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void docWithInvalidMapping10() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping10.pdf",
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
@@ -563,6 +572,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void stampTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocOldStdNs.pdf"),
                 new PdfWriter(destinationFolder + "stampTest01.pdf",
@@ -577,6 +587,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void stampTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocNoNs.pdf"),
                 new PdfWriter(destinationFolder + "stampTest02.pdf",
@@ -591,6 +602,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void stampTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocNewStdNs.pdf"),
                 new PdfWriter(destinationFolder + "stampTest03.pdf",
@@ -605,6 +617,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void stampTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDoc1_7.pdf"),
                 new PdfWriter(destinationFolder + "stampTest04.pdf",
@@ -655,6 +668,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void docWithSectInPdf2() throws IOException, ParserConfigurationException, SAXException,
             InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithSectInPdf2.pdf",

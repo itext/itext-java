@@ -96,16 +96,19 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testAscii85Filters() throws Exception {
         testFile("ASCII85_RunLengthDecode.pdf", "Im9", "png");
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testCcittFilters() throws Exception {
         testFile("ccittfaxdecode.pdf", "background0", "png");
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testFlateDecodeFilters() throws Exception {
         // TODO DEVSIX-2941: extracted indexed devicegray RunLengthDecode gets color inverted
         testFile("flatedecode_runlengthdecode.pdf", "Im9", "png");
@@ -139,6 +142,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testFlateRgbIcc() throws Exception {
         testFile("img_rgb_icc.pdf", "Im1", "png");
     }
@@ -149,6 +153,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testFlateCalRgb() throws Exception {
         testFile("img_calrgb.pdf", "Im1", "png");
     }

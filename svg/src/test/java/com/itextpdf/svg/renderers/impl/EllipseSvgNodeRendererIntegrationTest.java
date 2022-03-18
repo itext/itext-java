@@ -156,6 +156,7 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest() throws java.io.IOException {
         String filename = "calculateCoordinatesWithBetterPrecision.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
