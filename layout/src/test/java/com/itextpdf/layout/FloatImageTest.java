@@ -22,8 +22,8 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -59,6 +59,7 @@ public class FloatImageTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatAllClearNoneImageTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatAllClearNoneImage.pdf";
@@ -89,6 +90,7 @@ public class FloatImageTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatAllClearBothImageTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatAllClearBothImage.pdf";
@@ -120,6 +122,7 @@ public class FloatImageTest extends ExtendedITextTest {
 
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatNoneRightClearBothImageTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatNoneRightClearBothImage.pdf";
@@ -148,6 +151,7 @@ public class FloatImageTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatNoneRightClearNoneImageTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatNoneRightClearNoneImage.pdf";

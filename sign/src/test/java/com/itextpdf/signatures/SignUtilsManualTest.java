@@ -24,18 +24,19 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class SignUtilsManualTest extends ExtendedITextTest {
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
     public void removeCertificatesIteratorTest() throws KeyStoreException {
         Iterable<X509Certificate> iterable = SignUtils.getCertificates(KeyStoreUtil.loadCacertsKeyStore());
         Iterator<X509Certificate> it = iterable.iterator();

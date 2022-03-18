@@ -101,6 +101,7 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void runLengthEncodingTest01() throws IOException {
         String srcFile = sourceFolder + "runLengthEncodedImages.pdf";
 
@@ -150,7 +151,7 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void cryptFilterFlushedBeforeReadStreamTest() throws IOException {
         String file = sourceFolder + "cryptFilterTest.pdf";
@@ -176,7 +177,7 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void cryptFilterFlushedBeforeStreamTest() throws IOException {
         String file = sourceFolder + "cryptFilterTest.pdf";
@@ -201,7 +202,7 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void cryptFilterFlushedAfterStreamTest() throws IOException, InterruptedException {
         String file = sourceFolder + "cryptFilterTest.pdf";
