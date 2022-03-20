@@ -45,6 +45,13 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
+import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.element.CheckBox;
+import com.itextpdf.forms.form.element.ComboBoxField;
+import com.itextpdf.forms.form.element.IFormField;
+import com.itextpdf.forms.form.element.InputButton;
+import com.itextpdf.forms.form.element.InputField;
+import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -1266,6 +1273,80 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return true;
         }
         return false;
+    }
+    
+    boolean drawWidget() {
+        // TODO DEVSIX-7385 This method is excepted to be used instead of regenerateWidget method
+        final PdfName type = parent.getFormType();
+        IFormField formField;
+        if (PdfName.Tx.equals(type)) {
+            formField = createInputField();
+        } else if (PdfName.Ch.equals(type)) {
+            formField = createChoiceField();
+        } else if (PdfName.Btn.equals(type)) {
+            if (parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
+                formField = createInputButton();
+            } else if (parent.getFieldFlag(PdfButtonFormField.FF_RADIO)) {
+                formField = createRadio();
+            } else {
+                formField = createCheckbox();
+            }
+        } else {
+            return false;
+        }
+        // TODO DEVSIX-7359 This method is a placeholder and is not expected to work correctly right now.
+        //  Shall be changed.
+        drawFieldAndSaveAppearance(formField);
+        return true;
+    }
+    
+    void drawFieldAndSaveAppearance(IFormField formField) {
+        Rectangle rectangle = getRect(this.getPdfObject());
+        // TODO DEVSIX-7359 rectangle for xObject is incorrect. The most close result appears with +5 instead of +1000,
+        //  however several tests hang because of not enough space.
+        //  It may be that rectangle should be unique for each element.
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rectangle.getWidth() + 1000, rectangle.getHeight() + 1000));
+        Canvas canvas = new Canvas(xObject, this.getDocument());
+        // TODO DEVSIX-7359 setters for such values are expected to be implemented on the necessary level.
+        //  For all properties, which are expected to be used by user,
+        //  special setters shall present on model elements level.
+        formField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+        formField.setProperty(FormProperty.FORM_FIELD_VALUE, parent.getValueAsString());
+        canvas.add(formField);
+        PdfDictionary ap = new PdfDictionary();
+        ap.put(PdfName.N, xObject.getPdfObject());
+        ap.setModified();
+        put(PdfName.AP, ap);
+    }
+
+    IFormField createInputField() {
+        // TODO DEVSIX-7362 implement logic for text field.
+        InputField inputField = new InputField(parent.getFieldName().toUnicodeString());
+        return inputField;
+    }
+    
+    IFormField createChoiceField() {
+        // TODO DEVSIX-7394 implement logic for choice form fields.
+        ComboBoxField comboBoxField = new ComboBoxField(parent.getFieldName().toUnicodeString());
+        return comboBoxField;
+    }
+    
+    IFormField createInputButton() {
+        // TODO DEVSIX-7359 implement logic for push button.
+        InputButton inputButton = new InputButton(parent.getFieldName().toUnicodeString());
+        return inputButton;
+    }
+    
+    IFormField createRadio() {
+        // TODO DEVSIX-7360 implement logic for radio button.
+        Radio radio = new Radio(parent.getFieldName().toUnicodeString());
+        return radio;
+    }
+    
+    IFormField createCheckbox() {
+        // TODO DEVSIX-7361 implement logic for checkbox.
+        CheckBox checkBox = new CheckBox(parent.getFieldName().toUnicodeString());
+        return checkBox;
     }
 
     private static double degreeToRadians(double angle) {
