@@ -1,0 +1,2 @@
+This software uses the following test resources under the following licenses:
+//TODO DEVSIX-6473 Replace fonts in kernel
