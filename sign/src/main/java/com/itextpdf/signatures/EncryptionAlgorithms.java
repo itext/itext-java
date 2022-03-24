@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -73,13 +73,18 @@ public class EncryptionAlgorithms {
         algorithmNames.put("1.3.36.3.3.1.4", "RSA");
         algorithmNames.put("1.2.643.2.2.19", "ECGOST3410");
 
-        algorithmNames.put("1.2.840.10045.2.1", "ECDSA"); //Elliptic curve public key cryptography.
-        algorithmNames.put("1.2.840.10045.4.1", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA) algorithm.
-        algorithmNames.put("1.2.840.10045.4.3", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA).
-        algorithmNames.put("1.2.840.10045.4.3.2", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA256) algorithm.
-        algorithmNames.put("1.2.840.10045.4.3.3", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA384) algorithm.
-        algorithmNames.put("1.2.840.10045.4.3.4", "ECDSA"); //Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA512) algorithm.
-
+        // Elliptic curve public key cryptography
+        algorithmNames.put("1.2.840.10045.2.1", "ECDSA");
+        // Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA) algorithm
+        algorithmNames.put("1.2.840.10045.4.1", "ECDSA");
+        // Elliptic curve Digital Signature Algorithm (DSA)
+        algorithmNames.put("1.2.840.10045.4.3", "ECDSA");
+        // Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA256) algorithm
+        algorithmNames.put("1.2.840.10045.4.3.2", "ECDSA");
+        // Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA384) algorithm
+        algorithmNames.put("1.2.840.10045.4.3.3", "ECDSA");
+        // Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA512) algorithm
+        algorithmNames.put("1.2.840.10045.4.3.4", "ECDSA");
     }
 
     /**
@@ -89,9 +94,10 @@ public class EncryptionAlgorithms {
      */
     public static String getAlgorithm(String oid) {
         String ret = algorithmNames.get(oid);
-        if (ret == null)
+        if (ret == null) {
             return oid;
-        else
+        } else {
             return ret;
+        }
     }
 }

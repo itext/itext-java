@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf.copy;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -39,6 +40,8 @@ import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayInputStream;
@@ -53,19 +56,19 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     @Ignore("Unignore when DEVSIX-3585 would be implemented")
     public void testCopyingPageWithAnnotationContainingPopupKey() throws IOException {
-        String inFilePath = sourceFolder + "annotation-with-popup.pdf";
-        String outFilePath = destinationFolder + "copy-annotation-with-popup.pdf";
+        String inFilePath = SOURCE_FOLDER + "annotation-with-popup.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copy-annotation-with-popup.pdf";
         PdfDocument originalDocument = new PdfDocument(new PdfReader(inFilePath));
         PdfDocument outDocument = new PdfDocument(new PdfWriter(outFilePath));
 
@@ -108,8 +111,8 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     @Test
     @Ignore("Unignore when DEVSIX-3585 would be implemented")
     public void testCopyingPageWithAnnotationContainingIrtKey() throws IOException {
-        String inFilePath = sourceFolder + "annotation-with-irt.pdf";
-        String outFilePath = destinationFolder + "copy-annotation-with-irt.pdf";
+        String inFilePath = SOURCE_FOLDER + "annotation-with-irt.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copy-annotation-with-irt.pdf";
         PdfDocument originalDocument = new PdfDocument(new PdfReader(inFilePath));
         PdfDocument outDocument = new PdfDocument(new PdfWriter(outFilePath));
 
@@ -148,34 +151,68 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     @Test
     // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
     public void copySameLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
-        String cmpFilePath = sourceFolder + "cmp_copySameLinksWithGoToSmartMode.pdf";
-        String outFilePath = destinationFolder + "copySameLinksWithGoToSmartMode.pdf";
+        String cmpFilePath = SOURCE_FOLDER + "cmp_copySameLinksWithGoToSmartMode.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copySameLinksWithGoToSmartMode.pdf";
 
         copyLinksGoToActionTest(outFilePath, true, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
 
     @Test
     // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
     public void copyDiffDestLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
-        String cmpFilePath = sourceFolder + "cmp_copyDiffDestLinksWithGoToSmartMode.pdf";
-        String outFilePath = destinationFolder + "copyDiffDestLinksWithGoToSmartMode.pdf";
+        String cmpFilePath = SOURCE_FOLDER + "cmp_copyDiffDestLinksWithGoToSmartMode.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copyDiffDestLinksWithGoToSmartMode.pdf";
 
         copyLinksGoToActionTest(outFilePath, false, false);
 
-        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
 
     @Test
     // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
     public void copyDiffDisplayLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
-        String cmpFilePath = sourceFolder + "cmp_copyDiffDisplayLinksWithGoToSmartMode.pdf";
-        String outFilePath = destinationFolder + "copyDiffDisplayLinksWithGoToSmartMode.pdf";
+        String cmpFilePath = SOURCE_FOLDER + "cmp_copyDiffDisplayLinksWithGoToSmartMode.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copyDiffDisplayLinksWithGoToSmartMode.pdf";
 
         copyLinksGoToActionTest(outFilePath, false, true);
 
-        Assert.assertNull(new CompareTool().compareByContent(cmpFilePath, outFilePath, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
+    }
+
+    @Test
+    // TODO: DEVSIX-6090 (update cmp file after fixing the issue)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)})
+    public void copyPagesWithWidgetAnnotGoToActionExplicitDestTest() throws IOException, InterruptedException {
+        String srcFilePath = SOURCE_FOLDER + "pageToCopyWithWidgetAnnotGoToActionExplicitDest.pdf";
+        String cmpFilePath = SOURCE_FOLDER + "cmp_copyPagesWithWidgetAnnotGoToActionExplicitDest.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copyPagesWithWidgetAnnotGoToActionExplicitDest.pdf";
+
+        copyPages(srcFilePath, outFilePath, cmpFilePath);
+    }
+
+    @Test
+    // TODO: DEVSIX-6090 (update cmp file after fixing the issue)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)})
+    public void copyPagesWithWidgetAnnotGoToActionNamedDestTest() throws IOException, InterruptedException {
+        String srcFilePath = SOURCE_FOLDER + "pageToCopyWithWidgetAnnotGoToActionNamedDest.pdf";
+        String cmpFilePath = SOURCE_FOLDER + "cmp_copyPagesWithWidgetAnnotGoToActionNamedDest.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copyPagesWithWidgetAnnotGoToActionNamedDest.pdf";
+
+        copyPages(srcFilePath, outFilePath, cmpFilePath);
+    }
+
+    @Test
+    // TODO: DEVSIX-6090 (update cmp file after fixing the issue)
+    public void copyPagesWithScreenAnnotGoToActionExplicitDestTest() throws IOException, InterruptedException {
+        String srcFilePath = SOURCE_FOLDER + "pageToCopyWithScreenAnnotGoToActionExplicitDest.pdf";
+        String cmpFilePath = SOURCE_FOLDER + "cmp_copyPagesWithScreenAnnotGoToActionExplicitDest.pdf";
+        String outFilePath = DESTINATION_FOLDER + "copyPagesWithScreenAnnotGoToActionExplicitDest.pdf";
+
+        copyPages(srcFilePath, outFilePath, cmpFilePath);
     }
 
     private void copyLinksGoToActionTest(String dest, boolean isTheSameLinks, boolean diffDisplayOptions)
@@ -188,6 +225,22 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
         sourceDoc1.close();
         destDoc.close();
+    }
+
+    private void copyPages(String sourceFile, String outFilePath, String cmpFilePath)
+            throws IOException, InterruptedException {
+        try (PdfWriter writer = new PdfWriter(outFilePath);
+                PdfDocument pdfDoc = new PdfDocument(writer)) {
+            pdfDoc.addNewPage();
+            pdfDoc.addNewPage();
+
+            try (PdfReader reader = new PdfReader(sourceFile);
+                    PdfDocument srcDoc = new PdfDocument(reader)) {
+                srcDoc.copyPagesTo(1, srcDoc.getNumberOfPages(), pdfDoc);
+            }
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
 
     private ByteArrayOutputStream createPdfWithGoToAnnot(boolean isTheSameLink, boolean diffDisplayOptions) {

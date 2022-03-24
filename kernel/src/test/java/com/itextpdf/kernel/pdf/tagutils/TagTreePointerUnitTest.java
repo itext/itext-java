@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,8 +24,8 @@ package com.itextpdf.kernel.pdf.tagutils;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -38,44 +38,41 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class TagTreePointerUnitTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void rootTagCannotBeRemovedTest () {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_REMOVE_DOCUMENT_ROOT_TAG);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        tagTreePointer.removeTag();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.removeTag());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_REMOVE_DOCUMENT_ROOT_TAG,
+                exception.getMessage());
     }
 
     @Test
     public void cannotMoveToKidWithNonExistingRoleTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        tagTreePointer.moveToKid(1, "role");
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.moveToKid(1, "role"));
+        Assert.assertEquals(KernelExceptionMessageConstant.NO_KID_WITH_SUCH_ROLE,
+                exception.getMessage());
     }
 
     @Test
     public void cannotMoveToKidMcrTest01() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        tagTreePointer.moveToKid(1, "MCR");
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.moveToKid(1, "MCR"));
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE,
+                exception.getMessage());
     }
 
     @Test
@@ -83,9 +80,6 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.ENCOUNTERED_INVALID_MCR)
     })
     public void cannotMoveToKidMcrTest02() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         PdfStructElem parent = new PdfStructElem(pdfDoc, PdfName.MCR);
@@ -95,64 +89,62 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         parent.addKid(kid1);
         parent.addKid(kid2);
         tagTreePointer.setCurrentStructElem(parent);
-        tagTreePointer.moveToKid(1);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.moveToKid(1));
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_MARKED_CONTENT_REFERENCE,
+                exception.getMessage());
     }
 
     @Test
     public void noParentObjectInStructElemTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException
-                .expectMessage(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_SHALL_CONTAIN_PARENT_OBJECT);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         PdfStructElem pdfStructElem = new PdfStructElem(pdfDoc, PdfName.MCR);
-        tagTreePointer.setCurrentStructElem(pdfStructElem);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.setCurrentStructElem(pdfStructElem));
+        Assert.assertEquals(KernelExceptionMessageConstant.STRUCTURE_ELEMENT_SHALL_CONTAIN_PARENT_OBJECT,
+                exception.getMessage());
     }
 
     @Test
     public void pageMustBeInitializedBeforeNextMcidCreationTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException
-                .expectMessage(KernelExceptionMessageConstant.PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         PdfStructElem pdfStructElem = new PdfStructElem(pdfDoc, PdfName.MCR);
-        tagTreePointer.createNextMcidForStructElem(pdfStructElem, 1);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.createNextMcidForStructElem(pdfStructElem, 1));
+        Assert.assertEquals(KernelExceptionMessageConstant.PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE,
+                exception.getMessage());
     }
 
     @Test
     public void cannotMoveRootToParentTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException
-                .expectMessage(KernelExceptionMessageConstant.CANNOT_MOVE_TO_PARENT_CURRENT_ELEMENT_IS_ROOT);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        tagTreePointer.moveToParent();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.moveToParent());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_PARENT_CURRENT_ELEMENT_IS_ROOT,
+                exception.getMessage());
     }
 
     @Test
     public void cannotRelocateRootTagTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_RELOCATE_ROOT_TAG);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
-        tagTreePointer.relocate(tagTreePointer);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.relocate(tagTreePointer));
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_RELOCATE_ROOT_TAG, exception.getMessage());
     }
 
     @Test
     public void cannotFlushAlreadyFlushedPageTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PAGE_ALREADY_FLUSHED);
-
         PdfDocument pdfDoc = createTestDocument();
         TagTreePointer tagTreePointer = new TagTreePointer(pdfDoc);
         PdfPage pdfPage = pdfDoc.addNewPage(1);
         pdfPage.flush();
-        tagTreePointer.setPageForTagging(pdfPage);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> tagTreePointer.setPageForTagging(pdfPage));
+        Assert.assertEquals(KernelExceptionMessageConstant.PAGE_ALREADY_FLUSHED, exception.getMessage());
     }
 
     private static PdfDocument createTestDocument() {

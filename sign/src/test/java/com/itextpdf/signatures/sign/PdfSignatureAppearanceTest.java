@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -130,7 +130,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String fileName = "textAutoscaleTest02.pdf";
         String dest = DESTINATION_FOLDER + fileName;
 
-        Rectangle rect = new Rectangle(36, 648, 100, 50);
+        Rectangle rect = new Rectangle(36, 648, 150, 50);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.DESCRIPTION);
 
         assertAppearanceFontSize(dest, 6.83f);

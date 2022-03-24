@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -689,7 +689,9 @@ public class PdfType0Font extends PdfFont {
             if (ttf.isCff()) {
                 byte[] cffBytes;
                 if (subset) {
-                    cffBytes = new CFFFontSubset(ttf.getFontStreamBytes(), usedGlyphs).Process();
+                    byte[] bytes = ttf.getFontStreamBytes();
+                    Set<Integer> usedGids = ttf.mapGlyphsCidsToGids(usedGlyphs);
+                    cffBytes = new CFFFontSubset(bytes, usedGids).Process();
                 } else {
                     cffBytes = ttf.getFontStreamBytes();
                 }

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -1958,6 +1958,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 if (null == memoryLimitsAwareHandler) {
                     memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(reader.tokens.getSafeFile().length());
                 }
+                xref.setMemoryLimitsAwareHandler(memoryLimitsAwareHandler);
                 reader.readPdf();
                 if (reader.decrypt != null && reader.decrypt.isEmbeddedFilesOnly()) {
                     encryptedEmbeddedStreamsHandler.storeAllEmbeddedStreams();
@@ -2277,7 +2278,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * This method removes all annotation entries from form fields associated with a given page.
+     * Removes all widgets associated with a given page from AcroForm structure. Widgets can be either pure or merged.
      *
      * @param page to remove from.
      */
@@ -2285,10 +2286,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (page.isFlushed()) {
             return;
         }
+
+        final PdfDictionary acroForm = this.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+        final PdfArray fields = acroForm == null ? null : acroForm.getAsArray(PdfName.Fields);
+
         List<PdfAnnotation> annots = page.getAnnotations();
         for (PdfAnnotation annot : annots) {
             if (annot.getSubtype().equals(PdfName.Widget)) {
                 ((PdfWidgetAnnotation) annot).releaseFormFieldFromWidgetAnnotation();
+                if (fields != null) {
+                    fields.remove(annot.getPdfObject());
+                }
             }
         }
     }

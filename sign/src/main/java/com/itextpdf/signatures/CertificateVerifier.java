@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -94,8 +94,9 @@ public class CertificateVerifier {
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException {
         // Check if the certificate is valid on the signDate
-        if (signDate != null)
+        if (signDate != null) {
             signCert.checkValidity(signDate);
+        }
         // Check if the signature is valid
         if (issuerCert != null) {
             signCert.verify(issuerCert.getPublicKey());

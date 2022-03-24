@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Utility class that provides several convenience methods concerning digital signatures.
  */
@@ -96,7 +95,7 @@ public class SignatureUtil {
         // Only create new AcroForm if there is a writer
         this.acroForm = PdfAcroForm.getAcroForm(document, document.getWriter() != null);
     }
-    
+
     /**
      * Prepares an {@link PdfPKCS7} instance for the given signature.
      * This method handles signature parsing and might throw an exception if
@@ -138,31 +137,38 @@ public class SignatureUtil {
      */
     public PdfPKCS7 readSignatureData(String signatureFieldName, String securityProvider) {
         PdfSignature signature = getSignature(signatureFieldName);
-        if (signature == null)
+        if (signature == null) {
             return null;
+        }
         try {
             PdfName sub = signature.getSubFilter();
             PdfString contents = signature.getContents();
             PdfPKCS7 pk = null;
             if (sub.equals(PdfName.Adbe_x509_rsa_sha1)) {
                 PdfString cert = signature.getPdfObject().getAsString(PdfName.Cert);
-                if (cert == null)
+                if (cert == null) {
                     cert = signature.getPdfObject().getAsArray(PdfName.Cert).getAsString(0);
-                pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), cert.getValueBytes(), securityProvider);
-            } else
+                }
+                pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), cert.getValueBytes(),
+                        securityProvider);
+            } else {
                 pk = new PdfPKCS7(PdfEncodings.convertToBytes(contents.getValue(), null), sub, securityProvider);
+            }
             updateByteRange(pk, signature);
             PdfString date = signature.getDate();
-            if (date != null)
+            if (date != null) {
                 pk.setSignDate(PdfDate.decode(date.toString()));
+            }
             String signName = signature.getName();
             pk.setSignName(signName);
             String reason = signature.getReason();
-            if (reason != null)
+            if (reason != null) {
                 pk.setReason(reason);
+            }
             String location = signature.getLocation();
-            if (location != null)
+            if (location != null) {
                 pk.setLocation(location);
+            }
             return pk;
         } catch (Exception e) {
             throw new PdfException(e);
@@ -171,7 +177,9 @@ public class SignatureUtil {
 
     public PdfSignature getSignature(String name) {
         PdfDictionary sigDict = getSignatureDictionary(name);
-        return sigDict != null ? new PdfSignature(sigDict) : null;
+        return sigDict != null
+                ? new PdfSignature(sigDict)
+                : null;
     }
 
     /**
@@ -183,8 +191,9 @@ public class SignatureUtil {
      */
     public PdfDictionary getSignatureDictionary(String name) {
         getSignatureNames();
-        if (acroForm == null || !sigNames.containsKey(name))
+        if (acroForm == null || !sigNames.containsKey(name)) {
             return null;
+        }
         PdfFormField field = acroForm.getField(name);
         PdfDictionary merged = field.getPdfObject();
         return merged.getAsDictionary(PdfName.V);
@@ -196,7 +205,8 @@ public class SignatureUtil {
         RandomAccessFileOrArray rf = document.getReader().getSafeFile();
         InputStream rg = null;
         try {
-            rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(rf.createSourceView(), b.toLongArray()));
+            rg = new RASInputStream(
+                    new RandomAccessSourceFactory().createRanged(rf.createSourceView(), b.toLongArray()));
             byte[] buf = new byte[8192];
             int rd;
             while ((rd = rg.read(buf, 0, buf.length)) > 0) {
@@ -220,8 +230,9 @@ public class SignatureUtil {
      * @return List containing the field names that have signatures and are signed
      */
     public List<String> getSignatureNames() {
-        if (sigNames != null)
+        if (sigNames != null) {
             return new ArrayList<>(orderedSignatureNames);
+        }
         sigNames = new HashMap<>();
         orderedSignatureNames = new ArrayList<>();
         populateSignatureNames();
@@ -241,10 +252,12 @@ public class SignatureUtil {
             for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
                 PdfFormField field = entry.getValue();
                 PdfDictionary merged = field.getPdfObject();
-                if (!PdfName.Sig.equals(merged.getAsName(PdfName.FT)))
+                if (!PdfName.Sig.equals(merged.getAsName(PdfName.FT))) {
                     continue;
-                if (sigNames.containsKey(entry.getKey()))
+                }
+                if (sigNames.containsKey(entry.getKey())) {
                     continue;
+                }
                 sigs.add(entry.getKey());
             }
         }
@@ -259,8 +272,9 @@ public class SignatureUtil {
     public int getRevision(String field) {
         getSignatureNames();
         field = getTranslatedFieldName(field);
-        if (!sigNames.containsKey(field))
+        if (!sigNames.containsKey(field)) {
             return 0;
+        }
         return sigNames.get(field)[1];
     }
 
@@ -281,8 +295,9 @@ public class SignatureUtil {
      */
     public InputStream extractRevision(String field) {
         getSignatureNames();
-        if (!sigNames.containsKey(field))
+        if (!sigNames.containsKey(field)) {
             return null;
+        }
         int length = sigNames.get(field)[0];
         RandomAccessFileOrArray raf = document.getReader().getSafeFile();
         return new RASInputStream(new WindowRandomAccessSource(raf.createSourceView(), 0, length));
@@ -300,10 +315,12 @@ public class SignatureUtil {
      */
     public boolean signatureCoversWholeDocument(String name) {
         getSignatureNames();
-        if (!sigNames.containsKey(name))
+        if (!sigNames.containsKey(name)) {
             return false;
+        }
         try {
-            ContentsChecker signatureReader = new ContentsChecker(document.getReader().getSafeFile().createSourceView());
+            ContentsChecker signatureReader = new ContentsChecker(
+                    document.getReader().getSafeFile().createSourceView());
             return signatureReader.checkWhetherSignatureCoversWholeDocument(acroForm.getField(name));
         } catch (IOException e) {
             throw new PdfException(e);
@@ -329,11 +346,13 @@ public class SignatureUtil {
         for (Map.Entry<String, PdfFormField> entry : acroForm.getFormFields().entrySet()) {
             PdfFormField field = entry.getValue();
             PdfDictionary merged = field.getPdfObject();
-            if (!PdfName.Sig.equals(merged.get(PdfName.FT)))
+            if (!PdfName.Sig.equals(merged.get(PdfName.FT))) {
                 continue;
+            }
             PdfDictionary v = merged.getAsDictionary(PdfName.V);
-            if (v == null)
+            if (v == null) {
                 continue;
+            }
             PdfString contents = v.getAsString(PdfName.Contents);
             if (contents == null) {
                 continue;
@@ -396,7 +415,8 @@ public class SignatureUtil {
             rangeIsCorrect = false;
             PdfDictionary signature = (PdfDictionary) signatureField.getValue();
             int[] byteRange = ((PdfArray) signature.get(PdfName.ByteRange)).toIntArray();
-            if (4 != byteRange.length || 0 != byteRange[0] || tokens.getSafeFile().length() != byteRange[2] + byteRange[3]) {
+            if (4 != byteRange.length || 0 != byteRange[0]
+                    || tokens.getSafeFile().length() != byteRange[2] + byteRange[3]) {
                 return false;
             }
 

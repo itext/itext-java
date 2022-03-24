@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -66,6 +66,7 @@ public final class DateTimeUtil {
      * Gets the {@link Calendar} as UTC milliseconds from the epoch.
      *
      * @param calendar the calendar to be converted to millis
+     *
      * @return the date as UTC milliseconds from the epoch
      */
     public static double getUtcMillisFromEpoch(Calendar calendar) {
@@ -79,6 +80,7 @@ public final class DateTimeUtil {
      * Gets the date as {@link Calendar}.
      *
      * @param date the date to be returned as {@link Calendar}
+     *
      * @return the date as {@link Calendar}
      */
     public static Calendar getCalendar(Date date) {
@@ -87,27 +89,72 @@ public final class DateTimeUtil {
         return calendar;
     }
 
+    /**
+     * Gets a default {@link GregorianCalendar}.
+     *
+     * @return a default {@link GregorianCalendar} using the current time in the default
+     * time zone with the default locale
+     */
     public static Calendar getCurrentTimeCalendar() {
         return new GregorianCalendar();
     }
 
+
+    /**
+     * Gets current time consistently.
+     *
+     * @return the time at which it was allocated, measured to the nearest millisecond
+     */
     public static Date getCurrentTimeDate() {
         return new Date();
     }
 
+    /**
+     * Adds the specified amount of days to the given calendar field.
+     *
+     * @param calendar the calendar field where to add
+     * @param days the amount of days to be added
+     *
+     * @return the time at which it was allocated, measured to the nearest millisecond
+     */
     public static Calendar addDaysToCalendar(Calendar calendar, int days) {
         calendar.add(Calendar.DAY_OF_YEAR, days);
         return calendar;
     }
 
+    /**
+     * Defines if date is in past.
+     *
+     * @param date the date to be compared with current date
+     *
+     * @return <code>true</code> if given date is in past, <code>false</code> instead
+     */
     public static boolean isInPast(Date date) {
         return date.before(getCurrentTimeDate());
     }
 
+    /**
+     * Gets the number of milliseconds since January 1, 1970, 00:00:00 GMT
+     * represented by specified date.
+     *
+     * @param date the specified date to get time
+     *
+     * @return the number of milliseconds since January 1, 1970, 00:00:00 GMT
+     * represented by the specified date
+     */
     public static long getRelativeTime(Date date) {
         return date.getTime();
     }
 
+    /**
+     * Adds the specified amount of days to the given date.
+     *
+     * @param date the specified date to add
+     * @param days the amount of days to be added
+     *
+     * @return a {@link Date} object representing the calendar's time value (millisecond
+     * offset from the Epoch)
+     */
     public static Date addDaysToDate(Date date, int days) {
         Calendar cal = new GregorianCalendar();
         cal.setTime(date);
@@ -116,15 +163,24 @@ public final class DateTimeUtil {
     }
 
     /**
-     * Parses passing date with default {@code yyyy-MM-dd} pattern.
+     * Parses passing date with default yyyy-MM-dd pattern.
      *
      * @param date is date to be parse
+     *
      * @return parse date
      */
     public static Date parseWithDefaultPattern(String date) {
         return parse(date, DEFAULT_PATTERN);
     }
 
+    /**
+     * Parses passing date with specified format.
+     *
+     * @param date the date to be parsed
+     * @param format the format of parsing the date
+     *
+     * @return parsed date
+     */
     public static Date parse(String date, String format) {
         try {
             return initParserSDF(format).parse(date);
@@ -134,22 +190,52 @@ public final class DateTimeUtil {
     }
 
     /**
-     * Format passing date with default {@code yyyy-MM-dd} pattern.
+     * Format passing date with default yyyy-MM-dd pattern.
      *
-     * @param date is date to be format
-     * @return format date
+     * @param date the date to be formatted
+     *
+     * @return formatted date
      */
     public static String formatWithDefaultPattern(Date date) {
         return format(date, DEFAULT_PATTERN);
     }
 
+    /**
+     * Format passing date with specified pattern.
+     *
+     * @param date date to be formatted
+     * @param pattern pattern for format
+     *
+     * @return formatted date
+     */
     public static String format(Date date, String pattern) {
         return initParserSDF(pattern).format(date);
     }
 
+    /**
+     * Gets the offset of time zone from UTC
+     *
+     * @return the offset of time zone from UTC
+     *
+     * @deprecated Unused and will be removed in the next major release.
+     * Use {@link DateTimeUtil#getCurrentTimeZoneOffset(Date)} instead.
+     */
+    @Deprecated
     public static long getCurrentTimeZoneOffset() {
+        return getCurrentTimeZoneOffset(getCurrentTimeDate());
+    }
+
+    /**
+     * Gets the offset of time zone from UTC at the specified date.
+     *
+     * @param date the date represented in milliseconds since January 1, 1970 00:00:00 GMT
+     *
+     * @return the offset of time zone from UTC at the specified date adjusted with the amount
+     * of daylight saving.
+     */
+    public static long getCurrentTimeZoneOffset(Date date) {
         TimeZone tz = TimeZone.getDefault();
-        return tz.getOffset(getCurrentTimeDate().getTime());
+        return tz.getOffset(date.getTime());
     }
 
     private static DateFormat initParserSDF(String pattern) {

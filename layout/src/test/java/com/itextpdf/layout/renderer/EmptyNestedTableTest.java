@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -71,6 +71,7 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO DEVSIX-6255 Implementation of the application border attributes for cells
     public void buildEmptyTable() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "emptyNestedTableTest.pdf";

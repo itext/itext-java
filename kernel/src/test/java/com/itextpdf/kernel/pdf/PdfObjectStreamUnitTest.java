@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,34 +23,32 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfObjectStreamUnitTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void cannotAddMoreObjectsThanMaxStreamSizeTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.PDF_OBJECT_STREAM_REACH_MAX_SIZE);
-
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfObjectStream pdfObjectStream = new PdfObjectStream(pdfDocument);
         PdfNumber number = new PdfNumber(1);
         number.makeIndirect(pdfDocument);
-        for (int i = 0; i <= PdfObjectStream.MAX_OBJ_STREAM_SIZE; i++) {
+        //Here we add the maximum number of objects, so that adding the next one will cause an exception
+        for (int i = 0; i < PdfObjectStream.MAX_OBJ_STREAM_SIZE; i++) {
             pdfObjectStream.addObject(number);
         }
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfObjectStream.addObject(number));
+        Assert.assertEquals(KernelExceptionMessageConstant.PDF_OBJECT_STREAM_REACH_MAX_SIZE,
+                exception.getMessage());
     }
 
     @Test

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -60,6 +61,7 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
 
         Assert.assertEquals(Integer.MAX_VALUE / 100, handler.getMaxSizeOfSingleDecompressedPdfStream());
         Assert.assertEquals(Integer.MAX_VALUE / 20, handler.getMaxSizeOfDecompressedPdfStreamsSum());
+        Assert.assertEquals(50000000, handler.getMaxNumberOfElementsInXrefStructure());
     }
 
     @Test
@@ -125,6 +127,35 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         handler.endDecompressedPdfStreamProcessing();
         long state5 = handler.getAllMemoryUsedForDecompression();
         Assert.assertEquals(state1 + 100, state5);
+    }
+
+    @Test
+    public void customXrefCapacityHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+
+        Assert.assertEquals(50000000, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
+        memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(20);
+        Assert.assertEquals(20, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
+    }
+
+    @Test
+    public void checkCapacityExceedsLimitTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        // There we add 2 instead of 1 since xref structures used 1-based indexes, so we decrement the capacity
+        // before check.
+        final int capacityExceededTheLimit = memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure() + 2;
+
+        Exception ex = Assert.assertThrows(MemoryLimitsAwareException.class,
+                () -> memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacityExceededTheLimit));
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
+    }
+
+    @Test
+    public void checkCapacityTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        final int capacityToSet = 2;
+
+        AssertUtil.doesNotThrow(() -> memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacityToSet));
     }
 
     private static void testSingleStream(MemoryLimitsAwareHandler handler) {

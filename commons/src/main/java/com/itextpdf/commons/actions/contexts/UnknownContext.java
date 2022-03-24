@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,11 @@ public class UnknownContext implements IContext {
 
     private final boolean allowEvents;
 
+    /**
+     * Creates a fallback {@link IContext}.
+     *
+     * @param allowEvents defines whether the context allows all events or not
+     */
     public UnknownContext(boolean allowEvents) {
         this.allowEvents = allowEvents;
     }

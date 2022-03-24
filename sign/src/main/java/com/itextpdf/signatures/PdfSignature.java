@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -89,7 +89,8 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * A name that describes the encoding of the signature value and key information in the signature dictionary.
-     * @return a {@link PdfName} which usually has a value either {@link PdfName#Adbe_pkcs7_detached} or {@link PdfName#ETSI_CAdES_DETACHED}.
+     * @return a {@link PdfName} which usually has a value either {@link PdfName#Adbe_pkcs7_detached}
+     * or {@link PdfName#ETSI_CAdES_DETACHED}.
      */
     public PdfName getSubFilter() {
         return getPdfObject().getAsName(PdfName.SubFilter);
@@ -99,7 +100,8 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      * The type of PDF object that the wrapped dictionary describes; if present, shall be {@link PdfName#Sig} for a signature
      * dictionary or {@link PdfName#DocTimeStamp} for a timestamp signature dictionary. Shall be not null if it's value
      * is {@link PdfName#DocTimeStamp}. The default value is: {@link PdfName#Sig}.
-     * @return a {@link PdfName} that identifies type of the wrapped dictionary, returns null if it is not explicitly specified.
+     * @return a {@link PdfName} that identifies type of the wrapped dictionary,
+     * returns null if it is not explicitly specified.
      */
     public PdfName getType() {
         return getPdfObject().getAsName(PdfName.Type);
@@ -108,21 +110,21 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the /ByteRange.
      *
-     * @param range an array of pairs of integers that specifies the byte range used in the digest calculation. A pair consists of the starting byte offset and the length
+     * @param range an array of pairs of integers that specifies the byte range used in the digest calculation.
+     *              A pair consists of the starting byte offset and the length
      */
     public void setByteRange(int[] range) {
         PdfArray array = new PdfArray();
-
         for (int k = 0; k < range.length; ++k) {
             array.add(new PdfNumber(range[k]));
         }
-
         put(PdfName.ByteRange, array);
     }
 
     /**
      * Gets the /ByteRange.
-     * @return an array of pairs of integers that specifies the byte range used in the digest calculation. A pair consists of the starting byte offset and the length.
+     * @return an array of pairs of integers that specifies the byte range used in the digest calculation.
+     * A pair consists of the starting byte offset and the length.
      */
     public PdfArray getByteRange() {
         return getPdfObject().getAsArray(PdfName.ByteRange);
@@ -297,12 +299,10 @@ public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
      */
     private PdfSignatureBuildProperties getPdfSignatureBuildProperties() {
         PdfDictionary buildPropDict = getPdfObject().getAsDictionary(PdfName.Prop_Build);
-
         if (buildPropDict == null) {
             buildPropDict = new PdfDictionary();
             put(PdfName.Prop_Build, buildPropDict);
         }
-
         return new PdfSignatureBuildProperties(buildPropDict);
     }
 }

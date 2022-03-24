@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -164,19 +164,20 @@ public final class OID {
          * This set consists of standard extensions which are defined in RFC specifications and are not mentioned
          * as forbidden to be marked as critical.
          */
-        public static final Set<String> SUPPORTED_CRITICAL_EXTENSIONS = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(
-                KEY_USAGE,
-                CERTIFICATE_POLICIES,
-                POLICY_MAPPINGS,
-                SUBJECT_ALTERNATIVE_NAME,
-                ISSUER_ALTERNATIVE_NAME,
-                BASIC_CONSTRAINTS,
-                NAME_CONSTRAINTS,
-                POLICY_CONSTRAINTS,
-                EXTENDED_KEY_USAGE,
-                CRL_DISTRIBUTION_POINTS,
-                INHIBIT_ANY_POLICY,
-                ID_PKIX_OCSP_NOCHECK
-        )));
+        public static final Set<String> SUPPORTED_CRITICAL_EXTENSIONS = Collections.unmodifiableSet(
+                new LinkedHashSet<>(Arrays.asList(
+                        KEY_USAGE,
+                        CERTIFICATE_POLICIES,
+                        POLICY_MAPPINGS,
+                        SUBJECT_ALTERNATIVE_NAME,
+                        ISSUER_ALTERNATIVE_NAME,
+                        BASIC_CONSTRAINTS,
+                        NAME_CONSTRAINTS,
+                        POLICY_CONSTRAINTS,
+                        EXTENDED_KEY_USAGE,
+                        CRL_DISTRIBUTION_POINTS,
+                        INHIBIT_ANY_POLICY,
+                        ID_PKIX_OCSP_NOCHECK
+                )));
     }
 }

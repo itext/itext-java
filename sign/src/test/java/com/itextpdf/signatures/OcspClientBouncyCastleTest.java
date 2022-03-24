@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -127,6 +127,12 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         Assert.assertNull(castle.getOcspResponse(null, null, ocspServiceUrl));
     }
 
+    @Test
+    public void getOcspResponseWhenUrlCertIsNullTest() {
+        OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
+        Assert.assertThrows(ConnectException.class,
+                () -> castle.getOcspResponse(checkCert, rootCert, null));
+    }
 
     @Test
     @LogMessages(messages = {

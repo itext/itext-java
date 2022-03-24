@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,8 @@ public class LoggerHelper {
     * */
     static boolean equalsMessageByTemplate(String message, String template) {
         if (template.contains("{") && template.contains("}")) {
-            String templateWithoutParameters = Pattern.quote(template).replace("''", "'").replaceAll("\\{[0-9]+?}", "\\\\E(.)*?\\\\Q");
+            // Note: The escape on '}' is necessary for regex dialect compatibility reasons.
+            String templateWithoutParameters = Pattern.quote(template).replace("''", "'").replaceAll("\\{[0-9]+?\\}", "\\\\E(.)*?\\\\Q");
             Pattern p = Pattern.compile(templateWithoutParameters, Pattern.DOTALL);
             return p.matcher(message).matches();
         } else {

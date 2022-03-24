@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,6 +32,8 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -45,11 +47,12 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class PdfType0FontTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
 
     @Test
     public void trueTypeFontAndCmapConstructorTest() throws IOException {
-        TrueTypeFont ttf = new TrueTypeFont(sourceFolder + "NotoSerif-Regular_v1.7.ttf");
+        TrueTypeFont ttf = new TrueTypeFont(SOURCE_FOLDER + "NotoSerif-Regular_v1.7.ttf");
 
         PdfType0Font type0Font = new PdfType0Font(ttf, PdfEncodings.IDENTITY_H);
 
@@ -67,7 +70,7 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
     @Test
     public void unsupportedCmapTest() throws IOException {
-        TrueTypeFont ttf = new TrueTypeFont(sourceFolder + "NotoSerif-Regular_v1.7.ttf");
+        TrueTypeFont ttf = new TrueTypeFont(SOURCE_FOLDER + "NotoSerif-Regular_v1.7.ttf");
 
         Exception e = Assert.assertThrows(PdfException.class,
                 () -> new PdfType0Font(ttf, PdfEncodings.WINANSI)
@@ -77,7 +80,7 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
     @Test
     public void dictionaryConstructorTest() throws IOException {
-        String filePath = sourceFolder + "documentWithType0Noto.pdf";
+        String filePath = SOURCE_FOLDER + "documentWithType0Noto.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(filePath));
 
@@ -103,7 +106,7 @@ public class PdfType0FontTest extends ExtendedITextTest {
         // this text contains three successive surrogate pairs, which should result in three glyphs
         String textWithThreeSurrogatePairs = "\uD800\uDF10\uD800\uDF00\uD800\uDF11";
         PdfFont type0Font =
-                PdfFontFactory.createFont(sourceFolder + "NotoSansOldItalic-Regular.ttf", PdfEncodings.IDENTITY_H);
+                PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSansOldItalic-Regular.ttf", PdfEncodings.IDENTITY_H);
 
         List<Glyph> glyphs = new ArrayList<>();
         type0Font.appendGlyphs(textWithThreeSurrogatePairs, 0, textWithThreeSurrogatePairs.length() - 1, glyphs);

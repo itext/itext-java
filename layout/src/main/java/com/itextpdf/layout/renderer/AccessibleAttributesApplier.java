@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -168,7 +168,7 @@ public class AccessibleAttributesApplier {
             attributes.put(PdfName.BackgroundColor, new PdfArray(background.getColor().getColorValue()));
         }
 
-        //TODO NOTE: applying border attributes for cells is temporarily turned off on purpose. Remove this 'if' in future.
+        //TODO DEVSIX-6255: applying border attributes for cells is temporarily turned off on purpose. Remove this 'if' in future.
         // The reason is that currently, we can't distinguish if all cells have same border style or not.
         // Therefore for every cell in every table we have to write the same border attributes, which creates lots of clutter.
         if (!(renderer.getModelElement() instanceof Cell)) {

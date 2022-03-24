@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -250,7 +250,8 @@ public class PdfSigner {
      *                     preserved regardless of what is set in properties.
      * @throws IOException if some I/O problem occurs
      */
-    public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties) throws IOException {
+    public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties)
+            throws IOException {
         StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
         if (path == null) {
             temporaryOS = new ByteArrayOutputStream();
@@ -506,9 +507,11 @@ public class PdfSigner {
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
-    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
-                             ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype) throws IOException, GeneralSecurityException {
-        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, (SignaturePolicyIdentifier) null);
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
+            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+            CryptoStandard sigtype) throws IOException, GeneralSecurityException {
+        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
+                (SignaturePolicyIdentifier) null);
     }
 
     /**
@@ -529,9 +532,11 @@ public class PdfSigner {
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
-    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
-                             ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
-        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype, signaturePolicy.toSignaturePolicyIdentifier());
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
+            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+            CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
+        signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
+                signaturePolicy.toSignaturePolicyIdentifier());
     }
 
     /**
@@ -552,8 +557,9 @@ public class PdfSigner {
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
-    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain, Collection<ICrlClient> crlList, IOcspClient ocspClient,
-                             ITSAClient tsaClient, int estimatedSize, CryptoStandard sigtype, SignaturePolicyIdentifier signaturePolicy) throws IOException, GeneralSecurityException {
+    public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
+            Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+            CryptoStandard sigtype, SignaturePolicyIdentifier signaturePolicy) throws IOException, GeneralSecurityException {
         if (closed) {
             throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
         }
@@ -567,8 +573,9 @@ public class PdfSigner {
 
         Collection<byte[]> crlBytes = null;
         int i = 0;
-        while (crlBytes == null && i < chain.length)
+        while (crlBytes == null && i < chain.length) {
             crlBytes = processCrl(chain[i++], crlList);
+        }
         if (estimatedSize == 0) {
             estimatedSize = 8192;
             if (crlBytes != null) {
@@ -576,10 +583,12 @@ public class PdfSigner {
                     estimatedSize += element.length + 10;
                 }
             }
-            if (ocspClient != null)
+            if (ocspClient != null) {
                 estimatedSize += 4192;
-            if (tsaClient != null)
+            }
+            if (tsaClient != null) {
                 estimatedSize += 4192;
+            }
         }
         PdfSignatureAppearance appearance = getSignatureAppearance();
         appearance.setCertificate(chain[0]);
@@ -587,7 +596,9 @@ public class PdfSigner {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }
         String hashAlgorithm = externalSignature.getHashAlgorithm();
-        PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES ? PdfName.ETSI_CAdES_DETACHED : PdfName.Adbe_pkcs7_detached);
+        PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES
+                ? PdfName.ETSI_CAdES_DETACHED
+                : PdfName.Adbe_pkcs7_detached);
         dic.setReason(appearance.getReason());
         dic.setLocation(appearance.getLocation());
         dic.setSignatureCreator(appearance.getSignatureCreator());
@@ -620,8 +631,9 @@ public class PdfSigner {
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, sigtype, tsaClient, ocspList, crlBytes);
 
-        if (estimatedSize < encodedSig.length)
+        if (estimatedSize < encodedSig.length) {
             throw new IOException("Not enough space");
+        }
 
         byte[] paddedSig = new byte[estimatedSize];
         System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
@@ -803,21 +815,21 @@ public class PdfSigner {
      * @return a collection of CRL bytes that can be embedded in a PDF
      */
     protected Collection<byte[]> processCrl(Certificate cert, Collection<ICrlClient> crlList) {
-        if (crlList == null)
+        if (crlList == null) {
             return null;
+        }
         List<byte[]> crlBytes = new ArrayList<>();
         for (ICrlClient cc : crlList) {
-            if (cc == null)
+            if (cc == null) {
                 continue;
+            }
             Collection<byte[]> b = cc.getEncoded((X509Certificate) cert, null);
-            if (b == null)
+            if (b == null) {
                 continue;
+            }
             crlBytes.addAll(b);
         }
-        if (crlBytes.size() == 0)
-            return null;
-        else
-            return crlBytes;
+        return crlBytes.size() == 0 ? null : crlBytes;
     }
 
     protected void addDeveloperExtension(PdfDeveloperExtension extension) {
@@ -1062,7 +1074,8 @@ public class PdfSigner {
      */
     protected InputStream getRangeStream() throws IOException {
         RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
-        return new RASInputStream(fac.createRanged(getUnderlyingSource(), range));
+        IRandomAccessSource randomAccessSource = fac.createRanged(getUnderlyingSource(), range);
+        return new RASInputStream(randomAccessSource);
     }
 
     /**
@@ -1090,8 +1103,9 @@ public class PdfSigner {
                     throw new IllegalArgumentException("The key didn't reserve space in preclose");
                 bous.reset();
                 os.write(obj);
-                if (bous.size() > lit.getBytesCount())
+                if (bous.size() > lit.getBytesCount()) {
                     throw new IllegalArgumentException(SignExceptionMessageConstant.TOO_BIG_KEY);
+                }
                 if (tempFile == null) {
                     System.arraycopy(bous.toByteArray(), 0, bout, (int) lit.getPosition(), (int) bous.size());
                 } else {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,31 +41,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class ProducerBuilderTest extends ExtendedITextTest {
 
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
-
     @Test
     public void emptyEventsProducerLineTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
-
-        ProducerBuilder.modifyProducer(Collections.<AbstractProductProcessITextEvent>emptyList(), null);
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ProducerBuilder.modifyProducer(Collections.<AbstractProductProcessITextEvent>emptyList(), null));
+        Assert.assertEquals(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT,
+                exception.getMessage());
     }
 
     @Test
     public void nullEventsProducerLineTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT);
-
-        ProducerBuilder.modifyProducer((List<AbstractProductProcessITextEvent>)null, null);
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ProducerBuilder.modifyProducer((List<AbstractProductProcessITextEvent>)null, null));
+        Assert.assertEquals(CommonsExceptionMessageConstant.NO_EVENTS_WERE_REGISTERED_FOR_THE_DOCUMENT,
+                exception.getMessage());
     }
 
     @Test
@@ -145,11 +140,10 @@ public class ProducerBuilderTest extends ExtendedITextTest {
     @Test
     public void currentDateNoFormatProducerLineTest() {
         List<ConfirmedEventWrapper> events = getEvents("Created at ${currentDate}", 1, 2, 3);
-
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"));
-
-        ProducerBuilder.modifyProducer(events, null);
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ProducerBuilder.modifyProducer(events, null));
+        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "currentDate"),
+                exception.getMessage());
     }
 
     @Test
@@ -173,11 +167,10 @@ public class ProducerBuilderTest extends ExtendedITextTest {
     @Test
     public void usedProductsEmptyFormatProducerLineTest() {
         List<ConfirmedEventWrapper> events = getEvents("Used products: ${usedProducts}", 1, 2, 3);
-
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"));
-
-        ProducerBuilder.modifyProducer(events, null);
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> ProducerBuilder.modifyProducer(events, null));
+        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"),
+                exception.getMessage());
     }
 
     @Test

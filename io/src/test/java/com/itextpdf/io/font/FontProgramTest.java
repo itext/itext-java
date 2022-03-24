@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -80,18 +80,12 @@ public class FontProgramTest extends ExtendedITextTest {
     public void registerDirectoryOpenTypeTest() {
         FontProgramFactory.clearRegisteredFonts();
         FontProgramFactory.clearRegisteredFontFamilies();
-        int cacheSize = -1;
-        try {
-            Field f = FontCache.class.getDeclaredField("fontCache");
-            f.setAccessible(true);
-            Map<FontCacheKey, FontProgram> cachedFonts = ((Map<FontCacheKey, FontProgram>) f.get(null));
-            cachedFonts.clear();
-            FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
-            cacheSize = cachedFonts.size();
-        } catch (Exception e) { }
+        FontCache.clearSavedFonts();
+        FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
+
         Assert.assertEquals(43, FontProgramFactory.getRegisteredFonts().size());
+        Assert.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/otf/FreeSansBold.ttf"));
         Assert.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans lihavoitu"));
-        Assert.assertEquals(0, cacheSize);
     }
 
     @Test

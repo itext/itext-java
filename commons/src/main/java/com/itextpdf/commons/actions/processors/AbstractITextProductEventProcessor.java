@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -25,10 +25,18 @@ package com.itextpdf.commons.actions.processors;
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 
+/**
+ * Abstract class with some standard functionality for product event processing.
+ */
 public abstract class AbstractITextProductEventProcessor implements ITextProductEventProcessor {
 
     private final String productName;
 
+    /**
+     * Creates a new instance of an abstract processor for the provided product.
+     *
+     * @param productName the product which will be handled by this processor
+     */
     public AbstractITextProductEventProcessor(String productName) {
         if (productName == null) {
             throw new IllegalArgumentException(CommonsExceptionMessageConstant.PRODUCT_NAME_CAN_NOT_BE_NULL);

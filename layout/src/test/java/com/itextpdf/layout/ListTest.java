@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -460,6 +460,86 @@ public class ListTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void listItemWithoutMarginsTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemWithoutMarginsTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemWithoutMarginsTest.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        document.setMargins(0, 0, 0, 0);
+
+        List list = new List();
+        list.setListSymbol(ListNumberingType.DECIMAL);
+        list.add(new ListItem("list item 1"));
+        list.add(new ListItem("list item 2"));
+
+        document.add(list);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void listItemBigMarginsTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemBigMarginsTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemBigMarginsTest.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        int margin = 100;
+        document.setMargins(margin, margin, margin, margin);
+
+        List list = new List();
+        list.setListSymbol(ListNumberingType.DECIMAL);
+        list.add(new ListItem("list item 1"));
+        list.add(new ListItem("list item 2"));
+
+        document.add(list);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void maxMarginWidthWhereTheBulletIsNotDrawnTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "maxMarginWidthWhereTheBulletIsNotDrawn.pdf";
+        String cmpFileName = sourceFolder + "cmp_maxMarginWidthWhereTheBulletIsNotDrawn.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        int margin = 50;
+        document.setMargins(margin, margin, margin, margin);
+
+        List list = new List();
+        list.setListSymbol(ListNumberingType.DECIMAL);
+        list.add(new ListItem("list item 1"));
+        list.add(new ListItem("list item 2"));
+        Float marginLeft = document.<Float>getDefaultProperty(Property.MARGIN_LEFT);
+        list.setFixedPosition((float) marginLeft, 780, 200);
+        document.add(list);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void initialMarginWidthWhereTheBulletIsDrawnTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "initialMarginWidthWhereTheBulletIsDrawn.pdf";
+        String cmpFileName = sourceFolder + "cmp_initialMarginWidthWhereTheBulletIsDrawn.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        int margin = 49;
+        document.setMargins(margin, margin, margin, margin);
+
+        List list = new List();
+        list.setListSymbol(ListNumberingType.DECIMAL);
+        list.add(new ListItem("list item 1"));
+        list.add(new ListItem("list item 2"));
+        Float marginLeft = document.<Float>getDefaultProperty(Property.MARGIN_LEFT);
+        list.setFixedPosition((float) marginLeft, 780, 200);
+        document.add(list);
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 4)
     })
@@ -470,7 +550,6 @@ public class ListTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
-
 
         doc.add(new Paragraph("Default layout:"));
         ListItem item = new ListItem();

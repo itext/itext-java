@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,8 +42,8 @@
  */
 package com.itextpdf.signatures.testutils.builder;
 
-
 import com.itextpdf.commons.utils.DateTimeUtil;
+
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
@@ -62,12 +62,15 @@ public class TestCrlBuilder {
 
     private static final String SIGN_ALG = "SHA256withRSA";
 
-    private X509v2CRLBuilder crlBuilder;
+    private final PrivateKey issuerPrivateKey;
+    private final X509v2CRLBuilder crlBuilder;
     private Date nextUpdate = DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), 30);
 
-    public TestCrlBuilder(X509Certificate caCert, Date thisUpdate) throws CertificateEncodingException {
-        X500Name issuerDN = new X500Name(PrincipalUtil.getIssuerX509Principal(caCert).getName());
-        crlBuilder = new X509v2CRLBuilder(issuerDN, thisUpdate);
+    public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, Date thisUpdate)
+            throws CertificateEncodingException {
+        String issuerCertSubjectDn = PrincipalUtil.getSubjectX509Principal(issuerCert).getName();
+        this.crlBuilder = new X509v2CRLBuilder(new X500Name(issuerCertSubjectDn), thisUpdate);
+        this.issuerPrivateKey = issuerPrivateKey;
     }
 
     public void setNextUpdate(Date nextUpdate) {
@@ -81,8 +84,10 @@ public class TestCrlBuilder {
         crlBuilder.addCRLEntry(certificate.getSerialNumber(), revocationDate, reason);
     }
 
-    public byte[] makeCrl(PrivateKey caPrivateKey) throws IOException, OperatorCreationException {
-        ContentSigner signer = new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME).build(caPrivateKey);
+    public byte[] makeCrl() throws IOException, OperatorCreationException {
+        ContentSigner signer =
+                new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                        .build(issuerPrivateKey);
         crlBuilder.setNextUpdate(nextUpdate);
         X509CRLHolder crl = crlBuilder.build(signer);
         return crl.getEncoded();

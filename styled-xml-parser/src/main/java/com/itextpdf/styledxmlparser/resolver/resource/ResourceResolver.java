@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utilities class to resolve resources.
  */
-// TODO handle <base href=".."> tag?
 public class ResourceResolver {
 
     /**
@@ -82,7 +81,6 @@ public class ResourceResolver {
     /**
      * The {@link SimpleImageCache} instance.
      */
-    // TODO provide a way to configure capacity, manually reset or disable the image cache?
     private SimpleImageCache imageCache;
 
     private IResourceRetriever retriever;

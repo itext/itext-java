@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,15 +43,15 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.TrueTypeCodePages;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,6 +60,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,6 +215,29 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    /**
+     * Maps a set of glyph CIDs (as used in PDF file) to corresponding GID values
+     * (as a glyph primary identifier in the font file).
+     * This call is only meaningful for fonts that return true for {@link #isCff()}.
+     * For other types of fonts, GID and CID are always the same, so that call would essentially
+     * return a set of the same values.
+     *
+     * @param glyphs a set of glyph CIDs
+     *
+     * @return a set of glyph ids corresponding to the passed glyph CIDs
+     */
+    public Set<Integer> mapGlyphsCidsToGids(Set<Integer> glyphs) {
+        return glyphs.stream()
+                .map((Integer i) -> {
+                    Glyph usedGlyph = getGlyphByCode(i);
+                    if (usedGlyph instanceof GidAwareGlyph) {
+                        return ((GidAwareGlyph) usedGlyph).getGid();
+                    }
+                    return i;
+                })
+                .collect(Collectors.toSet());
+    }
+
     protected void readGdefTable() throws java.io.IOException {
         int[] gdef = fontParser.tables.get("GDEF");
         if (gdef != null) {
@@ -299,6 +323,10 @@ public class TrueTypeFont extends FontProgram {
         unicodeToGlyph = new LinkedHashMap<>(cmap.size());
         codeToGlyph = new LinkedHashMap<>(numOfGlyphs);
         avgWidth = 0;
+        CFFFontSubset cffFontSubset = null;
+        if (isCff()) {
+            cffFontSubset = new CFFFontSubset(getFontStreamBytes());
+        }
         for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
             if (index >= numOfGlyphs) {
@@ -307,12 +335,24 @@ public class TrueTypeFont extends FontProgram {
                         getFontNames().getFontName(), index));
                 continue;
             }
-            Glyph glyph = new Glyph(index, glyphWidths[index], charCode, bBoxes != null ? bBoxes[index] : null);
+            int cid;
+            Glyph glyph;
+            int[] glyphBBox = bBoxes != null ? bBoxes[index] : null;
+            if (cffFontSubset != null && cffFontSubset.isCID()) {
+                cid = cffFontSubset.getCidForGlyphId(index);
+                GidAwareGlyph cffGlyph = new GidAwareGlyph(cid, glyphWidths[index], charCode, glyphBBox);
+                cffGlyph.setGid(index);
+                glyph = cffGlyph;
+            } else {
+                cid = index;
+                glyph = new Glyph(cid, glyphWidths[index], charCode, glyphBBox);
+            }
+
             unicodeToGlyph.put(charCode, glyph);
             // This is done on purpose to keep the mapping to glyphs with smaller unicode values, in contrast with
             // larger values which often represent different forms of other characters.
-            if (!codeToGlyph.containsKey(index)) {
-                codeToGlyph.put(index, glyph);
+            if (!codeToGlyph.containsKey(cid)) {
+                codeToGlyph.put(cid, glyph);
             }
             avgWidth += glyph.getWidth();
         }

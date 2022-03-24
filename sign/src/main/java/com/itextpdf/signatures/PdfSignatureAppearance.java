@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -688,7 +688,8 @@ public class PdfSignatureAppearance {
                     float usableScale = imageScale;
 
                     if (imageScale < 0) {
-                        usableScale = Math.min(rotatedRect.getWidth() / image.getWidth(), rotatedRect.getHeight() / image.getHeight());
+                        usableScale = Math.min(rotatedRect.getWidth() / image.getWidth(),
+                                rotatedRect.getHeight() / image.getHeight());
                     }
 
                     float w = image.getWidth() * usableScale;
@@ -758,7 +759,8 @@ public class PdfSignatureAppearance {
 
             switch (renderingMode) {
                 case NAME_AND_DESCRIPTION:
-                    String signedBy = CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("CN");
+                    String signedBy =
+                            CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("CN");
 
                     if (signedBy == null) {
                         signedBy = CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("E");

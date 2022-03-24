@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -103,6 +103,7 @@ import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
+import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.jce.provider.X509CertParser;
@@ -117,7 +118,6 @@ import org.bouncycastle.x509.util.StreamParsingException;
 final class SignUtils {
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
-
         if (algorithm.equals("EC")) {
             algorithm = "ECDSA";
         }
@@ -148,7 +148,8 @@ final class SignUtils {
         return externalDigest.getMessageDigest(hashAlgorithm);
     }
 
-    static MessageDigest getMessageDigest(String hashAlgorithm, String provider) throws NoSuchAlgorithmException, NoSuchProviderException {
+    static MessageDigest getMessageDigest(String hashAlgorithm, String provider)
+            throws NoSuchAlgorithmException, NoSuchProviderException {
         if (provider == null || provider.startsWith("SunPKCS11") || provider.startsWith("SunMSCAPI")) {
             return MessageDigest.getInstance(DigestAlgorithms.normalizeDigestName(hashAlgorithm));
         } else {
@@ -165,15 +166,20 @@ final class SignUtils {
         return (InputStream) con.getContent();
     }
 
-    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber, AlgorithmIdentifier digestAlgorithmIdentifier) throws OperatorCreationException, CertificateEncodingException, OCSPException {
+    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
+            AlgorithmIdentifier digestAlgorithmIdentifier)
+            throws OperatorCreationException, CertificateEncodingException, OCSPException {
         return new CertificateID(
                 new JcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
                 new JcaX509CertificateHolder(issuerCert), serialNumber);
     }
 
-    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber, ASN1ObjectIdentifier identifier) throws OperatorCreationException, CertificateEncodingException, OCSPException {
+    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
+            ASN1ObjectIdentifier identifier)
+            throws OperatorCreationException, CertificateEncodingException, OCSPException {
         return new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(new AlgorithmIdentifier(identifier, DERNull.INSTANCE)),
+                new JcaDigestCalculatorProviderBuilder().build().get(
+                        new AlgorithmIdentifier(identifier, DERNull.INSTANCE)),
                 new JcaX509CertificateHolder(issuerCert), serialNumber);
     }
 
@@ -181,7 +187,9 @@ final class SignUtils {
         OCSPReqBuilder gen = new OCSPReqBuilder();
         gen.addRequest(id);
 
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded()));
+        DEROctetString derOctetString = new DEROctetString(
+                new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded());
+        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, derOctetString);
         gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
         return gen.build();
     }
@@ -204,18 +212,29 @@ final class SignUtils {
         return (InputStream) con.getContent();
     }
 
-    static boolean isSignatureValid(BasicOCSPResp validator, Certificate certStoreX509, String provider) throws OperatorCreationException, OCSPException {
-        if (provider == null) provider = "BC";
-        return validator.isSignatureValid(new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey()));
+    static boolean isSignatureValid(BasicOCSPResp validator, Certificate certStoreX509, String provider)
+            throws OperatorCreationException, OCSPException {
+        if (provider == null) {
+            provider = "BC";
+        }
+        return validator.isSignatureValid(
+                new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey()));
     }
 
-    static void isSignatureValid(TimeStampToken validator, X509Certificate certStoreX509, String provider) throws OperatorCreationException, TSPException {
-        if (provider == null) provider = "BC";
-        validator.validate(new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider).build(certStoreX509));
+    static void isSignatureValid(TimeStampToken validator, X509Certificate certStoreX509, String provider)
+            throws OperatorCreationException, TSPException {
+        if (provider == null) {
+            provider = "BC";
+        }
+        SignerInformationVerifier verifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider)
+                .build(certStoreX509);
+        validator.validate(verifier);
     }
 
-    static boolean checkIfIssuersMatch(CertificateID certID, X509Certificate issuerCert) throws CertificateEncodingException, IOException, OCSPException {
-        return certID.matchesIssuer(new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider());
+    static boolean checkIfIssuersMatch(CertificateID certID, X509Certificate issuerCert)
+            throws CertificateEncodingException, IOException, OCSPException {
+        return certID.matchesIssuer(
+                new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider());
     }
 
     static Date add180Sec(Date date) {
@@ -230,6 +249,7 @@ final class SignUtils {
             try {
                 certs.add(converter.getCertificate(certHolder));
             } catch (Exception ex) {
+                // do nothing
             }
         }
         return certs;
@@ -258,7 +278,8 @@ final class SignUtils {
         InputStream tsaResponseStream;
     }
 
-    static TsaResponse getTsaResponseForUserRequest(String tsaUrl, byte[] requestBytes, String tsaUsername, String tsaPassword) throws IOException {
+    static TsaResponse getTsaResponseForUserRequest(String tsaUrl, byte[] requestBytes, String tsaUsername,
+            String tsaPassword) throws IOException {
         URL url = new URL(tsaUrl);
         URLConnection tsaConnection;
         try {
@@ -306,10 +327,9 @@ final class SignUtils {
     // TODO DEVSIX-2534
     @Deprecated
     static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
-        if ( cert == null ) {
+        if (cert == null) {
             throw new IllegalArgumentException("X509Certificate can't be null.");
         }
-
         if (cert.hasUnsupportedCriticalExtension()) {
             for (String oid : cert.getCriticalExtensionOIDs()) {
                 if (OID.X509Extensions.SUPPORTED_CRITICAL_EXTENSIONS.contains(oid)) {
@@ -328,8 +348,11 @@ final class SignUtils {
         return calendar;
     }
 
-    static Signature getSignatureHelper(String algorithm, String provider) throws NoSuchProviderException, NoSuchAlgorithmException {
-        return provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
+    static Signature getSignatureHelper(String algorithm, String provider)
+            throws NoSuchProviderException, NoSuchAlgorithmException {
+        return provider == null
+                ? Signature.getInstance(algorithm)
+                : Signature.getInstance(algorithm, provider);
     }
 
     static boolean verifyCertificateSignature(X509Certificate certificate, PublicKey issuerPublicKey, String provider) {
@@ -385,7 +408,7 @@ final class SignUtils {
                                     break;
                                 }
                             } catch (KeyStoreException e) {
-                                continue;
+                                // do nothing and continue
                             }
                         }
                     }

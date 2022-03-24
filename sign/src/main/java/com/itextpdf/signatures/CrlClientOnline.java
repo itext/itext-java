@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -133,24 +133,27 @@ public class CrlClientOnline implements ICrlClient {
      */
     @Override
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
-        if (checkCert == null)
+        if (checkCert == null) {
             return null;
-        List<URL> urllist = new ArrayList<>(urls);
-        if (urllist.size() == 0) {
+        }
+        List<URL> urlList = new ArrayList<>(urls);
+        if (urlList.size() == 0) {
             LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
             try {
-                if (url == null)
+                if (url == null) {
                     url = CertificateUtil.getCRLURL(checkCert);
-                if (url == null)
+                }
+                if (url == null) {
                     throw new IllegalArgumentException("Passed url can not be null.");
-                urllist.add(new URL(url));
+                }
+                urlList.add(new URL(url));
                 LOGGER.info("Found CRL url: " + url);
             } catch (Exception e) {
                 LOGGER.info("Skipped CRL url: " + e.getMessage());
             }
         }
         List<byte[]> ar = new ArrayList<>();
-        for (URL urlt : urllist) {
+        for (URL urlt : urlList) {
             try {
                 LOGGER.info("Checking CRL: " + urlt);
                 InputStream inp = SignUtils.getHttpResponse(urlt);
@@ -158,15 +161,17 @@ public class CrlClientOnline implements ICrlClient {
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 while (true) {
                     int n = inp.read(buf, 0, buf.length);
-                    if (n <= 0)
+                    if (n <= 0) {
                         break;
+                    }
                     bout.write(buf, 0, n);
                 }
                 inp.close();
                 ar.add(bout.toByteArray());
                 LOGGER.info("Added CRL found at: " + urlt);
             } catch (Exception e) {
-                LOGGER.info(MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, e.getMessage()));
+                LOGGER.info(MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT,
+                        e.getMessage()));
             }
         }
         return ar;

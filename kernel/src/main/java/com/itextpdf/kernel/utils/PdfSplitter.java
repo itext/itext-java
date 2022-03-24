@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -113,11 +113,12 @@ public class PdfSplitter {
     }
 
     /**
-     * Splits the document basing on the given size.
+     * Splits the document basing on the given size specified in bytes.
      *
-     * @param size <strong>Preferred</strong> size for splitting.
+     * @param size <strong>Preferred</strong> size specified in bytes for splitting.
+     *
      * @return The documents which the source document was split into.
-     *         Be warned that these documents are not closed.
+     * Be warned that these documents are not closed.
      */
     public List<PdfDocument> splitBySize(long size) {
         List<PageRange> splitRanges = new ArrayList<>();
@@ -196,6 +197,7 @@ public class PdfSplitter {
      * Splits a document into smaller documents with no more than @pageCount pages each.
      *
      * @param pageCount the biggest possible number of pages in a split document.
+     *
      * @return the list of resultant documents. By warned that they are not closed.
      */
     public List<PdfDocument> splitByPageCount(int pageCount) {
@@ -210,6 +212,7 @@ public class PdfSplitter {
      * Extracts the specified page ranges from a document.
      *
      * @param pageRanges the list of page ranges for each of the resultant document.
+     *
      * @return the list of the resultant documents for each of the specified page range.
      * Be warned that these documents are not closed.
      */
@@ -229,6 +232,7 @@ public class PdfSplitter {
      * Extracts the specified page ranges from a document.
      *
      * @param pageRange the page range to be extracted from the document.
+     *
      * @return the resultant document containing the pages specified by the provided page range.
      * Be warned that this document is not closed.
      */
@@ -244,7 +248,9 @@ public class PdfSplitter {
      * This method is called when another split document is to be created.
      * You can override this method and return your own {@link PdfWriter} depending on your needs.
      *
-     * @param documentPageRange the page range of the original document to be included in the document being created now.
+     * @param documentPageRange the page range of the original document to be included
+     *                          in the document being created now.
+     *
      * @return the PdfWriter instance for the document which is being created.
      */
     protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
@@ -269,6 +275,7 @@ public class PdfSplitter {
      * and places the entire hierarchy in a separate document ( outlines and pages ) .
      *
      * @param outlineTitles list of outline titles .
+     *
      * @return Collection of {@link PdfDocument} which contains split parts of a document
      */
     public List<PdfDocument> splitByOutlines(List<String> outlineTitles) {

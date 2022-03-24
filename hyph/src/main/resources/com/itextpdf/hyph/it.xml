@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
-<!-- Created by Stéphane Bline - Peregrine Systems - sbline@apsydev.com
+<!-- Created by StÃ©phane Bline - Peregrine Systems - sbline@apsydev.com
      Conversion of the original TEX italian hyphenation patterns written by 
      Claudio Beccari (beccari@polito.it).
      Use of the original work granted by the author.
@@ -38,16 +38,16 @@ wW
 xX
 yY
 zZ
-àÀ
-âÂ
-çÇ
-èÈ
-éÉ
-êÊ
-îÎ
-ïÏ
-ôÔ
-ûÛ
+Ã Ã€
+Ã¢Ã‚
+Ã§Ã‡
+Ã¨Ãˆ
+Ã©Ã‰
+ÃªÃŠ
+Ã®ÃŽ
+Ã¯Ã
+Ã´Ã”
+Ã»Ã›
 </classes>
 <patterns>
 .a3p2n

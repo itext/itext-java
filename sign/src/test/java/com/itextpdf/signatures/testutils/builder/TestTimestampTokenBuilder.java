@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,14 +45,18 @@ package com.itextpdf.signatures.testutils.builder;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.signatures.DigestAlgorithms;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -66,11 +70,15 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
 
 public class TestTimestampTokenBuilder {
     private static final String SIGN_ALG = "SHA256withRSA";
+
+    // just a more or less random oid of timestamp policy
+    private static final String POLICY_OID = "1.3.6.1.4.1.45794.1.1";
 
     private List<Certificate> tsaCertificateChain;
     private PrivateKey tsaPrivateKey;
@@ -84,19 +92,8 @@ public class TestTimestampTokenBuilder {
     }
 
     public byte[] createTimeStampToken(TimeStampRequest request) throws OperatorCreationException, TSPException, IOException, CertificateEncodingException {
-        ContentSigner signer = new JcaContentSignerBuilder(SIGN_ALG).build(tsaPrivateKey);
-        DigestCalculatorProvider digestCalcProviderProvider = new JcaDigestCalculatorProviderBuilder().build();
-
-        SignerInfoGenerator siGen =
-                new JcaSignerInfoGeneratorBuilder(digestCalcProviderProvider)
-                        .build(signer, (X509Certificate) tsaCertificateChain.get(0));
-
-        // just a more or less random oid of timestamp policy
-        ASN1ObjectIdentifier policy = new ASN1ObjectIdentifier("1.3.6.1.4.1.45794.1.1");
-
-        String digestForTsSigningCert = DigestAlgorithms.getAllowedDigest("SHA1");
-        DigestCalculator dgCalc = digestCalcProviderProvider.get(new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestForTsSigningCert)));
-        TimeStampTokenGenerator tsTokGen = new TimeStampTokenGenerator(siGen, dgCalc, policy);
+        TimeStampTokenGenerator tsTokGen = createTimeStampTokenGenerator(tsaPrivateKey,
+                tsaCertificateChain.get(0), SIGN_ALG, "SHA1", POLICY_OID);
         tsTokGen.setAccuracySeconds(1);
 
         // TODO setting this is somewhat wrong. Acrobat and openssl recognize timestamp tokens generated with this line as corrupted
@@ -110,5 +107,36 @@ public class TestTimestampTokenBuilder {
         Date genTime = DateTimeUtil.getCurrentTimeDate();
         TimeStampToken tsToken = tsTokGen.generate(request, serialNumber, genTime);
         return tsToken.getEncoded();
+    }
+
+    public byte[] createTSAResponse(byte[] requestBytes, String signatureAlgorithm, String allowedDigest) {
+        try {
+            String digestForTsSigningCert = DigestAlgorithms.getAllowedDigest(allowedDigest);
+            TimeStampTokenGenerator tokenGenerator = createTimeStampTokenGenerator(tsaPrivateKey,
+                    tsaCertificateChain.get(0), signatureAlgorithm, allowedDigest, POLICY_OID);
+
+            Set<String> algorithms = new HashSet<>(Collections.singletonList(digestForTsSigningCert));
+            TimeStampResponseGenerator generator = new TimeStampResponseGenerator(tokenGenerator, algorithms);
+            TimeStampRequest request = new TimeStampRequest(requestBytes);
+            return generator.generate(request, request.getNonce(), new Date()).getEncoded();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static TimeStampTokenGenerator createTimeStampTokenGenerator(PrivateKey pk, Certificate cert,
+            String signatureAlgorithm, String allowedDigest, String policyOid)
+            throws TSPException, OperatorCreationException, CertificateEncodingException {
+        ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).build(pk);
+        DigestCalculatorProvider digestCalcProviderProvider = new JcaDigestCalculatorProviderBuilder().build();
+        SignerInfoGenerator siGen =
+                new JcaSignerInfoGeneratorBuilder(digestCalcProviderProvider)
+                        .build(signer, (X509Certificate) cert);
+
+        String digestForTsSigningCert = DigestAlgorithms.getAllowedDigest(allowedDigest);
+        DigestCalculator dgCalc = digestCalcProviderProvider.get(
+                new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestForTsSigningCert)));
+        ASN1ObjectIdentifier policy = new ASN1ObjectIdentifier(policyOid);
+        return new TimeStampTokenGenerator(siGen, dgCalc, policy);
     }
 }

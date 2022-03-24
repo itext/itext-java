@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,6 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -81,12 +80,12 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class GetImageBytesTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
@@ -159,10 +158,40 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO: DEVSIX-3538 (update test after fix)
+    public void testSeparationCSWithICCBasedAsAlternative() {
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile(
+                "separationCSWithICCBasedAsAlternative.pdf", "Im1", "tif"));
+
+        Assert.assertEquals(MessageFormatUtil.format(
+                com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported, PdfName.Separation), e.getMessage());
+    }
+
+    @Test
+    // TODO: DEVSIX-3538 (update test after fix)
+    public void testSeparationCSWithDeviceCMYKAsAlternative() {
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile(
+                "separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "tif"));
+
+        Assert.assertEquals(MessageFormatUtil.format(
+                com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported, PdfName.Separation), e.getMessage());
+    }
+
+    @Test
+    // TODO: DEVSIX-3538 (update test after fix)
+    public void testSeparationCSWithDeviceRGBAsAlternative() {
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile(
+                "separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "tif"));
+
+        Assert.assertEquals(MessageFormatUtil.format(
+                com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported, PdfName.Separation), e.getMessage());
+    }
+
+    @Test
     public void extractByteAlignedG4TiffImageTest() throws IOException {
-        String inFileName = sourceFolder + "extractByteAlignedG4TiffImage.pdf";
-        String outImageFileName = destinationFolder + "extractedByteAlignedImage.png";
-        String cmpImageFileName = sourceFolder + "cmp_extractByteAlignedG4TiffImage.png";
+        String inFileName = SOURCE_FOLDER + "extractByteAlignedG4TiffImage.pdf";
+        String outImageFileName = DESTINATION_FOLDER + "extractedByteAlignedImage.png";
+        String cmpImageFileName = SOURCE_FOLDER + "cmp_extractByteAlignedG4TiffImage.png";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
 
@@ -192,7 +221,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     public void expectedByteAlignedTiffImageExtractionTest() throws IOException {
         //Byte-aligned image is expected in pdf file, but in fact it's not
-        String inFileName = sourceFolder + "expectedByteAlignedTiffImageExtraction.pdf";
+        String inFileName = SOURCE_FOLDER + "expectedByteAlignedTiffImageExtraction.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
 
@@ -202,7 +231,9 @@ public class GetImageBytesTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> processor.processPageContent(pdfDocument.getPage(1))
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException.ExpectedTrailingZeroBitsForByteAlignedLines), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil
+                        .format(com.itextpdf.io.exceptions.IOException.ExpectedTrailingZeroBitsForByteAlignedLines),
+                e.getMessage());
     }
 
     private class ImageExtractor implements IEventListener {
@@ -230,40 +261,45 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     private void testFile(String filename, String objectid, String expectedImageFormat) throws Exception {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + filename));
-        try {
+        try (PdfReader reader = new PdfReader(SOURCE_FOLDER + filename);
+                PdfDocument pdfDocument = new PdfDocument(reader)) {
             PdfResources resources = pdfDocument.getPage(1).getResources();
             PdfDictionary xobjects = resources.getResource(PdfName.XObject);
             PdfObject obj = xobjects.get(new PdfName(objectid));
             if (obj == null) {
-                throw new IllegalArgumentException("Reference " + objectid + " not found - Available keys are " + xobjects.keySet());
+                throw new IllegalArgumentException("Reference " + objectid
+                        + " not found - Available keys are " + xobjects.keySet());
             }
-            PdfImageXObject img = new PdfImageXObject((PdfStream) (obj.isIndirectReference() ? ((PdfIndirectReference) obj).getRefersTo() : obj));
+
+            PdfImageXObject img = new PdfImageXObject((PdfStream) obj);
+
             Assert.assertEquals(expectedImageFormat, img.identifyImageFileExtension());
 
-
             byte[] result = img.getImageBytes(true);
-            byte[] cmpBytes = Files.readAllBytes(Paths.get(sourceFolder, filename.substring(0, filename.length() - 4) + "." + expectedImageFormat));
+            byte[] cmpBytes = Files.readAllBytes(Paths.get(
+                    SOURCE_FOLDER, filename.substring(0, filename.length() - 4) + "." + expectedImageFormat));
 
             if (img.identifyImageFileExtension().equals("tif")) {
                 compareTiffImages(cmpBytes, result);
             } else {
                 Assert.assertArrayEquals(cmpBytes, result);
             }
-        } finally {
-            pdfDocument.close();
         }
     }
 
     private void compareTiffImages(byte[] cmpBytes, byte[] resultBytes) throws IOException {
-        int cmpNumDirectories = TIFFDirectory.getNumDirectories(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(cmpBytes)));
-        int resultNumDirectories = TIFFDirectory.getNumDirectories(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(resultBytes)));
+        int cmpNumDirectories = TIFFDirectory.getNumDirectories(new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createSource(cmpBytes)));
+        int resultNumDirectories = TIFFDirectory.getNumDirectories(new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createSource(resultBytes)));
 
         Assert.assertEquals(cmpNumDirectories, resultNumDirectories);
 
         for (int dirNum = 0; dirNum < cmpNumDirectories; ++dirNum) {
-            TIFFDirectory cmpDir = new TIFFDirectory(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(cmpBytes)), dirNum);
-            TIFFDirectory resultDir = new TIFFDirectory(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(resultBytes)), dirNum);
+            TIFFDirectory cmpDir = new TIFFDirectory(new RandomAccessFileOrArray(
+                    new RandomAccessSourceFactory().createSource(cmpBytes)), dirNum);
+            TIFFDirectory resultDir = new TIFFDirectory(new RandomAccessFileOrArray(
+                    new RandomAccessSourceFactory().createSource(resultBytes)), dirNum);
 
             Assert.assertEquals(cmpDir.getNumEntries(), resultDir.getNumEntries());
             Assert.assertEquals(cmpDir.getIFDOffset(), resultDir.getIFDOffset());
@@ -276,8 +312,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 TIFFField cmpField = cmpDir.getField(tag);
                 TIFFField resultField = resultDir.getField(tag);
 
-                if (tag == TIFFConstants.TIFFTAG_SOFTWARE) {
-                } else {
+                if (tag != TIFFConstants.TIFFTAG_SOFTWARE) {
                     compareFields(cmpField, resultField);
                 }
             }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -35,16 +35,18 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class CFFFontTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/CFFFontTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
 
     @Test
     public void seekTest() throws IOException {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory()
                 .createBestSource(SOURCE_FOLDER + "NotoSansCJKjp-Bold.otf"));
 
-        byte[] cff = new byte[16014190];
+        int offsetToCff = 259880;
+        int cffLength = 16023217;
+        byte[] cff = new byte[cffLength];
         try {
-            raf.seek(283192);
+            raf.seek(offsetToCff);
             raf.readFully(cff);
         } finally {
             raf.close();
@@ -67,9 +69,11 @@ public class CFFFontTest extends ExtendedITextTest {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory()
                 .createBestSource(SOURCE_FOLDER + "NotoSansCJKjp-Bold.otf"));
 
-        byte[] cff = new byte[16014190];
+        int offsetToCff = 259880;
+        int cffLength = 16023217;
+        byte[] cff = new byte[cffLength];
         try {
-            raf.seek(283192);
+            raf.seek(offsetToCff);
             raf.readFully(cff);
         } finally {
             raf.close();

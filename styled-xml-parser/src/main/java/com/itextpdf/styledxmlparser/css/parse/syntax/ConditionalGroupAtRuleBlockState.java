@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,6 @@ class ConditionalGroupAtRuleBlockState implements IParserState {
      * @see com.itextpdf.styledxmlparser.css.parse.syntax.IParserState#process(char)
      */
     @Override
-    // TODO use UnknownState?
     public void process(char ch) {
         if (ch == '/') {
             controller.enterCommentStartState();

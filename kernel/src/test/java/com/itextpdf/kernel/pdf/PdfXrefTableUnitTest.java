@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -96,5 +98,54 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
 
         Assert.assertEquals(numberOfReferences, table.getCountOfIndirectObjects());
         Assert.assertEquals(226, table.size());
+    }
+
+    @Test
+    public void checkExceedTheNumberOfElementsInXrefTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(5);
+
+        final PdfXrefTable xrefTable = new PdfXrefTable(5, memoryLimitsAwareHandler);
+        final int numberOfReferences = 5;
+        for (int i = 1; i < numberOfReferences; i++) {
+            xrefTable.add(new PdfIndirectReference(null, i));
+        }
+
+        Exception exception = Assert.assertThrows(MemoryLimitsAwareException.class,
+                () -> xrefTable.add(new PdfIndirectReference(null, numberOfReferences)));
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT,
+                exception.getMessage());
+    }
+
+    @Test
+    public void ensureCapacityExceedTheLimitTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        final PdfXrefTable xrefTable = new PdfXrefTable(memoryLimitsAwareHandler);
+        final int newCapacityExceededTheLimit = memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure() + 2;
+
+        // There we add 2 instead of 1 since xref structures used 1-based indexes, so we decrement the capacity
+        // before check.
+        Exception ex = Assert.assertThrows(MemoryLimitsAwareException.class,
+                () -> xrefTable.setCapacity(newCapacityExceededTheLimit));
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
+    }
+
+    @Test
+    public void passCapacityGreaterThanLimitInConstructorTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(20);
+
+        Exception ex = Assert.assertThrows(MemoryLimitsAwareException.class,
+                () -> new PdfXrefTable(30, memoryLimitsAwareHandler));
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, ex.getMessage());
+    }
+
+    @Test
+    public void zeroCapacityInConstructorWithHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(20);
+        final PdfXrefTable xrefTable = new PdfXrefTable(0, memoryLimitsAwareHandler);
+
+        Assert.assertEquals(20, xrefTable.getCapacity());
     }
 }

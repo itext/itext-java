@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -3490,6 +3490,30 @@ public class TableTest extends AbstractTableTest {
     private static void startSeveralEmptyRows(Table table) {
         table.startNewRow();
         table.startNewRow();
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void preciseFittingBoldSimulatedTextInCellsTest() throws IOException, InterruptedException {
+        String fileName = "preciseFittingBoldSimulatedTextInCells.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+            Document doc = new Document(pdfDocument)) {
+
+            int numberOfColumns = 9;
+            Table table = new Table(UnitValue.createPercentArray(numberOfColumns));
+            table.useAllAvailableWidth();
+            table.setFixedLayout();
+
+            for (int i = 0; i < numberOfColumns; i++) {
+                table.addCell(new Cell().add(new Paragraph("Description").setBold()));
+            }
+
+            doc.add(table);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
     @Test

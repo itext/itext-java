@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -38,26 +38,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class SvgProcessorResultUnitTest extends ExtendedITextTest {
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void contextParameterCannotBeNullTest() {
         Map<String, ISvgNodeRenderer> namedObjects = new HashMap<>();
         ISvgNodeRenderer root = new SvgTagSvgNodeRenderer();
-
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL);
-
-        SvgProcessorResult result = new SvgProcessorResult(namedObjects, root, null);
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> new SvgProcessorResult(namedObjects, root, null));
+        Assert.assertEquals(SvgExceptionMessageConstant.PARAMETER_CANNOT_BE_NULL, exception.getMessage());
     }
 
     @Test

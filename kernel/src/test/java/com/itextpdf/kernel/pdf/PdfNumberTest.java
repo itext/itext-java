@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,8 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class PdfNumberTest extends ExtendedITextTest {
 
+    private static final double DELTA = 0.0001;
+
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_PROCESS_NAN))
     public void testNaN() {
@@ -61,5 +63,19 @@ public class PdfNumberTest extends ExtendedITextTest {
         // code for "0"
         byte[] expected = {48};
         Assert.assertArrayEquals(expected, number.getInternalContent());
+    }
+
+    @Test
+    public void intValueInPdfNumberTest() {
+        double valueToSet = 3000000000d;
+        final PdfNumber number = new PdfNumber(valueToSet);
+
+        Assert.assertEquals(valueToSet, number.getValue(), DELTA);
+        Assert.assertEquals(valueToSet, number.doubleValue(), DELTA);
+        Assert.assertEquals(Integer.MAX_VALUE, number.intValue());
+
+        valueToSet = 50d;
+        number.setValue(valueToSet + DELTA);
+        Assert.assertEquals(50, number.intValue());
     }
 }

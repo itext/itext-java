@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -364,8 +363,20 @@ public class ListItemRenderer extends DivRenderer {
             pageSize = pdfDocument.getDefaultPageSize();
         }
 
-        Document document = new Document(pdfDocument);
-        return new Rectangle(pageSize).applyMargins(document.getTopMargin(), document.getRightMargin(), document.getBottomMargin(),
-                                     document.getLeftMargin(), false);
+        RootRenderer rootRenderer = this.getRootRenderer();
+        //TODO DEVSIX-6372 Obtaining DocumentRenderer's margins results in a ClassCastException
+        Float[] margins = new Float[] {rootRenderer.<Float>getProperty(Property.MARGIN_TOP),
+                rootRenderer.<Float>getProperty(Property.MARGIN_RIGHT),
+                rootRenderer.<Float>getProperty(Property.MARGIN_BOTTOM),
+                rootRenderer.<Float>getProperty(Property.MARGIN_LEFT)};
+        for (int i = 0; i < margins.length; i++) {
+            margins[i] = replaceIfNull(margins[i], 0f);
+        }
+        return new Rectangle(pageSize)
+                .applyMargins((float) margins[0], (float) margins[1], (float) margins[2], (float) margins[3], false);
+    }
+
+    private static float replaceIfNull(Float value, float defaultValue) {
+        return (float) (null == value ? defaultValue : value);
     }
 }

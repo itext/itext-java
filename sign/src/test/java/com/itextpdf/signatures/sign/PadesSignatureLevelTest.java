@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -129,18 +129,13 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
     public void padesSignatureLevelLTTest01() throws GeneralSecurityException, IOException {
         String outFileName = destinationFolder + "padesSignatureLevelLTTest01.pdf";
         String srcFileName = sourceFolder + "signedPAdES-T.pdf";
-        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
         String caCertFileName = certsSrc + "rootRsa.p12";
-
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
 
         X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
 
-        ICrlClient crlClient = new TestCrlClient(caCert, caPrivateKey);
+        ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
-        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
         PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName), new StampingProperties().useAppendMode());
         LtvVerification ltvVerification = new LtvVerification(document);
@@ -148,7 +143,8 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         ltvVerification.merge();
         document.close();
 
-        basicCheckDssDict("padesSignatureLevelLTTest01.pdf");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+                outFileName, sourceFolder + "cmp_padesSignatureLevelLTTest01.pdf"));
     }
 
     @Test
@@ -165,13 +161,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         signer.timestamp(testTsa, "timestampSig1");
 
-        PadesSigTest.basicCheckSignedDoc(destinationFolder + "padesSignatureLevelLTATest01.pdf", "timestampSig1");
-    }
-
-    private void basicCheckDssDict(String fileName) throws IOException {
-        PdfDocument outDocument = new PdfDocument(new PdfReader(destinationFolder + fileName));
-        PdfDictionary dssDict = outDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
-        Assert.assertNotNull(dssDict);
-        Assert.assertEquals(4, dssDict.size());
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(
+                outFileName, sourceFolder + "cmp_padesSignatureLevelLTATest01.pdf"));
     }
 }

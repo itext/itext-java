@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-
+//TODO DEVSIX-6406: add support for indeterminate-segment-size value of dataLength
 /**
  * Class to read a JBIG2 file at a basic level: understand all the segments,
  * understand what segments belong to which pages, how many pages there are,
@@ -62,11 +62,7 @@ import java.util.TreeSet;
  * are any.  Or: the minimum required to be able to take a normal sequential
  * or random-access organized file, and be able to embed JBIG2 pages as images
  * in a PDF.
- *
- * TODO: the indeterminate-segment-size value of dataLength, else?
- *
  */
-
 public class Jbig2SegmentReader {
     //see 7.4.2.
     public static final int SYMBOL_DICTIONARY = 0;
@@ -255,8 +251,8 @@ public class Jbig2SegmentReader {
     void readSegment(Jbig2Segment s) throws java.io.IOException {
         int ptr = (int) ra.getPosition();
 
+        //TODO DEVSIX-6406 7.2.7 not supported
         if (s.dataLength == 0xffffffffl) {
-            // TODO figure this bit out, 7.2.7
             return;
         }
 
@@ -340,7 +336,6 @@ public class Jbig2SegmentReader {
             } else if (segment_number <= 65536) {
                 referred_to_segment_numbers[i] = ra.readUnsignedShort();
             } else {
-                // TODO wtf ack
                 referred_to_segment_numbers[i] = (int) ra.readUnsignedInt();
             }
         }
@@ -374,7 +369,7 @@ public class Jbig2SegmentReader {
 
         // 7.2.7
         long segment_data_length = ra.readUnsignedInt();
-        // TODO the 0xffffffff value that might be here, and how to understand those afflicted segments
+        //TODO DEVSIX-6406 the 0xffffffff value that might be here, and how to understand those afflicted segments
         s.dataLength = segment_data_length;
 
         int end_ptr = (int) ra.getPosition();

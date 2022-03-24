@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -560,18 +560,37 @@ public class PdfDocumentTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-5760 cleaned widget left in the kids of the form field
     public void widgetDaEntryRemovePageTest() throws IOException, InterruptedException {
-        // In this test widgets contain entry /DA that is not specific for widget annotation, so after removing of the
-        // page such widget is not removed from the document. See method PdfDocument#removeUnusedWidgetsFromFields
-        // to see logic of removing unused widgets.
-        // If open the output PDF in Adobe Acrobat, widgets on pages 3-4 will not be viewed. It seems to adobe bug.
         final String testName = "widgetDaEntryRemovePage.pdf";
         final String outPdf = DESTINATION_FOLDER + testName;
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "widgetWithDaEntry.pdf"),
-                new PdfWriter(outPdf));
-        pdfDocument.removePage(3);
-        pdfDocument.close();
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "widgetWithDaEntry.pdf"), new PdfWriter(outPdf))) {
+            pdfDocument.removePage(3);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_" + testName,
+                DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void mergedAndSimpleWidgetsRemovePageTest() throws IOException, InterruptedException {
+        final String testName = "mergedAndSimpleWidgetsRemovePage.pdf";
+        final String outPdf = DESTINATION_FOLDER + testName;
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "mergedAndSimpleWidgets.pdf"), new PdfWriter(outPdf))) {
+            pdfDocument.removePage(1);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_" + testName,
+                DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void mergedSiblingWidgetsRemovePageTest() throws IOException, InterruptedException {
+        final String testName = "mergedSiblingWidgetsRemovePage.pdf";
+        final String outPdf = DESTINATION_FOLDER + testName;
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "mergedSiblingWidgets.pdf"), new PdfWriter(outPdf))) {
+            pdfDocument.removePage(2);
+        }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_" + testName,
                 DESTINATION_FOLDER));
     }

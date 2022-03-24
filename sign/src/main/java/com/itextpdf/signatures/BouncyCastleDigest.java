@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -73,27 +73,38 @@ public class BouncyCastleDigest implements IExternalDigest {
             throw new NoSuchAlgorithmException(hashAlgorithm);
         }
         switch (oid) {
-            case "1.2.840.113549.2.2":      //MD2
+            // MD2
+            case "1.2.840.113549.2.2":
                 return new MD2.Digest();
-            case "1.2.840.113549.2.5":      //MD5
+            // MD5
+            case "1.2.840.113549.2.5":
                 return new MD5.Digest();
-            case "1.3.14.3.2.26":           //SHA1
+            // SHA1
+            case "1.3.14.3.2.26":
                 return new SHA1.Digest();
-            case "2.16.840.1.101.3.4.2.4":  //SHA224
+            // SHA224
+            case "2.16.840.1.101.3.4.2.4":
                 return new SHA224.Digest();
-            case "2.16.840.1.101.3.4.2.1":  //SHA256
+            // SHA256
+            case "2.16.840.1.101.3.4.2.1":
                 return new SHA256.Digest();
-            case "2.16.840.1.101.3.4.2.2":  //SHA384
+            // SHA384
+            case "2.16.840.1.101.3.4.2.2":
                 return new SHA384.Digest();
-            case "2.16.840.1.101.3.4.2.3":  //SHA512
+            // SHA512
+            case "2.16.840.1.101.3.4.2.3":
                 return new SHA512.Digest();
-            case "1.3.36.3.2.2":            //RIPEMD128
+            // RIPEMD128
+            case "1.3.36.3.2.2":
                 return new RIPEMD128.Digest();
-            case "1.3.36.3.2.1":            //RIPEMD160
+            // RIPEMD160
+            case "1.3.36.3.2.1":
                 return new RIPEMD160.Digest();
-            case "1.3.36.3.2.3":            //RIPEMD256
+            // RIPEMD256
+            case "1.3.36.3.2.3":
                 return new RIPEMD256.Digest();
-            case "1.2.643.2.2.9":           //GOST3411
+            // GOST3411
+            case "1.2.643.2.2.9":
                 return new GOST3411.Digest();
             default:
                 throw new NoSuchAlgorithmException(hashAlgorithm);

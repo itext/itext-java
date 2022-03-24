@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -66,4 +66,5 @@ public final class IoExceptionMessage {
     public static final String IMAGE_MAGICK_OUTPUT_IS_NULL = "ImageMagick process output is null.";
     public static final String IMAGE_MAGICK_PROCESS_EXECUTION_FAILED =
             "ImageMagick process execution finished with errors: ";
+    public static final String ALREADY_CLOSED = "Already closed";
 }

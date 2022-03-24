@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -686,5 +686,15 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
 
             AssertUtil.doesNotThrow(() -> renderer.linkRenderToDocument(divRenderer, doc.getPdfDocument()));
         }
+    }
+
+    @Test
+    //TODO DEVSIX-6372 Obtaining DocumentRenderer's margins results in a ClassCastException
+    public void obtainingMarginsErrorTest() {
+        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(doc);
+        RootRenderer renderer = document.getRenderer();
+        Rectangle rect = new Rectangle(0, 0);
+        Assert.assertThrows(ClassCastException.class, () -> renderer.applyMargins(rect, false));
     }
 }

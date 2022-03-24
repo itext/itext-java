@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.util;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -175,10 +176,12 @@ public class PdfCanvasParser {
         PdfArray array = new PdfArray();
         while (true) {
             PdfObject obj = readObject();
-            if (!obj.isArray() && tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray)
+            if (!obj.isArray() && tokeniser.getTokenType() == PdfTokenizer.TokenType.EndArray) {
                 break;
-            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic && obj.getType() != PdfObject.DICTIONARY)
-                tokeniser.throwError(KernelExceptionMessageConstant.UNEXPECTED_GT_GT);
+            }
+            if (tokeniser.getTokenType() == PdfTokenizer.TokenType.EndDic && obj.getType() != PdfObject.DICTIONARY) {
+                tokeniser.throwError(MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"));
+            }
             array.add(obj);
         }
         return array;

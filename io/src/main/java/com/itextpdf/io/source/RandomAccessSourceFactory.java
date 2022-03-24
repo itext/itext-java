@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -60,11 +60,15 @@ import java.nio.channels.FileChannel;
  */
 public final class RandomAccessSourceFactory {
 
+    /**
+     * The default value for the forceRead flag
+     */
+    private static boolean forceReadDefaultValue = false;
 
     /**
      * Whether the full content of the source should be read into memory at construction
      */
-    private boolean forceRead = false;
+    private boolean forceRead = forceReadDefaultValue;
 
     /**
      * Whether {@link java.io.RandomAccessFile} should be used instead of a {@link java.nio.channels.FileChannel}, where applicable
@@ -80,6 +84,14 @@ public final class RandomAccessSourceFactory {
      * Creates a factory that will give preference to accessing the underling data source using memory mapped files
      */
     public RandomAccessSourceFactory() {
+    }
+
+    /**
+     * Determines the default value for the forceRead flag
+     * @param forceRead true if by default the full content will be read, false otherwise
+     */
+    public static void setForceReadDefaultValue(boolean forceRead) {
+        forceReadDefaultValue = forceRead;
     }
 
     /**
@@ -140,10 +152,37 @@ public final class RandomAccessSourceFactory {
     }
 
     /**
-     * Creates a {@link IRandomAccessSource} based on an {@link InputStream}.  The full content of the InputStream is read into memory and used
+     * Creates or extracts a {@link IRandomAccessSource} based on an {@link InputStream}.
+     *
+     * <p>
+     * If the InputStream is an instance of {@link RASInputStream} then extracts the source from it.
+     * Otherwise The full content of the InputStream is read into memory and used
      * as the source for the {@link IRandomAccessSource}
+     *
      * @param inputStream the stream to read from
+     *
+     * @return the newly created or extracted {@link IRandomAccessSource}
+     *
+     * @throws java.io.IOException in case of any I/O error.
+     */
+    public IRandomAccessSource extractOrCreateSource(InputStream inputStream) throws java.io.IOException {
+        if (inputStream instanceof RASInputStream) {
+            return ((RASInputStream) inputStream).getSource();
+        }
+        return createSource(StreamUtil.inputStreamToArray(inputStream));
+    }
+
+    /**
+     * Creates a {@link IRandomAccessSource} based on an {@link InputStream}.
+     *
+     * <p>
+     * The full content of the InputStream is read into memory and used
+     * as the source for the {@link IRandomAccessSource}
+     *
+     * @param inputStream the stream to read from
+     *
      * @return the newly created {@link IRandomAccessSource}
+     *
      * @throws java.io.IOException in case of any I/O error.
      */
     public IRandomAccessSource createSource(InputStream inputStream) throws java.io.IOException{
@@ -168,7 +207,6 @@ public final class RandomAccessSourceFactory {
                     || filename.startsWith("http://")
                     || filename.startsWith("https://")
                     || filename.startsWith("jar:")
-                    || filename.startsWith("wsjar:")
                     || filename.startsWith("wsjar:")
                     || filename.startsWith("vfszip:")) {
                 return createSource(new URL(filename));

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -75,6 +75,7 @@ public class PdfXrefTable {
     private PdfIndirectReference[] xref;
     private int count = 0;
     private boolean readingCompleted;
+    private MemoryLimitsAwareHandler memoryLimitsAwareHandler;
 
     /**
      * Free references linked list is stored in a form of a map, where:
@@ -83,17 +84,59 @@ public class PdfXrefTable {
      */
     private final TreeMap<Integer, PdfIndirectReference> freeReferencesLinkedList;
 
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     * Capacity and {@link MemoryLimitsAwareHandler} instance would be set by default values.
+     */
     public PdfXrefTable() {
         this(INITIAL_CAPACITY);
     }
 
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     *
+     * @param capacity initial capacity of xref table.
+     */
     public PdfXrefTable(int capacity) {
+        this(capacity, null);
+    }
+
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     *
+     * @param memoryLimitsAwareHandler custom {@link MemoryLimitsAwareHandler} to set.
+     */
+    public PdfXrefTable(MemoryLimitsAwareHandler memoryLimitsAwareHandler) {
+        this(INITIAL_CAPACITY, memoryLimitsAwareHandler);
+    }
+
+    /**
+     * Creates a {@link PdfXrefTable} which will be used to store xref structure of the pdf document.
+     *
+     * @param capacity initial capacity of xref table.
+     * @param memoryLimitsAwareHandler memoryLimitsAwareHandler custom {@link MemoryLimitsAwareHandler} to set.
+     */
+    public PdfXrefTable(int capacity, MemoryLimitsAwareHandler memoryLimitsAwareHandler) {
         if (capacity < 1) {
-            capacity = INITIAL_CAPACITY;
+            capacity = memoryLimitsAwareHandler == null ? INITIAL_CAPACITY
+                    : Math.min(INITIAL_CAPACITY, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
         }
-        xref = new PdfIndirectReference[capacity];
-        freeReferencesLinkedList = new TreeMap<>();
+        this.memoryLimitsAwareHandler = memoryLimitsAwareHandler;
+        if (this.memoryLimitsAwareHandler != null) {
+            this.memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacity);
+        }
+        this.xref = new PdfIndirectReference[capacity];
+        this.freeReferencesLinkedList = new TreeMap<>();
         add((PdfIndirectReference) new PdfIndirectReference(null, 0, MAX_GENERATION, 0).setState(PdfObject.FREE));
+    }
+
+    /**
+     * Sets custom {@link MemoryLimitsAwareHandler}.
+     *
+     * @param memoryLimitsAwareHandler instance to set.
+     */
+    public void setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler memoryLimitsAwareHandler) {
+        this.memoryLimitsAwareHandler = memoryLimitsAwareHandler;
     }
 
     /**
@@ -153,88 +196,25 @@ public class PdfXrefTable {
     }
 
     /**
-     * Change the state of the cross-reference table to mark that reading of the document
-     * was completed.
-     */
-    void markReadingCompleted() {
-        readingCompleted = true;
-    }
-
-    /**
-     * Check if reading of the document was completed.
+     * Convenience method to write the fingerprint preceding the trailer.
+     * The fingerprint contains information on iText products used in the generation or manipulation
+     * of an outputted PDF file.
      *
-     * @return true if reading was completed and false otherwise
+     * @param document pdfDocument to write the fingerprint to
      */
-    boolean isReadingCompleted() {
-        return readingCompleted;
-    }
+    protected static void writeKeyInfo(PdfDocument document) {
+        PdfWriter writer = document.getWriter();
 
-    /**
-     * Set up appropriate state for the free references list.
-     *
-     * @param pdfDocument is the current {@link PdfDocument document}
-     */
-    void initFreeReferencesList(PdfDocument pdfDocument) {
-        freeReferencesLinkedList.clear();
-
-        // ensure zero object is free
-        xref[0].setState(PdfObject.FREE);
-        TreeSet<Integer> freeReferences = new TreeSet<>();
-        for (int i = 1; i < size(); ++i) {
-            PdfIndirectReference ref = xref[i];
-            if (ref == null || ref.isFree()) {
-                freeReferences.add(i);
+        final Collection<ProductData> products = document.getFingerPrint().getProducts();
+        if (products.isEmpty()) {
+            writer.writeString(MessageFormatUtil
+                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
+        } else {
+            for (ProductData productData : products) {
+                writer.writeString(MessageFormatUtil
+                        .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
             }
         }
-
-        PdfIndirectReference prevFreeRef = xref[0];
-        while (!freeReferences.<Integer>isEmpty()) {
-            int currFreeRefObjNr = -1;
-            if (prevFreeRef.getOffset() <= Integer.MAX_VALUE) {
-                currFreeRefObjNr = (int) prevFreeRef.getOffset();
-            }
-            if (!freeReferences.contains(currFreeRefObjNr) || xref[currFreeRefObjNr] == null) {
-                break;
-            }
-
-            freeReferencesLinkedList.put(currFreeRefObjNr, prevFreeRef);
-            prevFreeRef = xref[currFreeRefObjNr];
-            freeReferences.remove(currFreeRefObjNr);
-        }
-
-        while (!freeReferences.<Integer>isEmpty()) {
-            int next = freeReferences.pollFirst();
-            if (xref[next] == null) {
-                if (pdfDocument.properties.appendMode) {
-                    continue;
-                }
-                xref[next] = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, next, 0).setState(PdfObject.FREE).setState(PdfObject.MODIFIED);
-            } else if (xref[next].getGenNumber() == MAX_GENERATION && xref[next].getOffset() == 0) {
-                continue;
-            }
-            if (prevFreeRef.getOffset() != (long)next) {
-                ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(next);
-            }
-            freeReferencesLinkedList.put(next, prevFreeRef);
-            prevFreeRef = xref[next];
-        }
-
-        if (prevFreeRef.getOffset() != 0) {
-            ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(0);
-        }
-        freeReferencesLinkedList.put(0, prevFreeRef);
-    }
-
-    /**
-     * Method is used for object streams to avoid reuse existed references.
-     *
-     * @param document is the current {@link PdfDocument document}
-     * @return created indirect reference to the object stream
-     */
-    PdfIndirectReference createNewIndirectReference(PdfDocument document) {
-        PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
-        add(reference);
-        return (PdfIndirectReference) reference.setState(PdfObject.MODIFIED);
     }
 
     /**
@@ -277,6 +257,15 @@ public class PdfXrefTable {
             reference.genNr++;
         }
 
+    }
+
+    /**
+     * Gets the capacity of xref stream.
+     *
+     * @return the capacity of xref stream.
+     */
+    protected int getCapacity() {
+        return xref.length;
     }
 
     /**
@@ -440,6 +429,91 @@ public class PdfXrefTable {
     }
 
     /**
+     * Change the state of the cross-reference table to mark that reading of the document
+     * was completed.
+     */
+    void markReadingCompleted() {
+        readingCompleted = true;
+    }
+
+    /**
+     * Check if reading of the document was completed.
+     *
+     * @return true if reading was completed and false otherwise
+     */
+    boolean isReadingCompleted() {
+        return readingCompleted;
+    }
+
+    /**
+     * Set up appropriate state for the free references list.
+     *
+     * @param pdfDocument is the current {@link PdfDocument document}
+     */
+    void initFreeReferencesList(PdfDocument pdfDocument) {
+        freeReferencesLinkedList.clear();
+
+        // ensure zero object is free
+        xref[0].setState(PdfObject.FREE);
+        TreeSet<Integer> freeReferences = new TreeSet<>();
+        for (int i = 1; i < size(); ++i) {
+            PdfIndirectReference ref = xref[i];
+            if (ref == null || ref.isFree()) {
+                freeReferences.add(i);
+            }
+        }
+
+        PdfIndirectReference prevFreeRef = xref[0];
+        while (!freeReferences.<Integer>isEmpty()) {
+            int currFreeRefObjNr = -1;
+            if (prevFreeRef.getOffset() <= Integer.MAX_VALUE) {
+                currFreeRefObjNr = (int) prevFreeRef.getOffset();
+            }
+            if (!freeReferences.contains(currFreeRefObjNr) || xref[currFreeRefObjNr] == null) {
+                break;
+            }
+
+            freeReferencesLinkedList.put(currFreeRefObjNr, prevFreeRef);
+            prevFreeRef = xref[currFreeRefObjNr];
+            freeReferences.remove(currFreeRefObjNr);
+        }
+
+        while (!freeReferences.<Integer>isEmpty()) {
+            int next = freeReferences.pollFirst();
+            if (xref[next] == null) {
+                if (pdfDocument.properties.appendMode) {
+                    continue;
+                }
+                xref[next] = (PdfIndirectReference) new PdfIndirectReference(pdfDocument, next, 0).setState(PdfObject.FREE).setState(PdfObject.MODIFIED);
+            } else if (xref[next].getGenNumber() == MAX_GENERATION && xref[next].getOffset() == 0) {
+                continue;
+            }
+            if (prevFreeRef.getOffset() != (long)next) {
+                ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(next);
+            }
+            freeReferencesLinkedList.put(next, prevFreeRef);
+            prevFreeRef = xref[next];
+        }
+
+        if (prevFreeRef.getOffset() != 0) {
+            ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(0);
+        }
+        freeReferencesLinkedList.put(0, prevFreeRef);
+    }
+
+    /**
+     * Method is used for object streams to avoid reuse existed references.
+     *
+     * @param document is the current {@link PdfDocument document}
+     * @return created indirect reference to the object stream
+     */
+    PdfIndirectReference createNewIndirectReference(PdfDocument document) {
+        PdfIndirectReference reference = new PdfIndirectReference(document, ++count);
+        add(reference);
+        return (PdfIndirectReference) reference.setState(PdfObject.MODIFIED);
+    }
+
+    /**
      * Clear the state of the cross-reference table.
      */
     void clear() {
@@ -501,28 +575,6 @@ public class PdfXrefTable {
             mask >>= 8;
         }
         return size;
-    }
-
-    /**
-     * Convenience method to write the fingerprint preceding the trailer.
-     * The fingerprint contains information on iText products used in the generation or manipulation
-     * of an outputted PDF file.
-     *
-     * @param document pdfDocument to write the fingerprint to
-     */
-    protected static void writeKeyInfo(PdfDocument document) {
-        PdfWriter writer = document.getWriter();
-
-        final Collection<ProductData> products = document.getFingerPrint().getProducts();
-        if (products.isEmpty()) {
-            writer.writeString(MessageFormatUtil
-                    .format("%iText-{0}-no-registered-products\n", ITextCoreProductData.getInstance().getVersion()));
-        } else {
-            for (ProductData productData : products) {
-                writer.writeString(MessageFormatUtil
-                        .format("%iText-{0}-{1}\n", productData.getPublicProductName(), productData.getVersion()));
-            }
-        }
     }
 
     private void appendNewRefToFreeList(PdfIndirectReference reference) {
@@ -592,8 +644,11 @@ public class PdfXrefTable {
     }
 
     private void extendXref(int capacity) {
+        if (this.memoryLimitsAwareHandler != null) {
+            this.memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacity);
+        }
         PdfIndirectReference[] newXref = new PdfIndirectReference[capacity];
-        System.arraycopy(xref, 0, newXref, 0, xref.length);
-        xref = newXref;
+        System.arraycopy(this.xref, 0, newXref, 0, this.xref.length);
+        this.xref = newXref;
     }
 }

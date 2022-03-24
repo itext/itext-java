@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -98,7 +98,7 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
         TestOcspClient testOcspClient = new TestOcspClient()
                 .addBuilderForCertIssuer(interCert, interPrivateKey)
                 .addBuilderForCertIssuer(caCert, caPrivateKey);
-        TestCrlClient testCrlClient = new TestCrlClient(caCert, caPrivateKey);
+        TestCrlClient testCrlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
 
         addLtvInfo(srcFileName, ltvFileName, "Signature1", testOcspClient, testCrlClient);
         addLtvInfo(ltvFileName, ltvFileName2, "Signature2", testOcspClient, testCrlClient);

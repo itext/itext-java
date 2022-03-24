@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -156,17 +156,16 @@ public class CertificateUtil {
             for (int i = 0; i < AccessDescriptions.size(); i++) {
                 ASN1Sequence AccessDescription = (ASN1Sequence) AccessDescriptions.getObjectAt(i);
                 if ( AccessDescription.size() != 2 ) {
-                    continue;
+                    // do nothing and continue
                 }
                 else if (AccessDescription.getObjectAt(0) instanceof ASN1ObjectIdentifier) {
                     ASN1ObjectIdentifier id = (ASN1ObjectIdentifier)AccessDescription.getObjectAt(0);
                     if (SecurityIDs.ID_OCSP.equals(id.getId())) {
                         ASN1Primitive description = (ASN1Primitive)AccessDescription.getObjectAt(1);
-                        String AccessLocation =  getStringFromGeneralName(description);
+                        String AccessLocation = getStringFromGeneralName(description);
                         if (AccessLocation == null) {
                             return "" ;
-                        }
-                        else {
+                        } else {
                             return AccessLocation ;
                         }
                     }
@@ -230,5 +229,4 @@ public class CertificateUtil {
         ASN1TaggedObject taggedObject = (ASN1TaggedObject) names ;
         return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets(), "ISO-8859-1");
     }
-
 }

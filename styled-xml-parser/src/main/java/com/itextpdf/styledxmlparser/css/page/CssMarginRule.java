@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
     
     This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,7 @@ public class CssMarginRule extends CssNestedAtRule {
      */
     @Override
     public void addBodyCssDeclarations(List<CssDeclaration> cssDeclarations) {
+        // TODO DEVSIX-6364 Fix the body declarations duplication for each pageSelector part
         for (ICssSelector pageSelector : pageSelectors) {
             this.body.add(new CssNonStandardRuleSet(new CssPageMarginBoxSelector(getRuleName(), pageSelector), cssDeclarations));
         }

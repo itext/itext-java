@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -62,8 +62,9 @@ public final class ProducerBuilder extends AbstractITextConfigurationEvent {
      * <code>${</code> and ended with <code>}</code> without <code>}</code> character inside.
      * These substrings are interpreted as placeholders and the first group is the content of the
      * placeholder.
+     * Note: The escape on '}' is necessary for regex dialect compatibility reasons.
      */
-    private static final String PATTERN_STRING = "\\$\\{([^}]*)}";
+    private static final String PATTERN_STRING = "\\$\\{([^}]*)\\}";
     private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
 
     private static final Map<String, IPlaceholderPopulator> PLACEHOLDER_POPULATORS;

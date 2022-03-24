@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -689,8 +689,10 @@ public class PdfTokenizer implements Closeable {
 
     /**
      * Checks whether {@code line} equals to 'trailer'.
-     * @param line for check.
-     * @return true, if line is equals tio 'trailer', otherwise false.
+     *
+     * @param line for check
+     *
+     * @return true, if line is equals to 'trailer', otherwise false
      */
     public static boolean checkTrailer(ByteBuffer line) {
         if (Trailer.length > line.size())

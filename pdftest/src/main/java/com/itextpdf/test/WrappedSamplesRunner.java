@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -191,7 +191,7 @@ public abstract class WrappedSamplesRunner {
         }
     }
 
-    private void runMain() throws IllegalAccessException, InvocationTargetException {
+    protected void runMain() throws IllegalAccessException, InvocationTargetException {
         Method mainMethod = getMain(sampleClass);
         if (mainMethod == null) {
             throw new IllegalArgumentException("Class must have main method.");

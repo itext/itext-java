@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,72 +22,69 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfArrayUnitTest extends ExtendedITextTest {
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void cannotConvertArrayOfPdfStringsToArrayOfBooleansTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS);
-
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        pdfArray.toBooleanArray();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfArray.toBooleanArray());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_AN_ARRAY_OF_BOOLEANS,
+                exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToDoubleArrayTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY);
-
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        pdfArray.toDoubleArray();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfArray.toDoubleArray());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_DOUBLE_ARRAY,
+                exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToIntArrayTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY);
-
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        pdfArray.toIntArray();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfArray.toIntArray());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_INT_ARRAY,
+                exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToFloatArrayTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_FLOAT_ARRAY);
-
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        pdfArray.toFloatArray();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfArray.toFloatArray());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_FLOAT_ARRAY,
+                exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToLongArrayTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_LONG_ARRAY);
-
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        pdfArray.toLongArray();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfArray.toLongArray());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_LONG_ARRAY,
+                exception.getMessage());
     }
 
     @Test
     public void cannotConvertArrayOfPdfStringsToRectangleTest() {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_RECTANGLE);
-
         PdfArray pdfArray = new PdfArray(new PdfString(""));
-        pdfArray.toRectangle();
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfArray.toRectangle());
+        Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_CONVERT_PDF_ARRAY_TO_RECTANGLE,
+                exception.getMessage());
     }
 }

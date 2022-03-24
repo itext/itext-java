@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,9 +24,9 @@ package com.itextpdf.commons.actions.producer;
 
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.data.ProductData;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
-import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -35,23 +35,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
+
     private final UsedProductsPlaceholderPopulator populator = new UsedProductsPlaceholderPopulator();
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     @Test
     public void nullTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"));
-
-        populator.populate(getEvents(1), null);
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(getEvents(1), null));
+        Assert.assertEquals(MessageFormatUtil.format(CommonsExceptionMessageConstant.INVALID_USAGE_FORMAT_REQUIRED, "usedProducts"),
+                exception.getMessage());
     }
 
     @Test
@@ -138,10 +135,11 @@ public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
 
     @Test
     public void invalidLetterFormatTest() {
-        junitExpectedException.expect(IllegalArgumentException.class);
-        junitExpectedException.expectMessage(MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_CHARACTER, "X"));
-
-        populator.populate(getEvents(1), "PVTX");
+        Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                () -> populator.populate(getEvents(1), "PVTX"));
+        Assert.assertEquals(
+                MessageFormatUtil.format(CommonsExceptionMessageConstant.PATTERN_CONTAINS_UNEXPECTED_CHARACTER, "X"),
+                exception.getMessage());
     }
 
     private List<ConfirmedEventWrapper> getEvents(int ... indexes) {

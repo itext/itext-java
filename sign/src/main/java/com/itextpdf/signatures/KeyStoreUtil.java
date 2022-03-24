@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -66,10 +66,11 @@ public class KeyStoreUtil {
         try {
             fin = new FileInputStream(file);
             KeyStore k;
-            if (provider == null)
+            if (provider == null) {
                 k = KeyStore.getInstance("JKS");
-            else
+            } else {
                 k = KeyStore.getInstance("JKS", provider);
+            }
             k.load(fin, null);
             return k;
         }
@@ -77,7 +78,13 @@ public class KeyStoreUtil {
             throw new PdfException(e);
         }
         finally {
-            try{if (fin != null) {fin.close();}}catch(Exception ex){}
+            try  {
+                if (fin != null) {
+                    fin.close();
+                }
+            } catch (Exception ex) {
+                // do nothing
+            }
         }
     }
 
@@ -89,5 +96,4 @@ public class KeyStoreUtil {
     public static KeyStore loadCacertsKeyStore() {
         return loadCacertsKeyStore(null);
     }
-
 }

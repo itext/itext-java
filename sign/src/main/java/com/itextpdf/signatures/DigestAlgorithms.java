@@ -1,7 +1,7 @@
     /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -231,10 +231,11 @@ public class DigestAlgorithms {
      */
     public static String getDigest(String oid) {
         String ret = digestNames.get(oid);
-        if (ret == null)
+        if (ret == null) {
             return oid;
-        else
+        } else {
             return ret;
+        }
     }
 
     /**
@@ -244,8 +245,9 @@ public class DigestAlgorithms {
      * @return normalized name
      */
     public static String normalizeDigestName(String algo) {
-        if (fixNames.containsKey(algo))
+        if (fixNames.containsKey(algo)) {
             return fixNames.get(algo);
+        }
         return algo;
     }
 
@@ -258,7 +260,8 @@ public class DigestAlgorithms {
      */
     public static String getAllowedDigest(String name) {
         if (name == null) {
-            throw new IllegalArgumentException(SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
+            throw new IllegalArgumentException(
+                    SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
         }
         return allowedDigests.get(name.toUpperCase());
     }

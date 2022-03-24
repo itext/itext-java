@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -453,10 +453,7 @@ public class CFFFont {
             offItem.set(this.myOffset-indexBase.myOffset+1);
         }
     }
-    /**
-     * TODO To change the template for this generated type comment go to
-     * Window - Preferences - Java - Code Generation - Code and Comments
-     */
+
     protected static final class SubrMarkerItem extends Item {
         private OffsetItem offItem;
         private IndexBaseItem indexBase;
@@ -951,6 +948,9 @@ public class CFFFont {
         return b;
     }
 
+    public boolean isCID() {
+        return isCID(getNames()[0]);
+    }
 
     public boolean isCID(String fontName) {
         int j;
@@ -1024,6 +1024,8 @@ public class CFFFont {
         public int[] PrivateSubrsOffset;
         public int[][] PrivateSubrsOffsetsArray;
         public int[]       SubrsOffsets;
+
+        public int[] gidToCid;
     }
     // Changed from private to protected by Ygal&Oren
     protected Font[] fonts;

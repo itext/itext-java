@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,8 +26,8 @@ import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -39,24 +39,18 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.Assert;
-
-import java.io.IOException;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class PdfFontUnitTest extends ExtendedITextTest {
     public static final int FONT_METRICS_DESCENT = -40;
     public static final int FONT_METRICS_ASCENT = 700;
     public static final int FONT_SIZE = 50;
-
-    @Rule
-    public ExpectedException junitExpectedException = ExpectedException.none();
 
     public static class TestFont extends PdfFont {
 
@@ -634,28 +628,25 @@ public class PdfFontUnitTest extends ExtendedITextTest {
 
     @Test
     public void cannotGetFontStreamForNullBytesTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
-
         PdfFont pdfFont = PdfFontFactory.createFont();
-        pdfFont.getPdfFontStream(null, new int[] {1});
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfFont.getPdfFontStream(null, new int[] {1}));
+        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
     }
 
     @Test
     public void cannotGetFontStreamForNullLengthsTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
-
         PdfFont pdfFont = PdfFontFactory.createFont();
-        pdfFont.getPdfFontStream(new byte[] {1}, null);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfFont.getPdfFontStream(new byte[] {1}, null));
+        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
     }
 
     @Test
     public void cannotGetFontStreamForNullBytesAndLengthsTest() throws IOException {
-        junitExpectedException.expect(PdfException.class);
-        junitExpectedException.expectMessage(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE);
-
         PdfFont pdfFont = PdfFontFactory.createFont();
-        pdfFont.getPdfFontStream(null, null);
+        Exception exception = Assert.assertThrows(PdfException.class,
+                () -> pdfFont.getPdfFontStream(null, null));
+        Assert.assertEquals(KernelExceptionMessageConstant.FONT_EMBEDDING_ISSUE, exception.getMessage());
     }
 }

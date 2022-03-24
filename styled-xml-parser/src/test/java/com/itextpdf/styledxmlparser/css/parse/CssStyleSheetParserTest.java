@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -135,10 +135,8 @@ public class CssStyleSheetParserTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-6364 Fix the body declarations duplication for each pageSelector part
     public void test11() throws IOException {
-        // TODO in this test declarations of the page at-rule with compound selector are duplicated.
-        // See CssPageRule#addBodyCssDeclarations() method for the reason and possible solution if this becomes important.
-
         String cssFile = sourceFolder + "css11.css";
         String cmpFile = sourceFolder + "cmp_css11.css";
         CssStyleSheet styleSheet = CssStyleSheetParser.parse(new FileInputStream(cssFile));

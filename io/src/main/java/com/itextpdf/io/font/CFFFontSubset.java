@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.util.GenericArray;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -166,9 +167,16 @@ public class CFFFontSubset extends CFFFont {
      * C'tor for CFFFontSubset
      *
      * @param cff        - The font file
-     * @param GlyphsUsed - a Map that contains the glyph used in the subset
      */
+    CFFFontSubset(byte[] cff) {
+        this(cff, Collections.<Integer>emptySet(), true);
+    }
+
     public CFFFontSubset(byte[] cff, Set<Integer> GlyphsUsed) {
+        this(cff, GlyphsUsed, false);
+    }
+
+    CFFFontSubset(byte[] cff, Set<Integer> GlyphsUsed, boolean isCidParsingRequired) {
         // Use CFFFont c'tor in order to parse the font file.
         super(cff);
         this.GlyphsUsed = GlyphsUsed;
@@ -186,6 +194,10 @@ public class CFFFontSubset extends CFFFont {
 
             // For each font save the offset array of the charstring
             fonts[i].charstringsOffsets = getIndex(fonts[i].charstringsOffset);
+
+            if (isCidParsingRequired) {
+                initGlyphIdToCharacterIdArray(i, fonts[i].nglyphs, fonts[i].charsetOffset);
+            }
 
             // Process the FDSelect if exist
             if (fonts[i].fdselectOffset >= 0) {
@@ -535,8 +547,8 @@ public class CFFFontSubset extends CFFFont {
         int LBias = CalcBias(SubrOffset, Font);
 
         // For each glyph used find its GID, start & end pos
-        for (int i = 0; i < glyphsInList.size(); i++) {
-            int glyph = (int) glyphsInList.get(i);
+        for (Integer usedGlyph : glyphsInList) {
+            int glyph = (int) usedGlyph;
             int Start = fonts[Font].charstringsOffsets[glyph];
             int End = fonts[Font].charstringsOffsets[glyph + 1];
 
@@ -1702,6 +1714,78 @@ public class CFFFontSubset extends CFFFont {
         // Put the subsetted new subrs index
         if (NewSubrsIndexNonCID != null) {
             OutputList.addLast(new RangeItem(new RandomAccessFileOrArray(rasFactory.createSource(NewSubrsIndexNonCID)), 0, NewSubrsIndexNonCID.length));
+        }
+    }
+
+    /**
+     * Returns the CID to which specified GID is mapped.
+     *
+     * @param gid glyph identifier
+     *
+     * @return CID value
+     */
+    int getCidForGlyphId(int gid) {
+        return getCidForGlyphId(0, gid);
+    }
+
+    /**
+     * Returns the CID to which specified GID is mapped.
+     *
+     * @param fontIndex index of font for which cid-gid mapping is to be identified
+     * @param gid glyph identifier
+     *
+     * @return CID value
+     */
+    int getCidForGlyphId(int fontIndex, int gid) {
+        if (fonts[fontIndex].gidToCid == null) {
+            return gid;
+        }
+
+        // gidToCid mapping starts with value corresponding to gid == 1, becuase .notdef is omitted
+        int index = gid - 1;
+        return index >= 0 && index < fonts[fontIndex].gidToCid.length
+                ? fonts[fontIndex].gidToCid[index]
+                : gid;
+    }
+
+    /**
+     * Creates glyph-to-character id array.
+     *
+     * @param fontIndex   index of font for which charsets data is to be parsed
+     * @param numOfGlyphs number of glyphs in the font
+     * @param offset      the offset to charsets data
+     */
+    private void initGlyphIdToCharacterIdArray(int fontIndex, int numOfGlyphs, int offset) {
+        // Seek charset offset
+        seek(offset);
+
+        // Read the format
+        int format = getCard8();
+
+        // .notdef is omitted, therefore remaining number of elements is one less than overall number
+        int numOfElements = numOfGlyphs - 1;
+        fonts[fontIndex].gidToCid = new int[numOfElements];
+
+        switch (format) {
+            case 0:
+                for (int i = 0; i < numOfElements; i++) {
+                    int cid = getCard16();
+                    fonts[fontIndex].gidToCid[i] = cid;
+                }
+                break;
+            case 1:
+            case 2:
+                int start = 0;
+                while (start < numOfElements) {
+                    int first = getCard16();
+                    int nLeft = format == 1 ? getCard8() : getCard16();
+                    for (int i = 0; i <= nLeft && start < numOfElements; i++) {
+                        fonts[fontIndex].gidToCid[start++] = first + i;
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 }

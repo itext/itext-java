@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -193,6 +193,10 @@ public class Document extends RootElement<Document> {
             nextRelayoutRenderer = new DocumentRenderer(this, immediateFlush);
         }
 
+        // Even though #relayout() only makes sense when immediateFlush=false and therefore no elements
+        // should have been written to document, still empty pages are created during layout process
+        // because we need to know the effective page size which may differ from page to page.
+        // Therefore, we remove all the pages that might have been created before proceeding to relayout elements.
         while (pdfDocument.getNumberOfPages() > 0) {
             pdfDocument.removePage(pdfDocument.getNumberOfPages());
         }

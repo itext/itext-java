@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -37,10 +37,21 @@ public abstract class AbstractContextManagerConfigurationEvent extends AbstractI
         super();
     }
 
+    /**
+     * Registers generic context for products and namespaces which are associated with them.
+     *
+     * @param namespaces namespaces of the products to be registered
+     * @param products the products to be registered
+     */
     protected void registerGenericContext(Collection<String> namespaces, Collection<String> products) {
         ContextManager.getInstance().registerGenericContext(namespaces, products);
     }
 
+    /**
+     * Unregisters certain namespaces.
+     *
+     * @param namespaces the namespaces to be unregisted
+     */
     protected void unregisterContext(Collection<String> namespaces) {
         ContextManager.getInstance().unregisterContext(namespaces);
     }
