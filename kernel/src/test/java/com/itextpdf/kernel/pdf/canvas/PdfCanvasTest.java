@@ -54,6 +54,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -87,44 +88,43 @@ public class PdfCanvasTest extends ExtendedITextTest {
     /**
      * Paths to images.
      */
-    public static final String[] RESOURCES = {
+    private static final String[] RESOURCES = {
             "Desert.jpg",
             "bulb.gif",
             "0047478.jpg",
             "itext.png"
     };
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
+
+    private static final String AUTHOR = "iText Software";
+    private static final String CREATOR = "iText 7";
+    private static final String TITLE = "Empty iText 7 Document";
 
     @BeforeClass
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void createSimpleCanvas() throws IOException {
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "simpleCanvas.pdf"));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "simpleCanvas.pdf"));
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvas.pdf");
+        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvas.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
@@ -134,8 +134,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void canvasDrawArcsTest() throws IOException, InterruptedException {
         String fileName = "canvasDrawArcsTest.pdf";
-        String output = destinationFolder + fileName;
-        String cmp = sourceFolder + "cmp_" + fileName;
+        String output = DESTINATION_FOLDER + fileName;
+        String cmp = SOURCE_FOLDER + "cmp_" + fileName;
 
         try (PdfDocument doc = new PdfDocument(new PdfWriter(output))) {
             PdfPage page = doc.addNewPage();
@@ -160,7 +160,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             canvas.release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -168,14 +168,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         final String fileName = "simpleCanvasWithDrawing.pdf";
 
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas
@@ -227,13 +223,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + fileName);
+        PdfReader reader = new PdfReader(DESTINATION_FOLDER + fileName);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
@@ -245,14 +241,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         final String fileName = "simpleCanvasWithText.pdf";
 
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         //Initialize canvas and write text to it
@@ -312,13 +304,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + fileName);
+        PdfReader reader = new PdfReader(DESTINATION_FOLDER + fileName);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
@@ -327,15 +319,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void createSimpleCanvasWithPageFlush() throws IOException {
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "simpleCanvasWithPageFlush.pdf"));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "simpleCanvasWithPageFlush.pdf"));
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
@@ -343,13 +330,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithPageFlush.pdf");
+        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvasWithPageFlush.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
@@ -358,30 +345,25 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void createSimpleCanvasWithFullCompression() throws IOException {
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        PdfWriter writer = new PdfWriter(destinationFolder + "simpleCanvasWithFullCompression.pdf",
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "simpleCanvasWithFullCompression.pdf",
                 new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithFullCompression.pdf");
+        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvasWithFullCompression.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
@@ -390,16 +372,11 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void createSimpleCanvasWithPageFlushAndFullCompression() throws IOException {
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
-
-        PdfWriter writer = new PdfWriter(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf", new WriterProperties().setFullCompressionMode(true));
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "simpleCanvasWithPageFlushAndFullCompression.pdf", new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         PdfPage page1 = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.rectangle(100, 100, 100, 100).fill();
@@ -407,13 +384,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "simpleCanvasWithPageFlushAndFullCompression.pdf");
+        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvasWithPageFlushAndFullCompression.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
@@ -423,16 +400,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create1000PagesDocument() throws IOException {
         int pageCount = 1000;
-        String filename = destinationFolder + pageCount + "PagesDocument.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + pageCount + "PagesDocument.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -450,13 +423,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "1000PagesDocument.pdf");
+        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "1000PagesDocument.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -468,16 +441,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create100PagesDocument() throws IOException {
         int pageCount = 100;
-        String filename = destinationFolder + pageCount + "PagesDocument.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + pageCount + "PagesDocument.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -499,9 +468,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -513,16 +482,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create10PagesDocument() throws IOException {
         int pageCount = 10;
-        String filename = destinationFolder + pageCount + "PagesDocument.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + pageCount + "PagesDocument.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -544,9 +509,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -558,16 +523,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create1000PagesDocumentWithText() throws IOException {
         int pageCount = 1000;
-        final String filename = destinationFolder + "1000PagesDocumentWithText.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        final String filename = DESTINATION_FOLDER + "1000PagesDocumentWithText.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -588,9 +549,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -602,17 +563,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create1000PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 1000;
-        String filename = destinationFolder + "1000PagesDocumentWithFullCompression.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + "1000PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -635,9 +592,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -648,17 +605,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void smallDocumentWithFullCompression() throws IOException {
-        String filename = destinationFolder + "smallDocumentWithFullCompression.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + "smallDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
 
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -678,9 +631,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
 
         page = pdfDocument.getPage(1);
@@ -692,17 +645,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create100PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 100;
-        String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -724,9 +673,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -738,17 +687,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create197PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 197;
-        String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -770,9 +715,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -784,17 +729,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void create10PagesDocumentWithFullCompression() throws IOException {
         int pageCount = 10;
-        String filename = destinationFolder + pageCount + "PagesDocumentWithFullCompression.pdf";
-
-        final String author = "Alexander Chingarev";
-        final String creator = "iText 6";
-        final String title = "Empty iText 6 Document";
+        String filename = DESTINATION_FOLDER + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(author).
-                setCreator(creator).
-                setTitle(title);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
         for (int i = 0; i < pageCount; i++) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -816,9 +757,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", author, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", creator, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", title, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
         Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
         for (int i = 1; i <= pageCount; i++) {
             PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
@@ -829,8 +770,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void copyPagesTest1() throws IOException, InterruptedException {
-        String file1 = destinationFolder + "copyPages1_1.pdf";
-        String file2 = destinationFolder + "copyPages1_2.pdf";
+        String file1 = DESTINATION_FOLDER + "copyPages1_1.pdf";
+        String file2 = DESTINATION_FOLDER + "copyPages1_2.pdf";
 
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
@@ -871,13 +812,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
         Assert.assertNotNull(page.get(PdfName.Parent));
         pdfDocument.close();
-        Assert.assertNull(new CompareTool().compareByContent(file1, file2, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(file1, file2, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void copyPagesTest2() throws IOException {
-        String file1 = destinationFolder + "copyPages2_1.pdf";
-        String file2 = destinationFolder + "copyPages2_2.pdf";
+        String file1 = DESTINATION_FOLDER + "copyPages2_1.pdf";
+        String file2 = DESTINATION_FOLDER + "copyPages2_2.pdf";
 
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
@@ -930,8 +871,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void copyPagesTest3() throws IOException {
-        String file1 = destinationFolder + "copyPages3_1.pdf";
-        String file2 = destinationFolder + "copyPages3_2.pdf";
+        String file1 = DESTINATION_FOLDER + "copyPages3_1.pdf";
+        String file2 = DESTINATION_FOLDER + "copyPages3_2.pdf";
 
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
@@ -982,7 +923,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void copyPagesTest4() throws IOException {
-        String file1 = destinationFolder + "copyPages4_1.pdf";
+        String file1 = DESTINATION_FOLDER + "copyPages4_1.pdf";
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
 
         for (int i = 0; i < 5; i++) {
@@ -1002,7 +943,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
         pdfDoc1 = new PdfDocument(new PdfReader(file1));
 
         for (int i = 0; i < 5; i++) {
-            PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + MessageFormatUtil.format("copyPages4_{0}.pdf", i + 2)));
+            PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(
+                    DESTINATION_FOLDER + MessageFormatUtil.format("copyPages4_{0}.pdf", i + 2)));
             PdfPage page2 = pdfDoc1.getPage(i + 1).copyTo(pdfDoc2);
             pdfDoc2.addPage(page2);
             pdfDoc2.close();
@@ -1018,7 +960,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         for (int i = 0; i < 5; i++) {
             PdfDictionary page1 = doc1.getPage(i + 1).getPdfObject();
-            PdfDocument doc2 = new PdfDocument(new PdfReader(destinationFolder + MessageFormatUtil.format("copyPages4_{0}.pdf", i + 2)));
+            PdfDocument doc2 = new PdfDocument(new PdfReader(
+                    DESTINATION_FOLDER + MessageFormatUtil.format("copyPages4_{0}.pdf", i + 2)));
             PdfDictionary page = doc2.getPage(1).getPdfObject();
             Assert.assertTrue(cmpTool.compareDictionaries(page1, page));
             doc2.close();
@@ -1034,7 +977,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int documentCount = 3;
 
         for (int i = 0; i < documentCount; i++) {
-            PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + MessageFormatUtil.format("copyPages5_{0}.pdf", i + 1)));
+            PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(
+                    DESTINATION_FOLDER + MessageFormatUtil.format("copyPages5_{0}.pdf", i + 1)));
             PdfPage page1 = pdfDoc1.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page1);
             canvas.rectangle(100, 600, 100, 100);
@@ -1050,11 +994,12 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         List<PdfDocument> docs = new ArrayList<PdfDocument>();
         for (int i = 0; i < documentCount; i++) {
-            PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(destinationFolder + MessageFormatUtil.format("copyPages5_{0}.pdf", i + 1)));
+            PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(
+                    DESTINATION_FOLDER + MessageFormatUtil.format("copyPages5_{0}.pdf", i + 1)));
             docs.add(pdfDoc1);
         }
 
-        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyPages5_4.pdf"));
+        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "copyPages5_4.pdf"));
         for (int i = 0; i < 3; i++) {
             pdfDoc2.addPage(docs.get(i).getPage(1).copyTo(pdfDoc2));
         }
@@ -1065,10 +1010,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         CompareTool cmpTool = new CompareTool();
         for (int i = 0; i < 3; i++) {
-            PdfReader reader1 = new PdfReader(destinationFolder + MessageFormatUtil.format("copyPages5_{0}.pdf", i + 1));
+            PdfReader reader1 = new PdfReader(DESTINATION_FOLDER + MessageFormatUtil.format("copyPages5_{0}.pdf", i + 1));
             PdfDocument doc1 = new PdfDocument(reader1);
             Assert.assertEquals("Rebuilt", false, reader1.hasRebuiltXref());
-            PdfReader reader2 = new PdfReader(destinationFolder + "copyPages5_4.pdf");
+            PdfReader reader2 = new PdfReader(DESTINATION_FOLDER + "copyPages5_4.pdf");
             PdfDocument doc2 = new PdfDocument(reader2);
             Assert.assertEquals("Rebuilt", false, reader2.hasRebuiltXref());
             PdfDictionary page1 = doc1.getPage(1).getPdfObject();
@@ -1082,10 +1027,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void copyPagesTest6() throws IOException {
-        String file1 = destinationFolder + "copyPages6_1.pdf";
-        String file2 = destinationFolder + "copyPages6_2.pdf";
-        String file3 = destinationFolder + "copyPages6_3.pdf";
-        String file1_upd = destinationFolder + "copyPages6_1_upd.pdf";
+        String file1 = DESTINATION_FOLDER + "copyPages6_1.pdf";
+        String file2 = DESTINATION_FOLDER + "copyPages6_2.pdf";
+        String file3 = DESTINATION_FOLDER + "copyPages6_3.pdf";
+        String file1_upd = DESTINATION_FOLDER + "copyPages6_1_upd.pdf";
 
         PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(file1));
         PdfPage page1 = pdfDoc1.addNewPage();
@@ -1170,7 +1115,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void markedContentTest2() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "markedContentTest2.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "markedContentTest2.pdf"));
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
@@ -1188,7 +1133,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "markedContentTest2.pdf", sourceFolder + "cmp_markedContentTest2.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(
+                DESTINATION_FOLDER + "markedContentTest2.pdf", SOURCE_FOLDER + "cmp_markedContentTest2.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -1212,68 +1159,72 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void wmfImageTest01() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest01.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "wmfImageTest01.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = new WmfImageData(sourceFolder + "example.wmf");
+        ImageData img = new WmfImageData(SOURCE_FOLDER + "example.wmf");
         canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 0.1f, 0.1f), false);
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest01.pdf", sourceFolder + "cmp_wmfImageTest01.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest01.pdf", SOURCE_FOLDER + "cmp_wmfImageTest01.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void wmfImageTest02() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest02.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "wmfImageTest02.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = new WmfImageData(sourceFolder + "butterfly.wmf");
+        ImageData img = new WmfImageData(SOURCE_FOLDER + "butterfly.wmf");
         canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 1, 1), false);
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest02.pdf", sourceFolder + "cmp_wmfImageTest02.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest02.pdf", SOURCE_FOLDER + "cmp_wmfImageTest02.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
 
     @Test
     public void wmfImageTest03() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest03.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "wmfImageTest03.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = new WmfImageData(sourceFolder + "type1.wmf");
+        ImageData img = new WmfImageData(SOURCE_FOLDER + "type1.wmf");
         canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 1, 1), false);
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest03.pdf", sourceFolder + "cmp_wmfImageTest03.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest03.pdf", SOURCE_FOLDER + "cmp_wmfImageTest03.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void wmfImageTest04() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest04.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "wmfImageTest04.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = new WmfImageData(sourceFolder + "type0.wmf");
+        ImageData img = new WmfImageData(SOURCE_FOLDER + "type0.wmf");
         canvas.addImageFittedIntoRectangle(img, new Rectangle(0, 0, 1, 1), false);
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest04.pdf", sourceFolder + "cmp_wmfImageTest04.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest04.pdf", SOURCE_FOLDER + "cmp_wmfImageTest04.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void wmfImageTest05() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "wmfImageTest05.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "wmfImageTest05.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        InputStream stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "example2.wmf"));
+        InputStream stream = UrlUtil.openStream(UrlUtil.toURL(SOURCE_FOLDER + "example2.wmf"));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         ImageData img = new WmfImageData(baos.toByteArray());
@@ -1281,29 +1232,31 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "wmfImageTest05.pdf", sourceFolder + "cmp_wmfImageTest05.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "wmfImageTest05.pdf", SOURCE_FOLDER + "cmp_wmfImageTest05.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void gifImageTest01() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest01.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "gifImageTest01.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = ImageDataFactory.create(sourceFolder + "2-frames.gif");
+        ImageData img = ImageDataFactory.create(SOURCE_FOLDER + "2-frames.gif");
         canvas.addImageFittedIntoRectangle(img, new Rectangle(100, 100, 200, 188.24f), false);
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest01.pdf", sourceFolder + "cmp_gifImageTest01.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest01.pdf", SOURCE_FOLDER + "cmp_gifImageTest01.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void gifImageTest02() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest02.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "gifImageTest02.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1317,15 +1270,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest02.pdf", sourceFolder + "cmp_gifImageTest02.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest02.pdf", SOURCE_FOLDER + "cmp_gifImageTest02.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void gifImageTest03() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest03.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "gifImageTest03.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1339,15 +1293,16 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest03.pdf", sourceFolder + "cmp_gifImageTest03.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest03.pdf", SOURCE_FOLDER + "cmp_gifImageTest03.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void gifImageTest04() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest04.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "gifImageTest04.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(sourceFolder + "2-frames.gif");
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "2-frames.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1366,10 +1321,10 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void gifImageTest05() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "gifImageTest05.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "gifImageTest05.pdf"));
         PdfPage page = document.addNewPage();
 
-        InputStream is = new FileInputStream(sourceFolder + "animated_fox_dog.gif");
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "animated_fox_dog.gif");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int reads = is.read();
         while (reads != -1) {
@@ -1387,7 +1342,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "gifImageTest05.pdf", sourceFolder + "cmp_gifImageTest05.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest05.pdf", SOURCE_FOLDER + "cmp_gifImageTest05.pdf",
+                DESTINATION_FOLDER, "diff_"));
     }
 
 //    @Test
@@ -1439,7 +1395,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void awtImagesTest01() throws IOException, InterruptedException {
         String filename = "awtImagesTest01.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1448,7 +1404,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int y = 700;
         int width = 100;
         for (String image : RESOURCES) {
-            java.awt.Image awtImage = Toolkit.getDefaultToolkit().createImage(sourceFolder + image);
+            java.awt.Image awtImage = Toolkit.getDefaultToolkit().createImage(SOURCE_FOLDER + image);
             ImageData imageData = ImageDataFactory.create(awtImage, null);
             canvas.addImageFittedIntoRectangle(imageData, new Rectangle(x, y, width, (width / imageData.getWidth()) * imageData.getHeight()), false);
             y -= 150;
@@ -1456,14 +1412,15 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void canvasInitializationPageNoContentsKey() throws IOException, InterruptedException {
-        String srcFile = sourceFolder + "pageNoContents.pdf";
-        String cmpFile = sourceFolder + "cmp_pageNoContentsStamp.pdf";
-        String destFile = destinationFolder + "pageNoContentsStamp.pdf";
+        String srcFile = SOURCE_FOLDER + "pageNoContents.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_pageNoContentsStamp.pdf";
+        String destFile = DESTINATION_FOLDER + "pageNoContentsStamp.pdf";
 
         PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(destFile));
 
@@ -1473,14 +1430,14 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void canvasInitializationStampingExistingStream() throws IOException, InterruptedException {
-        String srcFile = sourceFolder + "pageWithContent.pdf";
-        String cmpFile = sourceFolder + "cmp_stampingExistingStream.pdf";
-        String destFile = destinationFolder + "stampingExistingStream.pdf";
+        String srcFile = SOURCE_FOLDER + "pageWithContent.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_stampingExistingStream.pdf";
+        String destFile = DESTINATION_FOLDER + "stampingExistingStream.pdf";
 
         PdfDocument document = new PdfDocument(new PdfReader(srcFile), new PdfWriter(destFile));
 
@@ -1491,14 +1448,14 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void canvasStampingJustCopiedStreamWithCompression() throws IOException, InterruptedException {
-        String srcFile = sourceFolder + "pageWithContent.pdf";
-        String cmpFile = sourceFolder + "cmp_stampingJustCopiedStreamWithCompression.pdf";
-        String destFile = destinationFolder + "stampingJustCopiedStreamWithCompression.pdf";
+        String srcFile = SOURCE_FOLDER + "pageWithContent.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_stampingJustCopiedStreamWithCompression.pdf";
+        String destFile = DESTINATION_FOLDER + "stampingJustCopiedStreamWithCompression.pdf";
 
         PdfDocument srcDocument = new PdfDocument(new PdfReader(srcFile));
         PdfDocument document = new PdfDocument(new PdfWriter(destFile));
@@ -1512,13 +1469,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void canvasSmallFontSize01() throws IOException, InterruptedException {
-        String cmpFile = sourceFolder + "cmp_canvasSmallFontSize01.pdf";
-        String destFile = destinationFolder + "canvasSmallFontSize01.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_canvasSmallFontSize01.pdf";
+        String destFile = DESTINATION_FOLDER + "canvasSmallFontSize01.pdf";
 
         PdfDocument document = new PdfDocument(new PdfWriter(destFile));
 
@@ -1568,21 +1525,479 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void addWmfImageTest() throws IOException, InterruptedException {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "addWmfImage.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "addWmfImage.pdf"));
         PdfPage page = document.addNewPage();
 
         PdfCanvas canvas = new PdfCanvas(page);
-        ImageData img = new WmfImageData(sourceFolder + "example2.wmf");
+        ImageData img = new WmfImageData(SOURCE_FOLDER + "example2.wmf");
         canvas.addImageAt(img, 0, 0, false);
 
         document.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "addWmfImage.pdf",
-                sourceFolder + "cmp_addWmfImage.pdf", destinationFolder, "diff_"));
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "addWmfImage.pdf",
+                SOURCE_FOLDER + "cmp_addWmfImage.pdf", DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void setLeadingPositiveTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setLeadingPositive.pdf";
+        String outPdf = DESTINATION_FOLDER + "setLeadingPositive.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text one")
+                .newlineShowText("normal text two")
+                .newlineShowText("normal text three")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 650)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .setLeading(20.0f)
+                .showText("set leading text with positive value one")
+                .newlineShowText("set leading text with positive value two")
+                .newlineShowText("set leading text with positive value three")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setLeadingNegativeTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setLeadingNegative.pdf";
+        String outPdf = DESTINATION_FOLDER + "setLeadingNegative.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text one")
+                .newlineShowText("normal text two")
+                .newlineShowText("normal text three")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 650)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .setLeading(-10.0f)
+                .showText("set leading text with negative value one")
+                .newlineShowText("set leading text with negative value two")
+                .newlineShowText("set leading text with negative value three")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    //TODO DEVSIX-6486 Transformation matrix of wrong length are processed without any warning
+    public void wrongLengthOfTransMatrixTest() throws IOException, PdfException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_wrongLengthOfTransMatrix.pdf";
+        String outPdf = DESTINATION_FOLDER + "wrongLengthOfTransMatrix.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+        PdfArray wrongNumberOfTransMatrix = new PdfArray(new int[] {1, 0, 0, 1, 100});
+
+        canvas.saveState()
+                .beginText()
+                .concatMatrix(wrongNumberOfTransMatrix)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void concatMatrixPdfArrayTest() throws IOException, PdfException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_concatMatrixPdfArray.pdf";
+        String outPdf = DESTINATION_FOLDER + "concatMatrixPdfArray.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+        PdfArray arrayTransformationMatrix = new PdfArray(new int[] {3, 1, 1, 3, 50, 700});
+
+        canvas.saveState()
+                .beginText()
+                .concatMatrix(arrayTransformationMatrix)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("hello world")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setMoveTextWithLeadingTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setMoveTextWithLeading.pdf";
+        String outPdf = DESTINATION_FOLDER + "setMoveTextWithLeading.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text one")
+                .newlineShowText("normal text two")
+                .newlineShowText("normal text three")
+                .endText()
+                .restoreState();
+
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .moveTextWithLeading(0, -200)
+                .showText("move text with leading one")
+                .newlineShowText("move text with leading two")
+                .newlineShowText("move text with leading three")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setNewLineTextTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setNewLineText.pdf";
+        String outPdf = DESTINATION_FOLDER + "setNewLineText.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("text before")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .setLeading(10f)
+                .newlineText()
+                .showText("text after")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setPositiveTextRiseValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setPositiveTextRiseValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setPositiveTextRiseValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(100, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(100, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .setTextRise(10f)
+                .showText("rise text positive value")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setNegativeTextRiseValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setNegativeTextRiseValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setNegativeTextRiseValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(100, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .moveText(100, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .setTextRise(-10f)
+                .showText("rise text negative value")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setPositiveWordSpacingValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setPositiveWordSpacingValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setPositiveWordSpacingValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .moveText(50, 650)
+                .setWordSpacing(20f)
+                .showText("positive word spacing test")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setNegativeWordSpacingValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setNegativeWordSpacingValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setNegativeWordSpacingValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .moveText(50, 650)
+                .setWordSpacing(-5f)
+                .showText("negative word spacing test")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setPositiveCharSpacingValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setPositiveCharSpacingValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setPositiveCharSpacingValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .moveText(50, 650)
+                .setCharacterSpacing(5f)
+                .showText("positive char spacing test")
+                .endText();
+
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setNegativeCharSpacingValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setNegativeCharSpacingValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setNegativeCharSpacingValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .moveText(50, 650)
+                .setCharacterSpacing(-1f)
+                .showText("negative char spacing test")
+                .endText();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setNegativeHorizontalScalingValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setNegativeHorizontalScalingValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setNegativeHorizontalScalingValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .moveText(50, 650)
+                .setHorizontalScaling(-10f)
+                .showText("negative horizontal scaling")
+                .endText();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void setPositiveHorizontalScalingValueTest() throws IOException, InterruptedException {
+        String cmpPdf = SOURCE_FOLDER + "cmp_setPositiveHorizontalScalingValue.pdf";
+        String outPdf = DESTINATION_FOLDER + "setPositiveHorizontalScalingValue.pdf";
+
+        PdfDocument document = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage documentPage = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(documentPage);
+
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 700)
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .showText("normal text")
+                .endText()
+                .restoreState();
+
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(PdfFontFactory.createFont(), 14)
+                .moveText(50, 650)
+                .setHorizontalScaling(10f)
+                .showText("positive horizontal scaling")
+                .endText();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }
