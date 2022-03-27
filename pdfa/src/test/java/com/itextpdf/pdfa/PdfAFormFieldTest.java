@@ -81,7 +81,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.IOException;
 import org.junit.Assert;
@@ -232,7 +231,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -255,7 +253,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -283,7 +280,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -293,7 +289,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ComboBoxField.pdf";
 
         PdfFont fontCJK = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSansCJKtc-Light.otf",
-                        PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_EMBEDDED);
+                PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
@@ -304,12 +300,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.addField(PdfFormField.createComboBox(pdfDoc, new Rectangle(156, 616, 70, 70),
-                "combo", "用", new String[] {"用", "规", "表"}, fontCJK, conformanceLevel));
+                "combo", "用", new String[]{"用", "规", "表"}, fontCJK, conformanceLevel));
 
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -332,17 +327,16 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
         PdfChoiceFormField f = PdfFormField.createList(pdfDoc, new Rectangle(86, 556, 50, 200),
-                "list", "9", new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
+                "list", "9", new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
                 fontFreeSans, conformanceLevel);
         f.setValue("4");
         f.setTopIndex(2);
-        f.setListSelected(new String[] {"3", "5"});
+        f.setListSelected(new String[]{"3", "5"});
         form.addField(f);
 
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -368,7 +362,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -397,7 +390,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -424,7 +416,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -451,7 +442,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
     }
 
     @Test
@@ -461,10 +451,10 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String mergedDocFileName = DESTINATION_FOLDER + "mergedPdfADoc.pdf";
 
         try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
-                PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), PdfAConformanceLevel.PDF_A_1B,
-                        new PdfOutputIntent("Custom", "",
-                                "http://www.color.org", "sRGB ICC preference", is));
-                Document doc = new Document(pdfDoc)) {
+             PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), PdfAConformanceLevel.PDF_A_1B,
+                     new PdfOutputIntent("Custom", "",
+                             "http://www.color.org", "sRGB ICC preference", is));
+             Document doc = new Document(pdfDoc)) {
 
             PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf", PdfEncodings.WINANSI);
 
@@ -476,11 +466,9 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                     PdfAConformanceLevel.PDF_A_1B).setFieldName("text").setPage(1), pdfDoc.getPage(1));
         }
 
-        Assert.assertNull(new VeraPdfValidator().validate(fileName));
-
         PdfADocument pdfDocToMerge;
         try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
-                PdfDocument newDoc = new PdfDocument(new PdfReader(fileName))) {
+             PdfDocument newDoc = new PdfDocument(new PdfReader(fileName))) {
             pdfDocToMerge = new PdfADocument(new PdfWriter(mergedDocFileName).setSmartMode(true),
                     PdfAConformanceLevel.PDF_A_1B,
                     new PdfOutputIntent("Custom", "",
@@ -488,7 +476,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
             newDoc.copyPagesTo(1, newDoc.getNumberOfPages(), pdfDocToMerge, new PdfPageFormCopier());
         }
-        
+
         Exception ex = Assert.assertThrows(PdfException.class, () -> pdfDocToMerge.close());
         Assert.assertEquals(MessageFormatUtil
                 .format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
