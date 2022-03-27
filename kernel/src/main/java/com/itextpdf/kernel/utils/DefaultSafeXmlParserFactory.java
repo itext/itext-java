@@ -190,8 +190,8 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
         tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false);
         // recommendations from Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-        factory.setXIncludeAware(false); // Android-Skip
-        factory.setExpandEntityReferences(false); // Android-Skip
+        factory.setXIncludeAware(false);
+        factory.setExpandEntityReferences(false);
     }
 
     /**
@@ -205,7 +205,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
         tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false);
         // recommendations from Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-        factory.setXIncludeAware(false); // Android-Skip
+        factory.setXIncludeAware(false);
     }
 
     /**

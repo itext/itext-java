@@ -143,7 +143,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void testAppliedClipPathRenderer() {
         AbstractBranchSvgNodeRenderer clipPathRenderer = new ClipPathSvgNodeRenderer();
         clipPathRenderer.setAttribute(SvgConstants.Attributes.ID, "randomString");
@@ -178,7 +177,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void testAppliedGroupClipPathRenderer() {
         AbstractBranchSvgNodeRenderer clipPathRenderer = new ClipPathSvgNodeRenderer();
         clipPathRenderer.setAttribute(SvgConstants.Attributes.ID, "randomString");
@@ -218,7 +216,6 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6444 fix different ByteUtils#getIsoBytes behavior)
     public void testEoAppliedGroupClipPathRenderer() {
         AbstractBranchSvgNodeRenderer clipPathRenderer = new ClipPathSvgNodeRenderer();
         clipPathRenderer.setAttribute(SvgConstants.Attributes.ID, "randomString");
