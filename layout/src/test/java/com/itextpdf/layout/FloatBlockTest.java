@@ -63,7 +63,6 @@ public class FloatBlockTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatImageInDivClearNoneTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatImageInDivClearNone.pdf";
@@ -83,7 +82,6 @@ public class FloatBlockTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatImageInDivClearBothTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatImageInDivClearBoth.pdf";
@@ -103,7 +101,6 @@ public class FloatBlockTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatImageDifferentSizeInDivTest()
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String cmpFileName = sourceFolder + "cmp_floatImageDifferentSizeInDiv.pdf";

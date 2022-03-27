@@ -118,7 +118,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void textInParagraphTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "textInParagraphTest01.pdf"));
         pdfDocument.setTagged();
@@ -156,7 +155,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void imageTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest02.pdf"));
         pdfDocument.setTagged();
@@ -179,7 +177,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void divTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "divTest01.pdf"));
         pdfDocument.setTagged();
@@ -204,7 +201,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest01.pdf"));
         pdfDocument.setTagged();
@@ -234,7 +230,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest02.pdf"));
         pdfDocument.setTagged();
@@ -258,7 +253,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest03.pdf"));
         pdfDocument.setTagged();
@@ -299,7 +293,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest04.pdf"));
         pdfDocument.setTagged();
@@ -331,7 +324,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest05.pdf"));
         pdfDocument.setTagged();
@@ -365,7 +357,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest06.pdf"));
         pdfDocument.setTagged();
@@ -403,7 +394,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest07.pdf"));
         pdfDocument.setTagged();
@@ -433,7 +423,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void linkInsideTable() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + "linkInsideTable.pdf"));
         pdf.setTagged();
@@ -453,7 +442,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableTest08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest08.pdf"));
         pdfDocument.setTagged();
@@ -487,7 +475,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void listTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest01.pdf"));
         pdfDocument.setTagged();
@@ -506,7 +493,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void listTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest02.pdf"));
         pdfDocument.setTagged();
@@ -579,7 +565,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void listTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest03.pdf"));
         pdfDocument.setTagged();
@@ -605,7 +590,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void listTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest04.pdf"));
         pdfDocument.setTagged();
@@ -626,7 +610,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void linkTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "linkTest01.pdf"));
         pdfDocument.setTagged();
@@ -645,7 +628,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void artifactTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "artifactTest01.pdf"));
         pdfDocument.setTagged();
@@ -668,7 +650,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void artifactTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "artifactTest02.pdf"));
         pdfDocument.setTagged();
@@ -693,7 +674,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
      * tag structure. So you can check the result by comparing resultant document with the one in textInParagraphTest01.
      */
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void flushingTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest01.pdf"));
         pdfDocument.setTagged();
@@ -721,7 +701,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
      * tag structure. So you can check the result by comparing resultant document with the one in tableTest05.
      */
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void flushingTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest02.pdf"));
         pdfDocument.setTagged();
@@ -759,7 +738,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
      * tag structure. So you can check the result by comparing resultant document with the one in tableTest04.
      */
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void flushingTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest03.pdf"));
         pdfDocument.setTagged();
@@ -793,7 +771,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void wordBreaksLineEndingsTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest01.pdf",
@@ -817,7 +794,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void wordBreaksLineEndingsTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest02.pdf",
@@ -836,7 +812,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void wordBreaksLineEndingsTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest03.pdf",
@@ -868,7 +843,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void wordBreaksLineEndingsTest04() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest04.pdf",
@@ -894,7 +868,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void wordBreaksLineEndingsTest05() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest05.pdf",
@@ -919,7 +892,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void imageAndTextNoRole01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(destinationFolder + "imageAndTextNoRole01.pdf",
@@ -955,7 +927,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void tableWithCaption01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfWriter writer = new PdfWriter(destinationFolder + "tableWithCaption01.pdf");
         PdfDocument pdf = new PdfDocument(writer);
@@ -984,7 +955,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void emptyDivTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfWriter writer = new PdfWriter(destinationFolder + "emptyDivTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
@@ -1002,7 +972,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void floatListItemTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfWriter writer = new PdfWriter(destinationFolder + "floatListItemTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
@@ -1024,7 +993,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
     })
     //TODO update cmp-file after DEVSIX-3335 fixed
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfWriter writer = new PdfWriter(destinationFolder + "notAsciiCharTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
@@ -1073,7 +1041,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6443 fix features supporting in SAXParserFactory)
     public void createTaggedVersionOneDotFourTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "createTaggedVersionOneDotFourTest01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4)));
         pdfDocument.setTagged();
