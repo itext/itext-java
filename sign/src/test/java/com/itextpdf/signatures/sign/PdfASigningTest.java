@@ -59,7 +59,6 @@ import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileInputStream;
@@ -124,7 +123,6 @@ public class PdfASigningTest extends ExtendedITextTest {
         sign(src, fieldName, dest, chain, pk,
                 DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false, PdfSigner.NOT_CERTIFIED, 12f);
 
-        Assert.assertNull(new VeraPdfValidator().validate(dest));
         Assert.assertNull(SignaturesCompareTool.compareSignatures(dest, sourceFolder + "cmp_" + fileName));
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(27, 550, 195, 40))));
@@ -142,8 +140,6 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
-
-        Assert.assertNull(new VeraPdfValidator().validate(out));
     }
 
 

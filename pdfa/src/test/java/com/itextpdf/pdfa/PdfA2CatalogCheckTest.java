@@ -54,7 +54,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -103,8 +102,6 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OCProperties, ocProperties);
 
         doc.close();
-
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf));
         compareResult(outPdf, cmpPdf);
     }
 
@@ -170,8 +167,6 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OCProperties, ocProperties);
 
         doc.close();
-
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf));
         compareResult(outPdf, cmpPdf);
     }
 
