@@ -284,9 +284,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
 
                 if (result.getSplitRenderer() != null) {
-                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
-                    // in case when parent box should wrap around child boxes.
-                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    // TODO DEVSIX-6488 all elements should be layouted first in case when parent box should wrap around child boxes
                     alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox());
                 }
 
@@ -340,9 +338,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getStatus() == LayoutResult.FULL) {
                 decreaseLayoutBoxAfterChildPlacement(layoutBox, result, childRenderer);
                 if (childRenderer.getOccupiedArea() != null) {
-                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
-                    // in case when parent box should wrap around child boxes.
-                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    // TODO DEVSIX-6488 all elements should be layouted first in case when parent box should wrap around child boxes
                     alignChildHorizontally(childRenderer, occupiedArea.getBBox());
                 }
             }
