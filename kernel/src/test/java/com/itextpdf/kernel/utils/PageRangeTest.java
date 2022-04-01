@@ -56,7 +56,7 @@ import org.junit.experimental.categories.Category;
 public class PageRangeTest extends ExtendedITextTest {
 
     @Test
-    public void addSingle() {
+    public void addSingleTest() {
         PageRange range = new PageRange();
         range.addSinglePage(5);
 
@@ -64,7 +64,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addSingles() {
+    public void addSinglesTest() {
         PageRange range = new PageRange();
         range.addSinglePage(5);
         range.addSinglePage(1);
@@ -73,7 +73,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addSequence() {
+    public void addSequenceTest() {
         PageRange range = new PageRange();
         range.addPageSequence(11, 19);
 
@@ -81,7 +81,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addSequenceAndSingle() {
+    public void addSequenceAndSingleTest() {
         PageRange range = new PageRange();
         range.addPageSequence(22, 27);
         range.addSinglePage(25);
@@ -90,7 +90,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addSingleAndSequence() {
+    public void addSingleAndSequenceTest() {
         PageRange range = new PageRange();
         range.addSinglePage(5);
         range.addPageSequence(3, 8);
@@ -99,7 +99,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addCustomAfter() {
+    public void addCustomAfterTest() {
         PageRange range = new PageRange();
         range.addPageRangePart(new PageRange.PageRangePartAfter(3));
 
@@ -107,7 +107,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addCustomEven() {
+    public void addCustomEvenTest() {
         PageRange range = new PageRange();
         range.addPageRangePart(PageRange.PageRangePartOddEven.EVEN);
 
@@ -115,7 +115,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addCustomAnd() {
+    public void addCustomAndTest() {
         PageRange range = new PageRange();
         PageRange.IPageRangePart odd = PageRange.PageRangePartOddEven.ODD;
         PageRange.IPageRangePart seq = new PageRange.PageRangePartSequence(2, 14);
@@ -126,70 +126,102 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addSingleConstructor() {
+    public void addSingleConstructorTest() {
         PageRange range = new PageRange("5");
 
         Assert.assertEquals(Arrays.asList(5), range.getQualifyingPageNums(7));
     }
 
     @Test
-    public void addSinglesConstructor() {
+    public void addSinglesConstructorTest() {
         PageRange range = new PageRange("5, 1");
 
         Assert.assertEquals(Arrays.asList(5, 1), range.getQualifyingPageNums(10));
     }
 
     @Test
-    public void addSequenceConstructor() {
+    public void addSinglesConstructorWithNegativeNumbersTest() {
+        PageRange range = new PageRange("-5, -1");
+
+        Assert.assertNotEquals(Arrays.asList(5, 1), range.getQualifyingPageNums(10));
+    }
+
+    @Test
+    public void addSinglesConstructorWithWhitespacesTest() {
+        PageRange range = new PageRange(" 5 , 1  ");
+
+        Assert.assertEquals(Arrays.asList(5, 1), range.getQualifyingPageNums(10));
+    }
+
+    @Test
+    public void addSinglesConstructorWithLetterTest() {
+        PageRange range = new PageRange("5, A, 1");
+
+        Assert.assertEquals(Arrays.asList(5, 1), range.getQualifyingPageNums(10));
+    }
+
+    @Test
+    public void addSequenceConstructorTest() {
         PageRange range = new PageRange("11-19");
 
         Assert.assertEquals(Arrays.asList(11, 12, 13, 14, 15, 16), range.getQualifyingPageNums(16));
     }
 
     @Test
-    public void addSequenceAndSingleConstructor() {
+    public void addSequenceConstructorWithWhitespacesTest() {
+        PageRange range1 = new PageRange(" 11- 19");
+        PageRange range2 = new PageRange(" 11 -19");
+        PageRange range3 = new PageRange(" 11 - 19");
+
+        Assert.assertEquals(Arrays.asList(11, 12, 13, 14, 15, 16), range1.getQualifyingPageNums(16));
+        Assert.assertEquals(Arrays.asList(11, 12, 13, 14, 15, 16), range2.getQualifyingPageNums(16));
+        Assert.assertEquals(Arrays.asList(11, 12, 13, 14, 15, 16), range3.getQualifyingPageNums(16));
+    }
+
+    @Test
+    public void addSequenceAndSingleConstructorTest() {
         PageRange range = new PageRange("22-27,25");
 
         Assert.assertEquals(Arrays.asList(22, 23, 24, 25, 26, 27, 25), range.getQualifyingPageNums(30));
     }
 
     @Test
-    public void addSingleAndSequenceConstructor() {
+    public void addSingleAndSequenceConstructorTest() {
         PageRange range = new PageRange("5, 3-8");
 
         Assert.assertEquals(Arrays.asList(5, 3, 4, 5, 6, 7, 8), range.getQualifyingPageNums(10));
     }
 
     @Test
-    public void addCustomAfterConstructor() {
+    public void addCustomAfterConstructorTest() {
         PageRange range = new PageRange("3-");
 
         Assert.assertEquals(Arrays.asList(3, 4, 5), range.getQualifyingPageNums(5));
     }
 
     @Test
-    public void addCustomEvenConstructor() {
+    public void addCustomEvenConstructorTest() {
         PageRange range = new PageRange("even");
 
         Assert.assertEquals(Arrays.asList(2, 4), range.getQualifyingPageNums(5));
     }
 
     @Test
-    public void addCustomAndConstructor() {
+    public void addCustomAndConstructorTest() {
         PageRange range = new PageRange("odd & 2-14");
 
         Assert.assertEquals(Arrays.asList(3, 5, 7, 9, 11, 13), range.getQualifyingPageNums(15));
     }
 
     @Test
-    public void addIncorrectCustomAndConstructor() {
+    public void addIncorrectCustomAndConstructorTest() {
         PageRange range = new PageRange("&");
 
         Assert.assertEquals(new ArrayList<>(), range.getQualifyingPageNums(0));
     }
 
     @Test
-    public void addIncorrectConstructor() {
+    public void addIncorrectConstructorTest() {
         PageRange range = new PageRange("");
 
         Assert.assertEquals(new ArrayList<>(), range.getQualifyingPageNums(0));
@@ -210,14 +242,30 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pageRangeEqualsNullTest() {
+    public void addSequenceConstructorWithNegativeNumberTest() {
+        PageRange range = new PageRange("-3-8");
+
+        Assert.assertEquals(new ArrayList<>(), range.getQualifyingPageNums(3));
+    }
+
+    @Test
+    public void addSequenceConstructorWithLetterTest() {
+        PageRange range1 = new PageRange("3-F");
+        PageRange range2 = new PageRange("3-8F");
+
+        Assert.assertEquals(new ArrayList<>(), range1.getQualifyingPageNums(3));
+        Assert.assertEquals(new ArrayList<>(), range2.getQualifyingPageNums(3));
+    }
+
+    @Test
+    public void checkPageRangeEqualsNullTest() {
         PageRange range1 = new PageRange("3-8");
 
         Assert.assertFalse(range1.equals(null));
     }
 
     @Test
-    public void pageRangeEqualsAndHashCodeTest() {
+    public void checkPageRangeEqualsAndHashCodeTest() {
         PageRange range1 = new PageRange("3-8");
         PageRange range2 = new PageRange("3-8");
 
@@ -227,7 +275,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pageRangeNotEqualsAndHashCodeTest() {
+    public void checkPageRangeNotEqualsAndHashCodeTest() {
         PageRange range1 = new PageRange("3-8");
         PageRange range2 = new PageRange("1-2");
 
@@ -258,14 +306,14 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartSingleEqualsNullTest() {
+    public void checkRangePartSingleEqualsNullTest() {
         PageRange.PageRangePartSingle pageRangePartSingle = new PageRange.PageRangePartSingle(10);
 
         Assert.assertFalse(pageRangePartSingle.equals(null));
     }
 
     @Test
-    public void rangePartSingleEqualsAndHashCodeTest() {
+    public void checkRangePartSingleEqualsAndHashCodeTest() {
         PageRange.PageRangePartSingle pageRangePartSingle1 = new PageRange.PageRangePartSingle(10);
         PageRange.PageRangePartSingle pageRangePartSingle2 = new PageRange.PageRangePartSingle(10);
 
@@ -275,7 +323,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartSingleNotEqualsAndHashCodeTest() {
+    public void checkRangePartSingleNotEqualsAndHashCodeTest() {
         PageRange.PageRangePartSingle pageRangePartSingle1 = new PageRange.PageRangePartSingle(10);
         PageRange.PageRangePartSingle pageRangePartSingle2 = new PageRange.PageRangePartSingle(1);
 
@@ -285,14 +333,14 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartSequenceEqualsNullTest() {
+    public void checkRangePartSequenceEqualsNullTest() {
         PageRange.PageRangePartSequence pageRangePartSequence = new PageRange.PageRangePartSequence(1, 2);
 
         Assert.assertFalse(pageRangePartSequence.equals(null));
     }
 
     @Test
-    public void rangePartSequenceEqualsAndHashCodeTest() {
+    public void checkRangePartSequenceEqualsAndHashCodeTest() {
         PageRange.PageRangePartSequence pageRangePartSequence = new PageRange.PageRangePartSequence(1, 2);
         PageRange.PageRangePartSequence pageRangePartSequence2 = new PageRange.PageRangePartSequence(1, 2);
 
@@ -302,7 +350,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartSequenceNotEqualsAndHashCodeTest() {
+    public void checkRangePartSequenceNotEqualsAndHashCodeTest() {
         PageRange.PageRangePartSequence pageRangePartSequence = new PageRange.PageRangePartSequence(1, 2);
         PageRange.PageRangePartSequence pageRangePartSequence2 = new PageRange.PageRangePartSequence(3, 4);
 
@@ -326,14 +374,14 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartAfterEqualsNullTest() {
+    public void checkRangePartAfterEqualsNullTest() {
         PageRange.PageRangePartAfter pageRangePartAfter = new PageRange.PageRangePartAfter(10);
 
         Assert.assertFalse(pageRangePartAfter.equals(null));
     }
 
     @Test
-    public void rangePartAfterEqualsAndHashCodeTest() {
+    public void checkRangePartAfterEqualsAndHashCodeTest() {
         PageRange.PageRangePartAfter pageRangePartAfter = new PageRange.PageRangePartAfter(10);
         PageRange.PageRangePartAfter pageRangePartAfter2 = new PageRange.PageRangePartAfter(10);
 
@@ -343,7 +391,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartAfterNotEqualsAndHashCodeTest() {
+    public void checkRangePartAfterNotEqualsAndHashCodeTest() {
         PageRange.PageRangePartAfter pageRangePartAfter = new PageRange.PageRangePartAfter(10);
         PageRange.PageRangePartAfter pageRangePartAfter2 = new PageRange.PageRangePartAfter(1);
 
@@ -365,13 +413,13 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartOddEvenEqualsNullTest() {
+    public void checkRangePartOddEvenEqualsNullTest() {
         Assert.assertFalse(PageRange.PageRangePartOddEven.EVEN.equals(null));
         Assert.assertFalse(PageRange.PageRangePartOddEven.ODD.equals(null));
     }
 
     @Test
-    public void rangePartOddEvenEqualsAndHashCodeTest() {
+    public void checkRangePartOddEvenEqualsAndHashCodeTest() {
         Assert.assertTrue(PageRange.PageRangePartOddEven.EVEN.equals(PageRange.PageRangePartOddEven.EVEN));
         Assert.assertTrue(PageRange.PageRangePartOddEven.ODD.equals(PageRange.PageRangePartOddEven.ODD));
 
@@ -382,7 +430,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartOddEvenNotEqualsAndHashCodeTest() {
+    public void checkRangePartOddEvenNotEqualsAndHashCodeTest() {
         Assert.assertFalse(PageRange.PageRangePartOddEven.EVEN.equals(PageRange.PageRangePartOddEven.ODD));
 
         Assert.assertNotEquals(PageRange.PageRangePartOddEven.EVEN.hashCode(),
@@ -408,7 +456,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartAndEqualsNullTest() {
+    public void checkRangePartAndEqualsNullTest() {
         PageRange.IPageRangePart odd = PageRange.PageRangePartOddEven.ODD;
         PageRange.IPageRangePart seq = new PageRange.PageRangePartSequence(2, 14);
         PageRange.PageRangePartAnd pageRangePartAnd = new PageRange.PageRangePartAnd(odd, seq);
@@ -417,7 +465,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartAndEqualsAndHashCodeTest() {
+    public void checkRangePartAndEqualsAndHashCodeTest() {
         PageRange.IPageRangePart odd = PageRange.PageRangePartOddEven.ODD;
         PageRange.IPageRangePart seq = new PageRange.PageRangePartSequence(2, 14);
         PageRange.PageRangePartAnd pageRangePartAnd = new PageRange.PageRangePartAnd(odd, seq);
@@ -429,7 +477,7 @@ public class PageRangeTest extends ExtendedITextTest {
     }
 
     @Test
-    public void rangePartAndNotEqualsAndHashCodeTest() {
+    public void checkRangePartAndNotEqualsAndHashCodeTest() {
         PageRange.IPageRangePart odd = PageRange.PageRangePartOddEven.ODD;
         PageRange.IPageRangePart seq = new PageRange.PageRangePartSequence(2, 14);
         PageRange.PageRangePartAnd pageRangePartAnd = new PageRange.PageRangePartAnd(odd, seq);
