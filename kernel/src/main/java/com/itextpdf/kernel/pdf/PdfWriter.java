@@ -285,7 +285,7 @@ public class PdfWriter extends PdfOutputStream {
         }
 
         SerializedObjectContent serializedContent = null;
-        if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page)) {
+        if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page) && !checkTypeOfPdfDictionary(obj, PdfName.OCG)) {
             serializedContent = smartModeSerializer.serializeObject(obj);
             PdfIndirectReference objectRef = smartModeSerializer.getSavedSerializedObject(serializedContent);
             if (objectRef != null) {
