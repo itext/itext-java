@@ -119,12 +119,25 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("odd", el.attr("abs:href"));
     }
 
-    @Test public void handleAbsOnFileUris() {
+    @Test
+    public void handleAbsOnFileUris() {
         Document doc = Jsoup.parse("<a href='password'>One/a><a href='/var/log/messages'>Two</a>", "file:/etc/");
+        String expectedUrl = "file:/etc/password";
+        String expectedUrlAnotherValidVersion = createAnotherValidUrlVersion(expectedUrl);
+
         Element one = doc.select("a").first();
-        Assert.assertEquals("file:/etc/password", one.absUrl("href"));
+        final String firstUrl = one.absUrl("href");
+        // Both variants(namely with triple and single slashes) are valid.
+
+        Assert.assertTrue(expectedUrl.equals(firstUrl) || expectedUrlAnotherValidVersion.equals(firstUrl));
+
+        expectedUrl = "file:/var/log/messages";
+        expectedUrlAnotherValidVersion = createAnotherValidUrlVersion(expectedUrl);
+
         Element two = doc.select("a").get(1);
-        Assert.assertEquals("file:/var/log/messages", two.absUrl("href"));
+        final String secondUrl = two.absUrl("href");
+        // Both variants(namely with triple and single slashes) are valid.
+        Assert.assertTrue(expectedUrl.equals(secondUrl) || expectedUrlAnotherValidVersion.equals(secondUrl));
     }
 
     @Test
@@ -352,5 +365,17 @@ public class NodeTest extends ExtendedITextTest {
         Attributes attributes = new Attributes();
         attributes.put("value", "bar");
         return attributes;
+    }
+
+    private static String createAnotherValidUrlVersion(String url) {
+        if (url.startsWith("file:///")) {
+            return "file:/" + url.substring("file:///".length());
+        } else {
+            if (url.startsWith("file:/")) {
+                return "file:///" + url.substring("file:/".length());
+            } else {
+                return url;
+            }
+        }
     }
 }
