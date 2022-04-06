@@ -407,11 +407,17 @@ public class PdfReader implements Closeable {
                 PdfObject filter = stream.get(PdfName.Filter, true);
                 boolean skip = false;
                 if (filter != null) {
+                    if (filter.isFlushed()) {
+                        IndirectFilterUtils.throwFlushedFilterException(stream);
+                    }
                     if (PdfName.Crypt.equals(filter)) {
                         skip = true;
                     } else if (filter.getType() == PdfObject.ARRAY) {
                         PdfArray filters = (PdfArray) filter;
                         for (int k = 0; k < filters.size(); k++) {
+                            if (filters.get(k).isFlushed()) {
+                                IndirectFilterUtils.throwFlushedFilterException(stream);
+                            }
                             if (!filters.isEmpty() && PdfName.Crypt.equals(filters.get(k, true))) {
                                 skip = true;
                                 break;

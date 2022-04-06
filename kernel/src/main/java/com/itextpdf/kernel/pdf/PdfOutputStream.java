@@ -53,7 +53,6 @@ import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -67,6 +66,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     private static final byte[] closeDict = ByteUtils.getIsoBytes(">>");
     private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
     private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfOutputStream.class);
 
     /**
      * Document associated with PdfOutputStream.
@@ -181,8 +181,7 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             write(key);
             PdfObject value = pdfDictionary.get(key, false);
             if (value == null) {
-                Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
                 value = PdfNull.PDF_NULL;
             }
             if ((value.getType() == PdfObject.NUMBER
@@ -213,14 +212,12 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             throw new PdfException(KernelExceptionMessageConstant.PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT);
         }
         if (indirectReference.isFree()) {
-            Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-            logger.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
+            LOGGER.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.refersTo == null
                 && (indirectReference.checkState(PdfObject.MODIFIED) || indirectReference.getReader() == null
                     || !(indirectReference.getOffset() > 0 || indirectReference.getIndex() >= 0))) {
-            Logger logger = LoggerFactory.getLogger(PdfOutputStream.class);
-            logger.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
+            LOGGER.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
@@ -339,7 +336,8 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
                 assert pdfStream.getOutputStream() != null : "PdfStream lost OutputStream";
                 ByteArrayOutputStream byteArrayStream;
                 try {
-                    if (toCompress && !containsFlateFilter(pdfStream) && (allowCompression || userDefinedCompression)) {
+                    if (toCompress && !containsFlateFilter(pdfStream) && decodeParamsArrayNotFlushed(pdfStream)
+                            && (allowCompression || userDefinedCompression)) {
                         // compress
                         updateCompressionFilter(pdfStream);
                         byteArrayStream = new ByteArrayOutputStream();
@@ -390,70 +388,86 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     protected boolean checkEncryption(PdfStream pdfStream) {
         if (crypto == null || (crypto.isEmbeddedFilesOnly() && !document.doesStreamBelongToEmbeddedFile(pdfStream))) {
             return false;
-        } else if (isXRefStream(pdfStream)) {
+        }
+        if (isXRefStream(pdfStream)) {
             // The cross-reference stream shall not be encrypted
             return false;
-        } else {
-            PdfObject filter = pdfStream.get(PdfName.Filter, true);
-            if (filter != null) {
-                if (PdfName.Crypt.equals(filter)) {
-                    return false;
-                } else if (filter.getType() == PdfObject.ARRAY) {
-                    PdfArray filters = (PdfArray) filter;
-                    if (!filters.isEmpty() && PdfName.Crypt.equals(filters.get(0, true))) {
-                        return false;
-                    }
-                }
-            }
+        }
+        PdfObject filter = pdfStream.get(PdfName.Filter, true);
+        if (filter == null) {
             return true;
         }
+        if (filter.isFlushed()) {
+            IndirectFilterUtils.throwFlushedFilterException(pdfStream);
+        }
+        if (PdfName.Crypt.equals(filter)) {
+            return false;
+        }
+        if (filter.getType() == PdfObject.ARRAY) {
+            PdfArray filters = (PdfArray) filter;
+            if (filters.isEmpty()) {
+                return true;
+            }
+            if (filters.get(0).isFlushed()) {
+                IndirectFilterUtils.throwFlushedFilterException(pdfStream);
+            }
+            return !PdfName.Crypt.equals(filters.get(0, true));
+        }
+        return true;
     }
 
     protected boolean containsFlateFilter(PdfStream pdfStream) {
         PdfObject filter = pdfStream.get(PdfName.Filter);
-        if (filter != null) {
-            if (filter.getType() == PdfObject.NAME) {
-                if (PdfName.FlateDecode.equals(filter)) {
-                    return true;
-                }
-            } else if (filter.getType() == PdfObject.ARRAY) {
-                if (((PdfArray) filter).contains(PdfName.FlateDecode))
-                    return true;
-            } else {
-                throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
+        if (filter == null) {
+            return false;
+        }
+        if (filter.isFlushed()) {
+            IndirectFilterUtils.logFilterWasAlreadyFlushed(LOGGER, pdfStream);
+            return true;
+        }
+        if (filter.getType() != PdfObject.NAME && filter.getType() != PdfObject.ARRAY) {
+            throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
+        }
+        if (filter.getType() == PdfObject.NAME) {
+            return PdfName.FlateDecode.equals(filter);
+        }
+        for (PdfObject obj : (PdfArray) filter) {
+            if (obj.isFlushed()) {
+                IndirectFilterUtils.logFilterWasAlreadyFlushed(LOGGER, pdfStream);
+                return true;
             }
         }
-        return false;
+        return ((PdfArray) filter).contains(PdfName.FlateDecode);
     }
 
     protected void updateCompressionFilter(PdfStream pdfStream) {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter == null) {
             pdfStream.put(PdfName.Filter, PdfName.FlateDecode);
-        } else {
-            PdfArray filters = new PdfArray();
-            filters.add(PdfName.FlateDecode);
-            if (filter instanceof PdfArray) {
-                filters.addAll((PdfArray) filter);
-            } else {
-                filters.add(filter);
-            }
-            PdfObject decodeParms = pdfStream.get(PdfName.DecodeParms);
-            if (decodeParms != null) {
-                if (decodeParms instanceof PdfDictionary) {
-                    PdfArray array = new PdfArray();
-                    array.add(new PdfNull());
-                    array.add(decodeParms);
-                    pdfStream.put(PdfName.DecodeParms, array);
-                } else if (decodeParms instanceof PdfArray) {
-                    ((PdfArray) decodeParms).add(0, new PdfNull());
-                } else {
-                    throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
-                            .setMessageParams(decodeParms.getClass().toString());
-                }
-            }
-            pdfStream.put(PdfName.Filter, filters);
+            return;
         }
+        PdfArray filters = new PdfArray();
+        filters.add(PdfName.FlateDecode);
+        if (filter instanceof PdfArray) {
+            filters.addAll((PdfArray) filter);
+        } else {
+            filters.add(filter);
+        }
+        PdfObject decodeParms = pdfStream.get(PdfName.DecodeParms);
+        if (decodeParms != null) {
+            if (decodeParms instanceof PdfDictionary) {
+                PdfArray array = new PdfArray();
+                array.add(new PdfNull());
+                array.add(decodeParms);
+                pdfStream.put(PdfName.DecodeParms, array);
+            } else if (decodeParms instanceof PdfArray) {
+                ((PdfArray) decodeParms).add(0, new PdfNull());
+            } else {
+                throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
+                        .setMessageParams(decodeParms.getClass().toString());
+            }
+        }
+        pdfStream.put(PdfName.Filter, filters);
     }
 
     protected byte[] decodeFlateBytes(PdfStream stream, byte[] bytes) {
@@ -468,9 +482,18 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
             filterName = (PdfName) filterObject;
         } else if (filterObject instanceof PdfArray) {
             filtersArray = (PdfArray) filterObject;
+            if (filtersArray.isFlushed()) {
+                IndirectFilterUtils.logFilterWasAlreadyFlushed(LOGGER, stream);
+                return bytes;
+            }
             filterName = filtersArray.getAsName(0);
         } else {
             throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
+        }
+
+        if (filterName.isFlushed()) {
+            IndirectFilterUtils.logFilterWasAlreadyFlushed(LOGGER, stream);
+            return bytes;
         }
 
         if (!PdfName.FlateDecode.equals(filterName)) {
@@ -483,6 +506,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         PdfObject decodeParamsObject = stream.get(PdfName.DecodeParms);
         if (decodeParamsObject == null) {
             decodeParams = null;
+        } else if (decodeParamsObject.isFlushed()) {
+            IndirectFilterUtils.logFilterWasAlreadyFlushed(LOGGER, stream);
+            return bytes;
         } else if (decodeParamsObject.getType() == PdfObject.DICTIONARY) {
             decodeParams = (PdfDictionary) decodeParamsObject;
         } else if (decodeParamsObject.getType() == PdfObject.ARRAY) {
@@ -491,6 +517,13 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         } else {
             throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
                     .setMessageParams(decodeParamsObject.getClass().toString());
+        }
+
+        if (decodeParams != null && (decodeParams.isFlushed() || isFlushed(decodeParams, PdfName.Predictor)
+                || isFlushed(decodeParams, PdfName.Columns) || isFlushed(decodeParams, PdfName.Colors) || isFlushed(
+                decodeParams, PdfName.BitsPerComponent))) {
+            IndirectFilterUtils.logFilterWasAlreadyFlushed(LOGGER, stream);
+            return bytes;
         }
 
         // decode
@@ -534,5 +567,22 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
         }
 
         return bytes;
+    }
+
+    private static boolean isFlushed(PdfDictionary dict, PdfName name) {
+        PdfObject obj = dict.get(name);
+        return obj != null && obj.isFlushed();
+    }
+
+    private static boolean decodeParamsArrayNotFlushed(PdfStream pdfStream) {
+        PdfArray decodeParams = pdfStream.getAsArray(PdfName.DecodeParms);
+        if (decodeParams == null) {
+            return true;
+        }
+        if (decodeParams.isFlushed()) {
+            IndirectFilterUtils.logFilterWasAlreadyFlushed(LOGGER, pdfStream);
+            return false;
+        }
+        return true;
     }
 }
