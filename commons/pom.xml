@@ -10,7 +10,18 @@
   <name>iText 7 - commons</name>
   <url>https://itextpdf.com/</url>
 
+  <properties>
+    <jackson.core.version>2.13.2</jackson.core.version>
+  </properties>
+
   <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.core.version}</version>
+      <optional>true</optional>
+    </dependency>
+
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>pdftest</artifactId>

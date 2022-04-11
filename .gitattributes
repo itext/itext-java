@@ -20,6 +20,7 @@
 *.xht text eol=lf
 *.xhtml text eol=lf
 *.xml text eol=lf
+*.json text eol=lf
 port-hash text eol=lf
 
 # Declare files that will always have CRLF line endings on checkout.
