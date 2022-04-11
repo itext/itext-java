@@ -331,7 +331,6 @@ public abstract class AbstractRenderer implements IRenderer {
         if (modelElement != null && ((property = modelElement.<T1>getProperty(key)) != null || modelElement.hasProperty(key))) {
             return (T1) property;
         }
-        // TODO in some situations we will want to check inheritance with additional info, such as parent and descendant.
         if (parent != null && Property.isPropertyInherited(key) && (property = parent.<T1>getProperty(key)) != null) {
             return (T1) property;
         }
@@ -1718,7 +1717,6 @@ public abstract class AbstractRenderer implements IRenderer {
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
                 // during mathematical operations the precision can be lost, so avoiding them if possible (100 / 100 == 1) is a good practice
-                // TODO Maybe decrease the result value by AbstractRenderer.EPS ?
                 return value.getValue() != 100 ? baseValue * value.getValue() / 100 : baseValue;
             } else {
                 assert value.getUnitType() == UnitValue.POINT;
