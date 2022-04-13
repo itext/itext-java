@@ -41,6 +41,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -75,6 +76,11 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 	private ListSymbolPosition listSymbolPosition;
 	private Integer comparisonPdfId;
 
+	@BeforeClass
+	public static void beforeClass() {
+		createOrClearDestinationFolder(DESTINATION_FOLDER);
+	}
+
 	public ListItemPositionAlignmentTest(Object listBaseDirection, Object listItemBaseDirection,
 	                                     Object listSymbolAlignment, Object listSymbolPosition, Object comparisonPdfId) throws IOException {
 		this.listBaseDirection = (BaseDirection) listBaseDirection;
@@ -82,10 +88,6 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 		this.listSymbolAlignment = (ListSymbolAlignment) listSymbolAlignment;
 		this.listSymbolPosition = (ListSymbolPosition) listSymbolPosition;
 		this.comparisonPdfId = (Integer) comparisonPdfId;
-
-		createOrClearDestinationFolder(DESTINATION_FOLDER);
-		// Create an HTML for this test
-		createHtml();
 	}
 
 	@Parameterized.Parameters(name = PARAMETERS_NAME_PATTERN)
@@ -114,6 +116,8 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 	@Test
 	@LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8)})
 	public void defaultListIemPositionAlignmentTest() throws IOException, InterruptedException {
+		// Create an HTML for this test
+		createHtml();
 		String fileName = MessageFormatUtil.format(
 				RESULTANT_FILE_NAME_PATTERN,
 				formatSymbolPosition(listSymbolPosition),

@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -52,6 +53,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.EntityResolver;
@@ -112,7 +114,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     @Override
     public DocumentBuilder createDocumentBuilderInstance(boolean namespaceAware, boolean ignoringComments) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
         configureSafeDocumentBuilderFactory(factory);
         factory.setNamespaceAware(namespaceAware);
         factory.setIgnoringComments(ignoringComments);
@@ -128,7 +130,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     @Override
     public XMLReader createXMLReaderInstance(boolean namespaceAware, boolean validating) {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParserFactory factory = XmlUtil.createSAXParserFactory();
         factory.setNamespaceAware(namespaceAware);
         factory.setValidating(validating);
         configureSafeSAXParserFactory(factory);

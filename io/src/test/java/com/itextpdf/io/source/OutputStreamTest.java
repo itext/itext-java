@@ -354,6 +354,9 @@ public class OutputStreamTest extends ExtendedITextTest {
 
     @Test
     public void localHighPrecisionOverridesGlobalTest() throws IOException {
+
+        boolean highPrecision = OutputStream.getHighPrecision();
+
         //the data is random
         double numberToWrite = 2.000002d;
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -364,6 +367,8 @@ public class OutputStreamTest extends ExtendedITextTest {
             stream.writeDouble(numberToWrite);
             stream.flush();
             Assert.assertEquals("2", new String(bytes.toByteArray(), StandardCharsets.UTF_8));
+        } finally {
+            OutputStream.setHighPrecision(highPrecision);
         }
     }
 }
