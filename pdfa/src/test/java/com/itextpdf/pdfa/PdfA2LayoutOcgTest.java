@@ -56,6 +56,7 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Skip
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,6 +105,7 @@ public class PdfA2LayoutOcgTest extends ExtendedITextTest {
 
         pdfDoc.close();
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+        Assert.assertNull(new VeraPdfValidator().validate(outFileName)); // Android-Skip
     }
 
 }
