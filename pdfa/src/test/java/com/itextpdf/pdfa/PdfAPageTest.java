@@ -58,6 +58,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Skip
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -107,6 +108,8 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         // During the closing event was called on each document page
         Assert.assertEquals(pageCount, eventHandler.getCounter());
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Skip
     }
 
     @Test
@@ -135,6 +138,8 @@ public class PdfAPageTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Skip
     }
 
     @Test
@@ -161,6 +166,8 @@ public class PdfAPageTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Skip
     }
 
     @Test
@@ -187,6 +194,8 @@ public class PdfAPageTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Skip
     }
 
     @Test
@@ -215,6 +224,8 @@ public class PdfAPageTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertEquals(pageCount, eventHandler.getCounter());
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Skip
     }
 
     static class EndPageEventHandler implements IEventHandler {
