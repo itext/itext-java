@@ -43,8 +43,8 @@
  */
 package com.itextpdf.io.util;
 
-import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
-import org.apache.xerces.jaxp.SAXParserFactoryImpl;
+// Android-Replace: import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
+// Android-Replace: import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,7 +66,7 @@ public final class XmlUtil {
      * @return document builder factory implementation
      */
     public static DocumentBuilderFactory getDocumentBuilderFactory() {
-        return new DocumentBuilderFactoryImpl();
+        return DocumentBuilderFactory.newInstance(); // Android-Replace: return new DocumentBuilderFactoryImpl();
     }
 
     /**
@@ -75,7 +75,7 @@ public final class XmlUtil {
      * @return SAX parser factory implementation
      */
     public static SAXParserFactory createSAXParserFactory() {
-        return new SAXParserFactoryImpl();
+        return SAXParserFactory.newInstance(); // Android-Replace: return new SAXParserFactoryImpl();
     }
 
     /**

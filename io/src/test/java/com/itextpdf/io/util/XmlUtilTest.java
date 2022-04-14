@@ -44,6 +44,8 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -65,13 +67,13 @@ public class XmlUtilTest extends ExtendedITextTest {
     public void getDocumentBuilderFactoryTest() {
         DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
 
-        Assert.assertEquals(DocumentBuilderFactory.newInstance().getClass(), factory.getClass());
+        Assert.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
     }
 
     @Test
     public void createSAXParserFactoryTest() {
         SAXParserFactory factory = XmlUtil.createSAXParserFactory();
 
-        Assert.assertEquals(SAXParserFactory.newInstance().getClass(), factory.getClass());
+        Assert.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
     }
 }
