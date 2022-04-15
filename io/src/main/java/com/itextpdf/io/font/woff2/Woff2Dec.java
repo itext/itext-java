@@ -1111,7 +1111,6 @@ class Woff2Dec {
                 throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
             }
             src_offset = Round.round4(meta_offset + meta_length);
-            //TODO literary can't happen
             if (src_offset > Integer.MAX_VALUE) {
                 throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
             }
@@ -1122,7 +1121,6 @@ class Woff2Dec {
                 throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
             }
             src_offset = Round.round4(priv_offset + priv_length);
-            //TODO literary can't happen
             if (src_offset > Integer.MAX_VALUE) {
                 throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
             }
