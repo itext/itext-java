@@ -127,7 +127,6 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6440 fix problem with URL resolving)
     public void getOcspResponseWhenUrlCertIsNullTest() {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertThrows(ConnectException.class,
@@ -138,7 +137,6 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Getting OCSP from http://asd", logLevel = LogLevelConstants.INFO),
     })
-    // Android-Ignore (TODO DEVSIX-6440 fix problem with URL resolving)
     public void incorrectUrlTest() {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertThrows(UnknownHostException.class,
@@ -160,7 +158,6 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Getting OCSP from http://localhost:9000/demo/ocsp/ocsp-service", logLevel
                     = LogLevelConstants.INFO),
     })
-    // Android-Ignore (TODO DEVSIX-6440 fix problem with URL resolving)
     public void connectionRefusedTest() {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertThrows(ConnectException.class,
