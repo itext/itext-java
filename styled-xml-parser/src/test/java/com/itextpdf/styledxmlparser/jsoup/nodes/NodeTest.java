@@ -126,7 +126,6 @@ public class NodeTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6440 fix problem with URL resolving)
     public void handleAbsOnFileUris() {
         Document doc = Jsoup.parse("<a href='password'>One/a><a href='/var/log/messages'>Two</a>", "file:/etc/");
         String expectedUrl = "file:/etc/password";
