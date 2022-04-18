@@ -270,7 +270,9 @@ final class SignUtils {
     }
 
     public static String dateToString(Calendar signDate) {
-        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(signDate.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
+        if(signDate.getTimeZone() != null) sdf.setTimeZone(signDate.getTimeZone());
+        return sdf.format(signDate.getTime());
     }
 
     static class TsaResponse {
