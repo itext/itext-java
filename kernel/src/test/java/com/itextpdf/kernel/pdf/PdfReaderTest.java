@@ -50,6 +50,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.exceptions.InvalidXRefPrevException;
@@ -2604,6 +2605,26 @@ public class PdfReaderTest extends ExtendedITextTest {
             // 27600 is actual invalid length of stream. In reader StrictnessLevel#CONSERVATIVE we expect, that
             // exception would be thrown and length wouldn't be fixed.
             Assert.assertEquals(27600, ((PdfNumber) xmpMetadataStream.get(PdfName.Length)).intValue());
+        }
+    }
+
+    @Test
+    public void tokensPositionIsNotUpdatedWhileReadingLengthTest() throws IOException {
+        String filename = SOURCE_FOLDER + "simpleDocWithIndirectLength.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename))) {
+            PdfTokenizer tokenizer = pdfDoc.getReader().tokens;
+
+            // we will try to get the content stream object
+            // since it's not been gotten yet, iText will read this object,
+            // which will change the tokenizer's position
+            PdfStream pageContentStream = (PdfStream) pdfDoc.getPdfObject(5);
+
+            // tokenizer's position after reading object should point to the end of the object's stream
+            Assert.assertEquals(pageContentStream.getOffset() + pageContentStream.getLength(), tokenizer.getPosition());
+
+            // let's read next valid token and check that it means ending stream
+            tokenizer.nextValidToken();
+            tokenizer.tokenValueEqualsTo(ByteUtils.getIsoBytes("endstream"));
         }
     }
 
