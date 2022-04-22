@@ -1343,8 +1343,9 @@ public class PdfReader implements Closeable {
                 }
             }
         }
-        if (trailer == null)
+        if (trailer == null) {
             throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
+        }
     }
 
     protected PdfNumber getXrefPrev(PdfObject prevObjectToCheck) {

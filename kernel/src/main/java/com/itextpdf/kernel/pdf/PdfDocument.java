@@ -1969,7 +1969,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
                 readDocumentIds();
 
-                catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
+                PdfDictionary catalogDictionary = (PdfDictionary) trailer.get(PdfName.Root, true);
+                if (null == catalogDictionary) {
+                    throw new PdfException(KernelExceptionMessageConstant.CORRUPTED_ROOT_ENTRY_IN_TRAILER);
+                }
+                catalog = new PdfCatalog(catalogDictionary);
                 updatePdfVersionFromCatalog();
                 PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                 if (xmpMetadataStream != null) {

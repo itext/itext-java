@@ -129,6 +129,8 @@ public final class KernelExceptionMessageConstant {
             "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required parent entry.";
     public static final String CORRUPTED_OUTLINE_NO_TITLE_ENTRY =
             "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required title entry.";
+    public static final String CORRUPTED_ROOT_ENTRY_IN_TRAILER = "The trailer is corrupted: the catalog "
+            + "is corrupted or cannot be referenced from the file's trailer. The PDF cannot be opened.";
     public static final String DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED = "Data handler counter has been disabled";
     public static final String DEFAULT_CRYPT_FILTER_NOT_FOUND_ENCRYPTION = "/DefaultCryptFilter not found "
             + "(encryption).";
