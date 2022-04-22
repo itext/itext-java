@@ -2628,41 +2628,6 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
     }
 
-    /**
-     * Returns the current memory use.
-     *
-     * @return the current memory use
-     */
-    private static long getMemoryUse() {
-        garbageCollect();
-        garbageCollect();
-        garbageCollect();
-        garbageCollect();
-        long totalMemory = Runtime.getRuntime().totalMemory();
-        garbageCollect();
-        garbageCollect();
-        long freeMemory = Runtime.getRuntime().freeMemory();
-        return (totalMemory - freeMemory);
-    }
-
-    /**
-     * Makes sure all garbage is cleared from the memory.
-     */
-    private static void garbageCollect() {
-        try {
-            System.gc();
-            Thread.sleep(200);
-            System.runFinalization();
-            Thread.sleep(200);
-            System.gc();
-            Thread.sleep(200);
-            System.runFinalization();
-            Thread.sleep(200);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-    }
-
     private static PdfDictionary getTestPdfDictionary() {
         HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
         tmpMap.put(new PdfName("b"), new PdfName("c"));
