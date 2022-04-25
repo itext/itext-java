@@ -54,6 +54,8 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,6 +68,7 @@ public class UrlUtilTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
+        Security.addProvider(new BouncyCastleProvider());
         createDestinationFolder(destinationFolder);
     }
 
@@ -84,7 +87,6 @@ public class UrlUtilTest extends ExtendedITextTest {
     // Tests, that getFinalConnection will be redirected some times for other urls, and initialUrl will be different
     // from final url.
     @Test
-    // Android-Ignore (TODO DEVSIX-6551 fix problem with getFinalConnection method related to SSL)
     public void getFinalConnectionWhileRedirectingTest() throws IOException {
         URL initialUrl = new URL("http://itextpdf.com");
         URL expectedURL = new URL("https://itextpdf.com/");
@@ -104,7 +106,6 @@ public class UrlUtilTest extends ExtendedITextTest {
     // This test checks that when we pass invalid url and trying get stream related to final redirected url,exception
     // would be thrown.
     @Test
-    // Android-Ignore (TODO DEVSIX-6551 fix problem with getFinalConnection method related to SSL)
     public void getInputStreamOfFinalConnectionThrowExceptionTest() throws IOException {
         URL invalidUrl = new URL("http://itextpdf");
 
@@ -114,7 +115,6 @@ public class UrlUtilTest extends ExtendedITextTest {
     // This test checks that when we pass valid url and trying get stream related to final redirected url, it would
     // not be null.
     @Test
-    // Android-Ignore (TODO DEVSIX-6551 fix problem with getFinalConnection method related to SSL)
     public void getInputStreamOfFinalConnectionTest() throws IOException {
         URL initialUrl = new URL("http://itextpdf.com");
         InputStream streamOfFinalConnectionOfInvalidUrl = UrlUtil.getInputStreamOfFinalConnection(initialUrl);
