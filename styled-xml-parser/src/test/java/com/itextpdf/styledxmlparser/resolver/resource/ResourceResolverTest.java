@@ -152,7 +152,20 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6456 fix the java.net.URLConnection#getHeaderField which is used by UrlUtil)
+    public void malformedResourceNameWithoutSharpSymbolTest07() throws IOException {
+        String fileName = "%5B%5D@!$&'()+,;=._~-/styles09.css";
+
+        InputStream expected = new FileInputStream(baseUri + "[]@!$&'()+,;=._~-/styles09.css");
+
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        InputStream stream = resourceResolver.retrieveResourceAsInputStream(fileName);
+
+        Assert.assertNotNull(stream);
+        Assert.assertEquals(expected.read(), stream.read());
+    }
+
+    @Test
+    // Android-Ignore (TODO DEVSIX-6612 Unignore tests related to "#" symbol in URL path)
     public void malformedResourceNameTest07() throws IOException {
         String fileName = "%23%5B%5D@!$&'()+,;=._~-/styles09.css";
 
