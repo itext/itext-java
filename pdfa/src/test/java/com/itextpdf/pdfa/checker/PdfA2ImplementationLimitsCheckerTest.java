@@ -122,14 +122,15 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void dictionaryCapacityHasNoLimitsTest() {
-
-        PdfDictionary longDictionary = PdfACheckerTestUtils.getLongDictionary(999999);
+        // Using 9999 dictionary pairs which is more than pdfA1 4095 limit (see PDF/A 4.3.2 Limits)
+        PdfDictionary longDictionary = PdfACheckerTestUtils.getLongDictionary(9999);
 
         // An exception should not be thrown as there is no limits for capacity of a dictionary
         // in PDFA 2
         pdfA2Checker.checkPdfObject(longDictionary);
 
-        PdfStream longStream = PdfACheckerTestUtils.getStreamWithLongDictionary(999999);
+        // Using 9999 dictionary pairs which is more than pdfA1 4095 limit (see PDF/A 4.3.2 Limits)
+        PdfStream longStream = PdfACheckerTestUtils.getStreamWithLongDictionary(9999);
 
         // An exception should not be thrown as there is no limits for capacity of a dictionary
         // and stream in PDFA 2

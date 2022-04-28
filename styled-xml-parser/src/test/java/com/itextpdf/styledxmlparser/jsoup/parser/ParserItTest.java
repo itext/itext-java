@@ -35,7 +35,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class ParserItTest extends ExtendedITextTest {
-    
+
+    @Test
     public void testIssue1251() {
         // https://github.com/jhy/jsoup/issues/1251
         String testString = "<a href=\"\"ca";
