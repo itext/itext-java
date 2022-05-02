@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.itextpdf</groupId>
-  <artifactId>root</artifactId>
-  <version>7.2.3-SNAPSHOT</version>
+
+  <groupId>com.itextpdf.android</groupId>
+  <artifactId>root-android</artifactId>
+  <version>7.2.2</version>
   <packaging>pom</packaging>
+
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
@@ -19,6 +21,7 @@
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <id>itext</id>
@@ -27,6 +30,7 @@
       <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
+
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -41,9 +45,10 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
+
   <modules>
-    <module>commons</module>
     <module>barcodes</module>
+    <module>commons</module>
     <module>font-asian</module>
     <module>forms</module>
     <module>hyph</module>
@@ -57,6 +62,7 @@
     <module>styled-xml-parser</module>
     <module>svg</module>
   </modules>
+
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
     <url>https://git.itextsupport.com/projects/I7J/repos/itextcore</url>
@@ -101,30 +107,6 @@
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
 
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>itext-snapshot</id>
-      <name>iText Repository - snapshots</name>
-      <url>https://repo.itextsupport.com/snapshot</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>itext-releases</id>
-      <name>iText Repository - releases</name>
-      <url>https://repo.itextsupport.com/releases</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -150,6 +132,31 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>itext-snapshot</id>
+      <name>iText Repository - snapshots</name>
+      <url>https://repo.itextsupport.com/snapshot</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/releases</url>
+    </repository>
+  </repositories>
 
   <build>
     <finalName>itext7-${project.artifactId}-${project.version}</finalName>
@@ -545,6 +552,13 @@
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
             <version>${dependencyCheck.version}</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
             <dependencies>
               <dependency>
                 <groupId>mysql</groupId>
@@ -560,13 +574,6 @@
               <databaseUser />
               <format>ALL</format>
             </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
