@@ -81,7 +81,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Skip
 
 import java.io.IOException;
 import org.junit.Assert;
@@ -232,7 +231,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -255,7 +253,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -283,7 +280,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -309,7 +305,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -342,7 +337,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -368,7 +362,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -397,7 +390,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -424,7 +416,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -451,7 +442,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
     }
 
     @Test
@@ -475,8 +465,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                     "text", "textField", font, 10, false,
                     PdfAConformanceLevel.PDF_A_1B).setFieldName("text").setPage(1), pdfDoc.getPage(1));
         }
-
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Skip
 
         PdfADocument pdfDocToMerge;
         try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");

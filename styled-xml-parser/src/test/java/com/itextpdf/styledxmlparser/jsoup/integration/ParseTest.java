@@ -127,7 +127,7 @@ public class ParseTest extends ExtendedITextTest {
         Assert.assertEquals("http://news.baidu.com", newsLink.absUrl("href"));
 
         // check auto-detect from meta
-        Assert.assertEquals("GB2312", doc.outputSettings().charset().name()); // Android-Replace: Assert.assertEquals("GBK", doc.outputSettings().charset().name());
+        Assert.assertEquals("GBK", doc.outputSettings().charset().name());
         Assert.assertEquals("<title>百度一下，你就知道      </title>", doc.select("title").outerHtml());
 
         doc.outputSettings().charset("ascii");
@@ -142,7 +142,7 @@ public class ParseTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(in, null,
                 "http://www.baidu.com/"); // http charset is gb2312, but NOT specifying it, to test http-equiv parse
         // check auto-detect from meta
-        Assert.assertEquals("GB2312", doc.outputSettings().charset().name()); // Android-Replace: Assert.assertEquals("GBK", doc.outputSettings().charset().name());
+        Assert.assertEquals("GBK", doc.outputSettings().charset().name());
         Assert.assertEquals("<title>百度一下，你就知道</title>", doc.select("title").outerHtml());
     }
 
@@ -152,7 +152,7 @@ public class ParseTest extends ExtendedITextTest {
         File in = getFile("/htmltests/meta-charset-1.html");
         Document doc = Jsoup.parse(in, null, "http://example.com/"); //gb2312, has html5 <meta charset>
         Assert.assertEquals("新", doc.text());
-        Assert.assertEquals("GB2312", doc.outputSettings().charset().name()); // Android-Replace: Assert.assertEquals("GBK", doc.outputSettings().charset().name());
+        Assert.assertEquals("GBK", doc.outputSettings().charset().name());
 
         // double check, no charset, falls back to utf8 which is incorrect
         in = getFile("/htmltests/meta-charset-2.html"); //

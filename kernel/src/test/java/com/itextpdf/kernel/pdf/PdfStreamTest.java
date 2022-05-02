@@ -90,7 +90,7 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.Ignore
     public void runLengthEncodingTest01() throws IOException {
         String srcFile = sourceFolder + "runLengthEncodedImages.pdf";
 
