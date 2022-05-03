@@ -503,6 +503,7 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
