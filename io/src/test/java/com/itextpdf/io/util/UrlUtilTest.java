@@ -123,6 +123,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void getBaseUriTest() throws IOException {
         String absolutePathRoot = Paths.get("").toAbsolutePath().toUri().toURL().toExternalForm();
         String expected = absolutePathRoot + destinationFolder.substring(1);
