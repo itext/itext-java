@@ -127,7 +127,7 @@ public class PdfASigningTest extends ExtendedITextTest {
         Assert.assertNull(new VeraPdfValidator().validate(dest)); // Android-Skip
         Assert.assertNull(SignaturesCompareTool.compareSignatures(dest, sourceFolder + "cmp_" + fileName));
         Assert.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
-                "diff_", getTestMap(new Rectangle(67, 575, 155, 15))));
+                "diff_", getTestMap(new Rectangle(27, 550, 195, 40))));
     }
 
     @Test

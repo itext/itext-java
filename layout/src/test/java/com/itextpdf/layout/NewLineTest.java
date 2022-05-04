@@ -118,6 +118,6 @@ public class NewLineTest extends ExtendedITextTest {
         document.add(paragraph);
         document.close();
 
-        Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, diffPrefix));
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, diffPrefix));
     }
 }
