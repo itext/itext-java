@@ -696,4 +696,16 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFileName, destinationFolder, "diff_"));
     }
+
+    @Test
+    public void widgetContainsNoTEntryTest() throws IOException, InterruptedException {
+        String sourceFileName = sourceFolder + "fieldThreeWidgets.pdf";
+        String destFileName = destinationFolder + "widgetContainsNoTEntryTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_widgetContainsNoTEntryTest.pdf";
+        PdfDocument sourcePdfDocument = new PdfDocument(new PdfReader(sourceFileName));
+        PdfDocument resultPdfDocument = new PdfDocument(new PdfWriter(destFileName));
+        sourcePdfDocument.copyPagesTo(1, sourcePdfDocument.getNumberOfPages(), resultPdfDocument, new PdfPageFormCopier());
+        resultPdfDocument.close();
+        Assert.assertNull(new CompareTool().compareByContent(destFileName, cmpFileName, destinationFolder, "diff_"));
+    }
 }
