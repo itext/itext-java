@@ -48,6 +48,9 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 
+/**
+ * Class to hold background-image property.
+ */
 public class BackgroundImage {
 
     private static final BlendMode DEFAULT_BLEND_MODE = BlendMode.NORMAL;
@@ -84,10 +87,20 @@ public class BackgroundImage {
                 backgroundImage.getBackgroundOrigin());
     }
 
+    /**
+     * Gets initial image if it is instanceof {@link PdfImageXObject}, otherwise returns null.
+     *
+     * @return {@link PdfImageXObject}
+     */
     public PdfImageXObject getImage() {
         return image instanceof PdfImageXObject ? (PdfImageXObject) image : null;
     }
 
+    /**
+     * Gets initial image if it is instanceof {@link PdfFormXObject}, otherwise returns null.
+     *
+     * @return {@link PdfFormXObject}
+     */
     public PdfFormXObject getForm() {
         return image instanceof PdfFormXObject ? (PdfFormXObject) image : null;
     }
@@ -128,10 +141,20 @@ public class BackgroundImage {
         return position;
     }
 
+    /**
+     * Gets linearGradientBuilder.
+     *
+     * @return {@link AbstractLinearGradientBuilder}
+     */
     public AbstractLinearGradientBuilder getLinearGradientBuilder() {
         return this.linearGradientBuilder;
     }
 
+    /**
+     * Returns is background specified.
+     *
+     * @return {@code true} if background is specified, otherwise false
+     */
     public boolean isBackgroundSpecified() {
         return image instanceof PdfFormXObject || image instanceof PdfImageXObject || linearGradientBuilder != null;
     }
@@ -213,6 +236,9 @@ public class BackgroundImage {
         private BackgroundBox clip = BackgroundBox.BORDER_BOX;
         private BackgroundBox origin = BackgroundBox.PADDING_BOX;
 
+        /**
+         * Creates a new {@link Builder} instance.
+         */
         public Builder() {
         }
 

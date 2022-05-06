@@ -239,12 +239,18 @@ public class BackgroundPosition {
         return value.isPercentValue() ? (value.getValue() / 100 * fullValue) : value.getValue();
     }
 
+    /**
+     * A specialized enum containing positions in x-dimension (horizontal positions).
+     */
     public static enum PositionX {
         LEFT,
         RIGHT,
         CENTER
     }
 
+    /**
+     * A specialized enum containing positions in y-dimension (vertical positions).
+     */
     public static enum PositionY {
         TOP,
         BOTTOM,

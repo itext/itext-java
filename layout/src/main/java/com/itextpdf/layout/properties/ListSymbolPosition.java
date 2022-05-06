@@ -42,6 +42,9 @@
  */
 package com.itextpdf.layout.properties;
 
+/**
+ * A specialized enum containing position properties for list symbols.
+ */
 public enum ListSymbolPosition {
     DEFAULT,
     INSIDE,
