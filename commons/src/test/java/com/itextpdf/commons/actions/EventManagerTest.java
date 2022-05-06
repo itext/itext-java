@@ -22,6 +22,9 @@
  */
 package com.itextpdf.commons.actions;
 
+import com.itextpdf.commons.actions.processors.DefaultProductProcessorFactory;
+import com.itextpdf.commons.actions.processors.IProductProcessorFactory;
+import com.itextpdf.commons.actions.processors.UnderAgplProductProcessorFactory;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.ecosystem.TestConfigurationEvent;
@@ -33,12 +36,18 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class EventManagerTest extends ExtendedITextTest {
+
+    @After
+    public void afterEach() {
+        ProductProcessorFactoryKeeper.restoreDefaultProductProcessorFactory();
+    }
 
     @Test
     @LogMessages(messages = {
@@ -106,7 +115,15 @@ public class EventManagerTest extends ExtendedITextTest {
         Assert.assertFalse(eventManager.isRegistered(handler));
 
         Assert.assertFalse(eventManager.unregister(handler));
+    }
 
+    @Test
+    public void turningOffAgplTest() {
+        IProductProcessorFactory defaultProductProcessorFactory = ProductProcessorFactoryKeeper.getProductProcessorFactory();
+        Assert.assertTrue(defaultProductProcessorFactory instanceof DefaultProductProcessorFactory);
+        EventManager.acknowledgeAgplUsageDisableWarningMessage();
+        IProductProcessorFactory underAgplProductProcessorFactory1 = ProductProcessorFactoryKeeper.getProductProcessorFactory();
+        Assert.assertTrue(underAgplProductProcessorFactory1 instanceof UnderAgplProductProcessorFactory);
     }
 
     private static class ThrowArithmeticExpHandler implements IEventHandler {
