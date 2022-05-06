@@ -48,6 +48,9 @@ import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 
+/**
+ * Represents a {@link Border3D} with a groove effect being applied.
+ */
 public class GrooveBorder extends Border3D {
 
     /**

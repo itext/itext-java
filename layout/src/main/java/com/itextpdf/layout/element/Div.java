@@ -102,11 +102,25 @@ public class Div extends BlockElement<Div> {
         return tagProperties;
     }
 
+    /**
+     * Defines whether the {@link Div} should occupy all the space left in the available area
+     * in case it is the last element in this area.
+     *
+     * @param fillArea defines whether the available area should be filled
+     * @return this {@link Div}
+     */
     public Div setFillAvailableArea(boolean fillArea) {
         setProperty(Property.FILL_AVAILABLE_AREA, fillArea);
         return this;
     }
 
+    /**
+     * Defines whether the {@link Div} should occupy all the space left in the available area
+     * in case the area has been split and it is the last element in the split part of this area.
+     *
+     * @param fillAreaOnSplit defines whether the available area should be filled
+     * @return this {@link Div}
+     */
     public Div setFillAvailableAreaOnSplit(boolean fillAreaOnSplit) {
         setProperty(Property.FILL_AVAILABLE_AREA_ON_SPLIT, fillAreaOnSplit);
         return this;

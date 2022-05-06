@@ -92,37 +92,43 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     /**
-     * Adds a piece of text to the Paragraph
+     * Adds a piece of text to this {@link Paragraph}.
      *
      * @param text the content to be added, as a {@link String}
-     * @return this Paragraph
+     * @return this {@link Paragraph}
      */
     public Paragraph add(String text) {
         return add(new Text(text));
     }
 
     /**
-     * Adds a layout element to the Paragraph.
+     * Adds a {@link ILeafElement element} to this {@link Paragraph}.
      *
      * @param element the content to be added, any {@link ILeafElement}
-     * @return this Paragraph
+     * @return this {@link Paragraph}
      */
     public Paragraph add(ILeafElement element) {
         childElements.add(element);
         return this;
     }
 
+    /**
+     * Adds an {@link IBlockElement element} to this {@link Paragraph}.
+     *
+     * @param element the content to be added, any {@link IBlockElement}
+     * @return this {@link Paragraph}
+     */
     public Paragraph add(IBlockElement element) {
         childElements.add(element);
         return this;
     }
 
     /**
-     * Adds a {@link java.util.List} of layout elements to the Paragraph.
+     * Adds a {@link java.util.List} of layout elements to this {@link Paragraph}.
      *
      * @param elements the content to be added
      * @param <T2>      any {@link ILeafElement}
-     * @return this Paragraph
+     * @return this {@link Paragraph}
      */
     public <T2 extends ILeafElement> Paragraph addAll(java.util.List<T2> elements) {
         for (ILeafElement element : elements) {
@@ -132,10 +138,10 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     /**
-     * Adds an unspecified amount of tabstop elements as properties to the Paragraph.
+     * Adds an unspecified amount of tabstop elements as properties to this {@link Paragraph}.
      *
      * @param tabStops the {@link TabStop tabstop(s)} to be added as properties
-     * @return this Paragraph
+     * @return this {@link Paragraph}
      * @see TabStop
      */
     public Paragraph addTabStops(TabStop... tabStops) {
@@ -144,10 +150,10 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     /**
-     * Adds a {@link java.util.List} of tabstop elements as properties to the Paragraph.
+     * Adds a {@link java.util.List} of tabstop elements as properties to this {@link Paragraph}.
      *
      * @param tabStops the list of {@link TabStop}s to be added as properties
-     * @return this Paragraph
+     * @return this {@link Paragraph}
      * @see TabStop
      */
     public Paragraph addTabStops(java.util.List<TabStop> tabStops) {
