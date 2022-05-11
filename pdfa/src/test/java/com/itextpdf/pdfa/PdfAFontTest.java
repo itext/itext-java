@@ -58,6 +58,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -253,25 +254,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     public void cidFontCheckTest1() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_cidFontCheckTest1.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest1.pdf";
-        PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        PdfPage page = doc.addNewPage();
-        // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
-                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .moveText(36, 700)
-                .setFontAndSize(font, 12)
-                .showText("Hello World")
-                .endText()
-                .restoreState();
-
-
-        doc.close();
-
+        generateAndValidatePdfA2WithCidFont("FreeSans.ttf", outPdf);
         compareResult(outPdf, cmpPdf);
     }
 
@@ -279,25 +262,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     public void cidFontCheckTest2() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_cidFontCheckTest2.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest2.pdf";
-        PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        PdfPage page = doc.addNewPage();
-        // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Puritan2.otf",
-                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .moveText(36, 700)
-                .setFontAndSize(font, 12)
-                .showText("Hello World")
-                .endText()
-                .restoreState();
-
-
-        doc.close();
-
+        generateAndValidatePdfA2WithCidFont("Puritan2.otf", outPdf);
         compareResult(outPdf, cmpPdf);
     }
 
@@ -305,25 +270,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     public void cidFontCheckTest3() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_cidFontCheckTest3.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest3.pdf";
-        PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        PdfPage page = doc.addNewPage();
-        // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKtc-Light.otf",
-                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .moveText(36, 700)
-                .setFontAndSize(font, 12)
-                .showText("Hello World")
-                .endText()
-                .restoreState();
-
-
-        doc.close();
-
+        generateAndValidatePdfA2WithCidFont("NotoSansCJKtc-Light.otf", outPdf);
         compareResult(outPdf, cmpPdf);
     }
 
@@ -408,5 +355,26 @@ public class PdfAFontTest extends ExtendedITextTest {
         if (result != null) {
             fail(result);
         }
+    }
+
+    private void generateAndValidatePdfA2WithCidFont(String fontFile, String outPdf) throws IOException {
+        PdfWriter writer = new PdfWriter(outPdf);
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+        // Identity-H must be embedded
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + fontFile,
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .moveText(36, 700)
+                .setFontAndSize(font, 12)
+                .showText("Hello World")
+                .endText()
+                .restoreState();
+
+        doc.close();
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf));
     }
 }

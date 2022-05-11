@@ -1435,7 +1435,17 @@ public class CFFFontSubset extends CFFFont {
         // first glyph in range (ignore .notdef)
         OutputList.addLast(new UInt16Item((char) 1));
         // nLeft
-        OutputList.addLast(new UInt16Item((char) (nglyphs - 1)));
+        /*
+        Maintenance note: Here's the rationale for subtracting 2:
+         - The .notdef glyph is included in the nglyphs count, but
+           we excluded it by starting our range at 1 => decrement once.
+         - The CFF specification mandates that the nLeft field _exclude_
+           the first glyph => decrement once more.
+
+        This line used to say "nglyphs - 1" for the better part of two decades,
+        so many PDFs out there contain wrong charset extents.
+        */
+        OutputList.addLast(new UInt16Item((char) (nglyphs - 2)));
     }
 
     /**
