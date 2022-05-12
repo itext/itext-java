@@ -11,7 +11,7 @@
   <url>https://itextpdf.com/</url>
 
   <properties>
-    <jackson.core.version>2.13.2</jackson.core.version>
+    <jackson.core.version>2.13.2.2</jackson.core.version>
   </properties>
 
   <dependencies>
