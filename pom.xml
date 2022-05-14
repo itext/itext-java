@@ -83,7 +83,7 @@
     <javadoc.version>3.0.1</javadoc.version>
     <junit.version>4.13.2</junit.version>
     <junitparams.version>1.0.4</junitparams.version>
-    <logback.version>1.2.10</logback.version>
+    <logback.version>1.2.11</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
