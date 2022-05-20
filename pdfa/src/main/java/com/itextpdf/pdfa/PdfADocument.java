@@ -284,6 +284,12 @@ public class PdfADocument extends PdfDocument {
         super.flushFonts();
     }
 
+    /**
+     * Sets the checker that defines the requirements of the PDF/A standard
+     * depending on conformance level.
+     *
+     * @param conformanceLevel {@link PdfAConformanceLevel}
+     */
     protected void setChecker(PdfAConformanceLevel conformanceLevel) {
         switch (conformanceLevel.getPart()) {
             case "1":
@@ -298,6 +304,9 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
+    /**
+     * Initializes tagStructureContext to track necessary information of document's tag structure.
+     */
     protected void initTagStructureContext() {
         tagStructureContext = new TagStructureContext(this, getPdfVersionForPdfA(checker.getConformanceLevel()));
     }

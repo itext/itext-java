@@ -596,6 +596,11 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    /**
+     * Returns maximum allowed bytes length of the string in a PDF document.
+     *
+     * @return maximum string length
+     */
     protected int getMaxStringLength() {
         return 65535;
     }
@@ -756,6 +761,13 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    /**
+     * Gets a {@link PdfArray} of fields with kids from a {@link PdfArray} of {@link PdfDictionary} objects.
+     *
+     * @param array the {@link PdfArray} of form fields {@link PdfDictionary} objects
+     *
+     * @return the {@link PdfArray} of form fields
+     */
     protected PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
         for (PdfObject field : array) {

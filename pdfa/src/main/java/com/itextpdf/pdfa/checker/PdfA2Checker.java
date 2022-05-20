@@ -855,6 +855,13 @@ public class PdfA2Checker extends PdfA1Checker {
         checkFormXObject(form, null);
     }
 
+    /**
+     * Verify the conformity of the Form XObject with appropriate
+     * specification. Throws PdfAConformanceException if any discrepancy was found
+     *
+     * @param form the {@link PdfStream} to be checked
+     * @param contentStream the {@link PdfStream} current content stream
+     */
     protected void checkFormXObject(PdfStream form, PdfStream contentStream) {
         if (isAlreadyChecked(form)) return;
 
