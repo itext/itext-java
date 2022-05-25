@@ -370,6 +370,10 @@ public final class IoLogMessageConstant {
     public static final String NUM_TREE_SHALL_NOT_END_WITH_KEY =
             "Number tree ends with a key which is invalid according to the PDF specification.";
 
+    /**
+     * @deprecated Unused constant. Will be removed in 7.3
+     */
+    @Deprecated
     public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY =
             "\\N entry is required to be present in an appearance dictionary.";
 

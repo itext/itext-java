@@ -721,7 +721,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                     }
                 }
             } else {
-                LOGGER.error(IoLogMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
+                LOGGER.warn(FormsExceptionMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
             }
 
             PdfArray fFields = getFields();
