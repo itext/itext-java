@@ -56,6 +56,8 @@
     <module>sign</module>
     <module>styled-xml-parser</module>
     <module>svg</module>
+    <module>bouncy-castle-fips</module>
+    <module>bouncy-castle</module>
   </modules>
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>

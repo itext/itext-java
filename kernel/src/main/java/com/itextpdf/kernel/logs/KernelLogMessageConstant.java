@@ -48,6 +48,9 @@ package com.itextpdf.kernel.logs;
  */
 public final class KernelLogMessageConstant {
 
+    public static final String BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT = "Either bouncy-castle or bouncy-castle-fips " +
+            "dependency must be added in order to use BouncyCastleFactoryCreator";
+
     public static final String CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP =
             "Document outline dictionary is corrupted: some outline (PDF object: \"{0}\") has wrong first/next link "
                     + "entry. Next outlines in this dictionary will be unprocessed.";
