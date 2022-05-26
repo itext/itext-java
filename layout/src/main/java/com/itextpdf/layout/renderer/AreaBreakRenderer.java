@@ -52,7 +52,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import java.util.List;
 
 /**
- * Renderer object for the {@link AreaBreak} layout element. Will terminate the
+ * Renderer for the {@link AreaBreak} layout element. Will terminate the
  * current content area and initialize a new one.
  */
 public class AreaBreakRenderer implements IRenderer {

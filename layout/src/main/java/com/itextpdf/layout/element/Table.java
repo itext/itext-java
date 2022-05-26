@@ -525,7 +525,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
       * @param caption The element to be set as a caption.
       * @return this element
       */
-
     public Table setCaption(Div caption) {
         this.caption = caption;
         if (null != caption) {
@@ -941,6 +940,11 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return normalized;
     }
 
+    /**
+     * Returns the list of all row groups.
+     *
+     * @return a list of a {@link RowRange} which holds the row numbers of a section of a table
+     */
     protected java.util.List<RowRange> getRowGroups() {
         int lastRowWeCanFlush = currentColumn == columnWidths.length ? currentRow : currentRow - 1;
         int[] cellBottomRows = new int[columnWidths.length];
