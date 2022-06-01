@@ -23,8 +23,16 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.List;
-import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.layout.element.ListItem;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.properties.ListSymbolPosition;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -34,7 +42,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class ListRendererUnitTest extends ExtendedITextTest {
+public class ListRendererUnitTest extends RendererUnitTest {
 
     @Test
     @LogMessages(messages = {
@@ -46,5 +54,82 @@ public class ListRendererUnitTest extends ExtendedITextTest {
         };
 
         Assert.assertEquals(ListRenderer.class, listRenderer.getNextRenderer().getClass());
+    }
+
+    @Test
+    public void symbolPositioningInsideDrawnOnceTest() {
+        InvocationsCounter invocationsCounter = new InvocationsCounter();
+
+        List modelElement = new List();
+        modelElement.setNextRenderer(new ListRendererCreatingNotifyingListSymbols(modelElement, invocationsCounter));
+        modelElement.add((ListItem) new ListItem().add(new Paragraph("ListItem1")).add(new Paragraph("ListItem2")));
+        modelElement.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.INSIDE);
+        modelElement.setFontSize(30);
+
+        // A hack for a test in order to layout the list at the very left border of the parent area.
+        // List symbols are not drawn outside the parent area, so we want to make sure that symbol renderer
+        // won't be drawn twice even if there's enough space around the list.
+        modelElement.setMarginLeft(500);
+        IRenderer listRenderer = modelElement.createRendererSubTree();
+
+        Document document = createDummyDocument();
+        listRenderer.setParent(document.getRenderer());
+        PdfPage pdfPage = document.getPdfDocument().addNewPage();
+
+        // should be enough to fit a single list-item, but not both
+        int height = 80;
+
+        // we don't want to impose any width restrictions
+        int width = 1000;
+        LayoutResult result = listRenderer.layout(createLayoutContext(width, height));
+        assert result.getStatus() == LayoutResult.PARTIAL;
+        result.getSplitRenderer().draw(new DrawContext(document.getPdfDocument(), new PdfCanvas(pdfPage)));
+
+        // only split part is drawn, list symbol is expected to be drawn only once.
+        Assert.assertEquals(1, invocationsCounter.getInvocationsCount());
+    }
+
+    private static class ListRendererCreatingNotifyingListSymbols extends ListRenderer {
+        private InvocationsCounter counter;
+
+        public ListRendererCreatingNotifyingListSymbols(List modelElement, InvocationsCounter counter) {
+            super(modelElement);
+            this.counter = counter;
+        }
+
+        @Override
+        protected IRenderer makeListSymbolRenderer(int index, IRenderer renderer) {
+            return new NotifyingListSymbolRenderer(new Text("-"), counter);
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new ListRendererCreatingNotifyingListSymbols((List) getModelElement(), counter);
+        }
+    }
+
+    private static class NotifyingListSymbolRenderer extends TextRenderer {
+        private InvocationsCounter counter;
+
+        public NotifyingListSymbolRenderer(Text textElement, InvocationsCounter counter) {
+            super(textElement);
+            this.counter = counter;
+        }
+
+        @Override
+        public void draw(DrawContext drawContext) {
+            counter.registerInvocation();
+            super.draw(drawContext);
+        }
+    }
+
+    private static class InvocationsCounter {
+        private int counter = 0;
+        void registerInvocation() {
+            ++counter;
+        }
+        int getInvocationsCount() {
+            return counter;
+        }
     }
 }
