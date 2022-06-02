@@ -43,7 +43,9 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.kernel.exceptions.PdfException;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -52,7 +54,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -65,6 +66,7 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
  * Class containing static methods that allow you to get information from
  * an X509 Certificate: the issuer and the subject.
  */
+// TODO DEVSIX-6731 Switch CertificateInfo to the new approach
 public class CertificateInfo {
 
     // Inner classes
@@ -380,7 +382,7 @@ public class CertificateInfo {
      * @param enc a TBSCertificate in a byte array
      * @return an ASN1Primitive
      */
-    public static ASN1Primitive getIssuer(byte[] enc) {
+    public static IASN1Primitive getIssuer(byte[] enc) {
         try {
             ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(enc));
             ASN1Sequence seq = (ASN1Sequence)in.readObject();

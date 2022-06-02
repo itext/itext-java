@@ -18,6 +18,18 @@ import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSequence;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
 import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
+import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -76,7 +88,31 @@ public interface IBouncyCastleFactory {
 
     IDERSet createDERSet(IASN1Primitive primitive);
 
+    IDERSet createDERSet(ISignaturePolicyIdentifier identifier);
+
     IASN1Enumerated createEnumerated(int i);
 
     IASN1Encoding createEncoding();
+
+    IAttributeTable createAttributeTable(IASN1Set unat);
+
+    IPKCSObjectIdentifiers createPKCSObjectIdentifiers();
+
+    IAttribute createAttribute(IASN1ObjectIdentifier attrType, IASN1Set attrValues);
+
+    IContentInfo createContentInfo(IASN1Sequence sequence);
+
+    ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws Exception;
+
+    ISigningCertificate createSigningCertificate(IASN1Sequence sequence);
+
+    ISigningCertificateV2 createSigningCertificateV2(IASN1Sequence sequence);
+
+    IBasicOCSPResponse createBasicOCSPResponse(IASN1Primitive primitive);
+
+    IBasicOCSPResp createBasicOCSPResp(IBasicOCSPResponse response);
+
+    IOCSPObjectIdentifiers createOCSPObjectIdentifiers();
+
+    IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1EncodableWrapper encodable);
 }

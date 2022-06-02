@@ -2,13 +2,13 @@ package com.itextpdf.bouncycastle.asn1;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
-import org.bouncycastle.asn1.ASN1InputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.bouncycastle.asn1.ASN1InputStream;
 
 public class ASN1InputStreamBC implements IASN1InputStream {
-    private ASN1InputStream stream;
+    private final ASN1InputStream stream;
 
     public ASN1InputStreamBC(byte[] bytes) {
         this.stream = new ASN1InputStream(bytes);

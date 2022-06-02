@@ -44,6 +44,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.utils.Base64;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -124,7 +125,7 @@ public class SignaturePolicyInfo {
         return policyUri;
     }
 
-    SignaturePolicyIdentifier toSignaturePolicyIdentifier() {
+    ISignaturePolicyIdentifier toSignaturePolicyIdentifier() {
         String algId = DigestAlgorithms.getAllowedDigest(this.policyDigestAlgorithm);
 
         if (algId == null || algId.length() == 0) {

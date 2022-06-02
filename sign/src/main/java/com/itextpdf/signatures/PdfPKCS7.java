@@ -57,30 +57,29 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSequence;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.ess.IESSCertID;
+import com.itextpdf.commons.bouncycastle.asn1.ess.IESSCertIDv2;
+import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
+import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.tsp.IMessageImprint;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
+import com.itextpdf.commons.bouncycastle.jce.IX509Principal;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.kernel.bouncycastle.BouncyCastleFactoryCreator;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
-import org.bouncycastle.asn1.ess.ESSCertID;
-import org.bouncycastle.asn1.ess.ESSCertIDv2;
-import org.bouncycastle.asn1.ess.SigningCertificate;
-import org.bouncycastle.asn1.ess.SigningCertificateV2;
-import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.tsp.MessageImprint;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -114,9 +113,9 @@ import java.util.Set;
  */
 public class PdfPKCS7 {
 
-    private static IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
+    private static final IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
 
-    private SignaturePolicyIdentifier signaturePolicyIdentifier;
+    private ISignaturePolicyIdentifier signaturePolicyIdentifier;
 
     // Encryption provider
 
@@ -334,8 +333,7 @@ public class PdfPKCS7 {
             signerversion = bouncyCastleFactory.createInteger(signerInfo.getObjectAt(0)).getValue().intValue();
             // Get the signing certificate
             IASN1Sequence issuerAndSerialNumber = bouncyCastleFactory.createSequence(signerInfo.getObjectAt(1));
-            // TODO Switch SignUtils to the new approach
-            X509Principal issuer = SignUtils.getIssuerX509Name(issuerAndSerialNumber);
+            IX509Principal issuer = SignUtils.getIssuerX509Name(issuerAndSerialNumber);
             BigInteger serialNumber = bouncyCastleFactory.createInteger(issuerAndSerialNumber.getObjectAt(1)).getValue();
             for (Object element : certs) {
                 X509Certificate cert = (X509Certificate) element;
@@ -383,9 +381,9 @@ public class PdfPKCS7 {
                     } else if (isCades && idSeq2.equals(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V1)) {
                         IASN1Set setout = bouncyCastleFactory.createSet(seq2.getObjectAt(1));
                         IASN1Sequence seqout = bouncyCastleFactory.createSequence(setout.getObjectAt(0));
-                        SigningCertificate sv2 = SigningCertificate.getInstance(seqout);
-                        ESSCertID[] cerv2m = sv2.getCerts();
-                        ESSCertID cerv2 = cerv2m[0];
+                        ISigningCertificate sv2 = bouncyCastleFactory.createSigningCertificate(seqout);
+                        IESSCertID[] cerv2m = sv2.getCerts();
+                        IESSCertID cerv2 = cerv2m[0];
                         byte[] enc2 = signCert.getEncoded();
                         MessageDigest m2 = SignUtils.getMessageDigest("SHA-1");
                         byte[] signCertHash = m2.digest(enc2);
@@ -396,10 +394,10 @@ public class PdfPKCS7 {
                     } else if (isCades && idSeq2.equals(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2)) {
                         IASN1Set setout = bouncyCastleFactory.createSet(seq2.getObjectAt(1));
                         IASN1Sequence seqout = bouncyCastleFactory.createSequence(setout.getObjectAt(0));
-                        SigningCertificateV2 sv2 = SigningCertificateV2.getInstance(seqout);
-                        ESSCertIDv2[] cerv2m = sv2.getCerts();
-                        ESSCertIDv2 cerv2 = cerv2m[0];
-                        AlgorithmIdentifier ai2 = cerv2.getHashAlgorithm();
+                        ISigningCertificateV2 sv2 = bouncyCastleFactory.createSigningCertificateV2(seqout);
+                        IESSCertIDv2[] cerv2m = sv2.getCerts();
+                        IESSCertIDv2 cerv2 = cerv2m[0];
+                        IAlgorithmIdentifier ai2 = cerv2.getHashAlgorithm();
                         byte[] enc2 = signCert.getEncoded();
                         MessageDigest m2
                                 = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(ai2.getAlgorithm().getId()));
@@ -424,22 +422,22 @@ public class PdfPKCS7 {
                 IASN1TaggedObject taggedObject = bouncyCastleFactory.createTaggedObject(signerInfo.getObjectAt(next));
                 if (taggedObject != null) {
                     IASN1Set unat = bouncyCastleFactory.createSetInstance(taggedObject, false);
-                    // TODO Wrap other asn1 classes.
-                    AttributeTable attble = new AttributeTable(unat);
-                    Attribute ts = attble.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
+                    IAttributeTable attble = bouncyCastleFactory.createAttributeTable(unat);
+                    IPKCSObjectIdentifiers ipkcsObjectIdentifiers = bouncyCastleFactory.createPKCSObjectIdentifiers();
+                    IAttribute ts = attble.get(ipkcsObjectIdentifiers.getIdAaSignatureTimeStampToken());
                     if (ts != null && ts.getAttrValues().size() > 0) {
                         IASN1Set attributeValues = ts.getAttrValues();
                         IASN1Sequence tokenSequence =
                                 bouncyCastleFactory.createSequenceInstance(attributeValues.getObjectAt(0));
-                        ContentInfo contentInfo = ContentInfo.getInstance(tokenSequence);
-                        this.timeStampToken = new TimeStampToken(contentInfo);
+                        IContentInfo contentInfo = bouncyCastleFactory.createContentInfo(tokenSequence);
+                        this.timeStampToken = bouncyCastleFactory.createTimeStampToken(contentInfo);
                     }
                 }
             }
             if (isTsp) {
-                ContentInfo contentInfoTsp = ContentInfo.getInstance(signedData);
-                this.timeStampToken = new TimeStampToken(contentInfoTsp);
-                TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
+                IContentInfo contentInfoTsp = bouncyCastleFactory.createContentInfo(signedData);
+                this.timeStampToken = bouncyCastleFactory.createTimeStampToken(contentInfoTsp);
+                ITimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             } else {
@@ -462,7 +460,7 @@ public class PdfPKCS7 {
         this.signaturePolicyIdentifier = signaturePolicy.toSignaturePolicyIdentifier();
     }
 
-    public void setSignaturePolicy(SignaturePolicyIdentifier signaturePolicy) {
+    public void setSignaturePolicy(ISignaturePolicyIdentifier signaturePolicy) {
         this.signaturePolicyIdentifier = signaturePolicy;
     }
 
@@ -856,7 +854,6 @@ public class PdfPKCS7 {
 
             v = bouncyCastleFactory.createEncodableVector();
 
-            // TODO Switch CertificateInfo to the new approach
             v.add(CertificateInfo.getIssuer(signCert.getTBSCertificate()));
             v.add(bouncyCastleFactory.createInteger(signCert.getSerialNumber()));
             signerinfo.add(bouncyCastleFactory.createDERSequence(v));
@@ -964,7 +961,7 @@ public class PdfPKCS7 {
      *
      * <p>
      *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded BasicOCSPResponse value contained in the response data.
+     *     only the DER-encoded IBasicOCSPResponse value contained in the response data.
      *
      * <p>
      * A simple example:
@@ -1057,8 +1054,8 @@ public class PdfPKCS7 {
                     for (byte[] ocspBytes : ocsp) {
                         IDEROctetString doctet = bouncyCastleFactory.createDEROctetString(ocspBytes);
                         IASN1EncodableVector v2 = bouncyCastleFactory.createEncodableVector();
-                        // TODO Wrap other asn1 classes.
-                        v2.add(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
+                        IOCSPObjectIdentifiers objectIdentifiers = bouncyCastleFactory.createOCSPObjectIdentifiers();
+                        v2.add(objectIdentifiers.getIdPkixOcspBasic());
                         v2.add(doctet);
                         IASN1Enumerated den = bouncyCastleFactory.createEnumerated(0);
                         IASN1EncodableVector v3 = bouncyCastleFactory.createEncodableVector();
@@ -1079,9 +1076,8 @@ public class PdfPKCS7 {
                 v.add(bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 
                 IASN1EncodableVector aaV2 = bouncyCastleFactory.createEncodableVector();
-                // TODO Wrap other asn1 classes.
-                AlgorithmIdentifier algoId
-                        = new AlgorithmIdentifier(bouncyCastleFactory.createObjectIdentifier(digestAlgorithmOid), null);
+                IAlgorithmIdentifier algoId = bouncyCastleFactory.createAlgorithmIdentifier(
+                        bouncyCastleFactory.createObjectIdentifier(digestAlgorithmOid), null);
                 aaV2.add(algoId);
                 MessageDigest md = SignUtils.getMessageDigest(getHashAlgorithm(), interfaceDigest);
                 byte[] dig = md.digest(signCert.getEncoded());
@@ -1093,9 +1089,10 @@ public class PdfPKCS7 {
             }
 
             if (signaturePolicyIdentifier != null) {
-                // TODO Wrap other asn1 classes.
-                attribute.add(new Attribute(PKCSObjectIdentifiers.id_aa_ets_sigPolicyId,
-                        bouncyCastleFactory.createDERSet(signaturePolicyIdentifier)));
+                IPKCSObjectIdentifiers ipkcsObjectIdentifiers = bouncyCastleFactory.createPKCSObjectIdentifiers();
+                IAttribute attr = bouncyCastleFactory.createAttribute(ipkcsObjectIdentifiers.getIdAaEtsSigPolicyId(),
+                        bouncyCastleFactory.createDERSet(signaturePolicyIdentifier));
+                attribute.add(attr);
             }
 
             return bouncyCastleFactory.createDERSet(attribute);
@@ -1155,8 +1152,8 @@ public class PdfPKCS7 {
         if (verified)
             return verifyResult;
         if (isTsp) {
-            TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
-            MessageImprint imprint = info.toASN1Structure().getMessageImprint();
+            ITimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
+            IMessageImprint imprint = info.toASN1Structure().getMessageImprint();
             byte[] md = messageDigest.digest();
             byte[] imphashed = imprint.getHashedMessage();
             verifyResult = Arrays.equals(md, imphashed);
@@ -1202,8 +1199,8 @@ public class PdfPKCS7 {
         if (timeStampToken == null) {
             return false;
         }
-        TimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
-        MessageImprint imprint = info.toASN1Structure().getMessageImprint();
+        ITimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
+        IMessageImprint imprint = info.toASN1Structure().getMessageImprint();
         String algOID = info.getHashAlgorithm().getAlgorithm().getId();
         byte[] md = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
@@ -1322,16 +1319,16 @@ public class PdfPKCS7 {
     // Online Certificate Status Protocol
 
     /**
-     * BouncyCastle BasicOCSPResp
+     * BouncyCastle IBasicOCSPResp
      */
-    BasicOCSPResp basicResp;
+    IBasicOCSPResp basicResp;
 
     /**
      * Gets the OCSP basic response if there is one.
      *
      * @return the OCSP basic response or null
      */
-    public BasicOCSPResp getOcsp() {
+    public IBasicOCSPResp getOcsp() {
         return basicResp;
     }
 
@@ -1347,12 +1344,11 @@ public class PdfPKCS7 {
             return false;
         try {
             X509Certificate[] cs = (X509Certificate[]) getSignCertificateChain();
-            SingleResp sr = basicResp.getResponses()[0];
-            CertificateID cid = sr.getCertID();
+            ISingleResp sr = basicResp.getResponses()[0];
+            ICertificateID cid = sr.getCertID();
             X509Certificate sigcer = getSigningCertificate();
             X509Certificate isscer = cs[1];
-            CertificateID tis = SignUtils.generateCertificateId(isscer, sigcer.getSerialNumber(),
-                    cid.getHashAlgOID());
+            ICertificateID tis = SignUtils.generateCertificateId(isscer, sigcer.getSerialNumber(), cid.getHashAlgOID());
             return tis.equals(cid);
         } catch (Exception ignored) {
         }
@@ -1360,18 +1356,19 @@ public class PdfPKCS7 {
     }
 
     /**
-     * Helper method that creates the BasicOCSPResp object.
+     * Helper method that creates the IBasicOCSPResp object.
      *
      * @param seq
      * @throws IOException
      */
     private void findOcsp(IASN1Sequence seq) throws IOException {
-        basicResp = (BasicOCSPResp) null;
+        basicResp = (IBasicOCSPResp) null;
         boolean ret = false;
         while (true) {
             IASN1ObjectIdentifier objectIdentifier = bouncyCastleFactory.createObjectIdentifier(seq.getObjectAt(0));
+            IOCSPObjectIdentifiers ocspObjectIdentifiers = bouncyCastleFactory.createOCSPObjectIdentifiers();
             if (objectIdentifier != null
-                    && objectIdentifier.getId().equals(OCSPObjectIdentifiers.id_pkix_ocsp_basic.getId())) {
+                    && objectIdentifier.getId().equals(ocspObjectIdentifiers.getIdPkixOcspBasic().getId())) {
                 break;
             }
             ret = true;
@@ -1399,8 +1396,8 @@ public class PdfPKCS7 {
         }
         IASN1OctetString os = bouncyCastleFactory.createOctetString(seq.getObjectAt(1));
         IASN1InputStream inp = bouncyCastleFactory.createInputStream(os.getOctets());
-        BasicOCSPResponse resp = BasicOCSPResponse.getInstance(inp.readObject());
-        basicResp = new BasicOCSPResp(resp);
+        IBasicOCSPResponse resp = bouncyCastleFactory.createBasicOCSPResponse(inp.readObject());
+        basicResp = bouncyCastleFactory.createBasicOCSPResp(resp);
     }
 
     // Time Stamps
@@ -1418,7 +1415,7 @@ public class PdfPKCS7 {
     /**
      * BouncyCastle TimeStampToken.
      */
-    private TimeStampToken timeStampToken;
+    private ITimeStampToken timeStampToken;
 
     /**
      * Check if it's a PAdES-LTV time stamp.
@@ -1434,7 +1431,7 @@ public class PdfPKCS7 {
      *
      * @return the timestamp token or null
      */
-    public TimeStampToken getTimeStampToken() {
+    public ITimeStampToken getTimeStampToken() {
         return timeStampToken;
     }
 

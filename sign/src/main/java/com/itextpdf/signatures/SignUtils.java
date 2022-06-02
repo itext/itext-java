@@ -43,6 +43,11 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.jce.IX509Principal;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
@@ -85,8 +90,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
@@ -115,6 +118,7 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.x509.util.StreamParsingException;
 
+// TODO DEVSIX-6730 Switch SignUtils to the new approach
 final class SignUtils {
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
@@ -174,8 +178,8 @@ final class SignUtils {
                 new JcaX509CertificateHolder(issuerCert), serialNumber);
     }
 
-    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
-            ASN1ObjectIdentifier identifier)
+    static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
+            IASN1ObjectIdentifier identifier)
             throws OperatorCreationException, CertificateEncodingException, OCSPException {
         return new CertificateID(
                 new JcaDigestCalculatorProviderBuilder().build().get(
@@ -265,7 +269,7 @@ final class SignUtils {
         return iterable.iterator().next();
     }
 
-    static X509Principal getIssuerX509Name(ASN1Sequence issuerAndSerialNumber) throws IOException {
+    static IX509Principal getIssuerX509Name(IASN1Sequence issuerAndSerialNumber) throws IOException {
         return new X509Principal(issuerAndSerialNumber.getObjectAt(0).toASN1Primitive().getEncoded());
     }
 
@@ -342,7 +346,7 @@ final class SignUtils {
         return false;
     }
 
-    static Calendar getTimeStampDate(TimeStampToken timeStampToken) {
+    static Calendar getTimeStampDate(ITimeStampToken timeStampToken) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(timeStampToken.getTimeStampInfo().getGenTime());
         return calendar;
