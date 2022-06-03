@@ -1182,6 +1182,12 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     @Override
     public void move(float dxRight, float dyUp) {
+        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+        if (occupiedArea == null) {
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Moving won't be performed."));
+            return;
+        }
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);
         for (IRenderer childRenderer : childRenderers) {
