@@ -173,6 +173,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     final PdfXrefTable xref = new PdfXrefTable();
     protected FingerPrint fingerPrint;
 
+    protected SerializeOptions serializeOptions = new SerializeOptions();
+
     protected final StampingProperties properties;
 
     protected PdfStructTreeRoot structTreeRoot;
@@ -334,6 +336,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
+        this.serializeOptions = serializeOptions;
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
@@ -345,7 +348,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
-        SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
     }
@@ -1867,6 +1869,24 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public SequenceId getDocumentIdWrapper() {
         return documentId;
+    }
+
+    /**
+     * Sets a persistent XMP metadata serialization options.
+     *
+     * @param serializeOptions serialize options
+     */
+    public void setSerializeOptions(SerializeOptions serializeOptions) {
+        this.serializeOptions = serializeOptions;
+    }
+
+    /**
+     * Gets a persistent XMP metadata serialization options.
+     *
+     * @return serialize options
+     */
+    public SerializeOptions getSerializeOptions() {
+        return this.serializeOptions;
     }
 
     /**

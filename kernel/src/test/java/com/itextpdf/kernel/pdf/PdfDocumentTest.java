@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -604,6 +605,14 @@ public class PdfDocumentTest extends ExtendedITextTest {
         PdfReader corruptedReader = new PdfReader(filename);
         Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(corruptedReader));
         Assert.assertEquals(KernelExceptionMessageConstant.CORRUPTED_ROOT_ENTRY_IN_TRAILER, e.getMessage());
+    }
+
+    @Test
+    public void setSerializeOptionsTest() {
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        SerializeOptions options = new SerializeOptions().setUseCanonicalFormat(true);
+        document.setSerializeOptions(options);
+        Assert.assertEquals(options, document.getSerializeOptions());
     }
 
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
