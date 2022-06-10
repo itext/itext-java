@@ -52,6 +52,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.function.PdfFunctionFactory;
+import com.itextpdf.kernel.pdf.function.IPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfFunction;
 
 import java.util.Arrays;
@@ -142,6 +144,15 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
         public PdfName getName() {
             return ((PdfArray)getPdfObject()).getAsName(1);
+        }
+
+        /**
+         * Gets the function to calulate a separation color value to an alternative colorspace.
+         *
+         * @return a {@link IPdfFunction} to perform the calculation
+         */
+        public IPdfFunction getTintTransformation() {
+            return PdfFunctionFactory.create(((PdfArray)getPdfObject()).get(3));
         }
 
         private static PdfArray getSeparationCsArray(PdfName name, PdfObject alternateSpace, PdfObject tintTransform) {

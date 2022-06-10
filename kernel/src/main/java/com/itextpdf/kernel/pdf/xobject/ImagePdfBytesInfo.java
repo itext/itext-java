@@ -46,11 +46,15 @@ import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Separation;
+import com.itextpdf.kernel.pdf.function.IPdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfFunctionFactory;
 
 import java.io.IOException;
 
@@ -86,13 +90,12 @@ class ImagePdfBytesInfo {
         decode = imageXObject.getPdfObject().getAsArray(PdfName.Decode);
         findColorspace(colorspace, true);
     }
-
+    
     public int getPngColorType() {
         return pngColorType;
     }
 
     public byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
-        java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
         if (pngColorType < 0) {
             if (bpc != 8)
                 throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
@@ -102,6 +105,7 @@ class ImagePdfBytesInfo {
                 PdfObject tyca = ca.get(0);
                 if (!PdfName.ICCBased.equals(tyca))
                     throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
+
                 PdfStream pr = (PdfStream) ca.get(1);
                 int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n != 4) {
@@ -111,6 +115,8 @@ class ImagePdfBytesInfo {
             } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
                 throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
             }
+            java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
+
             stride = 4 * width;
             TiffWriter wr = new TiffWriter();
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL, 4));
@@ -138,34 +144,66 @@ class ImagePdfBytesInfo {
             imageBytes = ms.toByteArray();
             return imageBytes;
         } else {
-            PngWriter png = new PngWriter(ms);
-            if (decode != null) {
-                if (pngBitDepth == 1) {
-                    // if the decode array is 1,0, then we need to invert the image
-                    if (decode.getAsNumber(0).intValue() == 1 && decode.getAsNumber(1).intValue() == 0) {
-                        int len = imageBytes.length;
-                        for (int t = 0; t < len; ++t) {
-                            imageBytes[t] ^= 0xff;
-                        }
-                    } else {
-                        // if the decode array is 0,1, do nothing.  It's possible that the array could be 0,0 or 1,1 - but that would be silly, so we'll just ignore that case
-                    }
-                } else {
-                    // todo: add decode transformation for other depths
+            if (colorspace instanceof PdfArray) {
+                PdfArray ca = (PdfArray) colorspace;
+                PdfObject tyca = ca.get(0);
+                if (PdfName.Separation.equals(tyca)) {
+                    return processSeperationColor(imageBytes, ca);
                 }
             }
-            png.writeHeader(width, height, pngBitDepth, pngColorType);
-            if (icc != null) {
-                png.writeIccProfile(icc);
-            }
-            if (palette != null) {
-                png.writePalette(palette);
-            }
-            png.writeData(imageBytes, stride);
-            png.writeEnd();
-            imageBytes = ms.toByteArray();
-            return imageBytes;
+            return processPng(imageBytes, pngBitDepth, pngColorType);
         }
+    }
+
+    private byte[] processSeperationColor(byte[] imageBytes, PdfArray colorSpaceArray) throws IOException {
+        Separation scs = new Separation(colorSpaceArray);
+
+        byte[] newImageBytes = scs.getTintTransformation().calculateFromByteArray(imageBytes, 0,
+                imageBytes.length, 8, 8
+        );
+        // TODO switch top tiff for CMYK
+        // TODO verify RGBA is working
+        if (scs.getBaseCs().getNumberOfComponents() > 3) {
+            throw new UnsupportedOperationException(KernelExceptionMessageConstant.
+                    GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB);
+        }
+
+
+        stride = stride = (width * bpc * 3 + 7) / 8;;
+        return processPng(newImageBytes, pngBitDepth, 2);
+
+    }
+
+    private byte[] processPng(byte[] imageBytes, int pngBitDepth, int pngColorType) throws IOException {
+        java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
+
+        PngWriter png = new PngWriter(ms);
+        if (decode != null) {
+            if (pngBitDepth == 1) {
+                // if the decode array is 1,0, then we need to invert the image
+                if (decode.getAsNumber(0).intValue() == 1 && decode.getAsNumber(1).intValue() == 0) {
+                    int len = imageBytes.length;
+                    for (int t = 0; t < len; ++t) {
+                        imageBytes[t] ^= 0xff;
+                    }
+                } else {
+                    // if the decode array is 0,1, do nothing.  It's possible that the array could be 0,0 or 1,1 - but that would be silly, so we'll just ignore that case
+                }
+            } else {
+                // todo: add decode transformation for other depths
+            }
+        }
+        png.writeHeader(width, height, pngBitDepth, pngColorType);
+        if (icc != null) {
+            png.writeIccProfile(icc);
+        }
+        if (palette != null) {
+            png.writePalette(palette);
+        }
+        png.writeData(imageBytes, stride);
+        png.writeEnd();
+        imageBytes = ms.toByteArray();
+        return imageBytes;
     }
 
     /**
@@ -220,7 +258,14 @@ class ImagePdfBytesInfo {
                     stride = (width * bpc + 7) / 8;
                     pngColorType = 3;
                 }
+            } else if (PdfName.Separation.equals(tyca)) {
+                IPdfFunction fct = PdfFunctionFactory.create(ca.get(3));
+                int components = fct.getOutputSize();
+                pngColorType = components == 1? 1: 2;
+                components = 3;
+                pngBitDepth = 8;
             }
         }
     }
 }
+
