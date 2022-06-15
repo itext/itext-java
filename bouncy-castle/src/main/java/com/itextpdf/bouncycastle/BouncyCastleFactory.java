@@ -65,6 +65,8 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.security.Provider;
+
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -78,6 +80,7 @@ import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFactory implements IBouncyCastleFactory {
@@ -334,5 +337,10 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         ASN1ObjectIdentifierBC algorithmBc = (ASN1ObjectIdentifierBC) algorithm;
         ASN1EncodableWrapperBC encodableBc = (ASN1EncodableWrapperBC) encodable;
         return new AlgorithmIdentifierBC(new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), encodableBc.getEncodable()));
+    }
+    
+    @Override
+    public Provider createProvider() {
+        return new BouncyCastleProvider();
     }
 }

@@ -46,18 +46,9 @@ package com.itextpdf.signatures;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 
-import org.bouncycastle.jcajce.provider.digest.GOST3411;
-import org.bouncycastle.jcajce.provider.digest.MD2;
-import org.bouncycastle.jcajce.provider.digest.MD5;
-import org.bouncycastle.jcajce.provider.digest.RIPEMD128;
-import org.bouncycastle.jcajce.provider.digest.RIPEMD160;
-import org.bouncycastle.jcajce.provider.digest.RIPEMD256;
-import org.bouncycastle.jcajce.provider.digest.SHA1;
-import org.bouncycastle.jcajce.provider.digest.SHA224;
-import org.bouncycastle.jcajce.provider.digest.SHA256;
-import org.bouncycastle.jcajce.provider.digest.SHA384;
-import org.bouncycastle.jcajce.provider.digest.SHA512;
+import com.itextpdf.kernel.bouncycastle.BouncyCastleFactoryCreator;
 
 /**
  * Implementation for digests accessed directly from the BouncyCastle library bypassing
@@ -72,40 +63,42 @@ public class BouncyCastleDigest implements IExternalDigest {
         if (oid == null) {
             throw new NoSuchAlgorithmException(hashAlgorithm);
         }
+        
+        Provider provider = BouncyCastleFactoryCreator.getFactory().createProvider();
         switch (oid) {
             // MD2
             case "1.2.840.113549.2.2":
-                return new MD2.Digest();
+                return MessageDigest.getInstance("MD2", provider);
             // MD5
             case "1.2.840.113549.2.5":
-                return new MD5.Digest();
+                return MessageDigest.getInstance("MD5", provider);
             // SHA1
             case "1.3.14.3.2.26":
-                return new SHA1.Digest();
+                return MessageDigest.getInstance("SHA1", provider);
             // SHA224
             case "2.16.840.1.101.3.4.2.4":
-                return new SHA224.Digest();
+                return MessageDigest.getInstance("SHA224", provider);
             // SHA256
             case "2.16.840.1.101.3.4.2.1":
-                return new SHA256.Digest();
+                return MessageDigest.getInstance("SHA256", provider);
             // SHA384
             case "2.16.840.1.101.3.4.2.2":
-                return new SHA384.Digest();
+                return MessageDigest.getInstance("SHA384", provider);
             // SHA512
             case "2.16.840.1.101.3.4.2.3":
-                return new SHA512.Digest();
+                return MessageDigest.getInstance("SHA512", provider);
             // RIPEMD128
             case "1.3.36.3.2.2":
-                return new RIPEMD128.Digest();
+                return MessageDigest.getInstance("RIPEMD128", provider);
             // RIPEMD160
             case "1.3.36.3.2.1":
-                return new RIPEMD160.Digest();
+                return MessageDigest.getInstance("RIPEMD160", provider);
             // RIPEMD256
             case "1.3.36.3.2.3":
-                return new RIPEMD256.Digest();
+                return MessageDigest.getInstance("RIPEMD256", provider);
             // GOST3411
             case "1.2.643.2.2.9":
-                return new GOST3411.Digest();
+                return MessageDigest.getInstance("GOST3411", provider);
             default:
                 throw new NoSuchAlgorithmException(hashAlgorithm);
         }

@@ -34,6 +34,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.security.Provider;
 
 public interface IBouncyCastleFactory {
     IASN1ObjectIdentifier createObjectIdentifier(IASN1EncodableWrapper encodable);
@@ -115,4 +116,6 @@ public interface IBouncyCastleFactory {
     IOCSPObjectIdentifiers createOCSPObjectIdentifiers();
 
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1EncodableWrapper encodable);
+
+    Provider createProvider();
 }
