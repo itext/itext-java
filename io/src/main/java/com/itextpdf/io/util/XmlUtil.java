@@ -47,6 +47,7 @@ import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 
 /**
  * This file is a helper class for internal usage only.
@@ -55,6 +56,24 @@ import javax.xml.parsers.ParserConfigurationException;
 public final class XmlUtil {
 
     private XmlUtil() {
+    }
+
+    /**
+     * Creates default document builder factory.
+     *
+     * @return document builder factory implementation
+     */
+    public static DocumentBuilderFactory getDocumentBuilderFactory() {
+        return DocumentBuilderFactory.newInstance();
+    }
+
+    /**
+     * Creates default SAX parser factory.
+     *
+     * @return SAX parser factory implementation
+     */
+    public static SAXParserFactory createSAXParserFactory() {
+        return SAXParserFactory.newInstance();
     }
 
     /**

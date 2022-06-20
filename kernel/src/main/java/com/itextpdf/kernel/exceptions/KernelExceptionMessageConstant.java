@@ -129,6 +129,8 @@ public final class KernelExceptionMessageConstant {
             "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required parent entry.";
     public static final String CORRUPTED_OUTLINE_NO_TITLE_ENTRY =
             "Document outline is corrupted: some outline (PDF object: \"{0}\") lacks the required title entry.";
+    public static final String CORRUPTED_ROOT_ENTRY_IN_TRAILER = "The trailer is corrupted: the catalog "
+            + "is corrupted or cannot be referenced from the file's trailer. The PDF cannot be opened.";
     public static final String DATA_HANDLER_COUNTER_HAS_BEEN_DISABLED = "Data handler counter has been disabled";
     public static final String DEFAULT_CRYPT_FILTER_NOT_FOUND_ENCRYPTION = "/DefaultCryptFilter not found "
             + "(encryption).";
@@ -177,6 +179,9 @@ public final class KernelExceptionMessageConstant {
     public static final String FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED = "Flushed page cannot be added or inserted.";
     public static final String FLUSHED_PAGE_CANNOT_BE_REMOVED = "Flushed page cannot be removed from a document which "
             + "is tagged or has an AcroForm";
+    public static final String FLUSHED_STREAM_FILTER_EXCEPTION =
+            "Stream {0} {1} R contains flushed indirect filter object in encrypted document, try to use "
+                    + "PdfStream#flush() stream before PdfDocument#close() to prevent this exception";
     public static final String FLUSHING_HELPER_FLUSHING_MODE_IS_NOT_FOR_DOC_READING_MODE = "Flushing writes the object "
             + "to the output stream and releases it from memory. It is only possible for documents that have a "
             + "PdfWriter associated with them. Use PageFlushingHelper#releaseDeep method instead.";

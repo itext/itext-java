@@ -35,17 +35,24 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class ParserItTest extends ExtendedITextTest {
+
     @Test
     public void testIssue1251() {
         // https://github.com/jhy/jsoup/issues/1251
-        StringBuilder str = new StringBuilder("<a href=\"\"ca");
-        for (int countSpaces = 0; countSpaces < 100000; countSpaces++) {
-            try {
-                Parser.htmlParser().setTrackErrors(1).parseInput(str.toString(), "");
-            } catch (Exception e) {
-                throw new AssertionError("failed at length " + str.length(), e);
-            }
-            str.insert(countSpaces, ' ');
+        String testString = "<a href=\"\"ca";
+
+        StringBuilder str = new StringBuilder();
+        // initial max length of the buffer is 2**15 * 0.75 = 24576
+        int spacesToReproduceIssue = 24577 - testString.length();
+        for (int i = 0; i < spacesToReproduceIssue; i++) {
+            str.append(" ");
+        }
+        str.append(testString);
+
+        try {
+            Parser.htmlParser().setTrackErrors(1).parseInput(str.toString(), "");
+        } catch (Exception e) {
+            throw new AssertionError("failed at length " + str.length(), e);
         }
     }
 

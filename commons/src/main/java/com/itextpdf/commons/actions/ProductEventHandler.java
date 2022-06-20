@@ -25,7 +25,6 @@ package com.itextpdf.commons.actions;
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.contexts.UnknownContext;
-import com.itextpdf.commons.actions.processors.DefaultITextProductEventProcessor;
 import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.exceptions.ProductEventHandlerRepeatException;
@@ -97,7 +96,7 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
         }
 
         if (ProductNameConstant.PRODUCT_NAMES.contains(productName)) {
-            processor = new DefaultITextProductEventProcessor(productName);
+            processor = ProductProcessorFactoryKeeper.getProductProcessorFactory().createProcessor(productName);
             processors.put(productName, processor);
             return processor;
         } else {

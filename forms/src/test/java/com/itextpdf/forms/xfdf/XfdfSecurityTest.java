@@ -77,7 +77,7 @@ public class XfdfSecurityTest extends ExtendedITextTest {
     @Test
     public void xxeVulnerabilityXfdfTest()
             throws IOException {
-        XmlProcessorCreator.setXmlParserFactory(new DefaultSafeXmlParserFactory());
+        XmlProcessorCreator.setXmlParserFactory(null);
         try (InputStream inputStream = new ByteArrayInputStream(XFDF_WITH_XXE.getBytes(StandardCharsets.UTF_8))) {
             Exception e = Assert.assertThrows(PdfException.class,
                     () -> XfdfFileUtils.createXfdfDocumentFromStream(inputStream)

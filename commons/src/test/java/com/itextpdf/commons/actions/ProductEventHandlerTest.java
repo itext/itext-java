@@ -24,6 +24,8 @@ package com.itextpdf.commons.actions;
 
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
+import com.itextpdf.commons.actions.processors.AbstractITextProductEventProcessor;
+import com.itextpdf.commons.actions.processors.IProductProcessorFactory;
 import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
@@ -34,6 +36,7 @@ import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +47,11 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
     @Before
     public void clearProcessors() {
         ProductEventHandler.INSTANCE.clearProcessors();
+    }
+
+    @After
+    public void afterEach() {
+        ProductProcessorFactoryKeeper.restoreDefaultProductProcessorFactory();
     }
 
     @Test
@@ -119,6 +127,18 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void settingCustomProcessFactoryTest() {
+        CustomFactory productProcessorFactory = new CustomFactory();
+        productProcessorFactory.createProcessor(ProductNameConstant.ITEXT_CORE);
+        ProductProcessorFactoryKeeper.setProductProcessorFactory(productProcessorFactory);
+
+        ProductEventHandler handler = ProductEventHandler.INSTANCE;
+
+        ITextProductEventProcessor activeProcessor = handler.getActiveProcessor(ProductNameConstant.ITEXT_CORE);
+        Assert.assertTrue(activeProcessor instanceof TestProductEventProcessor);
+    }
+
+    @Test
     public void repeatEventHandlingWithFiveExceptionOnProcessingTest() {
         ProductEventHandler handler = ProductEventHandler.INSTANCE;
 
@@ -155,6 +175,30 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
 
         AssertUtil.doesNotThrow(() -> handler.onAcceptedEvent(event));
     }
+
+    private static class CustomFactory implements IProductProcessorFactory {
+        @Override
+        public ITextProductEventProcessor createProcessor(String productName) {
+            return new TestProductEventProcessor(productName);
+        }
+    }
+
+    private static class TestProductEventProcessor extends AbstractITextProductEventProcessor {
+        public TestProductEventProcessor(String productName) {
+            super(productName);
+        }
+
+        @Override
+        public void onEvent(AbstractProductProcessITextEvent event) {
+            // do nothing
+        }
+
+        @Override
+        public String getUsageType() {
+            return "AGPL";
+        }
+    }
+
 
     private static class RepeatEventProcessor implements ITextProductEventProcessor {
         private final int exceptionsCount;

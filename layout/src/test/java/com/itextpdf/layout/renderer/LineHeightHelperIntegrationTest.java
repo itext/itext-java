@@ -37,6 +37,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -63,7 +65,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         String cmpPdf = CMP + "cmp_" + name;
         String outPdf = DESTINATION + name;
         testFont(PdfFontFactory.createFont(StandardFonts.COURIER), outPdf);
-        new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 
     @Test
@@ -72,7 +74,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         String cmpPdf = CMP + "cmp_" + name;
         String outPdf = DESTINATION + name;
         testFont(PdfFontFactory.createFont(StandardFonts.HELVETICA), outPdf);
-        new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 
     @Test
@@ -81,7 +83,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         String cmpPdf = CMP + "cmp_" + name;
         String outPdf = DESTINATION + name;
         testFont(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN), outPdf);
-        new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION);
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 
     private void testFont(PdfFont font, String outPdf) throws FileNotFoundException {

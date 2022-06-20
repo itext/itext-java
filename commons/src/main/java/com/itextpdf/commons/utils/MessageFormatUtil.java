@@ -56,7 +56,36 @@ public final class MessageFormatUtil {
         // Empty constructor.
     }
 
+    /**
+     * This method provides a generic way for formatting strings.
+     * Indexed arguments can be referred with {index},
+     * to escape curly braces you have to double them.
+     *
+     * <p>
+     * Only basic escaping is allowed, single quotes in a set of curly braces are not supported and
+     * multiple escaped braces in a row are also not supported
+     * 
+     * <p>
+     * Allowed {{{0}}}
+     * Allowed '{0}'
+     * Allowed '{{{0}}}'
+     *
+     * <p>
+     * Not allowed {{'{0}'}}
+     * Not allowed {{{{{0}}}}}
+     *
+     * @param pattern   to format
+     * @param arguments arguments
+     *
+     * @return The formatted string
+     */
     public static String format(String pattern, Object... arguments) {
-        return new MessageFormat(pattern, Locale.ROOT).format(arguments);
+        return new MessageFormat(
+                pattern.replace("'", "''")
+                        .replace("{{{","'{'{" )
+                        .replace("}}}","}'}'" )
+                        .replace("{{","'{'" )
+                        .replace("}}","'}'" )
+                ,Locale.ROOT).format(arguments);
     }
 }

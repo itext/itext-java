@@ -42,11 +42,12 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -55,7 +56,7 @@ public class SecurityTestXmlParserFactory extends DefaultSafeXmlParserFactory {
     public DocumentBuilder createDocumentBuilderInstance(boolean namespaceAware, boolean ignoringComments) {
         DocumentBuilder db;
         try {
-            db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            db = XmlUtil.getDocumentBuilderFactory().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new PdfException(e.getMessage(), e);
         }

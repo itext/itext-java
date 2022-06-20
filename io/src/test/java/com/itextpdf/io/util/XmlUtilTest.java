@@ -49,6 +49,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
+
 @Category(UnitTest.class)
 public class XmlUtilTest extends ExtendedITextTest {
 
@@ -56,5 +59,19 @@ public class XmlUtilTest extends ExtendedITextTest {
     public void initNewXmlDocumentTest() throws Exception {
         Document doc = XmlUtil.initNewXmlDocument();
         Assert.assertNotNull(doc);
+    }
+
+    @Test
+    public void getDocumentBuilderFactoryTest() {
+        DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
+
+        Assert.assertEquals(DocumentBuilderFactory.newInstance().getClass(), factory.getClass());
+    }
+
+    @Test
+    public void createSAXParserFactoryTest() {
+        SAXParserFactory factory = XmlUtil.createSAXParserFactory();
+
+        Assert.assertEquals(SAXParserFactory.newInstance().getClass(), factory.getClass());
     }
 }

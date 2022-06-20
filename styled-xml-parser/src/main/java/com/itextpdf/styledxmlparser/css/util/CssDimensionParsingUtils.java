@@ -441,7 +441,7 @@ public final class CssDimensionParsingUtils {
     }
 
     private static boolean isExponentNotation(String s, int index) {
-        return index < s.length() && s.charAt(index) == 'e' &&
+        return index < s.length() && Character.toLowerCase(s.charAt(index)) == 'e' &&
                 // e.g. 12e5
                 (index + 1 < s.length() && isDigit(s.charAt(index + 1)) ||
                         // e.g. 12e-5, 12e+5

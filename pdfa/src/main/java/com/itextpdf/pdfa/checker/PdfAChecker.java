@@ -149,6 +149,11 @@ public abstract class PdfAChecker {
 
     private boolean fullCheckMode = false;
 
+    /**
+     * Creates a PdfAChecker with the required conformance level.
+     *
+     * @param conformanceLevel the required conformance level
+     */
     protected PdfAChecker(PdfAConformanceLevel conformanceLevel) {
         this.conformanceLevel = conformanceLevel;
     }
@@ -388,33 +393,187 @@ public abstract class PdfAChecker {
      */
     protected abstract long getMaxNumberOfIndirectObjects();
 
+    /**
+     * Retrieve forbidden actions in conforming document.
+     *
+     * @return set of {@link PdfName} with forbidden actions
+     */
     protected abstract Set<PdfName> getForbiddenActions();
+
+    /**
+     * Retrieve allowed actions in conforming document.
+     *
+     * @return set of {@link PdfName} with allowed named actions
+     */
     protected abstract Set<PdfName> getAllowedNamedActions();
+
+    /**
+     * Checks if the action is allowed.
+     *
+     * @param action to be checked
+     */
     protected abstract void checkAction(PdfDictionary action);
+
+    /**
+     * Verify the conformity of the annotation dictionary.
+     *
+     * @param annotDic the annotation {@link PdfDictionary} to be checked
+     */
     protected abstract void checkAnnotation(PdfDictionary annotDic);
+
+    /**
+     * Checks if entries in catalog dictionary are valid.
+     *
+     * @param catalogDict the catalog {@link PdfDictionary} to be checked
+     */
     protected abstract void checkCatalogValidEntries(PdfDictionary catalogDict);
+
+    /**
+     * Verify the conformity of used color spaces.
+     */
     protected abstract void checkColorsUsages();
+
+    /**
+     * Verify the conformity of the given image.
+     *
+     * @param image the image to check
+     * @param currentColorSpaces the {@link PdfDictionary} containing the color spaces used in the document
+     */
     protected abstract void checkImage(PdfStream image, PdfDictionary currentColorSpaces);
+
+    /**
+     * Verify the conformity of the file specification dictionary.
+     *
+     * @param fileSpec the {@link PdfDictionary} containing file specification to be checked
+     */
     protected abstract void checkFileSpec(PdfDictionary fileSpec);
+
+    /**
+     * Verify the conformity of the form dictionary.
+     *
+     * @param form the form {@link PdfDictionary} to be checked
+     */
     protected abstract void checkForm(PdfDictionary form);
+
+    /**
+     * Verify the conformity of the form XObject dictionary.
+     *
+     * @param form the {@link PdfStream} to check
+     */
     protected abstract void checkFormXObject(PdfStream form);
+
+    /**
+     * Performs a number of checks on the logical structure of the document.
+     *
+     * @param catalog the catalog {@link PdfDictionary} to check
+     */
     protected abstract void checkLogicalStructure(PdfDictionary catalog);
+
+    /**
+     * Performs a number of checks on the metadata of the document.
+     *
+     * @param catalog the catalog {@link PdfDictionary} to check
+     */
     protected abstract void checkMetaData(PdfDictionary catalog);
+
+    /**
+     * Verify the conformity of the non-symbolic TrueType font.
+     *
+     * @param trueTypeFont the {@link PdfTrueTypeFont} to check
+     */
     protected abstract void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
+
+    /**
+     * Verify the conformity of the output intents array in the catalog dictionary.
+     *
+     * @param catalog the {@link PdfDictionary} to check
+     */
     protected abstract void checkOutputIntents(PdfDictionary catalog);
+
+    /**
+     * Verify the conformity of the page dictionary.
+     *
+     * @param page the {@link PdfDictionary} to check
+     * @param pageResources the page's resources dictionary
+     */
     protected abstract void checkPageObject(PdfDictionary page, PdfDictionary pageResources);
+
+    /**
+     * Checks the allowable size of the page.
+     *
+     * @param page the {@link PdfDictionary} of page which size being checked
+     */
     protected abstract void checkPageSize(PdfDictionary page);
+
+    /**
+     * Verify the conformity of the PDF array.
+     *
+     * @param array the {@link PdfArray} to check
+     */
     protected abstract void checkPdfArray(PdfArray array);
+
+    /**
+     * Verify the conformity of the PDF dictionary.
+     *
+     * @param dictionary the {@link PdfDictionary} to check
+     */
     protected abstract void checkPdfDictionary(PdfDictionary dictionary);
+
+    /**
+     * Verify the conformity of the PDF name.
+     *
+     * @param name the {@link PdfName} to check
+     */
     protected abstract void checkPdfName(PdfName name);
+
+    /**
+     * Verify the conformity of the PDF number.
+     *
+     * @param number the {@link PdfNumber} to check
+     */
     protected abstract void checkPdfNumber(PdfNumber number);
+
+    /**
+     * Verify the conformity of the PDF stream.
+     *
+     * @param stream the {@link PdfStream} to check
+     */
     protected abstract void checkPdfStream(PdfStream stream);
+
+    /**
+     * Verify the conformity of the PDF string.
+     *
+     * @param string the {@link PdfString} to check
+     */
     protected abstract void checkPdfString(PdfString string);
+
+    /**
+     * Verify the conformity of the symbolic TrueType font.
+     *
+     * @param trueTypeFont the {@link PdfTrueTypeFont} to check
+     */
     protected abstract void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont);
+
+    /**
+     * Verify the conformity of the trailer dictionary.
+     *
+     * @param trailer the {@link PdfDictionary} of trailer to check
+     */
     protected abstract void checkTrailer(PdfDictionary trailer);
+
+    /**
+     * Verify the conformity of the page transparency.
+     *
+     * @param pageDict the {@link PdfDictionary} contains contents for transparency to be checked
+     * @param pageResources the {@link PdfDictionary} contains resources for transparency to be checked
+     */
     protected abstract void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources);
 
-
+    /**
+     * Verify the conformity of the resources dictionary.
+     *
+     * @param resources the {@link PdfDictionary} to be checked
+     */
     protected void checkResources(PdfDictionary resources) {
         if (resources == null)
             return;
@@ -462,10 +621,23 @@ public abstract class PdfAChecker {
         }
     }
 
+    /**
+     * Checks if the specified flag is set.
+     *
+     * @param flags a set of flags specifying various characteristics of the PDF object
+     * @param flag to be checked
+     * @return true if the specified flag is set
+     */
     protected static boolean checkFlag(int flags, int flag) {
         return (flags & flag) != 0;
     }
 
+    /**
+     * Checks conformance level of PDF/A standard.
+     *
+     * @param conformanceLevel the {@link PdfAConformanceLevel} to be checked
+     * @return true if the specified conformanceLevel is <code>a</code> for PDF/A-1, PDF/A-2 or PDF/A-3
+     */
     protected static boolean checkStructure(PdfAConformanceLevel conformanceLevel) {
         return conformanceLevel == PdfAConformanceLevel.PDF_A_1A
                 || conformanceLevel == PdfAConformanceLevel.PDF_A_2A
@@ -484,6 +656,12 @@ public abstract class PdfAChecker {
                 dictionary.getAsDictionary(PdfName.Group).getAsName(PdfName.S));
     }
 
+    /**
+     * Checks whether the specified dictionary was already checked.
+     *
+     * @param dictionary the {@link PdfDictionary} to check
+     * @return true if the specified dictionary was checked
+     */
     protected boolean isAlreadyChecked(PdfDictionary dictionary) {
         if (checkedObjects.contains(dictionary)) {
             return true;

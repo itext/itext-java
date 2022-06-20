@@ -115,7 +115,7 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
 
     @Before
     public void resetXmlParserFactoryToDefault() {
-        XmlProcessorCreator.setXmlParserFactory(new DefaultSafeXmlParserFactory());
+        XmlProcessorCreator.setXmlParserFactory(null);
     }
 
     @Test

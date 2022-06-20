@@ -82,8 +82,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents a renderer for block elements.
+ */
 public abstract class BlockRenderer extends AbstractRenderer {
 
+    /**
+     * Creates a BlockRenderer from its corresponding layout object.
+     *
+     * @param modelElement the {@link IElement} which this object should manage
+     */
     protected BlockRenderer(IElement modelElement) {
         super(modelElement);
     }
@@ -284,9 +292,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
 
                 if (result.getSplitRenderer() != null) {
-                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
-                    // in case when parent box should wrap around child boxes.
-                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    // TODO DEVSIX-6488 all elements should be layouted first in case when parent box should wrap around child boxes
                     alignChildHorizontally(result.getSplitRenderer(), occupiedArea.getBBox());
                 }
 
@@ -340,9 +346,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (result.getStatus() == LayoutResult.FULL) {
                 decreaseLayoutBoxAfterChildPlacement(layoutBox, result, childRenderer);
                 if (childRenderer.getOccupiedArea() != null) {
-                    // Use occupied area's bbox width so that for absolutely positioned renderers we do not align using full width
-                    // in case when parent box should wrap around child boxes.
-                    // TODO in the latter case, all elements should be layouted first so that we know maximum width needed to place all children and then apply horizontal alignment
+                    // TODO DEVSIX-6488 all elements should be layouted first in case when parent box should wrap around child boxes
                     alignChildHorizontally(childRenderer, occupiedArea.getBBox());
                 }
             }
@@ -587,6 +591,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return bBox;
     }
 
+    /**
+     * Creates a split renderer.
+     *
+     * @param layoutResult the result of content layouting
+     *
+     * @return a new {@link AbstractRenderer} instance
+     */
     protected AbstractRenderer createSplitRenderer(int layoutResult) {
         AbstractRenderer splitRenderer = (AbstractRenderer) getNextRenderer();
         splitRenderer.parent = parent;
@@ -597,6 +608,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return splitRenderer;
     }
 
+    /**
+     * Creates an overflow renderer.
+     *
+     * @param layoutResult the result of content layouting
+     *
+     * @return a new {@link AbstractRenderer} instance
+     */
     protected AbstractRenderer createOverflowRenderer(int layoutResult) {
         AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
         overflowRenderer.parent = parent;
@@ -649,6 +667,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return new AbstractRenderer[]{splitRenderer, overflowRenderer};
     }
 
+    /**
+     * This method applies vertical alignment for the occupied area
+     * of the renderer and its children renderers.
+     */
     protected void applyVerticalAlignment() {
         VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
         if (verticalAlignment == null || verticalAlignment == VerticalAlignment.TOP || childRenderers.isEmpty()) {
@@ -696,6 +718,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * This method rotates content of the renderer and
+     * calculates correct occupied area for the rotated element.
+     *
+     * @param layoutBox a {@link Rectangle}
+     */
     protected void applyRotationLayout(Rectangle layoutBox) {
         float angle = (float) this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
@@ -779,6 +807,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
         return rotationTransform;
     }
 
+    /**
+     * This method starts rotation for the renderer if rotation angle property is specified.
+     *
+     * @param canvas the {@link PdfCanvas} to draw on
+     */
     protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
@@ -794,6 +827,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * This method ends rotation for the renderer if applied.
+     *
+     * @param canvas the {@link PdfCanvas} to draw on
+     */
     protected void endRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null && hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {

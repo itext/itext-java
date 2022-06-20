@@ -58,7 +58,12 @@ public abstract class RendererUnitTest extends ExtendedITextTest {
 
     // This also can be converted to a @Rule to have it all at hand in the future
     protected static Document createDummyDocument() {
-        return new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
+        Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
+
+        // setting margins to 0, because it's a dummy parent and this way it would less likely
+        // interfere with other calculations
+        document.setMargins(0, 0, 0, 0);
+        return document;
     }
 
     protected static TextRenderer createLayoutedTextRenderer(String text, Document document) {
@@ -77,5 +82,9 @@ public abstract class RendererUnitTest extends ExtendedITextTest {
 
     protected static LayoutArea createLayoutArea(float width, float height) {
         return new LayoutArea(1, new Rectangle(width, height));
+    }
+
+    protected static LayoutContext createLayoutContext(float width, float height) {
+        return new LayoutContext(createLayoutArea(width, height));
     }
 }

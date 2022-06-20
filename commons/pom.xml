@@ -4,13 +4,24 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.2.2</version>
+    <version>7.2.3</version>
   </parent>
   <artifactId>commons</artifactId>
   <name>iText 7 - commons</name>
   <url>https://itextpdf.com/</url>
 
+  <properties>
+    <jackson.core.version>2.13.3</jackson.core.version>
+  </properties>
+
   <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.core.version}</version>
+      <optional>true</optional>
+    </dependency>
+
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>pdftest</artifactId>

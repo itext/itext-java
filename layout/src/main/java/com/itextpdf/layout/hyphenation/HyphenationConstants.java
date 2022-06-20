@@ -42,6 +42,9 @@
  */
 package com.itextpdf.layout.hyphenation;
 
+/**
+ * Class containing constants to be used in hyphenation on layout level.
+ */
 public class HyphenationConstants {
 
     public static final String HYPHENATION_DEFAULT_RESOURCE = "com/itextpdf/hyph/";

@@ -86,7 +86,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     @Test
     public void getFinalConnectionWhileRedirectingTest() throws IOException {
         URL initialUrl = new URL("http://itextpdf.com");
-        URL expectedURL = new URL("https://itextpdf.com/en");
+        URL expectedURL = new URL("https://itextpdf.com/");
         URLConnection finalConnection = null;
 
         try {

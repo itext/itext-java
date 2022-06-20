@@ -41,12 +41,12 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfObjectReleaseTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfObjectReleaseTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfObjectReleaseTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfObjectReleaseTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfObjectReleaseTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
@@ -76,72 +76,66 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET))
     public void releaseCatalogTest() throws IOException, InterruptedException {
-        String srcFile = sourceFolder + "releaseObjectsInSimpleDoc.pdf";
-        String release = destinationFolder + "outReleaseObjectsInSimpleDoc.pdf";
+        String srcFile = SOURCE_FOLDER + "releaseObjectsInSimpleDoc.pdf";
+        String release = DESTINATION_FOLDER + "outReleaseObjectsInSimpleDoc.pdf";
 
         try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(release))) {
             doc.getCatalog().getPdfObject().release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET))
     public void releasePagesTest() throws IOException, InterruptedException {
-        String srcFile = sourceFolder + "releaseObjectsInSimpleDoc.pdf";
-        String release = destinationFolder + "outReleaseObjectsInSimpleDoc.pdf";
+        String srcFile = SOURCE_FOLDER + "releaseObjectsInSimpleDoc.pdf";
+        String release = DESTINATION_FOLDER + "outReleaseObjectsInSimpleDoc.pdf";
 
         try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(release))) {
             doc.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages).release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET))
     public void releaseStructTreeRootTest() throws IOException, InterruptedException {
-        String srcFile = sourceFolder + "releaseObjectsInDocWithStructTreeRoot.pdf";
-        String release = destinationFolder + "outReleaseObjectsInDocWithStructTreeRoot.pdf";
+        String srcFile = SOURCE_FOLDER + "releaseObjectsInDocWithStructTreeRoot.pdf";
+        String release = DESTINATION_FOLDER + "outReleaseObjectsInDocWithStructTreeRoot.pdf";
 
         try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(release))) {
             doc.getStructTreeRoot().getPdfObject().release();
         }
 
-        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(release, srcFile, DESTINATION_FOLDER));
     }
 
     @Test
-    public void noForbidReleaseObjectsModifyingTest() throws IOException, InterruptedException {
-        String srcFile = sourceFolder + "noForbidReleaseObjectsModifying.pdf";
-        String stampReleased = sourceFolder + "noForbidReleaseObjectsModified.pdf";
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET))
+    public void releaseModifiedObjectTest() throws IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "releaseModifiedObject.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_releaseModifiedObject.pdf";
+        String outFile = DESTINATION_FOLDER + "releaseModifiedObject.pdf";
 
-        try (PdfDocument doc = new PdfDocument(
-                new PdfReader(srcFile),
-                new PdfWriter(destinationFolder + "noForbidReleaseObjectsModifying.pdf"),
-                new StampingProperties().useAppendMode())) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile))) {
 
             PdfAnnotation annots = doc.getPage(1).getAnnotations().get(0);
 
             annots.setRectangle(new PdfArray(new Rectangle(100, 100, 80, 50)));
-            annots.getRectangle().release();
+            annots.getPdfObject().release();
         }
 
-        try (PdfDocument openPrev = new PdfDocument(new PdfReader(stampReleased))) {
-            Assert.assertTrue(new Rectangle(100, 100, 80, 50).equalsWithEpsilon(
-                    openPrev.getPage(1).getAnnotations().get(0).getRectangle().toRectangle()));
-        }
-
-        Assert.assertNotNull(new CompareTool().compareByContent(srcFile, stampReleased, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFile, DESTINATION_FOLDER));
     }
 
     @Test
     public void addingReleasedObjectToDocumentTest() throws IOException {
-        String srcFile = sourceFolder + "releaseObjectsInSimpleDoc.pdf";
+        String srcFile = SOURCE_FOLDER + "releaseObjectsInSimpleDoc.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFile),
-                new PdfWriter(sourceFolder + "addingReleasedObjectToDocument.pdf"));
+                new PdfWriter(SOURCE_FOLDER + "addingReleasedObjectToDocument.pdf"));
         try {
             PdfObject releasedObj = doc.getPdfObject(1);
             releasedObj.release();
@@ -157,9 +151,9 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     }
 
     private void singlePdfObjectReleaseTest(String inputFilename, String outStampingFilename, String outStampingReleaseFilename) throws IOException, InterruptedException {
-        String srcFile = sourceFolder + inputFilename;
-        String outPureStamping = destinationFolder + outStampingFilename;
-        String outStampingRelease = destinationFolder + outStampingReleaseFilename;
+        String srcFile = SOURCE_FOLDER + inputFilename;
+        String outPureStamping = DESTINATION_FOLDER + outStampingFilename;
+        String outStampingRelease = DESTINATION_FOLDER + outStampingReleaseFilename;
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outPureStamping));
         // We open/close document to make sure that the results of release logic and simple overwriting coincide.
@@ -176,6 +170,6 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
 
         stamperRelease.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, destinationFolder));
+        Assert.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, DESTINATION_FOLDER));
     }
 }

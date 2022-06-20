@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -52,6 +53,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.EntityResolver;
@@ -112,7 +114,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     @Override
     public DocumentBuilder createDocumentBuilderInstance(boolean namespaceAware, boolean ignoringComments) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = createDocumentBuilderFactory();
         configureSafeDocumentBuilderFactory(factory);
         factory.setNamespaceAware(namespaceAware);
         factory.setIgnoringComments(ignoringComments);
@@ -128,7 +130,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     @Override
     public XMLReader createXMLReaderInstance(boolean namespaceAware, boolean validating) {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParserFactory factory = createSAXParserFactory();
         factory.setNamespaceAware(namespaceAware);
         factory.setValidating(validating);
         configureSafeSAXParserFactory(factory);
@@ -143,7 +145,30 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         return xmlReader;
     }
 
-    private void configureSafeDocumentBuilderFactory(DocumentBuilderFactory factory) {
+    /**
+     * Creates a document builder factory implementation.
+     * 
+     * @return result of {@link DocumentBuilderFactory#newInstance()} call
+     */
+    protected DocumentBuilderFactory createDocumentBuilderFactory() {
+        return XmlUtil.getDocumentBuilderFactory();
+    }
+
+    /**
+     * Creates a SAX parser factory implementation.
+     * 
+     * @return result of {@link SAXParserFactory#newInstance()} call
+     */
+    protected SAXParserFactory createSAXParserFactory() {
+        return XmlUtil.createSAXParserFactory();
+    }
+
+    /**
+     * Configures document builder factory to make it secure against xml attacks.
+     * 
+     * @param factory {@link DocumentBuilderFactory} instance to be configured
+     */
+    protected void configureSafeDocumentBuilderFactory(DocumentBuilderFactory factory) {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
@@ -153,7 +178,12 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         factory.setExpandEntityReferences(false);
     }
 
-    private void configureSafeSAXParserFactory(SAXParserFactory factory) {
+    /**
+     * Configures SAX parser factory to make it secure against xml attacks.
+     *
+     * @param factory {@link SAXParserFactory} instance to be configured
+     */
+    protected void configureSafeSAXParserFactory(SAXParserFactory factory) {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);

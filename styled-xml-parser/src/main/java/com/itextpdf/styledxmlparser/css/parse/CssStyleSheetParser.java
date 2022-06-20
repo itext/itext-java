@@ -57,7 +57,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * Utilities class to parse a CSS style sheet.
  */
-// TODO refactor into interface
 public final class CssStyleSheetParser {
 
     /**
@@ -76,7 +75,8 @@ public final class CssStyleSheetParser {
      */
     public static CssStyleSheet parse(InputStream stream, String baseUrl) throws IOException {
         CssParserStateController controller = new CssParserStateController(baseUrl);
-        Reader br = PortUtil.wrapInBufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)); // TODO determine charset correctly DEVSIX-1458
+        // TODO determine charset correctly DEVSIX-1458
+        Reader br = PortUtil.wrapInBufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
         char[] buffer = new char[8192];
         int length;
         while ((length = br.read(buffer, 0, buffer.length)) > 0) {
@@ -106,7 +106,6 @@ public final class CssStyleSheetParser {
      * @return the resulting {@link CssStyleSheet}
      */
     public static CssStyleSheet parse(String data, String baseUrl) {
-        // TODO charset? better to create parse logic based on string completely
         ByteArrayInputStream stream = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
         try {
             return parse(stream, baseUrl);

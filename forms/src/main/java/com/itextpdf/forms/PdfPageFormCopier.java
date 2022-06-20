@@ -335,7 +335,8 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
             if (existingFields.contains(name)) {
                 PdfArray kids = parent.getAsArray(PdfName.Kids);
                 for (PdfObject kid : kids) {
-                    if (((PdfDictionary) kid).get(PdfName.T).equals(fieldDic.get(PdfName.T))) {
+                    if (((PdfDictionary) kid).get(PdfName.T) != null &&
+                            ((PdfDictionary) kid).get(PdfName.T).equals(fieldDic.get(PdfName.T))) {
                         PdfFormField kidField = makeFormField(kid);
                         PdfFormField field = makeFormField(fieldDic);
                         if (kidField == null || field == null) {

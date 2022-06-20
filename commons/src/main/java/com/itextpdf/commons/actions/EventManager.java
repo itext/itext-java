@@ -22,6 +22,7 @@
  */
 package com.itextpdf.commons.actions;
 
+import com.itextpdf.commons.actions.processors.UnderAgplProductProcessorFactory;
 import com.itextpdf.commons.exceptions.AggregatedException;
 
 import java.util.ArrayList;
@@ -49,6 +50,16 @@ public final class EventManager {
      */
     public static EventManager getInstance() {
         return INSTANCE;
+    }
+
+    /**
+     * Deliberately turns off the warning message about AGPL usage.
+     *
+     * <p>
+     * <b> Important note. Calling of this method means that the terms of AGPL license are met. </b>
+     */
+    public static void acknowledgeAgplUsageDisableWarningMessage() {
+        ProductProcessorFactoryKeeper.setProductProcessorFactory(new UnderAgplProductProcessorFactory());
     }
 
     /**

@@ -1,0 +1,8 @@
+{
+  "firstValue": "SECOND_VALUE",
+  "enumArray": [
+    "FIRST_VALUE",
+    "FIRST_VALUE",
+    "SECOND_VALUE"
+  ]
+}

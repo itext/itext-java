@@ -173,6 +173,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     final PdfXrefTable xref = new PdfXrefTable();
     protected FingerPrint fingerPrint;
 
+    protected SerializeOptions serializeOptions = new SerializeOptions();
+
     protected final StampingProperties properties;
 
     protected PdfStructTreeRoot structTreeRoot;
@@ -334,6 +336,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) throws XMPException {
+        this.serializeOptions = serializeOptions;
         setXmpMetadata(XMPMetaFactory.serializeToBuffer(xmpMeta, serializeOptions));
     }
 
@@ -345,7 +348,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @throws XMPException on serialization errors
      */
     public void setXmpMetadata(XMPMeta xmpMeta) throws XMPException {
-        SerializeOptions serializeOptions = new SerializeOptions();
         serializeOptions.setPadding(2000);
         setXmpMetadata(xmpMeta, serializeOptions);
     }
@@ -1870,6 +1872,24 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
+     * Sets a persistent XMP metadata serialization options.
+     *
+     * @param serializeOptions serialize options
+     */
+    public void setSerializeOptions(SerializeOptions serializeOptions) {
+        this.serializeOptions = serializeOptions;
+    }
+
+    /**
+     * Gets a persistent XMP metadata serialization options.
+     *
+     * @return serialize options
+     */
+    public SerializeOptions getSerializeOptions() {
+        return this.serializeOptions;
+    }
+
+    /**
      * Gets list of indirect references.
      *
      * @return list of indirect references.
@@ -1969,7 +1989,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
                 readDocumentIds();
 
-                catalog = new PdfCatalog((PdfDictionary) trailer.get(PdfName.Root, true));
+                PdfDictionary catalogDictionary = (PdfDictionary) trailer.get(PdfName.Root, true);
+                if (null == catalogDictionary) {
+                    throw new PdfException(KernelExceptionMessageConstant.CORRUPTED_ROOT_ENTRY_IN_TRAILER);
+                }
+                catalog = new PdfCatalog(catalogDictionary);
                 updatePdfVersionFromCatalog();
                 PdfStream xmpMetadataStream = catalog.getPdfObject().getAsStream(PdfName.Metadata);
                 if (xmpMetadataStream != null) {

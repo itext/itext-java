@@ -92,9 +92,6 @@ public class PdfFontTest extends ExtendedITextTest {
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 7";
-    @SuppressWarnings("unused")
-    static final String pangramme = "Amazingly few discotheques provide jukeboxes " +
-            "but it now while sayingly ABEFGHJKNOPQRSTUWYZ?";
 
     @BeforeClass
     public static void beforeClass() {
@@ -1655,7 +1652,7 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testWoffFont() throws IOException, InterruptedException {
+    public void woffFontTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "testWoffFont.pdf";
         String cmpFilename = sourceFolder + "cmp_testWoffFont.pdf";
 
@@ -1664,7 +1661,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(new PdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "Amaranth-Regular.woff",
+        PdfFont font = PdfFontFactory.createFont(fontsFolder + "SourceSerif4-Black.woff",
                 "Identity-H", EmbeddingStrategy.PREFER_EMBEDDED);
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1938,12 +1935,12 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testFontRegister() throws IOException {
-        FontProgramFactory.registerFont(fontsFolder + "Aller_Rg.ttf", "aller");
+    public void fontRegisterTest() throws IOException {
+        FontProgramFactory.registerFont(fontsFolder + "NotoSerif-Regular_v1.7.ttf", "notoSerifRegular");
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
-        PdfFont pdfFont = PdfFontFactory.createRegisteredFont("aller");
+        PdfFont pdfFont = PdfFontFactory.createRegisteredFont("notoSerifRegular");
         //clear font cache for other tests
         FontProgramFactory.clearRegisteredFonts();
         Assert.assertTrue(pdfFont instanceof PdfType0Font);

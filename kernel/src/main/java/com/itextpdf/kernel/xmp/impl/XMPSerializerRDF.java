@@ -909,7 +909,9 @@ public class XMPSerializerRDF
 				return;
 			}
 		}
-
+		if (prefix.isEmpty()) {
+			return;
+		}
 		if (!usedPrefixes.contains(prefix))
 		{
 			writeNewline();

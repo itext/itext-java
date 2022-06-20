@@ -92,6 +92,11 @@ class TernaryTreeIterator implements Enumeration {
             child = c;
         }
 
+        /**
+         * Construct item.
+         *
+         * @param i an {@link Item}
+         */
         public Item(Item i) {
             this.parent = i.parent;
             this.child = i.child;

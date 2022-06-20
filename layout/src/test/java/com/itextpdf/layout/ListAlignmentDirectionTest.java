@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -71,16 +72,17 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
     private TextAlignment listTextAlignment;
     private BaseDirection listBaseDirection;
 
+    @BeforeClass
+    public static void beforeClass() {
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
     public ListAlignmentDirectionTest(Object itemTextAlignment, Object itemBaseDirection,
             Object listTextAlignment, Object listBaseDirection) throws IOException {
         this.itemTextAlignment = (TextAlignment) itemTextAlignment;
         this.itemBaseDirection = (BaseDirection) itemBaseDirection;
         this.listTextAlignment = (TextAlignment) listTextAlignment;
         this.listBaseDirection = (BaseDirection) listBaseDirection;
-
-        createOrClearDestinationFolder(DESTINATION_FOLDER);
-        // Create an HTML for this test
-        createHtml();
     }
 
     @Parameterized.Parameters(name = PARAMETERS_NAME_PATTERN)
@@ -107,6 +109,8 @@ public class ListAlignmentDirectionTest extends ExtendedITextTest {
     // TODO DEVSIX-5727 direction of the first list-item should define the symbol indent's side. Once the issue
     // is fixed, the corresponding cmps should be updated.
     public void alignmentDirectionTest() throws Exception {
+        // Create an HTML for this test
+        createHtml();
         String fileName = MessageFormatUtil.format(
                 RESULTANT_FILE_NAME_PATTERN,
                 formatTextAlignment(itemTextAlignment),

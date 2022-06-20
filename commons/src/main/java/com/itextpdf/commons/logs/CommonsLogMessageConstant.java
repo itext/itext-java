@@ -58,6 +58,40 @@ public final class CommonsLogMessageConstant {
             "Statistics name {0} is invalid. Cannot find corresponding statistics aggregator.";
 
     /**
+     * Message notifies that files archiving operation failed.
+     *
+     * <ul>
+     * <li>0th is a message of thrown exception;
+     * </ul>
+     */
+    public static final String LOCAL_FILE_COMPRESSION_FAILED = "Cannot archive files into zip. "
+            + "Exception message: {0}.";
+
+    /**
+     * Message notifies that some exception has been thrown during json deserialization from object.
+     * List of params:
+     *
+     * <ul>
+     * <li>0th is a class name of thrown exception;
+     * <li>1st is a message of thrown exception;
+     * </ul>
+     */
+    public static final String UNABLE_TO_DESERIALIZE_JSON =
+            "Unable to deserialize json. Exception {0} was thrown with the message: {1}.";
+
+    /**
+     * Message notifies that some exception has been thrown during json serialization to object.
+     * List of params:
+     *
+     * <ul>
+     * <li>0th is a class name of thrown exception;
+     * <li>1st is a message of thrown exception;
+     * </ul>
+     */
+    public static final String UNABLE_TO_SERIALIZE_OBJECT =
+            "Unable to serialize object. Exception {0} was thrown with the message: {1}.";
+
+    /**
      * Message notifies that unknown placeholder was ignored during parsing of the producer line
      * format. List of params:
      *
@@ -81,6 +115,6 @@ public final class CommonsLogMessageConstant {
                     + "Probably appropriate process fail";
 
     private CommonsLogMessageConstant() {
-        //Private constructor will prevent the instantiation of this class directly
+        // Private constructor will prevent the instantiation of this class directly.
     }
 }

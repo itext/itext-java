@@ -42,5 +42,10 @@
  */
 package com.itextpdf.layout.element;
 
+/**
+ * This class represents a block layout element with special margins, tabbing, and alignment.
+ * An {@link IBlockElement} will try to take up as much horizontal space as available to it
+ * on the canvas or page. The concept is comparable to the block element in HTML.
+ */
 public interface IBlockElement extends IAbstractElement {
 }
