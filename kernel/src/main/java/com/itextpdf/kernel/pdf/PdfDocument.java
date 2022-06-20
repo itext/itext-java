@@ -1492,6 +1492,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      *              See ISO 32000-1 12.3.2.3 for more info.
      */
     public void addNamedDestination(String key, PdfObject value) {
+        addNamedDestination(new PdfString(key), value);
+    }
+
+    /**
+     * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
+     *
+     * @param key   Name of the destination.
+     * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
+     *              See ISO 32000-1 12.3.2.3 for more info.
+     */
+    public void addNamedDestination(PdfString key, PdfObject value) {
         checkClosingStatus();
         if (value.isArray() && ((PdfArray) value).get(0).isNumber()) {
             LoggerFactory.getLogger(PdfDocument.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
@@ -1588,7 +1599,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public void addFileAttachment(String key, PdfFileSpec fs) {
         checkClosingStatus();
-        catalog.addNameToNameTree(key, fs.getPdfObject(), PdfName.EmbeddedFiles);
+        catalog.addNameToNameTree(new PdfString(key), fs.getPdfObject(), PdfName.EmbeddedFiles);
     }
 
     /**
@@ -1646,8 +1657,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         if (collection != null && collection.isViewHidden()) {
             PdfString documentName = collection.getInitialDocument();
             PdfNameTree embeddedFiles = getCatalog().getNameTree(PdfName.EmbeddedFiles);
-            String documentNameUnicode = documentName.toUnicodeString();
-            PdfObject fileSpecObject = embeddedFiles.getNames().get(documentNameUnicode);
+            PdfObject fileSpecObject = embeddedFiles.getNames().get(documentName);
             if (fileSpecObject != null && fileSpecObject.isDictionary()) {
                 try {
                     PdfFileSpec fileSpec = PdfEncryptedPayloadFileSpecFactory.wrap((PdfDictionary) fileSpecObject);
@@ -1660,6 +1670,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                             stream = embeddedDictionary.getAsStream(PdfName.F);
                         }
                         if (stream != null) {
+                            String documentNameUnicode = documentName.toUnicodeString();
                             return new PdfEncryptedPayloadDocument(stream, fileSpec, documentNameUnicode);
                         }
                     }

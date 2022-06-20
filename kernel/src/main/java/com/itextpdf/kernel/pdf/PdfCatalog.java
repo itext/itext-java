@@ -487,7 +487,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
      *              See ISO 32000-1 12.3.2.3 for more info.
      */
-    void addNamedDestination(String key, PdfObject value) {
+    void addNamedDestination(PdfString key, PdfObject value) {
         addNameToNameTree(key, value, PdfName.Dests);
     }
 
@@ -498,7 +498,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param value    value in the name tree
      * @param treeType type of the tree (Dests, AP, EmbeddedFiles etc).
      */
-    void addNameToNameTree(String key, PdfObject value, PdfName treeType) {
+    void addNameToNameTree(PdfString key, PdfObject value, PdfName treeType) {
         getNameTree(treeType).addEntry(key, value);
     }
 
@@ -529,7 +529,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             }
             outlines = new PdfOutline(getDocument());
         } else {
-            constructOutlines(outlineRoot, destsTree.getNames());
+            constructOutlines(outlineRoot, destsTree);
         }
 
         return outlines;
@@ -597,7 +597,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param outlineRoot {@link PdfOutline dictionary} root.
      * @param names       map containing the PdfObjects stored in the tree.
      */
-    void constructOutlines(PdfDictionary outlineRoot, Map<String, PdfObject> names) {
+    void constructOutlines(PdfDictionary outlineRoot, IPdfNameTreeAccess names) {
         if (outlineRoot == null) {
             return;
         }
@@ -693,8 +693,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             }
         } else if (dest.isString() || dest.isName()) {
             PdfNameTree destsTree = getNameTree(PdfName.Dests);
-            Map<String, PdfObject> dests = destsTree.getNames();
-            String srcDestName = dest.isString() ? ((PdfString) dest).toUnicodeString() : ((PdfName) dest).getValue();
+            Map<PdfString, PdfObject> dests = destsTree.getNames();
+            PdfString srcDestName = dest.isString() ? (PdfString) dest : new PdfString(((PdfName) dest).getValue());
             PdfArray srcDestArray = (PdfArray) dests.get(srcDestName);
             if (srcDestArray != null) {
                 PdfObject pageObject = srcDestArray.get(0);
@@ -736,7 +736,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private boolean isEqualSameNameDestExist(Map<PdfPage, PdfPage> page2page, PdfDocument toDocument,
-            String srcDestName, PdfArray srcDestArray, PdfPage oldPage) {
+            PdfString srcDestName, PdfArray srcDestArray, PdfPage oldPage) {
         PdfArray sameNameDest = (PdfArray) toDocument.getCatalog().getNameTree(PdfName.Dests).
                 getNames().get(srcDestName);
         boolean equalSameNameDestExists = false;
@@ -754,7 +754,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return equalSameNameDestExists;
     }
 
-    private void addOutlineToPage(PdfOutline outline, Map<String, PdfObject> names) {
+    private void addOutlineToPage(PdfOutline outline, IPdfNameTreeAccess names) {
         PdfObject pageObj = outline.getDestination().getDestinationPage(names);
         if (pageObj instanceof PdfNumber) {
             final int pageNumber = ((PdfNumber) pageObj).intValue() + 1;
@@ -778,7 +778,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    private void addOutlineToPage(PdfOutline outline, PdfDictionary item, Map<String, PdfObject> names) {
+    private void addOutlineToPage(PdfOutline outline, PdfDictionary item, IPdfNameTreeAccess names) {
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
             PdfDestination destination = PdfDestination.makeDestination(dest);

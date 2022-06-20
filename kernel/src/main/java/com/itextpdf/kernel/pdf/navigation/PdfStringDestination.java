@@ -43,11 +43,10 @@
  */
 package com.itextpdf.kernel.pdf.navigation;
 
+import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
-
-import java.util.Map;
 
 public class PdfStringDestination extends PdfDestination {
 
@@ -61,8 +60,8 @@ public class PdfStringDestination extends PdfDestination {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
-        PdfArray array = (PdfArray) names.get(((PdfString)getPdfObject()).toUnicodeString());
+    public PdfObject getDestinationPage(IPdfNameTreeAccess names) {
+        PdfArray array = (PdfArray) names.getEntry((PdfString) getPdfObject());
 
         return array != null ? array.get(0) : null;
     }

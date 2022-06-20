@@ -129,7 +129,7 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDestination dest = PdfDestination.makeDestination(((PdfLinkAnnotation) annot).getDestinationObject());
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
     @Test
@@ -193,7 +193,7 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDestination dest = PdfDestination.makeDestination(((PdfLinkAnnotation) annot).getDestinationObject());
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
     @Test
@@ -257,7 +257,7 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
                 ((PdfLinkAnnotation) annot).getAction().get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
     @Test
@@ -324,7 +324,7 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
                 ((PdfLinkAnnotation) annot).getAction().get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
 
@@ -391,7 +391,7 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
                 ((PdfLinkAnnotation) annot).getAction().getAsDictionary(PdfName.Next).get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
     @Test
@@ -458,6 +458,6 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
                 ((PdfLinkAnnotation) annot).getAction().getAsDictionary(PdfName.Next).get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 }

@@ -42,8 +42,9 @@
  */
 package com.itextpdf.kernel.pdf.navigation;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -54,7 +55,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 
 import java.util.List;
-import java.util.Map;
 
 public class PdfStructureDestination extends PdfDestination {
 
@@ -103,7 +103,7 @@ public class PdfStructureDestination extends PdfDestination {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
+    public PdfObject getDestinationPage(IPdfNameTreeAccess names) {
         PdfObject firstObj = ((PdfArray)getPdfObject()).get(0);
         if (firstObj.isDictionary()) {
                 PdfStructElem structElem = new PdfStructElem((PdfDictionary)firstObj);

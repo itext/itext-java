@@ -218,8 +218,8 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
             page = pdfDocument.getPage(((PdfNumber) pValue).intValue() + 1);
         } else if (pValue instanceof PdfString) {
             PdfNameTree destsTree = pdfDocument.getCatalog().getNameTree(PdfName.Dests);
-            Map<String, PdfObject> dests = destsTree.getNames();
-            PdfArray pdfArray = (PdfArray) dests.get(((PdfString) pValue).getValue());
+            Map<PdfString, PdfObject> dests = destsTree.getNames();
+            PdfArray pdfArray = (PdfArray) dests.get((PdfString) pValue);
             if (null != pdfArray) {
                 if (pdfArray.get(0) instanceof PdfNumber) {
                     page = pdfDocument.getPage(((PdfNumber) pdfArray.get(0)).intValue());

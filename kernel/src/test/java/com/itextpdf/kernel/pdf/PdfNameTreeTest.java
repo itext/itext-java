@@ -81,9 +81,9 @@ public class PdfNameTreeTest extends ExtendedITextTest {
     public void embeddedFileAndJavascriptTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "FileWithSingleAttachment.pdf"));
         PdfNameTree embeddedFilesNameTree = pdfDocument.getCatalog().getNameTree(PdfName.EmbeddedFiles);
-        Map<String, PdfObject> objs = embeddedFilesNameTree.getNames();
+        Map<PdfString, PdfObject> objs = embeddedFilesNameTree.getNames();
         PdfNameTree javascript = pdfDocument.getCatalog().getNameTree(PdfName.JavaScript);
-        Map<String, PdfObject> objs2 = javascript.getNames();
+        Map<PdfString, PdfObject> objs2 = javascript.getNames();
         pdfDocument.close();
         Assert.assertEquals(1, objs.size());
         Assert.assertEquals(1, objs2.size());
@@ -123,10 +123,10 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         PdfDocument finalDoc = new PdfDocument(finalReader);
 
         PdfNameTree embeddedFilesNameTree = finalDoc.getCatalog().getNameTree(PdfName.EmbeddedFiles);
-        Map<String, PdfObject> embeddedFilesMap = embeddedFilesNameTree.getNames();
+        Map<PdfString, PdfObject> embeddedFilesMap = embeddedFilesNameTree.getNames();
 
         Assert.assertTrue(embeddedFilesMap.size()>0);
-        Assert.assertTrue(embeddedFilesMap.containsKey("Test File"));
+        Assert.assertTrue(embeddedFilesMap.containsKey(new PdfString("Test File")));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         pdfDocument.getCatalog().getPdfObject().put(PdfName.Names, dictionary);
 
         PdfNameTree appearance = pdfDocument.getCatalog().getNameTree(PdfName.AP);
-        Map<String, PdfObject> objs = appearance.getNames();
+        Map<PdfString, PdfObject> objs = appearance.getNames();
         pdfDocument.close();
         Assert.assertEquals(1, objs.size());
     }
@@ -175,8 +175,11 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         System.out.println("Expected names: " + expectedNames);
 
         for (int i = 0; i < 10; i++) {
-            Map<String, PdfObject> names = doc.getCatalog().getNameTree(PdfName.Dests).getNames();
-            List<String> actualNames = new ArrayList<>(names.keySet());
+            IPdfNameTreeAccess names = doc.getCatalog().getNameTree(PdfName.Dests);
+            List<String> actualNames = new ArrayList<>();
+            for (PdfString name : names.getKeys()) {
+                actualNames.add(name.toUnicodeString());
+            }
 
             System.out.println("Actual names:   " + actualNames);
 
@@ -187,10 +190,10 @@ public class PdfNameTreeTest extends ExtendedITextTest {
     }
 
     private static void testSetModified(boolean isAppendMode) throws IOException {
-        String[] expectedKeys = {
-                "new_key1",
-                "new_key2",
-                "new_key3",
+        PdfString[] expectedKeys = {
+                new PdfString("new_key1"),
+                new PdfString("new_key2"),
+                new PdfString("new_key3"),
         };
 
         ByteArrayOutputStream sourceFile = createDocumentInMemory();
@@ -200,8 +203,8 @@ public class PdfNameTreeTest extends ExtendedITextTest {
                 ? new PdfDocument(reader, new PdfWriter(modifiedFile), new StampingProperties().useAppendMode())
                 : new PdfDocument(reader, new PdfWriter(modifiedFile));
         PdfNameTree nameTree = pdfDoc.getCatalog().getNameTree(PdfName.Dests);
-        Map<String, PdfObject> names = nameTree.getNames();
-        ArrayList<String> keys = new ArrayList<>(names.keySet());
+        Map<PdfString, PdfObject> names = nameTree.getNames();
+        List<PdfString> keys = new ArrayList<>(names.keySet());
 
         for (int i = 0; i < keys.size(); i++) {
             names.put(expectedKeys[i], names.get(keys.get(i)));
@@ -215,7 +218,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         reader = new PdfReader(new ByteArrayInputStream(modifiedFile.toByteArray()));
         pdfDoc = new PdfDocument(reader);
         nameTree = pdfDoc.getCatalog().getNameTree(PdfName.Dests);
-        Set<String> actualKeys = nameTree.getNames().keySet();
+        Set<PdfString> actualKeys = nameTree.getNames().keySet();
 
         Assert.assertArrayEquals(expectedKeys, actualKeys.toArray());
     }

@@ -43,13 +43,12 @@
  */
 package com.itextpdf.kernel.pdf.navigation;
 
+import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
-
-import java.util.Map;
 
 /**
  * This class shall be used for creation of destinations, associated with outline items, annotations
@@ -73,7 +72,7 @@ public class PdfExplicitDestination extends PdfDestination {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
+    public PdfObject getDestinationPage(IPdfNameTreeAccess names) {
         return ((PdfArray)getPdfObject()).get(0);
     }
 

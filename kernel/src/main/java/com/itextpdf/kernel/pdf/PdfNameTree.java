@@ -43,26 +43,15 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-
-import java.util.LinkedHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class PdfNameTree {
+public class PdfNameTree extends GenericNameTree {
 
-    private static final int NODE_SIZE = 40;
-
-    private PdfCatalog catalog;
-    private Map<String, PdfObject> items = new LinkedHashMap<>();
-    private PdfName treeType;
-    private boolean modified;
+    private final PdfCatalog catalog;
+    private final PdfName treeType;
 
     /**
      * Creates the NameTree of current Document
@@ -71,205 +60,86 @@ public class PdfNameTree {
      * @param treeType the type of tree. Dests Tree, AP Tree etc.
      */
     public PdfNameTree(PdfCatalog catalog, PdfName treeType) {
+        super(catalog.getDocument());
         this.treeType = treeType;
         this.catalog = catalog;
-        items = getNames();
+        this.setItems(readFromCatalog());
     }
 
     /**
      * Retrieves the names stored in the name tree
      *
+     * <p>
+     * When non-textual names are required, use
+     *
      * @return Map containing the PdfObjects stored in the tree
      */
-    public Map<String, PdfObject> getNames() {
-        if (items.size() > 0) {
-            return items;
-        }
+    public Map<PdfString, PdfObject> getNames() {
+        return this.getItems();
+    }
 
-        PdfDictionary dictionary = catalog.getPdfObject().getAsDictionary(PdfName.Names);
-        if (dictionary != null) {
-            dictionary = dictionary.getAsDictionary(treeType);
-            if (dictionary != null) {
-                items = readTree(dictionary);
-                // A separate collection for keys is used for auto porting to C#, because in C#
-                // it is impossible to change the collection which you iterate in for loop
-                Set<String> keys = new HashSet<>();
-                keys.addAll(items.keySet());
-                for (String key : keys) {
-                    if (treeType.equals(PdfName.Dests)) {
-                        PdfArray arr = getDestArray(items.get(key));
-                        if (arr != null) {
-                            items.put(key, arr);
-                        } else
-                            items.remove(key);
-                    } else if (items.get(key) == null)
-                        items.remove(key);
-                }
-            }
+    private LinkedHashMap<PdfString, PdfObject> readFromCatalog() {
+        PdfDictionary namesDict = catalog.getPdfObject().getAsDictionary(PdfName.Names);
+
+        PdfDictionary treeRoot = namesDict == null ? null : namesDict.getAsDictionary(treeType);
+
+        LinkedHashMap<PdfString, PdfObject> items;
+        if (treeRoot == null) {
+            items = new LinkedHashMap<>();
+        } else {
+            // readTree() guarantees that the map contains no nulls
+            items = readTree(treeRoot);
         }
 
         if (treeType.equals(PdfName.Dests)) {
-            PdfDictionary destinations = catalog.getPdfObject().getAsDictionary(PdfName.Dests);
-            if (destinations != null) {
-                Set<PdfName> keys = destinations.keySet();
-                for (PdfName key : keys) {
-                    PdfArray array = getDestArray(destinations.get(key));
-                    if (array == null) {
-                        continue;
-                    }
-                    items.put(key.getValue(), array);
-                }
-            }
+            normalizeDestinations(items);
+            insertDestsEntriesFromCatalog(items);
         }
+
         return items;
     }
 
-    /**
-     * Add an entry to the name tree
-     *
-     * @param key   key of the entry
-     * @param value object to add
-     */
-    public void addEntry(String key, PdfObject value) {
-        PdfObject existingVal = items.get(key);
-        if (existingVal != null) {
-            if (value.getIndirectReference() != null && value.getIndirectReference().equals(existingVal.getIndirectReference())) {
-                return;
+    private static void normalizeDestinations(Map<PdfString, PdfObject> items) {
+        // normalise dest entries to arrays
+
+        // A separate collection for keys is used for auto porting to C#, because in C#
+        // it is impossible to change the collection which you iterate in for loop
+        Set<PdfString> keys = new HashSet<>(items.keySet());
+        for (PdfString key : keys) {
+            PdfArray arr = getDestArray(items.get(key));
+            if (arr == null) {
+                items.remove(key);
             } else {
-                Logger logger = LoggerFactory.getLogger(PdfNameTree.class);
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
+                items.put(key, arr);
             }
         }
-        modified = true;
-        items.put(key, value);
     }
 
-    /**
-     * @return True if the object has been modified, false otherwise.
-     */
-    public boolean isModified() {
-        return modified;
-    }
-
-    /**
-     * Sets the modified flag to true. It means that the object has been modified.
-     */
-    public void setModified() {
-        modified = true;
-    }
-
-    /**
-     * Build a PdfDictionary containing the name tree
-     *
-     * @return PdfDictionary containing the name tree
-     */
-    public PdfDictionary buildTree() {
-        String[] names = new String[items.size()];
-        names = items.keySet().toArray(names);
-        Arrays.sort(names);
-        if (names.length <= NODE_SIZE) {
-            PdfDictionary dic = new PdfDictionary();
-            PdfArray ar = new PdfArray();
-            for (String name : names) {
-                ar.add(new PdfString(name, null));
-                ar.add(items.get(name));
-            }
-            dic.put(PdfName.Names, ar);
-            return dic;
-        }
-        int skip = NODE_SIZE;
-        PdfDictionary[] kids = new PdfDictionary[(names.length + NODE_SIZE - 1) / NODE_SIZE];
-        for (int k = 0; k < kids.length; ++k) {
-            int offset = k * NODE_SIZE;
-            int end = Math.min(offset + NODE_SIZE, names.length);
-            PdfDictionary dic = new PdfDictionary();
-            PdfArray arr = new PdfArray();
-            arr.add(new PdfString(names[offset], null));
-            arr.add(new PdfString(names[end - 1], null));
-            dic.put(PdfName.Limits, arr);
-            arr = new PdfArray();
-            for (; offset < end; ++offset) {
-                arr.add(new PdfString(names[offset], null));
-                arr.add(items.get(names[offset]));
-            }
-            dic.put(PdfName.Names, arr);
-            dic.makeIndirect(catalog.getDocument());
-            kids[k] = dic;
-        }
-        int top = kids.length;
-        while (true) {
-            if (top <= NODE_SIZE) {
-                PdfArray arr = new PdfArray();
-                for (int i = 0; i < top; ++i)
-                    arr.add(kids[i]);
-                PdfDictionary dic = new PdfDictionary();
-                dic.put(PdfName.Kids, arr);
-                return dic;
-            }
-            skip *= NODE_SIZE;
-            int tt = (names.length + skip - 1) / skip;
-            for (int i = 0; i < tt; ++i) {
-                int offset = i * NODE_SIZE;
-                int end = Math.min(offset + NODE_SIZE, top);
-                PdfDictionary dic = (PdfDictionary) new PdfDictionary().makeIndirect(catalog.getDocument());
-                PdfArray arr = new PdfArray();
-                arr.add(new PdfString(names[i * skip], null));
-                arr.add(new PdfString(names[Math.min((i + 1) * skip, names.length) - 1], null));
-                dic.put(PdfName.Limits, arr);
-                arr = new PdfArray();
-                for (; offset < end; ++offset) {
-                    arr.add(kids[offset]);
+    private void insertDestsEntriesFromCatalog(Map<PdfString, PdfObject> items) {
+        // make sure that destinations in the Catalog/Dests dictionary are listed
+        // in the destination name tree (if that's what we're working on)
+        PdfDictionary destinations = catalog.getPdfObject().getAsDictionary(PdfName.Dests);
+        if (destinations != null) {
+            Set<PdfName> keys = destinations.keySet();
+            for (PdfName key : keys) {
+                PdfArray array = getDestArray(destinations.get(key));
+                if (array == null) {
+                    continue;
                 }
-                dic.put(PdfName.Kids, arr);
-                kids[i] = dic;
+                items.put(new PdfString(key.getValue()), array);
             }
-            top = tt;
         }
     }
 
-    private Map<String, PdfObject> readTree(PdfDictionary dictionary) {
-        Map<String, PdfObject> items = new LinkedHashMap<>();
-        if (dictionary != null) {
-            iterateItems(dictionary, items, null);
-        }
-        return items;
-    }
-
-    private PdfString iterateItems(PdfDictionary dictionary, Map<String, PdfObject> items, PdfString leftOver) {
-        PdfArray names = dictionary.getAsArray(PdfName.Names);
-        if (names != null) {
-            for (int k = 0; k < names.size(); k++) {
-                PdfString name;
-                if (leftOver == null)
-                    name = names.getAsString(k++);
-                else {
-                    name = leftOver;
-                    leftOver = null;
-                }
-                if (k < names.size()) {
-                    items.put(name.toUnicodeString(), names.get(k));
-                } else {
-                    return name;
-                }
-            }
-        } else if ((names = dictionary.getAsArray(PdfName.Kids)) != null) {
-            for (int k = 0; k < names.size(); k++) {
-                PdfDictionary kid = names.getAsDictionary(k);
-                leftOver = iterateItems(kid, items, leftOver);
-            }
-        }
-        return null;
-    }
-
-    private PdfArray getDestArray(PdfObject obj) {
-        if (obj == null)
+    private static PdfArray getDestArray(PdfObject obj) {
+        if (obj == null) {
             return null;
-        if (obj.isArray())
+        } else if (obj.isArray()) {
             return (PdfArray) obj;
-        else if (obj.isDictionary()) {
-            PdfArray arr = ((PdfDictionary) obj).getAsArray(PdfName.D);
-            return arr;
+        } else if (obj.isDictionary()) {
+            return ((PdfDictionary) obj).getAsArray(PdfName.D);
+        } else {
+            return null;
         }
-        return null;
     }
 }

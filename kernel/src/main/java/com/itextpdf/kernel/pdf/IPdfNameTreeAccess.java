@@ -41,33 +41,35 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.navigation;
+package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
+import java.util.Set;
 
-public class PdfNamedDestination extends PdfDestination {
+/**
+ * Abstract access interface to a PDF name tree.
+ */
+public interface IPdfNameTreeAccess {
 
+    /**
+     * Retrieve an entry from the name tree.
+     *
+     * @param key  key of entry to retrieve
+     * @return retrieved entry or {@code null} if absent
+     */
+    PdfObject getEntry(PdfString key);
 
-	public PdfNamedDestination(String name) {
-        this(new PdfName(name));
-    }
+    /**
+     * Retrieve an entry from the name tree.
+     *
+     * @param key  key of entry to retrieve
+     * @return retrieved entry or {@code null} if absent
+     */
+    PdfObject getEntry(String key);
 
-    public PdfNamedDestination(PdfName pdfObject) {
-        super(pdfObject);
-    }
-
-    @Override
-    public PdfObject getDestinationPage(IPdfNameTreeAccess names) {
-        PdfName name = (PdfName) getPdfObject();
-        PdfArray array = (PdfArray) names.getEntry(name.getValue());
-        return array != null ? array.get(0) : null;
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return false;
-    }
+    /**
+     * Retrieve the set of keys in the name tree.
+     *
+     * @return set of all keys in the name tree
+     */
+    Set<PdfString> getKeys();
 }

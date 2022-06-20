@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNameTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -1746,20 +1747,26 @@ public class CompareTool {
             else {
                 PdfArray explicitCmpDest = null;
                 PdfArray explicitOutDest = null;
-                Map<String, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
-                Map<String, PdfObject> outNamedDestinations = outDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
+                PdfNameTree cmpNamedDestinations = cmpDocument
+                        .getCatalog().getNameTree(PdfName.Dests);
+                PdfNameTree outNamedDestinations = outDocument
+                        .getCatalog().getNameTree(PdfName.Dests);
                 switch (cmpDestObject.getType()) {
                     case PdfObject.ARRAY:
                         explicitCmpDest = (PdfArray) cmpDestObject;
                         explicitOutDest = (PdfArray) outDestObject;
                         break;
                     case PdfObject.NAME:
-                        explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfName) cmpDestObject).getValue());
-                        explicitOutDest = (PdfArray) outNamedDestinations.get(((PdfName) outDestObject).getValue());
+                        String cmpDestName = ((PdfName) cmpDestObject).getValue();
+                        explicitCmpDest = (PdfArray) cmpNamedDestinations.getEntry(cmpDestName);
+                        String outDestName = ((PdfName) outDestObject).getValue();
+                        explicitOutDest = (PdfArray) outNamedDestinations.getEntry(outDestName);
                         break;
                     case PdfObject.STRING:
-                        explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfString) cmpDestObject).toUnicodeString());
-                        explicitOutDest = (PdfArray) outNamedDestinations.get(((PdfString) outDestObject).toUnicodeString());
+                        explicitCmpDest = (PdfArray) cmpNamedDestinations
+                                .getEntry((PdfString) cmpDestObject);
+                        explicitOutDest = (PdfArray) outNamedDestinations
+                                .getEntry((PdfString) outDestObject);
                         break;
                     default:
                         break;

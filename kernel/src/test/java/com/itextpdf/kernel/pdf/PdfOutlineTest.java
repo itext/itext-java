@@ -64,8 +64,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -78,6 +79,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
+
 
     @BeforeClass
     public static void before() {
@@ -543,7 +545,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
             first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
 
             AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
-                    .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>()));
+                    .constructOutlines(outlineDictionary, new EmptyNameTree()));
         }
     }
 
@@ -566,7 +568,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
             Exception exception = Assert.assertThrows(
                     PdfException.class,
                     () -> pdfDocument.getCatalog()
-                            .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>())
+                            .constructOutlines(outlineDictionary, new EmptyNameTree())
             );
             Assert.assertEquals(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.CORRUPTED_OUTLINE_NO_TITLE_ENTRY,
@@ -691,7 +693,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
             second.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
 
             AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
-                    .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>()));
+                    .constructOutlines(outlineDictionary, new EmptyNameTree()));
             PdfOutline resultedOutline = pdfDocument.getOutlines(false);
             Assert.assertEquals(2, resultedOutline.getAllChildren().size());
             Assert.assertEquals(resultedOutline.getAllChildren().get(1).getParent(),
@@ -722,7 +724,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
             first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
 
             AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
-                    .constructOutlines(outlineDictionary, new HashMap<String, PdfObject>()));
+                    .constructOutlines(outlineDictionary, new EmptyNameTree()));
             PdfOutline resultedOutline = pdfDocument.getOutlines(false);
             Assert.assertEquals(1, resultedOutline.getAllChildren().size());
             Assert.assertEquals(resultedOutline,
@@ -810,6 +812,23 @@ public class PdfOutlineTest extends ExtendedITextTest {
             Assert.assertEquals(resultedF, resultedF.getAllChildren().get(1).getParent());
             Assert.assertTrue(resultedF.getAllChildren().get(0).getAllChildren().isEmpty());
             Assert.assertTrue(resultedF.getAllChildren().get(1).getAllChildren().isEmpty());
+        }
+    }
+
+    private static final class EmptyNameTree implements IPdfNameTreeAccess {
+        @Override
+        public PdfObject getEntry(PdfString key) {
+            return null;
+        }
+
+        @Override
+        public PdfObject getEntry(String key) {
+            return null;
+        }
+
+        @Override
+        public Set<PdfString> getKeys() {
+            return Collections.<PdfString>emptySet();
         }
     }
 }

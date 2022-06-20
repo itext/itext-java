@@ -43,14 +43,13 @@
  */
 package com.itextpdf.kernel.pdf.navigation;
 
+import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
-
-import java.util.Map;
 
 
 public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
@@ -60,7 +59,7 @@ public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
         super(pdfObject);
     }
 
-    public abstract PdfObject getDestinationPage(Map<String, PdfObject> names);
+    public abstract PdfObject getDestinationPage(IPdfNameTreeAccess names);
 
 
     public static PdfDestination makeDestination(PdfObject pdfObject) {

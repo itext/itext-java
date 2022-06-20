@@ -41,33 +41,23 @@
     For more information, please contact iText Software Corp. at this
     address: sales@itextpdf.com
  */
-package com.itextpdf.kernel.pdf.navigation;
+package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
+import java.util.Comparator;
 
-public class PdfNamedDestination extends PdfDestination {
+/**
+ * Compare {@link PdfString} objects by value.
+ */
+final class PdfStringComparator implements Comparator<PdfString> {
 
+    // Comparator.comparing(...) would be better; we do it like this for
+    // autoporting reasons.
 
-	public PdfNamedDestination(String name) {
-        this(new PdfName(name));
-    }
-
-    public PdfNamedDestination(PdfName pdfObject) {
-        super(pdfObject);
+    PdfStringComparator() {
     }
 
     @Override
-    public PdfObject getDestinationPage(IPdfNameTreeAccess names) {
-        PdfName name = (PdfName) getPdfObject();
-        PdfArray array = (PdfArray) names.getEntry(name.getValue());
-        return array != null ? array.get(0) : null;
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return false;
+    public int compare(PdfString o1, PdfString o2) {
+        return o1.getValue().compareTo(o2.getValue());
     }
 }

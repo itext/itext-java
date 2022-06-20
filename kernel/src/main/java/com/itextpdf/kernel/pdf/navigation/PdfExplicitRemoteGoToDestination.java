@@ -42,12 +42,11 @@
  */
 package com.itextpdf.kernel.pdf.navigation;
 
+import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-
-import java.util.Map;
 
 /**
  * This class shall be used for creation of destinations, associated Remote Go-To and Embedded Go-To actions only,
@@ -66,7 +65,7 @@ public class PdfExplicitRemoteGoToDestination extends PdfDestination {
     }
 
     @Override
-    public PdfObject getDestinationPage(Map<String, PdfObject> names) {
+    public PdfObject getDestinationPage(IPdfNameTreeAccess names) {
         return ((PdfArray)getPdfObject()).get(0);
     }
 

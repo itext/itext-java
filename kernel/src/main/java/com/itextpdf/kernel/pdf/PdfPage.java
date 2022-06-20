@@ -1162,7 +1162,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
-            getDocument().getCatalog().addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+            PdfString key = new PdfString(description);
+            getDocument().getCatalog()
+                    .addNameToNameTree(key, fs.getPdfObject(), PdfName.EmbeddedFiles);
         }
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null) {
