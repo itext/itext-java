@@ -31,13 +31,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <artifactId>bouncy-castle</artifactId>
       <groupId>com.itextpdf</groupId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>bouncy-castle-fips</artifactId>
-      <groupId>com.itextpdf</groupId>
+      <artifactId>bouncy-castle-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -16,13 +16,11 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-fips</artifactId>
             <version>1.0.6</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bc-fips</artifactId>
             <version>1.0.2.3</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>

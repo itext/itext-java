@@ -58,6 +58,7 @@
     <module>svg</module>
     <module>bouncy-castle-fips</module>
     <module>bouncy-castle</module>
+    <module>bouncy-castle-connector</module>
   </modules>
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
