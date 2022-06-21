@@ -280,6 +280,7 @@ public class ListItemRenderer extends DivRenderer {
                 boolean isRtl = BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION));
                 if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
                     ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
+                    // TODO DEVSIX-6876 LIST_SYMBOL_INDENT is not inherited
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
 
                         if (symbolRenderer instanceof LineRenderer) {
@@ -297,32 +298,30 @@ public class ListItemRenderer extends DivRenderer {
                         }
                     symbolAddedInside = true;
                 } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
-                    Paragraph p = new Paragraph();
-                    p.getAccessibilityProperties().setRole(null);
-                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
-                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                    if (symbolIndent != null) {
-                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                    }
-                    paragraphRenderer.addChild(symbolRenderer);
+                    IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
                     paragraphRenderer.addChild(childRenderers.get(0));
                     childRenderers.set(0, paragraphRenderer);
                     symbolAddedInside = true;
                 }
                 if (!symbolAddedInside) {
-                    Paragraph p = new Paragraph();
-                    p.getAccessibilityProperties().setRole(null);
-                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
-                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                    if (symbolIndent != null) {
-                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                    }
-                    paragraphRenderer.addChild(symbolRenderer);
+                    IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
                     childRenderers.add(0, paragraphRenderer);
                     symbolAddedInside = true;
                 }
             }
         }
+    }
+
+    private IRenderer renderSymbolInNeutralParagraph() {
+        Paragraph p = new Paragraph().setNeutralRole();
+        IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
+        Float symbolIndent = (Float) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_INDENT);
+        if (symbolIndent != null) {
+            // cast to float is necessary for autoporting reasons
+            symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
+        }
+        paragraphRenderer.addChild(symbolRenderer);
+        return paragraphRenderer;
     }
 
     private boolean isListSymbolEmpty(IRenderer listSymbolRenderer) {
