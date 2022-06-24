@@ -43,9 +43,8 @@
  */
 package com.itextpdf.kernel.security;
 
-
-import org.bouncycastle.cms.Recipient;
-import org.bouncycastle.cms.RecipientId;
+import com.itextpdf.commons.bouncycastle.cms.IRecipient;
+import com.itextpdf.commons.bouncycastle.cms.IRecipientId;
 
 /**
  * Interface to externalize the retrieval of the CMS recipient info.
@@ -57,13 +56,13 @@ public interface IExternalDecryptionProcess {
      *
      * @return ID of the CMS Recipient
      */
-    RecipientId getCmsRecipientId();
+    IRecipientId getCmsRecipientId();
 
     /**
      * Returns the CMS recipient
      *
      * @return CMS Recipient
      */
-    Recipient getCmsRecipient();
+    IRecipient getCmsRecipient();
 
 }

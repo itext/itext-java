@@ -29,12 +29,14 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.Provider;
+import java.security.PrivateKey;
 
 public interface IBouncyCastleFactory {
     IASN1ObjectIdentifier createObjectIdentifier(IASN1EncodableWrapper encodable);
@@ -118,4 +120,6 @@ public interface IBouncyCastleFactory {
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1EncodableWrapper encodable);
 
     Provider createProvider();
+
+    IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey);
 }

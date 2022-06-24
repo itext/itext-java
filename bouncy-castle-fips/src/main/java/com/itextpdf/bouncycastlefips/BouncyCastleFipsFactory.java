@@ -29,6 +29,7 @@ import com.itextpdf.bouncycastlefips.asn1.ocsp.OCSPObjectIdentifiersBCFips;
 import com.itextpdf.bouncycastlefips.asn1.pcks.PKCSObjectIdentifiersBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.BasicOCSPRespBCFips;
+import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenBCFips;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
@@ -60,13 +61,14 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.Provider;
-
+import java.security.PrivateKey;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -82,6 +84,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.jcajce.util.DefaultJcaJceHelper;
+import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
@@ -342,5 +345,10 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public Provider createProvider() {
         return new BouncyCastleFipsProvider();
+    }
+
+    @Override
+    public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey){
+        return new JceKeyTransEnvelopedRecipientBCFips(new JceKeyTransEnvelopedRecipient(privateKey));
     }
 }

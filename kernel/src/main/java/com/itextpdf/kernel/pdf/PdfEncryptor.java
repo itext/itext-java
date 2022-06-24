@@ -43,16 +43,17 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cms.AbstractCMSException;
+import com.itextpdf.commons.bouncycastle.cms.IRecipient;
+import com.itextpdf.commons.bouncycastle.cms.IRecipientInformation;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.util.Map;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.Recipient;
-import org.bouncycastle.cms.RecipientInformation;
-import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 /**
  * This class takes any PDF and returns exactly the same but
@@ -60,6 +61,8 @@ import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
  * It is also possible to change the info dictionary.
  */
 public final class PdfEncryptor {
+
+    private static final IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
 
     private IMetaInfo metaInfo;
     private EncryptionProperties properties;
@@ -202,10 +205,12 @@ public final class PdfEncryptor {
      * @param certificateKey         private certificate key
      * @param certificateKeyProvider the name of the certificate key provider
      * @return content from a recipient info
-     * @throws CMSException if the content cannot be recovered.
+     * @throws AbstractCMSException if the content cannot be recovered.
      */
-    public static byte[] getContent(RecipientInformation recipientInfo, PrivateKey certificateKey, String certificateKeyProvider) throws CMSException {
-        Recipient jceKeyTransRecipient = new JceKeyTransEnvelopedRecipient(certificateKey).setProvider(certificateKeyProvider);
+    public static byte[] getContent(IRecipientInformation recipientInfo, PrivateKey certificateKey,
+            String certificateKeyProvider) throws AbstractCMSException {
+        IRecipient jceKeyTransRecipient = bouncyCastleFactory.createJceKeyTransEnvelopedRecipient(certificateKey)
+                .setProvider(certificateKeyProvider);
         return recipientInfo.getContent(jceKeyTransRecipient);
     }
 
