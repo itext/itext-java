@@ -9,7 +9,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
-import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -20,16 +19,15 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class PdfShadingParameterizedTest extends ExtendedITextTest {
 
-    private String shadingName;
-    private int shadingType;
+    private final String shadingName;
+    private final int shadingType;
 
-    public PdfShadingParameterizedTest(Object name, Object type)
-    {
+    public PdfShadingParameterizedTest(Object name, Object type) {
         shadingName = (String) name;
         shadingType = (int) type;
     }
 
-    @Parameterized.Parameters (name = "{0}")
+    @Parameterized.Parameters(name = "{0}")
     public static Iterable<Object[]> parameters() {
         return Arrays.asList(new Object[][] {
                 {"FreeFormGouraudShadedTriangleMesh", 4},
@@ -45,7 +43,8 @@ public class PdfShadingParameterizedTest extends ExtendedITextTest {
         PdfDictionary dict = new PdfDictionary();
         dict.put(PdfName.ShadingType, new PdfNumber(shadingType));
         dict.put(PdfName.ColorSpace, PdfName.DeviceRGB);
-        Exception e = Assert.assertThrows("Creating " + shadingName + " should throw PdfException.", PdfException.class, () -> PdfShading.makeShading(dict));
+        Exception e = Assert.assertThrows("Creating " + shadingName + " should throw PdfException.", PdfException.class,
+                () -> PdfShading.makeShading(dict));
 
         Assert.assertEquals(KernelExceptionMessageConstant.UNEXPECTED_SHADING_TYPE, e.getMessage());
     }
