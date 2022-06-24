@@ -67,7 +67,6 @@ public class GsubLookupType4 extends OpenTableLookup {
     
     @Override
     public boolean transformOne(GlyphLine line) {
-        //TODO >
         if (line.idx >= line.end)
             return false;
         boolean changed = false;
