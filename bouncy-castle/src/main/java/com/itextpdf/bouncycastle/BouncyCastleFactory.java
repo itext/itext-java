@@ -30,6 +30,7 @@ import com.itextpdf.bouncycastle.asn1.pcks.PKCSObjectIdentifiersBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipientBC;
+import com.itextpdf.bouncycastle.tsp.TSPExceptionBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
@@ -64,6 +65,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -84,6 +86,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFactory implements IBouncyCastleFactory {
@@ -301,9 +304,13 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws Exception {
+    public ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws TSPExceptionBC, IOException {
         ContentInfoBC contentInfoBC = (ContentInfoBC) contentInfo;
-        return new TimeStampTokenBC(new TimeStampToken(contentInfoBC.getContentInfo()));
+        try {
+            return new TimeStampTokenBC(new TimeStampToken(contentInfoBC.getContentInfo()));
+        } catch (TSPException e) {
+            throw new TSPExceptionBC(e);
+        }
     }
 
     @Override

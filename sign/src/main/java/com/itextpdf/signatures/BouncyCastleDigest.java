@@ -48,7 +48,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 
-import com.itextpdf.kernel.bouncycastle.BouncyCastleFactoryCreator;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 
 /**
  * Implementation for digests accessed directly from the BouncyCastle library bypassing

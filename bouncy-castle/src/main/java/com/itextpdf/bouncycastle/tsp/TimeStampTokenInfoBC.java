@@ -1,5 +1,6 @@
 package com.itextpdf.bouncycastle.tsp;
 
+import com.itextpdf.bouncycastle.asn1.tsp.TSTInfoBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;

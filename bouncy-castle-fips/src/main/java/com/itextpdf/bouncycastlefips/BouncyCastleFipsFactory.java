@@ -30,6 +30,7 @@ import com.itextpdf.bouncycastlefips.asn1.pcks.PKCSObjectIdentifiersBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.BasicOCSPRespBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
+import com.itextpdf.bouncycastlefips.tsp.TSPExceptionBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenBCFips;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
@@ -64,6 +65,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -85,6 +87,7 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.jcajce.util.DefaultJcaJceHelper;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
@@ -301,9 +304,13 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws Exception {
+    public ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws TSPExceptionBCFips, IOException {
         ContentInfoBCFips contentInfoBCFips = (ContentInfoBCFips) contentInfo;
-        return new TimeStampTokenBCFips(new TimeStampToken(contentInfoBCFips.getContentInfo()));
+        try {
+            return new TimeStampTokenBCFips(new TimeStampToken(contentInfoBCFips.getContentInfo()));
+        } catch (TSPException e) {
+            throw new TSPExceptionBCFips(e);
+        }
     }
 
     @Override

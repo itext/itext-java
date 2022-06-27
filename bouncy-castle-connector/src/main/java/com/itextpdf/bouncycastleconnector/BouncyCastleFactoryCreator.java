@@ -1,6 +1,7 @@
 package com.itextpdf.bouncycastleconnector;
 
 import com.itextpdf.bouncycastle.BouncyCastleFactory;
+import com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant;
 import com.itextpdf.bouncycastlefips.BouncyCastleFipsFactory;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 
@@ -20,7 +21,7 @@ public final class BouncyCastleFactoryCreator {
             try {
                 factory = new BouncyCastleFipsFactory();
             } catch (NoClassDefFoundError ignored) {
-                LOGGER.error(BouncyCasleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+                LOGGER.error(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
             }
         }
     }

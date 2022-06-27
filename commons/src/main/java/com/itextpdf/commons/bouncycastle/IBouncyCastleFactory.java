@@ -30,8 +30,10 @@ import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -105,7 +107,7 @@ public interface IBouncyCastleFactory {
 
     IContentInfo createContentInfo(IASN1Sequence sequence);
 
-    ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws Exception;
+    ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws AbstractTSPException, IOException;
 
     ISigningCertificate createSigningCertificate(IASN1Sequence sequence);
 

@@ -1,6 +1,5 @@
-package com.itextpdf.bouncycastle.tsp;
+package com.itextpdf.bouncycastle.asn1.tsp;
 
-import com.itextpdf.bouncycastle.asn1.tsp.MessageImprintBC;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.IMessageImprint;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 
