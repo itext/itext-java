@@ -69,10 +69,7 @@ class Woff2Dec {
     private final static int FLAG_WE_HAVE_A_TWO_BY_TWO = 1 << 7;
     private final static int FLAG_WE_HAVE_INSTRUCTIONS = 1 << 8;
 
-    private final static int kCheckSumAdjustmentOffset = 8;
-
     private final static int kEndPtsOfContoursOffset = 10;
-    private final static int kCompositeGlyphBegin = 10;
 
     // 98% of Google Fonts have no glyph above 5k bytes
     // Largest glyph ever observed was 72k bytes
@@ -95,8 +92,7 @@ class Woff2Dec {
         public int flavor;
         public int header_version;
         public short num_tables;
-        //TODO do we need it to be long?
-        public long compressed_offset;
+        public int compressed_offset;
         public int compressed_length;
         public int uncompressed_size;
         public Woff2Common.Table[] tables;  // num_tables unique tables
@@ -402,8 +398,6 @@ class Woff2Dec {
 
     // Build TrueType loca table. Returns loca_checksum
     private static int storeLoca(int[] loca_values, int index_format, Woff2Out out) {
-        // TODO(user) figure out what index format to use based on whether max
-        // offset fits into uint16_t or not
         long loca_size = loca_values.length;
         long offset_size = index_format != 0 ? 4 : 2;
         if ((loca_size << 2) >> 2 != loca_size) {
@@ -431,12 +425,11 @@ class Woff2Dec {
                                              Woff2FontInfo info, Woff2Out out) {
         final int kNumSubStreams = 7;
         Buffer file = new Buffer(data, data_offset, glyf_table.transform_length);
-        int version;
         ArrayList<StreamInfo> substreams = new ArrayList<>(kNumSubStreams);
         final int glyf_start = out.size();
 
-        // TODO: check version on 0?
-        version = file.readInt();
+        //read and ignore version
+        file.readInt();
         info.num_glyphs = file.readShort();
         info.index_format = file.readShort();
 
@@ -594,7 +587,6 @@ class Woff2Dec {
             loca_values[i] = out.size() - glyf_start;
             out.write(glyph_buf, 0, glyph_size);
 
-            // TODO(user) Old code aligned glyphs ... but do we actually need to?
             pad4(out);
 
             glyph_checksum += computeULongSum(glyph_buf, 0, glyph_size);
@@ -651,8 +643,7 @@ class Woff2Dec {
         // Skip 34 to reach 'hhea' numberOfHMetrics
         Buffer buffer = new Buffer(data, offset, data_length);
         buffer.skip(34);
-        short result = buffer.readShort();
-        return result;
+        return buffer.readShort();
     }
 
     private static int reconstructTransformedHmtx(byte[] transformed_buf,
@@ -830,10 +821,9 @@ class Woff2Dec {
         return offset;
     }
 
-    //TODO do we realy need long here?
     // First table goes after all the headers, table directory, etc
-    private static long computeOffsetToFirstTable(Woff2Header hdr) {
-        long offset = kSfntHeaderSize +
+    private static int computeOffsetToFirstTable(Woff2Header hdr) {
+        int offset = kSfntHeaderSize +
                 kSfntEntrySize * hdr.num_tables;
         if (hdr.header_version != 0) {
             offset = collectionHeaderSize(hdr.header_version, hdr.ttc_fonts.length)
@@ -852,9 +842,7 @@ class Woff2Dec {
                 tables.add(hdr.tables[asU16(index)]);
             }
         } else {
-            for (Woff2Common.Table table : hdr.tables) {
-                tables.add(table);
-            }
+            tables.addAll(Arrays.asList(hdr.tables));
         }
         return tables;
     }
@@ -872,7 +860,7 @@ class Woff2Dec {
         ArrayList<Woff2Common.Table> tables = tables(hdr, font_index);
 
         // 'glyf' without 'loca' doesn't make sense
-        if ((findTable(tables, kGlyfTableTag) != null) != (findTable(tables, kLocaTableTag) != null)) {
+        if ((findTable(tables, kGlyfTableTag) == null) == (findTable(tables, kLocaTableTag) != null)) {
             throw new FontCompressionException(FontCompressionException.RECONSTRUCT_TABLE_DIRECTORY_FAILED);
         }
 
@@ -891,8 +879,6 @@ class Woff2Dec {
                 throw new FontCompressionException(FontCompressionException.RECONSTRUCT_TABLE_DIRECTORY_FAILED);
             }
 
-            // TODO(user) a collection with optimized hmtx that reused glyf/loca
-            // would fail. We don't optimize hmtx for collections yet.
             if (((long)table.src_offset) + table.src_length > transformed_buf_size) {
                  throw new FontCompressionException(FontCompressionException.RECONSTRUCT_TABLE_DIRECTORY_FAILED);
             }
@@ -982,9 +968,6 @@ class Woff2Dec {
         }
         hdr.flavor = file.readInt();
 
-        // TODO(user): Should call IsValidVersionTag() here.
-
-        //assuming we won't deal with font files > 2Gb
         int reported_length = file.readInt();
         assert reported_length > 0;
 
@@ -1093,15 +1076,8 @@ class Woff2Dec {
             }
         }
 
-        final long first_table_offset = computeOffsetToFirstTable(hdr);
-
         hdr.compressed_offset = file.getOffset();
-        //TODO literary can't happen
-        if (hdr.compressed_offset > Integer.MAX_VALUE) {
-            throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
-        }
-        long src_offset = round4(hdr.compressed_offset + hdr.compressed_length);
-        long dst_offset = first_table_offset;
+        int src_offset = round4(hdr.compressed_offset + hdr.compressed_length);
 
         if (src_offset > length) {
             throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
@@ -1111,9 +1087,6 @@ class Woff2Dec {
                 throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
             }
             src_offset = Round.round4(meta_offset + meta_length);
-            if (src_offset > Integer.MAX_VALUE) {
-                throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
-            }
         }
 
         if (priv_offset != 0) {
@@ -1121,9 +1094,6 @@ class Woff2Dec {
                 throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
             }
             src_offset = Round.round4(priv_offset + priv_length);
-            if (src_offset > Integer.MAX_VALUE) {
-                throw new FontCompressionException(FontCompressionException.READ_HEADER_FAILED);
-            }
         }
 
         if (src_offset != Round.round4(length)) {
@@ -1134,9 +1104,7 @@ class Woff2Dec {
     // Write everything before the actual table data
     private static void writeHeaders(byte[] data, int length, RebuildMetadata metadata,
                                      Woff2Header hdr, Woff2Out out) {
-        long firstTableOffset = computeOffsetToFirstTable(hdr);
-        assert firstTableOffset <= Integer.MAX_VALUE;
-        byte[] output = new byte[(int) firstTableOffset];
+        byte[] output = new byte[computeOffsetToFirstTable(hdr)];
 
         // Re-order tables in output (OTSpec) order
         List<Woff2Common.Table> sorted_tables = new ArrayList<>(Arrays.asList(hdr.tables));
@@ -1159,23 +1127,22 @@ class Woff2Dec {
         }
 
         // Start building the font
-        byte[] result = output;
         int offset = 0;
         if (hdr.header_version != 0) {
             // TTC header
-            offset = storeU32(result, offset, hdr.flavor);  // TAG TTCTag
-            offset = storeU32(result, offset, hdr.header_version);  // FIXED Version
-            offset = storeU32(result, offset, hdr.ttc_fonts.length);  // ULONG numFonts
+            offset = storeU32(output, offset, hdr.flavor);  // TAG TTCTag
+            offset = storeU32(output, offset, hdr.header_version);  // FIXED Version
+            offset = storeU32(output, offset, hdr.ttc_fonts.length);  // ULONG numFonts
             // Space for ULONG OffsetTable[numFonts] (zeroed initially)
             int offset_table = offset;  // keep start of offset table for later
             for (int i = 0; i < hdr.ttc_fonts.length; ++i) {
-                offset = storeU32(result, offset, 0);  // will fill real values in later
+                offset = storeU32(output, offset, 0);  // will fill real values in later
             }
             // space for DSIG fields for header v2
             if (hdr.header_version == 0x00020000) {
-                offset = storeU32(result, offset, 0);  // ULONG ulDsigTag
-                offset = storeU32(result, offset, 0);  // ULONG ulDsigLength
-                offset = storeU32(result, offset, 0);  // ULONG ulDsigOffset
+                offset = storeU32(output, offset, 0);  // ULONG ulDsigTag
+                offset = storeU32(output, offset, 0);  // ULONG ulDsigLength
+                offset = storeU32(output, offset, 0);  // ULONG ulDsigOffset
             }
 
             // write Offset Tables and store the location of each in TTC Header
@@ -1184,28 +1151,28 @@ class Woff2Dec {
                 TtcFont ttc_font = hdr.ttc_fonts[i];
 
                 // write Offset Table location into TTC Header
-                offset_table = storeU32(result, offset_table, offset);
+                offset_table = storeU32(output, offset_table, offset);
 
                 // write the actual offset table so our header doesn't lie
                 ttc_font.dst_offset = offset;
-                offset = storeOffsetTable(result, offset, ttc_font.flavor, ttc_font.table_indices.length);
+                offset = storeOffsetTable(output, offset, ttc_font.flavor, ttc_font.table_indices.length);
 
                 metadata.font_infos[i] = new Woff2FontInfo();
                 for (short table_index : ttc_font.table_indices) {
                     int tag = hdr.tables[table_index].tag;
                     metadata.font_infos[i].table_entry_by_tag.put(tag, offset);
-                    offset = storeTableEntry(result, offset, tag);
+                    offset = storeTableEntry(output, offset, tag);
                 }
 
                 ttc_font.header_checksum = computeULongSum(output, ttc_font.dst_offset, offset - ttc_font.dst_offset);
             }
         } else {
             metadata.font_infos = new Woff2FontInfo[1];
-            offset = storeOffsetTable(result, offset, hdr.flavor, hdr.num_tables);
+            offset = storeOffsetTable(output, offset, hdr.flavor, hdr.num_tables);
             metadata.font_infos[0] = new Woff2FontInfo();
             for (int i = 0; i < hdr.num_tables; ++i) {
                 metadata.font_infos[0].table_entry_by_tag.put(sorted_tables.get(i).tag, offset);
-                offset = storeTableEntry(result, offset, sorted_tables.get(i).tag);
+                offset = storeTableEntry(output, offset, sorted_tables.get(i).tag);
             }
         }
 
@@ -1236,7 +1203,7 @@ class Woff2Dec {
         }
 
         byte[] uncompressed_buf = new byte[hdr.uncompressed_size];
-        woff2Uncompress(uncompressed_buf, 0, hdr.uncompressed_size, data, (int) hdr.compressed_offset, hdr.compressed_length);
+        woff2Uncompress(uncompressed_buf, 0, hdr.uncompressed_size, data, hdr.compressed_offset, hdr.compressed_length);
 
         for (int i = 0; i < metadata.font_infos.length; i++) {
             reconstructFont(uncompressed_buf, 0, hdr.uncompressed_size, metadata, hdr, i, out);
