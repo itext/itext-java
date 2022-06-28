@@ -1,7 +1,7 @@
 package com.itextpdf.bouncycastle;
 
-import com.itextpdf.bouncycastle.asn1.ASN1EncodableVectorBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
+import com.itextpdf.bouncycastle.asn1.ASN1EncodableVectorBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EncodingBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EnumeratedBC;
 import com.itextpdf.bouncycastle.asn1.ASN1InputStreamBC;
@@ -12,6 +12,7 @@ import com.itextpdf.bouncycastle.asn1.ASN1OutputStreamBC;
 import com.itextpdf.bouncycastle.asn1.ASN1PrimitiveBC;
 import com.itextpdf.bouncycastle.asn1.ASN1SequenceBC;
 import com.itextpdf.bouncycastle.asn1.ASN1SetBC;
+import com.itextpdf.bouncycastle.asn1.ASN1StringBC;
 import com.itextpdf.bouncycastle.asn1.ASN1TaggedObjectBC;
 import com.itextpdf.bouncycastle.asn1.DERNullBC;
 import com.itextpdf.bouncycastle.asn1.DEROctetStringBC;
@@ -46,8 +47,8 @@ import com.itextpdf.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuil
 import com.itextpdf.bouncycastle.tsp.TSPExceptionBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encoding;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
@@ -58,6 +59,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
@@ -95,16 +97,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.security.Provider;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
@@ -118,8 +121,8 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TSPException;
@@ -128,31 +131,31 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
-    public IASN1ObjectIdentifier createObjectIdentifier(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBC encodableWrapperBC = (ASN1EncodableBC) encodableWrapper;
-        if (encodableWrapperBC.getEncodable() instanceof ASN1ObjectIdentifier) {
-            return new ASN1ObjectIdentifierBC((ASN1ObjectIdentifier) encodableWrapperBC.getEncodable());
+    public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1ObjectIdentifier) {
+            return new ASN1ObjectIdentifierBC((ASN1ObjectIdentifier) encodableBC.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1ObjectIdentifier createObjectIdentifier(String str) {
+    public IASN1ObjectIdentifier createASN1ObjectIdentifier(String str) {
         return new ASN1ObjectIdentifierBC(str);
     }
 
     @Override
-    public IASN1InputStream createInputStream(InputStream stream) {
+    public IASN1InputStream createASN1InputStream(InputStream stream) {
         return new ASN1InputStreamBC(stream);
     }
 
     @Override
-    public IASN1InputStream createInputStream(byte[] bytes) {
+    public IASN1InputStream createASN1InputStream(byte[] bytes) {
         return new ASN1InputStreamBC(bytes);
     }
 
     @Override
-    public IASN1OctetString createOctetString(IASN1Primitive primitive) {
+    public IASN1OctetString createASN1OctetString(IASN1Primitive primitive) {
         ASN1PrimitiveBC primitiveBC = (ASN1PrimitiveBC) primitive;
         if (primitiveBC.getPrimitive() instanceof ASN1OctetString) {
             return new ASN1OctetStringBC((ASN1OctetString) primitiveBC.getPrimitive());
@@ -161,16 +164,16 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1OctetString createOctetString(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBC encodableWrapperBC = (ASN1EncodableBC) encodableWrapper;
-        if (encodableWrapperBC.getEncodable() instanceof ASN1OctetString) {
-            return new ASN1OctetStringBC((ASN1OctetString) encodableWrapperBC.getEncodable());
+    public IASN1OctetString createASN1OctetString(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1OctetString) {
+            return new ASN1OctetStringBC((ASN1OctetString) encodableBC.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Sequence createSequence(IASN1Primitive primitive) {
+    public IASN1Sequence createASN1Sequence(IASN1Primitive primitive) {
         ASN1PrimitiveBC primitiveBC = (ASN1PrimitiveBC) primitive;
         if (primitiveBC.getPrimitive() instanceof ASN1Sequence) {
             return new ASN1SequenceBC((ASN1Sequence) primitiveBC.getPrimitive());
@@ -179,7 +182,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createSequence(Object object) {
+    public IASN1Sequence createASN1Sequence(Object object) {
         if (object instanceof ASN1Sequence) {
             return new ASN1SequenceBC((ASN1Sequence) object);
         }
@@ -187,10 +190,10 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createSequence(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBC encodableWrapperBC = (ASN1EncodableBC) encodableWrapper;
-        if (encodableWrapperBC.getEncodable() instanceof ASN1Sequence) {
-            return new ASN1SequenceBC((ASN1Sequence) encodableWrapperBC.getEncodable());
+    public IASN1Sequence createASN1Sequence(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1Sequence) {
+            return new ASN1SequenceBC((ASN1Sequence) encodableBC.getEncodable());
         }
         return null;
     }
@@ -208,55 +211,61 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createSequenceInstance(Object object) {
+    public IASN1Sequence createASN1SequenceInstance(Object object) {
         return new ASN1SequenceBC(object);
     }
 
     @Override
-    public IASN1TaggedObject createTaggedObject(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBC encodableWrapperBC = (ASN1EncodableBC) encodableWrapper;
-        if (encodableWrapperBC.getEncodable() instanceof ASN1TaggedObject) {
-            return new ASN1TaggedObjectBC((ASN1TaggedObject) encodableWrapperBC.getEncodable());
+    public IASN1TaggedObject createASN1TaggedObject(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1TaggedObject) {
+            return new ASN1TaggedObjectBC((ASN1TaggedObject) encodableBC.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Integer createInteger(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBC encodableWrapperBC = (ASN1EncodableBC) encodableWrapper;
-        if (encodableWrapperBC.getEncodable() instanceof ASN1Integer) {
-            return new ASN1IntegerBC((ASN1Integer) encodableWrapperBC.getEncodable());
+    public IASN1Integer createASN1Integer(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1Integer) {
+            return new ASN1IntegerBC((ASN1Integer) encodableBC.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Integer createInteger(int i) {
+    public IASN1Integer createASN1Integer(int i) {
         return new ASN1IntegerBC(i);
     }
 
     @Override
-    public IASN1Integer createInteger(BigInteger i) {
+    public IASN1Integer createASN1Integer(BigInteger i) {
         return new ASN1IntegerBC(i);
     }
 
     @Override
-    public IASN1Set createSet(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBC encodableWrapperBC = (ASN1EncodableBC) encodableWrapper;
-        if (encodableWrapperBC.getEncodable() instanceof ASN1Set) {
-            return new ASN1SetBC((ASN1Set) encodableWrapperBC.getEncodable());
+    public IASN1Set createASN1Set(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1Set) {
+            return new ASN1SetBC((ASN1Set) encodableBC.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Set createSetInstance(IASN1TaggedObject taggedObject, boolean b) {
+    public IASN1Set createASN1Set(Object encodable) {
+        return encodable instanceof ASN1EncodableBC ?
+                createASN1Set((ASN1EncodableBC) encodable) : null;
+    }
+
+    @Override
+    public IASN1Set createASN1SetInstance(IASN1TaggedObject taggedObject, boolean b) {
         ASN1TaggedObjectBC taggedObjectBC = (ASN1TaggedObjectBC) taggedObject;
         return new ASN1SetBC(taggedObjectBC.getTaggedObject(), b);
     }
 
     @Override
-    public IASN1OutputStream createOutputStream(OutputStream stream) {
+    public IASN1OutputStream createASN1OutputStream(OutputStream stream) {
         return new ASN1OutputStreamBC(stream);
     }
 
@@ -266,7 +275,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1EncodableVector createEncodableVector() {
+    public IASN1EncodableVector createASN1EncodableVector() {
         return new ASN1EncodableVectorBC();
     }
 
@@ -306,12 +315,12 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Enumerated createEnumerated(int i) {
+    public IASN1Enumerated createASN1Enumerated(int i) {
         return new ASN1EnumeratedBC(i);
     }
 
     @Override
-    public IASN1Encoding createEncoding() {
+    public IASN1Encoding createASN1Encoding() {
         return ASN1EncodingBC.getInstance();
     }
 
@@ -382,16 +391,17 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable) {
         ASN1ObjectIdentifierBC algorithmBc = (ASN1ObjectIdentifierBC) algorithm;
         ASN1EncodableBC encodableBc = (ASN1EncodableBC) encodable;
-        return new AlgorithmIdentifierBC(new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), encodableBc.getEncodable()));
+        return new AlgorithmIdentifierBC(
+                new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), encodableBc.getEncodable()));
     }
-    
+
     @Override
     public Provider createProvider() {
         return new BouncyCastleProvider();
     }
 
     @Override
-    public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey){
+    public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBC(new JceKeyTransEnvelopedRecipient(privateKey));
     }
 
@@ -399,17 +409,17 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IJcaContentVerifierProviderBuilder createJcaContentVerifierProviderBuilder() {
         return new JcaContentVerifierProviderBuilderBC(new JcaContentVerifierProviderBuilder());
     }
-    
+
     @Override
     public IJcaSimpleSignerInfoVerifierBuilder createJcaSimpleSignerInfoVerifierBuilder() {
         return new JcaSimpleSignerInfoVerifierBuilderBC(new JcaSimpleSignerInfoVerifierBuilder());
     }
-    
+
     @Override
     public IJcaX509CertificateConverter createJcaX509CertificateConverter() {
         return new JcaX509CertificateConverterBC(new JcaX509CertificateConverter());
     }
-    
+
     @Override
     public IJcaDigestCalculatorProviderBuilder createJcaDigestCalculatorProviderBuilder() {
         return new JcaDigestCalculatorProviderBuilderBC(new JcaDigestCalculatorProviderBuilder());
@@ -417,28 +427,28 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public ICertificateID createCertificateID(IDigestCalculator digestCalculator,
-                                              IX509CertificateHolder certificateHolder,
-                                              BigInteger bigInteger) throws OCSPExceptionBC {
+            IX509CertificateHolder certificateHolder,
+            BigInteger bigInteger) throws OCSPExceptionBC {
         return new CertificateIDBC(digestCalculator, certificateHolder, bigInteger);
     }
-    
+
     @Override
     public IX509CertificateHolder createX509CertificateHolder(byte[] bytes) throws IOException {
         return new X509CertificateHolderBC(bytes);
     }
-    
+
     @Override
     public IJcaX509CertificateHolder createJcaX509CertificateHolder(X509Certificate certificate)
             throws CertificateEncodingException {
         return new JcaX509CertificateHolderBC(new JcaX509CertificateHolder(certificate));
     }
-    
+
     @Override
     public IExtension createExtension(IASN1ObjectIdentifier objectIdentifier,
-                                      boolean critical, IASN1OctetString octetString) {
+            boolean critical, IASN1OctetString octetString) {
         return new ExtensionBC(objectIdentifier, critical, octetString);
     }
-    
+
     @Override
     public IExtensions createExtensions(IExtension extension) {
         return new ExtensionsBC(extension);
@@ -448,7 +458,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IOCSPReqBuilder createOCSPReqBuilder() {
         return new OCSPReqBuilderBC(new OCSPReqBuilder());
     }
-    
+
     @Override
     public ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBC) {
         SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[qualifierInfosBC.length];
@@ -456,5 +466,23 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
             qualifierInfos[i] = ((SigPolicyQualifierInfoBC) qualifierInfosBC[i]).getQualifierInfo();
         }
         return new SigPolicyQualifiersBC(qualifierInfos);
+    }
+
+    @Override
+    public IASN1String createASN1String(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1String) {
+            return new ASN1StringBC((ASN1String) encodableBC.getEncodable());
+        }
+        return null;
+    }
+
+    @Override
+    public IASN1Primitive createASN1Primitive(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBCFips = (ASN1EncodableBC) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1Primitive) {
+            return new ASN1PrimitiveBC((ASN1Primitive) encodableBCFips.getEncodable());
+        }
+        return null;
     }
 }

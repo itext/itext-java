@@ -1,7 +1,7 @@
 package com.itextpdf.bouncycastlefips;
 
-import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableVectorBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
+import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableVectorBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1EncodingBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1EnumeratedBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1InputStreamBCFips;
@@ -12,6 +12,7 @@ import com.itextpdf.bouncycastlefips.asn1.ASN1OutputStreamBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1PrimitiveBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1SequenceBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1SetBCFips;
+import com.itextpdf.bouncycastlefips.asn1.ASN1StringBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1TaggedObjectBCFips;
 import com.itextpdf.bouncycastlefips.asn1.DERNullBCFips;
 import com.itextpdf.bouncycastlefips.asn1.DEROctetStringBCFips;
@@ -46,8 +47,8 @@ import com.itextpdf.bouncycastlefips.operator.jcajce.JcaDigestCalculatorProvider
 import com.itextpdf.bouncycastlefips.tsp.TSPExceptionBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenBCFips;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encoding;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
@@ -58,6 +59,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
@@ -95,16 +97,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.security.Provider;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
@@ -118,8 +121,8 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TSPException;
@@ -127,31 +130,31 @@ import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
-    public IASN1ObjectIdentifier createObjectIdentifier(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBCFips encodableWrapperBCFips = (ASN1EncodableBCFips) encodableWrapper;
-        if (encodableWrapperBCFips.getEncodable() instanceof ASN1ObjectIdentifier) {
-            return new ASN1ObjectIdentifierBCFips((ASN1ObjectIdentifier) encodableWrapperBCFips.getEncodable());
+    public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1ObjectIdentifier) {
+            return new ASN1ObjectIdentifierBCFips((ASN1ObjectIdentifier) encodableBCFips.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1ObjectIdentifier createObjectIdentifier(String str) {
+    public IASN1ObjectIdentifier createASN1ObjectIdentifier(String str) {
         return new ASN1ObjectIdentifierBCFips(str);
     }
 
     @Override
-    public IASN1InputStream createInputStream(InputStream stream) {
+    public IASN1InputStream createASN1InputStream(InputStream stream) {
         return new ASN1InputStreamBCFips(stream);
     }
 
     @Override
-    public IASN1InputStream createInputStream(byte[] bytes) {
+    public IASN1InputStream createASN1InputStream(byte[] bytes) {
         return new ASN1InputStreamBCFips(bytes);
     }
 
     @Override
-    public IASN1OctetString createOctetString(IASN1Primitive primitive) {
+    public IASN1OctetString createASN1OctetString(IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         if (primitiveBCFips.getPrimitive() instanceof ASN1OctetString) {
             return new ASN1OctetStringBCFips((ASN1OctetString) primitiveBCFips.getPrimitive());
@@ -160,16 +163,16 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1OctetString createOctetString(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBCFips encodableWrapperBCFips = (ASN1EncodableBCFips) encodableWrapper;
-        if (encodableWrapperBCFips.getEncodable() instanceof ASN1OctetString) {
-            return new ASN1OctetStringBCFips((ASN1OctetString) encodableWrapperBCFips.getEncodable());
+    public IASN1OctetString createASN1OctetString(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1OctetString) {
+            return new ASN1OctetStringBCFips((ASN1OctetString) encodableBCFips.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Sequence createSequence(IASN1Primitive primitive) {
+    public IASN1Sequence createASN1Sequence(IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         if (primitiveBCFips.getPrimitive() instanceof ASN1Sequence) {
             return new ASN1SequenceBCFips((ASN1Sequence) primitiveBCFips.getPrimitive());
@@ -178,7 +181,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createSequence(Object object) {
+    public IASN1Sequence createASN1Sequence(Object object) {
         if (object instanceof ASN1Sequence) {
             return new ASN1SequenceBCFips((ASN1Sequence) object);
         }
@@ -186,10 +189,10 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createSequence(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBCFips encodableWrapperBCFips = (ASN1EncodableBCFips) encodableWrapper;
-        if (encodableWrapperBCFips.getEncodable() instanceof ASN1Sequence) {
-            return new ASN1SequenceBCFips((ASN1Sequence) encodableWrapperBCFips.getEncodable());
+    public IASN1Sequence createASN1Sequence(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1Sequence) {
+            return new ASN1SequenceBCFips((ASN1Sequence) encodableBCFips.getEncodable());
         }
         return null;
     }
@@ -207,55 +210,61 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createSequenceInstance(Object object) {
+    public IASN1Sequence createASN1SequenceInstance(Object object) {
         return new ASN1SequenceBCFips(object);
     }
 
     @Override
-    public IASN1TaggedObject createTaggedObject(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBCFips encodableWrapperBCFips = (ASN1EncodableBCFips) encodableWrapper;
-        if (encodableWrapperBCFips.getEncodable() instanceof ASN1TaggedObject) {
-            return new ASN1TaggedObjectBCFips((ASN1TaggedObject) encodableWrapperBCFips.getEncodable());
+    public IASN1TaggedObject createASN1TaggedObject(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1TaggedObject) {
+            return new ASN1TaggedObjectBCFips((ASN1TaggedObject) encodableBCFips.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Integer createInteger(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBCFips encodableWrapperBCFips = (ASN1EncodableBCFips) encodableWrapper;
-        if (encodableWrapperBCFips.getEncodable() instanceof ASN1Integer) {
-            return new ASN1IntegerBCFips((ASN1Integer) encodableWrapperBCFips.getEncodable());
+    public IASN1Integer createASN1Integer(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1Integer) {
+            return new ASN1IntegerBCFips((ASN1Integer) encodableBCFips.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Integer createInteger(int i) {
+    public IASN1Integer createASN1Integer(int i) {
         return new ASN1IntegerBCFips(i);
     }
 
     @Override
-    public IASN1Integer createInteger(BigInteger i) {
+    public IASN1Integer createASN1Integer(BigInteger i) {
         return new ASN1IntegerBCFips(i);
     }
 
     @Override
-    public IASN1Set createSet(IASN1Encodable encodableWrapper) {
-        ASN1EncodableBCFips encodableWrapperBCFips = (ASN1EncodableBCFips) encodableWrapper;
-        if (encodableWrapperBCFips.getEncodable() instanceof ASN1Set) {
-            return new ASN1SetBCFips((ASN1Set) encodableWrapperBCFips.getEncodable());
+    public IASN1Set createASN1Set(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1Set) {
+            return new ASN1SetBCFips((ASN1Set) encodableBCFips.getEncodable());
         }
         return null;
     }
 
     @Override
-    public IASN1Set createSetInstance(IASN1TaggedObject taggedObject, boolean b) {
+    public IASN1Set createASN1Set(Object encodable) {
+        return encodable instanceof ASN1EncodableBCFips ?
+                createASN1Set((ASN1EncodableBCFips) encodable) : null;
+    }
+
+    @Override
+    public IASN1Set createASN1SetInstance(IASN1TaggedObject taggedObject, boolean b) {
         ASN1TaggedObjectBCFips taggedObjectBCFips = (ASN1TaggedObjectBCFips) taggedObject;
         return new ASN1SetBCFips(taggedObjectBCFips.getTaggedObject(), b);
     }
 
     @Override
-    public IASN1OutputStream createOutputStream(OutputStream stream) {
+    public IASN1OutputStream createASN1OutputStream(OutputStream stream) {
         return new ASN1OutputStreamBCFips(stream);
     }
 
@@ -265,7 +274,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1EncodableVector createEncodableVector() {
+    public IASN1EncodableVector createASN1EncodableVector() {
         return new ASN1EncodableVectorBCFips();
     }
 
@@ -305,12 +314,12 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Enumerated createEnumerated(int i) {
+    public IASN1Enumerated createASN1Enumerated(int i) {
         return new ASN1EnumeratedBCFips(i);
     }
 
     @Override
-    public IASN1Encoding createEncoding() {
+    public IASN1Encoding createASN1Encoding() {
         return ASN1EncodingBCFips.getInstance();
     }
 
@@ -378,19 +387,21 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable) {
+    public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm,
+            IASN1Encodable encodable) {
         ASN1ObjectIdentifierBCFips algorithmBc = (ASN1ObjectIdentifierBCFips) algorithm;
         ASN1EncodableBCFips encodableBc = (ASN1EncodableBCFips) encodable;
-        return new AlgorithmIdentifierBCFips(new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), encodableBc.getEncodable()));
+        return new AlgorithmIdentifierBCFips(
+                new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), encodableBc.getEncodable()));
     }
-    
+
     @Override
     public Provider createProvider() {
         return new BouncyCastleFipsProvider();
     }
 
     @Override
-    public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey){
+    public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBCFips(new JceKeyTransEnvelopedRecipient(privateKey));
     }
     
@@ -455,5 +466,23 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
             qualifierInfos[i] = ((SigPolicyQualifierInfoBCFips) qualifierInfosBC[i]).getQualifierInfo();
         }
         return new SigPolicyQualifiersBCFips(qualifierInfos);
+    }
+
+    @Override
+    public IASN1String createASN1String(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1String) {
+            return new ASN1StringBCFips((ASN1String) encodableBCFips.getEncodable());
+        }
+        return null;
+    }
+
+    @Override
+    public IASN1Primitive createASN1Primitive(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof ASN1Primitive) {
+            return new ASN1PrimitiveBCFips((ASN1Primitive) encodableBCFips.getEncodable());
+        }
+        return null;
     }
 }

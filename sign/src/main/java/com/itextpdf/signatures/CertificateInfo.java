@@ -43,7 +43,14 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
 import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.io.ByteArrayInputStream;
@@ -54,20 +61,14 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.ASN1String;
-import org.bouncycastle.asn1.ASN1TaggedObject;
 
 /**
  * Class containing static methods that allow you to get information from
  * an X509 Certificate: the issuer and the subject.
  */
-// TODO DEVSIX-6731 Switch CertificateInfo to the new approach
 public class CertificateInfo {
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     // Inner classes
 
@@ -78,94 +79,101 @@ public class CertificateInfo {
         /**
          * Country code - StringType(SIZE(2)).
          */
-        public static final ASN1ObjectIdentifier C = new ASN1ObjectIdentifier("2.5.4.6");
+        public static final IASN1ObjectIdentifier C = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.6");
 
         /**
          * Organization - StringType(SIZE(1..64)).
          */
-        public static final ASN1ObjectIdentifier O = new ASN1ObjectIdentifier("2.5.4.10");
+        public static final IASN1ObjectIdentifier O = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.10");
 
         /**
          * Organizational unit name - StringType(SIZE(1..64)).
          */
-        public static final ASN1ObjectIdentifier OU = new ASN1ObjectIdentifier("2.5.4.11");
+        public static final IASN1ObjectIdentifier OU = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.11");
 
         /**
          * Title.
          */
-        public static final ASN1ObjectIdentifier T = new ASN1ObjectIdentifier("2.5.4.12");
+        public static final IASN1ObjectIdentifier T = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.12");
 
         /**
          * Common name - StringType(SIZE(1..64)).
          */
-        public static final ASN1ObjectIdentifier CN = new ASN1ObjectIdentifier("2.5.4.3");
+        public static final IASN1ObjectIdentifier CN = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.3");
 
         /**
          * Device serial number name - StringType(SIZE(1..64)).
          */
-        public static final ASN1ObjectIdentifier SN = new ASN1ObjectIdentifier("2.5.4.5");
+        public static final IASN1ObjectIdentifier SN = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.5");
 
         /**
          * Locality name - StringType(SIZE(1..64)).
          */
-        public static final ASN1ObjectIdentifier L = new ASN1ObjectIdentifier("2.5.4.7");
+        public static final IASN1ObjectIdentifier L = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.7");
 
         /**
          * State, or province name - StringType(SIZE(1..64)).
          */
-        public static final ASN1ObjectIdentifier ST = new ASN1ObjectIdentifier("2.5.4.8");
+        public static final IASN1ObjectIdentifier ST = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.8");
 
         /**
          * Naming attribute of type X520name.
          */
-        public static final ASN1ObjectIdentifier SURNAME = new ASN1ObjectIdentifier("2.5.4.4");
+        public static final IASN1ObjectIdentifier SURNAME = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier("2.5.4.4");
 
         /**
          * Naming attribute of type X520name.
          */
-        public static final ASN1ObjectIdentifier GIVENNAME = new ASN1ObjectIdentifier("2.5.4.42");
+        public static final IASN1ObjectIdentifier GIVENNAME = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                "2.5.4.42");
 
         /**
          * Naming attribute of type X520name.
          */
-        public static final ASN1ObjectIdentifier INITIALS = new ASN1ObjectIdentifier("2.5.4.43");
+        public static final IASN1ObjectIdentifier INITIALS = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                "2.5.4.43");
 
         /**
          * Naming attribute of type X520name.
          */
-        public static final ASN1ObjectIdentifier GENERATION = new ASN1ObjectIdentifier("2.5.4.44");
+        public static final IASN1ObjectIdentifier GENERATION = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                "2.5.4.44");
 
         /**
          * Naming attribute of type X520name.
          */
-        public static final ASN1ObjectIdentifier UNIQUE_IDENTIFIER = new ASN1ObjectIdentifier("2.5.4.45");
+        public static final IASN1ObjectIdentifier UNIQUE_IDENTIFIER = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                "2.5.4.45");
 
         /**
          * Email address (RSA PKCS#9 extension) - IA5String.
          * <p>
          * Note: if you're trying to be ultra orthodox, don't use this! It shouldn't be in here.
          */
-        public static final ASN1ObjectIdentifier EmailAddress = new ASN1ObjectIdentifier("1.2.840.113549.1.9.1");
+        public static final IASN1ObjectIdentifier EmailAddress = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                "1.2.840.113549.1.9.1");
 
         /**
          * Email address in Verisign certificates.
          */
-        public static final ASN1ObjectIdentifier E = EmailAddress;
+        public static final IASN1ObjectIdentifier E = EmailAddress;
 
         /**
          * Object identifier.
          */
-        public static final ASN1ObjectIdentifier DC = new ASN1ObjectIdentifier("0.9.2342.19200300.100.1.25");
+        public static final IASN1ObjectIdentifier DC = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                "0.9.2342.19200300.100.1.25");
 
         /**
          * LDAP User id.
          */
-        public static final ASN1ObjectIdentifier UID = new ASN1ObjectIdentifier("0.9.2342.19200300.100.1.1");
+        public static final IASN1ObjectIdentifier UID = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                "0.9.2342.19200300.100.1.1");
 
         /**
          * A Map with default symbols.
          */
-        public static final Map<ASN1ObjectIdentifier, String> DefaultSymbols = new HashMap<>();
+        public static final Map<IASN1ObjectIdentifier, String> DefaultSymbols = new HashMap<>();
 
         static {
             DefaultSymbols.put(C, "C");
@@ -195,23 +203,23 @@ public class CertificateInfo {
          *
          * @param seq an ASN1 Sequence
          */
-        public X500Name(ASN1Sequence seq) {
+        public X500Name(IASN1Sequence seq) {
             @SuppressWarnings("unchecked")
             Enumeration e = seq.getObjects();
 
             while (e.hasMoreElements()) {
-                ASN1Set set = (ASN1Set)e.nextElement();
+                IASN1Set set = BOUNCY_CASTLE_FACTORY.createASN1Set(e.nextElement());
 
                 for (int i = 0; i < set.size(); i++) {
-                    ASN1Sequence s = (ASN1Sequence)set.getObjectAt(i);
-                    String id = DefaultSymbols.get((ASN1ObjectIdentifier)s.getObjectAt(0));
+                    IASN1Sequence s = BOUNCY_CASTLE_FACTORY.createASN1Sequence(set.getObjectAt(i));
+                    String id = DefaultSymbols.get(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(s.getObjectAt(0)));
                     if (id != null) {
                         List<String> vs = values.get(id);
                         if (vs == null) {
                             vs = new ArrayList<>();
                             values.put(id, vs);
                         }
-                        vs.add(((ASN1String) s.getObjectAt(1)).getString());
+                        vs.add((BOUNCY_CASTLE_FACTORY.createASN1String(s.getObjectAt(1))).getString());
                     }
                 }
             }
@@ -226,11 +234,12 @@ public class CertificateInfo {
             CertificateInfo.X509NameTokenizer nTok = new CertificateInfo.X509NameTokenizer(dirName);
 
             while (nTok.hasMoreTokens()) {
-                String  token = nTok.nextToken();
+                String token = nTok.nextToken();
                 int index = token.indexOf('=');
 
                 if (index == -1) {
-                    throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("badly.formated.directory.string")*/);
+                    throw new IllegalArgumentException(/*MessageLocalization.getComposedMessage("badly.formated
+                    .directory.string")*/);
                 }
 
                 String id = token.substring(0, index).toUpperCase();
@@ -248,6 +257,7 @@ public class CertificateInfo {
          * Gets the first entry from the field array retrieved from the values Map.
          *
          * @param name the field name
+         *
          * @return the (first) field value
          */
         public String getField(String name) {
@@ -258,7 +268,8 @@ public class CertificateInfo {
         /**
          * Gets a field array from the values Map.
          *
-         * @param name      The field name
+         * @param name The field name
+         *
          * @return List
          */
         public List<String> getFieldArray(String name) {
@@ -285,9 +296,9 @@ public class CertificateInfo {
      * We need this class as some of the lightweight Java environments don't support classes such as StringTokenizer.
      */
     public static class X509NameTokenizer {
-        private String          oid;
-        private int             index;
-        private StringBuffer    buf = new StringBuffer();
+        private String oid;
+        private int index;
+        private StringBuffer buf = new StringBuffer();
 
         /**
          * Creates an X509NameTokenizer.
@@ -318,36 +329,31 @@ public class CertificateInfo {
                 return null;
             }
 
-            int     end = index + 1;
+            int end = index + 1;
             boolean quoted = false;
             boolean escaped = false;
 
             buf.setLength(0);
 
             while (end != oid.length()) {
-                char    c = oid.charAt(end);
+                char c = oid.charAt(end);
 
                 if (c == '"') {
                     if (!escaped) {
                         quoted = !quoted;
-                    }
-                    else {
+                    } else {
                         buf.append(c);
                     }
                     escaped = false;
-                }
-                else {
+                } else {
                     if (escaped || quoted) {
                         buf.append(c);
                         escaped = false;
-                    }
-                    else if (c == '\\') {
+                    } else if (c == '\\') {
                         escaped = true;
-                    }
-                    else if (c == ',') {
+                    } else if (c == ',') {
                         break;
-                    }
-                    else {
+                    } else {
                         buf.append(c);
                     }
                 }
@@ -365,13 +371,14 @@ public class CertificateInfo {
      * Get the issuer fields from an X509 Certificate.
      *
      * @param cert an X509Certificate
+     *
      * @return an X500Name
      */
     public static X500Name getIssuerFields(X509Certificate cert) {
         try {
-            return new X500Name((ASN1Sequence)CertificateInfo.getIssuer(cert.getTBSCertificate()));
-        }
-        catch (Exception e) {
+            return new X500Name(
+                    BOUNCY_CASTLE_FACTORY.createASN1Sequence(CertificateInfo.getIssuer(cert.getTBSCertificate())));
+        } catch (Exception e) {
             throw new PdfException(e);
         }
     }
@@ -380,15 +387,16 @@ public class CertificateInfo {
      * Get the "issuer" from the TBSCertificate bytes that are passed in.
      *
      * @param enc a TBSCertificate in a byte array
-     * @return an ASN1Primitive
+     *
+     * @return an IASN1Primitive
      */
     public static IASN1Primitive getIssuer(byte[] enc) {
         try {
-            ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(enc));
-            ASN1Sequence seq = (ASN1Sequence)in.readObject();
-            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 3 : 2);
-        }
-        catch (IOException e) {
+            IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(enc));
+            IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(in.readObject());
+            return BOUNCY_CASTLE_FACTORY.createASN1Primitive(
+                    seq.getObjectAt(BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(seq.getObjectAt(0)) != null ? 3 : 2));
+        } catch (IOException e) {
             throw new PdfException(e);
         }
     }
@@ -399,15 +407,16 @@ public class CertificateInfo {
      * Get the subject fields from an X509 Certificate.
      *
      * @param cert an X509Certificate
+     *
      * @return an X500Name
      */
     public static X500Name getSubjectFields(X509Certificate cert) {
         try {
             if (cert != null) {
-                return new X500Name((ASN1Sequence)CertificateInfo.getSubject(cert.getTBSCertificate()));
+                return new X500Name(
+                        BOUNCY_CASTLE_FACTORY.createASN1Sequence(CertificateInfo.getSubject(cert.getTBSCertificate())));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new PdfException(e);
         }
         return null;
@@ -417,15 +426,16 @@ public class CertificateInfo {
      * Get the "subject" from the TBSCertificate bytes that are passed in.
      *
      * @param enc A TBSCertificate in a byte array
-     * @return a ASN1Primitive
+     *
+     * @return a IASN1Primitive
      */
-    public static ASN1Primitive getSubject(byte[] enc) {
+    public static IASN1Primitive getSubject(byte[] enc) {
         try {
-            ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(enc));
-            ASN1Sequence seq = (ASN1Sequence)in.readObject();
-            return (ASN1Primitive)seq.getObjectAt(seq.getObjectAt(0) instanceof ASN1TaggedObject ? 5 : 4);
-        }
-        catch (IOException e) {
+            IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(enc));
+            IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(in.readObject());
+            return BOUNCY_CASTLE_FACTORY.createASN1Primitive(
+                    seq.getObjectAt(BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(seq.getObjectAt(0)) != null ? 5 : 4));
+        } catch (IOException e) {
             throw new PdfException(e);
         }
     }

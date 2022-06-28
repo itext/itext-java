@@ -1,7 +1,7 @@
 package com.itextpdf.commons.bouncycastle;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encoding;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
@@ -12,6 +12,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
@@ -51,53 +52,55 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.security.Provider;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 public interface IBouncyCastleFactory {
-    IASN1ObjectIdentifier createObjectIdentifier(IASN1Encodable encodable);
+    IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable);
 
-    IASN1ObjectIdentifier createObjectIdentifier(String str);
+    IASN1ObjectIdentifier createASN1ObjectIdentifier(String str);
 
-    IASN1InputStream createInputStream(InputStream stream);
+    IASN1InputStream createASN1InputStream(InputStream stream);
 
-    IASN1InputStream createInputStream(byte[] bytes);
+    IASN1InputStream createASN1InputStream(byte[] bytes);
 
-    IASN1OctetString createOctetString(IASN1Primitive primitive);
+    IASN1OctetString createASN1OctetString(IASN1Primitive primitive);
 
-    IASN1OctetString createOctetString(IASN1Encodable encodableWrapper);
+    IASN1OctetString createASN1OctetString(IASN1Encodable encodable);
 
-    IASN1Sequence createSequence(IASN1Primitive primitive);
+    IASN1Sequence createASN1Sequence(IASN1Primitive primitive);
 
-    IASN1Sequence createSequence(Object object);
+    IASN1Sequence createASN1Sequence(Object object);
 
-    IASN1Sequence createSequence(IASN1Encodable encodableWrapper);
+    IASN1Sequence createASN1Sequence(IASN1Encodable encodable);
 
     IDERSequence createDERSequence(IASN1EncodableVector encodableVector);
 
     IDERSequence createDERSequence(IASN1Primitive primitive);
 
-    IASN1Sequence createSequenceInstance(Object object);
+    IASN1Sequence createASN1SequenceInstance(Object object);
 
-    IASN1TaggedObject createTaggedObject(IASN1Encodable encodableWrapper);
+    IASN1TaggedObject createASN1TaggedObject(IASN1Encodable encodable);
 
-    IASN1Integer createInteger(IASN1Encodable encodableWrapper);
+    IASN1Integer createASN1Integer(IASN1Encodable encodable);
 
-    IASN1Integer createInteger(int i);
+    IASN1Integer createASN1Integer(int i);
 
-    IASN1Integer createInteger(BigInteger i);
+    IASN1Integer createASN1Integer(BigInteger i);
 
-    IASN1Set createSet(IASN1Encodable encodableWrapper);
+    IASN1Set createASN1Set(IASN1Encodable encodable);
 
-    IASN1Set createSetInstance(IASN1TaggedObject taggedObject, boolean b);
+    IASN1Set createASN1Set(Object encodable);
 
-    IASN1OutputStream createOutputStream(OutputStream stream);
+    IASN1Set createASN1SetInstance(IASN1TaggedObject taggedObject, boolean b);
+
+    IASN1OutputStream createASN1OutputStream(OutputStream stream);
 
     IDEROctetString createDEROctetString(byte[] bytes);
 
-    IASN1EncodableVector createEncodableVector();
+    IASN1EncodableVector createASN1EncodableVector();
 
     IDERNull createDERNull();
 
@@ -111,9 +114,9 @@ public interface IBouncyCastleFactory {
 
     IDERSet createDERSet(ISignaturePolicyIdentifier identifier);
 
-    IASN1Enumerated createEnumerated(int i);
+    IASN1Enumerated createASN1Enumerated(int i);
 
-    IASN1Encoding createEncoding();
+    IASN1Encoding createASN1Encoding();
 
     IAttributeTable createAttributeTable(IASN1Set unat);
 
@@ -154,7 +157,7 @@ public interface IBouncyCastleFactory {
 
     IX509CertificateHolder createX509CertificateHolder(byte[] bytes) throws IOException;
 
-    IJcaX509CertificateHolder createJcaX509CertificateHolder(X509Certificate certificate) 
+    IJcaX509CertificateHolder createJcaX509CertificateHolder(X509Certificate certificate)
             throws CertificateEncodingException;
 
     IExtension createExtension(IASN1ObjectIdentifier objectIdentifier, boolean critical, IASN1OctetString octetString);
@@ -164,4 +167,8 @@ public interface IBouncyCastleFactory {
     IOCSPReqBuilder createOCSPReqBuilder();
 
     ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBC);
+
+    IASN1String createASN1String(IASN1Encodable encodable);
+
+    IASN1Primitive createASN1Primitive(IASN1Encodable encodable);
 }
