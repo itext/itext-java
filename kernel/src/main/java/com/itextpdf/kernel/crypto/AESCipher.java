@@ -43,66 +43,65 @@
  */
 package com.itextpdf.kernel.crypto;
 
-import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.engines.AESFastEngine;
-import org.bouncycastle.crypto.modes.CBCBlockCipher;
-import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates an AES Cipher with CBC and padding PKCS5/7.
+ *
  * @author Paulo Soares
  */
 public class AESCipher {
 
-    private PaddedBufferedBlockCipher bp;
-    
+    private static final IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
+
+    private final Cipher cipher;
+
     /**
      * Creates a new instance of AESCipher
      *
      * @param forEncryption if true the cipher is initialised for
-     * encryption, if false for decryption
-     * @param key the key to be used in the cipher
-     * @param iv initialization vector to be used in cipher
+     *                      encryption, if false for decryption
+     * @param key           the key to be used in the cipher
+     * @param iv            initialization vector to be used in cipher
      */
     public AESCipher(boolean forEncryption, byte[] key, byte[] iv) {
-        BlockCipher aes = new AESFastEngine();
-        BlockCipher cbc = new CBCBlockCipher(aes);
-        bp = new PaddedBufferedBlockCipher(cbc);
-        KeyParameter kp = new KeyParameter(key);
-        ParametersWithIV piv = new ParametersWithIV(kp, iv);
-        bp.init(forEncryption, piv);
-    }
-    
-    public byte[] update(byte[] inp, int inpOff, int inpLen) {
-        int neededLen = bp.getUpdateOutputSize(inpLen);
-        byte[] outp;
-        if (neededLen > 0) {
-            outp = new byte[neededLen];
-        } else {
-            outp = new byte[0];
-        }
-        bp.processBytes(inp, inpOff, inpLen, outp, 0);
-        return outp;
-    }
-    
-    public byte[] doFinal() {
-        int neededLen = bp.getOutputSize(0);
-        byte[] outp = new byte[neededLen];
-        int n;
         try {
-            n = bp.doFinal(outp, 0);
-        } catch (Exception ex) {
-            return outp;
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", bouncyCastleFactory.createProvider());
+            cipher.init(forEncryption ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
+                    new SecretKeySpec(key, "AES"),
+                    new IvParameterSpec(iv));
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }
-        if (n != outp.length) {
-            byte[] outp2 = new byte[n];
-            System.arraycopy(outp, 0, outp2, 0, n);
-            return outp2;
-        }
-        else
-            return outp;
     }
 
+    public byte[] update(byte[] inp, int inpOff, int inpLen) {
+        return cipher.update(inp, inpOff, inpLen);
+    }
+
+    public byte[] doFinal() {
+        try {
+            return cipher.doFinal();
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            Logger logger = LoggerFactory.getLogger(AesDecryptor.class);
+            logger.info(KernelLogMessageConstant.ERROR_WHILE_FINALIZING_AES_CIPHER, e);
+            return null;
+        }
+    }
 }

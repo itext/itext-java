@@ -156,6 +156,7 @@ public final class KernelExceptionMessageConstant {
             + "decompression a single stream occupied more than a maximum integer value. Please check your pdf.";
     public static final String END_OF_CONTENT_STREAM_REACHED_BEFORE_END_OF_IMAGE_DATA = "End of content stream "
             + "reached before end of image data.";
+    public static final String ERROR_WHILE_INITIALIZING_AES_CIPHER = "Exception initializing AES cipher.";
     public static final String ERROR_WHILE_READING_OBJECT_STREAM = "Error while reading Object Stream.";
     public static final String ENCRYPTED_PAYLOAD_FILE_SPEC_DOES_NOT_HAVE_ENCRYPTED_PAYLOAD_DICTIONARY = "Encrypted "
             + "payload file spec shall have encrypted payload dictionary.";

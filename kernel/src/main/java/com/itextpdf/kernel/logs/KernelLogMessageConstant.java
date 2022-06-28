@@ -56,6 +56,8 @@ public final class KernelLogMessageConstant {
             "DCTDecode filter decoding into the bit map is not supported. The stream data would be left in JPEG "
                     + "baseline format";
 
+    public static final String ERROR_WHILE_FINALIZING_AES_CIPHER = "Exception finalizing AES cipher.";
+
     public static final String FEATURE_IS_NOT_SUPPORTED =
             "Exception was thrown: {0}. The feature {1} is probably not supported by your XML processor.";
 
