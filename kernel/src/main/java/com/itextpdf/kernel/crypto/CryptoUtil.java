@@ -42,6 +42,10 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encoding;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
@@ -54,14 +58,14 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1OutputStream;
 
 /**
  * This file is a helper class for internal usage only.
  * Be aware that it's API and functionality may be changed in the future.
  */
 public class CryptoUtil {
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private CryptoUtil() {
 
@@ -78,20 +82,20 @@ public class CryptoUtil {
     }
 
     /**
-     * Creates {@link ASN1OutputStream} instance and asserts for unexpected ASN1 encodings.
+     * Creates {@link IASN1OutputStream} instance and asserts for unexpected ASN1 encodings.
      *
      * @param outputStream the underlying stream
      * @param asn1Encoding ASN1 encoding that will be used for writing. Only DER and BER are allowed as values.
-     *                     See also {@link ASN1Encoding}.
+     *                     See also {@link IASN1Encoding}.
      *
-     * @return an {@link ASN1OutputStream} instance. Exact stream implementation is chosen based on passed encoding.
+     * @return an {@link IASN1OutputStream} instance. Exact stream implementation is chosen based on passed encoding.
      */
-    public static ASN1OutputStream createAsn1OutputStream(OutputStream outputStream, String asn1Encoding) {
-        if (!ASN1Encoding.DER.equals(asn1Encoding) && !ASN1Encoding.BER.equals(asn1Encoding)) {
+    public static IASN1OutputStream createAsn1OutputStream(OutputStream outputStream, String asn1Encoding) {
+        if (!BOUNCY_CASTLE_FACTORY.createASN1Encoding().getDer().equals(asn1Encoding) && !BOUNCY_CASTLE_FACTORY.createASN1Encoding().getBer().equals(asn1Encoding)) {
             throw new UnsupportedOperationException(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_ASN1_ENCODING, asn1Encoding)
             );
         }
-        return ASN1OutputStream.create(outputStream, asn1Encoding);
+        return BOUNCY_CASTLE_FACTORY.createASN1OutputStream(outputStream, asn1Encoding);
     }
 }

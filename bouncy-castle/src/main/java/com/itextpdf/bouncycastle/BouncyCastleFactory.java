@@ -104,6 +104,7 @@ import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
@@ -267,6 +268,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IASN1OutputStream createASN1OutputStream(OutputStream stream) {
         return new ASN1OutputStreamBC(stream);
+    }
+
+    @Override
+    public IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding) {
+        return new ASN1OutputStreamBC(ASN1OutputStream.create(outputStream, asn1Encoding));
     }
 
     @Override

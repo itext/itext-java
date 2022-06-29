@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.bouncycastle.asn1.ASN1OutputStreamBC;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -29,7 +30,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1OutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -39,14 +39,14 @@ public class CryptoUtilTest extends ExtendedITextTest {
     @Test
     public void createBerStreamTest() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ASN1OutputStream stream = CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.BER);
+        ASN1OutputStreamBC stream = (ASN1OutputStreamBC) CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.BER);
         Assert.assertNotNull(stream);
     }
 
     @Test
     public void createDerStreamTest() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ASN1OutputStream stream = CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.DER);
+        ASN1OutputStreamBC stream = (ASN1OutputStreamBC) CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.DER);
         Assert.assertNotNull(stream);
     }
 

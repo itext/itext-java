@@ -43,11 +43,11 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.tsp.TimeStampToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,7 +229,7 @@ public class CertificateVerification {
      * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
      * @return <CODE>true</CODE> is a certificate was found
      */
-    public static boolean verifyOcspCertificates(BasicOCSPResp ocsp, KeyStore keystore, String provider) {
+    public static boolean verifyOcspCertificates(IBasicOCSPResp ocsp, KeyStore keystore, String provider) {
         List<Exception> exceptionsThrown = new ArrayList<>();
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {
@@ -257,7 +257,7 @@ public class CertificateVerification {
      * @param provider the provider or <CODE>null</CODE> to use the BouncyCastle provider
      * @return <CODE>true</CODE> is a certificate was found
      */
-    public static boolean verifyTimestampCertificates(TimeStampToken ts, KeyStore keystore, String provider) {
+    public static boolean verifyTimestampCertificates(ITimeStampToken ts, KeyStore keystore, String provider) {
         List<Exception> exceptionsThrown = new ArrayList<>();
         try {
             for (X509Certificate certStoreX509 : SignUtils.getCertificates(keystore)) {

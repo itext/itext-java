@@ -14,6 +14,10 @@ public class ASN1OutputStreamBC implements IASN1OutputStream {
         this.stream = ASN1OutputStream.create(stream);
     }
 
+    public ASN1OutputStreamBC(ASN1OutputStream stream) {
+        this.stream = stream;
+    }
+
     @Override
     public void writeObject(IASN1Primitive primitive) throws IOException {
         ASN1PrimitiveBC primitiveBC = (ASN1PrimitiveBC) primitive;

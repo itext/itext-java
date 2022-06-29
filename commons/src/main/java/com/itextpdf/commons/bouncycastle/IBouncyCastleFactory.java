@@ -98,6 +98,8 @@ public interface IBouncyCastleFactory {
 
     IASN1OutputStream createASN1OutputStream(OutputStream stream);
 
+    IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding);
+
     IDEROctetString createDEROctetString(byte[] bytes);
 
     IASN1EncodableVector createASN1EncodableVector();

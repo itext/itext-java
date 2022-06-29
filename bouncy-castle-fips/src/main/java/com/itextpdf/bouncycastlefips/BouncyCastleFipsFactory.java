@@ -104,11 +104,14 @@ import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.DLOutputStream;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
@@ -269,6 +272,16 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding) {
+        if (asn1Encoding.equals("DER")) {
+            return new ASN1OutputStreamBCFips(new DEROutputStream(outputStream));
+        } else {
+            return new ASN1OutputStreamBCFips((asn1Encoding.equals("DL") ? new DLOutputStream(outputStream)
+                    : new ASN1OutputStream(outputStream)));
+        }
+    }
+
+    @Override
     public IDEROctetString createDEROctetString(byte[] bytes) {
         return new DEROctetStringBCFips(bytes);
     }
@@ -404,7 +417,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBCFips(new JceKeyTransEnvelopedRecipient(privateKey));
     }
-    
+
     @Override
     public IJcaContentVerifierProviderBuilder createJcaContentVerifierProviderBuilder() {
         return new JcaContentVerifierProviderBuilderBCFips(new JcaContentVerifierProviderBuilder());
@@ -424,11 +437,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IJcaDigestCalculatorProviderBuilder createJcaDigestCalculatorProviderBuilder() {
         return new JcaDigestCalculatorProviderBuilderBCFips(new JcaDigestCalculatorProviderBuilder());
     }
-    
+
     @Override
     public ICertificateID createCertificateID(IDigestCalculator digestCalculator,
-                                              IX509CertificateHolder certificateHolder,
-                                              BigInteger bigInteger) throws OCSPExceptionBCFips {
+            IX509CertificateHolder certificateHolder,
+            BigInteger bigInteger) throws OCSPExceptionBCFips {
         return new CertificateIDBCFips(digestCalculator, certificateHolder, bigInteger);
     }
 
@@ -445,7 +458,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IExtension createExtension(IASN1ObjectIdentifier objectIdentifier,
-                                      boolean critical, IASN1OctetString octetString) {
+            boolean critical, IASN1OctetString octetString) {
         return new ExtensionBCFips(objectIdentifier, critical, octetString);
     }
 
@@ -453,7 +466,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IExtensions createExtensions(IExtension extension) {
         return new ExtensionsBCFips(extension);
     }
-    
+
     @Override
     public IOCSPReqBuilder createOCSPReqBuilder() {
         return new OCSPReqBuilderBCFips(new OCSPReqBuilder());
