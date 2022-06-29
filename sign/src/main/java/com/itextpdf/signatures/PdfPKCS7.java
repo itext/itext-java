@@ -73,7 +73,6 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
-import com.itextpdf.commons.bouncycastle.jce.IX509Principal;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
@@ -81,6 +80,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
+import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -113,7 +113,7 @@ import java.util.Set;
  */
 public class PdfPKCS7 {
 
-    private static final IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private ISignaturePolicyIdentifier signaturePolicyIdentifier;
 
@@ -227,8 +227,8 @@ public class PdfPKCS7 {
             signCert = (X509Certificate) SignUtils.getFirstElement(certs);
             crls = new ArrayList<>();
 
-            IASN1InputStream in = bouncyCastleFactory.createInputStream(new ByteArrayInputStream(contentsKey));
-            digest = bouncyCastleFactory.createOctetString(in.readObject()).getOctets();
+            IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createInputStream(new ByteArrayInputStream(contentsKey));
+            digest = BOUNCY_CASTLE_FACTORY.createOctetString(in.readObject()).getOctets();
 
             sig = SignUtils.getSignatureHelper("SHA1withRSA", provider);
             sig.initVerify(signCert.getPublicKey());
@@ -255,7 +255,7 @@ public class PdfPKCS7 {
         isCades = PdfName.ETSI_CAdES_DETACHED.equals(filterSubtype);
         try {
             this.provider = provider;
-            IASN1InputStream din = bouncyCastleFactory.createInputStream(new ByteArrayInputStream(contentsKey));
+            IASN1InputStream din = BOUNCY_CASTLE_FACTORY.createInputStream(new ByteArrayInputStream(contentsKey));
 
             //
             // Basic checks to make sure it's a PKCS#7 SignedData Object
@@ -268,17 +268,17 @@ public class PdfPKCS7 {
                 throw new IllegalArgumentException(
                         SignExceptionMessageConstant.CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT);
             }
-            IASN1Sequence signedData = bouncyCastleFactory.createSequence(pkcs);
+            IASN1Sequence signedData = BOUNCY_CASTLE_FACTORY.createSequence(pkcs);
             if (signedData == null) {
                 throw new IllegalArgumentException(
                         SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE);
             }
-            IASN1ObjectIdentifier objId = bouncyCastleFactory.createObjectIdentifier(signedData.getObjectAt(0));
+            IASN1ObjectIdentifier objId = BOUNCY_CASTLE_FACTORY.createObjectIdentifier(signedData.getObjectAt(0));
             if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
                 throw new IllegalArgumentException(
                         SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA);
-            IASN1Sequence content = bouncyCastleFactory.createSequence(
-                    bouncyCastleFactory.createTaggedObject(signedData.getObjectAt(1)).getObject());
+            IASN1Sequence content = BOUNCY_CASTLE_FACTORY.createSequence(
+                    BOUNCY_CASTLE_FACTORY.createTaggedObject(signedData.getObjectAt(1)).getObject());
             // the positions that we care are:
             //     0 - version
             //     1 - digestAlgorithms
@@ -287,27 +287,27 @@ public class PdfPKCS7 {
             //     last - signerInfos
 
             // the version
-            version = bouncyCastleFactory.createInteger(content.getObjectAt(0)).getValue().intValue();
+            version = BOUNCY_CASTLE_FACTORY.createInteger(content.getObjectAt(0)).getValue().intValue();
 
             // the digestAlgorithms
             digestalgos = new HashSet<>();
-            Enumeration e = bouncyCastleFactory.createSet(content.getObjectAt(1)).getObjects();
+            Enumeration e = BOUNCY_CASTLE_FACTORY.createSet(content.getObjectAt(1)).getObjects();
             while (e.hasMoreElements()) {
-                IASN1Sequence s = bouncyCastleFactory.createSequence(e.nextElement());
-                IASN1ObjectIdentifier o = bouncyCastleFactory.createObjectIdentifier(s.getObjectAt(0));
+                IASN1Sequence s = BOUNCY_CASTLE_FACTORY.createSequence(e.nextElement());
+                IASN1ObjectIdentifier o = BOUNCY_CASTLE_FACTORY.createObjectIdentifier(s.getObjectAt(0));
                 digestalgos.add(o.getId());
             }
 
             // the possible ID_PKCS7_DATA
-            IASN1Sequence rsaData = bouncyCastleFactory.createSequence(content.getObjectAt(2));
+            IASN1Sequence rsaData = BOUNCY_CASTLE_FACTORY.createSequence(content.getObjectAt(2));
             if (rsaData.size() > 1) {
-                IASN1OctetString rsaDataContent = bouncyCastleFactory.createOctetString(
-                        bouncyCastleFactory.createTaggedObject(rsaData.getObjectAt(1)).getObject());
+                IASN1OctetString rsaDataContent = BOUNCY_CASTLE_FACTORY.createOctetString(
+                        BOUNCY_CASTLE_FACTORY.createTaggedObject(rsaData.getObjectAt(1)).getObject());
                 this.rsaData = rsaDataContent.getOctets();
             }
 
             int next = 3;
-            while (bouncyCastleFactory.createTaggedObject(content.getObjectAt(next)) != null) {
+            while (BOUNCY_CASTLE_FACTORY.createTaggedObject(content.getObjectAt(next)) != null) {
                 ++next;
             }
 
@@ -319,22 +319,22 @@ public class PdfPKCS7 {
             certs = SignUtils.readAllCerts(contentsKey);
 
             // the signerInfos
-            IASN1Set signerInfos = bouncyCastleFactory.createSet(content.getObjectAt(next));
+            IASN1Set signerInfos = BOUNCY_CASTLE_FACTORY.createSet(content.getObjectAt(next));
             if (signerInfos.size() != 1)
                 throw new IllegalArgumentException(
                         SignExceptionMessageConstant.THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME);
-            IASN1Sequence signerInfo = bouncyCastleFactory.createSequence(signerInfos.getObjectAt(0));
+            IASN1Sequence signerInfo = BOUNCY_CASTLE_FACTORY.createSequence(signerInfos.getObjectAt(0));
             // the positions that we care are
             //     0 - version
             //     1 - the signing certificate issuer and serial number
             //     2 - the digest algorithm
             //     3 or 4 - digestEncryptionAlgorithm
             //     4 or 5 - encryptedDigest
-            signerversion = bouncyCastleFactory.createInteger(signerInfo.getObjectAt(0)).getValue().intValue();
+            signerversion = BOUNCY_CASTLE_FACTORY.createInteger(signerInfo.getObjectAt(0)).getValue().intValue();
             // Get the signing certificate
-            IASN1Sequence issuerAndSerialNumber = bouncyCastleFactory.createSequence(signerInfo.getObjectAt(1));
-            IX509Principal issuer = SignUtils.getIssuerX509Name(issuerAndSerialNumber);
-            BigInteger serialNumber = bouncyCastleFactory.createInteger(issuerAndSerialNumber.getObjectAt(1)).getValue();
+            IASN1Sequence issuerAndSerialNumber = BOUNCY_CASTLE_FACTORY.createSequence(signerInfo.getObjectAt(1));
+            X500Principal issuer = SignUtils.getIssuerX500Principal(issuerAndSerialNumber);
+            BigInteger serialNumber = BOUNCY_CASTLE_FACTORY.createInteger(issuerAndSerialNumber.getObjectAt(1)).getValue();
             for (Object element : certs) {
                 X509Certificate cert = (X509Certificate) element;
                 if (cert.getIssuerDN().equals(issuer) && serialNumber.equals(cert.getSerialNumber())) {
@@ -347,41 +347,41 @@ public class PdfPKCS7 {
                         setMessageParams(issuer.getName() + " / " + serialNumber.toString(16));
             }
             signCertificateChain();
-            digestAlgorithmOid = bouncyCastleFactory.createObjectIdentifier(
-                    bouncyCastleFactory.createSequence(signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
+            digestAlgorithmOid = BOUNCY_CASTLE_FACTORY.createObjectIdentifier(
+                    BOUNCY_CASTLE_FACTORY.createSequence(signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
             next = 3;
             boolean foundCades = false;
-            IASN1TaggedObject tagsig = bouncyCastleFactory.createTaggedObject(signerInfo.getObjectAt(next));
+            IASN1TaggedObject tagsig = BOUNCY_CASTLE_FACTORY.createTaggedObject(signerInfo.getObjectAt(next));
             if (tagsig != null) {
-                IASN1Set sseq = bouncyCastleFactory.createSetInstance(tagsig, false);
+                IASN1Set sseq = BOUNCY_CASTLE_FACTORY.createSetInstance(tagsig, false);
                 sigAttr = sseq.getEncoded();
                 // maybe not necessary, but we use the following line as fallback:
-                sigAttrDer = sseq.getEncoded(bouncyCastleFactory.createEncoding().getDer());
+                sigAttrDer = sseq.getEncoded(BOUNCY_CASTLE_FACTORY.createEncoding().getDer());
 
                 for (int k = 0; k < sseq.size(); ++k) {
-                    IASN1Sequence seq2 = bouncyCastleFactory.createSequence(sseq.getObjectAt(k));
-                    String idSeq2 = bouncyCastleFactory.createObjectIdentifier(seq2.getObjectAt(0)).getId();
+                    IASN1Sequence seq2 = BOUNCY_CASTLE_FACTORY.createSequence(sseq.getObjectAt(k));
+                    String idSeq2 = BOUNCY_CASTLE_FACTORY.createObjectIdentifier(seq2.getObjectAt(0)).getId();
                     if (idSeq2.equals(SecurityIDs.ID_MESSAGE_DIGEST)) {
-                        IASN1Set set = bouncyCastleFactory.createSet(seq2.getObjectAt(1));
-                        digestAttr = bouncyCastleFactory.createOctetString(set.getObjectAt(0)).getOctets();
+                        IASN1Set set = BOUNCY_CASTLE_FACTORY.createSet(seq2.getObjectAt(1));
+                        digestAttr = BOUNCY_CASTLE_FACTORY.createOctetString(set.getObjectAt(0)).getOctets();
                     } else if (idSeq2.equals(SecurityIDs.ID_ADBE_REVOCATION)) {
-                        IASN1Set setout = bouncyCastleFactory.createSet(seq2.getObjectAt(1));
-                        IASN1Sequence seqout = bouncyCastleFactory.createSequence(setout.getObjectAt(0));
+                        IASN1Set setout = BOUNCY_CASTLE_FACTORY.createSet(seq2.getObjectAt(1));
+                        IASN1Sequence seqout = BOUNCY_CASTLE_FACTORY.createSequence(setout.getObjectAt(0));
                         for (int j = 0; j < seqout.size(); ++j) {
-                            IASN1TaggedObject tg = bouncyCastleFactory.createTaggedObject(seqout.getObjectAt(j));
+                            IASN1TaggedObject tg = BOUNCY_CASTLE_FACTORY.createTaggedObject(seqout.getObjectAt(j));
                             if (tg.getTagNo() == 0) {
-                                IASN1Sequence seqin = bouncyCastleFactory.createSequence(tg.getObject());
+                                IASN1Sequence seqin = BOUNCY_CASTLE_FACTORY.createSequence(tg.getObject());
                                 findCRL(seqin);
                             }
                             if (tg.getTagNo() == 1) {
-                                IASN1Sequence seqin = bouncyCastleFactory.createSequence(tg.getObject());
+                                IASN1Sequence seqin = BOUNCY_CASTLE_FACTORY.createSequence(tg.getObject());
                                 findOcsp(seqin);
                             }
                         }
                     } else if (isCades && idSeq2.equals(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V1)) {
-                        IASN1Set setout = bouncyCastleFactory.createSet(seq2.getObjectAt(1));
-                        IASN1Sequence seqout = bouncyCastleFactory.createSequence(setout.getObjectAt(0));
-                        ISigningCertificate sv2 = bouncyCastleFactory.createSigningCertificate(seqout);
+                        IASN1Set setout = BOUNCY_CASTLE_FACTORY.createSet(seq2.getObjectAt(1));
+                        IASN1Sequence seqout = BOUNCY_CASTLE_FACTORY.createSequence(setout.getObjectAt(0));
+                        ISigningCertificate sv2 = BOUNCY_CASTLE_FACTORY.createSigningCertificate(seqout);
                         IESSCertID[] cerv2m = sv2.getCerts();
                         IESSCertID cerv2 = cerv2m[0];
                         byte[] enc2 = signCert.getEncoded();
@@ -392,9 +392,9 @@ public class PdfPKCS7 {
                             throw new IllegalArgumentException("Signing certificate doesn't match the ESS information.");
                         foundCades = true;
                     } else if (isCades && idSeq2.equals(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2)) {
-                        IASN1Set setout = bouncyCastleFactory.createSet(seq2.getObjectAt(1));
-                        IASN1Sequence seqout = bouncyCastleFactory.createSequence(setout.getObjectAt(0));
-                        ISigningCertificateV2 sv2 = bouncyCastleFactory.createSigningCertificateV2(seqout);
+                        IASN1Set setout = BOUNCY_CASTLE_FACTORY.createSet(seq2.getObjectAt(1));
+                        IASN1Sequence seqout = BOUNCY_CASTLE_FACTORY.createSequence(setout.getObjectAt(0));
+                        ISigningCertificateV2 sv2 = BOUNCY_CASTLE_FACTORY.createSigningCertificateV2(seqout);
                         IESSCertIDv2[] cerv2m = sv2.getCerts();
                         IESSCertIDv2 cerv2 = cerv2m[0];
                         IAlgorithmIdentifier ai2 = cerv2.getHashAlgorithm();
@@ -415,28 +415,28 @@ public class PdfPKCS7 {
             }
             if (isCades && !foundCades)
                 throw new IllegalArgumentException("CAdES ESS information missing.");
-            digestEncryptionAlgorithmOid = bouncyCastleFactory.createObjectIdentifier(
-                    bouncyCastleFactory.createSequence(signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
-            digest = bouncyCastleFactory.createOctetString(signerInfo.getObjectAt(next++)).getOctets();
+            digestEncryptionAlgorithmOid = BOUNCY_CASTLE_FACTORY.createObjectIdentifier(
+                    BOUNCY_CASTLE_FACTORY.createSequence(signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
+            digest = BOUNCY_CASTLE_FACTORY.createOctetString(signerInfo.getObjectAt(next++)).getOctets();
             if (next < signerInfo.size()) {
-                IASN1TaggedObject taggedObject = bouncyCastleFactory.createTaggedObject(signerInfo.getObjectAt(next));
+                IASN1TaggedObject taggedObject = BOUNCY_CASTLE_FACTORY.createTaggedObject(signerInfo.getObjectAt(next));
                 if (taggedObject != null) {
-                    IASN1Set unat = bouncyCastleFactory.createSetInstance(taggedObject, false);
-                    IAttributeTable attble = bouncyCastleFactory.createAttributeTable(unat);
-                    IPKCSObjectIdentifiers ipkcsObjectIdentifiers = bouncyCastleFactory.createPKCSObjectIdentifiers();
+                    IASN1Set unat = BOUNCY_CASTLE_FACTORY.createSetInstance(taggedObject, false);
+                    IAttributeTable attble = BOUNCY_CASTLE_FACTORY.createAttributeTable(unat);
+                    IPKCSObjectIdentifiers ipkcsObjectIdentifiers = BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers();
                     IAttribute ts = attble.get(ipkcsObjectIdentifiers.getIdAaSignatureTimeStampToken());
                     if (ts != null && ts.getAttrValues().size() > 0) {
                         IASN1Set attributeValues = ts.getAttrValues();
                         IASN1Sequence tokenSequence =
-                                bouncyCastleFactory.createSequenceInstance(attributeValues.getObjectAt(0));
-                        IContentInfo contentInfo = bouncyCastleFactory.createContentInfo(tokenSequence);
-                        this.timeStampToken = bouncyCastleFactory.createTimeStampToken(contentInfo);
+                                BOUNCY_CASTLE_FACTORY.createSequenceInstance(attributeValues.getObjectAt(0));
+                        IContentInfo contentInfo = BOUNCY_CASTLE_FACTORY.createContentInfo(tokenSequence);
+                        this.timeStampToken = BOUNCY_CASTLE_FACTORY.createTimeStampToken(contentInfo);
                     }
                 }
             }
             if (isTsp) {
-                IContentInfo contentInfoTsp = bouncyCastleFactory.createContentInfo(signedData);
-                this.timeStampToken = bouncyCastleFactory.createTimeStampToken(contentInfoTsp);
+                IContentInfo contentInfoTsp = BOUNCY_CASTLE_FACTORY.createContentInfo(signedData);
+                this.timeStampToken = BOUNCY_CASTLE_FACTORY.createTimeStampToken(contentInfoTsp);
                 ITimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
                 String algOID = info.getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
@@ -753,8 +753,8 @@ public class PdfPKCS7 {
                 digest = sig.sign();
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-            IASN1OutputStream dout = bouncyCastleFactory.createOutputStream(bOut);
-            dout.writeObject(bouncyCastleFactory.createDEROctetString(digest));
+            IASN1OutputStream dout = BOUNCY_CASTLE_FACTORY.createOutputStream(bOut);
+            dout.writeObject(BOUNCY_CASTLE_FACTORY.createDEROctetString(digest));
             dout.close();
 
             return bOut.toByteArray();
@@ -819,64 +819,64 @@ public class PdfPKCS7 {
             }
 
             // Create the set of Hash algorithms
-            IASN1EncodableVector digestAlgorithms = bouncyCastleFactory.createEncodableVector();
+            IASN1EncodableVector digestAlgorithms = BOUNCY_CASTLE_FACTORY.createEncodableVector();
             for (Object element : digestalgos) {
-                IASN1EncodableVector algos = bouncyCastleFactory.createEncodableVector();
-                algos.add(bouncyCastleFactory.createObjectIdentifier((String) element));
-                algos.add(bouncyCastleFactory.createDERNull());
-                digestAlgorithms.add(bouncyCastleFactory.createDERSequence(algos));
+                IASN1EncodableVector algos = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+                algos.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier((String) element));
+                algos.add(BOUNCY_CASTLE_FACTORY.createDERNull());
+                digestAlgorithms.add(BOUNCY_CASTLE_FACTORY.createDERSequence(algos));
             }
 
             // Create the contentInfo.
-            IASN1EncodableVector v = bouncyCastleFactory.createEncodableVector();
-            v.add(bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_PKCS7_DATA));
+            IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(SecurityIDs.ID_PKCS7_DATA));
             if (rsaData != null) {
-                v.add(bouncyCastleFactory.createDERTaggedObject(0, bouncyCastleFactory.createDEROctetString(rsaData)));
+                v.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(0, BOUNCY_CASTLE_FACTORY.createDEROctetString(rsaData)));
             }
-            IDERSequence contentinfo = bouncyCastleFactory.createDERSequence(v);
+            IDERSequence contentinfo = BOUNCY_CASTLE_FACTORY.createDERSequence(v);
 
             // Get all the certificates
             //
-            v = bouncyCastleFactory.createEncodableVector();
+            v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
             for (Object element : certs) {
-                IASN1InputStream tempstream = bouncyCastleFactory.createInputStream(
+                IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createInputStream(
                         new ByteArrayInputStream(((X509Certificate) element).getEncoded()));
                 v.add(tempstream.readObject());
             }
 
-            IDERSet dercertificates = bouncyCastleFactory.createDERSet(v);
+            IDERSet dercertificates = BOUNCY_CASTLE_FACTORY.createDERSet(v);
 
             // Create signerinfo structure.
-            IASN1EncodableVector signerinfo = bouncyCastleFactory.createEncodableVector();
+            IASN1EncodableVector signerinfo = BOUNCY_CASTLE_FACTORY.createEncodableVector();
 
             // Add the signerInfo version
-            signerinfo.add(bouncyCastleFactory.createInteger(signerversion));
+            signerinfo.add(BOUNCY_CASTLE_FACTORY.createInteger(signerversion));
 
-            v = bouncyCastleFactory.createEncodableVector();
+            v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
 
             v.add(CertificateInfo.getIssuer(signCert.getTBSCertificate()));
-            v.add(bouncyCastleFactory.createInteger(signCert.getSerialNumber()));
-            signerinfo.add(bouncyCastleFactory.createDERSequence(v));
+            v.add(BOUNCY_CASTLE_FACTORY.createInteger(signCert.getSerialNumber()));
+            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // Add the digestAlgorithm
-            v = bouncyCastleFactory.createEncodableVector();
-            v.add(bouncyCastleFactory.createObjectIdentifier(digestAlgorithmOid));
-            v.add(bouncyCastleFactory.createDERNull());
-            signerinfo.add(bouncyCastleFactory.createDERSequence(v));
+            v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(digestAlgorithmOid));
+            v.add(BOUNCY_CASTLE_FACTORY.createDERNull());
+            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // add the authenticated attribute if present
             if (secondDigest != null) {
-                signerinfo.add(bouncyCastleFactory.createDERTaggedObject(false, 0,
+                signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(false, 0,
                         getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype)));
             }
             // Add the digestEncryptionAlgorithm
-            v = bouncyCastleFactory.createEncodableVector();
-            v.add(bouncyCastleFactory.createObjectIdentifier(digestEncryptionAlgorithmOid));
-            v.add(bouncyCastleFactory.createDERNull());
-            signerinfo.add(bouncyCastleFactory.createDERSequence(v));
+            v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(digestEncryptionAlgorithmOid));
+            v.add(BOUNCY_CASTLE_FACTORY.createDERNull());
+            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // Add the digest
-            signerinfo.add(bouncyCastleFactory.createDEROctetString(digest));
+            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(digest));
 
             // When requested, go get and add the timestamp. May throw an exception.
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
@@ -887,33 +887,33 @@ public class PdfPKCS7 {
                 if (tsToken != null) {
                     IASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
                     if (unauthAttributes != null) {
-                        signerinfo.add(bouncyCastleFactory.createDERTaggedObject(
-                                false, 1, bouncyCastleFactory.createDERSet(unauthAttributes)));
+                        signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
+                                false, 1, BOUNCY_CASTLE_FACTORY.createDERSet(unauthAttributes)));
                     }
                 }
             }
 
             // Finally build the body out of all the components above
-            IASN1EncodableVector body = bouncyCastleFactory.createEncodableVector();
-            body.add(bouncyCastleFactory.createInteger(version));
-            body.add(bouncyCastleFactory.createDERSet(digestAlgorithms));
+            IASN1EncodableVector body = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            body.add(BOUNCY_CASTLE_FACTORY.createInteger(version));
+            body.add(BOUNCY_CASTLE_FACTORY.createDERSet(digestAlgorithms));
             body.add(contentinfo);
-            body.add(bouncyCastleFactory.createDERTaggedObject(false, 0, dercertificates));
+            body.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(false, 0, dercertificates));
 
             // Only allow one signerInfo
-            body.add(bouncyCastleFactory.createDERSet(bouncyCastleFactory.createDERSequence(signerinfo)));
+            body.add(BOUNCY_CASTLE_FACTORY.createDERSet(BOUNCY_CASTLE_FACTORY.createDERSequence(signerinfo)));
 
             // Now we have the body, wrap it in it's PKCS7Signed shell
             // and return it
             //
-            IASN1EncodableVector whole = bouncyCastleFactory.createEncodableVector();
-            whole.add(bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_PKCS7_SIGNED_DATA));
-            whole.add(bouncyCastleFactory.createDERTaggedObject(0, bouncyCastleFactory.createDERSequence(body)));
+            IASN1EncodableVector whole = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            whole.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(SecurityIDs.ID_PKCS7_SIGNED_DATA));
+            whole.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(0, BOUNCY_CASTLE_FACTORY.createDERSequence(body)));
 
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-            IASN1OutputStream dout = bouncyCastleFactory.createOutputStream(bOut);
-            dout.writeObject(bouncyCastleFactory.createDERSequence(whole));
+            IASN1OutputStream dout = BOUNCY_CASTLE_FACTORY.createOutputStream(bOut);
+            dout.writeObject(BOUNCY_CASTLE_FACTORY.createDERSequence(whole));
             dout.close();
 
             return bOut.toByteArray();
@@ -939,15 +939,15 @@ public class PdfPKCS7 {
         // @todo: move this together with the rest of the defintions
         String ID_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14"; // RFC 3161 id-aa-timeStampToken
 
-        IASN1InputStream tempstream = bouncyCastleFactory.createInputStream(new ByteArrayInputStream(timeStampToken));
-        IASN1EncodableVector unauthAttributes = bouncyCastleFactory.createEncodableVector();
+        IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createInputStream(new ByteArrayInputStream(timeStampToken));
+        IASN1EncodableVector unauthAttributes = BOUNCY_CASTLE_FACTORY.createEncodableVector();
 
-        IASN1EncodableVector v = bouncyCastleFactory.createEncodableVector();
-        v.add(bouncyCastleFactory.createObjectIdentifier(ID_TIME_STAMP_TOKEN)); // id-aa-timeStampToken
-        IASN1Sequence seq = bouncyCastleFactory.createSequence(tempstream.readObject());
-        v.add(bouncyCastleFactory.createDERSet(seq));
+        IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+        v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(ID_TIME_STAMP_TOKEN)); // id-aa-timeStampToken
+        IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createSequence(tempstream.readObject());
+        v.add(BOUNCY_CASTLE_FACTORY.createDERSet(seq));
 
-        unauthAttributes.add(bouncyCastleFactory.createDERSequence(v));
+        unauthAttributes.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
         return unauthAttributes;
     }
 
@@ -995,7 +995,7 @@ public class PdfPKCS7 {
             Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
         try {
             return getAuthenticatedAttributeSet(secondDigest, ocsp, crlBytes, sigtype)
-                    .getEncoded(bouncyCastleFactory.createEncoding().getDer());
+                    .getEncoded(BOUNCY_CASTLE_FACTORY.createEncoding().getDer());
         } catch (Exception e) {
             throw new PdfException(e);
         }
@@ -1011,16 +1011,16 @@ public class PdfPKCS7 {
     private IDERSet getAuthenticatedAttributeSet(byte[] secondDigest, Collection<byte[]> ocsp,
             Collection<byte[]> crlBytes, PdfSigner.CryptoStandard sigtype) {
         try {
-            IASN1EncodableVector attribute = bouncyCastleFactory.createEncodableVector();
-            IASN1EncodableVector v = bouncyCastleFactory.createEncodableVector();
-            v.add(bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_CONTENT_TYPE));
-            v.add(bouncyCastleFactory.createDERSet(
-                    bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_PKCS7_DATA)));
-            attribute.add(bouncyCastleFactory.createDERSequence(v));
-            v = bouncyCastleFactory.createEncodableVector();
-            v.add(bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_MESSAGE_DIGEST));
-            v.add(bouncyCastleFactory.createDERSet(bouncyCastleFactory.createDEROctetString(secondDigest)));
-            attribute.add(bouncyCastleFactory.createDERSequence(v));
+            IASN1EncodableVector attribute = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(SecurityIDs.ID_CONTENT_TYPE));
+            v.add(BOUNCY_CASTLE_FACTORY.createDERSet(
+                    BOUNCY_CASTLE_FACTORY.createObjectIdentifier(SecurityIDs.ID_PKCS7_DATA)));
+            attribute.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
+            v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+            v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(SecurityIDs.ID_MESSAGE_DIGEST));
+            v.add(BOUNCY_CASTLE_FACTORY.createDERSet(BOUNCY_CASTLE_FACTORY.createDEROctetString(secondDigest)));
+            attribute.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
             boolean haveCrl = false;
             if (crlBytes != null) {
                 for (byte[] bCrl : crlBytes) {
@@ -1031,71 +1031,71 @@ public class PdfPKCS7 {
                 }
             }
             if (ocsp != null && !ocsp.isEmpty() || haveCrl) {
-                v = bouncyCastleFactory.createEncodableVector();
-                v.add(bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_ADBE_REVOCATION));
+                v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+                v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(SecurityIDs.ID_ADBE_REVOCATION));
 
-                IASN1EncodableVector revocationV = bouncyCastleFactory.createEncodableVector();
+                IASN1EncodableVector revocationV = BOUNCY_CASTLE_FACTORY.createEncodableVector();
 
                 if (haveCrl) {
-                    IASN1EncodableVector v2 = bouncyCastleFactory.createEncodableVector();
+                    IASN1EncodableVector v2 = BOUNCY_CASTLE_FACTORY.createEncodableVector();
                     for (byte[] bCrl : crlBytes) {
                         if (bCrl == null) {
                             continue;
                         }
-                        IASN1InputStream t = bouncyCastleFactory.createInputStream(new ByteArrayInputStream(bCrl));
+                        IASN1InputStream t = BOUNCY_CASTLE_FACTORY.createInputStream(new ByteArrayInputStream(bCrl));
                         v2.add(t.readObject());
                     }
-                    revocationV.add(bouncyCastleFactory.createDERTaggedObject(
-                            true, 0, bouncyCastleFactory.createDERSequence(v2)));
+                    revocationV.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
+                            true, 0, BOUNCY_CASTLE_FACTORY.createDERSequence(v2)));
                 }
 
                 if (ocsp != null && !ocsp.isEmpty()) {
-                    IASN1EncodableVector vo1 = bouncyCastleFactory.createEncodableVector();
+                    IASN1EncodableVector vo1 = BOUNCY_CASTLE_FACTORY.createEncodableVector();
                     for (byte[] ocspBytes : ocsp) {
-                        IDEROctetString doctet = bouncyCastleFactory.createDEROctetString(ocspBytes);
-                        IASN1EncodableVector v2 = bouncyCastleFactory.createEncodableVector();
-                        IOCSPObjectIdentifiers objectIdentifiers = bouncyCastleFactory.createOCSPObjectIdentifiers();
+                        IDEROctetString doctet = BOUNCY_CASTLE_FACTORY.createDEROctetString(ocspBytes);
+                        IASN1EncodableVector v2 = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+                        IOCSPObjectIdentifiers objectIdentifiers = BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers();
                         v2.add(objectIdentifiers.getIdPkixOcspBasic());
                         v2.add(doctet);
-                        IASN1Enumerated den = bouncyCastleFactory.createEnumerated(0);
-                        IASN1EncodableVector v3 = bouncyCastleFactory.createEncodableVector();
+                        IASN1Enumerated den = BOUNCY_CASTLE_FACTORY.createEnumerated(0);
+                        IASN1EncodableVector v3 = BOUNCY_CASTLE_FACTORY.createEncodableVector();
                         v3.add(den);
-                        v3.add(bouncyCastleFactory.createDERTaggedObject(
-                                true, 0, bouncyCastleFactory.createDERSequence(v2)));
-                        vo1.add(bouncyCastleFactory.createDERSequence(v3));
+                        v3.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
+                                true, 0, BOUNCY_CASTLE_FACTORY.createDERSequence(v2)));
+                        vo1.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v3));
                     }
-                    revocationV.add(bouncyCastleFactory.createDERTaggedObject(
-                            true, 1, bouncyCastleFactory.createDERSequence(vo1)));
+                    revocationV.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
+                            true, 1, BOUNCY_CASTLE_FACTORY.createDERSequence(vo1)));
                 }
 
-                v.add(bouncyCastleFactory.createDERSet(bouncyCastleFactory.createDERSequence(revocationV)));
-                attribute.add(bouncyCastleFactory.createDERSequence(v));
+                v.add(BOUNCY_CASTLE_FACTORY.createDERSet(BOUNCY_CASTLE_FACTORY.createDERSequence(revocationV)));
+                attribute.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
             }
             if (sigtype == PdfSigner.CryptoStandard.CADES) {
-                v = bouncyCastleFactory.createEncodableVector();
-                v.add(bouncyCastleFactory.createObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
+                v = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+                v.add(BOUNCY_CASTLE_FACTORY.createObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 
-                IASN1EncodableVector aaV2 = bouncyCastleFactory.createEncodableVector();
-                IAlgorithmIdentifier algoId = bouncyCastleFactory.createAlgorithmIdentifier(
-                        bouncyCastleFactory.createObjectIdentifier(digestAlgorithmOid), null);
+                IASN1EncodableVector aaV2 = BOUNCY_CASTLE_FACTORY.createEncodableVector();
+                IAlgorithmIdentifier algoId = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
+                        BOUNCY_CASTLE_FACTORY.createObjectIdentifier(digestAlgorithmOid), null);
                 aaV2.add(algoId);
                 MessageDigest md = SignUtils.getMessageDigest(getHashAlgorithm(), interfaceDigest);
                 byte[] dig = md.digest(signCert.getEncoded());
-                aaV2.add(bouncyCastleFactory.createDEROctetString(dig));
+                aaV2.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(dig));
 
-                v.add(bouncyCastleFactory.createDERSet(bouncyCastleFactory.createDERSequence(
-                        bouncyCastleFactory.createDERSequence(bouncyCastleFactory.createDERSequence(aaV2)))));
-                attribute.add(bouncyCastleFactory.createDERSequence(v));
+                v.add(BOUNCY_CASTLE_FACTORY.createDERSet(BOUNCY_CASTLE_FACTORY.createDERSequence(
+                        BOUNCY_CASTLE_FACTORY.createDERSequence(BOUNCY_CASTLE_FACTORY.createDERSequence(aaV2)))));
+                attribute.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
             }
 
             if (signaturePolicyIdentifier != null) {
-                IPKCSObjectIdentifiers ipkcsObjectIdentifiers = bouncyCastleFactory.createPKCSObjectIdentifiers();
-                IAttribute attr = bouncyCastleFactory.createAttribute(ipkcsObjectIdentifiers.getIdAaEtsSigPolicyId(),
-                        bouncyCastleFactory.createDERSet(signaturePolicyIdentifier));
+                IPKCSObjectIdentifiers ipkcsObjectIdentifiers = BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers();
+                IAttribute attr = BOUNCY_CASTLE_FACTORY.createAttribute(ipkcsObjectIdentifiers.getIdAaEtsSigPolicyId(),
+                        BOUNCY_CASTLE_FACTORY.createDERSet(signaturePolicyIdentifier));
                 attribute.add(attr);
             }
 
-            return bouncyCastleFactory.createDERSet(attribute);
+            return BOUNCY_CASTLE_FACTORY.createDERSet(attribute);
         } catch (Exception e) {
             throw new PdfException(e);
         }
@@ -1306,8 +1306,8 @@ public class PdfPKCS7 {
         try {
             crls = new ArrayList<>();
             for (int k = 0; k < seq.size(); ++k) {
-                ByteArrayInputStream ar = new ByteArrayInputStream(
-                        seq.getObjectAt(k).toASN1Primitive().getEncoded(bouncyCastleFactory.createEncoding().getDer()));
+                ByteArrayInputStream ar = new ByteArrayInputStream(seq.getObjectAt(k).toASN1Primitive()
+                        .getEncoded(BOUNCY_CASTLE_FACTORY.createEncoding().getDer()));
                 X509CRL crl = (X509CRL) SignUtils.parseCrlFromStream(ar);
                 crls.add(crl);
             }
@@ -1365,23 +1365,23 @@ public class PdfPKCS7 {
         basicResp = (IBasicOCSPResp) null;
         boolean ret = false;
         while (true) {
-            IASN1ObjectIdentifier objectIdentifier = bouncyCastleFactory.createObjectIdentifier(seq.getObjectAt(0));
-            IOCSPObjectIdentifiers ocspObjectIdentifiers = bouncyCastleFactory.createOCSPObjectIdentifiers();
+            IASN1ObjectIdentifier objectIdentifier = BOUNCY_CASTLE_FACTORY.createObjectIdentifier(seq.getObjectAt(0));
+            IOCSPObjectIdentifiers ocspObjectIdentifiers = BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers();
             if (objectIdentifier != null
                     && objectIdentifier.getId().equals(ocspObjectIdentifiers.getIdPkixOcspBasic().getId())) {
                 break;
             }
             ret = true;
             for (int k = 0; k < seq.size(); ++k) {
-                IASN1Sequence nextSeq = bouncyCastleFactory.createSequence(seq.getObjectAt(k));
+                IASN1Sequence nextSeq = BOUNCY_CASTLE_FACTORY.createSequence(seq.getObjectAt(k));
                 if (nextSeq != null) {
                     seq = nextSeq;
                     ret = false;
                     break;
                 }
-                IASN1TaggedObject tag = bouncyCastleFactory.createTaggedObject(seq.getObjectAt(k));
+                IASN1TaggedObject tag = BOUNCY_CASTLE_FACTORY.createTaggedObject(seq.getObjectAt(k));
                 if (tag != null) {
-                    nextSeq = bouncyCastleFactory.createSequence(tag.getObject());
+                    nextSeq = BOUNCY_CASTLE_FACTORY.createSequence(tag.getObject());
                     if (nextSeq != null) {
                         seq = nextSeq;
                         ret = false;
@@ -1394,10 +1394,10 @@ public class PdfPKCS7 {
             if (ret)
                 return;
         }
-        IASN1OctetString os = bouncyCastleFactory.createOctetString(seq.getObjectAt(1));
-        IASN1InputStream inp = bouncyCastleFactory.createInputStream(os.getOctets());
-        IBasicOCSPResponse resp = bouncyCastleFactory.createBasicOCSPResponse(inp.readObject());
-        basicResp = bouncyCastleFactory.createBasicOCSPResp(resp);
+        IASN1OctetString os = BOUNCY_CASTLE_FACTORY.createOctetString(seq.getObjectAt(1));
+        IASN1InputStream inp = BOUNCY_CASTLE_FACTORY.createInputStream(os.getOctets());
+        IBasicOCSPResponse resp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(inp.readObject());
+        basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(resp);
     }
 
     // Time Stamps

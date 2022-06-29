@@ -1,8 +1,7 @@
 package com.itextpdf.bouncycastle.asn1;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableWrapper;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 
@@ -32,7 +31,7 @@ public class ASN1SetBC extends ASN1PrimitiveBC implements IASN1Set {
     }
 
     @Override
-    public IASN1EncodableWrapper getObjectAt(int index) {
-        return new ASN1EncodableWrapperBC(getSet().getObjectAt(index));
+    public IASN1Encodable getObjectAt(int index) {
+        return new ASN1EncodableBC(getSet().getObjectAt(index));
     }
 }

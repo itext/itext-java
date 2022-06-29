@@ -63,7 +63,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AESCipherCBCnoPad {
 
-    private static final IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private final Cipher cipher;
 
@@ -88,7 +88,7 @@ public class AESCipherCBCnoPad {
      */
     public AESCipherCBCnoPad(boolean forEncryption, byte[] key, byte[] initVector) {
         try {
-            cipher = Cipher.getInstance("AES/CBC/NoPadding", bouncyCastleFactory.createProvider());
+            cipher = Cipher.getInstance("AES/CBC/NoPadding", BOUNCY_CASTLE_FACTORY.createProvider());
             cipher.init(forEncryption ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
                     new SecretKeySpec(key, "AES"),
                     new IvParameterSpec(initVector));

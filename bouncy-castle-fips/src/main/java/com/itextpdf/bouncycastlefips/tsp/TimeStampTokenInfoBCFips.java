@@ -8,6 +8,8 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 
+import java.util.Date;
+
 public class TimeStampTokenInfoBCFips implements ITimeStampTokenInfo {
     private final TimeStampTokenInfo timeStampTokenInfo;
 
@@ -27,5 +29,10 @@ public class TimeStampTokenInfoBCFips implements ITimeStampTokenInfo {
     @Override
     public ITSTInfo toASN1Structure() {
         return new TSTInfoBCFips(timeStampTokenInfo.toASN1Structure());
+    }
+
+    @Override
+    public Date getGenTime() {
+        return timeStampTokenInfo.getGenTime();
     }
 }

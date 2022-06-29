@@ -1,6 +1,6 @@
 package com.itextpdf.bouncycastlefips.asn1;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableWrapper;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
 
 import java.util.Enumeration;
@@ -31,7 +31,7 @@ public class ASN1SetBCFips extends ASN1PrimitiveBCFips implements IASN1Set {
     }
 
     @Override
-    public IASN1EncodableWrapper getObjectAt(int index) {
-        return new ASN1EncodableWrapperBCFips(getSet().getObjectAt(index));
+    public IASN1Encodable getObjectAt(int index) {
+        return new ASN1EncodableBCFips(getSet().getObjectAt(index));
     }
 }

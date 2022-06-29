@@ -1,6 +1,6 @@
 package com.itextpdf.bouncycastle.asn1;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableWrapper;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import org.bouncycastle.asn1.ASN1Sequence;
 
@@ -18,8 +18,8 @@ public class ASN1SequenceBC extends ASN1PrimitiveBC implements IASN1Sequence {
         return (ASN1Sequence) getPrimitive();
     }
 
-    public IASN1EncodableWrapper getObjectAt(int i) {
-        return new ASN1EncodableWrapperBC(getSequence().getObjectAt(i));
+    public IASN1Encodable getObjectAt(int i) {
+        return new ASN1EncodableBC(getSequence().getObjectAt(i));
     }
 
     public int size() {

@@ -43,10 +43,25 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
+import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
+import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
-import com.itextpdf.commons.bouncycastle.jce.IX509Principal;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
+import com.itextpdf.commons.bouncycastle.cms.ISignerInformationVerifier;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -90,36 +105,13 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
-import org.bouncycastle.asn1.esf.SigPolicyQualifiers;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
-import org.bouncycastle.cms.SignerInformationVerifier;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.jce.provider.X509CertParser;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.x509.util.StreamParsingException;
+import java.util.stream.Collectors;
 
-// TODO DEVSIX-6730 Switch SignUtils to the new approach
+import javax.security.auth.x500.X500Principal;
+
 final class SignUtils {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
         if (algorithm.equals("EC")) {
@@ -170,31 +162,33 @@ final class SignUtils {
         return (InputStream) con.getContent();
     }
 
-    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
-            AlgorithmIdentifier digestAlgorithmIdentifier)
-            throws OperatorCreationException, CertificateEncodingException, OCSPException {
-        return new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
-                new JcaX509CertificateHolder(issuerCert), serialNumber);
+    static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
+            IAlgorithmIdentifier digestAlgorithmIdentifier)
+            throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
+        return FACTORY.createCertificateID(
+                FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
+                FACTORY.createJcaX509CertificateHolder(issuerCert),
+                serialNumber);
     }
 
     static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
             IASN1ObjectIdentifier identifier)
-            throws OperatorCreationException, CertificateEncodingException, OCSPException {
-        return new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(
-                        new AlgorithmIdentifier(identifier, DERNull.INSTANCE)),
-                new JcaX509CertificateHolder(issuerCert), serialNumber);
+            throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
+        return FACTORY.createCertificateID(
+                FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(
+                        FACTORY.createAlgorithmIdentifier(identifier, FACTORY.createDERNull())),
+                FACTORY.createJcaX509CertificateHolder(issuerCert), serialNumber);
     }
 
-    static OCSPReq generateOcspRequestWithNonce(CertificateID id) throws IOException, OCSPException {
-        OCSPReqBuilder gen = new OCSPReqBuilder();
+    static IOCSPReq generateOcspRequestWithNonce(ICertificateID id) throws IOException, AbstractOCSPException {
+        IOCSPReqBuilder gen = FACTORY.createOCSPReqBuilder();
         gen.addRequest(id);
 
-        DEROctetString derOctetString = new DEROctetString(
-                new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded());
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, derOctetString);
-        gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
+        IDEROctetString derOctetString = FACTORY.createDEROctetString(
+                FACTORY.createDEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded());
+        IExtension ext = FACTORY.createExtension(
+                FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNonce(), false, derOctetString);
+        gen.setRequestExtensions(FACTORY.createExtensions(ext));
         return gen.build();
     }
 
@@ -216,40 +210,41 @@ final class SignUtils {
         return (InputStream) con.getContent();
     }
 
-    static boolean isSignatureValid(BasicOCSPResp validator, Certificate certStoreX509, String provider)
-            throws OperatorCreationException, OCSPException {
+    static boolean isSignatureValid(IBasicOCSPResp validator, Certificate certStoreX509, String provider)
+            throws AbstractOperatorCreationException, AbstractOCSPException {
         if (provider == null) {
-            provider = "BC";
+            provider = FACTORY.createProvider().getName();
         }
-        return validator.isSignatureValid(
-                new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey()));
+        return validator.isSignatureValid(FACTORY.createJcaContentVerifierProviderBuilder()
+                .setProvider(provider).build(certStoreX509.getPublicKey()));
     }
 
-    static void isSignatureValid(TimeStampToken validator, X509Certificate certStoreX509, String provider)
-            throws OperatorCreationException, TSPException {
+    static void isSignatureValid(ITimeStampToken validator, X509Certificate certStoreX509, String provider)
+            throws AbstractOperatorCreationException, AbstractTSPException {
         if (provider == null) {
-            provider = "BC";
+            provider = FACTORY.createProvider().getName();
         }
-        SignerInformationVerifier verifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider)
+        ISignerInformationVerifier verifier = FACTORY.createJcaSimpleSignerInfoVerifierBuilder().setProvider(provider)
                 .build(certStoreX509);
         validator.validate(verifier);
     }
 
-    static boolean checkIfIssuersMatch(CertificateID certID, X509Certificate issuerCert)
-            throws CertificateEncodingException, IOException, OCSPException {
+    static boolean checkIfIssuersMatch(ICertificateID certID, X509Certificate issuerCert)
+            throws CertificateEncodingException, IOException, AbstractOCSPException, AbstractOperatorCreationException {
         return certID.matchesIssuer(
-                new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider());
+                FACTORY.createX509CertificateHolder(issuerCert.getEncoded()),
+                FACTORY.createJcaDigestCalculatorProviderBuilder().build());
     }
 
     static Date add180Sec(Date date) {
         return new Date(date.getTime() + 180000L);
     }
 
-    static Iterable<X509Certificate> getCertsFromOcspResponse(BasicOCSPResp ocspResp) {
+    static Iterable<X509Certificate> getCertsFromOcspResponse(IBasicOCSPResp ocspResp) {
         List<X509Certificate> certs = new ArrayList<>();
-        X509CertificateHolder[] certHolders = ocspResp.getCerts();
-        JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
-        for (X509CertificateHolder certHolder : certHolders) {
+        IX509CertificateHolder[] certHolders = ocspResp.getCerts();
+        IJcaX509CertificateConverter converter = FACTORY.createJcaX509CertificateConverter();
+        for (IX509CertificateHolder certHolder : certHolders) {
             try {
                 certs.add(converter.getCertificate(certHolder));
             } catch (Exception ex) {
@@ -259,18 +254,18 @@ final class SignUtils {
         return certs;
     }
 
-    static Collection<Certificate> readAllCerts(byte[] contentsKey) throws StreamParsingException {
-        X509CertParser cr = new X509CertParser();
-        cr.engineInit(new ByteArrayInputStream(contentsKey));
-        return cr.engineReadAll();
+    static Collection<Certificate> readAllCerts(byte[] contentsKey) throws CertificateException {
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", FACTORY.createProvider());
+        return certificateFactory.generateCertificates(new ByteArrayInputStream(contentsKey))
+                .stream().map((cert) -> (Certificate) cert).collect(Collectors.toList());
     }
 
     static <T> T getFirstElement(Iterable<T> iterable) {
         return iterable.iterator().next();
     }
 
-    static IX509Principal getIssuerX509Name(IASN1Sequence issuerAndSerialNumber) throws IOException {
-        return new X509Principal(issuerAndSerialNumber.getObjectAt(0).toASN1Primitive().getEncoded());
+    static X500Principal getIssuerX500Principal(IASN1Sequence issuerAndSerialNumber) throws IOException {
+        return new X500Principal(issuerAndSerialNumber.getObjectAt(0).toASN1Primitive().getEncoded());
     }
 
     public static String dateToString(Calendar signDate) {
@@ -374,8 +369,8 @@ final class SignUtils {
         return res;
     }
 
-    static SigPolicyQualifiers createSigPolicyQualifiers(SigPolicyQualifierInfo... sigPolicyQualifierInfo) {
-        return new SigPolicyQualifiers(sigPolicyQualifierInfo);
+    static ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... sigPolicyQualifierInfo) {
+        return FACTORY.createSigPolicyQualifiers(sigPolicyQualifierInfo);
     }
 
     static Iterable<X509Certificate> getCertificates(final KeyStore keyStore) throws KeyStoreException {

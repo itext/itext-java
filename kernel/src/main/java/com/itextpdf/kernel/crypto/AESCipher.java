@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AESCipher {
 
-    private static final IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private final Cipher cipher;
 
@@ -82,7 +82,7 @@ public class AESCipher {
      */
     public AESCipher(boolean forEncryption, byte[] key, byte[] iv) {
         try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", bouncyCastleFactory.createProvider());
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", BOUNCY_CASTLE_FACTORY.createProvider());
             cipher.init(forEncryption ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
                     new SecretKeySpec(key, "AES"),
                     new IvParameterSpec(iv));

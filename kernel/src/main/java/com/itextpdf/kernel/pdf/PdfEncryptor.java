@@ -62,7 +62,7 @@ import java.util.Map;
  */
 public final class PdfEncryptor {
 
-    private static final IBouncyCastleFactory bouncyCastleFactory = BouncyCastleFactoryCreator.getFactory();
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private IMetaInfo metaInfo;
     private EncryptionProperties properties;
@@ -209,7 +209,7 @@ public final class PdfEncryptor {
      */
     public static byte[] getContent(IRecipientInformation recipientInfo, PrivateKey certificateKey,
             String certificateKeyProvider) throws AbstractCMSException {
-        IRecipient jceKeyTransRecipient = bouncyCastleFactory.createJceKeyTransEnvelopedRecipient(certificateKey)
+        IRecipient jceKeyTransRecipient = BOUNCY_CASTLE_FACTORY.createJceKeyTransEnvelopedRecipient(certificateKey)
                 .setProvider(certificateKeyProvider);
         return recipientInfo.getContent(jceKeyTransRecipient);
     }

@@ -9,10 +9,10 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 public class PKCSObjectIdentifiersBC implements IPKCSObjectIdentifiers {
     private static final PKCSObjectIdentifiersBC INSTANCE = new PKCSObjectIdentifiersBC();
 
-    private static final ASN1ObjectIdentifierBC id_aa_ets_sigPolicyId = new ASN1ObjectIdentifierBC(
+    private static final ASN1ObjectIdentifierBC ID_AA_ETS_SIG_POLICY_ID = new ASN1ObjectIdentifierBC(
             PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
 
-    private static final ASN1ObjectIdentifierBC id_aa_signatureTimeStampToken = new ASN1ObjectIdentifierBC(
+    private static final ASN1ObjectIdentifierBC ID_AA_SIGNATURE_TIME_STAMP_TOKEN = new ASN1ObjectIdentifierBC(
             PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
 
     private PKCSObjectIdentifiersBC() {
@@ -25,11 +25,11 @@ public class PKCSObjectIdentifiersBC implements IPKCSObjectIdentifiers {
 
     @Override
     public IASN1ObjectIdentifier getIdAaSignatureTimeStampToken() {
-        return id_aa_signatureTimeStampToken;
+        return ID_AA_SIGNATURE_TIME_STAMP_TOKEN;
     }
 
     @Override
     public IASN1ObjectIdentifier getIdAaEtsSigPolicyId() {
-        return id_aa_ets_sigPolicyId;
+        return ID_AA_ETS_SIG_POLICY_ID;
     }
 }

@@ -7,7 +7,7 @@ import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
 import org.bouncycastle.asn1.cms.Attribute;
 
 public class AttributeBCFips implements IAttribute {
-    private final final Attribute attribute;
+    private final Attribute attribute;
 
     public AttributeBCFips(Attribute attribute) {
         this.attribute = attribute;

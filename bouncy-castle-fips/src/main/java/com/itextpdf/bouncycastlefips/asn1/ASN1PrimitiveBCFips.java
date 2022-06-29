@@ -5,15 +5,14 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import java.io.IOException;
 import org.bouncycastle.asn1.ASN1Primitive;
 
-public class ASN1PrimitiveBCFips implements ASN1EncodableBCFips, IASN1Primitive {
-    private final ASN1Primitive primitive;
-
+public class ASN1PrimitiveBCFips extends ASN1EncodableBCFips implements IASN1Primitive {
+    
     public ASN1PrimitiveBCFips(ASN1Primitive primitive) {
-        this.primitive = primitive;
+        super(primitive);
     }
 
     public ASN1Primitive getPrimitive() {
-        return primitive;
+        return (ASN1Primitive) getEncodable();
     }
 
     @Override

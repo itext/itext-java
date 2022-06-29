@@ -9,8 +9,11 @@ import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 public class OCSPObjectIdentifiersBCFips implements IOCSPObjectIdentifiers {
     private static final OCSPObjectIdentifiersBCFips INSTANCE = new OCSPObjectIdentifiersBCFips();
 
-    private static final IASN1ObjectIdentifier id_pkix_ocsp_basic =
+    private static final IASN1ObjectIdentifier ID_PKIX_OCSP_BASIC =
             new ASN1ObjectIdentifierBCFips(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
+
+    private static final IASN1ObjectIdentifier ID_PKIX_OCSP_NONCE =
+            new ASN1ObjectIdentifierBCFips(OCSPObjectIdentifiers.id_pkix_ocsp_nonce);
 
     private OCSPObjectIdentifiersBCFips() {
         // Do nothing.
@@ -22,6 +25,11 @@ public class OCSPObjectIdentifiersBCFips implements IOCSPObjectIdentifiers {
 
     @Override
     public IASN1ObjectIdentifier getIdPkixOcspBasic() {
-        return id_pkix_ocsp_basic;
+        return ID_PKIX_OCSP_BASIC;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getIdPkixOcspNonce() {
+        return ID_PKIX_OCSP_NONCE;
     }
 }
