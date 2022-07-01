@@ -298,7 +298,12 @@ public class PdfType3Function extends AbstractPdfFunction<PdfDictionary> {
         if (functionsArray == null || functionsArray.size() == 0) {
             throw new PdfException(KernelExceptionMessageConstant.INVALID_TYPE_3_FUNCTION_NULL_FUNCTIONS);
         }
-        Integer tempOutputSize = getRange() == null ? (Integer) null : getOutputSize();
+
+        Integer tempOutputSize = null;
+        if (getRange()!= null)
+        {
+            tempOutputSize = getOutputSize();
+        }
         final List<IPdfFunction> tempFunctions = new ArrayList<>();
         for (PdfObject funcObj : functionsArray) {
             if (!(funcObj instanceof PdfDictionary)) {
