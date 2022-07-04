@@ -43,12 +43,15 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.SingleResp;
+
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,20 +72,22 @@ import java.util.List;
  */
 public class OCSPVerifier extends RootStoreVerifier {
 
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     /** The Logger instance */
     protected static final Logger LOGGER = LoggerFactory.getLogger(OCSPVerifier.class);
 
     protected final static String id_kp_OCSPSigning = "1.3.6.1.5.5.7.3.9";
 
-    /** The list of OCSP responses. */
-    protected List<BasicOCSPResp> ocsps;
+    /** The list of {@link IBasicOCSPResp} OCSP response wrappers. */
+    protected List<IBasicOCSPResp> ocsps;
 
     /**
      * Creates an OCSPVerifier instance.
      * @param verifier	the next verifier in the chain
-     * @param ocsps a list of OCSP responses
+     * @param ocsps a list of {@link IBasicOCSPResp} OCSP response wrappers
      */
-    public OCSPVerifier(CertificateVerifier verifier, List<BasicOCSPResp> ocsps) {
+    public OCSPVerifier(CertificateVerifier verifier, List<IBasicOCSPResp> ocsps) {
         super(verifier);
         this.ocsps = ocsps;
     }
@@ -105,7 +110,7 @@ public class OCSPVerifier extends RootStoreVerifier {
         int validOCSPsFound = 0;
         // first check in the list of OCSP responses that was provided
         if (ocsps != null) {
-            for (BasicOCSPResp ocspResp : ocsps) {
+            for (IBasicOCSPResp ocspResp : ocsps) {
                 if (verify(ocspResp, signCert, issuerCert, signDate)) {
                     validOCSPsFound++;
                 }
@@ -135,7 +140,7 @@ public class OCSPVerifier extends RootStoreVerifier {
 
     /**
      * Verifies a certificate against a single OCSP response
-     * @param ocspResp   the OCSP response
+     * @param ocspResp   {@link IBasicOCSPResp} the OCSP response wrapper
      * @param signCert   the certificate that needs to be checked
      * @param issuerCert the certificate of CA (certificate that issued signCert). This certificate is considered trusted
      *                   and valid by this method.
@@ -144,16 +149,16 @@ public class OCSPVerifier extends RootStoreVerifier {
      * @return {@code true}, in case successful check, otherwise false.
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
      */
-    public boolean verify(BasicOCSPResp ocspResp, X509Certificate signCert, X509Certificate issuerCert, Date signDate)
+    public boolean verify(IBasicOCSPResp ocspResp, X509Certificate signCert, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException {
         if (ocspResp == null) {
             return false;
         }
         // Getting the responses
-        SingleResp[] resp = ocspResp.getResponses();
-        for (int i = 0; i < resp.length; i++) {
+        ISingleResp[] resp = ocspResp.getResponses();
+        for (ISingleResp iSingleResp : resp) {
             // check if the serial number corresponds
-            if (!signCert.getSerialNumber().equals(resp[i].getCertID().getSerialNumber())) {
+            if (!signCert.getSerialNumber().equals(iSingleResp.getCertID().getSerialNumber())) {
                 continue;
             }
             // check if the issuer matches
@@ -161,33 +166,33 @@ public class OCSPVerifier extends RootStoreVerifier {
                 if (issuerCert == null) {
                     issuerCert = signCert;
                 }
-                if (!SignUtils.checkIfIssuersMatch(resp[i].getCertID(), issuerCert)) {
+                if (!SignUtils.checkIfIssuersMatch(iSingleResp.getCertID(), issuerCert)) {
                     LOGGER.info("OCSP: Issuers doesn't match.");
                     continue;
                 }
             } catch (IOException e) {
                 throw new GeneralSecurityException(e.getMessage());
-            } catch (OCSPException e) {
+            } catch (AbstractOCSPException | AbstractOperatorCreationException e) {
                 continue;
             }
             // check if the OCSP response was valid at the time of signing
-            if (resp[i].getNextUpdate() == null) {
-                Date nextUpdate = SignUtils.add180Sec(resp[i].getThisUpdate());
+            if (iSingleResp.getNextUpdate() == null) {
+                Date nextUpdate = SignUtils.add180Sec(iSingleResp.getThisUpdate());
                 LOGGER.info(MessageFormatUtil.format("No 'next update' for OCSP Response; assuming {0}", nextUpdate));
                 if (signDate.after(nextUpdate)) {
                     LOGGER.info(MessageFormatUtil.format("OCSP no longer valid: {0} after {1}", signDate, nextUpdate));
                     continue;
                 }
             } else {
-                if (signDate.after(resp[i].getNextUpdate())) {
+                if (signDate.after(iSingleResp.getNextUpdate())) {
                     LOGGER.info(MessageFormatUtil.format("OCSP no longer valid: {0} after {1}", signDate,
-                            resp[i].getNextUpdate()));
+                            iSingleResp.getNextUpdate()));
                     continue;
                 }
             }
             // check the status of the certificate
-            Object status = resp[i].getCertStatus();
-            if (status == CertificateStatus.GOOD) {
+            Object status = iSingleResp.getCertStatus();
+            if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
                 // check if the OCSP response was genuine
                 isValidResponse(ocspResp, issuerCert, signDate);
                 return true;
@@ -200,13 +205,13 @@ public class OCSPVerifier extends RootStoreVerifier {
      * Verifies if an OCSP response is genuine
      * If it doesn't verify against the issuer certificate and response's certificates, it may verify
      * using a trusted anchor or cert.
-     * @param ocspResp the OCSP response
+     * @param ocspResp {@link IBasicOCSPResp} the OCSP response wrapper
      * @param issuerCert the issuer certificate. This certificate is considered trusted and valid by this method.
      * @param signDate sign date
      *
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
      */
-    public void isValidResponse(BasicOCSPResp ocspResp, X509Certificate issuerCert, Date signDate)
+    public void isValidResponse(IBasicOCSPResp ocspResp, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException {
         // OCSP response might be signed by the issuer certificate or
         // the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
@@ -257,7 +262,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                 // validating ocsp signers certificate
                 // Check if responders certificate has id-pkix-ocsp-nocheck extension,
                 // in which case we do not validate (perform revocation check on) ocsp certs for lifetime of certificate
-                if (responderCert.getExtensionValue(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck.getId()) == null) {
+                if (responderCert.getExtensionValue(BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNoCheck().getId()) == null) {
                     CRL crl;
                     try {
                         // TODO DEVSIX-5210 Implement a check heck for Authority Information Access according to
@@ -310,11 +315,11 @@ public class OCSPVerifier extends RootStoreVerifier {
 
     /**
      * Checks if an OCSP response is genuine
-     * @param ocspResp	the OCSP response
+     * @param ocspResp	{@link IBasicOCSPResp} the OCSP response wrapper
      * @param responderCert	the responder certificate
      * @return	true if the OCSP response verifies against the responder certificate
      */
-    public boolean isSignatureValid(BasicOCSPResp ocspResp, Certificate responderCert) {
+    public boolean isSignatureValid(IBasicOCSPResp ocspResp, Certificate responderCert) {
         try {
             return SignUtils.isSignatureValid(ocspResp, responderCert, "BC");
         } catch (Exception e) {
@@ -327,21 +332,21 @@ public class OCSPVerifier extends RootStoreVerifier {
      * (without further checking!).
      * @param signCert	the signing certificate
      * @param issuerCert	the issuer certificate
-     * @return an OCSP response
+     * @return {@link IBasicOCSPResp} an OCSP response wrapper
      */
-    public BasicOCSPResp getOcspResponse(X509Certificate signCert, X509Certificate issuerCert) {
+    public IBasicOCSPResp getOcspResponse(X509Certificate signCert, X509Certificate issuerCert) {
         if (signCert == null && issuerCert == null) {
             return null;
         }
         OcspClientBouncyCastle ocsp = new OcspClientBouncyCastle(null);
-        BasicOCSPResp ocspResp = ocsp.getBasicOCSPResp(signCert, issuerCert, null);
+        IBasicOCSPResp ocspResp = ocsp.getBasicOCSPResp(signCert, issuerCert, null);
         if (ocspResp == null) {
             return null;
         }
-        SingleResp[] resps = ocspResp.getResponses();
-        for (SingleResp resp : resps) {
+        ISingleResp[] resps = ocspResp.getResponses();
+        for (ISingleResp resp : resps) {
             Object status = resp.getCertStatus();
-            if (status == CertificateStatus.GOOD) {
+            if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
                 return ocspResp;
             }
         }

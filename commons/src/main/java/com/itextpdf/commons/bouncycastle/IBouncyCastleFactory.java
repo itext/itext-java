@@ -29,6 +29,11 @@ import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
@@ -39,7 +44,9 @@ import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
@@ -138,6 +145,8 @@ public interface IBouncyCastleFactory {
 
     IBasicOCSPResp createBasicOCSPResp(IBasicOCSPResponse response);
 
+    IBasicOCSPResp createBasicOCSPResp(Object response);
+
     IOCSPObjectIdentifiers createOCSPObjectIdentifiers();
 
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable);
@@ -157,6 +166,8 @@ public interface IBouncyCastleFactory {
     ICertificateID createCertificateID(IDigestCalculator digestCalculator, IX509CertificateHolder certificateHolder,
                                        BigInteger bigInteger) throws AbstractOCSPException;
 
+    ICertificateID createCertificateID();
+
     IX509CertificateHolder createX509CertificateHolder(byte[] bytes) throws IOException;
 
     IJcaX509CertificateHolder createJcaX509CertificateHolder(X509Certificate certificate)
@@ -173,4 +184,22 @@ public interface IBouncyCastleFactory {
     IASN1String createASN1String(IASN1Encodable encodable);
 
     IASN1Primitive createASN1Primitive(IASN1Encodable encodable);
+
+    IOCSPResp createOCSPResp(IOCSPResponse ocspResponse);
+
+    IOCSPResp createOCSPResp(byte[] bytes) throws IOException;
+
+    IOCSPResponse createOCSPResponse(IOCSPResponseStatus respStatus, IResponseBytes responseBytes);
+
+    IResponseBytes createResponseBytes(IASN1ObjectIdentifier asn1ObjectIdentifier, IDEROctetString derOctetString);
+
+    IOCSPRespBuilder createOCSPRespBuilder();
+
+    IOCSPResponseStatus createOCSPResponseStatus(int status);
+
+    IOCSPResponseStatus createOCSPResponseStatus();
+
+    ICertificateStatus createCertificateStatus();
+
+    IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus);
 }

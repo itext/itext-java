@@ -42,6 +42,7 @@
  */
 package com.itextpdf.signatures.verify;
 
+import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
@@ -159,7 +160,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void expiredAuthorizedOCSPResponderTest_now() throws GeneralSecurityException, IOException, OperatorCreationException {
+    public void expiredAuthorizedOCSPResponderTest_now() {
         Date ocspResponderCertStartDate = DateTimeUtil.parse("15/10/2005", "dd/MM/yyyy");
         Date ocspResponderCertEndDate = DateTimeUtil.parse("15/10/2010", "dd/MM/yyyy");
         Date checkDate = DateTimeUtil.getCurrentTimeDate();
@@ -186,7 +187,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         BasicOCSPResp basicOCSPResp = new BasicOCSPResp(BasicOCSPResponse.getInstance(var2));
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        return ocspVerifier.verify(basicOCSPResp, checkCert, rootCert, checkDate);
+        return ocspVerifier.verify(new BasicOCSPRespBC(basicOCSPResp), checkCert, rootCert, checkDate);
     }
 
     public boolean verifyAuthorizedOCSPResponderTest(Date ocspResponderCertStartDate, Date ocspResponderCertEndDate, Date checkDate) throws IOException, OperatorCreationException, GeneralSecurityException {
@@ -212,6 +213,6 @@ public class OcspVerifierTest extends ExtendedITextTest {
         BasicOCSPResp basicOCSPResp = new BasicOCSPResp(BasicOCSPResponse.getInstance(var2));
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        return ocspVerifier.verify(basicOCSPResp, checkCert, caCert, checkDate);
+        return ocspVerifier.verify(new BasicOCSPRespBC(basicOCSPResp), checkCert, caCert, checkDate);
     }
 }

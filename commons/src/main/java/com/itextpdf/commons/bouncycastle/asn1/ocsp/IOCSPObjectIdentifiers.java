@@ -6,4 +6,6 @@ public interface IOCSPObjectIdentifiers {
     IASN1ObjectIdentifier getIdPkixOcspBasic();
 
     IASN1ObjectIdentifier getIdPkixOcspNonce();
+
+    IASN1ObjectIdentifier getIdPkixOcspNoCheck();
 }

@@ -29,6 +29,9 @@ import com.itextpdf.bouncycastle.asn1.ess.SigningCertificateBC;
 import com.itextpdf.bouncycastle.asn1.ess.SigningCertificateV2BC;
 import com.itextpdf.bouncycastle.asn1.ocsp.BasicOCSPResponseBC;
 import com.itextpdf.bouncycastle.asn1.ocsp.OCSPObjectIdentifiersBC;
+import com.itextpdf.bouncycastle.asn1.ocsp.OCSPResponseBC;
+import com.itextpdf.bouncycastle.asn1.ocsp.OCSPResponseStatusBC;
+import com.itextpdf.bouncycastle.asn1.ocsp.ResponseBytesBC;
 import com.itextpdf.bouncycastle.asn1.pcks.PKCSObjectIdentifiersBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionBC;
@@ -38,8 +41,12 @@ import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateConverterBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateHolderBC;
 import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
 import com.itextpdf.bouncycastle.cert.ocsp.CertificateIDBC;
+import com.itextpdf.bouncycastle.cert.ocsp.CertificateStatusBC;
 import com.itextpdf.bouncycastle.cert.ocsp.OCSPExceptionBC;
 import com.itextpdf.bouncycastle.cert.ocsp.OCSPReqBuilderBC;
+import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBC;
+import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBuilderBC;
+import com.itextpdf.bouncycastle.cert.ocsp.RevokedStatusBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipientBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilderBC;
@@ -76,6 +83,9 @@ import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
@@ -85,7 +95,11 @@ import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverte
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
@@ -116,11 +130,14 @@ import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
 import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
+import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -389,6 +406,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IBasicOCSPResp createBasicOCSPResp(Object response) {
+        if (response instanceof BasicOCSPResp) {
+            return new BasicOCSPRespBC((BasicOCSPResp) response);
+        }
+        return null;
+    }
+
+    @Override
     public IOCSPObjectIdentifiers createOCSPObjectIdentifiers() {
         return OCSPObjectIdentifiersBC.getInstance();
     }
@@ -436,6 +461,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
             IX509CertificateHolder certificateHolder,
             BigInteger bigInteger) throws OCSPExceptionBC {
         return new CertificateIDBC(digestCalculator, certificateHolder, bigInteger);
+    }
+
+    @Override
+    public ICertificateID createCertificateID() {
+        return CertificateIDBC.getInstance();
     }
 
     @Override
@@ -488,6 +518,56 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         ASN1EncodableBC encodableBCFips = (ASN1EncodableBC) encodable;
         if (encodableBCFips.getEncodable() instanceof ASN1Primitive) {
             return new ASN1PrimitiveBC((ASN1Primitive) encodableBCFips.getEncodable());
+        }
+        return null;
+    }
+
+    @Override
+    public IOCSPResp createOCSPResp(IOCSPResponse ocspResponse) {
+        return new OCSPRespBC(ocspResponse);
+    }
+
+    @Override
+    public IOCSPResp createOCSPResp(byte[] bytes) throws IOException {
+        return new OCSPRespBC(new OCSPResp(bytes));
+    }
+
+    @Override
+    public IOCSPResponse createOCSPResponse(IOCSPResponseStatus respStatus, IResponseBytes responseBytes) {
+        return new OCSPResponseBC(respStatus, responseBytes);
+    }
+
+    @Override
+    public IResponseBytes createResponseBytes(IASN1ObjectIdentifier asn1ObjectIdentifier,
+            IDEROctetString derOctetString) {
+        return new ResponseBytesBC(asn1ObjectIdentifier, derOctetString);
+    }
+
+    @Override
+    public IOCSPRespBuilder createOCSPRespBuilder() {
+        return OCSPRespBuilderBC.getInstance();
+    }
+
+    @Override
+    public IOCSPResponseStatus createOCSPResponseStatus(int status) {
+        return new OCSPResponseStatusBC(new OCSPResponseStatus(status));
+    }
+
+    @Override
+    public IOCSPResponseStatus createOCSPResponseStatus() {
+        return OCSPResponseStatusBC.getInstance();
+    }
+
+    @Override
+    public ICertificateStatus createCertificateStatus() {
+        return CertificateStatusBC.getInstance();
+    }
+
+    @Override
+    public IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus) {
+        CertificateStatusBC certificateStatusBC = (CertificateStatusBC) certificateStatus;
+        if (certificateStatusBC.getCertificateStatus() instanceof RevokedStatus) {
+            return new RevokedStatusBC((RevokedStatus) certificateStatusBC.getCertificateStatus());
         }
         return null;
     }

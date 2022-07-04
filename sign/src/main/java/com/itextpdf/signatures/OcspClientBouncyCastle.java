@@ -43,8 +43,18 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.io.IOException;
@@ -55,16 +65,7 @@ import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.RevokedStatus;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.operator.OperatorException;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,8 @@ import org.slf4j.LoggerFactory;
  * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements IOcspClient {
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     /**
      * The Logger instance.
@@ -100,18 +103,18 @@ public class OcspClientBouncyCastle implements IOcspClient {
      * @param rootCert  the parent certificate
      * @param url       to get the verification
      *
-     * @return OCSP response
+     * @return {@link IBasicOCSPResp} an OCSP response wrapper
      */
-    public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
+    public IBasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
-            OCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
+            IOCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
             if (ocspResponse == null) {
                 return null;
             }
-            if (ocspResponse.getStatus() != OCSPResponseStatus.SUCCESSFUL) {
+            if (ocspResponse.getStatus() != BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus().getSuccessful()) {
                 return null;
             }
-            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
+            IBasicOCSPResp basicResponse = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(ocspResponse.getResponseObject());
             if (verifier != null) {
                 verifier.isValidResponse(basicResponse, rootCert, DateTimeUtil.getCurrentTimeDate());
             }
@@ -128,15 +131,15 @@ public class OcspClientBouncyCastle implements IOcspClient {
     @Override
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
-            BasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
+            IBasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
             if (basicResponse != null) {
-                SingleResp[] responses = basicResponse.getResponses();
+                ISingleResp[] responses = basicResponse.getResponses();
                 if (responses.length == 1) {
-                    SingleResp resp = responses[0];
-                    Object status = resp.getCertStatus();
-                    if (status == CertificateStatus.GOOD) {
+                    ISingleResp resp = responses[0];
+                    ICertificateStatus status = resp.getCertStatus();
+                    if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
                         return basicResponse.getEncoded();
-                    } else if (status instanceof RevokedStatus) {
+                    } else if (BOUNCY_CASTLE_FACTORY.createRevokedStatus(status) != null) {
                         throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
                     } else {
                         throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
@@ -156,19 +159,19 @@ public class OcspClientBouncyCastle implements IOcspClient {
      * @param issuerCert   certificate of the issues
      * @param serialNumber serial number
      *
-     * @return an OCSP request
+     * @return {@link IOCSPReq} an OCSP request wrapper
      *
-     * @throws OCSPException is thrown if any errors occur while handling OCSP requests/responses
-     * @throws IOException signals that an I/O exception has occurred
+     * @throws AbstractOCSPException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws IOException           signals that an I/O exception has occurred
      */
-    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
-            throws OCSPException, IOException,
-            OperatorException, CertificateEncodingException {
+    private static IOCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
+            throws AbstractOCSPException, IOException, CertificateEncodingException, AbstractOperatorCreationException {
         //Add provider BC
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
 
         // Generate the id for the certificate we are looking for
-        CertificateID id = SignUtils.generateCertificateId(issuerCert, serialNumber, CertificateID.HASH_SHA1);
+        ICertificateID id = SignUtils.generateCertificateId(issuerCert, serialNumber,
+                BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
 
         // basic request generation with nonce
         return SignUtils.generateOcspRequestWithNonce(id);
@@ -182,15 +185,15 @@ public class OcspClientBouncyCastle implements IOcspClient {
      * @param url       to get the verification. If it's null it will be taken
      *                  from the check cert or from other implementation specific source
      *
-     * @return an OCSP response
+     * @return {@link IOCSPResp} an OCSP response wrapper
      *
-     * @throws GeneralSecurityException if any execution errors occur
-     * @throws OCSPException            if any errors occur while handling OCSP requests/responses
-     * @throws IOException              if any I/O execution errors occur
-     * @throws OperatorException        if any BC execution errors occur
+     * @throws GeneralSecurityException          if any execution errors occur
+     * @throws AbstractOCSPException             if any errors occur while handling OCSP requests/responses
+     * @throws IOException                       if any I/O execution errors occur
+     * @throws AbstractOperatorCreationException if any BC execution errors occur
      */
-    OCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
-            throws GeneralSecurityException, OCSPException, IOException, OperatorException {
+    IOCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
+            throws GeneralSecurityException, AbstractOCSPException, IOException, AbstractOperatorCreationException {
         if (checkCert == null || rootCert == null) {
             return null;
         }
@@ -201,10 +204,10 @@ public class OcspClientBouncyCastle implements IOcspClient {
             return null;
         }
         LOGGER.info("Getting OCSP from " + url);
-        OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
+        IOCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
         URL urlt = new URL(url);
         InputStream in = SignUtils.getHttpResponseForOcspRequest(array, urlt);
-        return new OCSPResp(StreamUtil.inputStreamToArray(in));
+        return BOUNCY_CASTLE_FACTORY.createOCSPResp(StreamUtil.inputStreamToArray(in));
     }
 }

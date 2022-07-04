@@ -1,32 +1,38 @@
 package com.itextpdf.bouncycastle.cert.ocsp;
 
 import com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC;
+import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
 import com.itextpdf.bouncycastle.operator.DigestCalculatorBC;
 import com.itextpdf.bouncycastle.operator.DigestCalculatorProviderBC;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
-import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
-
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.operator.DigestCalculatorProvider;
 
 import java.math.BigInteger;
+import org.bouncycastle.cert.ocsp.CertificateID;
+import org.bouncycastle.cert.ocsp.OCSPException;
 
 public class CertificateIDBC implements ICertificateID {
+    private static final CertificateIDBC INSTANCE = new CertificateIDBC(null);
+
+    private static final AlgorithmIdentifierBC HASH_SHA1 = new AlgorithmIdentifierBC(CertificateID.HASH_SHA1);
+
     private final CertificateID certificateID;
 
     public CertificateIDBC(CertificateID certificateID) {
         this.certificateID = certificateID;
     }
-    
+
+    public static CertificateIDBC getInstance() {
+        return INSTANCE;
+    }
+
     public CertificateIDBC(IDigestCalculator digestCalculator,
-                           IX509CertificateHolder certificateHolder, BigInteger bigInteger) throws OCSPExceptionBC {
+            IX509CertificateHolder certificateHolder, BigInteger bigInteger) throws OCSPExceptionBC {
         try {
             this.certificateID = new CertificateID(
                     ((DigestCalculatorBC) digestCalculator).getDigestCalculator(),
@@ -45,10 +51,15 @@ public class CertificateIDBC implements ICertificateID {
     public IASN1ObjectIdentifier getHashAlgOID() {
         return new ASN1ObjectIdentifierBC(certificateID.getHashAlgOID());
     }
-    
+
+    @Override
+    public IAlgorithmIdentifier getHashSha1() {
+        return HASH_SHA1;
+    }
+
     @Override
     public boolean matchesIssuer(IX509CertificateHolder certificateHolder,
-                                 IDigestCalculatorProvider provider) throws OCSPExceptionBC {
+            IDigestCalculatorProvider provider) throws OCSPExceptionBC {
         try {
             return certificateID.matchesIssuer(
                     ((X509CertificateHolderBC) certificateHolder).getCertificateHolder(),
@@ -56,5 +67,10 @@ public class CertificateIDBC implements ICertificateID {
         } catch (OCSPException e) {
             throw new OCSPExceptionBC(e);
         }
+    }
+
+    @Override
+    public BigInteger getSerialNumber() {
+        return certificateID.getSerialNumber();
     }
 }

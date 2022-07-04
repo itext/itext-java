@@ -42,6 +42,11 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBC;
+import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
+import com.itextpdf.bouncycastle.cert.ocsp.OCSPExceptionBC;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
@@ -74,7 +79,6 @@ import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cert.ocsp.UnknownStatus;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.OperatorException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -108,21 +112,21 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
 
     @Test
     public void getOcspResponseWhenCheckCertIsNullTest()
-            throws OCSPException, GeneralSecurityException, IOException, OperatorException {
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertNull(castle.getOcspResponse(null, rootCert, ocspServiceUrl));
     }
 
     @Test
     public void getOcspResponseWhenRootCertIsNullTest()
-            throws OCSPException, GeneralSecurityException, IOException, OperatorException {
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertNull(castle.getOcspResponse(checkCert, null, ocspServiceUrl));
     }
 
     @Test
     public void getOcspResponseWhenRootAndCheckCertIsNullTest()
-            throws OCSPException, GeneralSecurityException, IOException, OperatorException {
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertNull(castle.getOcspResponse(null, null, ocspServiceUrl));
     }
@@ -169,7 +173,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOcspRespTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
 
-        BasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
+        BasicOCSPRespBC basicOCSPResp = (BasicOCSPRespBC) ocspClientBouncyCastle
                 .getBasicOCSPResp(checkCert, rootCert, ocspServiceUrl);
         Assert.assertNotNull(basicOCSPResp);
         Assert.assertTrue(basicOCSPResp.getResponses().length > 0);
@@ -179,7 +183,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOcspRespNullTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = new OcspClientBouncyCastle(null);
 
-        BasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
+        BasicOCSPRespBC basicOCSPResp = (BasicOCSPRespBC) ocspClientBouncyCastle
                 .getBasicOCSPResp(checkCert, null, ocspServiceUrl);
         Assert.assertNull(basicOCSPResp);
     }
@@ -190,7 +194,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOCSPRespLogMessageTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
 
-        BasicOCSPResp basicOCSPResp = ocspClientBouncyCastle.getBasicOCSPResp(null, null, null);
+        BasicOCSPRespBC basicOCSPResp = (BasicOCSPRespBC) ocspClientBouncyCastle.getBasicOCSPResp(null, null, null);
         Assert.assertNull(basicOCSPResp);
     }
 
@@ -263,15 +267,15 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         }
 
         @Override
-        OCSPResp getOcspResponse(X509Certificate chCert, X509Certificate rCert, String url) throws OCSPException {
+        OCSPRespBC getOcspResponse(X509Certificate chCert, X509Certificate rCert, String url) throws OCSPExceptionBC {
             try {
                 CertificateID id = SignTestPortUtil.generateCertificateId(rootCert, checkCert.getSerialNumber(),
                         CertificateID.HASH_SHA1);
                 BasicOCSPResp basicOCSPResp = testOcspBuilder.makeOcspResponseObject(SignTestPortUtil
                         .generateOcspRequestWithNonce(id).getEncoded());
-                return new OCSPRespBuilder().build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp);
+                return new OCSPRespBC(new OCSPRespBuilder().build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp));
             } catch (Exception e) {
-                throw new OCSPException(e.getMessage());
+                throw new OCSPExceptionBC(new OCSPException(e.getMessage()));
             }
         }
     }

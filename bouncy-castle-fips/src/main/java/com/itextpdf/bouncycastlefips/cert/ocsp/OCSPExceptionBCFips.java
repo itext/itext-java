@@ -13,4 +13,9 @@ public class OCSPExceptionBCFips extends AbstractOCSPException {
     public OCSPException getException() {
         return exception;
     }
+
+    @Override
+    public String toString() {
+        return exception.toString();
+    }
 }

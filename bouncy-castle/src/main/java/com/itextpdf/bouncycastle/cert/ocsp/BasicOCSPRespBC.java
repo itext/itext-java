@@ -7,6 +7,9 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 
 import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
+
+import java.io.IOException;
+import java.util.Objects;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
@@ -53,5 +56,32 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
             certsBC[i] = new X509CertificateHolderBC(certs[i]);
         }
         return certsBC;
+    }
+
+    @Override
+    public byte[] getEncoded() throws IOException {
+        return basicOCSPRespBC.getEncoded();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        BasicOCSPRespBC that = (BasicOCSPRespBC) o;
+        return Objects.equals(basicOCSPRespBC, that.basicOCSPRespBC);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(basicOCSPRespBC);
+    }
+
+    @Override
+    public String toString() {
+        return basicOCSPRespBC.toString();
     }
 }
