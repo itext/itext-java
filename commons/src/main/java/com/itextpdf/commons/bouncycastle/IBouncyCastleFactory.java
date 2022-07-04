@@ -63,12 +63,16 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cms.AbstractCMSException;
+import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
 import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
 import java.io.IOException;
@@ -94,7 +98,7 @@ public interface IBouncyCastleFactory {
     IASN1OctetString createASN1OctetString(IASN1Primitive primitive);
 
     IASN1OctetString createASN1OctetString(IASN1Encodable encodable);
-    
+
     IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b);
 
     IASN1Sequence createASN1Sequence(Object object);
@@ -216,7 +220,7 @@ public interface IBouncyCastleFactory {
     IASN1String createASN1String(IASN1Encodable encodable);
 
     IASN1Primitive createASN1Primitive(IASN1Encodable encodable);
-    
+
     IOCSPResp createOCSPResp(IOCSPResponse ocspResponse);
 
     IOCSPResp createOCSPResp(byte[] bytes) throws IOException;
@@ -236,9 +240,9 @@ public interface IBouncyCastleFactory {
     IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus);
 
     IASN1Primitive createASN1Primitive(byte[] array) throws IOException;
-    
+
     IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b);
-    
+
     IDERIA5String createDERIA5String(String str);
 
     ICRLDistPoint createCRLDistPoint(Object object);
@@ -276,5 +280,11 @@ public interface IBouncyCastleFactory {
             IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString);
 
     IOriginatorInfo createNullOriginatorInfo();
+
+    ICMSEnvelopedData createCMSEnvelopedData(byte[] valueBytes) throws AbstractCMSException;
+
+    ITimeStampRequestGenerator createTimeStampRequestGenerator();
+
+    ITimeStampResponse createTimeStampResponse(byte[] respBytes) throws AbstractTSPException, IOException;
 }
 

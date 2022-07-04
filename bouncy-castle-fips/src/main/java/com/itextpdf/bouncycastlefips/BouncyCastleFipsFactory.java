@@ -62,11 +62,15 @@ import com.itextpdf.bouncycastlefips.cert.ocsp.OCSPReqBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.OCSPRespBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.OCSPRespBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.RevokedStatusBCFips;
+import com.itextpdf.bouncycastlefips.cms.CMSEnvelopedDataBCFips;
+import com.itextpdf.bouncycastlefips.cms.CMSExceptionBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentVerifierProviderBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaDigestCalculatorProviderBuilderBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TSPExceptionBCFips;
+import com.itextpdf.bouncycastlefips.tsp.TimeStampRequestGeneratorBCFips;
+import com.itextpdf.bouncycastlefips.tsp.TimeStampResponseBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenBCFips;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
@@ -131,11 +135,14 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
 import java.io.IOException;
@@ -176,12 +183,16 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.RevokedStatus;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
@@ -560,7 +571,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
             boolean critical, IASN1OctetString octetString) {
         return new ExtensionBCFips(objectIdentifier, critical, octetString);
     }
-    
+
     @Override
     public IExtension createExtension() {
         return ExtensionBCFips.getInstance();
@@ -658,7 +669,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
         return null;
     }
-    
+
     @Override
     public IASN1Primitive createASN1Primitive(byte[] array) throws IOException {
         return new ASN1PrimitiveBCFips(array);
@@ -758,6 +769,29 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IOriginatorInfo createNullOriginatorInfo() {
         return new OriginatorInfoBCFips(null);
+    }
+
+    @Override
+    public ICMSEnvelopedData createCMSEnvelopedData(byte[] bytes) throws CMSExceptionBCFips {
+        try {
+            return new CMSEnvelopedDataBCFips(new CMSEnvelopedData(bytes));
+        } catch (CMSException e) {
+            throw new CMSExceptionBCFips(e);
+        }
+    }
+
+    @Override
+    public ITimeStampRequestGenerator createTimeStampRequestGenerator() {
+        return new TimeStampRequestGeneratorBCFips(new TimeStampRequestGenerator());
+    }
+
+    @Override
+    public ITimeStampResponse createTimeStampResponse(byte[] respBytes) throws TSPExceptionBCFips, IOException {
+        try {
+            return new TimeStampResponseBCFips(new TimeStampResponse(respBytes));
+        } catch (TSPException e) {
+            throw new TSPExceptionBCFips(e);
+        }
     }
 }
 

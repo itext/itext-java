@@ -43,6 +43,15 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
+import com.itextpdf.commons.bouncycastle.asn1.cmp.IPKIFailureInfo;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -54,14 +63,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.cmp.PKIFailureInfo;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,8 @@ import org.slf4j.LoggerFactory;
  * for ease of subclassing.
  */
 public class TSAClientBouncyCastle implements ITSAClient {
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     /**
      * The default value for the hash algorithm
@@ -213,31 +216,32 @@ public class TSAClientBouncyCastle implements ITSAClient {
      *
      * @return encoded, TSA signed data of the timeStampToken
      * @throws IOException if I/O error occurs
-     * @throws TSPException if the TSA response is malformed
+     * @throws AbstractTSPException if the TSA response is malformed
      */
     @Override
-    public byte[] getTimeStampToken(byte[] imprint) throws IOException, TSPException {
+    public byte[] getTimeStampToken(byte[] imprint)
+            throws IOException, AbstractTSPException {
         byte[] respBytes = null;
         // Setup the time stamp request
-        TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
+        ITimeStampRequestGenerator tsqGenerator = BOUNCY_CASTLE_FACTORY.createTimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
         if (tsaReqPolicy != null && tsaReqPolicy.length() > 0) {
             tsqGenerator.setReqPolicy(tsaReqPolicy);
         }
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getTimeBasedSeed());
-        TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
+        ITimeStampRequest request = tsqGenerator.generate(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
         byte[] requestBytes = request.getEncoded();
 
         // Call the communications layer
         respBytes = getTSAResponse(requestBytes);
 
         // Handle the TSA response
-        TimeStampResponse response = new TimeStampResponse(respBytes);
+        ITimeStampResponse response = BOUNCY_CASTLE_FACTORY.createTimeStampResponse(respBytes);
 
         // validate communication level attributes (RFC 3161 PKIStatus)
         response.validate(request);
-        PKIFailureInfo failure = response.getFailInfo();
+        IPKIFailureInfo failure = response.getFailInfo();
         int value = (failure == null) ? 0 : failure.intValue();
         if (value != 0) {
             // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
@@ -248,13 +252,13 @@ public class TSAClientBouncyCastle implements ITSAClient {
         //        assure we do not sign using an invalid timestamp).
 
         // extract just the time stamp token (removes communication status info)
-        TimeStampToken tsToken = response.getTimeStampToken();
+        ITimeStampToken tsToken = response.getTimeStampToken();
         if (tsToken == null) {
             throw new PdfException(
                     SignExceptionMessageConstant.THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN
             ).setMessageParams(tsaURL, response.getStatusString());
         }
-        TimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
+        ITimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
         byte[] encoded = tsToken.getEncoded();
 
         LOGGER.info("Timestamp generated: " + tsTokenInfo.getGenTime());

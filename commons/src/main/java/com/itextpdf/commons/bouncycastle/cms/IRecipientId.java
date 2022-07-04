@@ -1,5 +1,7 @@
 package com.itextpdf.commons.bouncycastle.cms;
 
+import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+
 public interface IRecipientId {
-    IRecipientId getRID();
+    boolean match(IX509CertificateHolder holder);
 }

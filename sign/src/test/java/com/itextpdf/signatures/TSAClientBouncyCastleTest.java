@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastle.tsp.TimeStampTokenInfoBC;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -220,8 +222,8 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         private TimeStampTokenInfo timeStampTokenInfo;
 
         @Override
-        public void inspectTimeStampTokenInfo(TimeStampTokenInfo info) {
-            this.timeStampTokenInfo = info;
+        public void inspectTimeStampTokenInfo(ITimeStampTokenInfo info) {
+            this.timeStampTokenInfo = ((TimeStampTokenInfoBC) info).getTimeStampTokenInfo();
         }
 
 

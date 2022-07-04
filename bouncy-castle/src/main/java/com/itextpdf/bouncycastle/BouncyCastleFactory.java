@@ -62,11 +62,15 @@ import com.itextpdf.bouncycastle.cert.ocsp.OCSPReqBuilderBC;
 import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBC;
 import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBuilderBC;
 import com.itextpdf.bouncycastle.cert.ocsp.RevokedStatusBC;
+import com.itextpdf.bouncycastle.cms.CMSEnvelopedDataBC;
+import com.itextpdf.bouncycastle.cms.CMSExceptionBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipientBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilderBC;
 import com.itextpdf.bouncycastle.tsp.TSPExceptionBC;
+import com.itextpdf.bouncycastle.tsp.TimeStampRequestGeneratorBC;
+import com.itextpdf.bouncycastle.tsp.TimeStampResponseBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
@@ -131,11 +135,14 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
 import java.io.IOException;
@@ -146,7 +153,6 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -175,12 +181,16 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.RevokedStatus;
+import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFactory implements IBouncyCastleFactory {
@@ -578,7 +588,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         }
         return new SigPolicyQualifiersBC(qualifierInfos);
     }
-    
+
     @Override
     public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
                                                                 IDERIA5String string) {
@@ -752,5 +762,27 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IOriginatorInfo createNullOriginatorInfo() {
         return new OriginatorInfoBC(null);
     }
-}
 
+    @Override
+    public ICMSEnvelopedData createCMSEnvelopedData(byte[] bytes) throws CMSExceptionBC {
+        try {
+            return new CMSEnvelopedDataBC(new CMSEnvelopedData(bytes));
+        } catch (CMSException e) {
+            throw new CMSExceptionBC(e);
+        }
+    }
+
+    @Override
+    public ITimeStampRequestGenerator createTimeStampRequestGenerator() {
+        return new TimeStampRequestGeneratorBC(new TimeStampRequestGenerator());
+    }
+
+    @Override
+    public ITimeStampResponse createTimeStampResponse(byte[] respBytes) throws TSPExceptionBC, IOException {
+        try {
+            return new TimeStampResponseBC(new TimeStampResponse(respBytes));
+        } catch (TSPException e) {
+            throw new TSPExceptionBC(e);
+        }
+    }
+}

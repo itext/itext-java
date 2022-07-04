@@ -5,6 +5,7 @@ import com.itextpdf.commons.bouncycastle.cms.ISignerInformationVerifier;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 
+import java.io.IOException;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 
@@ -22,6 +23,11 @@ public class TimeStampTokenBCFips implements ITimeStampToken {
     @Override
     public ITimeStampTokenInfo getTimeStampInfo() {
         return new TimeStampTokenInfoBCFips(timeStampToken.getTimeStampInfo());
+    }
+
+    @Override
+    public byte[] getEncoded() throws IOException {
+        return timeStampToken.getEncoded();
     }
 
     @Override
