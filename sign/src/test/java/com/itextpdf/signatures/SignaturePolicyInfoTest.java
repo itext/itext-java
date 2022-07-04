@@ -42,6 +42,10 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastle.asn1.ASN1PrimitiveBC;
+import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifierInfoBC;
+import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifiersBC;
+import com.itextpdf.bouncycastle.asn1.esf.SignaturePolicyIdentifierBC;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -139,8 +143,9 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
 
     @Test
     public void toSignaturePolicyIdentifierTest() {
-        SignaturePolicyIdentifier actual = new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH,
-                POLICY_DIGEST_ALGORITHM, POLICY_URI).toSignaturePolicyIdentifier();
+        SignaturePolicyIdentifierBC actual = (SignaturePolicyIdentifierBC)
+                new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH, POLICY_DIGEST_ALGORITHM, POLICY_URI)
+                        .toSignaturePolicyIdentifier();
 
         DERIA5String deria5String = new DERIA5String(POLICY_URI);
         SigPolicyQualifierInfo sigPolicyQualifierInfo = new SigPolicyQualifierInfo(
@@ -154,12 +159,14 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
         OtherHashAlgAndValue otherHashAlgAndValue = new OtherHashAlgAndValue(algorithmIdentifier, derOctetString);
         ASN1ObjectIdentifier objectIdentifier = new ASN1ObjectIdentifier(POLICY_IDENTIFIER);
         ASN1ObjectIdentifier objectIdentifierInstance = ASN1ObjectIdentifier.getInstance(objectIdentifier);
-        SignaturePolicyId signaturePolicyId = new SignaturePolicyId(objectIdentifierInstance, otherHashAlgAndValue,
-                SignUtils.createSigPolicyQualifiers(sigPolicyQualifierInfo));
+        SigPolicyQualifiersBC policyQualifiersBC = (SigPolicyQualifiersBC)
+                SignUtils.createSigPolicyQualifiers(new SigPolicyQualifierInfoBC(sigPolicyQualifierInfo));
+        SignaturePolicyId signaturePolicyId = new SignaturePolicyId(objectIdentifierInstance,
+                otherHashAlgAndValue, policyQualifiersBC.getSigPolityQualifiers());
 
         SignaturePolicyIdentifier expected = new SignaturePolicyIdentifier(signaturePolicyId);
 
-        Assert.assertEquals(expected.toASN1Primitive(), actual.toASN1Primitive());
+        Assert.assertEquals(expected.toASN1Primitive(), ((ASN1PrimitiveBC) actual.toASN1Primitive()).getPrimitive());
     }
 
     @Test

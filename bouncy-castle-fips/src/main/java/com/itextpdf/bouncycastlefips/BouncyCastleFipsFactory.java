@@ -14,6 +14,7 @@ import com.itextpdf.bouncycastlefips.asn1.ASN1SequenceBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1SetBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1StringBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1TaggedObjectBCFips;
+import com.itextpdf.bouncycastlefips.asn1.DERIA5StringBCFips;
 import com.itextpdf.bouncycastlefips.asn1.DERNullBCFips;
 import com.itextpdf.bouncycastlefips.asn1.DEROctetStringBCFips;
 import com.itextpdf.bouncycastlefips.asn1.DERSequenceBCFips;
@@ -22,8 +23,10 @@ import com.itextpdf.bouncycastlefips.asn1.DERTaggedObjectBCFips;
 import com.itextpdf.bouncycastlefips.asn1.cms.AttributeBCFips;
 import com.itextpdf.bouncycastlefips.asn1.cms.AttributeTableBCFips;
 import com.itextpdf.bouncycastlefips.asn1.cms.ContentInfoBCFips;
+import com.itextpdf.bouncycastlefips.asn1.esf.OtherHashAlgAndValueBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SigPolicyQualifierInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SigPolicyQualifiersBCFips;
+import com.itextpdf.bouncycastlefips.asn1.esf.SignaturePolicyIdBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SignaturePolicyIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ess.SigningCertificateBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ess.SigningCertificateV2BCFips;
@@ -34,8 +37,12 @@ import com.itextpdf.bouncycastlefips.asn1.ocsp.OCSPResponseStatusBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ocsp.ResponseBytesBCFips;
 import com.itextpdf.bouncycastlefips.asn1.pcks.PKCSObjectIdentifiersBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.CRLDistPointBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.DistributionPointNameBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.ExtensionBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.ExtensionsBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.GeneralNameBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.GeneralNamesBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509CertificateHolderBCFips;
 import com.itextpdf.bouncycastlefips.cert.jcajce.JcaX509CertificateConverterBCFips;
 import com.itextpdf.bouncycastlefips.cert.jcajce.JcaX509CertificateHolderBCFips;
@@ -68,6 +75,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSequence;
@@ -76,8 +84,10 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
@@ -88,8 +98,12 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
@@ -124,6 +138,8 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DLOutputStream;
 import org.bouncycastle.asn1.cms.Attribute;
@@ -134,6 +150,8 @@ import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -161,6 +179,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(String str) {
         return new ASN1ObjectIdentifierBCFips(str);
+    }
+
+    @Override
+    public IASN1ObjectIdentifier createASN1ObjectIdentifierInstance(Object object) {
+        return new ASN1ObjectIdentifierBCFips(ASN1ObjectIdentifier.getInstance(object));
     }
 
     @Override
@@ -192,12 +215,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createASN1Sequence(IASN1Primitive primitive) {
-        ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
-        if (primitiveBCFips.getPrimitive() instanceof ASN1Sequence) {
-            return new ASN1SequenceBCFips((ASN1Sequence) primitiveBCFips.getPrimitive());
-        }
-        return null;
+    public IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b) {
+        return new ASN1OctetStringBCFips(taggedObject, b);
     }
 
     @Override
@@ -218,6 +237,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IASN1Sequence createASN1SequenceInstance(Object object) {
+        return new ASN1SequenceBCFips(object);
+    }
+
+    @Override
     public IDERSequence createDERSequence(IASN1EncodableVector encodableVector) {
         ASN1EncodableVectorBCFips vectorBCFips = (ASN1EncodableVectorBCFips) encodableVector;
         return new DERSequenceBCFips(vectorBCFips.getEncodableVector());
@@ -227,11 +251,6 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IDERSequence createDERSequence(IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         return new DERSequenceBCFips(primitiveBCFips.getPrimitive());
-    }
-
-    @Override
-    public IASN1Sequence createASN1SequenceInstance(Object object) {
-        return new ASN1SequenceBCFips(object);
     }
 
     @Override
@@ -278,7 +297,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Set createASN1SetInstance(IASN1TaggedObject taggedObject, boolean b) {
+    public IASN1Set createASN1Set(IASN1TaggedObject taggedObject, boolean b) {
         ASN1TaggedObjectBCFips taggedObjectBCFips = (ASN1TaggedObjectBCFips) taggedObject;
         return new ASN1SetBCFips(taggedObjectBCFips.getTaggedObject(), b);
     }
@@ -301,6 +320,15 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IDEROctetString createDEROctetString(byte[] bytes) {
         return new DEROctetStringBCFips(bytes);
+    }
+
+    @Override
+    public IDEROctetString createDEROctetString(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof DEROctetString) {
+            return new DEROctetStringBCFips((DEROctetString) encodableBCFips.getEncodable());
+        }
+        return null;
     }
 
     @Override
@@ -425,6 +453,12 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm) {
+        ASN1ObjectIdentifierBCFips algorithmBc = (ASN1ObjectIdentifierBCFips) algorithm;
+        return new AlgorithmIdentifierBCFips(new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), null));
+    }
+
+    @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm,
             IASN1Encodable encodable) {
         ASN1ObjectIdentifierBCFips algorithmBc = (ASN1ObjectIdentifierBCFips) algorithm;
@@ -491,6 +525,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
             boolean critical, IASN1OctetString octetString) {
         return new ExtensionBCFips(objectIdentifier, critical, octetString);
     }
+    
+    @Override
+    public IExtension createExtension() {
+        return ExtensionBCFips.getInstance();
+    }
 
     @Override
     public IExtensions createExtensions(IExtension extension) {
@@ -509,6 +548,12 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
             qualifierInfos[i] = ((SigPolicyQualifierInfoBCFips) qualifierInfosBC[i]).getQualifierInfo();
         }
         return new SigPolicyQualifiersBCFips(qualifierInfos);
+    }
+
+    @Override
+    public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
+                                                                IDERIA5String string) {
+        return new SigPolicyQualifierInfoBCFips(objectIdentifier, string);
     }
 
     @Override
@@ -578,4 +623,63 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
         return null;
     }
+    
+    @Override
+    public IASN1Primitive createASN1Primitive(byte[] array) throws IOException {
+        return new ASN1PrimitiveBCFips(array);
+    }
+
+    @Override
+    public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
+        return new DERIA5StringBCFips(DERIA5String.getInstance(
+                ((ASN1TaggedObjectBCFips) taggedObject).getTaggedObject(), b));
+    }
+
+    @Override
+    public IDERIA5String createDERIA5String(String str) {
+        return new DERIA5StringBCFips(str);
+    }
+
+    @Override
+    public ICRLDistPoint createCRLDistPoint(Object object) {
+        return new CRLDistPointBCFips(CRLDistPoint.getInstance(object));
+    }
+
+    @Override
+    public IDistributionPointName createDistributionPointName() {
+        return DistributionPointNameBCFips.getInstance();
+    }
+
+    @Override
+    public IGeneralNames createGeneralNames(IASN1Encodable encodable) {
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        if (encodableBCFips.getEncodable() instanceof GeneralNames) {
+            return new GeneralNamesBCFips((GeneralNames) encodableBCFips.getEncodable());
+        }
+        return null;
+    }
+
+    @Override
+    public IGeneralName createGeneralName() {
+        return GeneralNameBCFips.getInstance();
+    }
+
+    @Override
+    public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
+                                                            IASN1OctetString octetString) {
+        return new OtherHashAlgAndValueBCFips(algorithmIdentifier, octetString);
+    }
+
+    @Override
+    public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
+                                                      IOtherHashAlgAndValue algAndValue,
+                                                      ISigPolicyQualifiers policyQualifiers) {
+        return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue, policyQualifiers);
+    }
+
+    @Override
+    public ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId) {
+        return new SignaturePolicyIdentifierBCFips(policyId);
+    }
 }
+

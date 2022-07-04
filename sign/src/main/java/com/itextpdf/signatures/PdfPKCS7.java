@@ -353,7 +353,7 @@ public class PdfPKCS7 {
             boolean foundCades = false;
             IASN1TaggedObject tagsig = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(signerInfo.getObjectAt(next));
             if (tagsig != null) {
-                IASN1Set sseq = BOUNCY_CASTLE_FACTORY.createASN1SetInstance(tagsig, false);
+                IASN1Set sseq = BOUNCY_CASTLE_FACTORY.createASN1Set(tagsig, false);
                 sigAttr = sseq.getEncoded();
                 // maybe not necessary, but we use the following line as fallback:
                 sigAttrDer = sseq.getEncoded(BOUNCY_CASTLE_FACTORY.createASN1Encoding().getDer());
@@ -421,7 +421,7 @@ public class PdfPKCS7 {
             if (next < signerInfo.size()) {
                 IASN1TaggedObject taggedObject = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(signerInfo.getObjectAt(next));
                 if (taggedObject != null) {
-                    IASN1Set unat = BOUNCY_CASTLE_FACTORY.createASN1SetInstance(taggedObject, false);
+                    IASN1Set unat = BOUNCY_CASTLE_FACTORY.createASN1Set(taggedObject, false);
                     IAttributeTable attble = BOUNCY_CASTLE_FACTORY.createAttributeTable(unat);
                     IPKCSObjectIdentifiers ipkcsObjectIdentifiers = BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers();
                     IAttribute ts = attble.get(ipkcsObjectIdentifiers.getIdAaSignatureTimeStampToken());
@@ -1077,7 +1077,7 @@ public class PdfPKCS7 {
 
                 IASN1EncodableVector aaV2 = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
                 IAlgorithmIdentifier algoId = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
-                        BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid), null);
+                        BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
                 aaV2.add(algoId);
                 MessageDigest md = SignUtils.getMessageDigest(getHashAlgorithm(), interfaceDigest);
                 byte[] dig = md.digest(signCert.getEncoded());

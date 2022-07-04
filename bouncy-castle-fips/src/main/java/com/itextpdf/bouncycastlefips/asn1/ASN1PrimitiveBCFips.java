@@ -11,6 +11,10 @@ public class ASN1PrimitiveBCFips extends ASN1EncodableBCFips implements IASN1Pri
         super(primitive);
     }
 
+    public ASN1PrimitiveBCFips(byte[] array) throws IOException {
+        super(ASN1Primitive.fromByteArray(array));
+    }
+
     public ASN1Primitive getPrimitive() {
         return (ASN1Primitive) getEncodable();
     }

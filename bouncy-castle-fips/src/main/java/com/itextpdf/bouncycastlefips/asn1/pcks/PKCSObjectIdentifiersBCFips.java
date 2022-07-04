@@ -15,6 +15,9 @@ public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
     private static final ASN1ObjectIdentifierBCFips ID_AA_SIGNATURE_TIME_STAMP_TOKEN = new ASN1ObjectIdentifierBCFips(
             PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
 
+    private static final ASN1ObjectIdentifierBCFips ID_SPQ_ETS_URI =
+            new ASN1ObjectIdentifierBCFips(PKCSObjectIdentifiers.id_spq_ets_uri);
+
     private PKCSObjectIdentifiersBCFips() {
         // Do nothing.
     }
@@ -31,5 +34,10 @@ public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
     @Override
     public IASN1ObjectIdentifier getIdAaEtsSigPolicyId() {
         return ID_AA_ETS_SIG_POLICY_ID;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getIdSpqEtsUri() {
+        return ID_SPQ_ETS_URI;
     }
 }

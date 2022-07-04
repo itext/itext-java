@@ -44,18 +44,14 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.utils.Base64;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.esf.OtherHashAlgAndValue;
-import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
-import org.bouncycastle.asn1.esf.SignaturePolicyId;
-import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * Class that encapsulates the signature policy information
@@ -66,6 +62,9 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
  *      "G7roucf600+f03r/o0bAOQ6WAs0=", "SHA-1", "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf");
  */
 public class SignaturePolicyInfo {
+    
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    
     private String policyIdentifier;
     private byte[] policyHash;
     private String policyDigestAlgorithm;
@@ -132,22 +131,22 @@ public class SignaturePolicyInfo {
             throw new IllegalArgumentException("Invalid policy hash algorithm");
         }
 
-        SignaturePolicyIdentifier signaturePolicyIdentifier = null;
-        SigPolicyQualifierInfo spqi = null;
+        ISignaturePolicyIdentifier signaturePolicyIdentifier = null;
+        ISigPolicyQualifierInfo spqi = null;
 
         if (this.policyUri != null && this.policyUri.length() > 0) {
-            spqi = new SigPolicyQualifierInfo(PKCSObjectIdentifiers.id_spq_ets_uri,
-                    new DERIA5String(this.policyUri));
+            spqi = FACTORY.createSigPolicyQualifierInfo(FACTORY.createPKCSObjectIdentifiers().getIdSpqEtsUri(),
+                    FACTORY.createDERIA5String(this.policyUri));
         }
 
-        ASN1ObjectIdentifier identifier = ASN1ObjectIdentifier.getInstance(
-                new ASN1ObjectIdentifier(this.policyIdentifier.replace("urn:oid:", "")));
-        OtherHashAlgAndValue otherHashAlgAndValue = new OtherHashAlgAndValue(
-                new AlgorithmIdentifier(new ASN1ObjectIdentifier(algId)),
-                new DEROctetString(this.policyHash));
-        SignaturePolicyId signaturePolicyId = new SignaturePolicyId(identifier, otherHashAlgAndValue,
+        IASN1ObjectIdentifier identifier = FACTORY.createASN1ObjectIdentifierInstance(
+                FACTORY.createASN1ObjectIdentifier(this.policyIdentifier.replace("urn:oid:", "")));
+        IOtherHashAlgAndValue otherHashAlgAndValue = FACTORY.createOtherHashAlgAndValue(
+                FACTORY.createAlgorithmIdentifier(FACTORY.createASN1ObjectIdentifier(algId)),
+                FACTORY.createDEROctetString(this.policyHash));
+        ISignaturePolicyId signaturePolicyId = FACTORY.createSignaturePolicyId(identifier, otherHashAlgAndValue,
                 SignUtils.createSigPolicyQualifiers(spqi));
-        signaturePolicyIdentifier = new SignaturePolicyIdentifier(signaturePolicyId);
+        signaturePolicyIdentifier = FACTORY.createSignaturePolicyIdentifier(signaturePolicyId);
 
         return signaturePolicyIdentifier;
     }

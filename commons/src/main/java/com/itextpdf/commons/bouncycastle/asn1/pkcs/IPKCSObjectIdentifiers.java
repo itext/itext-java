@@ -6,4 +6,6 @@ public interface IPKCSObjectIdentifiers {
     IASN1ObjectIdentifier getIdAaSignatureTimeStampToken();
 
     IASN1ObjectIdentifier getIdAaEtsSigPolicyId();
+
+    IASN1ObjectIdentifier getIdSpqEtsUri();
 }

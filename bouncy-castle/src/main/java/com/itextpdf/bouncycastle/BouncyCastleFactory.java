@@ -14,6 +14,7 @@ import com.itextpdf.bouncycastle.asn1.ASN1SequenceBC;
 import com.itextpdf.bouncycastle.asn1.ASN1SetBC;
 import com.itextpdf.bouncycastle.asn1.ASN1StringBC;
 import com.itextpdf.bouncycastle.asn1.ASN1TaggedObjectBC;
+import com.itextpdf.bouncycastle.asn1.DERIA5StringBC;
 import com.itextpdf.bouncycastle.asn1.DERNullBC;
 import com.itextpdf.bouncycastle.asn1.DEROctetStringBC;
 import com.itextpdf.bouncycastle.asn1.DERSequenceBC;
@@ -22,8 +23,10 @@ import com.itextpdf.bouncycastle.asn1.DERTaggedObjectBC;
 import com.itextpdf.bouncycastle.asn1.cms.AttributeBC;
 import com.itextpdf.bouncycastle.asn1.cms.AttributeTableBC;
 import com.itextpdf.bouncycastle.asn1.cms.ContentInfoBC;
+import com.itextpdf.bouncycastle.asn1.esf.OtherHashAlgAndValueBC;
 import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifierInfoBC;
 import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifiersBC;
+import com.itextpdf.bouncycastle.asn1.esf.SignaturePolicyIdBC;
 import com.itextpdf.bouncycastle.asn1.esf.SignaturePolicyIdentifierBC;
 import com.itextpdf.bouncycastle.asn1.ess.SigningCertificateBC;
 import com.itextpdf.bouncycastle.asn1.ess.SigningCertificateV2BC;
@@ -34,8 +37,12 @@ import com.itextpdf.bouncycastle.asn1.ocsp.OCSPResponseStatusBC;
 import com.itextpdf.bouncycastle.asn1.ocsp.ResponseBytesBC;
 import com.itextpdf.bouncycastle.asn1.pcks.PKCSObjectIdentifiersBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
+import com.itextpdf.bouncycastle.asn1.x509.CRLDistPointBC;
+import com.itextpdf.bouncycastle.asn1.x509.DistributionPointNameBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionsBC;
+import com.itextpdf.bouncycastle.asn1.x509.GeneralNameBC;
+import com.itextpdf.bouncycastle.asn1.x509.GeneralNamesBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateConverterBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateHolderBC;
@@ -68,6 +75,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSequence;
@@ -76,8 +84,10 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
@@ -88,8 +98,12 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
@@ -115,6 +129,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -124,6 +139,8 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
@@ -132,6 +149,8 @@ import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -163,6 +182,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IASN1ObjectIdentifier createASN1ObjectIdentifierInstance(Object object) {
+        return new ASN1ObjectIdentifierBC(ASN1ObjectIdentifier.getInstance(object));
+    }
+
+    @Override
     public IASN1InputStream createASN1InputStream(InputStream stream) {
         return new ASN1InputStreamBC(stream);
     }
@@ -191,12 +215,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Sequence createASN1Sequence(IASN1Primitive primitive) {
-        ASN1PrimitiveBC primitiveBC = (ASN1PrimitiveBC) primitive;
-        if (primitiveBC.getPrimitive() instanceof ASN1Sequence) {
-            return new ASN1SequenceBC((ASN1Sequence) primitiveBC.getPrimitive());
-        }
-        return null;
+    public IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b) {
+        return new ASN1OctetStringBC(taggedObject, b);
     }
 
     @Override
@@ -217,6 +237,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IASN1Sequence createASN1SequenceInstance(Object object) {
+        return new ASN1SequenceBC(object);
+    }
+
+    @Override
     public IDERSequence createDERSequence(IASN1EncodableVector encodableVector) {
         ASN1EncodableVectorBC vectorBC = (ASN1EncodableVectorBC) encodableVector;
         return new DERSequenceBC(vectorBC.getEncodableVector());
@@ -226,11 +251,6 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IDERSequence createDERSequence(IASN1Primitive primitive) {
         ASN1PrimitiveBC primitiveBC = (ASN1PrimitiveBC) primitive;
         return new DERSequenceBC(primitiveBC.getPrimitive());
-    }
-
-    @Override
-    public IASN1Sequence createASN1SequenceInstance(Object object) {
-        return new ASN1SequenceBC(object);
     }
 
     @Override
@@ -277,7 +297,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IASN1Set createASN1SetInstance(IASN1TaggedObject taggedObject, boolean b) {
+    public IASN1Set createASN1Set(IASN1TaggedObject taggedObject, boolean b) {
         ASN1TaggedObjectBC taggedObjectBC = (ASN1TaggedObjectBC) taggedObject;
         return new ASN1SetBC(taggedObjectBC.getTaggedObject(), b);
     }
@@ -295,6 +315,15 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IDEROctetString createDEROctetString(byte[] bytes) {
         return new DEROctetStringBC(bytes);
+    }
+
+    @Override
+    public IDEROctetString createDEROctetString(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof DEROctetString) {
+            return new DEROctetStringBC((DEROctetString) encodableBC.getEncodable());
+        }
+        return null;
     }
 
     @Override
@@ -419,6 +448,12 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm) {
+        ASN1ObjectIdentifierBC algorithmBc = (ASN1ObjectIdentifierBC) algorithm;
+        return new AlgorithmIdentifierBC(new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), null));
+    }
+
+    @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable) {
         ASN1ObjectIdentifierBC algorithmBc = (ASN1ObjectIdentifierBC) algorithm;
         ASN1EncodableBC encodableBc = (ASN1EncodableBC) encodable;
@@ -486,6 +521,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IExtension createExtension() {
+        return ExtensionBC.getInstance();
+    }
+
+    @Override
     public IExtensions createExtensions(IExtension extension) {
         return new ExtensionsBC(extension);
     }
@@ -503,6 +543,12 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         }
         return new SigPolicyQualifiersBC(qualifierInfos);
     }
+    
+    @Override
+    public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
+                                                                IDERIA5String string) {
+        return new SigPolicyQualifierInfoBC(objectIdentifier, string);
+    }
 
     @Override
     public IASN1String createASN1String(IASN1Encodable encodable) {
@@ -515,9 +561,9 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1Primitive createASN1Primitive(IASN1Encodable encodable) {
-        ASN1EncodableBC encodableBCFips = (ASN1EncodableBC) encodable;
-        if (encodableBCFips.getEncodable() instanceof ASN1Primitive) {
-            return new ASN1PrimitiveBC((ASN1Primitive) encodableBCFips.getEncodable());
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1Primitive) {
+            return new ASN1PrimitiveBC((ASN1Primitive) encodableBC.getEncodable());
         }
         return null;
     }
@@ -570,5 +616,62 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
             return new RevokedStatusBC((RevokedStatus) certificateStatusBC.getCertificateStatus());
         }
         return null;
+    }
+
+    @Override
+    public IASN1Primitive createASN1Primitive(byte[] array) throws IOException {
+        return new ASN1PrimitiveBC(array);
+    }
+    
+    @Override
+    public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
+        return new DERIA5StringBC(DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getTaggedObject(), b));
+    }
+
+    @Override
+    public IDERIA5String createDERIA5String(String str) {
+        return new DERIA5StringBC(str);
+    }
+
+    @Override
+    public ICRLDistPoint createCRLDistPoint(Object object) {
+        return new CRLDistPointBC(CRLDistPoint.getInstance(object));
+    }
+    
+    @Override
+    public IDistributionPointName createDistributionPointName() {
+        return DistributionPointNameBC.getInstance();
+    }
+    
+    @Override
+    public IGeneralNames createGeneralNames(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof GeneralNames) {
+            return new GeneralNamesBC((GeneralNames) encodableBC.getEncodable());
+        }
+        return null;
+    }
+    
+    @Override
+    public IGeneralName createGeneralName() {
+        return GeneralNameBC.getInstance();
+    }
+    
+    @Override
+    public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
+                                                            IASN1OctetString octetString) {
+        return new OtherHashAlgAndValueBC(algorithmIdentifier, octetString);
+    }
+    
+    @Override
+    public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
+                                                      IOtherHashAlgAndValue algAndValue,
+                                                      ISigPolicyQualifiers policyQualifiers) {
+        return new SignaturePolicyIdBC(objectIdentifier, algAndValue, policyQualifiers);
+    }
+    
+    @Override
+    public ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId) {
+        return new SignaturePolicyIdentifierBC(policyId);
     }
 }

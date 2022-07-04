@@ -14,6 +14,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IDERSequence;
@@ -22,8 +23,10 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
@@ -36,8 +39,12 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
@@ -69,6 +76,8 @@ public interface IBouncyCastleFactory {
 
     IASN1ObjectIdentifier createASN1ObjectIdentifier(String str);
 
+    IASN1ObjectIdentifier createASN1ObjectIdentifierInstance(Object object);
+
     IASN1InputStream createASN1InputStream(InputStream stream);
 
     IASN1InputStream createASN1InputStream(byte[] bytes);
@@ -76,18 +85,18 @@ public interface IBouncyCastleFactory {
     IASN1OctetString createASN1OctetString(IASN1Primitive primitive);
 
     IASN1OctetString createASN1OctetString(IASN1Encodable encodable);
-
-    IASN1Sequence createASN1Sequence(IASN1Primitive primitive);
+    
+    IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b);
 
     IASN1Sequence createASN1Sequence(Object object);
 
     IASN1Sequence createASN1Sequence(IASN1Encodable encodable);
 
+    IASN1Sequence createASN1SequenceInstance(Object object);
+
     IDERSequence createDERSequence(IASN1EncodableVector encodableVector);
 
     IDERSequence createDERSequence(IASN1Primitive primitive);
-
-    IASN1Sequence createASN1SequenceInstance(Object object);
 
     IASN1TaggedObject createASN1TaggedObject(IASN1Encodable encodable);
 
@@ -101,13 +110,15 @@ public interface IBouncyCastleFactory {
 
     IASN1Set createASN1Set(Object encodable);
 
-    IASN1Set createASN1SetInstance(IASN1TaggedObject taggedObject, boolean b);
+    IASN1Set createASN1Set(IASN1TaggedObject taggedObject, boolean b);
 
     IASN1OutputStream createASN1OutputStream(OutputStream stream);
 
     IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding);
 
     IDEROctetString createDEROctetString(byte[] bytes);
+
+    IDEROctetString createDEROctetString(IASN1Encodable encodable);
 
     IASN1EncodableVector createASN1EncodableVector();
 
@@ -149,6 +160,8 @@ public interface IBouncyCastleFactory {
 
     IOCSPObjectIdentifiers createOCSPObjectIdentifiers();
 
+    IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm);
+
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable);
 
     Provider createProvider();
@@ -175,16 +188,20 @@ public interface IBouncyCastleFactory {
 
     IExtension createExtension(IASN1ObjectIdentifier objectIdentifier, boolean critical, IASN1OctetString octetString);
 
+    IExtension createExtension();
+
     IExtensions createExtensions(IExtension extension);
 
     IOCSPReqBuilder createOCSPReqBuilder();
 
     ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBC);
 
+    ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier, IDERIA5String string);
+
     IASN1String createASN1String(IASN1Encodable encodable);
 
     IASN1Primitive createASN1Primitive(IASN1Encodable encodable);
-
+    
     IOCSPResp createOCSPResp(IOCSPResponse ocspResponse);
 
     IOCSPResp createOCSPResp(byte[] bytes) throws IOException;
@@ -202,4 +219,27 @@ public interface IBouncyCastleFactory {
     ICertificateStatus createCertificateStatus();
 
     IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus);
+
+    IASN1Primitive createASN1Primitive(byte[] array) throws IOException;
+    
+    IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b);
+    
+    IDERIA5String createDERIA5String(String str);
+
+    ICRLDistPoint createCRLDistPoint(Object object);
+
+    IDistributionPointName createDistributionPointName();
+
+    IGeneralNames createGeneralNames(IASN1Encodable encodable);
+
+    IGeneralName createGeneralName();
+
+    IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
+                                                     IASN1OctetString octetString);
+
+    ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
+                                               IOtherHashAlgAndValue algAndValue,
+                                               ISigPolicyQualifiers policyQualifiers);
+
+    ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId);
 }

@@ -9,6 +9,15 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import org.bouncycastle.asn1.x509.Extension;
 
 public class ExtensionBC extends ASN1EncodableBC implements IExtension {
+
+    private static final ExtensionBC INSTANCE = new ExtensionBC(null);
+
+    private static final ASN1ObjectIdentifierBC C_RL_DISTRIBUTION_POINTS =
+            new ASN1ObjectIdentifierBC(Extension.cRLDistributionPoints);
+
+    private static final ASN1ObjectIdentifierBC AUTHORITY_INFO_ACCESS =
+            new ASN1ObjectIdentifierBC(Extension.authorityInfoAccess);
+    
     public ExtensionBC(Extension extension) {
         super(extension);
     }
@@ -18,6 +27,18 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
                 ((ASN1ObjectIdentifierBC) objectIdentifier).getObjectIdentifier(),
                 critical,
                 ((ASN1OctetStringBC) octetString).getOctetString()));
+    }
+
+    public static ExtensionBC getInstance() {
+        return INSTANCE;
+    }
+
+    public IASN1ObjectIdentifier getCRlDistributionPoints() {
+        return C_RL_DISTRIBUTION_POINTS;
+    }
+
+    public IASN1ObjectIdentifier getAuthorityInfoAccess() {
+        return AUTHORITY_INFO_ACCESS;
     }
     
     public Extension getExtension() {
