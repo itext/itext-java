@@ -20,10 +20,10 @@ public class SigningCertificateV2BCFips implements ISigningCertificateV2 {
     @Override
     public IESSCertIDv2[] getCerts() {
         ESSCertIDv2[] certs = signingCertificateV2.getCerts();
-        IESSCertIDv2[] certsBC = new IESSCertIDv2[certs.length];
-        for (int i = 0; i < certsBC.length; i++) {
-            certsBC[i] = new ESSCertIDv2BCFips(certs[i]);
+        IESSCertIDv2[] certsBCFips = new IESSCertIDv2[certs.length];
+        for (int i = 0; i < certsBCFips.length; i++) {
+            certsBCFips[i] = new ESSCertIDv2BCFips(certs[i]);
         }
-        return certsBC;
+        return certsBCFips;
     }
 }

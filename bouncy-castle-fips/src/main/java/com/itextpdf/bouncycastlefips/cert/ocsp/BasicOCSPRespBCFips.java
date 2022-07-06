@@ -16,30 +16,30 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.SingleResp;
 
 public class BasicOCSPRespBCFips implements IBasicOCSPResp {
-    private final BasicOCSPResp basicOCSPRespBC;
+    private final BasicOCSPResp basicOCSPResp;
 
-    public BasicOCSPRespBCFips(BasicOCSPResp basicOCSPRespBC) {
-        this.basicOCSPRespBC = basicOCSPRespBC;
+    public BasicOCSPRespBCFips(BasicOCSPResp basicOCSPResp) {
+        this.basicOCSPResp = basicOCSPResp;
     }
 
-    public BasicOCSPResp getBasicOCSPRespBC() {
-        return basicOCSPRespBC;
+    public BasicOCSPResp getBasicOCSPResp() {
+        return basicOCSPResp;
     }
 
     @Override
     public ISingleResp[] getResponses() {
-        SingleResp[] resps = basicOCSPRespBC.getResponses();
-        ISingleResp[] respsBC = new ISingleResp[resps.length];
-        for (int i = 0; i < respsBC.length; i++) {
-            respsBC[i] = new SingleRespBCFips(resps[i]);
+        SingleResp[] resps = basicOCSPResp.getResponses();
+        ISingleResp[] respsBCFips = new ISingleResp[resps.length];
+        for (int i = 0; i < respsBCFips.length; i++) {
+            respsBCFips[i] = new SingleRespBCFips(resps[i]);
         }
-        return respsBC;
+        return respsBCFips;
     }
 
     @Override
     public boolean isSignatureValid(IContentVerifierProvider provider) throws OCSPExceptionBCFips {
         try {
-            return basicOCSPRespBC.isSignatureValid(((ContentVerifierProviderBCFips) provider).getProvider());
+            return basicOCSPResp.isSignatureValid(((ContentVerifierProviderBCFips) provider).getProvider());
         } catch (OCSPException e) {
             throw new OCSPExceptionBCFips(e);
         }
@@ -47,17 +47,17 @@ public class BasicOCSPRespBCFips implements IBasicOCSPResp {
 
     @Override
     public IX509CertificateHolder[] getCerts() {
-        X509CertificateHolder[] certs = basicOCSPRespBC.getCerts();
-        IX509CertificateHolder[] certsBC = new IX509CertificateHolder[certs.length];
+        X509CertificateHolder[] certs = basicOCSPResp.getCerts();
+        IX509CertificateHolder[] certsBCFips = new IX509CertificateHolder[certs.length];
         for (int i = 0; i < certs.length; i++) {
-            certsBC[i] = new X509CertificateHolderBCFips(certs[i]);
+            certsBCFips[i] = new X509CertificateHolderBCFips(certs[i]);
         }
-        return certsBC;
+        return certsBCFips;
     }
 
     @Override
     public byte[] getEncoded() throws IOException {
-        return basicOCSPRespBC.getEncoded();
+        return basicOCSPResp.getEncoded();
     }
 
     @Override
@@ -69,16 +69,16 @@ public class BasicOCSPRespBCFips implements IBasicOCSPResp {
             return false;
         }
         BasicOCSPRespBCFips that = (BasicOCSPRespBCFips) o;
-        return Objects.equals(basicOCSPRespBC, that.basicOCSPRespBC);
+        return Objects.equals(basicOCSPResp, that.basicOCSPResp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(basicOCSPRespBC);
+        return Objects.hash(basicOCSPResp);
     }
 
     @Override
     public String toString() {
-        return basicOCSPRespBC.toString();
+        return basicOCSPResp.toString();
     }
 }

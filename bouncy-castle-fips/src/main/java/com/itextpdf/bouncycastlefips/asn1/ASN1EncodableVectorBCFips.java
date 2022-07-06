@@ -22,19 +22,19 @@ public class ASN1EncodableVectorBCFips implements IASN1EncodableVector {
 
     @Override
     public void add(IASN1Primitive primitive) {
-        ASN1PrimitiveBCFips primitiveBC = (ASN1PrimitiveBCFips) primitive;
-        encodableVector.add(primitiveBC.getPrimitive());
+        ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
+        encodableVector.add(primitiveBCFips.getPrimitive());
     }
 
     @Override
     public void add(IAttribute attribute) {
-        AttributeBCFips attributeBC = (AttributeBCFips) attribute;
-        encodableVector.add(attributeBC.getAttribute());
+        AttributeBCFips attributeBCFips = (AttributeBCFips) attribute;
+        encodableVector.add(attributeBCFips.getAttribute());
     }
 
     @Override
     public void add(IAlgorithmIdentifier element) {
-        AlgorithmIdentifierBCFips elementBc = (AlgorithmIdentifierBCFips) element;
-        encodableVector.add(elementBc.getAlgorithmIdentifier());
+        AlgorithmIdentifierBCFips elementBCFips = (AlgorithmIdentifierBCFips) element;
+        encodableVector.add(elementBCFips.getAlgorithmIdentifier());
     }
 }

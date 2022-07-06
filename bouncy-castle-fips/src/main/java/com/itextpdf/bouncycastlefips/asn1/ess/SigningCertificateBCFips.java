@@ -20,10 +20,10 @@ public class SigningCertificateBCFips implements ISigningCertificate {
     @Override
     public IESSCertID[] getCerts() {
         ESSCertID[] certs = signingCertificate.getCerts();
-        IESSCertID[] certsBC = new IESSCertID[certs.length];
-        for (int i = 0; i < certsBC.length; i++) {
-            certsBC[i] = new ESSCertIDBCFips(certs[i]);
+        IESSCertID[] certsBCFips = new IESSCertID[certs.length];
+        for (int i = 0; i < certsBCFips.length; i++) {
+            certsBCFips[i] = new ESSCertIDBCFips(certs[i]);
         }
-        return certsBC;
+        return certsBCFips;
     }
 }

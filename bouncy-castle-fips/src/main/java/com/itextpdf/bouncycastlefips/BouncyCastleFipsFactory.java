@@ -23,6 +23,13 @@ import com.itextpdf.bouncycastlefips.asn1.DERTaggedObjectBCFips;
 import com.itextpdf.bouncycastlefips.asn1.cms.AttributeBCFips;
 import com.itextpdf.bouncycastlefips.asn1.cms.AttributeTableBCFips;
 import com.itextpdf.bouncycastlefips.asn1.cms.ContentInfoBCFips;
+import com.itextpdf.bouncycastlefips.asn1.cms.EncryptedContentInfoBCFips;
+import com.itextpdf.bouncycastlefips.asn1.cms.EnvelopedDataBCFips;
+import com.itextpdf.bouncycastlefips.asn1.cms.IssuerAndSerialNumberBCFips;
+import com.itextpdf.bouncycastlefips.asn1.cms.KeyTransRecipientInfoBCFips;
+import com.itextpdf.bouncycastlefips.asn1.cms.OriginatorInfoBCFips;
+import com.itextpdf.bouncycastlefips.asn1.cms.RecipientIdentifierBCFips;
+import com.itextpdf.bouncycastlefips.asn1.cms.RecipientInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.OtherHashAlgAndValueBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SigPolicyQualifierInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SigPolicyQualifiersBCFips;
@@ -43,6 +50,7 @@ import com.itextpdf.bouncycastlefips.asn1.x509.ExtensionBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.ExtensionsBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.GeneralNameBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.GeneralNamesBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.TBSCertificateBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509CertificateHolderBCFips;
 import com.itextpdf.bouncycastlefips.cert.jcajce.JcaX509CertificateConverterBCFips;
 import com.itextpdf.bouncycastlefips.cert.jcajce.JcaX509CertificateHolderBCFips;
@@ -84,6 +92,13 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEncryptedContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEnvelopedData;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IIssuerAndSerialNumber;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IKeyTransRecipientInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IOriginatorInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
@@ -97,6 +112,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
@@ -104,6 +120,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
@@ -152,6 +169,7 @@ import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -303,6 +321,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IASN1Set createNullASN1Set() {
+        return new ASN1SetBCFips(null);
+    }
+
+    @Override
     public IASN1OutputStream createASN1OutputStream(OutputStream stream) {
         return new ASN1OutputStreamBCFips(stream);
     }
@@ -372,6 +395,13 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IDERSet createDERSet(IRecipientInfo recipientInfo) {
+        RecipientInfoBCFips recipientInfoBCFips = (RecipientInfoBCFips) recipientInfo;
+        return new DERSetBCFips(recipientInfoBCFips.getRecipientInfo());
+
+    }
+
+    @Override
     public IASN1Enumerated createASN1Enumerated(int i) {
         return new ASN1EnumeratedBCFips(i);
     }
@@ -394,15 +424,20 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IAttribute createAttribute(IASN1ObjectIdentifier attrType, IASN1Set attrValues) {
-        ASN1ObjectIdentifierBCFips attrTypeBc = (ASN1ObjectIdentifierBCFips) attrType;
-        ASN1SetBCFips attrValuesBc = (ASN1SetBCFips) attrValues;
-        return new AttributeBCFips(new Attribute(attrTypeBc.getObjectIdentifier(), attrValuesBc.getSet()));
+        ASN1ObjectIdentifierBCFips attrTypeBCFips = (ASN1ObjectIdentifierBCFips) attrType;
+        ASN1SetBCFips attrValuesBCFips = (ASN1SetBCFips) attrValues;
+        return new AttributeBCFips(new Attribute(attrTypeBCFips.getObjectIdentifier(), attrValuesBCFips.getSet()));
     }
 
     @Override
     public IContentInfo createContentInfo(IASN1Sequence sequence) {
         ASN1SequenceBCFips sequenceBCFips = (ASN1SequenceBCFips) sequence;
         return new ContentInfoBCFips(ContentInfo.getInstance(sequenceBCFips.getSequence()));
+    }
+
+    @Override
+    public IContentInfo createContentInfo(IASN1ObjectIdentifier objectIdentifier, IASN1Encodable encodable) {
+        return new ContentInfoBCFips(objectIdentifier, encodable);
     }
 
     @Override
@@ -461,10 +496,10 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm,
             IASN1Encodable encodable) {
-        ASN1ObjectIdentifierBCFips algorithmBc = (ASN1ObjectIdentifierBCFips) algorithm;
-        ASN1EncodableBCFips encodableBc = (ASN1EncodableBCFips) encodable;
+        ASN1ObjectIdentifierBCFips algorithmBCFips = (ASN1ObjectIdentifierBCFips) algorithm;
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
         return new AlgorithmIdentifierBCFips(
-                new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), encodableBc.getEncodable()));
+                new AlgorithmIdentifier(algorithmBCFips.getObjectIdentifier(), encodableBCFips.getEncodable()));
     }
 
     @Override
@@ -617,9 +652,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus) {
-        CertificateStatusBCFips certificateStatusBC = (CertificateStatusBCFips) certificateStatus;
-        if (certificateStatusBC.getCertificateStatus() instanceof RevokedStatus) {
-            return new RevokedStatusBCFips((RevokedStatus) certificateStatusBC.getCertificateStatus());
+        CertificateStatusBCFips certificateStatusBCFips = (CertificateStatusBCFips) certificateStatus;
+        if (certificateStatusBCFips.getCertificateStatus() instanceof RevokedStatus) {
+            return new RevokedStatusBCFips((RevokedStatus) certificateStatusBCFips.getCertificateStatus());
         }
         return null;
     }
@@ -680,6 +715,49 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId) {
         return new SignaturePolicyIdentifierBCFips(policyId);
+    }
+
+    @Override
+    public IEnvelopedData createEnvelopedData(IOriginatorInfo originatorInfo, IASN1Set set,
+            IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
+        return new EnvelopedDataBCFips(originatorInfo, set, encryptedContentInfo, set1);
+    }
+
+    @Override
+    public IRecipientInfo createRecipientInfo(IKeyTransRecipientInfo keyTransRecipientInfo) {
+        return new RecipientInfoBCFips(keyTransRecipientInfo);
+    }
+
+    @Override
+    public IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
+            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+        return new EncryptedContentInfoBCFips(data, algorithmIdentifier, octetString);
+    }
+
+    @Override
+    public ITBSCertificate createTBSCertificate(Object object) {
+        return new TBSCertificateBCFips(TBSCertificate.getInstance(object));
+    }
+
+    @Override
+    public IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value) {
+        return new IssuerAndSerialNumberBCFips(issuer, value);
+    }
+
+    @Override
+    public IRecipientIdentifier createRecipientIdentifier(IIssuerAndSerialNumber issuerAndSerialNumber) {
+        return new RecipientIdentifierBCFips(issuerAndSerialNumber);
+    }
+
+    @Override
+    public IKeyTransRecipientInfo createKeyTransRecipientInfo(IRecipientIdentifier recipientIdentifier,
+            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+        return new KeyTransRecipientInfoBCFips(recipientIdentifier, algorithmIdentifier, octetString);
+    }
+
+    @Override
+    public IOriginatorInfo createNullOriginatorInfo() {
+        return new OriginatorInfoBCFips(null);
     }
 }
 

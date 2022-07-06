@@ -23,6 +23,13 @@ import com.itextpdf.bouncycastle.asn1.DERTaggedObjectBC;
 import com.itextpdf.bouncycastle.asn1.cms.AttributeBC;
 import com.itextpdf.bouncycastle.asn1.cms.AttributeTableBC;
 import com.itextpdf.bouncycastle.asn1.cms.ContentInfoBC;
+import com.itextpdf.bouncycastle.asn1.cms.EncryptedContentInfoBC;
+import com.itextpdf.bouncycastle.asn1.cms.EnvelopedDataBC;
+import com.itextpdf.bouncycastle.asn1.cms.IssuerAndSerialNumberBC;
+import com.itextpdf.bouncycastle.asn1.cms.KeyTransRecipientInfoBC;
+import com.itextpdf.bouncycastle.asn1.cms.OriginatorInfoBC;
+import com.itextpdf.bouncycastle.asn1.cms.RecipientIdentifierBC;
+import com.itextpdf.bouncycastle.asn1.cms.RecipientInfoBC;
 import com.itextpdf.bouncycastle.asn1.esf.OtherHashAlgAndValueBC;
 import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifierInfoBC;
 import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifiersBC;
@@ -43,6 +50,7 @@ import com.itextpdf.bouncycastle.asn1.x509.ExtensionBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionsBC;
 import com.itextpdf.bouncycastle.asn1.x509.GeneralNameBC;
 import com.itextpdf.bouncycastle.asn1.x509.GeneralNamesBC;
+import com.itextpdf.bouncycastle.asn1.x509.TBSCertificateBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateConverterBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateHolderBC;
@@ -84,6 +92,13 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEncryptedContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEnvelopedData;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IIssuerAndSerialNumber;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IKeyTransRecipientInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IOriginatorInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
@@ -97,6 +112,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
@@ -104,6 +120,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
@@ -151,6 +168,7 @@ import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -303,6 +321,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IASN1Set createNullASN1Set() {
+        return new ASN1SetBC(null);
+    }
+
+    @Override
     public IASN1OutputStream createASN1OutputStream(OutputStream stream) {
         return new ASN1OutputStreamBC(stream);
     }
@@ -367,6 +390,13 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IDERSet createDERSet(IRecipientInfo recipientInfo) {
+        RecipientInfoBC recipientInfoBC = (RecipientInfoBC) recipientInfo;
+        return new DERSetBC(recipientInfoBC.getRecipientInfo());
+    }
+
+
+    @Override
     public IASN1Enumerated createASN1Enumerated(int i) {
         return new ASN1EnumeratedBC(i);
     }
@@ -398,6 +428,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IContentInfo createContentInfo(IASN1Sequence sequence) {
         ASN1SequenceBC sequenceBC = (ASN1SequenceBC) sequence;
         return new ContentInfoBC(ContentInfo.getInstance(sequenceBC.getSequence()));
+    }
+
+    @Override
+    public IContentInfo createContentInfo(IASN1ObjectIdentifier objectIdentifier, IASN1Encodable encodable) {
+        return new ContentInfoBC(objectIdentifier, encodable);
     }
 
     @Override
@@ -622,7 +657,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IASN1Primitive createASN1Primitive(byte[] array) throws IOException {
         return new ASN1PrimitiveBC(array);
     }
-    
+
     @Override
     public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
         return new DERIA5StringBC(DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getTaggedObject(), b));
@@ -637,12 +672,12 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public ICRLDistPoint createCRLDistPoint(Object object) {
         return new CRLDistPointBC(CRLDistPoint.getInstance(object));
     }
-    
+
     @Override
     public IDistributionPointName createDistributionPointName() {
         return DistributionPointNameBC.getInstance();
     }
-    
+
     @Override
     public IGeneralNames createGeneralNames(IASN1Encodable encodable) {
         ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
@@ -651,27 +686,71 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         }
         return null;
     }
-    
+
     @Override
     public IGeneralName createGeneralName() {
         return GeneralNameBC.getInstance();
     }
-    
+
     @Override
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
-                                                            IASN1OctetString octetString) {
+            IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBC(algorithmIdentifier, octetString);
     }
-    
+
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
-                                                      IOtherHashAlgAndValue algAndValue,
-                                                      ISigPolicyQualifiers policyQualifiers) {
+            IOtherHashAlgAndValue algAndValue,
+            ISigPolicyQualifiers policyQualifiers) {
         return new SignaturePolicyIdBC(objectIdentifier, algAndValue, policyQualifiers);
     }
-    
+
     @Override
     public ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId) {
         return new SignaturePolicyIdentifierBC(policyId);
     }
+
+    @Override
+    public IEnvelopedData createEnvelopedData(IOriginatorInfo originatorInfo, IASN1Set set,
+            IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
+        return new EnvelopedDataBC(originatorInfo, set, encryptedContentInfo, set1);
+    }
+
+    @Override
+    public IRecipientInfo createRecipientInfo(IKeyTransRecipientInfo keyTransRecipientInfo) {
+        return new RecipientInfoBC(keyTransRecipientInfo);
+    }
+
+    @Override
+    public IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
+            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+        return new EncryptedContentInfoBC(data, algorithmIdentifier, octetString);
+    }
+
+    @Override
+    public ITBSCertificate createTBSCertificate(Object object) {
+        return new TBSCertificateBC(TBSCertificate.getInstance(object));
+    }
+
+    @Override
+    public IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value) {
+        return new IssuerAndSerialNumberBC(issuer, value);
+    }
+
+    @Override
+    public IRecipientIdentifier createRecipientIdentifier(IIssuerAndSerialNumber issuerAndSerialNumber) {
+        return new RecipientIdentifierBC(issuerAndSerialNumber);
+    }
+
+    @Override
+    public IKeyTransRecipientInfo createKeyTransRecipientInfo(IRecipientIdentifier recipientIdentifier,
+            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+        return new KeyTransRecipientInfoBC(recipientIdentifier, algorithmIdentifier, octetString);
+    }
+
+    @Override
+    public IOriginatorInfo createNullOriginatorInfo() {
+        return new OriginatorInfoBC(null);
+    }
 }
+

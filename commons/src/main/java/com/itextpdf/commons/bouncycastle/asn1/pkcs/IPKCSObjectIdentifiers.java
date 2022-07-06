@@ -8,4 +8,8 @@ public interface IPKCSObjectIdentifiers {
     IASN1ObjectIdentifier getIdAaEtsSigPolicyId();
 
     IASN1ObjectIdentifier getIdSpqEtsUri();
+
+    IASN1ObjectIdentifier getEnvelopedData();
+
+    IASN1ObjectIdentifier getData();
 }

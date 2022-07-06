@@ -20,8 +20,8 @@ public class ASN1OutputStreamBCFips implements IASN1OutputStream {
 
     @Override
     public void writeObject(IASN1Primitive primitive) throws IOException {
-        ASN1PrimitiveBCFips primitiveBC = (ASN1PrimitiveBCFips) primitive;
-        stream.writeObject(primitiveBC.getPrimitive());
+        ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
+        stream.writeObject(primitiveBCFips.getPrimitive());
     }
 
     @Override

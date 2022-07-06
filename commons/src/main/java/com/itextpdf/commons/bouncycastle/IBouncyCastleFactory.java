@@ -23,6 +23,13 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttribute;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IAttributeTable;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEncryptedContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEnvelopedData;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IIssuerAndSerialNumber;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IKeyTransRecipientInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IOriginatorInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
@@ -32,12 +39,11 @@ import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
-import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
-import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
@@ -45,6 +51,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
@@ -53,6 +60,8 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
@@ -112,6 +121,8 @@ public interface IBouncyCastleFactory {
 
     IASN1Set createASN1Set(IASN1TaggedObject taggedObject, boolean b);
 
+    IASN1Set createNullASN1Set();
+
     IASN1OutputStream createASN1OutputStream(OutputStream stream);
 
     IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding);
@@ -134,6 +145,8 @@ public interface IBouncyCastleFactory {
 
     IDERSet createDERSet(ISignaturePolicyIdentifier identifier);
 
+    IDERSet createDERSet(IRecipientInfo recipientInfo);
+
     IASN1Enumerated createASN1Enumerated(int i);
 
     IASN1Encoding createASN1Encoding();
@@ -145,6 +158,8 @@ public interface IBouncyCastleFactory {
     IAttribute createAttribute(IASN1ObjectIdentifier attrType, IASN1Set attrValues);
 
     IContentInfo createContentInfo(IASN1Sequence sequence);
+
+    IContentInfo createContentInfo(IASN1ObjectIdentifier objectIdentifier, IASN1Encodable encodable);
 
     ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws AbstractTSPException, IOException;
 
@@ -177,7 +192,7 @@ public interface IBouncyCastleFactory {
     IJcaDigestCalculatorProviderBuilder createJcaDigestCalculatorProviderBuilder();
 
     ICertificateID createCertificateID(IDigestCalculator digestCalculator, IX509CertificateHolder certificateHolder,
-                                       BigInteger bigInteger) throws AbstractOCSPException;
+            BigInteger bigInteger) throws AbstractOCSPException;
 
     ICertificateID createCertificateID();
 
@@ -242,4 +257,24 @@ public interface IBouncyCastleFactory {
                                                ISigPolicyQualifiers policyQualifiers);
 
     ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId);
+
+    IEnvelopedData createEnvelopedData(IOriginatorInfo originatorInfo, IASN1Set set,
+            IEncryptedContentInfo encryptedContentInfo, IASN1Set set1);
+
+    IRecipientInfo createRecipientInfo(IKeyTransRecipientInfo keyTransRecipientInfo);
+
+    IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
+            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString);
+
+    ITBSCertificate createTBSCertificate(Object object);
+
+    IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value);
+
+    IRecipientIdentifier createRecipientIdentifier(IIssuerAndSerialNumber issuerAndSerialNumber);
+
+    IKeyTransRecipientInfo createKeyTransRecipientInfo(IRecipientIdentifier recipientIdentifier,
+            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString);
+
+    IOriginatorInfo createNullOriginatorInfo();
 }
+

@@ -18,6 +18,12 @@ public class PKCSObjectIdentifiersBC implements IPKCSObjectIdentifiers {
     private static final ASN1ObjectIdentifierBC ID_SPQ_ETS_URI =
             new ASN1ObjectIdentifierBC(PKCSObjectIdentifiers.id_spq_ets_uri);
 
+    private static final ASN1ObjectIdentifierBC ENVELOPED_DATA = new ASN1ObjectIdentifierBC(
+            PKCSObjectIdentifiers.envelopedData);
+
+    private static final ASN1ObjectIdentifierBC DATA = new ASN1ObjectIdentifierBC(
+            PKCSObjectIdentifiers.data);
+
     private PKCSObjectIdentifiersBC() {
         // Do nothing.
     }
@@ -39,5 +45,15 @@ public class PKCSObjectIdentifiersBC implements IPKCSObjectIdentifiers {
     @Override
     public IASN1ObjectIdentifier getIdSpqEtsUri() {
         return ID_SPQ_ETS_URI;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getEnvelopedData() {
+        return ENVELOPED_DATA;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getData() {
+        return DATA;
     }
 }
