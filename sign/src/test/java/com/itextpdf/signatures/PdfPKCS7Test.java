@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
+import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -188,7 +190,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         Assert.assertNull(pkcs7.getCRLs());
         // it's tested here that ocsp and time stamp token were found while
         // constructing PdfPKCS7 instance
-        TimeStampToken timeStampToken = pkcs7.getTimeStampToken();
+        TimeStampToken timeStampToken = ((TimeStampTokenBC) pkcs7.getTimeStampToken()).getTimeStampToken();
         Assert.assertNotNull(timeStampToken);
 
         // The number corresponds to 3 September, 2021 13:32:33.
@@ -201,7 +203,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         Assert.assertEquals(
                 TimeTestUtil.getFullDaysMillis(expectedMillis),
                 TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(
-                        DateTimeUtil.getCalendar(pkcs7.getOcsp().getProducedAt()))),
+                        DateTimeUtil.getCalendar(((BasicOCSPRespBC) pkcs7.getOcsp()).getBasicOCSPResp().getProducedAt()))),
                 EPS);
     }
 
@@ -277,7 +279,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
 
     @Test
     public void isRevocationValidOcspResponseIsNullTest()
-            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
+            throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
         pkcs7.basicResp = null;
         Assert.assertFalse(pkcs7.isRevocationValid());
@@ -287,8 +289,8 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public void isRevocationValidLackOfSignCertsTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
-        pkcs7.basicResp = new BasicOCSPResp(BasicOCSPResponse.getInstance(new ASN1InputStream(
-                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+        pkcs7.basicResp = new BasicOCSPRespBC(new BasicOCSPResp(BasicOCSPResponse.getInstance(new ASN1InputStream(
+                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject())));
         pkcs7.signCerts = Collections.singleton(chain[0]);
         Assert.assertFalse(pkcs7.isRevocationValid());
     }
@@ -297,8 +299,8 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public void isRevocationValidExceptionDuringValidationTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
-        pkcs7.basicResp = new BasicOCSPResp(BasicOCSPResponse.getInstance(new ASN1InputStream(
-                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+        pkcs7.basicResp = new BasicOCSPRespBC(new BasicOCSPResp(BasicOCSPResponse.getInstance(new ASN1InputStream(
+                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject())));
         pkcs7.signCerts = Arrays.asList(new Certificate[]{null, null});
         Assert.assertFalse(pkcs7.isRevocationValid());
     }

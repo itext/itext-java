@@ -42,6 +42,7 @@
  */
 package com.itextpdf.signatures.verify;
 
+import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateVerification;
@@ -338,7 +339,8 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         Assert.assertEquals(expectedSecondResultMessage, resultedExceptionList.get(1).getMessage());
     }
 
-    private static boolean verifyTimestampCertificates(String tsaClientCertificate, KeyStore caKeyStore) throws Exception {
+    private static boolean verifyTimestampCertificates(String tsaClientCertificate, KeyStore caKeyStore)
+            throws Exception {
         Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaClientCertificate, PASSWORD);
         PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaClientCertificate, PASSWORD, PASSWORD);
 
@@ -348,6 +350,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         TimeStampToken timeStampToken = new TimeStampToken(
                 ContentInfo.getInstance(ASN1Sequence.getInstance(tsaCertificateBytes)));
 
-        return CertificateVerification.verifyTimestampCertificates(timeStampToken, caKeyStore, null);
+        return CertificateVerification.verifyTimestampCertificates(new TimeStampTokenBC(timeStampToken), caKeyStore,
+                null);
     }
 }

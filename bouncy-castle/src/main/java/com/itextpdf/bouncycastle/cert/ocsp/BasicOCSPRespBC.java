@@ -15,19 +15,19 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.SingleResp;
 
 public class BasicOCSPRespBC implements IBasicOCSPResp {
-    private final BasicOCSPResp basicOCSPRespBC;
+    private final BasicOCSPResp basicOCSPResp;
 
     public BasicOCSPRespBC(BasicOCSPResp basicOCSPRespBC) {
-        this.basicOCSPRespBC = basicOCSPRespBC;
+        this.basicOCSPResp = basicOCSPRespBC;
     }
 
-    public BasicOCSPResp getBasicOCSPRespBC() {
-        return basicOCSPRespBC;
+    public BasicOCSPResp getBasicOCSPResp() {
+        return basicOCSPResp;
     }
 
     @Override
     public ISingleResp[] getResponses() {
-        SingleResp[] resps = basicOCSPRespBC.getResponses();
+        SingleResp[] resps = basicOCSPResp.getResponses();
         ISingleResp[] respsBC = new ISingleResp[resps.length];
         for (int i = 0; i < respsBC.length; i++) {
             respsBC[i] = new SingleRespBC(resps[i]);
@@ -38,7 +38,7 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
     @Override
     public boolean isSignatureValid(IContentVerifierProvider provider) throws OCSPExceptionBC {
         try {
-            return basicOCSPRespBC.isSignatureValid(
+            return basicOCSPResp.isSignatureValid(
                     ((ContentVerifierProviderBC) provider).getContentVerifierProvider());
         } catch (OCSPException e) {
             throw new OCSPExceptionBC(e);
@@ -47,7 +47,7 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
 
     @Override
     public IX509CertificateHolder[] getCerts() {
-        X509CertificateHolder[] certs = basicOCSPRespBC.getCerts();
+        X509CertificateHolder[] certs = basicOCSPResp.getCerts();
         IX509CertificateHolder[] certsBC = new IX509CertificateHolder[certs.length];
         for (int i = 0; i < certs.length; i++) {
             certsBC[i] = new X509CertificateHolderBC(certs[i]);
@@ -57,7 +57,7 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
 
     @Override
     public byte[] getEncoded() throws IOException {
-        return basicOCSPRespBC.getEncoded();
+        return basicOCSPResp.getEncoded();
     }
 
     @Override
@@ -69,16 +69,16 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
             return false;
         }
         BasicOCSPRespBC that = (BasicOCSPRespBC) o;
-        return Objects.equals(basicOCSPRespBC, that.basicOCSPRespBC);
+        return Objects.equals(basicOCSPResp, that.basicOCSPResp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(basicOCSPRespBC);
+        return Objects.hash(basicOCSPResp);
     }
 
     @Override
     public String toString() {
-        return basicOCSPRespBC.toString();
+        return basicOCSPResp.toString();
     }
 }

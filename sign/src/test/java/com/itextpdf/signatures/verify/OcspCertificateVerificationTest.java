@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.verify;
 
+import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
 import com.itextpdf.signatures.CertificateVerification;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
@@ -29,6 +30,10 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
+
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -37,10 +42,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.X509Certificate;
 
 @Category(UnitTest.class)
 public class OcspCertificateVerificationTest extends ExtendedITextTest {
@@ -72,7 +73,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         BasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(rootOcspCert, password), null));
+                new BasicOCSPRespBC(response), Pkcs12FileHelper.initStore(rootOcspCert, password), null));
     }
 
     @Test
@@ -80,7 +81,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         BasicOCSPResp response = getOcspResponse();
 
         Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(signOcspCert, password), null));
+                new BasicOCSPRespBC(response), Pkcs12FileHelper.initStore(signOcspCert, password), null));
     }
 
     @Test
@@ -88,7 +89,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         BasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(notOcspAndOcspCert, password), null));
+                new BasicOCSPRespBC(response), Pkcs12FileHelper.initStore(notOcspAndOcspCert, password), null));
     }
 
     @Test

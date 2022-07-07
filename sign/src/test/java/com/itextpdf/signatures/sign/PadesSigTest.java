@@ -42,6 +42,7 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastle.asn1.esf.SignaturePolicyIdentifierBC;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -192,7 +193,7 @@ public class PadesSigTest extends ExtendedITextTest {
 
         if (sigPolicyIdentifier != null) {
             signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
-                    PdfSigner.CryptoStandard.CADES, sigPolicyIdentifier);
+                    PdfSigner.CryptoStandard.CADES, new SignaturePolicyIdentifierBC(sigPolicyIdentifier));
         } else if (sigPolicyInfo != null) {
             signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
                     PdfSigner.CryptoStandard.CADES, sigPolicyInfo);
