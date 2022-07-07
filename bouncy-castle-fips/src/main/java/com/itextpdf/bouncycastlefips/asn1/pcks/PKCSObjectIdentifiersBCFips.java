@@ -4,10 +4,11 @@ import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 
+import java.util.Objects;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
 public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
-    private static final PKCSObjectIdentifiersBCFips INSTANCE = new PKCSObjectIdentifiersBCFips();
+    private static final PKCSObjectIdentifiersBCFips INSTANCE = new PKCSObjectIdentifiersBCFips(null);
 
     private static final ASN1ObjectIdentifierBCFips ID_AA_ETS_SIG_POLICY_ID = new ASN1ObjectIdentifierBCFips(
             PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
@@ -24,12 +25,18 @@ public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
     private static final ASN1ObjectIdentifierBCFips DATA = new ASN1ObjectIdentifierBCFips(
             PKCSObjectIdentifiers.data);
 
-    private PKCSObjectIdentifiersBCFips() {
-        // Do nothing.
+    private final PKCSObjectIdentifiers pkcsObjectIdentifiers;
+
+    public PKCSObjectIdentifiersBCFips(PKCSObjectIdentifiers pkcsObjectIdentifiers) {
+        this.pkcsObjectIdentifiers = pkcsObjectIdentifiers;
     }
 
     public static IPKCSObjectIdentifiers getInstance() {
         return INSTANCE;
+    }
+
+    public PKCSObjectIdentifiers getPkcsObjectIdentifiers() {
+        return pkcsObjectIdentifiers;
     }
 
     @Override
@@ -55,5 +62,27 @@ public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
     @Override
     public IASN1ObjectIdentifier getData() {
         return DATA;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PKCSObjectIdentifiersBCFips that = (PKCSObjectIdentifiersBCFips) o;
+        return Objects.equals(pkcsObjectIdentifiers, that.pkcsObjectIdentifiers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pkcsObjectIdentifiers);
+    }
+
+    @Override
+    public String toString() {
+        return pkcsObjectIdentifiers.toString();
     }
 }

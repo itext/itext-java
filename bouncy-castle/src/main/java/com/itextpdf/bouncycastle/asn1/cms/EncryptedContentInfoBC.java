@@ -18,9 +18,9 @@ public class EncryptedContentInfoBC extends ASN1EncodableBC implements IEncrypte
 
     public EncryptedContentInfoBC(IASN1ObjectIdentifier data, IAlgorithmIdentifier algorithmIdentifier,
             IASN1OctetString octetString) {
-        super(new EncryptedContentInfo(((ASN1ObjectIdentifierBC) data).getObjectIdentifier(),
+        super(new EncryptedContentInfo(((ASN1ObjectIdentifierBC) data).getASN1ObjectIdentifier(),
                 ((AlgorithmIdentifierBC) algorithmIdentifier).getAlgorithmIdentifier(),
-                ((ASN1OctetStringBC) octetString).getOctetString()));
+                ((ASN1OctetStringBC) octetString).getASN1OctetString()));
     }
 
     public EncryptedContentInfo getEncryptedContentInfo() {

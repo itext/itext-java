@@ -1,6 +1,7 @@
 package com.itextpdf.bouncycastle.asn1;
 
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
+
 import org.bouncycastle.asn1.DEROctetString;
 
 public class DEROctetStringBC extends ASN1OctetStringBC implements IDEROctetString {

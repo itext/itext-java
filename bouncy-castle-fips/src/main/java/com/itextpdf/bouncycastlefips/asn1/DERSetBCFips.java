@@ -7,11 +7,19 @@ import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERSet;
 
 public class DERSetBCFips extends ASN1SetBCFips implements IDERSet {
+    public DERSetBCFips(DERSet derSet) {
+        super(derSet);
+    }
+
     public DERSetBCFips(ASN1EncodableVector vector) {
         super(new DERSet(vector));
     }
 
     public DERSetBCFips(ASN1Encodable encodable) {
         super(new DERSet(encodable));
+    }
+
+    public DERSet getDERSet() {
+        return (DERSet) getEncodable();
     }
 }

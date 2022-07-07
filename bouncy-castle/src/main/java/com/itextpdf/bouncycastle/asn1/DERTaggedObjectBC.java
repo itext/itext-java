@@ -6,11 +6,19 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERTaggedObject;
 
 public class DERTaggedObjectBC extends ASN1TaggedObjectBC implements IDERTaggedObject {
+    public DERTaggedObjectBC(DERTaggedObject derTaggedObject) {
+        super(derTaggedObject);
+    }
+
     public DERTaggedObjectBC(int i, ASN1Encodable encodable) {
         super(new DERTaggedObject(i, encodable));
     }
 
     public DERTaggedObjectBC(boolean b, int i, ASN1Encodable encodable) {
         super(new DERTaggedObject(b, i, encodable));
+    }
+
+    public DERTaggedObject getDERTaggedObject() {
+        return (DERTaggedObject) getEncodable();
     }
 }

@@ -19,7 +19,7 @@ public class KeyTransRecipientInfoBC extends ASN1EncodableBC implements IKeyTran
             IASN1OctetString octetString) {
         super(new KeyTransRecipientInfo(((RecipientIdentifierBC) recipientIdentifier).getRecipientIdentifier(),
                 ((AlgorithmIdentifierBC) algorithmIdentifier).getAlgorithmIdentifier(),
-                ((ASN1OctetStringBC) octetString).getOctetString()));
+                ((ASN1OctetStringBC) octetString).getASN1OctetString()));
     }
 
     public KeyTransRecipientInfo getKeyTransRecipientInfo() {

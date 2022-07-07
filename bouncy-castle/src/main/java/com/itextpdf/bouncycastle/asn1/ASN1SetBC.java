@@ -2,10 +2,10 @@ package com.itextpdf.bouncycastle.asn1;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.ASN1TaggedObject;
 
 import java.util.Enumeration;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 
 public class ASN1SetBC extends ASN1PrimitiveBC implements IASN1Set {
     public ASN1SetBC(ASN1Set set) {
@@ -16,22 +16,22 @@ public class ASN1SetBC extends ASN1PrimitiveBC implements IASN1Set {
         super(ASN1Set.getInstance(taggedObject, b));
     }
 
-    public ASN1Set getSet() {
+    public ASN1Set getASN1Set() {
         return (ASN1Set) getPrimitive();
     }
 
     @Override
     public Enumeration getObjects() {
-        return getSet().getObjects();
+        return getASN1Set().getObjects();
     }
 
     @Override
     public int size() {
-        return getSet().size();
+        return getASN1Set().size();
     }
 
     @Override
     public IASN1Encodable getObjectAt(int index) {
-        return new ASN1EncodableBC(getSet().getObjectAt(index));
+        return new ASN1EncodableBC(getASN1Set().getObjectAt(index));
     }
 }

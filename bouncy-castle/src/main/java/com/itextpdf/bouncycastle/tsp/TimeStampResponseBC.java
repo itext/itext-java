@@ -6,6 +6,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
+import java.util.Objects;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampResponse;
 
@@ -43,6 +44,28 @@ public class TimeStampResponseBC implements ITimeStampResponse {
     @Override
     public String getStatusString() {
         return timeStampResponse.getStatusString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TimeStampResponseBC that = (TimeStampResponseBC) o;
+        return Objects.equals(timeStampResponse, that.timeStampResponse);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeStampResponse);
+    }
+
+    @Override
+    public String toString() {
+        return timeStampResponse.toString();
     }
 }
 

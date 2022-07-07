@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.bouncycastle.asn1.ASN1Primitive;
 
 public class ASN1PrimitiveBCFips extends ASN1EncodableBCFips implements IASN1Primitive {
-    
     public ASN1PrimitiveBCFips(ASN1Primitive primitive) {
         super(primitive);
     }

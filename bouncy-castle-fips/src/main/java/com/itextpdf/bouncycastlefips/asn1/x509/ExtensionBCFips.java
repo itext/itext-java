@@ -6,6 +6,7 @@ import com.itextpdf.bouncycastlefips.asn1.ASN1OctetStringBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
+
 import org.bouncycastle.asn1.x509.Extension;
 
 public class ExtensionBCFips extends ASN1EncodableBCFips implements IExtension {
@@ -17,14 +18,14 @@ public class ExtensionBCFips extends ASN1EncodableBCFips implements IExtension {
 
     private static final ASN1ObjectIdentifierBCFips AUTHORITY_INFO_ACCESS =
             new ASN1ObjectIdentifierBCFips(Extension.authorityInfoAccess);
-    
+
     public ExtensionBCFips(Extension extension) {
         super(extension);
     }
 
     public ExtensionBCFips(IASN1ObjectIdentifier objectIdentifier, boolean critical, IASN1OctetString octetString) {
         super(new Extension(
-                ((ASN1ObjectIdentifierBCFips) objectIdentifier).getObjectIdentifier(),
+                ((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier(),
                 critical,
                 ((ASN1OctetStringBCFips) octetString).getOctetString()));
     }

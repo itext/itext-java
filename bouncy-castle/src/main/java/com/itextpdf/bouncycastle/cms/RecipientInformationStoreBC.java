@@ -6,7 +6,7 @@ import com.itextpdf.commons.bouncycastle.cms.IRecipientInformationStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.bouncycastle.cms.RecipientId;
+import java.util.Objects;
 import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 
@@ -37,4 +37,25 @@ public class RecipientInformationStoreBC implements IRecipientInformationStore {
         return new RecipientInformationBC(recipientInformationStore.get(((RecipientIdBC) id).getRecipientId()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RecipientInformationStoreBC that = (RecipientInformationStoreBC) o;
+        return Objects.equals(recipientInformationStore, that.recipientInformationStore);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(recipientInformationStore);
+    }
+
+    @Override
+    public String toString() {
+        return recipientInformationStore.toString();
+    }
 }

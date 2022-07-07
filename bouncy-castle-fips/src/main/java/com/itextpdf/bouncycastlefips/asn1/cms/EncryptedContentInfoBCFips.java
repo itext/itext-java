@@ -18,7 +18,7 @@ public class EncryptedContentInfoBCFips extends ASN1EncodableBCFips implements I
 
     public EncryptedContentInfoBCFips(IASN1ObjectIdentifier data, IAlgorithmIdentifier algorithmIdentifier,
             IASN1OctetString octetString) {
-        super(new EncryptedContentInfo(((ASN1ObjectIdentifierBCFips) data).getObjectIdentifier(),
+        super(new EncryptedContentInfo(((ASN1ObjectIdentifierBCFips) data).getASN1ObjectIdentifier(),
                 ((AlgorithmIdentifierBCFips) algorithmIdentifier).getAlgorithmIdentifier(),
                 ((ASN1OctetStringBCFips) octetString).getOctetString()));
     }

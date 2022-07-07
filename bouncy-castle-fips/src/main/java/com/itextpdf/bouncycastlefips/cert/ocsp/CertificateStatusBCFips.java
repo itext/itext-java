@@ -45,4 +45,9 @@ public class CertificateStatusBCFips implements ICertificateStatus {
     public int hashCode() {
         return Objects.hash(certificateStatus);
     }
+
+    @Override
+    public String toString() {
+        return certificateStatus.toString();
+    }
 }

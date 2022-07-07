@@ -5,6 +5,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 
 import java.util.Date;
+import java.util.Objects;
 import org.bouncycastle.cert.ocsp.SingleResp;
 
 public class SingleRespBCFips implements ISingleResp {
@@ -36,5 +37,27 @@ public class SingleRespBCFips implements ISingleResp {
     @Override
     public Date getThisUpdate() {
         return singleResp.getThisUpdate();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SingleRespBCFips that = (SingleRespBCFips) o;
+        return Objects.equals(singleResp, that.singleResp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(singleResp);
+    }
+
+    @Override
+    public String toString() {
+        return singleResp.toString();
     }
 }

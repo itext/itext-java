@@ -1,6 +1,7 @@
 package com.itextpdf.bouncycastlefips.asn1;
 
 import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
+
 import org.bouncycastle.asn1.DERIA5String;
 
 public class DERIA5StringBCFips extends ASN1PrimitiveBCFips implements IDERIA5String {

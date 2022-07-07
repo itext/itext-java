@@ -18,9 +18,9 @@ public class EnvelopedDataBCFips extends ASN1EncodableBCFips implements IEnvelop
             IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
         super(new EnvelopedData(
                 ((OriginatorInfoBCFips) originatorInfo).getOriginatorInfo(),
-                ((ASN1SetBCFips) set).getSet(),
+                ((ASN1SetBCFips) set).getASN1Set(),
                 ((EncryptedContentInfoBCFips) encryptedContentInfo).getEncryptedContentInfo(),
-                ((ASN1SetBCFips) set1).getSet()));
+                ((ASN1SetBCFips) set1).getASN1Set()));
     }
 
     public EnvelopedData getEnvelopedData() {

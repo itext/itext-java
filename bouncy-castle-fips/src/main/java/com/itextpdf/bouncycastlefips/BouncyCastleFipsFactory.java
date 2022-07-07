@@ -425,7 +425,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IAttributeTable createAttributeTable(IASN1Set unat) {
         ASN1SetBCFips asn1SetBCFips = (ASN1SetBCFips) unat;
-        return new AttributeTableBCFips(asn1SetBCFips.getSet());
+        return new AttributeTableBCFips(asn1SetBCFips.getASN1Set());
     }
 
     @Override
@@ -437,13 +437,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IAttribute createAttribute(IASN1ObjectIdentifier attrType, IASN1Set attrValues) {
         ASN1ObjectIdentifierBCFips attrTypeBCFips = (ASN1ObjectIdentifierBCFips) attrType;
         ASN1SetBCFips attrValuesBCFips = (ASN1SetBCFips) attrValues;
-        return new AttributeBCFips(new Attribute(attrTypeBCFips.getObjectIdentifier(), attrValuesBCFips.getSet()));
+        return new AttributeBCFips(
+                new Attribute(attrTypeBCFips.getASN1ObjectIdentifier(), attrValuesBCFips.getASN1Set()));
     }
 
     @Override
     public IContentInfo createContentInfo(IASN1Sequence sequence) {
         ASN1SequenceBCFips sequenceBCFips = (ASN1SequenceBCFips) sequence;
-        return new ContentInfoBCFips(ContentInfo.getInstance(sequenceBCFips.getSequence()));
+        return new ContentInfoBCFips(ContentInfo.getInstance(sequenceBCFips.getASN1Sequence()));
     }
 
     @Override
@@ -501,7 +502,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm) {
         ASN1ObjectIdentifierBCFips algorithmBc = (ASN1ObjectIdentifierBCFips) algorithm;
-        return new AlgorithmIdentifierBCFips(new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), null));
+        return new AlgorithmIdentifierBCFips(new AlgorithmIdentifier(algorithmBc.getASN1ObjectIdentifier(), null));
     }
 
     @Override
@@ -510,7 +511,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         ASN1ObjectIdentifierBCFips algorithmBCFips = (ASN1ObjectIdentifierBCFips) algorithm;
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
         return new AlgorithmIdentifierBCFips(
-                new AlgorithmIdentifier(algorithmBCFips.getObjectIdentifier(), encodableBCFips.getEncodable()));
+                new AlgorithmIdentifier(algorithmBCFips.getASN1ObjectIdentifier(), encodableBCFips.getEncodable()));
     }
 
     @Override
@@ -598,7 +599,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
-                                                                IDERIA5String string) {
+            IDERIA5String string) {
         return new SigPolicyQualifierInfoBCFips(objectIdentifier, string);
     }
 
@@ -712,14 +713,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
-                                                            IASN1OctetString octetString) {
+            IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBCFips(algorithmIdentifier, octetString);
     }
 
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
-                                                      IOtherHashAlgAndValue algAndValue,
-                                                      ISigPolicyQualifiers policyQualifiers) {
+            IOtherHashAlgAndValue algAndValue,
+            ISigPolicyQualifiers policyQualifiers) {
         return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue, policyQualifiers);
     }
 
@@ -794,4 +795,3 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
     }
 }
-

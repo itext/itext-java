@@ -10,7 +10,7 @@ public class SignaturePolicyIdentifierBC extends ASN1EncodableBC implements ISig
     public SignaturePolicyIdentifierBC(SignaturePolicyIdentifier signaturePolicyIdentifier) {
         super(signaturePolicyIdentifier);
     }
-    
+
     public SignaturePolicyIdentifierBC(ISignaturePolicyId signaturePolicyId) {
         this(new SignaturePolicyIdentifier(((SignaturePolicyIdBC) signaturePolicyId).getSignaturePolicyId()));
     }

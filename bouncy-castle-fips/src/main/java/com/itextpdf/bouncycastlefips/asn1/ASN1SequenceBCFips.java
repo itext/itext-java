@@ -15,20 +15,21 @@ public class ASN1SequenceBCFips extends ASN1PrimitiveBCFips implements IASN1Sequ
         super(ASN1Sequence.getInstance(obj));
     }
 
-    public ASN1Sequence getSequence() {
+    public ASN1Sequence getASN1Sequence() {
         return (ASN1Sequence) getPrimitive();
     }
 
     public IASN1Encodable getObjectAt(int i) {
-        return new ASN1EncodableBCFips(getSequence().getObjectAt(i));
+        return new ASN1EncodableBCFips(getASN1Sequence().getObjectAt(i));
     }
 
     @Override
     public Enumeration getObjects() {
-        return getSequence().getObjects();
+        return getASN1Sequence().getObjects();
     }
 
+    @Override
     public int size() {
-        return getSequence().size();
+        return getASN1Sequence().size();
     }
 }

@@ -5,7 +5,6 @@ import com.itextpdf.bouncycastle.operator.ContentVerifierProviderBC;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
-
 import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
 
 import java.io.IOException;
@@ -14,9 +13,6 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.SingleResp;
-
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class BasicOCSPRespBC implements IBasicOCSPResp {
     private final BasicOCSPResp basicOCSPRespBC;
@@ -38,16 +34,17 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
         }
         return respsBC;
     }
-    
+
     @Override
     public boolean isSignatureValid(IContentVerifierProvider provider) throws OCSPExceptionBC {
         try {
-            return basicOCSPRespBC.isSignatureValid(((ContentVerifierProviderBC) provider).getProvider());
+            return basicOCSPRespBC.isSignatureValid(
+                    ((ContentVerifierProviderBC) provider).getContentVerifierProvider());
         } catch (OCSPException e) {
             throw new OCSPExceptionBC(e);
         }
     }
-    
+
     @Override
     public IX509CertificateHolder[] getCerts() {
         X509CertificateHolder[] certs = basicOCSPRespBC.getCerts();

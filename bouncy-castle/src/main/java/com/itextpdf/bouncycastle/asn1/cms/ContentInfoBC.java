@@ -14,7 +14,7 @@ public class ContentInfoBC extends ASN1EncodableBC implements IContentInfo {
     }
 
     public ContentInfoBC(IASN1ObjectIdentifier objectIdentifier, IASN1Encodable encodable) {
-        super(new ContentInfo(((ASN1ObjectIdentifierBC) objectIdentifier).getObjectIdentifier(),
+        super(new ContentInfo(((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(),
                 ((ASN1EncodableBC) encodable).getEncodable()));
     }
 

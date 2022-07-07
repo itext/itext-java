@@ -5,6 +5,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 
 import java.io.IOException;
+import java.util.Objects;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 
@@ -40,5 +41,27 @@ public class OCSPRespBC implements IOCSPResp {
         } catch (OCSPException e) {
             throw new OCSPExceptionBC(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OCSPRespBC that = (OCSPRespBC) o;
+        return Objects.equals(ocspResp, that.ocspResp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ocspResp);
+    }
+
+    @Override
+    public String toString() {
+        return ocspResp.toString();
     }
 }

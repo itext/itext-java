@@ -1,25 +1,24 @@
 package com.itextpdf.bouncycastlefips.asn1.ess;
 
+import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.ess.IESSCertID;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
 
 import org.bouncycastle.asn1.ess.ESSCertID;
 import org.bouncycastle.asn1.ess.SigningCertificate;
 
-public class SigningCertificateBCFips implements ISigningCertificate {
-    private final SigningCertificate signingCertificate;
-
+public class SigningCertificateBCFips extends ASN1EncodableBCFips implements ISigningCertificate {
     public SigningCertificateBCFips(SigningCertificate signingCertificate) {
-        this.signingCertificate = signingCertificate;
+        super(signingCertificate);
     }
 
     public SigningCertificate getSigningCertificate() {
-        return signingCertificate;
+        return (SigningCertificate) getEncodable();
     }
 
     @Override
     public IESSCertID[] getCerts() {
-        ESSCertID[] certs = signingCertificate.getCerts();
+        ESSCertID[] certs = getSigningCertificate().getCerts();
         IESSCertID[] certsBCFips = new IESSCertID[certs.length];
         for (int i = 0; i < certsBCFips.length; i++) {
             certsBCFips[i] = new ESSCertIDBCFips(certs[i]);

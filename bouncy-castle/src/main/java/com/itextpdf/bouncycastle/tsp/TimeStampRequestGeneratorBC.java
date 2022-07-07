@@ -6,7 +6,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 
 import java.math.BigInteger;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import java.util.Objects;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 
 public class TimeStampRequestGeneratorBC implements ITimeStampRequestGenerator {
@@ -34,6 +34,28 @@ public class TimeStampRequestGeneratorBC implements ITimeStampRequestGenerator {
     @Override
     public ITimeStampRequest generate(IASN1ObjectIdentifier objectIdentifier, byte[] imprint, BigInteger nonce) {
         return new TimeStampRequestBC(requestGenerator.generate(
-                ((ASN1ObjectIdentifierBC) objectIdentifier).getObjectIdentifier(), imprint, nonce));
+                ((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(), imprint, nonce));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TimeStampRequestGeneratorBC that = (TimeStampRequestGeneratorBC) o;
+        return Objects.equals(requestGenerator, that.requestGenerator);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(requestGenerator);
+    }
+
+    @Override
+    public String toString() {
+        return requestGenerator.toString();
     }
 }

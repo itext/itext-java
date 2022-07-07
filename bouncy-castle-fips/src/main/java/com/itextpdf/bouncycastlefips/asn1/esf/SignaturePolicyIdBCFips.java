@@ -6,6 +6,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
+
 import org.bouncycastle.asn1.esf.SignaturePolicyId;
 
 public class SignaturePolicyIdBCFips extends ASN1EncodableBCFips implements ISignaturePolicyId {
@@ -14,9 +15,9 @@ public class SignaturePolicyIdBCFips extends ASN1EncodableBCFips implements ISig
     }
 
     public SignaturePolicyIdBCFips(IASN1ObjectIdentifier objectIdentifier,
-                                   IOtherHashAlgAndValue algAndValue, ISigPolicyQualifiers policyQualifiers) {
+            IOtherHashAlgAndValue algAndValue, ISigPolicyQualifiers policyQualifiers) {
         this(new SignaturePolicyId(
-                ((ASN1ObjectIdentifierBCFips) objectIdentifier).getObjectIdentifier(),
+                ((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier(),
                 ((OtherHashAlgAndValueBCFips) algAndValue).getOtherHashAlgAndValue(),
                 ((SigPolicyQualifiersBCFips) policyQualifiers).getSigPolityQualifiers()));
     }

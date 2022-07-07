@@ -5,7 +5,6 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 public class ASN1ObjectIdentifierBCFips extends ASN1PrimitiveBCFips implements IASN1ObjectIdentifier {
-
     public ASN1ObjectIdentifierBCFips(String identifier) {
         super(new ASN1ObjectIdentifier(identifier));
     }
@@ -14,12 +13,12 @@ public class ASN1ObjectIdentifierBCFips extends ASN1PrimitiveBCFips implements I
         super(identifier);
     }
 
-    public ASN1ObjectIdentifier getObjectIdentifier() {
+    public ASN1ObjectIdentifier getASN1ObjectIdentifier() {
         return (ASN1ObjectIdentifier) getPrimitive();
     }
 
     @Override
     public String getId() {
-        return getObjectIdentifier().getId();
+        return getASN1ObjectIdentifier().getId();
     }
 }

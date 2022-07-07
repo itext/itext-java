@@ -5,6 +5,8 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
+
+import java.util.Objects;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 
@@ -38,5 +40,27 @@ public class OCSPReqBuilderBCFips implements IOCSPReqBuilder {
         } catch (OCSPException e) {
             throw new OCSPExceptionBCFips(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OCSPReqBuilderBCFips that = (OCSPReqBuilderBCFips) o;
+        return Objects.equals(reqBuilder, that.reqBuilder);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(reqBuilder);
+    }
+
+    @Override
+    public String toString() {
+        return reqBuilder.toString();
     }
 }

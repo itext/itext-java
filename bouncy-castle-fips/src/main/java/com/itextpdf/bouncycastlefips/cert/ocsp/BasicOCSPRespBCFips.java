@@ -5,7 +5,6 @@ import com.itextpdf.bouncycastlefips.operator.ContentVerifierProviderBCFips;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
-
 import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
 
 import java.io.IOException;

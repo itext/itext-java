@@ -16,7 +16,7 @@ public class ResponseBytesBC extends ASN1EncodableBC implements IResponseBytes {
 
     public ResponseBytesBC(IASN1ObjectIdentifier asn1ObjectIdentifier, IDEROctetString derOctetString) {
         super(new ResponseBytes(
-                ((ASN1ObjectIdentifierBC) asn1ObjectIdentifier).getObjectIdentifier(),
+                ((ASN1ObjectIdentifierBC) asn1ObjectIdentifier).getASN1ObjectIdentifier(),
                 ((DEROctetStringBC) derOctetString).getDEROctetString()));
     }
 

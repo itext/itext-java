@@ -7,6 +7,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 
 import java.util.Date;
+import java.util.Objects;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 public class TimeStampTokenInfoBC implements ITimeStampTokenInfo {
@@ -33,5 +34,27 @@ public class TimeStampTokenInfoBC implements ITimeStampTokenInfo {
     @Override
     public Date getGenTime() {
         return timeStampTokenInfo.getGenTime();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TimeStampTokenInfoBC that = (TimeStampTokenInfoBC) o;
+        return Objects.equals(timeStampTokenInfo, that.timeStampTokenInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeStampTokenInfo);
+    }
+
+    @Override
+    public String toString() {
+        return timeStampTokenInfo.toString();
     }
 }

@@ -4,6 +4,8 @@ import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
+
+import java.util.Objects;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 
@@ -26,5 +28,27 @@ public class DigestCalculatorProviderBCFips implements IDigestCalculatorProvider
         } catch (OperatorCreationException e) {
             throw new OperatorCreationExceptionBCFips(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DigestCalculatorProviderBCFips that = (DigestCalculatorProviderBCFips) o;
+        return Objects.equals(calculatorProvider, that.calculatorProvider);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(calculatorProvider);
+    }
+
+    @Override
+    public String toString() {
+        return calculatorProvider.toString();
     }
 }

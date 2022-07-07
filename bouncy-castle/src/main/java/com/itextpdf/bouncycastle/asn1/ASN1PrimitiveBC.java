@@ -9,7 +9,7 @@ public class ASN1PrimitiveBC extends ASN1EncodableBC implements IASN1Primitive {
     public ASN1PrimitiveBC(ASN1Primitive primitive) {
         super(primitive);
     }
-    
+
     public ASN1PrimitiveBC(byte[] array) throws IOException {
         super(ASN1Primitive.fromByteArray(array));
     }

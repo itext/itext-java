@@ -7,7 +7,6 @@ import java.util.Enumeration;
 import org.bouncycastle.asn1.ASN1Sequence;
 
 public class ASN1SequenceBC extends ASN1PrimitiveBC implements IASN1Sequence {
-
     public ASN1SequenceBC(ASN1Sequence sequence) {
         super(sequence);
     }
@@ -16,20 +15,21 @@ public class ASN1SequenceBC extends ASN1PrimitiveBC implements IASN1Sequence {
         super(ASN1Sequence.getInstance(obj));
     }
 
-    public ASN1Sequence getSequence() {
+    public ASN1Sequence getASN1Sequence() {
         return (ASN1Sequence) getPrimitive();
     }
 
     public IASN1Encodable getObjectAt(int i) {
-        return new ASN1EncodableBC(getSequence().getObjectAt(i));
+        return new ASN1EncodableBC(getASN1Sequence().getObjectAt(i));
     }
 
     @Override
     public Enumeration getObjects() {
-        return getSequence().getObjects();
+        return getASN1Sequence().getObjects();
     }
 
+    @Override
     public int size() {
-        return getSequence().size();
+        return getASN1Sequence().size();
     }
 }

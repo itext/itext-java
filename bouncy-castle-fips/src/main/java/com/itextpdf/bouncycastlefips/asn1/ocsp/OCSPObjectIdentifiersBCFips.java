@@ -4,10 +4,11 @@ import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 
+import java.util.Objects;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 
 public class OCSPObjectIdentifiersBCFips implements IOCSPObjectIdentifiers {
-    private static final OCSPObjectIdentifiersBCFips INSTANCE = new OCSPObjectIdentifiersBCFips();
+    private static final OCSPObjectIdentifiersBCFips INSTANCE = new OCSPObjectIdentifiersBCFips(null);
 
     private static final IASN1ObjectIdentifier ID_PKIX_OCSP_BASIC =
             new ASN1ObjectIdentifierBCFips(OCSPObjectIdentifiers.id_pkix_ocsp_basic);
@@ -19,12 +20,18 @@ public class OCSPObjectIdentifiersBCFips implements IOCSPObjectIdentifiers {
     private static final IASN1ObjectIdentifier ID_PKIX_OCSP_NOCHECK =
             new ASN1ObjectIdentifierBCFips(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck);
 
-    private OCSPObjectIdentifiersBCFips() {
-        // Do nothing.
+    private final OCSPObjectIdentifiers ocspObjectIdentifiers;
+
+    public OCSPObjectIdentifiersBCFips(OCSPObjectIdentifiers ocspObjectIdentifiers) {
+        this.ocspObjectIdentifiers = ocspObjectIdentifiers;
     }
 
     public static OCSPObjectIdentifiersBCFips getInstance() {
         return INSTANCE;
+    }
+
+    public OCSPObjectIdentifiers getOcspObjectIdentifiers() {
+        return ocspObjectIdentifiers;
     }
 
     @Override
@@ -40,5 +47,27 @@ public class OCSPObjectIdentifiersBCFips implements IOCSPObjectIdentifiers {
     @Override
     public IASN1ObjectIdentifier getIdPkixOcspNoCheck() {
         return ID_PKIX_OCSP_NOCHECK;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OCSPObjectIdentifiersBCFips that = (OCSPObjectIdentifiersBCFips) o;
+        return Objects.equals(ocspObjectIdentifiers, that.ocspObjectIdentifiers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ocspObjectIdentifiers);
+    }
+
+    @Override
+    public String toString() {
+        return ocspObjectIdentifiers.toString();
     }
 }

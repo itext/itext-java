@@ -10,4 +10,12 @@ public class DERNullBCFips extends ASN1PrimitiveBCFips implements IDERNull {
     private DERNullBCFips() {
         super(DERNull.INSTANCE);
     }
+
+    public DERNullBCFips(DERNull derNull) {
+        super(derNull);
+    }
+
+    public DERNull getDERNull() {
+        return (DERNull) getPrimitive();
+    }
 }

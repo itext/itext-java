@@ -254,11 +254,11 @@ public interface IBouncyCastleFactory {
     IGeneralName createGeneralName();
 
     IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
-                                                     IASN1OctetString octetString);
+            IASN1OctetString octetString);
 
     ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
-                                               IOtherHashAlgAndValue algAndValue,
-                                               ISigPolicyQualifiers policyQualifiers);
+            IOtherHashAlgAndValue algAndValue,
+            ISigPolicyQualifiers policyQualifiers);
 
     ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId);
 
@@ -287,4 +287,3 @@ public interface IBouncyCastleFactory {
 
     ITimeStampResponse createTimeStampResponse(byte[] respBytes) throws AbstractTSPException, IOException;
 }
-

@@ -2,18 +2,24 @@ package com.itextpdf.bouncycastlefips.asn1;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encoding;
 
+import java.util.Objects;
 import org.bouncycastle.asn1.ASN1Encoding;
 
 public class ASN1EncodingBCFips implements IASN1Encoding {
+    private static final ASN1EncodingBCFips INSTANCE = new ASN1EncodingBCFips(null);
 
-    private static final ASN1EncodingBCFips INSTANCE = new ASN1EncodingBCFips();
+    private final ASN1Encoding asn1Encoding;
 
-    private ASN1EncodingBCFips() {
-        // empty constructor.
+    public ASN1EncodingBCFips(ASN1Encoding asn1Encoding) {
+        this.asn1Encoding = asn1Encoding;
     }
 
     public static ASN1EncodingBCFips getInstance() {
         return INSTANCE;
+    }
+
+    public ASN1Encoding getAsn1Encoding() {
+        return asn1Encoding;
     }
 
     @Override
@@ -29,5 +35,27 @@ public class ASN1EncodingBCFips implements IASN1Encoding {
     @Override
     public String getBer() {
         return ASN1Encoding.BER;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ASN1EncodingBCFips that = (ASN1EncodingBCFips) o;
+        return Objects.equals(asn1Encoding, that.asn1Encoding);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(asn1Encoding);
+    }
+
+    @Override
+    public String toString() {
+        return asn1Encoding.toString();
     }
 }

@@ -18,9 +18,9 @@ public class EnvelopedDataBC extends ASN1EncodableBC implements IEnvelopedData {
             IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
         super(new EnvelopedData(
                 ((OriginatorInfoBC) originatorInfo).getOriginatorInfo(),
-                ((ASN1SetBC) set).getSet(),
+                ((ASN1SetBC) set).getASN1Set(),
                 ((EncryptedContentInfoBC) encryptedContentInfo).getEncryptedContentInfo(),
-                ((ASN1SetBC) set1).getSet()));
+                ((ASN1SetBC) set1).getASN1Set()));
     }
 
     public EnvelopedData getEnvelopedData() {

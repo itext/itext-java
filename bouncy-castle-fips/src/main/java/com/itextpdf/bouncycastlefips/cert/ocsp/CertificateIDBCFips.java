@@ -13,6 +13,7 @@ import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 
 import java.math.BigInteger;
+import java.util.Objects;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.OCSPException;
 
@@ -27,10 +28,6 @@ public class CertificateIDBCFips implements ICertificateID {
         this.certificateID = certificateID;
     }
 
-    public static CertificateIDBCFips getInstance() {
-        return INSTANCE;
-    }
-
     public CertificateIDBCFips(IDigestCalculator digestCalculator, IX509CertificateHolder certificateHolder,
             BigInteger bigInteger) throws OCSPExceptionBCFips {
         try {
@@ -41,6 +38,10 @@ public class CertificateIDBCFips implements ICertificateID {
         } catch (OCSPException e) {
             throw new OCSPExceptionBCFips(e);
         }
+    }
+
+    public static CertificateIDBCFips getInstance() {
+        return INSTANCE;
     }
 
     public CertificateID getCertificateID() {
@@ -72,5 +73,27 @@ public class CertificateIDBCFips implements ICertificateID {
     @Override
     public BigInteger getSerialNumber() {
         return certificateID.getSerialNumber();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CertificateIDBCFips that = (CertificateIDBCFips) o;
+        return Objects.equals(certificateID, that.certificateID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(certificateID);
+    }
+
+    @Override
+    public String toString() {
+        return certificateID.toString();
     }
 }

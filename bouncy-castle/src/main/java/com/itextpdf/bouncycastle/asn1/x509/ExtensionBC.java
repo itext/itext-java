@@ -6,6 +6,7 @@ import com.itextpdf.bouncycastle.asn1.ASN1OctetStringBC;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
+
 import org.bouncycastle.asn1.x509.Extension;
 
 public class ExtensionBC extends ASN1EncodableBC implements IExtension {
@@ -17,16 +18,16 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
 
     private static final ASN1ObjectIdentifierBC AUTHORITY_INFO_ACCESS =
             new ASN1ObjectIdentifierBC(Extension.authorityInfoAccess);
-    
+
     public ExtensionBC(Extension extension) {
         super(extension);
     }
-    
+
     public ExtensionBC(IASN1ObjectIdentifier objectIdentifier, boolean critical, IASN1OctetString octetString) {
         super(new Extension(
-                ((ASN1ObjectIdentifierBC) objectIdentifier).getObjectIdentifier(),
+                ((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(),
                 critical,
-                ((ASN1OctetStringBC) octetString).getOctetString()));
+                ((ASN1OctetStringBC) octetString).getASN1OctetString()));
     }
 
     public static ExtensionBC getInstance() {
@@ -40,7 +41,7 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
     public IASN1ObjectIdentifier getAuthorityInfoAccess() {
         return AUTHORITY_INFO_ACCESS;
     }
-    
+
     public Extension getExtension() {
         return (Extension) getEncodable();
     }

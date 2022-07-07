@@ -16,7 +16,7 @@ public class ResponseBytesBCFips extends ASN1EncodableBCFips implements IRespons
 
     public ResponseBytesBCFips(IASN1ObjectIdentifier asn1ObjectIdentifier, IDEROctetString derOctetString) {
         super(new ResponseBytes(
-                ((ASN1ObjectIdentifierBCFips) asn1ObjectIdentifier).getObjectIdentifier(),
+                ((ASN1ObjectIdentifierBCFips) asn1ObjectIdentifier).getASN1ObjectIdentifier(),
                 ((DEROctetStringBCFips) derOctetString).getDEROctetString()));
     }
 

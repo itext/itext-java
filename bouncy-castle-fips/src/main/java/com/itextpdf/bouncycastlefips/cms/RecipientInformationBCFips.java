@@ -4,6 +4,7 @@ import com.itextpdf.commons.bouncycastle.cms.IRecipient;
 import com.itextpdf.commons.bouncycastle.cms.IRecipientId;
 import com.itextpdf.commons.bouncycastle.cms.IRecipientInformation;
 
+import java.util.Objects;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.RecipientInformation;
 
@@ -30,5 +31,27 @@ public class RecipientInformationBCFips implements IRecipientInformation {
     @Override
     public IRecipientId getRID() {
         return new RecipientIdBCFips(recipientInformation.getRID());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RecipientInformationBCFips that = (RecipientInformationBCFips) o;
+        return Objects.equals(recipientInformation, that.recipientInformation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(recipientInformation);
+    }
+
+    @Override
+    public String toString() {
+        return recipientInformation.toString();
     }
 }

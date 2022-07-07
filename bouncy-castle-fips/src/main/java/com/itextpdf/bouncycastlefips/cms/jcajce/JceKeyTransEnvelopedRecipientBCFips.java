@@ -3,6 +3,7 @@ package com.itextpdf.bouncycastlefips.cms.jcajce;
 import com.itextpdf.bouncycastlefips.cms.RecipientBCFips;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 
+import java.util.Objects;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 
 public class JceKeyTransEnvelopedRecipientBCFips extends RecipientBCFips implements IJceKeyTransEnvelopedRecipient {

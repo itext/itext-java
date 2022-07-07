@@ -14,7 +14,7 @@ public class ContentInfoBCFips extends ASN1EncodableBCFips implements IContentIn
     }
 
     public ContentInfoBCFips(IASN1ObjectIdentifier objectIdentifier, IASN1Encodable encodable) {
-        super(new ContentInfo(((ASN1ObjectIdentifierBCFips) objectIdentifier).getObjectIdentifier(),
+        super(new ContentInfo(((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier(),
                 ((ASN1EncodableBCFips) encodable).getEncodable()));
     }
 

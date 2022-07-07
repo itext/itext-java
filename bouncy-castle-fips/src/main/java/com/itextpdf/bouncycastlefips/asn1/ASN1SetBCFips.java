@@ -16,22 +16,22 @@ public class ASN1SetBCFips extends ASN1PrimitiveBCFips implements IASN1Set {
         super(ASN1Set.getInstance(taggedObject, b));
     }
 
-    public ASN1Set getSet() {
+    public ASN1Set getASN1Set() {
         return (ASN1Set) getPrimitive();
     }
 
     @Override
     public Enumeration getObjects() {
-        return getSet().getObjects();
+        return getASN1Set().getObjects();
     }
 
     @Override
     public int size() {
-        return getSet().size();
+        return getASN1Set().size();
     }
 
     @Override
     public IASN1Encodable getObjectAt(int index) {
-        return new ASN1EncodableBCFips(getSet().getObjectAt(index));
+        return new ASN1EncodableBCFips(getASN1Set().getObjectAt(index));
     }
 }

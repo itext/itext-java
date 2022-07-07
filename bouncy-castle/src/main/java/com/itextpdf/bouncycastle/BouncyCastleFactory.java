@@ -327,7 +327,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IASN1Set createASN1Set(IASN1TaggedObject taggedObject, boolean b) {
         ASN1TaggedObjectBC taggedObjectBC = (ASN1TaggedObjectBC) taggedObject;
-        return new ASN1SetBC(taggedObjectBC.getTaggedObject(), b);
+        return new ASN1SetBC(taggedObjectBC.getASN1TaggedObject(), b);
     }
 
     @Override
@@ -419,7 +419,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IAttributeTable createAttributeTable(IASN1Set unat) {
         ASN1SetBC asn1SetBC = (ASN1SetBC) unat;
-        return new AttributeTableBC(asn1SetBC.getSet());
+        return new AttributeTableBC(asn1SetBC.getASN1Set());
     }
 
     @Override
@@ -431,13 +431,13 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IAttribute createAttribute(IASN1ObjectIdentifier attrType, IASN1Set attrValues) {
         ASN1ObjectIdentifierBC attrTypeBc = (ASN1ObjectIdentifierBC) attrType;
         ASN1SetBC attrValuesBc = (ASN1SetBC) attrValues;
-        return new AttributeBC(new Attribute(attrTypeBc.getObjectIdentifier(), attrValuesBc.getSet()));
+        return new AttributeBC(new Attribute(attrTypeBc.getASN1ObjectIdentifier(), attrValuesBc.getASN1Set()));
     }
 
     @Override
     public IContentInfo createContentInfo(IASN1Sequence sequence) {
         ASN1SequenceBC sequenceBC = (ASN1SequenceBC) sequence;
-        return new ContentInfoBC(ContentInfo.getInstance(sequenceBC.getSequence()));
+        return new ContentInfoBC(ContentInfo.getInstance(sequenceBC.getASN1Sequence()));
     }
 
     @Override
@@ -495,7 +495,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm) {
         ASN1ObjectIdentifierBC algorithmBc = (ASN1ObjectIdentifierBC) algorithm;
-        return new AlgorithmIdentifierBC(new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), null));
+        return new AlgorithmIdentifierBC(new AlgorithmIdentifier(algorithmBc.getASN1ObjectIdentifier(), null));
     }
 
     @Override
@@ -503,7 +503,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         ASN1ObjectIdentifierBC algorithmBc = (ASN1ObjectIdentifierBC) algorithm;
         ASN1EncodableBC encodableBc = (ASN1EncodableBC) encodable;
         return new AlgorithmIdentifierBC(
-                new AlgorithmIdentifier(algorithmBc.getObjectIdentifier(), encodableBc.getEncodable()));
+                new AlgorithmIdentifier(algorithmBc.getASN1ObjectIdentifier(), encodableBc.getEncodable()));
     }
 
     @Override
@@ -584,14 +584,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBC) {
         SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[qualifierInfosBC.length];
         for (int i = 0; i < qualifierInfos.length; ++i) {
-            qualifierInfos[i] = ((SigPolicyQualifierInfoBC) qualifierInfosBC[i]).getQualifierInfo();
+            qualifierInfos[i] = ((SigPolicyQualifierInfoBC) qualifierInfosBC[i]).getSigPolicyQualifierInfo();
         }
         return new SigPolicyQualifiersBC(qualifierInfos);
     }
 
     @Override
     public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
-                                                                IDERIA5String string) {
+            IDERIA5String string) {
         return new SigPolicyQualifierInfoBC(objectIdentifier, string);
     }
 
@@ -670,7 +670,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
-        return new DERIA5StringBC(DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getTaggedObject(), b));
+        return new DERIA5StringBC(
+                DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getASN1TaggedObject(), b));
     }
 
     @Override
