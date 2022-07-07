@@ -6,41 +6,30 @@
     <artifactId>root</artifactId>
     <version>8.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>bouncy-castle-connector</artifactId>
-  <name>iText 7 - Bouncy Castle Connector</name>
+  <artifactId>bouncy-castle-fips-adapter</artifactId>
+  <name>iText 7 - Bouncy Castle FIPS Adapter</name>
   <url>https://itextpdf.com/</url>
+
+  <properties>
+    <bouncycastleFips.version>1.0.2.3</bouncycastleFips.version>
+    <bouncycastlePkixFips.version>1.0.6</bouncycastlePkixFips.version>
+  </properties>
+
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>bouncy-castle-adapter</artifactId>
-      <version>${project.version}</version>
-      <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcpkix-jdk15on</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcprov-jdk15on</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-fips</artifactId>
+      <version>${bouncycastlePkixFips.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bc-fips</artifactId>
+      <version>${bouncycastleFips.version}</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>bouncy-castle-fips-adapter</artifactId>
+      <artifactId>commons</artifactId>
       <version>${project.version}</version>
-      <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcpkix-fips</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bc-fips</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
   <build>

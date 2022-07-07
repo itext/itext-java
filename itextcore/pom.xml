@@ -133,5 +133,10 @@
       <artifactId>svg</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>bouncy-castle-connector</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

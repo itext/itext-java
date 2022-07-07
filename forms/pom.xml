@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>bouncy-castle</artifactId>
+      <artifactId>bouncy-castle-adapter</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <optional>true</optional>
