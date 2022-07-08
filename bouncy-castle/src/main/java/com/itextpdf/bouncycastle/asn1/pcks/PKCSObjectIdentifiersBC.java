@@ -11,7 +11,7 @@ public class PKCSObjectIdentifiersBC implements IPKCSObjectIdentifiers {
     private static final PKCSObjectIdentifiersBC INSTANCE = new PKCSObjectIdentifiersBC(null);
 
     private static final ASN1ObjectIdentifierBC ID_AA_ETS_SIG_POLICY_ID = new ASN1ObjectIdentifierBC(
-            PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
+            PKCSObjectIdentifiers.id_aa_ets_sigPolicyId);
 
     private static final ASN1ObjectIdentifierBC ID_AA_SIGNATURE_TIME_STAMP_TOKEN = new ASN1ObjectIdentifierBC(
             PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);

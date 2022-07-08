@@ -60,6 +60,6 @@ public class CertificateUtilTest extends ExtendedITextTest {
         X509Certificate tsaCert = (X509Certificate)
                 Pkcs12FileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCertWithoutTag.p12", PASSWORD)[0];
 
-        Assert.assertThrows(ClassCastException.class, () -> CertificateUtil.getTSAURL(tsaCert));
+        Assert.assertThrows(NullPointerException.class, () -> CertificateUtil.getTSAURL(tsaCert));
     }
 }

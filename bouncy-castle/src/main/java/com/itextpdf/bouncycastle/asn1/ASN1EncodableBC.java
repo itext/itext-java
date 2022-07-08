@@ -23,6 +23,11 @@ public class ASN1EncodableBC implements IASN1Encodable {
     }
 
     @Override
+    public boolean isNull() {
+        return encodable == null;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

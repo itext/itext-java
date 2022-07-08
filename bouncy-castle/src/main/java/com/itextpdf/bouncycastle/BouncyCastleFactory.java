@@ -211,7 +211,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifierInstance(Object object) {
-        return new ASN1ObjectIdentifierBC(ASN1ObjectIdentifier.getInstance(object));
+        return new ASN1ObjectIdentifierBC(ASN1ObjectIdentifier.getInstance(object instanceof ASN1EncodableBC ?
+                ((ASN1EncodableBC) object).getEncodable() : object));
     }
 
     @Override
@@ -266,7 +267,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1Sequence createASN1SequenceInstance(Object object) {
-        return new ASN1SequenceBC(object);
+        return new ASN1SequenceBC(object instanceof ASN1EncodableBC ?
+                ((ASN1EncodableBC) object).getEncodable() : object);
     }
 
     @Override
@@ -320,8 +322,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1Set createASN1Set(Object encodable) {
-        return encodable instanceof ASN1EncodableBC ?
-                createASN1Set((ASN1EncodableBC) encodable) : null;
+        return encodable instanceof ASN1Set ? new ASN1SetBC((ASN1Set) encodable) : null;
     }
 
     @Override
@@ -458,13 +459,13 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public ISigningCertificate createSigningCertificate(IASN1Sequence sequence) {
         ASN1SequenceBC sequenceBC = (ASN1SequenceBC) sequence;
-        return new SigningCertificateBC(SigningCertificate.getInstance(sequenceBC));
+        return new SigningCertificateBC(SigningCertificate.getInstance(sequenceBC.getASN1Sequence()));
     }
 
     @Override
     public ISigningCertificateV2 createSigningCertificateV2(IASN1Sequence sequence) {
         ASN1SequenceBC sequenceBC = (ASN1SequenceBC) sequence;
-        return new SigningCertificateV2BC(SigningCertificateV2.getInstance(sequenceBC));
+        return new SigningCertificateV2BC(SigningCertificateV2.getInstance(sequenceBC.getASN1Sequence()));
     }
 
     @Override
@@ -681,7 +682,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public ICRLDistPoint createCRLDistPoint(Object object) {
-        return new CRLDistPointBC(CRLDistPoint.getInstance(object));
+        return new CRLDistPointBC(CRLDistPoint.getInstance(object instanceof ASN1EncodableBC ?
+                ((ASN1EncodableBC) object).getEncodable() : object));
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.itextpdf.commons.bouncycastle.asn1.cmp.IPKIFailureInfo;
 
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 
-public class PKIFailureInfoBCFips extends ASN1PrimitiveBCFips implements IPKIFailureInfo  {
+public class PKIFailureInfoBCFips extends ASN1PrimitiveBCFips implements IPKIFailureInfo {
 
     public PKIFailureInfoBCFips(PKIFailureInfo pkiFailureInfo) {
         super(pkiFailureInfo);

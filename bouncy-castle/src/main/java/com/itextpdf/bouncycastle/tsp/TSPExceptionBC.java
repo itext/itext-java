@@ -37,4 +37,9 @@ public class TSPExceptionBC extends AbstractTSPException {
     public String toString() {
         return tspException.toString();
     }
+
+    @Override
+    public String getMessage() {
+        return tspException.getMessage();
+    }
 }

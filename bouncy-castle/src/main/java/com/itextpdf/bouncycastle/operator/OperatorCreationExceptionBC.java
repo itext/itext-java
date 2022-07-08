@@ -37,4 +37,9 @@ public class OperatorCreationExceptionBC extends AbstractOperatorCreationExcepti
     public String toString() {
         return exception.toString();
     }
+
+    @Override
+    public String getMessage() {
+        return exception.getMessage();
+    }
 }

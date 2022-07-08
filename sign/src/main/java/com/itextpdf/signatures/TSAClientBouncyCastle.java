@@ -242,7 +242,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         // validate communication level attributes (RFC 3161 PKIStatus)
         response.validate(request);
         IPKIFailureInfo failure = response.getFailInfo();
-        int value = (failure == null) ? 0 : failure.intValue();
+        int value = failure.isNull() ? 0 : failure.intValue();
         if (value != 0) {
             // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
             throw new PdfException(SignExceptionMessageConstant.INVALID_TSA_RESPONSE)

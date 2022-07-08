@@ -212,7 +212,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifierInstance(Object object) {
-        return new ASN1ObjectIdentifierBCFips(ASN1ObjectIdentifier.getInstance(object));
+        return new ASN1ObjectIdentifierBCFips(ASN1ObjectIdentifier.getInstance(object instanceof ASN1EncodableBCFips ?
+                ((ASN1EncodableBCFips) object).getEncodable() : object));
     }
 
     @Override
@@ -267,7 +268,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1Sequence createASN1SequenceInstance(Object object) {
-        return new ASN1SequenceBCFips(object);
+        return new ASN1SequenceBCFips(object instanceof ASN1EncodableBCFips ?
+                ((ASN1EncodableBCFips) object).getEncodable() : object);
     }
 
     @Override
@@ -321,8 +323,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IASN1Set createASN1Set(Object encodable) {
-        return encodable instanceof ASN1EncodableBCFips ?
-                createASN1Set((ASN1EncodableBCFips) encodable) : null;
+        return encodable instanceof ASN1Set ? new ASN1SetBCFips((ASN1Set) encodable) : null;
     }
 
     @Override
@@ -465,13 +466,13 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public ISigningCertificate createSigningCertificate(IASN1Sequence sequence) {
         ASN1SequenceBCFips sequenceBCFips = (ASN1SequenceBCFips) sequence;
-        return new SigningCertificateBCFips(SigningCertificate.getInstance(sequenceBCFips));
+        return new SigningCertificateBCFips(SigningCertificate.getInstance(sequenceBCFips.getASN1Sequence()));
     }
 
     @Override
     public ISigningCertificateV2 createSigningCertificateV2(IASN1Sequence sequence) {
         ASN1SequenceBCFips sequenceBCFips = (ASN1SequenceBCFips) sequence;
-        return new SigningCertificateV2BCFips(SigningCertificateV2.getInstance(sequenceBCFips));
+        return new SigningCertificateV2BCFips(SigningCertificateV2.getInstance(sequenceBCFips.getASN1Sequence()));
     }
 
     @Override
@@ -689,7 +690,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public ICRLDistPoint createCRLDistPoint(Object object) {
-        return new CRLDistPointBCFips(CRLDistPoint.getInstance(object));
+        return new CRLDistPointBCFips(CRLDistPoint.getInstance(object instanceof ASN1EncodableBCFips ?
+                ((ASN1EncodableBCFips) object).getEncodable() : object));
     }
 
     @Override
