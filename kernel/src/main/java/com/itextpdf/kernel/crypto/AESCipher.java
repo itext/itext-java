@@ -68,9 +68,19 @@ import org.slf4j.LoggerFactory;
  */
 public class AESCipher {
 
+    private static final String CIPHER_WITH_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
+
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private final Cipher cipher;
+    private static Cipher cipher;
+    
+    static {
+        try {
+            cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING, BOUNCY_CASTLE_FACTORY.createProvider());
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
+        }
+    }
 
     /**
      * Creates a new instance of AESCipher
@@ -82,11 +92,10 @@ public class AESCipher {
      */
     public AESCipher(boolean forEncryption, byte[] key, byte[] iv) {
         try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", BOUNCY_CASTLE_FACTORY.createProvider());
             cipher.init(forEncryption ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
                     new SecretKeySpec(key, "AES"),
                     new IvParameterSpec(iv));
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
             throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }
     }

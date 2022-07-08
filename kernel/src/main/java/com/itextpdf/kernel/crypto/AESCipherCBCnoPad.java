@@ -62,10 +62,20 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Paulo Soares
  */
 public class AESCipherCBCnoPad {
+    
+    private static final String CIPHER_WITHOUT_PADDING = "AES/CBC/NoPadding";
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private final Cipher cipher;
+    private static Cipher cipher;
+    
+    static {
+        try {
+            cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING, BOUNCY_CASTLE_FACTORY.createProvider());
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
+        }
+    }
 
     /**
      * Creates a new instance of AESCipher with CBC and no padding
@@ -88,11 +98,10 @@ public class AESCipherCBCnoPad {
      */
     public AESCipherCBCnoPad(boolean forEncryption, byte[] key, byte[] initVector) {
         try {
-            cipher = Cipher.getInstance("AES/CBC/NoPadding", BOUNCY_CASTLE_FACTORY.createProvider());
             cipher.init(forEncryption ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE,
                     new SecretKeySpec(key, "AES"),
                     new IvParameterSpec(initVector));
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
             throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }
     }

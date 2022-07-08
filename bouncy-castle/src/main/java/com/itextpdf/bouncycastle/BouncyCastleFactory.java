@@ -738,8 +738,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public ITBSCertificate createTBSCertificate(Object object) {
-        return new TBSCertificateBC(TBSCertificate.getInstance(object));
+    public ITBSCertificate createTBSCertificate(IASN1Encodable encodable) {
+        return new TBSCertificateBC(TBSCertificate.getInstance(((ASN1EncodableBC) encodable).getEncodable()));
     }
 
     @Override

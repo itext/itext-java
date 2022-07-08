@@ -270,7 +270,7 @@ public interface IBouncyCastleFactory {
     IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
             IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString);
 
-    ITBSCertificate createTBSCertificate(Object object);
+    ITBSCertificate createTBSCertificate(IASN1Encodable encodable);
 
     IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value);
 
