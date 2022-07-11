@@ -23,6 +23,17 @@
 
 package com.itextpdf.layout.properties;
 
+/**
+ * The possible values for the overflow wrap property.
+ *
+ * <p>
+ * {@link OverflowWrapPropertyValue#ANYWHERE} and {@link OverflowWrapPropertyValue#BREAK_WORD}
+ * mean that long words will break if they overflow the container.
+ *
+ * <p>
+ * {@link OverflowWrapPropertyValue#NORMAL} means that long words will not break,
+ * even if they overflow the container.
+ */
 public enum OverflowWrapPropertyValue {
     ANYWHERE,
     BREAK_WORD,

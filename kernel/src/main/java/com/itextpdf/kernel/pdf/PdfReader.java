@@ -407,11 +407,17 @@ public class PdfReader implements Closeable {
                 PdfObject filter = stream.get(PdfName.Filter, true);
                 boolean skip = false;
                 if (filter != null) {
+                    if (filter.isFlushed()) {
+                        IndirectFilterUtils.throwFlushedFilterException(stream);
+                    }
                     if (PdfName.Crypt.equals(filter)) {
                         skip = true;
                     } else if (filter.getType() == PdfObject.ARRAY) {
                         PdfArray filters = (PdfArray) filter;
                         for (int k = 0; k < filters.size(); k++) {
+                            if (filters.get(k).isFlushed()) {
+                                IndirectFilterUtils.throwFlushedFilterException(stream);
+                            }
                             if (!filters.isEmpty() && PdfName.Crypt.equals(filters.get(k, true))) {
                                 skip = true;
                                 break;
@@ -886,11 +892,15 @@ public class PdfReader implements Closeable {
                     do {
                         ch = tokens.read();
                     } while (ch == 32 || ch == 9 || ch == 0 || ch == 12);
-                    if (ch != '\n')
+                    if (ch != '\n') {
                         ch = tokens.read();
-                    if (ch != '\n')
+                    }
+                    if (ch != '\n') {
                         tokens.backOnePosition(ch);
-                    return new PdfStream(tokens.getPosition(), dict);
+                    }
+                    PdfStream pdfStream = new PdfStream(tokens.getPosition(), dict);
+                    tokens.seek(pdfStream.getOffset() + pdfStream.getLength());
+                    return pdfStream;
                 } else {
                     tokens.seek(pos);
                     return dict;
@@ -947,11 +957,13 @@ public class PdfReader implements Closeable {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             tokens.nextValidToken();
-            if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
+            if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic) {
                 break;
-            if (tokens.getTokenType() != PdfTokenizer.TokenType.Name)
+            }
+            if (tokens.getTokenType() != PdfTokenizer.TokenType.Name) {
                 tokens.throwError(
                         KernelExceptionMessageConstant.THIS_DICTIONARY_KEY_IS_NOT_A_NAME, tokens.getStringValue());
+            }
             PdfName name = readPdfName(true);
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
@@ -1296,7 +1308,8 @@ public class PdfReader implements Closeable {
         tokens.seek(0);
         trailer = null;
         ByteBuffer buffer = new ByteBuffer(24);
-        PdfTokenizer lineTokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
+        PdfTokenizer lineTokenizer =
+                new PdfTokenizer(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
@@ -1320,7 +1333,7 @@ public class PdfReader implements Closeable {
                     tokens.seek(pos);
                 }
             } else if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
-                int[] obj = PdfTokenizer.checkObjectStart(lineTokeniser);
+                int[] obj = PdfTokenizer.checkObjectStart(lineTokenizer);
                 if (obj == null)
                     continue;
                 int num = obj[0];
@@ -1330,8 +1343,9 @@ public class PdfReader implements Closeable {
                 }
             }
         }
-        if (trailer == null)
+        if (trailer == null) {
             throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
+        }
     }
 
     protected PdfNumber getXrefPrev(PdfObject prevObjectToCheck) {

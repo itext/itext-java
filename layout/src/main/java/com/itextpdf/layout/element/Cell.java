@@ -228,6 +228,15 @@ public class Cell extends BlockElement<Cell> {
         return new CellRenderer(this);
     }
 
+    /**
+     * Updates cell indexes.
+     *
+     * @param row the number of the row to update
+     * @param col the number of the col to update
+     * @param numberOfColumns to evaluate new colspan
+     *
+     * @return this {@link Cell} with updated fields
+     */
     protected Cell updateCellIndexes(int row, int col, int numberOfColumns) {
         this.row = row;
         this.col = col;

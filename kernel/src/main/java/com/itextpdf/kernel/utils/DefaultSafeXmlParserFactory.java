@@ -114,7 +114,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     @Override
     public DocumentBuilder createDocumentBuilderInstance(boolean namespaceAware, boolean ignoringComments) {
-        DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
+        DocumentBuilderFactory factory = createDocumentBuilderFactory();
         configureSafeDocumentBuilderFactory(factory);
         factory.setNamespaceAware(namespaceAware);
         factory.setIgnoringComments(ignoringComments);
@@ -130,7 +130,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     @Override
     public XMLReader createXMLReaderInstance(boolean namespaceAware, boolean validating) {
-        SAXParserFactory factory = XmlUtil.createSAXParserFactory();
+        SAXParserFactory factory = createSAXParserFactory();
         factory.setNamespaceAware(namespaceAware);
         factory.setValidating(validating);
         configureSafeSAXParserFactory(factory);
@@ -145,7 +145,30 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         return xmlReader;
     }
 
-    private void configureSafeDocumentBuilderFactory(DocumentBuilderFactory factory) {
+    /**
+     * Creates a document builder factory implementation.
+     * 
+     * @return result of {@link DocumentBuilderFactory#newInstance()} call
+     */
+    protected DocumentBuilderFactory createDocumentBuilderFactory() {
+        return XmlUtil.getDocumentBuilderFactory();
+    }
+
+    /**
+     * Creates a SAX parser factory implementation.
+     * 
+     * @return result of {@link SAXParserFactory#newInstance()} call
+     */
+    protected SAXParserFactory createSAXParserFactory() {
+        return XmlUtil.createSAXParserFactory();
+    }
+
+    /**
+     * Configures document builder factory to make it secure against xml attacks.
+     * 
+     * @param factory {@link DocumentBuilderFactory} instance to be configured
+     */
+    protected void configureSafeDocumentBuilderFactory(DocumentBuilderFactory factory) {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
@@ -155,7 +178,12 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         factory.setExpandEntityReferences(false);
     }
 
-    private void configureSafeSAXParserFactory(SAXParserFactory factory) {
+    /**
+     * Configures SAX parser factory to make it secure against xml attacks.
+     *
+     * @param factory {@link SAXParserFactory} instance to be configured
+     */
+    protected void configureSafeSAXParserFactory(SAXParserFactory factory) {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);

@@ -166,7 +166,7 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void parseAboluteLengthExponential01() {
+    public void parseAbsoluteLengthExponentialPtTest() {
         String value = "1e2pt";
         float actual = CssDimensionParsingUtils.parseAbsoluteLength(value);
         float expected = 1e2f;
@@ -175,12 +175,21 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void parseAboluteLengthExponential02() {
+    public void parseAbsoluteLengthExponentialPxTest() {
         String value = "1e2px";
         float actual = CssDimensionParsingUtils.parseAbsoluteLength(value);
         float expected = 1e2f * 0.75f;
 
         Assert.assertEquals(expected, actual, 0);
+    }
+
+    @Test
+    public void parseAbsoluteLengthExponentialCapitalTest() {
+        String value = "1E-4";
+        float actual = CssDimensionParsingUtils.parseAbsoluteLength(value);
+        float expected = 1e-4f * 0.75f;
+
+        Assert.assertEquals(expected, actual, 1e-9);
     }
 
     @Test

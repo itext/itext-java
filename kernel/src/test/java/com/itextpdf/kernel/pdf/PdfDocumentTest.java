@@ -45,6 +45,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.DeflaterOutputStream;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -57,6 +58,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -593,6 +595,24 @@ public class PdfDocumentTest extends ExtendedITextTest {
         }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_" + testName,
                 DESTINATION_FOLDER));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+    public void rootCannotBeReferenceFromTrailerTest() throws IOException {
+        String filename = SOURCE_FOLDER + "rootCannotBeReferenceFromTrailerTest.pdf";
+        PdfReader corruptedReader = new PdfReader(filename);
+        Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(corruptedReader));
+        Assert.assertEquals(KernelExceptionMessageConstant.CORRUPTED_ROOT_ENTRY_IN_TRAILER, e.getMessage());
+    }
+
+    @Test
+    public void setSerializeOptionsTest() {
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        SerializeOptions options = new SerializeOptions().setUseCanonicalFormat(true);
+        document.setSerializeOptions(options);
+        Assert.assertEquals(options, document.getSerializeOptions());
     }
 
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {

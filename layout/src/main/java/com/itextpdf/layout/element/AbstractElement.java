@@ -190,5 +190,10 @@ public abstract class AbstractElement<T extends IElement>
         return (T) (Object) this;
     }
 
+    /**
+     * Creates new renderer instance.
+     *
+     * @return new {@link IRenderer}
+     */
     protected abstract IRenderer makeNewRenderer();
 }

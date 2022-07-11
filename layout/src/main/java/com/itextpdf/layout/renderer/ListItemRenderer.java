@@ -250,6 +250,7 @@ public class ListItemRenderer extends DivRenderer {
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
         splitRenderer.occupiedArea = occupiedArea;
+        splitRenderer.symbolAddedInside = symbolAddedInside;
         splitRenderer.isLastRendererForModelElement = false;
         if (layoutResult == LayoutResult.PARTIAL) {
             splitRenderer.symbolRenderer = symbolRenderer;

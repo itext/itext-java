@@ -44,6 +44,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
@@ -68,6 +69,7 @@ import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -572,6 +574,12 @@ public class ParagraphRenderer extends BlockRenderer {
      */
     @Override
     public void move(float dxRight, float dyUp) {
+        Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
+        if (occupiedArea == null) {
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    "Moving won't be performed."));
+            return;
+        }
         occupiedArea.getBBox().moveRight(dxRight);
         occupiedArea.getBBox().moveUp(dyUp);
         if (null != lines) {

@@ -466,6 +466,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                     PdfAConformanceLevel.PDF_A_1B).setFieldName("text").setPage(1), pdfDoc.getPage(1));
         }
 
+
         PdfADocument pdfDocToMerge;
         try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
              PdfDocument newDoc = new PdfDocument(new PdfReader(fileName))) {

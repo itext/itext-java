@@ -445,6 +445,15 @@ public abstract class Border {
         NONE, TOP, RIGHT, BOTTOM, LEFT
     }
 
+    /**
+     * Gets a {@link Point} in which two lines intersect.
+     *
+     * @param lineBeg a {@link Point} which defines some point on the first line
+     * @param lineEnd a {@link Point} which defines another point on the first line
+     * @param clipLineBeg a {@link Point} which defines some point on the second line
+     * @param clipLineEnd a {@link Point} which defines another point on the second line
+     * @return the intersection {@link Point}
+     */
     protected Point getIntersectionPoint(Point lineBeg, Point lineEnd, Point clipLineBeg, Point clipLineEnd) {
         double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
         double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();

@@ -209,6 +209,10 @@ public final class FileUtil {
         }
     }
 
+    public static File constructFileByDirectoryAndName(String directory, String fileName) {
+        return new File(directory, fileName);
+    }
+
     /**
      * Creates a temporary file at the provided path.
      *
@@ -233,6 +237,10 @@ public final class FileUtil {
 
     public static InputStream getInputStreamForFile(String path) throws IOException {
         return Files.newInputStream(Paths.get(path));
+    }
+
+    public static OutputStream getFileOutputStream(String path) throws IOException {
+        return Files.newOutputStream(Paths.get(path));
     }
 
     public static RandomAccessFile getRandomAccessFile(File tempFile) throws FileNotFoundException {

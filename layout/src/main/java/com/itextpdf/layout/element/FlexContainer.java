@@ -45,8 +45,14 @@ package com.itextpdf.layout.element;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
+/**
+ * A {@link FlexContainer} represents a container of the flex objects.
+ */
 class FlexContainer extends Div {
 
+    /**
+     * Creates new {@link FlexContainer} instance.
+     */
     public FlexContainer() {
         super();
     }

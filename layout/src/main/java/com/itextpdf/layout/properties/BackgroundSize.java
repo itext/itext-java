@@ -44,6 +44,10 @@ public class BackgroundSize {
      */
     private boolean contain;
 
+    /**
+     * Creates a new {@link BackgroundSize} instance.
+     * The "cover" and "contain" properties are not set.
+     */
     public BackgroundSize() {
         cover = false;
         contain = false;

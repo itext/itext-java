@@ -44,13 +44,13 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
-import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Document;
 
+import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -67,13 +67,13 @@ public class XmlUtilTest extends ExtendedITextTest {
     public void getDocumentBuilderFactoryTest() {
         DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
 
-        Assert.assertEquals(DocumentBuilderFactoryImpl.class, factory.getClass());
+        Assert.assertEquals((new DocumentBuilderFactoryImpl()).getClass(), factory.getClass());
     }
 
     @Test
     public void createSAXParserFactoryTest() {
         SAXParserFactory factory = XmlUtil.createSAXParserFactory();
 
-        Assert.assertEquals(SAXParserFactoryImpl.class, factory.getClass());
+        Assert.assertEquals((new SAXParserFactoryImpl()).getClass(), factory.getClass());
     }
 }

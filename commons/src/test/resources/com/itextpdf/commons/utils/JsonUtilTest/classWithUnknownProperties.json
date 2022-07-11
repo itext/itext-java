@@ -1,0 +1,7 @@
+{
+  "firstUnknown": "some value",
+  "firstString": "some small string",
+  "integer": "8",
+  "secondUnknown": ["1", "2"],
+  "doubleValue": "26.0"
+}

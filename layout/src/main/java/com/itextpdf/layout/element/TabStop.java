@@ -100,30 +100,69 @@ public class TabStop {
         this.tabAnchor = '.';
     }
 
+    /**
+     * Returns the position of a tab stop.
+     *
+     * @return tabPosition, measured in absolute points
+     */
     public float getTabPosition() {
         return tabPosition;
     }
 
+    /**
+     * Returns the alignment of a tab stop, which defines the way the textual content
+     * should be positioned in regard to this tab stop.
+     *
+     * @return a {@link TabAlignment} value
+     */
     public TabAlignment getTabAlignment() {
         return tabAlignment;
     }
 
+    /**
+     * Sets the alignment, which defines the way the textual content
+     * should be positioned in regard to this tab stop.
+     *
+     * @param tabAlignment a {@link TabAlignment} value
+     */
     public void setTabAlignment(TabAlignment tabAlignment) {
         this.tabAlignment = tabAlignment;
     }
 
+    /**
+     * Returns the anchor of a tab stop.
+     *
+     * @return a {@link Character} value
+     */
     public Character getTabAnchor() {
         return tabAnchor;
     }
 
+    /**
+     * Sets the anchor of a tab stop.
+     *
+     * @param tabAnchor a {@link Character} value
+     */
     public void setTabAnchor(Character tabAnchor) {
         this.tabAnchor = tabAnchor;
     }
 
+    /**
+     * Returns the tab leader of a tab stop, which defines a pattern that
+     * should be repeated until the TabStop is reached.
+     *
+     * @return a {@link ILineDrawer} value, a pattern drawing object
+     */
     public ILineDrawer getTabLeader() {
         return tabLeader;
     }
 
+    /**
+     * Sets the tab leader of a tab stop, which defines a pattern that
+     * should be repeated until the TabStop is reached.
+     *
+     * @param tabLeader a {@link ILineDrawer} value
+     */
     public void setTabLeader(ILineDrawer tabLeader) {
         this.tabLeader = tabLeader;
     }

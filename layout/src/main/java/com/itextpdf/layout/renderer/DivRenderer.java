@@ -46,6 +46,9 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutContext;
 
+/**
+ * Represents a renderer for the {@link Div} layout element.
+ */
 public class DivRenderer extends BlockRenderer {
 
     /**

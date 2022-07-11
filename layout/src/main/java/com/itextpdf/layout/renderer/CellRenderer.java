@@ -58,6 +58,9 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.layout.LayoutContext;
 
+/**
+ * Represents a renderer for the {@link Cell} layout element.
+ */
 public class CellRenderer extends BlockRenderer {
     /**
      * Creates a CellRenderer from its corresponding layout object.
@@ -176,6 +179,15 @@ public class CellRenderer extends BlockRenderer {
         return rect;
     }
 
+    /**
+     * Applies spacings on the given rectangle.
+     *
+     * @param rect    a rectangle spacings will be applied on
+     * @param reverse indicates whether spacings will be applied
+     *                inside (in case of false) or outside (in case of true) the rectangle.
+     *
+     * @return a {@link Rectangle border box} of the renderer
+     */
     protected Rectangle applySpacings(Rectangle rect, boolean reverse) {
         if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
             Float verticalBorderSpacing = this.parent.<Float>getProperty(Property.VERTICAL_BORDER_SPACING);
@@ -193,6 +205,16 @@ public class CellRenderer extends BlockRenderer {
         return rect;
     }
 
+    /**
+     * Applies given spacings on the given rectangle.
+     *
+     * @param rect    a rectangle spacings will be applied on
+     * @param spacings the spacings to be applied on the given rectangle
+     * @param reverse indicates whether spacings will be applied
+     *                inside (in case of false) or outside (in case of true) the rectangle.
+     *
+     * @return a {@link Rectangle border box} of the renderer
+     */
     protected Rectangle applySpacings(Rectangle rect, float[] spacings, boolean reverse) {
         if (BorderCollapsePropertyValue.SEPARATE.equals(parent.<BorderCollapsePropertyValue>getProperty(Property.BORDER_COLLAPSE))) {
             rect.applyMargins(spacings[0] / 2, spacings[1] / 2, spacings[2] / 2, spacings[3] / 2, reverse);

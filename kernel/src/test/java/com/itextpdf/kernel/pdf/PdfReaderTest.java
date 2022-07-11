@@ -50,6 +50,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.exceptions.InvalidXRefPrevException;
@@ -2607,38 +2608,23 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
     }
 
-    /**
-     * Returns the current memory use.
-     *
-     * @return the current memory use
-     */
-    private static long getMemoryUse() {
-        garbageCollect();
-        garbageCollect();
-        garbageCollect();
-        garbageCollect();
-        long totalMemory = Runtime.getRuntime().totalMemory();
-        garbageCollect();
-        garbageCollect();
-        long freeMemory = Runtime.getRuntime().freeMemory();
-        return (totalMemory - freeMemory);
-    }
+    @Test
+    public void tokensPositionIsNotUpdatedWhileReadingLengthTest() throws IOException {
+        String filename = SOURCE_FOLDER + "simpleDocWithIndirectLength.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename))) {
+            PdfTokenizer tokenizer = pdfDoc.getReader().tokens;
 
-    /**
-     * Makes sure all garbage is cleared from the memory.
-     */
-    private static void garbageCollect() {
-        try {
-            System.gc();
-            Thread.sleep(200);
-            System.runFinalization();
-            Thread.sleep(200);
-            System.gc();
-            Thread.sleep(200);
-            System.runFinalization();
-            Thread.sleep(200);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+            // we will try to get the content stream object
+            // since it's not been gotten yet, iText will read this object,
+            // which will change the tokenizer's position
+            PdfStream pageContentStream = (PdfStream) pdfDoc.getPdfObject(5);
+
+            // tokenizer's position after reading object should point to the end of the object's stream
+            Assert.assertEquals(pageContentStream.getOffset() + pageContentStream.getLength(), tokenizer.getPosition());
+
+            // let's read next valid token and check that it means ending stream
+            tokenizer.nextValidToken();
+            tokenizer.tokenValueEqualsTo(ByteUtils.getIsoBytes("endstream"));
         }
     }
 

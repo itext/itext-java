@@ -34,5 +34,8 @@ public final class FormsExceptionMessageConstant {
     public static final String WRONG_FORM_FIELD_ADD_ANNOTATION_TO_THE_FIELD = "Wrong form field. Add annotation to the "
             + "field.";
 
+    public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY =
+            "\\N entry is required to be present in an appearance dictionary.";
+
     private FormsExceptionMessageConstant(){}
 }

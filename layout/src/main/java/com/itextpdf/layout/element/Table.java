@@ -525,7 +525,6 @@ public class Table extends BlockElement<Table> implements ILargeElement {
       * @param caption The element to be set as a caption.
       * @return this element
       */
-
     public Table setCaption(Div caption) {
         this.caption = caption;
         if (null != caption) {
@@ -828,16 +827,36 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return horizontalBorder;
     }
 
+    /**
+     * Defines whether the {@link Table} should be extended to occupy all the space left in the available area
+     * in case it is the last element in this area.
+     *
+     * @param isExtended defines whether the {@link Table} should be extended
+     * @return this {@link Table}
+     */
     public Table setExtendBottomRow(boolean isExtended) {
         setProperty(Property.FILL_AVAILABLE_AREA, isExtended);
         return this;
     }
 
+    /**
+     * Defines whether the {@link Table} should be extended to occupy all the space left in the available area
+     * in case the area has been split and it is the last element in the split part of this area.
+     *
+     * @param isExtended defines whether the {@link Table} should be extended
+     * @return this {@link Table}
+     */
     public Table setExtendBottomRowOnSplit(boolean isExtended) {
         setProperty(Property.FILL_AVAILABLE_AREA_ON_SPLIT, isExtended);
         return this;
     }
 
+    /**
+     * Sets the type of border collapse.
+     *
+     * @param collapsePropertyValue {@link BorderCollapsePropertyValue} to be set as the border collapse type
+     * @return this {@link Table}
+     */
     public Table setBorderCollapse(BorderCollapsePropertyValue collapsePropertyValue) {
         setProperty(Property.BORDER_COLLAPSE, collapsePropertyValue);
         if (null != header) {
@@ -849,6 +868,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return this;
     }
 
+    /**
+     * Sets the horizontal spacing between this {@link Table table}'s {@link Cell cells}.
+     *
+     * @param spacing a horizontal spacing between this {@link Table table}'s {@link Cell cells}
+     * @return this {@link Table}
+     */
     public Table setHorizontalBorderSpacing(float spacing) {
         setProperty(Property.HORIZONTAL_BORDER_SPACING, spacing);
         if (null != header) {
@@ -860,6 +885,12 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return this;
     }
 
+    /**
+     * Sets the vertical spacing between this {@link Table table}'s {@link Cell cells}.
+     *
+     * @param spacing a vertical spacing between this {@link Table table}'s {@link Cell cells}
+     * @return this {@link Table}
+     */
     public Table setVerticalBorderSpacing(float spacing) {
         setProperty(Property.VERTICAL_BORDER_SPACING, spacing);
         if (null != header) {
@@ -909,6 +940,11 @@ public class Table extends BlockElement<Table> implements ILargeElement {
         return normalized;
     }
 
+    /**
+     * Returns the list of all row groups.
+     *
+     * @return a list of a {@link RowRange} which holds the row numbers of a section of a table
+     */
     protected java.util.List<RowRange> getRowGroups() {
         int lastRowWeCanFlush = currentColumn == columnWidths.length ? currentRow : currentRow - 1;
         int[] cellBottomRows = new int[columnWidths.length];

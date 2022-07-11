@@ -43,9 +43,17 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.options.PropertyOptions;
+import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.FileInputStream;
@@ -106,6 +114,47 @@ public class PdfAXmpTest extends ExtendedITextTest {
         Assert.assertNull(ct.compareByContent(outFile, cmpFile, destinationFolder));
         Assert.assertNull(ct.compareDocumentInfo(outFile, cmpFile));
         Assert.assertNull(ct.compareXmp(outFile, cmpFile, true));
+    }
+
+    @Test
+    public void saveAndReadDocumentWithCanonicalXmpMetadata() throws IOException, XMPException {
+        String outFile = destinationFolder + "saveAndReadDocumentWithCanonicalXmpMetadata.pdf";
+        String cmpFile = cmpFolder + "cmp_saveAndReadDocumentWithCanonicalXmpMetadata.pdf";
+        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_2B;
+        PdfOutputIntent outputIntent;
+
+        try (InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")) {
+            outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        }
+
+        try (PdfADocument doc = new PdfADocument(new PdfWriter(outFile), conformanceLevel, outputIntent)) {
+            doc.addNewPage();
+            XMPMeta xmp = XMPMetaFactory.create();
+            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, conformanceLevel.getPart(), new PropertyOptions().setSchemaNode(true));
+            xmp.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, conformanceLevel.getConformance(), new PropertyOptions().setSchemaNode(true));
+            SerializeOptions options = new SerializeOptions().setUseCanonicalFormat(true).setUseCompactFormat(false);
+            doc.setXmpMetadata(xmp, options);
+            doc.setTagged();
+        }
+        // Closing document and reopening it to flush it XMP metadata ModifyDate
+        try (PdfDocument doc = new PdfDocument(new PdfReader(outFile));
+             PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFile))) {
+            byte[] rdf = doc.getXmpMetadata();
+            byte[] expectedRdf = cmpDoc.getXmpMetadata();
+            // Comparing angle brackets, since it's the main difference between canonical and compact format.
+            Assert.assertEquals(count(expectedRdf, (byte)'<'), count(rdf, (byte)'<'));
+            Assert.assertNull(new CompareTool().compareXmp(cmpFile, outFile, true));
+        }
+    }
+
+    private int count(byte[] array, byte b) {
+        int counter = 0;
+        for (byte each : array) {
+            if (each == b) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
 }
