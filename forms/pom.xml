@@ -33,16 +33,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
-      <scope>test</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>bouncy-castle</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
       <optional>true</optional>
     </dependency>
