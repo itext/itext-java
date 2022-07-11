@@ -68,6 +68,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeInstanceWithEnumStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "classWithEnum.json";
 
@@ -79,6 +80,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeInstanceWithEnumStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {
@@ -99,6 +101,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeToMinimalInstanceWithEnumStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "minimalClassWithEnum.json";
 
@@ -110,6 +113,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeToMinimalInstanceWithEnumStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {
@@ -178,6 +182,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeComplexStructureStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "complexStructure.json";
 
@@ -189,6 +194,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeComplexStructureStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {
@@ -209,6 +215,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeToMinimalComplexStructureStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "minimalComplexStructure.json";
 
@@ -220,6 +227,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void serializeToMinimalComplexStructureStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {

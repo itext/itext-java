@@ -112,6 +112,7 @@ public class ParseTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void testBaidu() throws IOException {
         // tests <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
         File in = getFile("/htmltests/baidu-cn-home.html");
@@ -136,6 +137,7 @@ public class ParseTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void testBaiduVariant() throws IOException {
         // tests <meta charset> when preceded by another <meta>
         File in = getFile("/htmltests/baidu-variant.html");
@@ -147,6 +149,7 @@ public class ParseTest extends ExtendedITextTest {
     }
 
     @Test
+    @org.junit.Ignore
     public void testHtml5Charset() throws IOException {
         // test that <meta charset="gb2312"> works
         File in = getFile("/htmltests/meta-charset-1.html");
