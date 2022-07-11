@@ -35,7 +35,7 @@ import org.junit.experimental.categories.Category;
 public class KeyStoreUtilUnitTest extends ExtendedITextTest {
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void loadCacertsKeyStoreSUNTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore("SUN");
         Assert.assertEquals("JKS", keyStore.getType());
@@ -43,7 +43,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void loadCaCertsKeyStoreNoSuchProviderTest() {
         PdfException e = Assert.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("unknown provider"));
@@ -51,7 +51,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void loadCaCertsKeyStoreJKSNotFoundTest() {
         PdfException e = Assert.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("SunPCSC"));
@@ -59,7 +59,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void loadCaCertsKeyStoreNullTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore(null);
         Assert.assertEquals("JKS", keyStore.getType());
@@ -67,7 +67,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void loadCaCertsKeyStoreEmptyTest() {
         PdfException e = Assert.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore(""));

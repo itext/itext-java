@@ -49,8 +49,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Document;
 
-// Android-Replace: import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
-// Android-Replace: import org.apache.xerces.jaxp.SAXParserFactoryImpl;
+import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -67,13 +67,13 @@ public class XmlUtilTest extends ExtendedITextTest {
     public void getDocumentBuilderFactoryTest() {
         DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory();
 
-        Assert.assertEquals(DocumentBuilderFactory.newInstance().getClass(), factory.getClass()); // Android-Replace: Assert.assertEquals((new DocumentBuilderFactoryImpl()).getClass(), factory.getClass());
+        Assert.assertEquals((new DocumentBuilderFactoryImpl()).getClass(), factory.getClass());
     }
 
     @Test
     public void createSAXParserFactoryTest() {
         SAXParserFactory factory = XmlUtil.createSAXParserFactory();
 
-        Assert.assertEquals(SAXParserFactory.newInstance().getClass(), factory.getClass()); // Android-Replace:  Assert.assertEquals((new SAXParserFactoryImpl()).getClass(), factory.getClass());
+        Assert.assertEquals((new SAXParserFactoryImpl()).getClass(), factory.getClass());
     }
 }

@@ -37,7 +37,7 @@ import org.junit.experimental.categories.Category;
 public class ProviderDigestUnitTest extends ExtendedITextTest {
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void getMessageDigestSunPKCS11SHA1Test() throws GeneralSecurityException {
         ProviderDigest providerDigest = new ProviderDigest("SunPKCS11");
         MessageDigest digest = providerDigest.getMessageDigest(DigestAlgorithms.SHA1);
@@ -47,7 +47,7 @@ public class ProviderDigestUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void getMessageDigestSUNSHA256Test() throws GeneralSecurityException {
         ProviderDigest providerDigest = new ProviderDigest("SUN");
         MessageDigest digest = providerDigest.getMessageDigest(DigestAlgorithms.SHA256);

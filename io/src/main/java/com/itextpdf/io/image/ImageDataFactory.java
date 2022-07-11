@@ -181,32 +181,6 @@ public final class ImageDataFactory {
         return image;
     }
 
-    // Android-Excise-Start
-    /**
-     * Gets an instance of an Image from a java.awt.Image
-     *
-     * @param image the java.awt.Image to convert
-     * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
-     * @return RawImage
-     * @throws java.io.IOException if an I/O error occurs.
-     */
-    public static ImageData create(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
-        return ImageDataFactory.create(image, color, false);
-    }
-
-    /**
-     * Gets an instance of an Image from a java.awt.Image.
-     *
-     * @param image   the <CODE>java.awt.Image</CODE> to convert
-     * @param color   if different from <CODE>null</CODE> the transparency pixels are replaced by this color
-     * @param forceBW if <CODE>true</CODE> the image is treated as black and white
-     * @return RawImage
-     * @throws java.io.IOException if an I/O error occurs.
-     */
-    public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
-        return AwtImageDataFactory.create(image, color, forceBW);
-    }
-    // Android-Excise-End
 
     /**
      * Get a bitmap ImageData instance from the specified url.
