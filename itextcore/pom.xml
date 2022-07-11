@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.itextpdf</groupId>
-  <artifactId>itext7-core</artifactId>
+  <groupId>com.itextpdf.android</groupId>
+  <artifactId>itext7-core-android</artifactId>
   <version>7.2.4</version>
   <packaging>pom</packaging>
   <name>iText 7 Core</name>
@@ -79,58 +79,58 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>barcodes</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>barcodes-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>font-asian</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>font-asian-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>forms</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>forms-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>hyph</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>hyph-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>io</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>io-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>kernel-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>layout</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>layout-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdfa</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdfa-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>sign</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>sign-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>styled-xml-parser</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>styled-xml-parser-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>svg</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>svg-android</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
