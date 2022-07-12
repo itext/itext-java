@@ -3,6 +3,7 @@ package com.itextpdf.bouncycastlefips.tsp;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Objects;
 import org.bouncycastle.tsp.TimeStampRequest;
 
@@ -21,6 +22,11 @@ public class TimeStampRequestBCFips implements ITimeStampRequest {
     @Override
     public byte[] getEncoded() throws IOException {
         return timeStampRequest.getEncoded();
+    }
+
+    @Override
+    public BigInteger getNonce() {
+        return timeStampRequest.getNonce();
     }
 
     @Override

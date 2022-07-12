@@ -43,6 +43,8 @@
 package com.itextpdf.signatures.verify;
 
 import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
@@ -79,6 +81,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class OcspVerifierTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] password = "testpass".toCharArray();
     private static final String caCertFileName = certsSrc + "rootRsa.p12";
@@ -103,7 +107,8 @@ public class OcspVerifierTest extends ExtendedITextTest {
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
-        builder.setCertificateStatus(new RevokedStatus(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20), CRLReason.keyCompromise));
+        builder.setCertificateStatus(FACTORY.createRevokedStatus(
+                DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20), CRLReason.keyCompromise));
         Assert.assertFalse(verifyTest(builder));
     }
 
@@ -113,7 +118,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
-        builder.setCertificateStatus(new UnknownStatus());
+        builder.setCertificateStatus(FACTORY.createUnknownStatus());
         Assert.assertFalse(verifyTest(builder));
     }
 

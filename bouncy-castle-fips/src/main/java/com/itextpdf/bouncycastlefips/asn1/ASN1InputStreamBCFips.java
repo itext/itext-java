@@ -23,12 +23,13 @@ public class ASN1InputStreamBCFips implements IASN1InputStream {
         this.stream = new ASN1InputStream(stream);
     }
 
-    public IASN1Primitive readObject() throws IOException {
-        return new ASN1PrimitiveBCFips(stream.readObject());
-    }
-
     public ASN1InputStream getASN1InputStream() {
         return stream;
+    }
+
+    @Override
+    public IASN1Primitive readObject() throws IOException {
+        return new ASN1PrimitiveBCFips(stream.readObject());
     }
 
     @Override

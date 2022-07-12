@@ -48,6 +48,8 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
+
+import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -59,7 +61,8 @@ public class TestOcspClient implements IOcspClient {
 
     private final Map<String, TestOcspResponseBuilder> issuerIdToResponseBuilder = new LinkedHashMap<>();
 
-    public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, PrivateKey privateKey) throws CertificateEncodingException {
+    public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, PrivateKey privateKey)
+            throws CertificateEncodingException, IOException {
         issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16), new TestOcspResponseBuilder(cert, privateKey));
         return this;
     }

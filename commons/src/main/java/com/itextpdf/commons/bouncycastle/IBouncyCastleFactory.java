@@ -57,28 +57,40 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaCertStore;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.cms.AbstractCMSException;
 import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
+import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
+import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
+import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
+import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
 import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,9 +98,12 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public interface IBouncyCastleFactory {
     IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable);
@@ -223,6 +238,8 @@ public interface IBouncyCastleFactory {
 
     IExtensions createExtensions(IExtension extension);
 
+    IExtensions createNullExtensions();
+
     IOCSPReqBuilder createOCSPReqBuilder();
 
     ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBC);
@@ -319,4 +336,29 @@ public interface IBouncyCastleFactory {
     IASN1GeneralizedTime createASN1GeneralizedTime(IASN1Encodable encodable);
 
     IASN1UTCTime createASN1UTCTime(IASN1Encodable encodable);
+
+    IJcaCertStore createJcaCertStore(List<Certificate> certificates) throws CertificateEncodingException;
+
+    ITimeStampResponseGenerator createTimeStampResponseGenerator(ITimeStampTokenGenerator tokenGenerator,
+            Set<String> algorithms);
+
+    ITimeStampRequest createTimeStampRequest(byte[] bytes) throws IOException;
+
+    IJcaContentSignerBuilder createJcaContentSignerBuilder(String algorithm);
+
+    IJcaSignerInfoGeneratorBuilder createJcaSignerInfoGeneratorBuilder(
+            IDigestCalculatorProvider digestCalcProviderProvider);
+
+    ITimeStampTokenGenerator createTimeStampTokenGenerator(ISignerInfoGenerator siGen, IDigestCalculator dgCalc,
+            IASN1ObjectIdentifier policy) throws AbstractTSPException;
+
+    IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException, IOException;
+
+    IRespID createRespID(IX500Name x500Name);
+
+    IBasicOCSPRespBuilder createBasicOCSPRespBuilder(IRespID respID);
+
+    IOCSPReq createOCSPReq(byte[] requestBytes) throws IOException;
+
+    IX509v2CRLBuilder createX509v2CRLBuilder(IX500Name x500Name, Date thisUpdate);
 }

@@ -42,6 +42,19 @@
  */
 package com.itextpdf.signatures.testutils.builder;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
+import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
+import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
+import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.signatures.DigestAlgorithms;
@@ -57,24 +70,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.SignerInfoGenerator;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DigestCalculator;
-import org.bouncycastle.operator.DigestCalculatorProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampResponseGenerator;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenGenerator;
 
 public class TestTimestampTokenBuilder {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static final String SIGN_ALG = "SHA256withRSA";
 
     // just a more or less random oid of timestamp policy
@@ -91,52 +90,57 @@ public class TestTimestampTokenBuilder {
         this.tsaPrivateKey = tsaPrivateKey;
     }
 
-    public byte[] createTimeStampToken(TimeStampRequest request) throws OperatorCreationException, TSPException, IOException, CertificateEncodingException {
-        TimeStampTokenGenerator tsTokGen = createTimeStampTokenGenerator(tsaPrivateKey,
+    public byte[] createTimeStampToken(ITimeStampRequest request)
+            throws AbstractOperatorCreationException, AbstractTSPException, IOException, CertificateEncodingException {
+        ITimeStampTokenGenerator tsTokGen = createTimeStampTokenGenerator(tsaPrivateKey,
                 tsaCertificateChain.get(0), SIGN_ALG, "SHA1", POLICY_OID);
         tsTokGen.setAccuracySeconds(1);
 
-        // TODO setting this is somewhat wrong. Acrobat and openssl recognize timestamp tokens generated with this line as corrupted
-        // openssl error message: 2304:error:2F09506F:time stamp routines:INT_TS_RESP_VERIFY_TOKEN:tsa name mismatch:ts_rsp_verify.c:476:
+        // TODO setting this is somewhat wrong. Acrobat and openssl recognize timestamp tokens generated with this
+        //  line as corrupted
+        // openssl error message: 2304:error:2F09506F:time stamp routines:INT_TS_RESP_VERIFY_TOKEN:tsa name
+        // mismatch:ts_rsp_verify.c:476:
 //        tsTokGen.setTSA(new GeneralName(new X500Name(PrincipalUtil.getIssuerX509Principal(tsCertificate).getName())));
 
-        tsTokGen.addCertificates(new JcaCertStore(tsaCertificateChain));
+        tsTokGen.addCertificates(FACTORY.createJcaCertStore(tsaCertificateChain));
 
         // should be unique for every timestamp
         BigInteger serialNumber = new BigInteger(String.valueOf(SystemUtil.getTimeBasedSeed()));
         Date genTime = DateTimeUtil.getCurrentTimeDate();
-        TimeStampToken tsToken = tsTokGen.generate(request, serialNumber, genTime);
+        ITimeStampToken tsToken = tsTokGen.generate(request, serialNumber, genTime);
         return tsToken.getEncoded();
     }
 
     public byte[] createTSAResponse(byte[] requestBytes, String signatureAlgorithm, String allowedDigest) {
         try {
             String digestForTsSigningCert = DigestAlgorithms.getAllowedDigest(allowedDigest);
-            TimeStampTokenGenerator tokenGenerator = createTimeStampTokenGenerator(tsaPrivateKey,
+            ITimeStampTokenGenerator tokenGenerator = createTimeStampTokenGenerator(tsaPrivateKey,
                     tsaCertificateChain.get(0), signatureAlgorithm, allowedDigest, POLICY_OID);
 
             Set<String> algorithms = new HashSet<>(Collections.singletonList(digestForTsSigningCert));
-            TimeStampResponseGenerator generator = new TimeStampResponseGenerator(tokenGenerator, algorithms);
-            TimeStampRequest request = new TimeStampRequest(requestBytes);
+            ITimeStampResponseGenerator generator = FACTORY.createTimeStampResponseGenerator(tokenGenerator,
+                    algorithms);
+            ITimeStampRequest request = FACTORY.createTimeStampRequest(requestBytes);
             return generator.generate(request, request.getNonce(), new Date()).getEncoded();
         } catch (Exception e) {
             return null;
         }
     }
 
-    private static TimeStampTokenGenerator createTimeStampTokenGenerator(PrivateKey pk, Certificate cert,
+    private static ITimeStampTokenGenerator createTimeStampTokenGenerator(PrivateKey pk, Certificate cert,
             String signatureAlgorithm, String allowedDigest, String policyOid)
-            throws TSPException, OperatorCreationException, CertificateEncodingException {
-        ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).build(pk);
-        DigestCalculatorProvider digestCalcProviderProvider = new JcaDigestCalculatorProviderBuilder().build();
-        SignerInfoGenerator siGen =
-                new JcaSignerInfoGeneratorBuilder(digestCalcProviderProvider)
+            throws AbstractTSPException, AbstractOperatorCreationException, CertificateEncodingException {
+        IContentSigner signer = FACTORY.createJcaContentSignerBuilder(signatureAlgorithm).build(pk);
+        IDigestCalculatorProvider digestCalcProviderProvider = FACTORY.createJcaDigestCalculatorProviderBuilder()
+                .build();
+        ISignerInfoGenerator siGen =
+                FACTORY.createJcaSignerInfoGeneratorBuilder(digestCalcProviderProvider)
                         .build(signer, (X509Certificate) cert);
 
         String digestForTsSigningCert = DigestAlgorithms.getAllowedDigest(allowedDigest);
-        DigestCalculator dgCalc = digestCalcProviderProvider.get(
-                new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestForTsSigningCert)));
-        ASN1ObjectIdentifier policy = new ASN1ObjectIdentifier(policyOid);
-        return new TimeStampTokenGenerator(siGen, dgCalc, policy);
+        IDigestCalculator dgCalc = digestCalcProviderProvider.get(
+                FACTORY.createAlgorithmIdentifier(FACTORY.createASN1ObjectIdentifier(digestForTsSigningCert)));
+        IASN1ObjectIdentifier policy = FACTORY.createASN1ObjectIdentifier(policyOid);
+        return FACTORY.createTimeStampTokenGenerator(siGen, dgCalc, policy);
     }
 }

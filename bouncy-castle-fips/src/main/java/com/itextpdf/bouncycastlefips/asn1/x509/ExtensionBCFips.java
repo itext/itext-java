@@ -34,15 +34,17 @@ public class ExtensionBCFips extends ASN1EncodableBCFips implements IExtension {
         return INSTANCE;
     }
 
+    public Extension getExtension() {
+        return (Extension) getEncodable();
+    }
+
+    @Override
     public IASN1ObjectIdentifier getCRlDistributionPoints() {
         return C_RL_DISTRIBUTION_POINTS;
     }
 
+    @Override
     public IASN1ObjectIdentifier getAuthorityInfoAccess() {
         return AUTHORITY_INFO_ACCESS;
-    }
-
-    public Extension getExtension() {
-        return (Extension) getEncodable();
     }
 }

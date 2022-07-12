@@ -20,6 +20,7 @@ public class ASN1SequenceBC extends ASN1PrimitiveBC implements IASN1Sequence {
         return (ASN1Sequence) getPrimitive();
     }
 
+    @Override
     public IASN1Encodable getObjectAt(int i) {
         return new ASN1EncodableBC(getASN1Sequence().getObjectAt(i));
     }

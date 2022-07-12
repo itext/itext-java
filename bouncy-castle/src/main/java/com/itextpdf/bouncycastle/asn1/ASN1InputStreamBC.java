@@ -23,12 +23,13 @@ public class ASN1InputStreamBC implements IASN1InputStream {
         this.stream = new ASN1InputStream(stream);
     }
 
-    public IASN1Primitive readObject() throws IOException {
-        return new ASN1PrimitiveBC(stream.readObject());
-    }
-
     public ASN1InputStream getASN1InputStream() {
         return stream;
+    }
+
+    @Override
+    public IASN1Primitive readObject() throws IOException {
+        return new ASN1PrimitiveBC(stream.readObject());
     }
 
     @Override

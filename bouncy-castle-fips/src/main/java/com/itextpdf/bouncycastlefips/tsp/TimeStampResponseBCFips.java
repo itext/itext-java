@@ -7,6 +7,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 
+import java.io.IOException;
 import java.util.Objects;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampResponse;
@@ -45,6 +46,11 @@ public class TimeStampResponseBCFips implements ITimeStampResponse {
     @Override
     public String getStatusString() {
         return timeStampResponse.getStatusString();
+    }
+
+    @Override
+    public byte[] getEncoded() throws IOException {
+        return timeStampResponse.getEncoded();
     }
 
     @Override

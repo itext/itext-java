@@ -42,6 +42,12 @@
  */
 package com.itextpdf.signatures.testutils.builder;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.IX509CRLHolder;
+import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
 import com.itextpdf.commons.utils.DateTimeUtil;
 
 import java.io.IOException;
@@ -49,27 +55,19 @@ import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cert.X509CRLHolder;
-import org.bouncycastle.cert.X509v2CRLBuilder;
-import org.bouncycastle.jce.PrincipalUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 public class TestCrlBuilder {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SIGN_ALG = "SHA256withRSA";
 
     private final PrivateKey issuerPrivateKey;
-    private final X509v2CRLBuilder crlBuilder;
+    private final IX509v2CRLBuilder crlBuilder;
     private Date nextUpdate = DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), 30);
 
     public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, Date thisUpdate)
-            throws CertificateEncodingException {
-        String issuerCertSubjectDn = PrincipalUtil.getSubjectX509Principal(issuerCert).getName();
-        this.crlBuilder = new X509v2CRLBuilder(new X500Name(issuerCertSubjectDn), thisUpdate);
+            throws CertificateEncodingException, IOException {
+        this.crlBuilder = FACTORY.createX509v2CRLBuilder(FACTORY.createX500Name(issuerCert), thisUpdate);
         this.issuerPrivateKey = issuerPrivateKey;
     }
 
@@ -84,12 +82,12 @@ public class TestCrlBuilder {
         crlBuilder.addCRLEntry(certificate.getSerialNumber(), revocationDate, reason);
     }
 
-    public byte[] makeCrl() throws IOException, OperatorCreationException {
-        ContentSigner signer =
-                new JcaContentSignerBuilder(SIGN_ALG).setProvider(BouncyCastleProvider.PROVIDER_NAME)
+    public byte[] makeCrl() throws IOException, AbstractOperatorCreationException {
+        IContentSigner signer =
+                FACTORY.createJcaContentSignerBuilder(SIGN_ALG).setProvider(FACTORY.getProviderName())
                         .build(issuerPrivateKey);
         crlBuilder.setNextUpdate(nextUpdate);
-        X509CRLHolder crl = crlBuilder.build(signer);
+        IX509CRLHolder crl = crlBuilder.build(signer);
         return crl.getEncoded();
     }
 }
