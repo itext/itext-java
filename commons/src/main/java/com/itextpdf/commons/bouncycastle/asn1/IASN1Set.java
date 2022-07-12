@@ -8,4 +8,6 @@ public interface IASN1Set extends IASN1Primitive {
     int size();
 
     IASN1Encodable getObjectAt(int index);
+
+    IASN1Encodable[] toArray();
 }

@@ -42,6 +42,15 @@
  */
 package com.itextpdf.signatures.testutils;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import java.io.IOException;
@@ -57,32 +66,27 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 public class SignTestPortUtil {
-    public static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber, AlgorithmIdentifier digestAlgorithmIdentifier) throws OperatorCreationException, CertificateEncodingException, OCSPException {
-        return new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
-                new JcaX509CertificateHolder(issuerCert), serialNumber);
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
+    public static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
+            IAlgorithmIdentifier digestAlgorithmIdentifier)
+            throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
+        return BOUNCY_CASTLE_FACTORY.createCertificateID(
+                BOUNCY_CASTLE_FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
+                BOUNCY_CASTLE_FACTORY.createJcaX509CertificateHolder(issuerCert), serialNumber);
     }
 
-    public static OCSPReq generateOcspRequestWithNonce(CertificateID id) throws IOException, OCSPException {
-        OCSPReqBuilder gen = new OCSPReqBuilder();
+    public static IOCSPReq generateOcspRequestWithNonce(ICertificateID id) throws IOException, AbstractOCSPException {
+        IOCSPReqBuilder gen = BOUNCY_CASTLE_FACTORY.createOCSPReqBuilder();
         gen.addRequest(id);
 
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded()));
-        gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
+        IExtension ext = BOUNCY_CASTLE_FACTORY.createExtension(
+                BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNonce(), false,
+                BOUNCY_CASTLE_FACTORY.createDEROctetString(
+                        BOUNCY_CASTLE_FACTORY.createDEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded()));
+        gen.setRequestExtensions(BOUNCY_CASTLE_FACTORY.createExtensions(ext));
         return gen.build();
     }
 

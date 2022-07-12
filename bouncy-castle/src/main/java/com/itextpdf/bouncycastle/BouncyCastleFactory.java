@@ -1,9 +1,11 @@
 package com.itextpdf.bouncycastle;
 
+import com.itextpdf.bouncycastle.asn1.ASN1BitStringBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableVectorBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EncodingBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EnumeratedBC;
+import com.itextpdf.bouncycastle.asn1.ASN1GeneralizedTimeBC;
 import com.itextpdf.bouncycastle.asn1.ASN1InputStreamBC;
 import com.itextpdf.bouncycastle.asn1.ASN1IntegerBC;
 import com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC;
@@ -14,6 +16,7 @@ import com.itextpdf.bouncycastle.asn1.ASN1SequenceBC;
 import com.itextpdf.bouncycastle.asn1.ASN1SetBC;
 import com.itextpdf.bouncycastle.asn1.ASN1StringBC;
 import com.itextpdf.bouncycastle.asn1.ASN1TaggedObjectBC;
+import com.itextpdf.bouncycastle.asn1.ASN1UTCTimeBC;
 import com.itextpdf.bouncycastle.asn1.DERIA5StringBC;
 import com.itextpdf.bouncycastle.asn1.DERNullBC;
 import com.itextpdf.bouncycastle.asn1.DEROctetStringBC;
@@ -43,6 +46,7 @@ import com.itextpdf.bouncycastle.asn1.ocsp.OCSPResponseBC;
 import com.itextpdf.bouncycastle.asn1.ocsp.OCSPResponseStatusBC;
 import com.itextpdf.bouncycastle.asn1.ocsp.ResponseBytesBC;
 import com.itextpdf.bouncycastle.asn1.pcks.PKCSObjectIdentifiersBC;
+import com.itextpdf.bouncycastle.asn1.util.ASN1DumpBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.bouncycastle.asn1.x509.CRLDistPointBC;
 import com.itextpdf.bouncycastle.asn1.x509.DistributionPointNameBC;
@@ -74,10 +78,12 @@ import com.itextpdf.bouncycastle.tsp.TimeStampRequestGeneratorBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampResponseBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encoding;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1GeneralizedTime;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Integer;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
@@ -88,6 +94,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1UTCTime;
 import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
@@ -117,6 +124,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
@@ -157,6 +165,8 @@ import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -166,6 +176,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cms.Attribute;
@@ -201,7 +212,7 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFactory implements IBouncyCastleFactory {
-    
+
     private static final String PROVIDER_NAME = new BouncyCastleProvider().getName();
 
     @Override
@@ -277,6 +288,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
             return new ASN1SequenceBC((ASN1Sequence) encodableBC.getEncodable());
         }
         return null;
+    }
+
+    @Override
+    public IASN1Sequence createASN1Sequence(byte[] array) throws IOException {
+        return new ASN1SequenceBC((ASN1Sequence) ASN1Sequence.fromByteArray(array));
     }
 
     @Override
@@ -837,5 +853,37 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IUnknownStatus createUnknownStatus() {
         return new UnknownStatusBC(new UnknownStatus());
+    }
+
+    @Override
+    public IASN1Dump createASN1Dump() {
+        return ASN1DumpBC.getInstance();
+    }
+
+    @Override
+    public IASN1BitString createASN1BitString(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1BitString) {
+            return new ASN1BitStringBC((ASN1BitString) encodableBC.getEncodable());
+        }
+        return null;
+    }
+
+    @Override
+    public IASN1GeneralizedTime createASN1GeneralizedTime(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1GeneralizedTime) {
+            return new ASN1GeneralizedTimeBC((ASN1GeneralizedTime) encodableBC.getEncodable());
+        }
+        return null;
+    }
+
+    @Override
+    public IASN1UTCTime createASN1UTCTime(IASN1Encodable encodable) {
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        if (encodableBC.getEncodable() instanceof ASN1UTCTime) {
+            return new ASN1UTCTimeBC((ASN1UTCTime) encodableBC.getEncodable());
+        }
+        return null;
     }
 }

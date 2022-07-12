@@ -43,6 +43,17 @@
  */
 package com.itextpdf.signatures.testutils;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -66,20 +77,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.bouncycastle.asn1.ASN1BitString;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1GeneralizedTime;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.ASN1UTCTime;
-import org.bouncycastle.asn1.util.ASN1Dump;
 
 public class SignaturesCompareTool {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static final String OID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
     private static final String OID_SIGNED_DATA = "1.2.840.113549.1.7.2";
     private static final String OID_TST_INFO = "1.2.840.113549.1.9.16.1.4";
@@ -88,6 +89,8 @@ public class SignaturesCompareTool {
     private static final String OID_ADBE_REVOCATION_INFO_ARCHIVAL = "1.2.840.113583.1.1.8";
     private static final String OID_OCSP_RESPONSE = "1.3.6.1.5.5.7.48.1.1";
     private static final String OID_OCSP_NONCE_EXTENSION = "1.3.6.1.5.5.7.48.1.2";
+
+    private static final IASN1Dump DUMP = BOUNCY_CASTLE_FACTORY.createASN1Dump();
 
     private static final Set<String> IGNORED_OIDS;
 
@@ -104,13 +107,14 @@ public class SignaturesCompareTool {
         return compareSignatures(dest, cmp, new ReaderProperties(), new ReaderProperties());
     }
 
-    public static String compareSignatures(String dest, String cmp, ReaderProperties destProperties, ReaderProperties cmpProperties) {
+    public static String compareSignatures(String dest, String cmp, ReaderProperties destProperties,
+            ReaderProperties cmpProperties) {
         ITextTest.printOutCmpPdfNameAndDir(dest, cmp);
 
         StringBuilder errorText = new StringBuilder();
 
         try (PdfDocument outDocument = new PdfDocument(new PdfReader(dest, destProperties));
-             PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmp, cmpProperties))) {
+                PdfDocument cmpDocument = new PdfDocument(new PdfReader(cmp, cmpProperties))) {
             SignatureUtil outSigUtil = new SignatureUtil(outDocument);
             SignatureUtil cmpSigUtil = new SignatureUtil(cmpDocument);
             if (!cmpSigUtil.getSignatureNames().equals(outSigUtil.getSignatureNames())) {
@@ -121,8 +125,10 @@ public class SignaturesCompareTool {
 
             List<String> signatures = cmpSigUtil.getSignatureNames();
             for (String sig : signatures) {
-                ASN1Sequence outSignedData = (ASN1Sequence) getSignatureContent(sig, outSigUtil);
-                ASN1Sequence cmpSignedData = (ASN1Sequence) getSignatureContent(sig, cmpSigUtil);
+                IASN1Sequence outSignedData = BOUNCY_CASTLE_FACTORY.createASN1Sequence(
+                        getSignatureContent(sig, outSigUtil));
+                IASN1Sequence cmpSignedData = BOUNCY_CASTLE_FACTORY.createASN1Sequence(
+                        getSignatureContent(sig, cmpSigUtil));
 
                 boolean isEqual = compareSignedData(outSignedData, cmpSignedData, errorText);
 
@@ -138,13 +144,15 @@ public class SignaturesCompareTool {
         return errorText.toString().isEmpty() ? null : errorText.toString();
     }
 
-    private static void createTxtFilesFromAsn1Sequences(ASN1Sequence outSignedData, ASN1Sequence cmpSignedData,
-                                                        String dest, String sig, StringBuilder errorText) throws IOException {
+    private static void createTxtFilesFromAsn1Sequences(IASN1Sequence outSignedData, IASN1Sequence cmpSignedData,
+            String dest, String sig, StringBuilder errorText) throws IOException {
         String sigFileName = dest.substring(0, dest.lastIndexOf("."));
         String outSigFile = sigFileName + "_" + sig + "_out.txt";
         String cmpSigFile = sigFileName + "_" + sig + "_cmp.txt";
-        writeToFile(outSigFile, sig + "\n" + ASN1Dump.dumpAsString(outSignedData, true) + "\n");
-        writeToFile(cmpSigFile, sig + "\n" + ASN1Dump.dumpAsString(cmpSignedData, true) + "\n");
+        writeToFile(outSigFile,
+                sig + "\n" + DUMP.dumpAsString(outSignedData, true) + "\n");
+        writeToFile(cmpSigFile,
+                sig + "\n" + DUMP.dumpAsString(cmpSignedData, true) + "\n");
 
         errorText.insert(0, "See signature output files: " +
                 "\nout: " + UrlUtil.getNormalizedFileUriString(outSigFile) +
@@ -152,7 +160,7 @@ public class SignaturesCompareTool {
     }
 
     private static boolean compareDssEntries(PdfDocument outDocument, PdfDocument cmpDocument,
-                                             String dest, StringBuilder errorText) throws IOException {
+            String dest, StringBuilder errorText) throws IOException {
         PdfDictionary outDss = outDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         PdfDictionary cmpDss = cmpDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         if (outDss == null || cmpDss == null) {
@@ -167,20 +175,22 @@ public class SignaturesCompareTool {
                 compareRevocationDataFromDss(
                         outDss, cmpDss, PdfName.OCSPs, dest, errorText,
                         (outSequence, cmpSequence, errorStringBuilder) ->
-                                SignaturesCompareTool.compareAsn1Structures(outSequence, cmpSequence, errorStringBuilder));
+                                SignaturesCompareTool.compareAsn1Structures(outSequence, cmpSequence,
+                                        errorStringBuilder));
         boolean crlCertificatesEqual =
                 compareRevocationDataFromDss(
                         outDss, cmpDss, PdfName.CRLs, dest, errorText,
                         (outSequence, cmpSequence, errorStringBuilder) ->
-                                SignaturesCompareTool.compareSequencesWithSignatureValue(outSequence, cmpSequence, errorStringBuilder));
+                                SignaturesCompareTool.compareSequencesWithSignatureValue(outSequence, cmpSequence,
+                                        errorStringBuilder));
 
         return ocspCertificatesEqual && crlCertificatesEqual;
     }
 
     private static boolean compareRevocationDataFromDss(PdfDictionary outDss, PdfDictionary cmpDss,
-                                                        PdfName entryName, String dest,
-                                                        StringBuilder errorText,
-                                                        SequenceComparator comparator) throws IOException {
+            PdfName entryName, String dest,
+            StringBuilder errorText,
+            SequenceComparator comparator) throws IOException {
         String errorMessage = entryName.getValue() + " entries inside DSS dictionaries are different";
         PdfArray outDssEntry = outDss.getAsArray(entryName);
         PdfArray cmpDssEntry = cmpDss.getAsArray(entryName);
@@ -208,8 +218,8 @@ public class SignaturesCompareTool {
                 return false;
             }
 
-            ASN1Sequence outDecodedItem = (ASN1Sequence) ASN1Sequence.fromByteArray(outDssEntryItem.getBytes());
-            ASN1Sequence cmpDecodedItem = (ASN1Sequence) ASN1Sequence.fromByteArray(cmpDssEntryItem.getBytes());
+            IASN1Sequence outDecodedItem = BOUNCY_CASTLE_FACTORY.createASN1Sequence(outDssEntryItem.getBytes());
+            IASN1Sequence cmpDecodedItem = BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpDssEntryItem.getBytes());
 
             if (!comparator.compare(outDecodedItem, cmpDecodedItem, errorText)) {
                 createTxtFilesFromAsn1Sequences(
@@ -220,19 +230,19 @@ public class SignaturesCompareTool {
         return true;
     }
 
-    private static boolean compareOcspResponses(ASN1Encodable[] outOcspResponse, ASN1Encodable[] cmpOcspResponse,
-                                                StringBuilder errorText) throws IOException {
+    private static boolean compareOcspResponses(IASN1Encodable[] outOcspResponse, IASN1Encodable[] cmpOcspResponse,
+            StringBuilder errorText) throws IOException {
         if (outOcspResponse.length != 2 || cmpOcspResponse.length != 2) {
             addError(errorText, "OCSP response has unexpected structure");
         }
-        ASN1OctetString outResponseString = (ASN1OctetString) outOcspResponse[1];
-        ASN1OctetString cmpResponseString = (ASN1OctetString) cmpOcspResponse[1];
+        IASN1OctetString outResponseString = BOUNCY_CASTLE_FACTORY.createASN1OctetString(outOcspResponse[1]);
+        IASN1OctetString cmpResponseString = BOUNCY_CASTLE_FACTORY.createASN1OctetString(cmpOcspResponse[1]);
         if (outResponseString.equals(cmpResponseString)) {
             return true;
         }
 
-        ASN1Sequence parsedOutResponse = (ASN1Sequence) ASN1Sequence.fromByteArray(outResponseString.getOctets());
-        ASN1Sequence parsedCmpResponse = (ASN1Sequence) ASN1Sequence.fromByteArray(cmpResponseString.getOctets());
+        IASN1Sequence parsedOutResponse = BOUNCY_CASTLE_FACTORY.createASN1Sequence(outResponseString.getOctets());
+        IASN1Sequence parsedCmpResponse = BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpResponseString.getOctets());
 
         return compareSequencesWithSignatureValue(parsedOutResponse, parsedCmpResponse, errorText);
     }
@@ -249,8 +259,8 @@ public class SignaturesCompareTool {
      *
      * @throws IOException is thrown if object data parsing failed
      */
-    private static boolean compareSignedData(ASN1Sequence outSignedData, ASN1Sequence cmpSignedData,
-                                                   StringBuilder errorText) throws IOException {
+    private static boolean compareSignedData(IASN1Sequence outSignedData, IASN1Sequence cmpSignedData,
+            StringBuilder errorText) throws IOException {
         if (outSignedData.size() != cmpSignedData.size() || outSignedData.size() != 2) {
             addError(errorText, "Signature top level elements count is incorrect (should be exactly 2):",
                     String.valueOf(outSignedData.size()),
@@ -258,18 +268,20 @@ public class SignaturesCompareTool {
             return false;
         }
 
-        ASN1ObjectIdentifier outObjId = (ASN1ObjectIdentifier) outSignedData.getObjectAt(0);
-        ASN1ObjectIdentifier cmpObjId = (ASN1ObjectIdentifier) cmpSignedData.getObjectAt(0);
+        IASN1ObjectIdentifier outObjId = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(outSignedData.getObjectAt(0));
+        IASN1ObjectIdentifier cmpObjId = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(cmpSignedData.getObjectAt(0));
         if (!outObjId.equals(cmpObjId) || !outObjId.getId().equals(OID_SIGNED_DATA)) {
             addError(errorText, "Signatures object identifier is incorrect (should be "
-                            + OID_SIGNED_DATA  + ")",
+                            + OID_SIGNED_DATA + ")",
                     String.valueOf(outObjId.getId()),
                     String.valueOf(cmpObjId.getId()));
             return false;
         }
 
-        ASN1Sequence outContent = (ASN1Sequence) ((ASN1TaggedObject) outSignedData.getObjectAt(1)).getObject();
-        ASN1Sequence cmpContent = (ASN1Sequence) ((ASN1TaggedObject) cmpSignedData.getObjectAt(1)).getObject();
+        IASN1Sequence outContent = BOUNCY_CASTLE_FACTORY.createASN1Sequence(
+                BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(outSignedData.getObjectAt(1)).getObject());
+        IASN1Sequence cmpContent = BOUNCY_CASTLE_FACTORY.createASN1Sequence(
+                BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(cmpSignedData.getObjectAt(1)).getObject());
         if (outContent.size() != cmpContent.size()) {
             addError(errorText, "Signatures base elements counts are different",
                     String.valueOf(outContent.size()),
@@ -278,7 +290,7 @@ public class SignaturesCompareTool {
         }
 
         int signerInfoIndex = getSignerInfoIndex(cmpContent);
-        if (!(outContent.getObjectAt(signerInfoIndex) instanceof ASN1Set)) {
+        if (BOUNCY_CASTLE_FACTORY.createASN1Set(outContent.getObjectAt(signerInfoIndex)) == null) {
             addError(errorText, "SignerInfo object indexes are different", null, null);
             return false;
         }
@@ -302,8 +314,8 @@ public class SignaturesCompareTool {
             }
         }
 
-        ASN1Set cmpSignerInfos = (ASN1Set) cmpContent.getObjectAt(signerInfoIndex);
-        ASN1Set outSignerInfos = (ASN1Set) outContent.getObjectAt(signerInfoIndex);
+        IASN1Set cmpSignerInfos = BOUNCY_CASTLE_FACTORY.createASN1Set(cmpContent.getObjectAt(signerInfoIndex));
+        IASN1Set outSignerInfos = BOUNCY_CASTLE_FACTORY.createASN1Set(outContent.getObjectAt(signerInfoIndex));
 
         // Currently, iText signature validation mechanism do not support signatures,
         // containing more than one SignerInfo entry. However, it is still valid signature.
@@ -313,14 +325,14 @@ public class SignaturesCompareTool {
             return false;
         }
 
-        ASN1Sequence outSignerInfo = (ASN1Sequence) outSignerInfos.getObjectAt(0);
-        ASN1Sequence cmpSignerInfo = (ASN1Sequence) cmpSignerInfos.getObjectAt(0);
+        IASN1Sequence outSignerInfo = BOUNCY_CASTLE_FACTORY.createASN1Sequence(outSignerInfos.getObjectAt(0));
+        IASN1Sequence cmpSignerInfo = BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpSignerInfos.getObjectAt(0));
 
         return compareSequencesWithSignatureValue(outSignerInfo, cmpSignerInfo, errorText);
     }
 
-    private static boolean compareSequencesWithSignatureValue(ASN1Sequence outSequence, ASN1Sequence cmpSequence,
-                                                              StringBuilder errorText) throws IOException {
+    private static boolean compareSequencesWithSignatureValue(IASN1Sequence outSequence, IASN1Sequence cmpSequence,
+            StringBuilder errorText) throws IOException {
         if (cmpSequence.size() != outSequence.size()) {
             addError(errorText, "Incorrect SignerInfo entries count", String.valueOf(outSequence.size()),
                     String.valueOf(cmpSequence.size()));
@@ -330,8 +342,8 @@ public class SignaturesCompareTool {
         for (int i = 0; i < cmpSequence.size(); i++) {
             // Skipping comparison of encoded strings fields which are SignatureValue fields.
             // They are expected to be different.
-            if (outSequence.getObjectAt(i) instanceof ASN1OctetString ||
-                    outSequence.getObjectAt(i) instanceof ASN1BitString) {
+            if (BOUNCY_CASTLE_FACTORY.createASN1OctetString(outSequence.getObjectAt(i)) != null ||
+                    BOUNCY_CASTLE_FACTORY.createASN1BitString(outSequence.getObjectAt(i)) != null) {
                 if (outSequence.getObjectAt(i).getClass().equals(cmpSequence.getObjectAt(i).getClass())) {
                     continue;
                 } else {
@@ -349,42 +361,47 @@ public class SignaturesCompareTool {
         return true;
     }
 
-    private static boolean compareAsn1Structures(ASN1Primitive out, ASN1Primitive cmp,
-                                                 StringBuilder errorText) throws IOException {
+    private static boolean compareAsn1Structures(IASN1Primitive out, IASN1Primitive cmp,
+            StringBuilder errorText) throws IOException {
         if (!out.getClass().equals(cmp.getClass())) {
             addError(errorText, "ASN1 objects types are different", out.getClass().getName(),
                     cmp.getClass().getName());
             return false;
         }
 
-        if (cmp instanceof ASN1TaggedObject) {
+        if (BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(cmp) != null) {
             return compareAsn1Structures(
-                    ((ASN1TaggedObject) out).getObject(), ((ASN1TaggedObject) cmp).getObject(), errorText);
-        } else if (cmp instanceof ASN1Sequence) {
-            if (!compareContainers(((ASN1Sequence) out).toArray(), ((ASN1Sequence) cmp).toArray(), errorText)) {
+                    BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(out).getObject(),
+                    BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(cmp).getObject(), errorText);
+        } else if (BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmp) != null) {
+            if (!compareContainers(BOUNCY_CASTLE_FACTORY.createASN1Sequence(out).toArray(),
+                    BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmp).toArray(), errorText)) {
                 addError(errorText, "ASN1Sequence objects are different");
                 return false;
             }
-        } else if (cmp instanceof ASN1Set) {
-            if (!compareContainers(((ASN1Set) out).toArray(), ((ASN1Set) cmp).toArray(), errorText)) {
+        } else if (BOUNCY_CASTLE_FACTORY.createASN1Set(cmp) != null) {
+            if (!compareContainers(BOUNCY_CASTLE_FACTORY.createASN1Set(out).toArray(),
+                    BOUNCY_CASTLE_FACTORY.createASN1Set(cmp).toArray(), errorText)) {
                 addError(errorText, "ASN1Set objects are different");
                 return false;
             }
-        } else if (cmp instanceof ASN1GeneralizedTime || cmp instanceof ASN1UTCTime) {
+        } else if (BOUNCY_CASTLE_FACTORY.createASN1GeneralizedTime(cmp) != null
+                || BOUNCY_CASTLE_FACTORY.createASN1UTCTime(cmp) != null) {
             // Ignore time values since usually they shouldn't be equal
             return true;
         } else {
             if (!cmp.equals(out)) {
                 addError(errorText, "ASN1 objects are different",
-                        ASN1Dump.dumpAsString(out, true), ASN1Dump.dumpAsString(cmp, true));
+                        DUMP.dumpAsString(out, true),
+                        DUMP.dumpAsString(cmp, true));
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean compareContainers(ASN1Encodable[] outArray,
-                                             ASN1Encodable[] cmpArray, StringBuilder errorText) throws IOException {
+    private static boolean compareContainers(IASN1Encodable[] outArray,
+            IASN1Encodable[] cmpArray, StringBuilder errorText) throws IOException {
         if (cmpArray.length != outArray.length) {
             addError(errorText, "Container lengths are different",
                     Integer.toString(outArray.length), Integer.toString(cmpArray.length));
@@ -427,36 +444,43 @@ public class SignaturesCompareTool {
      *
      * @return true if signed data objects are the similar, false otherwise
      */
-    private static boolean compareRevocationInfoArchivalAttribute(ASN1Encodable[] out, ASN1Encodable[] cmp,
+    private static boolean compareRevocationInfoArchivalAttribute(IASN1Encodable[] out, IASN1Encodable[] cmp,
             StringBuilder errorText) throws IOException {
         String structureIsInvalidError = "Signature revocation info archival attribute structure is invalid";
         if (!isExpectedRevocationInfoArchivalAttributeStructure(out)
                 || !isExpectedRevocationInfoArchivalAttributeStructure(cmp)) {
             addError(errorText, structureIsInvalidError,
-                    String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
-                    String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
+                    String.join("", Arrays.stream(out).map(e -> DUMP.dumpAsString(e))
+                            .collect(Collectors.toList())),
+                    String.join("", Arrays.stream(cmp).map(e -> DUMP.dumpAsString(e))
+                            .collect(Collectors.toList())));
             return false;
         }
 
-        ASN1Sequence outSequence = ((ASN1Sequence) ((ASN1Set) out[1]).getObjectAt(0).toASN1Primitive());
-        ASN1Sequence cmpSequence = ((ASN1Sequence) ((ASN1Set) cmp[1]).getObjectAt(0).toASN1Primitive());
+        IASN1Sequence outSequence = BOUNCY_CASTLE_FACTORY.createASN1Sequence(BOUNCY_CASTLE_FACTORY.createASN1Set(out[1]).getObjectAt(0).toASN1Primitive());
+        IASN1Sequence cmpSequence = BOUNCY_CASTLE_FACTORY.createASN1Sequence(BOUNCY_CASTLE_FACTORY.createASN1Set(cmp[1]).getObjectAt(0).toASN1Primitive());
         if (outSequence.size() != cmpSequence.size()) {
             addError(errorText,
-                    "Signature revocation info archival attributes have different sets of revocation info types (different sizes)",
+                    "Signature revocation info archival attributes have different sets of revocation info types "
+                            + "(different sizes)",
                     String.valueOf(outSequence.size()), String.valueOf(cmpSequence.size()));
             return false;
         }
 
         for (int i = 0; i < outSequence.size(); i++) {
-            if (!(outSequence.getObjectAt(i) instanceof ASN1TaggedObject)
-                    || !(cmpSequence.getObjectAt(i) instanceof ASN1TaggedObject)) {
+            if (BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(outSequence.getObjectAt(i)) == null
+                    || BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(cmpSequence.getObjectAt(i)) == null) {
                 addError(errorText, structureIsInvalidError,
-                        String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
-                        String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
+                        String.join("",
+                                Arrays.stream(out).map(e -> DUMP.dumpAsString(e))
+                                        .collect(Collectors.toList())),
+                        String.join("",
+                                Arrays.stream(cmp).map(e -> DUMP.dumpAsString(e))
+                                        .collect(Collectors.toList())));
                 return false;
             }
-            ASN1TaggedObject outTaggedObject = (ASN1TaggedObject) outSequence.getObjectAt(i);
-            ASN1TaggedObject cmpTaggedObject = (ASN1TaggedObject) cmpSequence.getObjectAt(i);
+            IASN1TaggedObject outTaggedObject = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(outSequence.getObjectAt(i));
+            IASN1TaggedObject cmpTaggedObject = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(cmpSequence.getObjectAt(i));
             if (outTaggedObject.getTagNo() != cmpTaggedObject.getTagNo()) {
                 addError(errorText,
                         "Signature revocation info archival attributes have different tagged objects tag numbers",
@@ -464,17 +488,21 @@ public class SignaturesCompareTool {
                 return false;
             }
 
-            if (!(outTaggedObject.getObject() instanceof ASN1Sequence)
-                    || !(cmpTaggedObject.getObject() instanceof ASN1Sequence)) {
+            if (BOUNCY_CASTLE_FACTORY.createASN1Sequence(outTaggedObject.getObject()) == null
+                    || BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpTaggedObject.getObject()) == null) {
                 addError(errorText, structureIsInvalidError,
-                        String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
-                        String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
+                        String.join("",
+                                Arrays.stream(out).map(e -> DUMP.dumpAsString(e))
+                                        .collect(Collectors.toList())),
+                        String.join("",
+                                Arrays.stream(cmp).map(e -> DUMP.dumpAsString(e))
+                                        .collect(Collectors.toList())));
                 return false;
             }
 
             // revocation entries can be either CRLs or OCSPs in most cases
-            ASN1Sequence outRevocationEntries = (ASN1Sequence) outTaggedObject.getObject();
-            ASN1Sequence cmpRevocationEntries = (ASN1Sequence) cmpTaggedObject.getObject();
+            IASN1Sequence outRevocationEntries = BOUNCY_CASTLE_FACTORY.createASN1Sequence(outTaggedObject.getObject());
+            IASN1Sequence cmpRevocationEntries = BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpTaggedObject.getObject());
             if (outRevocationEntries.size() != cmpRevocationEntries.size()) {
                 addError(errorText,
                         "Signature revocation info archival attributes have different number of entries",
@@ -485,8 +513,8 @@ public class SignaturesCompareTool {
             if (outTaggedObject.getTagNo() == 0) {
                 // CRL revocation info case
                 for (int j = 0; j < outRevocationEntries.size(); j++) {
-                    if (!(outRevocationEntries.getObjectAt(j) instanceof ASN1Sequence)
-                            || !(outRevocationEntries.getObjectAt(j) instanceof ASN1Sequence)) {
+                    if (BOUNCY_CASTLE_FACTORY.createASN1Sequence(outRevocationEntries.getObjectAt(j)) == null
+                            || BOUNCY_CASTLE_FACTORY.createASN1Sequence(outRevocationEntries.getObjectAt(j)) == null) {
                         addError(errorText,
                                 "Signature revocation info attribute has unexpected CRL entry type",
                                 outRevocationEntries.getObjectAt(j).getClass().getName().toString(),
@@ -494,8 +522,8 @@ public class SignaturesCompareTool {
                         return false;
                     }
                     if (!compareSequencesWithSignatureValue(
-                            ((ASN1Sequence) outRevocationEntries.getObjectAt(j)),
-                            ((ASN1Sequence) cmpRevocationEntries.getObjectAt(j)), errorText)) {
+                            BOUNCY_CASTLE_FACTORY.createASN1Sequence(outRevocationEntries.getObjectAt(j)),
+                            BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpRevocationEntries.getObjectAt(j)), errorText)) {
                         addError(errorText,
                                 MessageFormatUtil.format(
                                         "Signature revocation info attribute CRLs at {0} are different",
@@ -513,35 +541,43 @@ public class SignaturesCompareTool {
         return true;
     }
 
-    private static boolean isExpectedRevocationInfoArchivalAttributeStructure(ASN1Encodable[] container) {
+    private static boolean isExpectedRevocationInfoArchivalAttributeStructure(IASN1Encodable[] container) {
         return container.length == 2
-                && container[1] instanceof ASN1Set
-                && ((ASN1Set) container[1]).size() == 1
-                && ((ASN1Set) container[1]).getObjectAt(0).toASN1Primitive() instanceof ASN1Sequence;
+                && BOUNCY_CASTLE_FACTORY.createASN1Set(container[1]) != null
+                && BOUNCY_CASTLE_FACTORY.createASN1Set(container[1]).size() == 1
+                && BOUNCY_CASTLE_FACTORY.createASN1Sequence(
+                BOUNCY_CASTLE_FACTORY.createASN1Set(container[1]).getObjectAt(0).toASN1Primitive()) != null;
     }
 
-    private static boolean compareTimestampAttributes(ASN1Encodable[] out, ASN1Encodable[] cmp,
-                                                      StringBuilder errorText) throws IOException {
+    private static boolean compareTimestampAttributes(IASN1Encodable[] out, IASN1Encodable[] cmp,
+            StringBuilder errorText) throws IOException {
         if (cmp.length == 2) {
-            if (cmp[1] instanceof ASN1Set && out[1] instanceof ASN1Set) {
-                ASN1Primitive outSequence = ((ASN1Set) out[1]).getObjectAt(0).toASN1Primitive();
-                ASN1Primitive cmpSequence = ((ASN1Set) cmp[1]).getObjectAt(0).toASN1Primitive();
+            if (BOUNCY_CASTLE_FACTORY.createASN1Set(cmp[1]) != null &&
+                    BOUNCY_CASTLE_FACTORY.createASN1Set(out[1]) != null) {
+                IASN1Primitive outSequence = BOUNCY_CASTLE_FACTORY.createASN1Set(out[1]).getObjectAt(0)
+                        .toASN1Primitive();
+                IASN1Primitive cmpSequence = BOUNCY_CASTLE_FACTORY.createASN1Set(cmp[1]).getObjectAt(0)
+                        .toASN1Primitive();
 
-                if (outSequence instanceof ASN1Sequence && cmpSequence instanceof ASN1Sequence) {
-                    return compareSignedData((ASN1Sequence) outSequence, (ASN1Sequence) cmpSequence, errorText);
+                if (BOUNCY_CASTLE_FACTORY.createASN1Sequence(outSequence) != null &&
+                        BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpSequence) != null) {
+                    return compareSignedData(BOUNCY_CASTLE_FACTORY.createASN1Sequence(outSequence),
+                            BOUNCY_CASTLE_FACTORY.createASN1Sequence(cmpSequence), errorText);
                 }
             }
         }
 
         addError(errorText, "Signature timestamp attribute structure is invalid",
-                String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
-                String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
+                String.join("", Arrays.stream(out).map(e -> DUMP.dumpAsString(e))
+                        .collect(Collectors.toList())),
+                String.join("", Arrays.stream(cmp).map(e -> DUMP.dumpAsString(e))
+                        .collect(Collectors.toList())));
         return false;
     }
 
-    private static int getSignerInfoIndex(ASN1Sequence baseElement) {
+    private static int getSignerInfoIndex(IASN1Sequence baseElement) {
         for (int i = 3; i < baseElement.size(); i++) {
-            if (baseElement.getObjectAt(i) instanceof ASN1Set) {
+            if (BOUNCY_CASTLE_FACTORY.createASN1Set(baseElement.getObjectAt(i)) != null) {
                 return i;
             }
         }
@@ -549,27 +585,27 @@ public class SignaturesCompareTool {
         throw new IllegalStateException("SignerInfo entry has not been found.");
     }
 
-    private static String getASN1ObjectId(ASN1Primitive primitive) {
-        if (primitive instanceof ASN1Sequence) {
-            return getASN1ObjectId(((ASN1Sequence) primitive).toArray());
+    private static String getASN1ObjectId(IASN1Primitive primitive) {
+        if (BOUNCY_CASTLE_FACTORY.createASN1Sequence(primitive) != null) {
+            return getASN1ObjectId(BOUNCY_CASTLE_FACTORY.createASN1Sequence(primitive).toArray());
         }
-        if (primitive instanceof ASN1Set) {
-            return getASN1ObjectId(((ASN1Set) primitive).toArray());
-        }
-        return null;
-    }
-
-    private static String getASN1ObjectId(ASN1Encodable[] primitives) {
-        if (primitives.length != 0 && primitives[0] instanceof ASN1ObjectIdentifier) {
-            return ((ASN1ObjectIdentifier) primitives[0]).getId();
+        if (BOUNCY_CASTLE_FACTORY.createASN1Set(primitive) != null) {
+            return getASN1ObjectId(BOUNCY_CASTLE_FACTORY.createASN1Set(primitive).toArray());
         }
         return null;
     }
 
-    private static ASN1Primitive getSignatureContent(String signatureName, SignatureUtil util) throws IOException {
+    private static String getASN1ObjectId(IASN1Encodable[] primitives) {
+        if (primitives.length != 0 && BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(primitives[0]) != null) {
+            return BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(primitives[0]).getId();
+        }
+        return null;
+    }
+
+    private static IASN1Primitive getSignatureContent(String signatureName, SignatureUtil util) throws IOException {
         PdfSignature signature = util.getSignature(signatureName);
         byte[] contents = signature.getContents().getValueBytes();
-        ASN1InputStream inputStream = new ASN1InputStream(new ByteArrayInputStream(contents));
+        IASN1InputStream inputStream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(contents));
         return inputStream.readObject();
     }
 
@@ -598,6 +634,7 @@ public class SignaturesCompareTool {
 
     @FunctionalInterface
     interface SequenceComparator {
-        boolean compare(ASN1Sequence outSequence, ASN1Sequence cmpSequence, StringBuilder errorText) throws IOException;
+        boolean compare(IASN1Sequence outSequence, IASN1Sequence cmpSequence, StringBuilder errorText)
+                throws IOException;
     }
 }

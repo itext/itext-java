@@ -1,9 +1,11 @@
 package com.itextpdf.commons.bouncycastle;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encoding;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1GeneralizedTime;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Integer;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
@@ -14,6 +16,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1String;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1UTCTime;
 import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
 import com.itextpdf.commons.bouncycastle.asn1.IDERNull;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
@@ -43,6 +46,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
@@ -108,6 +112,8 @@ public interface IBouncyCastleFactory {
     IASN1Sequence createASN1Sequence(Object object);
 
     IASN1Sequence createASN1Sequence(IASN1Encodable encodable);
+
+    IASN1Sequence createASN1Sequence(byte[] array) throws IOException;
 
     IASN1Sequence createASN1SequenceInstance(Object object);
 
@@ -188,7 +194,7 @@ public interface IBouncyCastleFactory {
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable);
 
     Provider createProvider();
-    
+
     String getProviderName();
 
     IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey);
@@ -305,4 +311,12 @@ public interface IBouncyCastleFactory {
     AbstractOCSPException createAbstractOCSPException(Exception e);
 
     IUnknownStatus createUnknownStatus();
+
+    IASN1Dump createASN1Dump();
+
+    IASN1BitString createASN1BitString(IASN1Encodable encodable);
+
+    IASN1GeneralizedTime createASN1GeneralizedTime(IASN1Encodable encodable);
+
+    IASN1UTCTime createASN1UTCTime(IASN1Encodable encodable);
 }

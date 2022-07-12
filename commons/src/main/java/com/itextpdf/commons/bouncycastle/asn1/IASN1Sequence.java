@@ -8,4 +8,6 @@ public interface IASN1Sequence extends IASN1Primitive {
     Enumeration getObjects();
 
     int size();
+
+    IASN1Encodable[] toArray();
 }

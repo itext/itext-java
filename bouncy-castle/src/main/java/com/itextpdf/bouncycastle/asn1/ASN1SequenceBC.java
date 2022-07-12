@@ -4,6 +4,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 
 import java.util.Enumeration;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 
 public class ASN1SequenceBC extends ASN1PrimitiveBC implements IASN1Sequence {
@@ -31,5 +32,15 @@ public class ASN1SequenceBC extends ASN1PrimitiveBC implements IASN1Sequence {
     @Override
     public int size() {
         return getASN1Sequence().size();
+    }
+
+    @Override
+    public IASN1Encodable[] toArray() {
+        ASN1Encodable[] encodables = getASN1Sequence().toArray();
+        ASN1EncodableBC[] encodablesBC = new ASN1EncodableBC[encodables.length];
+        for (int i = 0; i < encodables.length; ++i) {
+            encodablesBC[i] = new ASN1EncodableBC(encodables[i]);
+        }
+        return encodablesBC;
     }
 }
