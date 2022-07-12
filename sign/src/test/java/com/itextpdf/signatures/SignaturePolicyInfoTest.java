@@ -42,29 +42,28 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.bouncycastle.asn1.ASN1PrimitiveBC;
-import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifierInfoBC;
-import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifiersBC;
-import com.itextpdf.bouncycastle.asn1.esf.SignaturePolicyIdentifierBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
+import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
+import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
+import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.esf.OtherHashAlgAndValue;
-import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
-import org.bouncycastle.asn1.esf.SignaturePolicyId;
-import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class SignaturePolicyInfoTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     private final static String POLICY_IDENTIFIER = "2.16.724.1.3.1.1.2.1.9";
     private final static String POLICY_HASH_BASE64 = "G7roucf600+f03r/o0bAOQ6WAs0=";
     private final static byte[] POLICY_HASH = Base64.decode(POLICY_HASH_BASE64);
@@ -143,30 +142,28 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
 
     @Test
     public void toSignaturePolicyIdentifierTest() {
-        SignaturePolicyIdentifierBC actual = (SignaturePolicyIdentifierBC)
-                new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH, POLICY_DIGEST_ALGORITHM, POLICY_URI)
-                        .toSignaturePolicyIdentifier();
+        ISignaturePolicyIdentifier actual = new SignaturePolicyInfo(POLICY_IDENTIFIER, POLICY_HASH,
+                POLICY_DIGEST_ALGORITHM, POLICY_URI).toSignaturePolicyIdentifier();
 
-        DERIA5String deria5String = new DERIA5String(POLICY_URI);
-        SigPolicyQualifierInfo sigPolicyQualifierInfo = new SigPolicyQualifierInfo(
-                PKCSObjectIdentifiers.id_spq_ets_uri, deria5String);
+        IDERIA5String deria5String = BOUNCY_CASTLE_FACTORY.createDERIA5String(POLICY_URI);
+        ISigPolicyQualifierInfo sigPolicyQualifierInfo = BOUNCY_CASTLE_FACTORY.createSigPolicyQualifierInfo(
+                BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers().getIdSpqEtsUri(), deria5String);
 
-        DEROctetString derOctetString = new DEROctetString(POLICY_HASH);
+        IDEROctetString derOctetString = BOUNCY_CASTLE_FACTORY.createDEROctetString(POLICY_HASH);
         String algId = DigestAlgorithms.getAllowedDigest(POLICY_DIGEST_ALGORITHM);
-        ASN1ObjectIdentifier asn1ObjectIdentifier = new ASN1ObjectIdentifier(algId);
-        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(
+        IASN1ObjectIdentifier asn1ObjectIdentifier = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(algId);
+        IAlgorithmIdentifier algorithmIdentifier = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
                 asn1ObjectIdentifier);
-        OtherHashAlgAndValue otherHashAlgAndValue = new OtherHashAlgAndValue(algorithmIdentifier, derOctetString);
-        ASN1ObjectIdentifier objectIdentifier = new ASN1ObjectIdentifier(POLICY_IDENTIFIER);
-        ASN1ObjectIdentifier objectIdentifierInstance = ASN1ObjectIdentifier.getInstance(objectIdentifier);
-        SigPolicyQualifiersBC policyQualifiersBC = (SigPolicyQualifiersBC)
-                SignUtils.createSigPolicyQualifiers(new SigPolicyQualifierInfoBC(sigPolicyQualifierInfo));
-        SignaturePolicyId signaturePolicyId = new SignaturePolicyId(objectIdentifierInstance,
-                otherHashAlgAndValue, policyQualifiersBC.getSigPolityQualifiers());
+        IOtherHashAlgAndValue otherHashAlgAndValue = BOUNCY_CASTLE_FACTORY.createOtherHashAlgAndValue(algorithmIdentifier, derOctetString);
+        IASN1ObjectIdentifier objectIdentifier = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(POLICY_IDENTIFIER);
+        IASN1ObjectIdentifier objectIdentifierInstance = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(objectIdentifier);
+        ISigPolicyQualifiers policyQualifiers = SignUtils.createSigPolicyQualifiers(sigPolicyQualifierInfo);
+        ISignaturePolicyId signaturePolicyId = BOUNCY_CASTLE_FACTORY.createSignaturePolicyId(objectIdentifierInstance,
+                otherHashAlgAndValue, policyQualifiers);
 
-        SignaturePolicyIdentifier expected = new SignaturePolicyIdentifier(signaturePolicyId);
+        ISignaturePolicyIdentifier expected = BOUNCY_CASTLE_FACTORY.createSignaturePolicyIdentifier(signaturePolicyId);
 
-        Assert.assertEquals(expected.toASN1Primitive(), ((ASN1PrimitiveBC) actual.toASN1Primitive()).getPrimitive());
+        Assert.assertEquals(expected, actual);
     }
 
     @Test

@@ -42,10 +42,15 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBC;
-import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
-import com.itextpdf.bouncycastle.cert.ocsp.OCSPExceptionBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -70,15 +75,6 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
-import org.bouncycastle.cert.ocsp.RevokedStatus;
-import org.bouncycastle.cert.ocsp.UnknownStatus;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -92,6 +88,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.p12";
     private static final char[] password = "testpass".toCharArray();
     private static final String ocspServiceUrl = "http://localhost:9000/demo/ocsp/ocsp-service";
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static X509Certificate checkCert;
     private static X509Certificate rootCert;
@@ -99,13 +96,13 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
     }
 
     @Before
     public void setUp()
             throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        builder = createBuilder(CertificateStatus.GOOD);
+        builder = createBuilder(BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood());
         checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(signOcspCert, password)[0];
         rootCert = builder.getIssuerCert();
     }
@@ -173,7 +170,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOcspRespTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
 
-        BasicOCSPRespBC basicOCSPResp = (BasicOCSPRespBC) ocspClientBouncyCastle
+        IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
                 .getBasicOCSPResp(checkCert, rootCert, ocspServiceUrl);
         Assert.assertNotNull(basicOCSPResp);
         Assert.assertTrue(basicOCSPResp.getResponses().length > 0);
@@ -183,7 +180,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOcspRespNullTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = new OcspClientBouncyCastle(null);
 
-        BasicOCSPRespBC basicOCSPResp = (BasicOCSPRespBC) ocspClientBouncyCastle
+        IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
                 .getBasicOCSPResp(checkCert, null, ocspServiceUrl);
         Assert.assertNull(basicOCSPResp);
     }
@@ -194,7 +191,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOCSPRespLogMessageTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
 
-        BasicOCSPRespBC basicOCSPResp = (BasicOCSPRespBC) ocspClientBouncyCastle.getBasicOCSPResp(null, null, null);
+        IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle.getBasicOCSPResp(null, null, null);
         Assert.assertNull(basicOCSPResp);
     }
 
@@ -214,8 +211,8 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void ocspStatusIsRevokedTest()
             throws UnrecoverableKeyException, CertificateException, KeyStoreException, IOException,
             NoSuchAlgorithmException {
-        RevokedStatus status = new RevokedStatus(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
-                OCSPResp.SUCCESSFUL);
+        IRevokedStatus status = BOUNCY_CASTLE_FACTORY.createRevokedStatus(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
+                BOUNCY_CASTLE_FACTORY.createOCSPResp().getSuccessful());
         TestOcspResponseBuilder responseBuilder = createBuilder(status);
         OcspClientBouncyCastle ocspClientBouncyCastle = createTestOcspClient(responseBuilder);
 
@@ -230,7 +227,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void ocspStatusIsUnknownTest()
             throws CertificateException, UnrecoverableKeyException, KeyStoreException, IOException,
             NoSuchAlgorithmException {
-        UnknownStatus status = new UnknownStatus();
+        IUnknownStatus status = BOUNCY_CASTLE_FACTORY.createUnknownStatus();
         TestOcspResponseBuilder responseBuilder = createBuilder(status);
         OcspClientBouncyCastle ocspClientBouncyCastle = createTestOcspClient(responseBuilder);
 
@@ -251,7 +248,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         return createOcspClient(responseBuilder);
     }
 
-    private static TestOcspResponseBuilder createBuilder(CertificateStatus status)
+    private static TestOcspResponseBuilder createBuilder(ICertificateStatus status)
             throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException {
         X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootOcspCert, password)[0];
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootOcspCert, password, password);
@@ -267,15 +264,16 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         }
 
         @Override
-        OCSPRespBC getOcspResponse(X509Certificate chCert, X509Certificate rCert, String url) throws OCSPExceptionBC {
+        IOCSPResp getOcspResponse(X509Certificate chCert, X509Certificate rCert, String url)
+                throws AbstractOCSPException {
             try {
-                CertificateID id = SignTestPortUtil.generateCertificateId(rootCert, checkCert.getSerialNumber(),
-                        CertificateID.HASH_SHA1);
-                BasicOCSPResp basicOCSPResp = testOcspBuilder.makeOcspResponseObject(SignTestPortUtil
+                ICertificateID id = SignTestPortUtil.generateCertificateId(rootCert, checkCert.getSerialNumber(),
+                        BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
+                IBasicOCSPResp basicOCSPResp = testOcspBuilder.makeOcspResponseObject(SignTestPortUtil
                         .generateOcspRequestWithNonce(id).getEncoded());
-                return new OCSPRespBC(new OCSPRespBuilder().build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp));
+                return BOUNCY_CASTLE_FACTORY.createOCSPRespBuilder().build(BOUNCY_CASTLE_FACTORY.createOCSPRespBuilderInstance().getSuccessful(), basicOCSPResp);
             } catch (Exception e) {
-                throw new OCSPExceptionBC(new OCSPException(e.getMessage()));
+                throw BOUNCY_CASTLE_FACTORY.createAbstractOCSPException(e);
             }
         }
     }

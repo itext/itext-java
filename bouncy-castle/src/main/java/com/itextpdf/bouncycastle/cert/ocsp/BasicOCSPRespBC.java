@@ -8,6 +8,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
@@ -58,6 +59,11 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
     @Override
     public byte[] getEncoded() throws IOException {
         return basicOCSPResp.getEncoded();
+    }
+
+    @Override
+    public Date getProducedAt() {
+        return basicOCSPResp.getProducedAt();
     }
 
     @Override

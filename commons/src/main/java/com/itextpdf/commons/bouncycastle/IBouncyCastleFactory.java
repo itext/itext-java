@@ -63,6 +63,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.cms.AbstractCMSException;
 import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
@@ -83,6 +84,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 
 public interface IBouncyCastleFactory {
     IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable);
@@ -100,6 +102,8 @@ public interface IBouncyCastleFactory {
     IASN1OctetString createASN1OctetString(IASN1Encodable encodable);
 
     IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b);
+
+    IASN1OctetString createASN1OctetString(byte[] bytes);
 
     IASN1Sequence createASN1Sequence(Object object);
 
@@ -225,9 +229,13 @@ public interface IBouncyCastleFactory {
 
     IOCSPResp createOCSPResp(byte[] bytes) throws IOException;
 
+    IOCSPResp createOCSPResp();
+
     IOCSPResponse createOCSPResponse(IOCSPResponseStatus respStatus, IResponseBytes responseBytes);
 
     IResponseBytes createResponseBytes(IASN1ObjectIdentifier asn1ObjectIdentifier, IDEROctetString derOctetString);
+
+    IOCSPRespBuilder createOCSPRespBuilderInstance();
 
     IOCSPRespBuilder createOCSPRespBuilder();
 
@@ -238,6 +246,8 @@ public interface IBouncyCastleFactory {
     ICertificateStatus createCertificateStatus();
 
     IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus);
+
+    IRevokedStatus createRevokedStatus(Date date, int i);
 
     IASN1Primitive createASN1Primitive(byte[] array) throws IOException;
 
@@ -286,4 +296,8 @@ public interface IBouncyCastleFactory {
     ITimeStampRequestGenerator createTimeStampRequestGenerator();
 
     ITimeStampResponse createTimeStampResponse(byte[] respBytes) throws AbstractTSPException, IOException;
+
+    AbstractOCSPException createAbstractOCSPException(Exception e);
+
+    IUnknownStatus createUnknownStatus();
 }

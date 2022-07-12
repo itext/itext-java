@@ -42,13 +42,14 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.signatures.testutils.X509MockCertificate;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.security.Security;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -56,10 +57,11 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     @BeforeClass
     public static void beforeClass() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
     }
 
     @Test

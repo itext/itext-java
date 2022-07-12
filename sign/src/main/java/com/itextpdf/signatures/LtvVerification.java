@@ -316,7 +316,7 @@ public class LtvVerification {
     private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
         IDEROctetString doctet = BOUNCY_CASTLE_FACTORY.createDEROctetString(basicOcspResponse);
         IOCSPResponseStatus respStatus = BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus(
-                BOUNCY_CASTLE_FACTORY.createOCSPRespBuilder().getSuccessful());
+                BOUNCY_CASTLE_FACTORY.createOCSPRespBuilderInstance().getSuccessful());
         IResponseBytes responseBytes = BOUNCY_CASTLE_FACTORY.createResponseBytes(
                 BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspBasic(), doctet);
         IOCSPResponse ocspResponse = BOUNCY_CASTLE_FACTORY.createOCSPResponse(respStatus, responseBytes);

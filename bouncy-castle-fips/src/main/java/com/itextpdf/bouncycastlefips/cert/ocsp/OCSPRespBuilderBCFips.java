@@ -1,8 +1,11 @@
 package com.itextpdf.bouncycastlefips.cert.ocsp;
 
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 
 import java.util.Objects;
+import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 
 public class OCSPRespBuilderBCFips implements IOCSPRespBuilder {
@@ -27,6 +30,16 @@ public class OCSPRespBuilderBCFips implements IOCSPRespBuilder {
     @Override
     public int getSuccessful() {
         return SUCCESSFUL;
+    }
+
+    @Override
+    public IOCSPResp build(int i, IBasicOCSPResp basicOCSPResp) throws OCSPExceptionBCFips {
+        try {
+            return new OCSPRespBCFips(
+                    ocspRespBuilder.build(i, ((BasicOCSPRespBCFips) basicOCSPResp).getBasicOCSPResp()));
+        } catch (OCSPException e) {
+            throw new OCSPExceptionBCFips(e);
+        }
     }
 
     @Override

@@ -22,8 +22,11 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
-import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -58,13 +61,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -79,6 +75,8 @@ public class PdfPKCS7Test extends ExtendedITextTest {
 
     private static final double EPS = 0.001;
 
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static Certificate[] chain;
     private static PrivateKey pk;
 
@@ -86,7 +84,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public static void init()
             throws KeyStoreException, IOException, CertificateException,
             NoSuchAlgorithmException, UnrecoverableKeyException {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
 
         pk = Pkcs12FileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.p12", PASSWORD, PASSWORD);
         chain = Pkcs12FileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.p12", PASSWORD);
@@ -190,7 +188,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         Assert.assertNull(pkcs7.getCRLs());
         // it's tested here that ocsp and time stamp token were found while
         // constructing PdfPKCS7 instance
-        TimeStampToken timeStampToken = ((TimeStampTokenBC) pkcs7.getTimeStampToken()).getTimeStampToken();
+        ITimeStampToken timeStampToken = pkcs7.getTimeStampToken();
         Assert.assertNotNull(timeStampToken);
 
         // The number corresponds to 3 September, 2021 13:32:33.
@@ -203,7 +201,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         Assert.assertEquals(
                 TimeTestUtil.getFullDaysMillis(expectedMillis),
                 TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(
-                        DateTimeUtil.getCalendar(((BasicOCSPRespBC) pkcs7.getOcsp()).getBasicOCSPResp().getProducedAt()))),
+                        DateTimeUtil.getCalendar(pkcs7.getOcsp().getProducedAt()))),
                 EPS);
     }
 
@@ -289,8 +287,9 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public void isRevocationValidLackOfSignCertsTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
-        pkcs7.basicResp = new BasicOCSPRespBC(new BasicOCSPResp(BasicOCSPResponse.getInstance(new ASN1InputStream(
-                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject())));
+        pkcs7.basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
+                BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
         pkcs7.signCerts = Collections.singleton(chain[0]);
         Assert.assertFalse(pkcs7.isRevocationValid());
     }
@@ -299,9 +298,10 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public void isRevocationValidExceptionDuringValidationTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
-        pkcs7.basicResp = new BasicOCSPRespBC(new BasicOCSPResp(BasicOCSPResponse.getInstance(new ASN1InputStream(
-                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject())));
-        pkcs7.signCerts = Arrays.asList(new Certificate[]{null, null});
+        pkcs7.basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
+                BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+        pkcs7.signCerts = Arrays.asList(new Certificate[] {null, null});
         Assert.assertFalse(pkcs7.isRevocationValid());
     }
 
@@ -312,8 +312,8 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
         byte[] bytes = pkcs7.getEncodedPKCS1();
         byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs1.txt"));
-        ASN1OctetString outOctetString = ASN1OctetString.getInstance(bytes);
-        ASN1OctetString cmpOctetString = ASN1OctetString.getInstance(cmpBytes);
+        IASN1OctetString outOctetString = BOUNCY_CASTLE_FACTORY.createASN1OctetString(bytes);
+        IASN1OctetString cmpOctetString = BOUNCY_CASTLE_FACTORY.createASN1OctetString(cmpBytes);
         Assert.assertEquals(outOctetString, cmpOctetString);
     }
 
@@ -344,8 +344,8 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
         byte[] bytes = pkcs7.getEncodedPKCS7();
         byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs7.txt"));
-        ASN1Primitive outStream = ASN1Primitive.fromByteArray(bytes);
-        ASN1Primitive cmpStream = ASN1Primitive.fromByteArray(cmpBytes);
+        IASN1Primitive outStream = BOUNCY_CASTLE_FACTORY.createASN1Primitive(bytes);
+        IASN1Primitive cmpStream = BOUNCY_CASTLE_FACTORY.createASN1Primitive(cmpBytes);
         Assert.assertEquals("SHA256withRSA", pkcs7.getDigestAlgorithm());
         Assert.assertEquals(outStream, cmpStream);
     }

@@ -22,7 +22,9 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.bouncycastle.tsp.TimeStampTokenInfoBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -38,15 +40,13 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class TSAClientBouncyCastleTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     @Test
     public void setTSAInfoTest() {
@@ -150,10 +150,10 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         byte[] timestampTokenArray = tsaClientBouncyCastle.getTimeStampToken(tsaClientBouncyCastle
                 .getMessageDigest().digest());
 
-        TimeStampToken expectedToken = new TimeStampResponse(tsaClientBouncyCastle.getExpectedTsaResponseBytes())
+        ITimeStampToken expectedToken = BOUNCY_CASTLE_FACTORY.createTimeStampResponse(tsaClientBouncyCastle.getExpectedTsaResponseBytes())
                 .getTimeStampToken();
-        TimeStampTokenInfo expectedTsTokenInfo = expectedToken.getTimeStampInfo();
-        TimeStampTokenInfo resultTsTokenInfo = itsaInfoBouncyCastle.getTimeStampTokenInfo();
+        ITimeStampTokenInfo expectedTsTokenInfo = expectedToken.getTimeStampInfo();
+        ITimeStampTokenInfo resultTsTokenInfo = itsaInfoBouncyCastle.getTimeStampTokenInfo();
 
         Assert.assertNotNull(timestampTokenArray);
         Assert.assertNotNull(resultTsTokenInfo);
@@ -219,15 +219,14 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
     private static final class CustomItsaInfoBouncyCastle implements ITSAInfoBouncyCastle {
 
-        private TimeStampTokenInfo timeStampTokenInfo;
+        private ITimeStampTokenInfo timeStampTokenInfo;
 
         @Override
         public void inspectTimeStampTokenInfo(ITimeStampTokenInfo info) {
-            this.timeStampTokenInfo = ((TimeStampTokenInfoBC) info).getTimeStampTokenInfo();
+            this.timeStampTokenInfo = info;
         }
 
-
-        public TimeStampTokenInfo getTimeStampTokenInfo() {
+        public ITimeStampTokenInfo getTimeStampTokenInfo() {
             return timeStampTokenInfo;
         }
     }

@@ -62,6 +62,7 @@ import com.itextpdf.bouncycastle.cert.ocsp.OCSPReqBuilderBC;
 import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBC;
 import com.itextpdf.bouncycastle.cert.ocsp.OCSPRespBuilderBC;
 import com.itextpdf.bouncycastle.cert.ocsp.RevokedStatusBC;
+import com.itextpdf.bouncycastle.cert.ocsp.UnknownStatusBC;
 import com.itextpdf.bouncycastle.cms.CMSEnvelopedDataBC;
 import com.itextpdf.bouncycastle.cms.CMSExceptionBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBC;
@@ -128,6 +129,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
@@ -135,6 +137,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
@@ -153,6 +156,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -178,9 +182,12 @@ import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 import org.bouncycastle.cert.ocsp.RevokedStatus;
+import org.bouncycastle.cert.ocsp.UnknownStatus;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
@@ -246,6 +253,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b) {
         return new ASN1OctetStringBC(taggedObject, b);
+    }
+
+    @Override
+    public IASN1OctetString createASN1OctetString(byte[] bytes) {
+        return new ASN1OctetStringBC(ASN1OctetString.getInstance(bytes));
     }
 
     @Override
@@ -625,6 +637,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IOCSPResp createOCSPResp() {
+        return OCSPRespBC.getInstance();
+    }
+
+    @Override
     public IOCSPResponse createOCSPResponse(IOCSPResponseStatus respStatus, IResponseBytes responseBytes) {
         return new OCSPResponseBC(respStatus, responseBytes);
     }
@@ -636,8 +653,13 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IOCSPRespBuilder createOCSPRespBuilder() {
+    public IOCSPRespBuilder createOCSPRespBuilderInstance() {
         return OCSPRespBuilderBC.getInstance();
+    }
+
+    @Override
+    public IOCSPRespBuilder createOCSPRespBuilder() {
+        return new OCSPRespBuilderBC(new OCSPRespBuilder());
     }
 
     @Override
@@ -662,6 +684,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
             return new RevokedStatusBC((RevokedStatus) certificateStatusBC.getCertificateStatus());
         }
         return null;
+    }
+
+    @Override
+    public IRevokedStatus createRevokedStatus(Date date, int i) {
+        return new RevokedStatusBC(new RevokedStatus(date, i));
     }
 
     @Override
@@ -787,5 +814,15 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         } catch (TSPException e) {
             throw new TSPExceptionBC(e);
         }
+    }
+
+    @Override
+    public AbstractOCSPException createAbstractOCSPException(Exception e) {
+        return new OCSPExceptionBC(new OCSPException(e.getMessage()));
+    }
+
+    @Override
+    public IUnknownStatus createUnknownStatus() {
+        return new UnknownStatusBC(new UnknownStatus());
     }
 }

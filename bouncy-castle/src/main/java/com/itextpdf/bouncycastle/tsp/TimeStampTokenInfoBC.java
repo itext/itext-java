@@ -6,6 +6,7 @@ import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
@@ -34,6 +35,11 @@ public class TimeStampTokenInfoBC implements ITimeStampTokenInfo {
     @Override
     public Date getGenTime() {
         return timeStampTokenInfo.getGenTime();
+    }
+
+    @Override
+    public byte[] getEncoded() throws IOException {
+        return timeStampTokenInfo.getEncoded();
     }
 
     @Override

@@ -10,6 +10,8 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 
 public class OCSPRespBC implements IOCSPResp {
+    private static final OCSPRespBC INSTANCE = new OCSPRespBC((OCSPResp) null);
+
     private final OCSPResp ocspResp;
 
     public OCSPRespBC(OCSPResp ocspResp) {
@@ -18,6 +20,10 @@ public class OCSPRespBC implements IOCSPResp {
 
     public OCSPRespBC(IOCSPResponse ocspResponse) {
         this(new OCSPResp(((OCSPResponseBC) ocspResponse).getOcspResponse()));
+    }
+
+    public static OCSPRespBC getInstance() {
+        return INSTANCE;
     }
 
     public OCSPResp getOcspResp() {
@@ -41,6 +47,11 @@ public class OCSPRespBC implements IOCSPResp {
         } catch (OCSPException e) {
             throw new OCSPExceptionBC(e);
         }
+    }
+
+    @Override
+    public int getSuccessful() {
+        return OCSPResp.SUCCESSFUL;
     }
 
     @Override

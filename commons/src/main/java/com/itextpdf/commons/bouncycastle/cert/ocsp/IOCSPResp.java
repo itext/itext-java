@@ -10,4 +10,6 @@ public interface IOCSPResp {
     int getStatus();
 
     Object getResponseObject() throws AbstractOCSPException;
+
+    int getSuccessful();
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
@@ -60,12 +61,12 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -74,6 +75,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class PdfSignerUnitTest extends ExtendedITextTest {
+    private static final Provider PROVIDER = BouncyCastleFactoryCreator.getFactory().createProvider();
 
     private static final byte[] OWNER = "owner".getBytes();
     private static final byte[] USER = "user".getBytes();
@@ -90,7 +92,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(PROVIDER);
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
@@ -149,7 +151,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         signer.fieldLock = fieldLock;
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                PROVIDER.getName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
         Assert.assertTrue(signer.closed);
     }
@@ -161,7 +163,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayOutputStream(),
                 new StampingProperties());
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                PROVIDER.getName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         Exception e = Assert.assertThrows(PdfException.class, () ->
@@ -177,7 +179,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayOutputStream(),
                 new StampingProperties());
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                PROVIDER.getName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         Exception e = Assert.assertThrows(PdfException.class, () ->

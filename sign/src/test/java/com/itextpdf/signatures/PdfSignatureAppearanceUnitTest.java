@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -47,7 +49,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,12 +69,14 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
             = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.p12";
     public static final char[] PASSWORD = "kspass".toCharArray();
 
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static Certificate[] chain;
 
     @BeforeClass
     public static void before() throws KeyStoreException, IOException, CertificateException,
             NoSuchAlgorithmException {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
     }

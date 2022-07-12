@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -58,6 +60,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class LtvVerificationTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerificationTest/";
     private static final String SRC_PDF = SOURCE_FOLDER + "pdfWithDssDictionary.pdf";
@@ -70,7 +73,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() throws IOException {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF));
         TEST_VERIFICATION = new LtvVerification(pdfDoc);
     }
