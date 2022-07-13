@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
@@ -66,6 +68,8 @@ import java.util.Arrays;
 @Category(IntegrationTest.class)
 public class TimestampSigTest extends ExtendedITextTest {
 
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/TimestampSigTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/TimestampSigTest/";
@@ -75,7 +79,7 @@ public class TimestampSigTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 

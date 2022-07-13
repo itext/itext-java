@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -66,7 +68,6 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -74,6 +75,9 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class SequentialSignaturesTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/SequentialSignaturesTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/SequentialSignaturesTest/";
@@ -82,7 +86,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -95,7 +99,8 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
 
         Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
         PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
-        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        IExternalSignature pks =
+                new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 
         String signatureName = "Signature2";
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties().useAppendMode());
@@ -124,7 +129,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
 
         IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
 
         String signatureName = "Signature2";
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName),

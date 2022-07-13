@@ -203,6 +203,9 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
+
+    private static final String PROVIDER_NAME = new BouncyCastleFipsProvider().getName();
+    
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -533,6 +536,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public String getProviderName() {
+        return PROVIDER_NAME;
+    }
+
+    @Override
     public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBCFips(new JceKeyTransEnvelopedRecipient(privateKey));
     }
@@ -744,6 +752,12 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
             IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBCFips(algorithmIdentifier, octetString);
+    }
+
+    @Override
+    public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
+            IOtherHashAlgAndValue algAndValue) {
+        return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue);
     }
 
     @Override

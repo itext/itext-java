@@ -201,6 +201,8 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
 public class BouncyCastleFactory implements IBouncyCastleFactory {
+    
+    private static final String PROVIDER_NAME = new BouncyCastleProvider().getName();
 
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
@@ -525,6 +527,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public String getProviderName() {
+        return PROVIDER_NAME;
+    }
+
+    @Override
     public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBC(new JceKeyTransEnvelopedRecipient(privateKey));
     }
@@ -736,6 +743,12 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
             IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBC(algorithmIdentifier, octetString);
+    }
+
+    @Override
+    public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
+            IOtherHashAlgAndValue algAndValue) {
+        return new SignaturePolicyIdBC(objectIdentifier, algAndValue);
     }
 
     @Override

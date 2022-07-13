@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -69,6 +71,8 @@ import org.junit.experimental.categories.Category;
 @Category( IntegrationTest.class)
 public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
 
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/LtvWithTwoSignaturesTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/LtvWithTwoSignaturesTest/";
@@ -77,7 +81,7 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -125,10 +129,15 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
         Assert.assertEquals(2, crls.size());
     }
 
-    private void addLtvInfo(String src, String dest, String sigName, TestOcspClient testOcspClient, TestCrlClient testCrlClient ) throws java.io.IOException, GeneralSecurityException {
-        PdfDocument document = new PdfDocument(new PdfReader(src), new PdfWriter(dest), new StampingProperties().useAppendMode());
-        LtvVerification ltvVerification = new LtvVerification(document, "BC");
-        ltvVerification.addVerification(sigName, testOcspClient, testCrlClient, LtvVerification.CertificateOption.WHOLE_CHAIN, LtvVerification.Level.OCSP_CRL, LtvVerification.CertificateInclusion.YES);
+    private void addLtvInfo(String src, String dest, String sigName, TestOcspClient testOcspClient,
+            TestCrlClient testCrlClient ) throws java.io.IOException, GeneralSecurityException {
+        PdfDocument document =
+                new PdfDocument(new PdfReader(src), new PdfWriter(dest), new StampingProperties().useAppendMode());
+        LtvVerification ltvVerification = new LtvVerification(document, FACTORY.getProviderName());
+        ltvVerification.addVerification(sigName, testOcspClient, testCrlClient,
+                LtvVerification.CertificateOption.WHOLE_CHAIN,
+                LtvVerification.Level.OCSP_CRL,
+                LtvVerification.CertificateInclusion.YES);
         ltvVerification.merge();
         document.close();
     }

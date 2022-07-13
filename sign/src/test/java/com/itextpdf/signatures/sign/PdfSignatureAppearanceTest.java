@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -83,7 +85,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -92,6 +93,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfSignatureAppearanceTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
@@ -103,7 +106,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
@@ -203,7 +206,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         // Make sure iText can open the document
@@ -232,7 +235,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setFieldName("Signature1");
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         Assert.assertNull(new CompareTool().compareVisually(dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER,
@@ -287,7 +290,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setFieldName("Signature1");
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
                 0, PdfSigner.CryptoStandard.CADES);
 
@@ -317,7 +320,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setFieldName("Signature1");
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
                 0, PdfSigner.CryptoStandard.CADES);
 
@@ -346,7 +349,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setFieldName("Signature1");
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
 
         Assert.assertThrows(NullPointerException.class, () -> signer.signDetached(new BouncyCastleDigest(),
                 pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES));
@@ -395,7 +398,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
@@ -422,7 +425,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
@@ -450,7 +453,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
@@ -478,7 +481,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
@@ -524,7 +527,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
@@ -566,7 +569,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         // Make sure iText can open the document
@@ -601,7 +604,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setFieldName("Signature1");
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
     }
 

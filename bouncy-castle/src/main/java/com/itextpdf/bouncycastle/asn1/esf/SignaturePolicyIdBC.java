@@ -22,6 +22,12 @@ public class SignaturePolicyIdBC extends ASN1EncodableBC implements ISignaturePo
                 ((SigPolicyQualifiersBC) policyQualifiers).getSigPolityQualifiers()));
     }
 
+    public SignaturePolicyIdBC(IASN1ObjectIdentifier objectIdentifier, IOtherHashAlgAndValue algAndValue) {
+        this(new SignaturePolicyId(
+                ((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(),
+                ((OtherHashAlgAndValueBC) algAndValue).getOtherHashAlgAndValue()));
+    }
+
     public SignaturePolicyId getSignaturePolicyId() {
         return (SignaturePolicyId) getEncodable();
     }

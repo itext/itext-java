@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -52,7 +54,6 @@ import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
@@ -78,7 +79,6 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -86,6 +86,9 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class LtvSigTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/LtvSigTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/LtvSigTest/";
@@ -94,7 +97,7 @@ public class LtvSigTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
@@ -218,7 +221,7 @@ public class LtvSigTest extends ExtendedITextTest {
     private static IExternalSignature prepareSignatureHandler(String signCertP12FileName)
             throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
         PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertP12FileName, PASSWORD, PASSWORD);
-        return new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        return new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
     }
 
     private static TestCrlClient prepareCrlClientForIssuer(String... issuerCertP12FileNames)

@@ -22,7 +22,8 @@
  */
 package com.itextpdf.signatures.sign;
 
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -46,7 +47,6 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,6 +55,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class EncryptedSigningTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/EncryptedSigningTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/EncryptedSigningTest/";
@@ -67,7 +69,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
@@ -95,7 +97,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         signer.setFieldName(fieldName);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         //Password to open out and cmp files are the same
@@ -111,17 +113,17 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "signCertificateSecurityPdf.pdf";
 
         PdfReader reader = new PdfReader(srcFile, new ReaderProperties()
-                .setPublicKeySecurityParams(chain[0], pk, new BouncyCastleProvider().getName(), null));
+                .setPublicKeySecurityParams(chain[0], pk, FACTORY.getProviderName(), null));
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
                 new StampingProperties().useAppendMode());
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         ReaderProperties properties = new ReaderProperties().setPublicKeySecurityParams(chain[0], pk,
-                new BouncyCastleProvider().getName(),null);
+                FACTORY.getProviderName(), null);
 
         //Public key to open out and cmp files are the same
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));

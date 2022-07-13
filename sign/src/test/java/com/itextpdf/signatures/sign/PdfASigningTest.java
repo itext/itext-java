@@ -43,6 +43,8 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -79,7 +81,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -88,6 +89,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfASigningTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfASigningTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfASigningTest/";
@@ -100,7 +103,7 @@ public class PdfASigningTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -142,7 +145,8 @@ public class PdfASigningTest extends ExtendedITextTest {
         signer.setFieldLockDict(new PdfSigFieldLock());
         signer.setCertificationLevel(PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED);
 
-        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        IExternalSignature pks =
+                new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         Assert.assertNull(new VeraPdfValidator().validate(out));
@@ -173,7 +177,7 @@ public class PdfASigningTest extends ExtendedITextTest {
                 .setReuseAppearance(false)
                 .setPageRect(rect);
 
-        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () ->
                 signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
@@ -222,7 +226,7 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         signer.setFieldName(name);
         // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
+        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);
     }
 

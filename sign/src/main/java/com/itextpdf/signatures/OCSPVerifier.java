@@ -321,7 +321,7 @@ public class OCSPVerifier extends RootStoreVerifier {
      */
     public boolean isSignatureValid(IBasicOCSPResp ocspResp, Certificate responderCert) {
         try {
-            return SignUtils.isSignatureValid(ocspResp, responderCert, "BC");
+            return SignUtils.isSignatureValid(ocspResp, responderCert, BOUNCY_CASTLE_FACTORY.getProviderName());
         } catch (Exception e) {
             return false;
         }

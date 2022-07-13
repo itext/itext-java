@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -77,7 +79,6 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,6 +86,9 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class SignDeferredTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/SignDeferredTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/SignDeferredTest/";
@@ -94,7 +98,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 
@@ -292,7 +296,8 @@ public class SignDeferredTest extends ExtendedITextTest {
 
             byte[] attributes = pkcs7.getAuthenticatedAttributeBytes(docBytesHash, PdfSigner.CryptoStandard.CMS, null, null);
 
-            PrivateKeySignature signature = new PrivateKeySignature(pk, HASH_ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
+            PrivateKeySignature signature =
+                    new PrivateKeySignature(pk, HASH_ALGORITHM, FACTORY.getProviderName());
             byte[] attrSign = signature.sign(attributes);
 
             pkcs7.setExternalDigest(attrSign, null, signature.getEncryptionAlgorithm());

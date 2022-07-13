@@ -213,7 +213,7 @@ final class SignUtils {
     static boolean isSignatureValid(IBasicOCSPResp validator, Certificate certStoreX509, String provider)
             throws AbstractOperatorCreationException, AbstractOCSPException {
         if (provider == null) {
-            provider = FACTORY.createProvider().getName();
+            provider = FACTORY.getProviderName();
         }
         return validator.isSignatureValid(FACTORY.createJcaContentVerifierProviderBuilder()
                 .setProvider(provider).build(certStoreX509.getPublicKey()));
@@ -222,7 +222,7 @@ final class SignUtils {
     static void isSignatureValid(ITimeStampToken validator, X509Certificate certStoreX509, String provider)
             throws AbstractOperatorCreationException, AbstractTSPException {
         if (provider == null) {
-            provider = FACTORY.createProvider().getName();
+            provider = FACTORY.getProviderName();
         }
         ISignerInformationVerifier verifier = FACTORY.createJcaSimpleSignerInfoVerifierBuilder().setProvider(provider)
                 .build(certStoreX509);

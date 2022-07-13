@@ -188,6 +188,8 @@ public interface IBouncyCastleFactory {
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable);
 
     Provider createProvider();
+    
+    String getProviderName();
 
     IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey);
 
@@ -265,6 +267,9 @@ public interface IBouncyCastleFactory {
 
     IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
             IASN1OctetString octetString);
+
+    ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
+            IOtherHashAlgAndValue algAndValue);
 
     ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
             IOtherHashAlgAndValue algAndValue,

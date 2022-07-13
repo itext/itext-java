@@ -22,6 +22,13 @@ public class SignaturePolicyIdBCFips extends ASN1EncodableBCFips implements ISig
                 ((SigPolicyQualifiersBCFips) policyQualifiers).getSigPolityQualifiers()));
     }
 
+    public SignaturePolicyIdBCFips(IASN1ObjectIdentifier objectIdentifier,
+            IOtherHashAlgAndValue algAndValue) {
+        this(new SignaturePolicyId(
+                ((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier(),
+                ((OtherHashAlgAndValueBCFips) algAndValue).getOtherHashAlgAndValue()));
+    }
+
     public SignaturePolicyId getSignaturePolicyId() {
         return (SignaturePolicyId) getEncodable();
     }
