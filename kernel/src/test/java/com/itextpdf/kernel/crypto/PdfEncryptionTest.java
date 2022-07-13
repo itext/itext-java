@@ -42,6 +42,8 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -74,7 +76,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -105,6 +106,8 @@ import static org.junit.Assert.fail;
  */
 @Category(IntegrationTest.class)
 public class PdfEncryptionTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
 
@@ -133,7 +136,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
     }
 
     @Test
@@ -284,7 +287,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
                                 null,
-                                "BC",
+                                FACTORY.getProviderName(),
                                 null))) {
 
             Exception e = Assert.assertThrows(PdfException.class,
@@ -301,7 +304,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
                                 getPrivateKey(),
-                                "BC",
+                                FACTORY.getProviderName(),
                                 null))) {
 
             Exception e = Assert.assertThrows(PdfException.class,
@@ -318,7 +321,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(CERT),
                                 CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
-                                "BC",
+                                FACTORY.getProviderName(),
                                 null))) {
 
             Exception e = Assert.assertThrows(PdfException.class,
@@ -335,7 +338,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
                                 CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
-                                "BC",
+                                FACTORY.getProviderName(),
                                 null))) {
 
             Exception e = Assert.assertThrows(PdfException.class,
@@ -361,7 +364,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public void copyEncryptedDocument() throws GeneralSecurityException, IOException, InterruptedException {
         PdfDocument srcDoc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties().
-                        setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(), "BC", null)));
+                        setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(), FACTORY.getProviderName(), null)));
         String fileName = "copiedEncryptedDoc.pdf";
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
         srcDoc.copyPagesTo(1, 1, destDoc);
@@ -662,8 +665,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         checkDecryptedWithCertificateContent(filename, cert, pageTextContent);
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        compareTool.getOutReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(), "BC", null);
-        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(), "BC", null);
+        compareTool.getOutReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(), FACTORY.getProviderName(), null);
+        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(), FACTORY.getProviderName(), null);
         String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
         if (compareResult != null) {
             fail(compareResult);
@@ -713,7 +716,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public void checkDecryptedWithCertificateContent(String filename, Certificate certificate, String pageContent) throws IOException, GeneralSecurityException {
         String src = destinationFolder + filename;
         PdfReader reader = new PdfReader(src, new ReaderProperties()
-                .setPublicKeySecurityParams(certificate, getPrivateKey(), "BC", null));
+                .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument document = new PdfDocument(reader);
         PdfPage page = document.getPage(1);
 
@@ -746,12 +749,12 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "stamped_" + filename;
         PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
-                .setPublicKeySecurityParams(certificate, getPrivateKey(), "BC", null));
+                .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName));
         document.close();
 
         CompareTool compareTool = new CompareTool();
-        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), "BC", null);
+        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
         String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
 
         if (compareResult != null) {
@@ -782,7 +785,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "appended_" + filename;
         PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
-                .setPublicKeySecurityParams(certificate, getPrivateKey(), "BC", null));
+                .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName), new StampingProperties().useAppendMode());
         PdfPage newPage = document.addNewPage();
         String helloWorldStringValue = "Hello world string";
@@ -791,7 +794,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         document.close();
 
         PdfReader appendedDocReader = new PdfReader(outFileName, new ReaderProperties()
-                .setPublicKeySecurityParams(certificate, getPrivateKey(), "BC", null));
+                .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument appendedDoc = new PdfDocument(appendedDocReader);
         PdfPage secondPage = appendedDoc.getPage(2);
         PdfString helloWorldPdfString = secondPage.getPdfObject().getAsString(PdfName.Default);
@@ -800,8 +803,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         appendedDoc.close();
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        compareTool.getOutReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), "BC", null);
-        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), "BC", null);
+        compareTool.getOutReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
+        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
 
         String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_appended_" + filename, destinationFolder, "diff_");
 

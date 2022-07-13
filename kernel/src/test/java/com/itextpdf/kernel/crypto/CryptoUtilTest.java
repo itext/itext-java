@@ -22,31 +22,34 @@
  */
 package com.itextpdf.kernel.crypto;
 
-import com.itextpdf.bouncycastle.asn1.ASN1OutputStreamBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.bouncycastle.asn1.ASN1Encoding;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class CryptoUtilTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     @Test
     public void createBerStreamTest() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ASN1OutputStreamBC stream = (ASN1OutputStreamBC) CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.BER);
+        IASN1OutputStream stream = CryptoUtil.createAsn1OutputStream(baos, FACTORY.createASN1Encoding().getBer());
         Assert.assertNotNull(stream);
     }
 
     @Test
     public void createDerStreamTest() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ASN1OutputStreamBC stream = (ASN1OutputStreamBC) CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.DER);
+        IASN1OutputStream stream = CryptoUtil.createAsn1OutputStream(baos, FACTORY.createASN1Encoding().getDer());
         Assert.assertNotNull(stream);
     }
 

@@ -47,7 +47,6 @@ import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.actions.ecosystem.TestMetaInfo;
-import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 

@@ -42,6 +42,9 @@
  */
 package com.itextpdf.signatures.testutils.client;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
@@ -50,9 +53,9 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.bouncycastle.cert.ocsp.CertificateID;
 
 public class TestOcspClient implements IOcspClient {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private final Map<String, TestOcspResponseBuilder> issuerIdToResponseBuilder = new LinkedHashMap<>();
 
@@ -70,7 +73,7 @@ public class TestOcspClient implements IOcspClient {
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url) {
         byte[] bytes = null;
         try {
-            CertificateID id = SignTestPortUtil.generateCertificateId(issuerCert, checkCert.getSerialNumber(), CertificateID.HASH_SHA1);
+            ICertificateID id = SignTestPortUtil.generateCertificateId(issuerCert, checkCert.getSerialNumber(), BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
             TestOcspResponseBuilder builder = issuerIdToResponseBuilder.get(issuerCert.getSerialNumber().toString(16));
             if (builder == null) {
                 throw new IllegalArgumentException("This TestOcspClient instance is not capable of providing OCSP response for the given issuerCert:" + issuerCert.getSubjectDN().toString());

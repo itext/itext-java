@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.verify.pdfinsecurity;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -56,7 +58,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Security;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -64,11 +65,13 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class IncrementalSavingAttackTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/verify/pdfinsecurity/IncrementalSavingAttackTest/";
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
     }
 
     @Test

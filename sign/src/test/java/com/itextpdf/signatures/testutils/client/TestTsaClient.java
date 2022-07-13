@@ -42,6 +42,10 @@
  */
 package com.itextpdf.signatures.testutils.client;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ITSAClient;
@@ -53,11 +57,10 @@ import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.List;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
 
 public class TestTsaClient implements ITSAClient {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static final String DIGEST_ALG = "SHA256";
     private final PrivateKey tsaPrivateKey;
     private List<Certificate> tsaCertificateChain;
@@ -79,10 +82,10 @@ public class TestTsaClient implements ITSAClient {
 
     @Override
     public byte[] getTimeStampToken(byte[] imprint) throws Exception {
-        TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
+        ITimeStampRequestGenerator tsqGenerator = BOUNCY_CASTLE_FACTORY.createTimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getTimeBasedSeed());
-        TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(DIGEST_ALG)), imprint, nonce);
+        ITimeStampRequest request = tsqGenerator.generate(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(DIGEST_ALG)), imprint, nonce);
 
         return new TestTimestampTokenBuilder(tsaCertificateChain, tsaPrivateKey).createTimeStampToken(request);
     }
