@@ -15,22 +15,43 @@ import java.util.Objects;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 
+/**
+ * Wrapper class for {@link JcaSignerInfoGeneratorBuilder}.
+ */
 public class JcaSignerInfoGeneratorBuilderBC implements IJcaSignerInfoGeneratorBuilder {
     private final JcaSignerInfoGeneratorBuilder jcaSignerInfoGeneratorBuilder;
 
+    /**
+     * Creates new wrapper instance for {@link JcaSignerInfoGeneratorBuilder}.
+     *
+     * @param jcaSignerInfoGeneratorBuilder {@link JcaSignerInfoGeneratorBuilder} to be wrapped
+     */
     public JcaSignerInfoGeneratorBuilderBC(JcaSignerInfoGeneratorBuilder jcaSignerInfoGeneratorBuilder) {
         this.jcaSignerInfoGeneratorBuilder = jcaSignerInfoGeneratorBuilder;
     }
 
-    public JcaSignerInfoGeneratorBuilderBC(IDigestCalculatorProvider digestCalcProviderProvider) {
+    /**
+     * Creates new wrapper instance for {@link JcaSignerInfoGeneratorBuilder}.
+     *
+     * @param calculatorProvider DigestCalculatorProvider wrapper to create {@link JcaSignerInfoGeneratorBuilder}
+     */
+    public JcaSignerInfoGeneratorBuilderBC(IDigestCalculatorProvider calculatorProvider) {
         this(new JcaSignerInfoGeneratorBuilder(
-                ((DigestCalculatorProviderBC) digestCalcProviderProvider).getCalculatorProvider()));
+                ((DigestCalculatorProviderBC) calculatorProvider).getCalculatorProvider()));
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link JcaSignerInfoGeneratorBuilder}.
+     */
     public JcaSignerInfoGeneratorBuilder getJcaSignerInfoGeneratorBuilder() {
         return jcaSignerInfoGeneratorBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISignerInfoGenerator build(IContentSigner signer, X509Certificate cert)
             throws OperatorCreationExceptionBC, CertificateEncodingException {
@@ -42,6 +63,9 @@ public class JcaSignerInfoGeneratorBuilderBC implements IJcaSignerInfoGeneratorB
         }
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -54,11 +78,17 @@ public class JcaSignerInfoGeneratorBuilderBC implements IJcaSignerInfoGeneratorB
         return Objects.equals(jcaSignerInfoGeneratorBuilder, that.jcaSignerInfoGeneratorBuilder);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(jcaSignerInfoGeneratorBuilder);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return jcaSignerInfoGeneratorBuilder.toString();

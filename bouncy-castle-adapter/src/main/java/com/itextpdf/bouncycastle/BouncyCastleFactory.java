@@ -262,6 +262,9 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
+/**
+ * This class implements {@link IBouncyCastleFactory} and creates bouncy-castle classes instances.
+ */
 public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     private static final String PROVIDER_NAME = new BouncyCastleProvider().getName();

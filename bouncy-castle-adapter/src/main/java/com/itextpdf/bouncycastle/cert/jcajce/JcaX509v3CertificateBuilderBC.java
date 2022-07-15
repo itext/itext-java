@@ -21,29 +21,58 @@ import java.util.Objects;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 
+/**
+ * Wrapper class for {@link JcaX509v3CertificateBuilder}.
+ */
 public class JcaX509v3CertificateBuilderBC implements IJcaX509v3CertificateBuilder {
     private final JcaX509v3CertificateBuilder certificateBuilder;
 
+    /**
+     * Creates new wrapper instance for {@link JcaX509v3CertificateBuilder}.
+     *
+     * @param certificateBuilder {@link JcaX509v3CertificateBuilder} to be wrapped
+     */
     public JcaX509v3CertificateBuilderBC(JcaX509v3CertificateBuilder certificateBuilder) {
         this.certificateBuilder = certificateBuilder;
     }
 
+    /**
+     * Creates new wrapper instance for {@link JcaX509v3CertificateBuilder}.
+     *
+     * @param signingCert      X509Certificate to create {@link JcaX509v3CertificateBuilder}
+     * @param certSerialNumber BigInteger to create {@link JcaX509v3CertificateBuilder}
+     * @param startDate        start date to create {@link JcaX509v3CertificateBuilder}
+     * @param endDate          end date to create {@link JcaX509v3CertificateBuilder}
+     * @param subjectDnName    X500Name wrapper to create {@link JcaX509v3CertificateBuilder}
+     * @param publicKey        PublicKey to create {@link JcaX509v3CertificateBuilder}
+     */
     public JcaX509v3CertificateBuilderBC(X509Certificate signingCert, BigInteger certSerialNumber, Date startDate,
             Date endDate, IX500Name subjectDnName, PublicKey publicKey) {
         this(new JcaX509v3CertificateBuilder(signingCert, certSerialNumber, startDate, endDate,
                 ((X500NameBC) subjectDnName).getX500Name(), publicKey));
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link JcaX509v3CertificateBuilder}.
+     */
     public JcaX509v3CertificateBuilder getCertificateBuilder() {
         return certificateBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509CertificateHolder build(IContentSigner contentSigner) {
         return new X509CertificateHolderBC(certificateBuilder.build(
                 ((ContentSignerBC) contentSigner).getContentSigner()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaX509v3CertificateBuilder addExtension(IASN1ObjectIdentifier extensionOID, boolean critical,
             IASN1Encodable extensionValue) throws CertIOExceptionBC {
@@ -56,6 +85,9 @@ public class JcaX509v3CertificateBuilderBC implements IJcaX509v3CertificateBuild
         }
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -68,11 +100,17 @@ public class JcaX509v3CertificateBuilderBC implements IJcaX509v3CertificateBuild
         return Objects.equals(certificateBuilder, that.certificateBuilder);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(certificateBuilder);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return certificateBuilder.toString();

@@ -12,22 +12,41 @@ import java.util.Objects;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.Req;
 
+/**
+ * Wrapper class for {@link OCSPReq}.
+ */
 public class OCSPReqBCFips implements IOCSPReq {
     private final OCSPReq ocspReq;
 
+    /**
+     * Creates new wrapper instance for {@link OCSPReq}.
+     *
+     * @param ocspReq {@link OCSPReq} to be wrapped
+     */
     public OCSPReqBCFips(OCSPReq ocspReq) {
         this.ocspReq = ocspReq;
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link OCSPReq}.
+     */
     public OCSPReq getOcspReq() {
         return ocspReq;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte[] getEncoded() throws IOException {
         return ocspReq.getEncoded();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IReq[] getRequestList() {
         Req[] reqs = ocspReq.getRequestList();
@@ -38,12 +57,18 @@ public class OCSPReqBCFips implements IOCSPReq {
         return reqsBCFips;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IExtension getExtension(IASN1ObjectIdentifier objectIdentifier) {
         return new ExtensionBCFips(ocspReq.getExtension(
                 ((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier()));
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -56,11 +81,17 @@ public class OCSPReqBCFips implements IOCSPReq {
         return Objects.equals(ocspReq, that.ocspReq);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(ocspReq);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return ocspReq.toString();

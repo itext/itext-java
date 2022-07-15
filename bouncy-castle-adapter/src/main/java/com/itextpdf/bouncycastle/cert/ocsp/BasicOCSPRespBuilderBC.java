@@ -18,27 +18,51 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.ocsp.BasicOCSPRespBuilder;
 import org.bouncycastle.cert.ocsp.OCSPException;
 
+/**
+ * Wrapper class for {@link BasicOCSPRespBuilder}.
+ */
 public class BasicOCSPRespBuilderBC implements IBasicOCSPRespBuilder {
     private final BasicOCSPRespBuilder basicOCSPRespBuilder;
 
+    /**
+     * Creates new wrapper instance for {@link BasicOCSPRespBuilder}.
+     *
+     * @param basicOCSPRespBuilder {@link BasicOCSPRespBuilder} to be wrapped
+     */
     public BasicOCSPRespBuilderBC(BasicOCSPRespBuilder basicOCSPRespBuilder) {
         this.basicOCSPRespBuilder = basicOCSPRespBuilder;
     }
 
+    /**
+     * Creates new wrapper instance for {@link BasicOCSPRespBuilder}.
+     *
+     * @param respID RespID wrapper to create {@link BasicOCSPRespBuilder} to be wrapped
+     */
     public BasicOCSPRespBuilderBC(IRespID respID) {
         this(new BasicOCSPRespBuilder(((RespIDBC) respID).getRespID()));
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link BasicOCSPRespBuilder}.
+     */
     public BasicOCSPRespBuilder getBasicOCSPRespBuilder() {
         return basicOCSPRespBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicOCSPRespBuilder setResponseExtensions(IExtensions extensions) {
         basicOCSPRespBuilder.setResponseExtensions(((ExtensionsBC) extensions).getExtensions());
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicOCSPRespBuilder addResponse(ICertificateID certID, ICertificateStatus certificateStatus, Date time,
             Date time1, IExtensions extensions) {
@@ -49,6 +73,9 @@ public class BasicOCSPRespBuilderBC implements IBasicOCSPRespBuilder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicOCSPResp build(IContentSigner signer, IX509CertificateHolder[] chain, Date time)
             throws OCSPExceptionBC {
@@ -64,6 +91,9 @@ public class BasicOCSPRespBuilderBC implements IBasicOCSPRespBuilder {
         }
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -76,11 +106,17 @@ public class BasicOCSPRespBuilderBC implements IBasicOCSPRespBuilder {
         return Objects.equals(basicOCSPRespBuilder, that.basicOCSPRespBuilder);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(basicOCSPRespBuilder);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return basicOCSPRespBuilder.toString();

@@ -9,17 +9,33 @@ import java.util.Objects;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
+/**
+ * Wrapper class for {@link JcaDigestCalculatorProviderBuilder}.
+ */
 public class JcaDigestCalculatorProviderBuilderBC implements IJcaDigestCalculatorProviderBuilder {
     private final JcaDigestCalculatorProviderBuilder providerBuilder;
 
+    /**
+     * Creates new wrapper instance for {@link JcaDigestCalculatorProviderBuilder}.
+     *
+     * @param providerBuilder {@link JcaDigestCalculatorProviderBuilder} to be wrapped
+     */
     public JcaDigestCalculatorProviderBuilderBC(JcaDigestCalculatorProviderBuilder providerBuilder) {
         this.providerBuilder = providerBuilder;
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link JcaDigestCalculatorProviderBuilder}.
+     */
     public JcaDigestCalculatorProviderBuilder getProviderBuilder() {
         return providerBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDigestCalculatorProvider build() throws OperatorCreationExceptionBC {
         try {
@@ -29,6 +45,9 @@ public class JcaDigestCalculatorProviderBuilderBC implements IJcaDigestCalculato
         }
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -41,11 +60,17 @@ public class JcaDigestCalculatorProviderBuilderBC implements IJcaDigestCalculato
         return Objects.equals(providerBuilder, that.providerBuilder);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(providerBuilder);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return providerBuilder.toString();

@@ -9,11 +9,27 @@ import com.itextpdf.commons.bouncycastle.asn1.cms.IOriginatorInfo;
 
 import org.bouncycastle.asn1.cms.EnvelopedData;
 
+/**
+ * Wrapper class for {@link EnvelopedData}.
+ */
 public class EnvelopedDataBCFips extends ASN1EncodableBCFips implements IEnvelopedData {
+    /**
+     * Creates new wrapper instance for {@link EnvelopedData}.
+     *
+     * @param envelopedData {@link EnvelopedData} to be wrapped
+     */
     public EnvelopedDataBCFips(EnvelopedData envelopedData) {
         super(envelopedData);
     }
 
+    /**
+     * Creates new wrapper instance for {@link EnvelopedData}.
+     *
+     * @param originatorInfo       OriginatorInfo wrapper to create {@link EnvelopedData}
+     * @param set                  ASN1Set wrapper to create {@link EnvelopedData}
+     * @param encryptedContentInfo EncryptedContentInfo wrapper to create {@link EnvelopedData}
+     * @param set1                 ASN1Set wrapper to create {@link EnvelopedData}
+     */
     public EnvelopedDataBCFips(IOriginatorInfo originatorInfo, IASN1Set set,
             IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
         super(new EnvelopedData(
@@ -23,6 +39,11 @@ public class EnvelopedDataBCFips extends ASN1EncodableBCFips implements IEnvelop
                 ((ASN1SetBCFips) set1).getASN1Set()));
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link EnvelopedData}.
+     */
     public EnvelopedData getEnvelopedData() {
         return (EnvelopedData) getEncodable();
     }

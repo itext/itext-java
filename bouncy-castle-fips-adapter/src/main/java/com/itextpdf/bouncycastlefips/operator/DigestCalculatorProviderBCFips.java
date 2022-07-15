@@ -9,17 +9,33 @@ import java.util.Objects;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 
+/**
+ * Wrapper class for {@link DigestCalculatorProvider}.
+ */
 public class DigestCalculatorProviderBCFips implements IDigestCalculatorProvider {
     private final DigestCalculatorProvider calculatorProvider;
 
+    /**
+     * Creates new wrapper instance for {@link DigestCalculatorProvider}.
+     *
+     * @param calculatorProvider {@link DigestCalculatorProvider} to be wrapped
+     */
     public DigestCalculatorProviderBCFips(DigestCalculatorProvider calculatorProvider) {
         this.calculatorProvider = calculatorProvider;
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link DigestCalculatorProvider}.
+     */
     public DigestCalculatorProvider getCalculatorProvider() {
         return calculatorProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDigestCalculator get(IAlgorithmIdentifier algorithmIdentifier) throws OperatorCreationExceptionBCFips {
         try {
@@ -30,6 +46,9 @@ public class DigestCalculatorProviderBCFips implements IDigestCalculatorProvider
         }
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -42,11 +61,17 @@ public class DigestCalculatorProviderBCFips implements IDigestCalculatorProvider
         return Objects.equals(calculatorProvider, that.calculatorProvider);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(calculatorProvider);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return calculatorProvider.toString();

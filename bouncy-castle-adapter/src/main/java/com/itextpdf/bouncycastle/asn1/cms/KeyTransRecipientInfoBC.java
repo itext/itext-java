@@ -10,11 +10,26 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 
+/**
+ * Wrapper class for {@link KeyTransRecipientInfo}.
+ */
 public class KeyTransRecipientInfoBC extends ASN1EncodableBC implements IKeyTransRecipientInfo {
+    /**
+     * Creates new wrapper instance for {@link KeyTransRecipientInfo}.
+     *
+     * @param keyTransRecipientInfo {@link KeyTransRecipientInfo} to be wrapped
+     */
     public KeyTransRecipientInfoBC(KeyTransRecipientInfo keyTransRecipientInfo) {
         super(keyTransRecipientInfo);
     }
 
+    /**
+     * Creates new wrapper instance for {@link KeyTransRecipientInfo}.
+     *
+     * @param recipientIdentifier RecipientIdentifier wrapper
+     * @param algorithmIdentifier AlgorithmIdentifier wrapper
+     * @param octetString         ASN1OctetString wrapper
+     */
     public KeyTransRecipientInfoBC(IRecipientIdentifier recipientIdentifier, IAlgorithmIdentifier algorithmIdentifier,
             IASN1OctetString octetString) {
         super(new KeyTransRecipientInfo(((RecipientIdentifierBC) recipientIdentifier).getRecipientIdentifier(),
@@ -22,6 +37,11 @@ public class KeyTransRecipientInfoBC extends ASN1EncodableBC implements IKeyTran
                 ((ASN1OctetStringBC) octetString).getASN1OctetString()));
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link KeyTransRecipientInfo}.
+     */
     public KeyTransRecipientInfo getKeyTransRecipientInfo() {
         return (KeyTransRecipientInfo) getEncodable();
     }

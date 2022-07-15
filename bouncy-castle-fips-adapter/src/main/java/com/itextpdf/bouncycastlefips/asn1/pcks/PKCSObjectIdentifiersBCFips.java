@@ -7,6 +7,9 @@ import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import java.util.Objects;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
+/**
+ * Wrapper class for {@link PKCSObjectIdentifiers}.
+ */
 public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
     private static final PKCSObjectIdentifiersBCFips INSTANCE = new PKCSObjectIdentifiersBCFips(null);
 
@@ -27,43 +30,76 @@ public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
 
     private final PKCSObjectIdentifiers pkcsObjectIdentifiers;
 
+    /**
+     * Creates new wrapper instance for {@link PKCSObjectIdentifiers}.
+     *
+     * @param pkcsObjectIdentifiers {@link PKCSObjectIdentifiers} to be wrapped
+     */
     public PKCSObjectIdentifiersBCFips(PKCSObjectIdentifiers pkcsObjectIdentifiers) {
         this.pkcsObjectIdentifiers = pkcsObjectIdentifiers;
     }
 
-    public static IPKCSObjectIdentifiers getInstance() {
+    /**
+     * Gets wrapper instance.
+     *
+     * @return {@link PKCSObjectIdentifiersBCFips} instance.
+     */
+    public static PKCSObjectIdentifiersBCFips getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link PKCSObjectIdentifiers}.
+     */
     public PKCSObjectIdentifiers getPkcsObjectIdentifiers() {
         return pkcsObjectIdentifiers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier getIdAaSignatureTimeStampToken() {
         return ID_AA_SIGNATURE_TIME_STAMP_TOKEN;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier getIdAaEtsSigPolicyId() {
         return ID_AA_ETS_SIG_POLICY_ID;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier getIdSpqEtsUri() {
         return ID_SPQ_ETS_URI;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier getEnvelopedData() {
         return ENVELOPED_DATA;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier getData() {
         return DATA;
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -76,11 +112,17 @@ public class PKCSObjectIdentifiersBCFips implements IPKCSObjectIdentifiers {
         return Objects.equals(pkcsObjectIdentifiers, that.pkcsObjectIdentifiers);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(pkcsObjectIdentifiers);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return pkcsObjectIdentifiers.toString();

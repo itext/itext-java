@@ -10,23 +10,42 @@ import java.util.Objects;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 
+/**
+ * Wrapper class for {@link JcaContentVerifierProviderBuilder}.
+ */
 public class JcaContentVerifierProviderBuilderBC implements IJcaContentVerifierProviderBuilder {
     private final JcaContentVerifierProviderBuilder providerBuilder;
 
+    /**
+     * Creates new wrapper instance for {@link JcaContentVerifierProviderBuilder}.
+     *
+     * @param providerBuilder {@link JcaContentVerifierProviderBuilder} to be wrapped
+     */
     public JcaContentVerifierProviderBuilderBC(JcaContentVerifierProviderBuilder providerBuilder) {
         this.providerBuilder = providerBuilder;
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link JcaContentVerifierProviderBuilder}.
+     */
     public JcaContentVerifierProviderBuilder getProviderBuilder() {
         return providerBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaContentVerifierProviderBuilder setProvider(String provider) {
         providerBuilder.setProvider(provider);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IContentVerifierProvider build(PublicKey publicKey) throws OperatorCreationExceptionBC {
         try {
@@ -36,6 +55,9 @@ public class JcaContentVerifierProviderBuilderBC implements IJcaContentVerifierP
         }
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -48,11 +70,17 @@ public class JcaContentVerifierProviderBuilderBC implements IJcaContentVerifierP
         return Objects.equals(providerBuilder, that.providerBuilder);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(providerBuilder);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return providerBuilder.toString();

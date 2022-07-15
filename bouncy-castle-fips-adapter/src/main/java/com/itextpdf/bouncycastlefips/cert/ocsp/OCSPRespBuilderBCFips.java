@@ -8,6 +8,9 @@ import java.util.Objects;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 
+/**
+ * Wrapper class for {@link OCSPRespBuilder}.
+ */
 public class OCSPRespBuilderBCFips implements IOCSPRespBuilder {
     private static final OCSPRespBuilderBCFips INSTANCE = new OCSPRespBuilderBCFips(null);
 
@@ -15,23 +18,44 @@ public class OCSPRespBuilderBCFips implements IOCSPRespBuilder {
 
     private final OCSPRespBuilder ocspRespBuilder;
 
+    /**
+     * Creates new wrapper instance for {@link OCSPRespBuilder}.
+     *
+     * @param ocspRespBuilder {@link OCSPRespBuilder} to be wrapped
+     */
     public OCSPRespBuilderBCFips(OCSPRespBuilder ocspRespBuilder) {
         this.ocspRespBuilder = ocspRespBuilder;
     }
 
+    /**
+     * Gets wrapper instance.
+     *
+     * @return {@link OCSPRespBuilderBCFips} instance.
+     */
     public static OCSPRespBuilderBCFips getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link OCSPRespBuilder}.
+     */
     public OCSPRespBuilder getOcspRespBuilder() {
         return ocspRespBuilder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getSuccessful() {
         return SUCCESSFUL;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPResp build(int i, IBasicOCSPResp basicOCSPResp) throws OCSPExceptionBCFips {
         try {
@@ -42,6 +66,9 @@ public class OCSPRespBuilderBCFips implements IOCSPRespBuilder {
         }
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -54,11 +81,17 @@ public class OCSPRespBuilderBCFips implements IOCSPRespBuilder {
         return Objects.equals(ocspRespBuilder, that.ocspRespBuilder);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(ocspRespBuilder);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return ocspRespBuilder.toString();

@@ -7,15 +7,31 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 
+/**
+ * Wrapper class for {@link GeneralNames}.
+ */
 public class GeneralNamesBCFips extends ASN1EncodableBCFips implements IGeneralNames {
+    /**
+     * Creates new wrapper instance for {@link GeneralNames}.
+     *
+     * @param generalNames {@link GeneralNames} to be wrapped
+     */
     public GeneralNamesBCFips(GeneralNames generalNames) {
         super(generalNames);
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link GeneralNames}.
+     */
     public GeneralNames getGeneralNames() {
         return (GeneralNames) getEncodable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IGeneralName[] getNames() {
         GeneralName[] generalNames = getGeneralNames().getNames();

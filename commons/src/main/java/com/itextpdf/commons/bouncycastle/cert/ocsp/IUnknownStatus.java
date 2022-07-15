@@ -1,4 +1,8 @@
 package com.itextpdf.commons.bouncycastle.cert.ocsp;
 
-public interface IUnknownStatus extends ICertificateStatus{
+/**
+ * This interface represents the wrapper for UnknownStatus that provides the ability
+ * to switch between bouncy-castle and bouncy-castle FIPS implementations.
+ */
+public interface IUnknownStatus extends ICertificateStatus {
 }

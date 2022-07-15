@@ -15,17 +15,33 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.SingleResp;
 
+/**
+ * Wrapper class for {@link BasicOCSPResp}.
+ */
 public class BasicOCSPRespBC implements IBasicOCSPResp {
     private final BasicOCSPResp basicOCSPResp;
 
-    public BasicOCSPRespBC(BasicOCSPResp basicOCSPRespBC) {
-        this.basicOCSPResp = basicOCSPRespBC;
+    /**
+     * Creates new wrapper instance for {@link BasicOCSPResp}.
+     *
+     * @param basicOCSPResp {@link BasicOCSPResp} to be wrapped
+     */
+    public BasicOCSPRespBC(BasicOCSPResp basicOCSPResp) {
+        this.basicOCSPResp = basicOCSPResp;
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link BasicOCSPResp}.
+     */
     public BasicOCSPResp getBasicOCSPResp() {
         return basicOCSPResp;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISingleResp[] getResponses() {
         SingleResp[] resps = basicOCSPResp.getResponses();
@@ -36,6 +52,9 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
         return respsBC;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isSignatureValid(IContentVerifierProvider provider) throws OCSPExceptionBC {
         try {
@@ -46,6 +65,9 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509CertificateHolder[] getCerts() {
         X509CertificateHolder[] certs = basicOCSPResp.getCerts();
@@ -56,16 +78,25 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
         return certsBC;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte[] getEncoded() throws IOException {
         return basicOCSPResp.getEncoded();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getProducedAt() {
         return basicOCSPResp.getProducedAt();
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -78,11 +109,17 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
         return Objects.equals(basicOCSPResp, that.basicOCSPResp);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(basicOCSPResp);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return basicOCSPResp.toString();

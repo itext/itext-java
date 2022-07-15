@@ -12,38 +12,69 @@ import java.util.Date;
 import java.util.Objects;
 import org.bouncycastle.cert.X509v2CRLBuilder;
 
+/**
+ * Wrapper class for {@link X509v2CRLBuilder}.
+ */
 public class X509v2CRLBuilderBC implements IX509v2CRLBuilder {
     private final X509v2CRLBuilder builder;
 
+    /**
+     * Creates new wrapper instance for {@link X509v2CRLBuilder}.
+     *
+     * @param builder {@link X509v2CRLBuilder} to be wrapped
+     */
     public X509v2CRLBuilderBC(X509v2CRLBuilder builder) {
         this.builder = builder;
     }
 
+    /**
+     * Creates new wrapper instance for {@link X509v2CRLBuilder}.
+     *
+     * @param x500Name X500Name wrapper to create {@link X509v2CRLBuilder}
+     * @param date     Date to create {@link X509v2CRLBuilder}
+     */
     public X509v2CRLBuilderBC(IX500Name x500Name, Date date) {
         this(new X509v2CRLBuilder(((X500NameBC) x500Name).getX500Name(), date));
     }
 
+    /**
+     * Gets actual org.bouncycastle object being wrapped.
+     *
+     * @return wrapped {@link X509v2CRLBuilder}.
+     */
     public X509v2CRLBuilder getBuilder() {
         return builder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509v2CRLBuilder addCRLEntry(BigInteger bigInteger, Date date, int i) {
         builder.addCRLEntry(bigInteger, date, i);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509v2CRLBuilder setNextUpdate(Date nextUpdate) {
         builder.setNextUpdate(nextUpdate);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509CRLHolder build(IContentSigner signer) {
         return new X509CRLHolderBC(builder.build(((ContentSignerBC) signer).getContentSigner()));
     }
 
+    /**
+     * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -56,11 +87,17 @@ public class X509v2CRLBuilderBC implements IX509v2CRLBuilder {
         return Objects.equals(builder, that.builder);
     }
 
+    /**
+     * Returns a hash code value based on the wrapped object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(builder);
     }
 
+    /**
+     * Delegates {@code toString} method call to the wrapped object.
+     */
     @Override
     public String toString() {
         return builder.toString();

@@ -264,6 +264,9 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 
+/**
+ * This class implements {@link IBouncyCastleFactory} and creates bouncy-castle FIPS classes instances.
+ */
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     private static final String PROVIDER_NAME = new BouncyCastleFipsProvider().getName();

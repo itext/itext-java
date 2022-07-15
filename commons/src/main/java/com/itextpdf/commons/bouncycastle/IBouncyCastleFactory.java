@@ -114,6 +114,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * {@link IBouncyCastleFactory} contains methods required for bouncy-classes objects creation. Implementation will be
+ * selected depending on a bouncy-castle dependency specified by the user.
+ */
 public interface IBouncyCastleFactory {
     IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable);
 
