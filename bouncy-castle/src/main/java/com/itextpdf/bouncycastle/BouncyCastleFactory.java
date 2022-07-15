@@ -49,18 +49,25 @@ import com.itextpdf.bouncycastle.asn1.pcks.PKCSObjectIdentifiersBC;
 import com.itextpdf.bouncycastle.asn1.util.ASN1DumpBC;
 import com.itextpdf.bouncycastle.asn1.x500.X500NameBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
+import com.itextpdf.bouncycastle.asn1.x509.BasicConstraintsBC;
 import com.itextpdf.bouncycastle.asn1.x509.CRLDistPointBC;
 import com.itextpdf.bouncycastle.asn1.x509.DistributionPointNameBC;
+import com.itextpdf.bouncycastle.asn1.x509.ExtendedKeyUsageBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionsBC;
 import com.itextpdf.bouncycastle.asn1.x509.GeneralNameBC;
 import com.itextpdf.bouncycastle.asn1.x509.GeneralNamesBC;
+import com.itextpdf.bouncycastle.asn1.x509.KeyPurposeIdBC;
+import com.itextpdf.bouncycastle.asn1.x509.KeyUsageBC;
+import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
 import com.itextpdf.bouncycastle.asn1.x509.TBSCertificateBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
+import com.itextpdf.bouncycastle.cert.X509ExtensionUtilsBC;
 import com.itextpdf.bouncycastle.cert.X509v2CRLBuilderBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaCertStoreBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateConverterBC;
 import com.itextpdf.bouncycastle.cert.jcajce.JcaX509CertificateHolderBC;
+import com.itextpdf.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilderBC;
 import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
 import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBuilderBC;
 import com.itextpdf.bouncycastle.cert.ocsp.CertificateIDBC;
@@ -138,18 +145,25 @@ import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IBasicConstraints;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IExtendedKeyUsage;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaCertStore;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509v3CertificateBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPRespBuilder;
@@ -185,6 +199,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -214,9 +229,11 @@ import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -964,6 +981,11 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IX500Name createX500Name(String s) {
+        return new X500NameBC(new X500Name(s));
+    }
+
+    @Override
     public IRespID createRespID(IX500Name x500Name) {
         return new RespIDBC(x500Name);
     }
@@ -981,5 +1003,48 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IX509v2CRLBuilder createX509v2CRLBuilder(IX500Name x500Name, Date date) {
         return new X509v2CRLBuilderBC(x500Name, date);
+    }
+
+    @Override
+    public IJcaX509v3CertificateBuilder createJcaX509v3CertificateBuilder(X509Certificate signingCert,
+            BigInteger certSerialNumber, Date startDate, Date endDate, IX500Name subjectDnName, PublicKey publicKey) {
+        return new JcaX509v3CertificateBuilderBC(signingCert, certSerialNumber, startDate, endDate, subjectDnName,
+                publicKey);
+    }
+
+    @Override
+    public IBasicConstraints createBasicConstraints(boolean b) {
+        return new BasicConstraintsBC(new BasicConstraints(b));
+    }
+
+    @Override
+    public IKeyUsage createKeyUsage() {
+        return KeyUsageBC.getInstance();
+    }
+
+    @Override
+    public IKeyUsage createKeyUsage(int i) {
+        return new KeyUsageBC(new KeyUsage(i));
+    }
+
+    @Override
+    public IKeyPurposeId createKeyPurposeId() {
+        return KeyPurposeIdBC.getInstance();
+    }
+
+    @Override
+    public IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId purposeId) {
+        return new ExtendedKeyUsageBC(purposeId);
+    }
+
+    @Override
+    public IX509ExtensionUtils createX509ExtensionUtils(IDigestCalculator digestCalculator) {
+        return new X509ExtensionUtilsBC(digestCalculator);
+    }
+
+    @Override
+    public ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object object) {
+        return new SubjectPublicKeyInfoBC(object instanceof ASN1EncodableBC ?
+                ((ASN1EncodableBC) object).getEncodable() : object);
     }
 }

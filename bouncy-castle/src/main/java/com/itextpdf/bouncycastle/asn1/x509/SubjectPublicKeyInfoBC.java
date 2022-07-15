@@ -11,6 +11,10 @@ public class SubjectPublicKeyInfoBC extends ASN1EncodableBC implements ISubjectP
         super(subjectPublicKeyInfo);
     }
 
+    public SubjectPublicKeyInfoBC(Object obj) {
+        super(SubjectPublicKeyInfo.getInstance(obj));
+    }
+
     public SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
         return (SubjectPublicKeyInfo) getEncodable();
     }

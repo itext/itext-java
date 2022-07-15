@@ -4,6 +4,7 @@ import com.itextpdf.bouncycastlefips.cert.X509CertificateHolderBCFips;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 
+import java.security.Provider;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Objects;
@@ -24,6 +25,12 @@ public class JcaX509CertificateConverterBCFips implements IJcaX509CertificateCon
     public X509Certificate getCertificate(IX509CertificateHolder certificateHolder) throws CertificateException {
         return certificateConverter.getCertificate(
                 ((X509CertificateHolderBCFips) certificateHolder).getCertificateHolder());
+    }
+
+    @Override
+    public IJcaX509CertificateConverter setProvider(Provider provider) {
+        certificateConverter.setProvider(provider);
+        return this;
     }
 
     @Override

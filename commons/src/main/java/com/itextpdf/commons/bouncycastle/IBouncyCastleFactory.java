@@ -49,18 +49,25 @@ import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IBasicConstraints;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IExtendedKeyUsage;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtensions;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaCertStore;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509v3CertificateBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPRespBuilder;
@@ -98,6 +105,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -354,6 +362,8 @@ public interface IBouncyCastleFactory {
 
     IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException, IOException;
 
+    IX500Name createX500Name(String s);
+
     IRespID createRespID(IX500Name x500Name);
 
     IBasicOCSPRespBuilder createBasicOCSPRespBuilder(IRespID respID);
@@ -361,4 +371,21 @@ public interface IBouncyCastleFactory {
     IOCSPReq createOCSPReq(byte[] requestBytes) throws IOException;
 
     IX509v2CRLBuilder createX509v2CRLBuilder(IX500Name x500Name, Date thisUpdate);
+
+    IJcaX509v3CertificateBuilder createJcaX509v3CertificateBuilder(X509Certificate signingCert,
+            BigInteger certSerialNumber, Date startDate, Date endDate, IX500Name subjectDnName, PublicKey publicKey);
+
+    IBasicConstraints createBasicConstraints(boolean b);
+
+    IKeyUsage createKeyUsage();
+
+    IKeyUsage createKeyUsage(int i);
+
+    IKeyPurposeId createKeyPurposeId();
+
+    IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId purposeId);
+
+    IX509ExtensionUtils createX509ExtensionUtils(IDigestCalculator digestCalculator);
+
+    ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object obj);
 }

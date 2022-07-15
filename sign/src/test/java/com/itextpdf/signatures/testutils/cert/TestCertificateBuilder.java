@@ -42,8 +42,23 @@
  */
 package com.itextpdf.signatures.testutils.cert;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAuthorityKeyIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectKeyIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
+import com.itextpdf.commons.bouncycastle.cert.AbstractCertIOException;
+import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509v3CertificateBuilder;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
+import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.SystemUtil;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PrivateKey;
@@ -51,34 +66,12 @@ import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.CertIOException;
-import org.bouncycastle.cert.X509ExtensionUtils;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DigestCalculatorProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 public class TestCertificateBuilder {
-    private static final String signatureAlgorithm = "SHA256WithRSA"; // requires corresponding key pairs to be used in this class
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
+    // requires corresponding key pairs to be used in this class
+    private static final String signatureAlgorithm = "SHA256WithRSA";
 
     private PublicKey publicKey;
     private X509Certificate signingCert;
@@ -87,7 +80,8 @@ public class TestCertificateBuilder {
     private Date startDate;
     private Date endDate;
 
-    public TestCertificateBuilder(PublicKey publicKey, X509Certificate signingCert, PrivateKey signingKey, String subjectDN) {
+    public TestCertificateBuilder(PublicKey publicKey, X509Certificate signingCert, PrivateKey signingKey,
+            String subjectDN) {
         this.publicKey = publicKey;
         this.signingCert = signingCert;
         this.signingKey = signingKey;
@@ -105,49 +99,57 @@ public class TestCertificateBuilder {
     }
 
     // TODO generalize
-    public X509Certificate buildAuthorizedOCSPResponderCert() throws IOException, CertificateException, OperatorCreationException {
-        X500Name subjectDnName = new X500Name(subjectDN);
-        BigInteger certSerialNumber = new BigInteger(Long.toString(SystemUtil.getTimeBasedSeed())); // Using the current timestamp as the certificate serial number
-        ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).build(signingKey);
-        JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(signingCert, certSerialNumber, startDate, endDate, subjectDnName, publicKey);
+    public X509Certificate buildAuthorizedOCSPResponderCert()
+            throws IOException, CertificateException, AbstractOperatorCreationException {
+        IX500Name subjectDnName = FACTORY.createX500Name(subjectDN);
+        // Using the current timestamp as the certificate serial number
+        BigInteger certSerialNumber = new BigInteger(Long.toString(SystemUtil.getTimeBasedSeed()));
+        IContentSigner contentSigner = FACTORY.createJcaContentSignerBuilder(signatureAlgorithm).build(signingKey);
+        IJcaX509v3CertificateBuilder certBuilder = FACTORY.createJcaX509v3CertificateBuilder(signingCert,
+                certSerialNumber, startDate, endDate, subjectDnName, publicKey);
 
         // TODO generalize extensions setting
         // Extensions --------------------------
 
         boolean ca = true;
-        addExtension(Extension.basicConstraints, true, new BasicConstraints(ca),
+        addExtension(FACTORY.createExtension().getBasicConstraints(), true, FACTORY.createBasicConstraints(ca),
+                certBuilder);
+        addExtension(FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNoCheck(), false, FACTORY.createDERNull(),
                 certBuilder);
 
-        addExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nocheck, false, DERNull.INSTANCE,
+        addExtension(FACTORY.createExtension().getKeyUsage(), false, FACTORY.createKeyUsage(FACTORY.createKeyUsage().
+                getDigitalSignature() | FACTORY.createKeyUsage().getNonRepudiation()), certBuilder);
+
+        addExtension(FACTORY.createExtension().getExtendedKeyUsage(), false,
+                FACTORY.createExtendedKeyUsage(FACTORY.createKeyPurposeId().getIdKpOCSPSigning()),
                 certBuilder);
 
-        addExtension(Extension.keyUsage, false, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.nonRepudiation),
-                certBuilder);
-
-        addExtension(Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_OCSPSigning),
-                certBuilder);
-
-        DigestCalculatorProvider digestCalcProviderProvider = new JcaDigestCalculatorProviderBuilder().build();
+        IDigestCalculatorProvider digestCalcProviderProvider = FACTORY.createJcaDigestCalculatorProviderBuilder()
+                .build();
         String sha1DigestForPublicKey = "1.3.14.3.2.26";
-        X509ExtensionUtils x509ExtensionUtils = new X509ExtensionUtils(digestCalcProviderProvider.get(new AlgorithmIdentifier(new ASN1ObjectIdentifier(sha1DigestForPublicKey))));
+        IX509ExtensionUtils x509ExtensionUtils = FACTORY.createX509ExtensionUtils(digestCalcProviderProvider.get(
+                FACTORY.createAlgorithmIdentifier(FACTORY.createASN1ObjectIdentifier(sha1DigestForPublicKey))));
         byte[] signinigPublicKeyEncoded = signingCert.getPublicKey().getEncoded();
-        SubjectPublicKeyInfo issuerPublicKeyInfo = new SubjectPublicKeyInfo(ASN1Sequence.getInstance(signinigPublicKeyEncoded));
-        AuthorityKeyIdentifier authKeyIdentifier = x509ExtensionUtils.createAuthorityKeyIdentifier(issuerPublicKeyInfo);
-        addExtension(Extension.authorityKeyIdentifier, false, authKeyIdentifier,
+        ISubjectPublicKeyInfo issuerPublicKeyInfo = FACTORY.createSubjectPublicKeyInfo(signinigPublicKeyEncoded);
+        IAuthorityKeyIdentifier authKeyIdentifier = x509ExtensionUtils.createAuthorityKeyIdentifier(
+                issuerPublicKeyInfo);
+        addExtension(FACTORY.createExtension().getAuthorityKeyIdentifier(), false, authKeyIdentifier,
                 certBuilder);
 
         byte[] publicKeyEncoded = signingCert.getPublicKey().getEncoded();
-        SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(ASN1Sequence.getInstance(publicKeyEncoded));
-        SubjectKeyIdentifier subjectKeyIdentifier = x509ExtensionUtils.createSubjectKeyIdentifier(subjectPublicKeyInfo);
-        addExtension(Extension.subjectKeyIdentifier, false, subjectKeyIdentifier,
-                certBuilder);
+        ISubjectPublicKeyInfo subjectPublicKeyInfo = FACTORY.createSubjectPublicKeyInfo(publicKeyEncoded);
+        ISubjectKeyIdentifier subjectKeyIdentifier = x509ExtensionUtils.createSubjectKeyIdentifier(
+                subjectPublicKeyInfo);
+        addExtension(FACTORY.createExtension().getSubjectKeyIdentifier(), false, subjectKeyIdentifier, certBuilder);
 
         // -------------------------------------
 
-        return new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate(certBuilder.build(contentSigner));
+        return FACTORY.createJcaX509CertificateConverter().setProvider(FACTORY.createProvider())
+                .getCertificate(certBuilder.build(contentSigner));
     }
 
-    private static void addExtension(ASN1ObjectIdentifier extensionOID, boolean critical, ASN1Encodable extensionValue, JcaX509v3CertificateBuilder certBuilder) throws CertIOException {
+    private static void addExtension(IASN1ObjectIdentifier extensionOID, boolean critical,
+            IASN1Encodable extensionValue, IJcaX509v3CertificateBuilder certBuilder) throws AbstractCertIOException {
         certBuilder.addExtension(extensionOID, critical, extensionValue);
     }
 }

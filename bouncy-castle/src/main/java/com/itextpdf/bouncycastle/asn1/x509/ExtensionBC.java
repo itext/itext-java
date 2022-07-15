@@ -19,6 +19,21 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
     private static final ASN1ObjectIdentifierBC AUTHORITY_INFO_ACCESS =
             new ASN1ObjectIdentifierBC(Extension.authorityInfoAccess);
 
+    private static final ASN1ObjectIdentifierBC BASIC_CONSTRAINTS =
+            new ASN1ObjectIdentifierBC(Extension.basicConstraints);
+
+    private static final ASN1ObjectIdentifierBC KEY_USAGE =
+            new ASN1ObjectIdentifierBC(Extension.keyUsage);
+
+    private static final ASN1ObjectIdentifierBC EXTENDED_KEY_USAGE =
+            new ASN1ObjectIdentifierBC(Extension.extendedKeyUsage);
+
+    private static final ASN1ObjectIdentifierBC AUTHORITY_KEY_IDENTIFIER =
+            new ASN1ObjectIdentifierBC(Extension.authorityKeyIdentifier);
+
+    private static final ASN1ObjectIdentifierBC SUBJECT_KEY_IDENTIFIER =
+            new ASN1ObjectIdentifierBC(Extension.subjectKeyIdentifier);
+
     public ExtensionBC(Extension extension) {
         super(extension);
     }
@@ -46,5 +61,30 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
     @Override
     public IASN1ObjectIdentifier getAuthorityInfoAccess() {
         return AUTHORITY_INFO_ACCESS;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getBasicConstraints() {
+        return BASIC_CONSTRAINTS;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getKeyUsage() {
+        return KEY_USAGE;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getExtendedKeyUsage() {
+        return EXTENDED_KEY_USAGE;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getAuthorityKeyIdentifier() {
+        return AUTHORITY_KEY_IDENTIFIER;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getSubjectKeyIdentifier() {
+        return SUBJECT_KEY_IDENTIFIER;
     }
 }

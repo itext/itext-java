@@ -19,6 +19,21 @@ public class ExtensionBCFips extends ASN1EncodableBCFips implements IExtension {
     private static final ASN1ObjectIdentifierBCFips AUTHORITY_INFO_ACCESS =
             new ASN1ObjectIdentifierBCFips(Extension.authorityInfoAccess);
 
+    private static final ASN1ObjectIdentifierBCFips BASIC_CONSTRAINTS =
+            new ASN1ObjectIdentifierBCFips(Extension.basicConstraints);
+
+    private static final ASN1ObjectIdentifierBCFips KEY_USAGE =
+            new ASN1ObjectIdentifierBCFips(Extension.keyUsage);
+
+    private static final ASN1ObjectIdentifierBCFips EXTENDED_KEY_USAGE =
+            new ASN1ObjectIdentifierBCFips(Extension.extendedKeyUsage);
+
+    private static final ASN1ObjectIdentifierBCFips AUTHORITY_KEY_IDENTIFIER =
+            new ASN1ObjectIdentifierBCFips(Extension.authorityKeyIdentifier);
+
+    private static final ASN1ObjectIdentifierBCFips SUBJECT_KEY_IDENTIFIER =
+            new ASN1ObjectIdentifierBCFips(Extension.subjectKeyIdentifier);
+
     public ExtensionBCFips(Extension extension) {
         super(extension);
     }
@@ -46,5 +61,30 @@ public class ExtensionBCFips extends ASN1EncodableBCFips implements IExtension {
     @Override
     public IASN1ObjectIdentifier getAuthorityInfoAccess() {
         return AUTHORITY_INFO_ACCESS;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getBasicConstraints() {
+        return BASIC_CONSTRAINTS;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getKeyUsage() {
+        return KEY_USAGE;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getExtendedKeyUsage() {
+        return EXTENDED_KEY_USAGE;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getAuthorityKeyIdentifier() {
+        return AUTHORITY_KEY_IDENTIFIER;
+    }
+
+    @Override
+    public IASN1ObjectIdentifier getSubjectKeyIdentifier() {
+        return SUBJECT_KEY_IDENTIFIER;
     }
 }

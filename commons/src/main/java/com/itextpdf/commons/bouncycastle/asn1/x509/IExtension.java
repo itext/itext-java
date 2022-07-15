@@ -7,4 +7,14 @@ public interface IExtension extends IASN1Encodable {
     IASN1ObjectIdentifier getCRlDistributionPoints();
 
     IASN1ObjectIdentifier getAuthorityInfoAccess();
+
+    IASN1ObjectIdentifier getBasicConstraints();
+
+    IASN1ObjectIdentifier getKeyUsage();
+
+    IASN1ObjectIdentifier getExtendedKeyUsage();
+
+    IASN1ObjectIdentifier getAuthorityKeyIdentifier();
+
+    IASN1ObjectIdentifier getSubjectKeyIdentifier();
 }

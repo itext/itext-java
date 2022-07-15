@@ -11,6 +11,10 @@ public class SubjectPublicKeyInfoBCFips extends ASN1EncodableBCFips implements I
         super(subjectPublicKeyInfo);
     }
 
+    public SubjectPublicKeyInfoBCFips(Object obj) {
+        super(SubjectPublicKeyInfo.getInstance(obj));
+    }
+
     public SubjectPublicKeyInfo getSubjectPublicKeyInfo() {
         return (SubjectPublicKeyInfo) getEncodable();
     }
