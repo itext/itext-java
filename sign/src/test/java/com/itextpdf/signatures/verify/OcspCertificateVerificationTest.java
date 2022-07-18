@@ -22,7 +22,10 @@
  */
 package com.itextpdf.signatures.verify;
 
-import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.CertificateVerification;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
@@ -34,10 +37,6 @@ import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,6 +44,8 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class OcspCertificateVerificationTest extends ExtendedITextTest {
+    
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     // Such messageTemplate is equal to any log message. This is required for porting reasons.
     private static final String ANY_LOG_MESSAGE = "{0}";
@@ -63,33 +64,33 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(signOcspCert, password)[0];
         rootCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootOcspCert, password)[0];
     }
 
     @Test
     public void keyStoreWithRootOcspCertificateTest() throws Exception {
-        BasicOCSPResp response = getOcspResponse();
+        IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                new BasicOCSPRespBC(response), Pkcs12FileHelper.initStore(rootOcspCert, password), null));
+                response, Pkcs12FileHelper.initStore(rootOcspCert, password), null));
     }
 
     @Test
     public void keyStoreWithSignOcspCertificateTest() throws Exception {
-        BasicOCSPResp response = getOcspResponse();
+        IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
-                new BasicOCSPRespBC(response), Pkcs12FileHelper.initStore(signOcspCert, password), null));
+                response, Pkcs12FileHelper.initStore(signOcspCert, password), null));
     }
 
     @Test
     public void keyStoreWithNotOcspAndOcspCertificatesTest() throws Exception {
-        BasicOCSPResp response = getOcspResponse();
+        IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                new BasicOCSPRespBC(response), Pkcs12FileHelper.initStore(notOcspAndOcspCert, password), null));
+                response, Pkcs12FileHelper.initStore(notOcspAndOcspCert, password), null));
     }
 
     @Test
@@ -99,12 +100,12 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
                 null, Pkcs12FileHelper.initStore(signOcspCert, password), null));
     }
 
-    private static BasicOCSPResp getOcspResponse() throws Exception {
+    private static IBasicOCSPResp getOcspResponse() throws Exception {
         TestOcspClient testClient = new TestOcspClient();
         PrivateKey key = Pkcs12FileHelper.readFirstKey(rootOcspCert, password, password);
         testClient.addBuilderForCertIssuer(rootCert, key);
         byte[] ocspResponseBytes = testClient.getEncoded(checkCert, rootCert, ocspServiceUrl);
-        ASN1Primitive var2 = ASN1Primitive.fromByteArray(ocspResponseBytes);
-        return new BasicOCSPResp(BasicOCSPResponse.getInstance(var2));
+        IASN1Primitive var2 = FACTORY.createASN1Primitive(ocspResponseBytes);
+        return FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(var2));
     }
 }

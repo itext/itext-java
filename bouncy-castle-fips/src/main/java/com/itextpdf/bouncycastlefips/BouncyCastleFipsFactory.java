@@ -51,6 +51,7 @@ import com.itextpdf.bouncycastlefips.asn1.x500.X500NameBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.BasicConstraintsBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.CRLDistPointBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.CRLReasonBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.DistributionPointNameBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.ExtendedKeyUsageBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.ExtensionBCFips;
@@ -147,6 +148,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IBasicConstraints;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLReason;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtendedKeyUsage;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
@@ -1055,5 +1057,10 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object object) {
         return new SubjectPublicKeyInfoBCFips(object instanceof ASN1EncodableBCFips ?
                 ((ASN1EncodableBCFips) object).getEncodable() : object);
+    }
+
+    @Override
+    public ICRLReason createCRLReason() {
+        return CRLReasonBCFips.getInstance();
     }
 }

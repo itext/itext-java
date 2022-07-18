@@ -42,9 +42,11 @@
  */
 package com.itextpdf.signatures.verify;
 
-import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
@@ -66,14 +68,6 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
-import org.bouncycastle.asn1.x509.CRLReason;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.RevokedStatus;
-import org.bouncycastle.cert.ocsp.UnknownStatus;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -89,7 +83,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
     }
 
     @Test
@@ -108,7 +102,8 @@ public class OcspVerifierTest extends ExtendedITextTest {
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         builder.setCertificateStatus(FACTORY.createRevokedStatus(
-                DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20), CRLReason.keyCompromise));
+                DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
+                FACTORY.createCRLReason().getKeyCompromise()));
         Assert.assertFalse(verifyTest(builder));
     }
 
@@ -145,7 +140,8 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void authorizedOCSPResponderTest() throws GeneralSecurityException, IOException, OperatorCreationException {
+    public void authorizedOCSPResponderTest() throws GeneralSecurityException, IOException,
+            AbstractOperatorCreationException {
         Date ocspResponderCertStartDate = DateTimeUtil.getCurrentTimeDate();
         Date ocspResponderCertEndDate = DateTimeUtil.addDaysToDate(ocspResponderCertStartDate, 365 * 100);
         Date checkDate = DateTimeUtil.getCurrentTimeDate();
@@ -155,7 +151,8 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void expiredAuthorizedOCSPResponderTest_atValidPeriod() throws GeneralSecurityException, IOException, OperatorCreationException {
+    public void expiredAuthorizedOCSPResponderTest_atValidPeriod() throws GeneralSecurityException, IOException,
+            AbstractOperatorCreationException {
         Date ocspResponderCertStartDate = DateTimeUtil.parse("15/10/2005", "dd/MM/yyyy");
         Date ocspResponderCertEndDate = DateTimeUtil.parse("15/10/2010", "dd/MM/yyyy");
         Date checkDate = DateTimeUtil.parse("15/10/2008", "dd/MM/yyyy");
@@ -188,14 +185,15 @@ public class OcspVerifierTest extends ExtendedITextTest {
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, rootRsaOcspBuilder);
         byte[] basicOcspRespBytes = ocspClient.getEncoded(checkCert, rootCert, null);
 
-        ASN1Primitive var2 = ASN1Primitive.fromByteArray(basicOcspRespBytes);
-        BasicOCSPResp basicOCSPResp = new BasicOCSPResp(BasicOCSPResponse.getInstance(var2));
+        IASN1Primitive var2 = FACTORY.createASN1Primitive(basicOcspRespBytes);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(var2));
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        return ocspVerifier.verify(new BasicOCSPRespBC(basicOCSPResp), checkCert, rootCert, checkDate);
+        return ocspVerifier.verify(basicOCSPResp, checkCert, rootCert, checkDate);
     }
 
-    public boolean verifyAuthorizedOCSPResponderTest(Date ocspResponderCertStartDate, Date ocspResponderCertEndDate, Date checkDate) throws IOException, OperatorCreationException, GeneralSecurityException {
+    public boolean verifyAuthorizedOCSPResponderTest(Date ocspResponderCertStartDate, Date ocspResponderCertEndDate,
+            Date checkDate) throws IOException, AbstractOperatorCreationException, GeneralSecurityException {
         X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(certsSrc + "intermediateRsa.p12", password)[0];
         PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(certsSrc + "intermediateRsa.p12", password, password);
         String checkCertFileName = certsSrc + "signCertRsaWithChain.p12";
@@ -214,10 +212,10 @@ public class OcspVerifierTest extends ExtendedITextTest {
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
         byte[] basicOcspRespBytes = ocspClient.getEncoded(checkCert, caCert, null);
 
-        ASN1Primitive var2 = ASN1Primitive.fromByteArray(basicOcspRespBytes);
-        BasicOCSPResp basicOCSPResp = new BasicOCSPResp(BasicOCSPResponse.getInstance(var2));
+        IASN1Primitive var2 = FACTORY.createASN1Primitive(basicOcspRespBytes);
+        IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(var2));
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
-        return ocspVerifier.verify(new BasicOCSPRespBC(basicOCSPResp), checkCert, caCert, checkDate);
+        return ocspVerifier.verify(basicOCSPResp, checkCert, caCert, checkDate);
     }
 }

@@ -42,6 +42,8 @@
  */
 package com.itextpdf.signatures.verify;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.LtvVerification;
@@ -55,7 +57,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.util.List;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -67,10 +68,12 @@ public class LtvVerifierTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/verify/LtvVerifierTest/";
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] password = "testpass".toCharArray();
+    
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         ITextTest.removeCryptographyRestrictions();
     }
 
@@ -94,9 +97,10 @@ public class LtvVerifierTest extends ExtendedITextTest {
     public void validLtvDocTest02() throws IOException, GeneralSecurityException {
         String ltvTsFileName = sourceFolder + "ltvDoc.pdf";
 
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
 
-        LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)), BouncyCastleProvider.PROVIDER_NAME);
+        LtvVerifier verifier =
+                new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)), FACTORY.getProviderName());
         verifier.setCertificateOption(LtvVerification.CertificateOption.WHOLE_CHAIN);
         verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password));
         List<VerificationOK> verificationMessages = verifier.verify(null);

@@ -51,6 +51,7 @@ import com.itextpdf.bouncycastle.asn1.x500.X500NameBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.bouncycastle.asn1.x509.BasicConstraintsBC;
 import com.itextpdf.bouncycastle.asn1.x509.CRLDistPointBC;
+import com.itextpdf.bouncycastle.asn1.x509.CRLReasonBC;
 import com.itextpdf.bouncycastle.asn1.x509.DistributionPointNameBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtendedKeyUsageBC;
 import com.itextpdf.bouncycastle.asn1.x509.ExtensionBC;
@@ -147,6 +148,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IBasicConstraints;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLReason;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtendedKeyUsage;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
@@ -1046,5 +1048,10 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object object) {
         return new SubjectPublicKeyInfoBC(object instanceof ASN1EncodableBC ?
                 ((ASN1EncodableBC) object).getEncodable() : object);
+    }
+    
+    @Override
+    public ICRLReason createCRLReason() {
+        return CRLReasonBC.getInstance();
     }
 }

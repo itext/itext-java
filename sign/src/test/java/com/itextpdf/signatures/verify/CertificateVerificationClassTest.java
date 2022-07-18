@@ -42,7 +42,9 @@
  */
 package com.itextpdf.signatures.verify;
 
-import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateVerification;
@@ -79,11 +81,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.x509.CRLReason;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -92,6 +89,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class CertificateVerificationClassTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     // Such messageTemplate is equal to any log message. This is required for porting reasons.
     private static final String ANY_LOG_MESSAGE = "{0}";
@@ -102,7 +100,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.createProvider());
         ITextTest.removeCryptographyRestrictions();
     }
 
@@ -192,15 +190,13 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
                 DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
                         COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME));
         crlBuilder.addCrlEntry(caCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
-                        COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME),
-                CRLReason.keyCompromise);
+                COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME), FACTORY.createCRLReason().getKeyCompromise());
 
         TestCrlBuilder crlForCheckBuilder = new TestCrlBuilder(caCert, caPrivateKey,
                 DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
                         COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME));
         crlForCheckBuilder.addCrlEntry(checkCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
-                        COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME),
-                CRLReason.keyCompromise);
+                COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME), FACTORY.createCRLReason().getKeyCompromise());
 
         TestCrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(crlBuilder);
         TestCrlClient crlForCheckClient = new TestCrlClient().addBuilderForCertIssuer(crlForCheckBuilder);
@@ -347,10 +343,9 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         TestTsaClient testTsaClient = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
         byte[] tsaCertificateBytes = testTsaClient.getTimeStampToken(testTsaClient.getMessageDigest().digest());
-        TimeStampToken timeStampToken = new TimeStampToken(
-                ContentInfo.getInstance(ASN1Sequence.getInstance(tsaCertificateBytes)));
+        ITimeStampToken timeStampToken = FACTORY.createTimeStampToken(
+                FACTORY.createContentInfo(FACTORY.createASN1Sequence(tsaCertificateBytes)));
 
-        return CertificateVerification.verifyTimestampCertificates(new TimeStampTokenBC(timeStampToken), caKeyStore,
-                null);
+        return CertificateVerification.verifyTimestampCertificates(timeStampToken, caKeyStore, null);
     }
 }
