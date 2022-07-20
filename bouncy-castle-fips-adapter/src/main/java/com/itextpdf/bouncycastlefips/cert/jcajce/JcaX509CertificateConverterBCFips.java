@@ -56,12 +56,6 @@ public class JcaX509CertificateConverterBCFips implements IJcaX509CertificateCon
      * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
      */
     @Override
-    public IJcaX509CertificateConverter setProvider(Provider provider) {
-        certificateConverter.setProvider(provider);
-        return this;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

@@ -56,7 +56,7 @@ import java.nio.charset.StandardCharsets;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.util.Collections;
 import org.junit.Assert;
@@ -65,7 +65,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import static org.junit.Assert.fail;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class PdfStreamTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStreamTest/";

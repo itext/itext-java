@@ -41,12 +41,6 @@
       <artifactId>bouncy-castle-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>bouncy-castle-adapter</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -69,4 +63,31 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>bouncy-castle</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>bouncy-castle-adapter</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>bouncy-castle-fips</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>bouncy-castle-fips-adapter</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -62,7 +62,7 @@ import java.util.Map;
 
 import static org.junit.Assert.fail;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
 
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/UnicodeBasedPasswordEncryptionTest/";

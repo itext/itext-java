@@ -26,7 +26,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
