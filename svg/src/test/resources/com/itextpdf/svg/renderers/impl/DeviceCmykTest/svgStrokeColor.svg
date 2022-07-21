@@ -1,0 +1,9 @@
+<svg viewBox="0 0 1200 600">
+<path stroke="device-cmyk(0 81% 81% 30%)" stroke-width="10"
+         d= "M 150,205  L179,291 L269,291 L197,345
+             L223,431 L150,380 L77,431 L103,345
+             L31,291 L121,291 z"/>
+<path stroke="device-cmyk(70%, 0%, 100%, 40%)" stroke-width="10"
+         d="M 400,205  L508,267.5 L508,392.5
+                    L400,455 L292,392.6 L292,267.5 z"/>
+</svg>

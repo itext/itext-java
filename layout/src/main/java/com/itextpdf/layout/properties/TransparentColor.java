@@ -46,6 +46,8 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 
+import java.util.Objects;
+
 /**
  * Represents a color with the specified opacity.
  */
@@ -122,5 +124,4 @@ public class TransparentColor {
     private boolean isTransparent() {
         return opacity < 1f;
     }
-
 }

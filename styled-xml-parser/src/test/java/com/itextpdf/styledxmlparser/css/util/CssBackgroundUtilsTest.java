@@ -24,7 +24,10 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,6 +52,8 @@ public class CssBackgroundUtilsTest extends ExtendedITextTest {
         Assert.assertEquals(BackgroundRepeatValue.REPEAT, CssBackgroundUtils.parseBackgroundRepeat("something"));
     }
 
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            StyledXmlParserLogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION)})
     @Test
     public void resolveBackgroundPropertyTypeTest() {
         Assert.assertEquals(CssBackgroundUtils.BackgroundPropertyType.UNDEFINED,

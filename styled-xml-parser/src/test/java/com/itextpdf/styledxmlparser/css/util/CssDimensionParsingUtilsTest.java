@@ -23,6 +23,9 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
@@ -249,4 +252,48 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
         Assert.assertEquals(expectedString, actualString);
     }
 
+    @Test
+    public void parseSimpleDeviceCmykTest(){
+        TransparentColor expected = new TransparentColor(new DeviceCmyk(0f, 0.4f, 0.6f, 1f), 1);
+        TransparentColor actual = CssDimensionParsingUtils.parseColor("device-cmyk(0 40% 60% 100%)");
+
+        Assert.assertEquals(expected.getColor(), actual.getColor());
+        Assert.assertEquals(expected.getOpacity(), actual.getOpacity(), 0.0001f);
+    }
+
+    @Test
+    public void parseDeviceCmykWithOpacityTest(){
+        TransparentColor expected = new TransparentColor(new DeviceCmyk(0f, 0.4f, 0.6f, 1f), 0.5f);
+        TransparentColor actual = CssDimensionParsingUtils.parseColor("device-cmyk(0 40% 60% 100% / .5)");
+
+        Assert.assertEquals(expected.getColor(), actual.getColor());
+        Assert.assertEquals(expected.getOpacity(), actual.getOpacity(), 0.0001f);
+    }
+
+    @Test
+    public void parseDeviceCmykWithFallbackAndOpacityTest(){
+        TransparentColor expected = new TransparentColor(new DeviceCmyk(0f, 0.4f, 0.6f, 1f), 0.5f);
+        TransparentColor actual = CssDimensionParsingUtils.parseColor("device-cmyk(0 40% 60% 100% / .5 rgb(178 34 34))");
+
+        Assert.assertEquals(expected.getColor(), actual.getColor());
+        Assert.assertEquals(expected.getOpacity(), actual.getOpacity(), 0.0001f);
+    }
+
+    @Test
+    public void parseRgbTest(){
+        TransparentColor expected = new TransparentColor(new DeviceRgb(255, 255, 128), 1f);
+        TransparentColor actual = CssDimensionParsingUtils.parseColor("rgb(255, 255, 128)");
+
+        Assert.assertEquals(expected.getColor(), actual.getColor());
+        Assert.assertEquals(expected.getOpacity(), actual.getOpacity(), 0.0001f);
+    }
+
+    @Test
+    public void parseInvalidColorTest(){
+        TransparentColor expected = new TransparentColor(new DeviceRgb(0, 0, 0), 1f);
+        TransparentColor actual = CssDimensionParsingUtils.parseColor("currentcolor");
+
+        Assert.assertEquals(expected.getColor(), actual.getColor());
+        Assert.assertEquals(expected.getOpacity(), actual.getOpacity(), 0.0001f);
+    }
 }

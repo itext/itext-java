@@ -62,6 +62,8 @@ public class WebColors extends HashMap<String, int[]> {
      */
     public static final WebColors NAMES = new WebColors();
 
+    private static final long serialVersionUID = 6350366251375926010L;
+
     private static final double RGB_MAX_VAL = 255.0;
     
     static {
@@ -232,6 +234,50 @@ public class WebColors extends HashMap<String, int[]> {
     }
 
     /**
+     * Gives you a DeviceCmyk based on a name.
+     *
+     * @param name 'device-cmyk(c, m, y, k)' structure
+     *
+     * @return the corresponding DeviceCmyk object. Never returns null.
+     */
+    public static DeviceCmyk getCMYKColor(String name) {
+        float[] cmykColor = getCMYKArray(name);
+        if (cmykColor == null) {
+            return new DeviceCmyk(0, 0, 0, 100);
+        } else {
+            return new DeviceCmyk(cmykColor[0], cmykColor[1], cmykColor[2], cmykColor[3]);
+        }
+    }
+
+    /**
+     * Gives an array of five floats that contain CMYK values and opacity, each value is between 0 and 1.
+     *
+     * @param name 'device-cmyk(c, m, y, k)' structure
+     *
+     * @return the corresponding array of five floats, or <code>null</code> if parsing failed.
+     */
+    public static float[] getCMYKArray(String name) {
+        float[] color = null;
+        try {
+            String colorName = name.toLowerCase();
+            if (colorName.startsWith("device-cmyk(")) {
+                final String delim = "device-cmyk()/, \t\r\n\f";
+                StringTokenizer tok = new StringTokenizer(colorName, delim);
+                color = new float[]{0, 0, 0, 1, 1};
+                parseCMYKColors(color, tok);
+                if (tok.hasMoreTokens()) {
+                    color[4] = getAlphaChannelValue(tok.nextToken());
+                }
+            }
+        } catch (Exception exc) {
+            // Will just return null in this case
+            color = null;
+        }
+
+        return color;
+    }
+
+    /**
      * Gives an array of four floats that contain RGBA values, each value is between 0 and 1. 
      * @param name a name such as black, violet, cornflowerblue or #RGB or
      *             #RRGGBB or RGB or RRGGBB or rgb(R,G,B) or rgb(R,G,B,A)
@@ -302,6 +348,16 @@ public class WebColors extends HashMap<String, int[]> {
         }
     }
 
+    private static void parseCMYKColors(float[] color, StringTokenizer tok) {
+        for (int k = 0; k < 4; ++k) {
+            if (tok.hasMoreTokens()) {
+                color[k] = getCMYKChannelValue(tok.nextToken());
+                color[k] = Math.max(0, color[k]);
+                color[k] = Math.min(1f, color[k]);
+            }
+        }
+    }
+
     /**
      * A web color string without the leading # will be 3 or 6 characters long
      * and all those characters will be hex digits. NOTE: colStr must be all
@@ -326,6 +382,15 @@ public class WebColors extends HashMap<String, int[]> {
             return parsePercentValue(rgbChannel);
         } else {
             return (float) (Integer.parseInt(rgbChannel) / RGB_MAX_VAL);
+        }
+
+    }
+
+    private static float getCMYKChannelValue(String cmykChannel) {
+        if (cmykChannel.endsWith("%")) {
+            return parsePercentValue(cmykChannel);
+        } else {
+            return (float) (Float.parseFloat(cmykChannel));
         }
 
     }
