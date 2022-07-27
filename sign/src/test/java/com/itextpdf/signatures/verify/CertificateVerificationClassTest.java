@@ -69,11 +69,13 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -91,6 +93,8 @@ import org.junit.experimental.categories.Category;
 public class CertificateVerificationClassTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
+    private static final Provider PROVIDER = FACTORY.createProvider();
+
     // Such messageTemplate is equal to any log message. This is required for porting reasons.
     private static final String ANY_LOG_MESSAGE = "{0}";
     private static final int COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME = -1;
@@ -100,7 +104,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(FACTORY.createProvider());
+        Security.addProvider(PROVIDER);
         ITextTest.removeCryptographyRestrictions();
     }
 
@@ -114,7 +118,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         Certificate[] certChain = Pkcs12FileHelper.readFirstChain(CERTS_SRC + "signCertRsaWithChain.p12", PASSWORD);
 
         String caCertFileName = CERTS_SRC + "rootRsa.p12";
-        KeyStore caKeyStore = Pkcs12FileHelper.initStore(caCertFileName, PASSWORD);
+        KeyStore caKeyStore = Pkcs12FileHelper.initStore(caCertFileName, PASSWORD, PROVIDER);
 
         List<VerificationException> verificationExceptions = CertificateVerification.verifyCertificates(certChain, caKeyStore);
 
@@ -125,7 +129,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     public void timestampCertificateAndKeyStoreCorrespondTest() throws Exception {
         String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
 
-        KeyStore caKeyStore = Pkcs12FileHelper.initStore(tsaCertFileName, PASSWORD);
+        KeyStore caKeyStore = Pkcs12FileHelper.initStore(tsaCertFileName, PASSWORD, PROVIDER);
 
         Assert.assertTrue(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
     }
@@ -136,7 +140,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
         String notTsaCertFileName = CERTS_SRC + "rootRsa.p12";
 
-        KeyStore caKeyStore = Pkcs12FileHelper.initStore(notTsaCertFileName, PASSWORD);
+        KeyStore caKeyStore = Pkcs12FileHelper.initStore(notTsaCertFileName, PASSWORD, PROVIDER);
 
         Assert.assertFalse(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
     }
@@ -258,7 +262,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    public void emptyCertChainTest() {
+    public void emptyCertChainTest() throws CertificateEncodingException, IOException {
         Certificate[] emptyCertChain = new Certificate[] {};
         final String expectedResult = MessageFormatUtil.format("Certificate Unknown failed: {0}",
                 SignExceptionMessageConstant.INVALID_STATE_WHILE_CHECKING_CERT_CHAIN);
@@ -278,14 +282,14 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         final String emptyCertChain = CERTS_SRC + "emptyCertChain.p12";
 
         Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
-        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD);
+        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD, PROVIDER);
 
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
                 emptyKeyStore, (Collection<CRL>) null);
 
         final String expectedResult = MessageFormatUtil.format(
                 SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
-                ((X509Certificate) validCertChain[2]).getSubjectDN().getName(),
+                FACTORY.createX500Name((X509Certificate) validCertChain[2]).toString(),
                 SignExceptionMessageConstant.CANNOT_BE_VERIFIED_CERTIFICATE_CHAIN);
 
         Assert.assertEquals(1, resultedExceptionList.size());
@@ -300,7 +304,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         final String emptyCertChain = CERTS_SRC + "rootRsa.p12";
 
         Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
-        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD);
+        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD, PROVIDER);
 
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
                 emptyKeyStore, (Collection<CRL>) null);
@@ -316,9 +320,9 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
         Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
 
         X509Certificate expectedExpiredCert = (X509Certificate) validCertChain[1];
-        final String expiredCertName = expectedExpiredCert.getSubjectDN().getName();
+        final String expiredCertName = FACTORY.createX500Name(expectedExpiredCert).toString();
         X509Certificate rootCert = (X509Certificate) validCertChain[2];
-        final String rootCertName = rootCert.getSubjectDN().getName();
+        final String rootCertName = FACTORY.createX500Name(rootCert).toString();
 
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
                 null, (Collection<CRL>) null);

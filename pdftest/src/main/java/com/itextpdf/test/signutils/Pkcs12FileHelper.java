@@ -44,11 +44,14 @@ package com.itextpdf.test.signutils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -94,9 +97,9 @@ public final class Pkcs12FileHelper {
         return pk;
     }
 
-    public static KeyStore initStore(String p12FileName, char[] ksPass) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException {
-        KeyStore p12 = KeyStore.getInstance("PKCS12", "BC");
-        p12.load(new FileInputStream(p12FileName), ksPass);
+    public static KeyStore initStore(String p12FileName, char[] ksPass, Provider provider) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException {
+        KeyStore p12 = KeyStore.getInstance("PKCS12", provider.getName());
+        p12.load(Files.newInputStream(Paths.get(p12FileName)), ksPass);
         return p12;
     }
 }

@@ -47,7 +47,6 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerifierIntegrationTest/";
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-
     @BeforeClass
     public static void before() {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
@@ -133,12 +132,12 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             Assert.assertEquals(2, verificationOKList.size());
             VerificationOK verificationOK = verificationOKList.get(0);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
 
             verificationOK = verificationOKList.get(1);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Root certificate passed without checking", verificationOK.message);
         }
     }
@@ -251,17 +250,17 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             Assert.assertEquals(3, verificationOKList.size());
             VerificationOK verificationOK = verificationOKList.get(0);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
 
             verificationOK = verificationOKList.get(1);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Root certificate in final revision", verificationOK.message);
 
             verificationOK = verificationOKList.get(2);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Root certificate passed without checking", verificationOK.message);
         }
     }

@@ -105,7 +105,7 @@ public class OCSPVerifier extends RootStoreVerifier {
      *        java.security.cert.X509Certificate, java.util.Date)
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException {
+            throws GeneralSecurityException, IOException {
         List<VerificationOK> result = new ArrayList<>();
         int validOCSPsFound = 0;
         // first check in the list of OCSP responses that was provided
@@ -150,7 +150,7 @@ public class OCSPVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
      */
     public boolean verify(IBasicOCSPResp ocspResp, X509Certificate signCert, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException {
+            throws GeneralSecurityException, IOException {
         if (ocspResp == null) {
             return false;
         }
@@ -212,7 +212,7 @@ public class OCSPVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException if OCSP response verification cannot be done or failed
      */
     public void isValidResponse(IBasicOCSPResp ocspResp, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException {
+            throws GeneralSecurityException, IOException {
         // OCSP response might be signed by the issuer certificate or
         // the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension
         X509Certificate responderCert = null;

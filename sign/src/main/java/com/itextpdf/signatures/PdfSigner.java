@@ -90,6 +90,7 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -806,7 +807,8 @@ public class PdfSigner {
      * @param crlList a list of CrlClient implementations
      * @return a collection of CRL bytes that can be embedded in a PDF
      */
-    protected Collection<byte[]> processCrl(Certificate cert, Collection<ICrlClient> crlList) {
+    protected Collection<byte[]> processCrl(Certificate cert, Collection<ICrlClient> crlList)
+            throws CertificateEncodingException, IOException {
         if (crlList == null) {
             return null;
         }

@@ -43,14 +43,18 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +70,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CrlClientOnline implements ICrlClient {
 
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     /**
      * The Logger instance.
      */
@@ -132,13 +137,14 @@ public class CrlClientOnline implements ICrlClient {
      * @see ICrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     @Override
-    public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
+    public Collection<byte[]> getEncoded(X509Certificate checkCert, String url)
+            throws CertificateEncodingException, IOException {
         if (checkCert == null) {
             return null;
         }
         List<URL> urlList = new ArrayList<>(urls);
         if (urlList.size() == 0) {
-            LOGGER.info("Looking for CRL for certificate " + checkCert.getSubjectDN());
+            LOGGER.info("Looking for CRL for certificate " + BOUNCY_CASTLE_FACTORY.createX500Name(checkCert));
             try {
                 if (url == null) {
                     url = CertificateUtil.getCRLURL(checkCert);

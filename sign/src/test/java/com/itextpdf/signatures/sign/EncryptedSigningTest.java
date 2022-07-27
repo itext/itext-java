@@ -108,24 +108,28 @@ public class EncryptedSigningTest extends ExtendedITextTest {
 
     @Test
     public void signCertificateSecurityPdfTest() throws IOException, GeneralSecurityException {
-        String srcFile = SOURCE_FOLDER + "signCertificateSecurityPdf.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_signCertificateSecurityPdf.pdf";
-        String outPdf = DESTINATION_FOLDER + "signCertificateSecurityPdf.pdf";
+        //RSA keys in FIPS are supported for signature verification only
+        if (!FACTORY.getProviderName().contains("FIPS")) {
+            String srcFile = SOURCE_FOLDER + "signCertificateSecurityPdf.pdf";
+            String cmpPdf = SOURCE_FOLDER + "cmp_signCertificateSecurityPdf.pdf";
+            String outPdf = DESTINATION_FOLDER + "signCertificateSecurityPdf.pdf";
 
-        PdfReader reader = new PdfReader(srcFile, new ReaderProperties()
-                .setPublicKeySecurityParams(chain[0], pk, FACTORY.getProviderName(), null));
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
-                new StampingProperties().useAppendMode());
+            PdfReader reader = new PdfReader(srcFile, new ReaderProperties()
+                    .setPublicKeySecurityParams(chain[0], pk, FACTORY.getProviderName(), null));
+            PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
+                    new StampingProperties().useAppendMode());
 
-        // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                FACTORY.getProviderName());
-        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+            // Creating the signature
+            IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                    FACTORY.getProviderName());
+            signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0,
+                    PdfSigner.CryptoStandard.CADES);
 
-        ReaderProperties properties = new ReaderProperties().setPublicKeySecurityParams(chain[0], pk,
-                FACTORY.getProviderName(), null);
+            ReaderProperties properties = new ReaderProperties().setPublicKeySecurityParams(chain[0], pk,
+                    FACTORY.getProviderName(), null);
 
-        //Public key to open out and cmp files are the same
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
+            //Public key to open out and cmp files are the same
+            Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
+        }
     }
 }

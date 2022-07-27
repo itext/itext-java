@@ -35,6 +35,7 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import org.junit.Assert;
@@ -46,6 +47,8 @@ import org.junit.experimental.categories.Category;
 public class OcspCertificateVerificationTest extends ExtendedITextTest {
     
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
+    private static final Provider PROVIDER = FACTORY.createProvider();
 
     // Such messageTemplate is equal to any log message. This is required for porting reasons.
     private static final String ANY_LOG_MESSAGE = "{0}";
@@ -64,7 +67,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() throws Exception {
-        Security.addProvider(FACTORY.createProvider());
+        Security.addProvider(PROVIDER);
         checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(signOcspCert, password)[0];
         rootCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootOcspCert, password)[0];
     }
@@ -74,7 +77,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(rootOcspCert, password), null));
+                response, Pkcs12FileHelper.initStore(rootOcspCert, password, PROVIDER), null));
     }
 
     @Test
@@ -82,7 +85,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(signOcspCert, password), null));
+                response, Pkcs12FileHelper.initStore(signOcspCert, password, PROVIDER), null));
     }
 
     @Test
@@ -90,14 +93,14 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(notOcspAndOcspCert, password), null));
+                response, Pkcs12FileHelper.initStore(notOcspAndOcspCert, password, PROVIDER), null));
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = ANY_LOG_MESSAGE))
     public void keyStoreWithNotOcspCertificateTest() throws Exception {
         Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
-                null, Pkcs12FileHelper.initStore(signOcspCert, password), null));
+                null, Pkcs12FileHelper.initStore(signOcspCert, password, PROVIDER), null));
     }
 
     private static IBasicOCSPResp getOcspResponse() throws Exception {

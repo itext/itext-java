@@ -425,4 +425,6 @@ public interface IBouncyCastleFactory {
     ISingleResp createSingleResp(IBasicOCSPResponse basicResp);
 
     X509Certificate createX509Certificate(Object element);
+
+    IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil();
 }

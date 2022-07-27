@@ -121,6 +121,7 @@ import com.itextpdf.bouncycastlefips.tsp.TimeStampResponseGeneratorBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenGeneratorBCFips;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleTestConstantsFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
@@ -301,6 +302,8 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     private static final String PROVIDER_NAME = new BouncyCastleFipsProvider().getName();
+    private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS = new BouncyCastleFipsTestConstantsFactory();
+
 
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
@@ -1021,8 +1024,13 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     @Override
     public IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException, IOException {
-        return new X500NameBCFips(X500Name.getInstance(
-                TBSCertificate.getInstance(ASN1Primitive.fromByteArray(certificate.getTBSCertificate())).getSubject()));
+        byte[] tbsCertificate = certificate.getTBSCertificate();
+        if (tbsCertificate.length != 0) {
+            return new X500NameBCFips(X500Name.getInstance(
+                    TBSCertificate.getInstance(ASN1Primitive.fromByteArray(tbsCertificate)).getSubject()));
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -1119,5 +1127,10 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public X509Certificate createX509Certificate(Object element) {
         return (X509Certificate) element;
+    }
+
+    @Override
+    public IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil() {
+        return BOUNCY_CASTLE_FIPS_TEST_CONSTANTS;
     }
 }

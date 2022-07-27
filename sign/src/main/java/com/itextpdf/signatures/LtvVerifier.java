@@ -117,12 +117,12 @@ public class LtvVerifier extends RootStoreVerifier {
      *
      * @throws GeneralSecurityException if some problem with signature or security are occurred
      */
-    public LtvVerifier(PdfDocument document) throws GeneralSecurityException {
+    public LtvVerifier(PdfDocument document) throws GeneralSecurityException, IOException {
         super(null);
         initLtvVerifier(document);
     }
 
-    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
+    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException, IOException {
         super(null);
         this.securityProviderCode = securityProviderCode;
         initLtvVerifier(document);
@@ -215,7 +215,7 @@ public class LtvVerifier extends RootStoreVerifier {
                 issuerCert = (X509Certificate) chain[i];
             }
             // now lets verify the certificate
-            LOGGER.info(signCert.getSubjectDN().getName());
+            LOGGER.info(BOUNCY_CASTLE_FACTORY.createX500Name(signCert).toString());
             List<VerificationOK> list = verify(signCert, issuerCert, signDate);
             if (list.size() == 0) {
                 try {
@@ -279,7 +279,7 @@ public class LtvVerifier extends RootStoreVerifier {
      *         java.security.cert.X509Certificate, java.util.Date)
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException {
+            throws GeneralSecurityException, IOException {
         // we'll verify against the rootstore (if present)
         RootStoreVerifier rootStoreVerifier = new RootStoreVerifier(verifier);
         rootStoreVerifier.setRootStore(rootStore);
@@ -390,7 +390,7 @@ public class LtvVerifier extends RootStoreVerifier {
         return ocsps;
     }
 
-    protected void initLtvVerifier(PdfDocument document) throws GeneralSecurityException {
+    protected void initLtvVerifier(PdfDocument document) throws GeneralSecurityException, IOException {
         this.document = document;
         this.acroForm = PdfAcroForm.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
@@ -414,7 +414,7 @@ public class LtvVerifier extends RootStoreVerifier {
      *
      * @throws GeneralSecurityException if some problems with signature or security occurred
      */
-    protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
+    protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException, IOException {
         PdfPKCS7 pkcs7 = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
             LOGGER.info("The timestamp covers whole document.");

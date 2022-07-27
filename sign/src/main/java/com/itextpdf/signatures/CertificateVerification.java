@@ -48,6 +48,9 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
+
+import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +128,8 @@ public class CertificateVerification {
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
-    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls) {
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls)
+            throws CertificateEncodingException, IOException {
         return verifyCertificates(certs, keystore, crls, DateTimeUtil.getCurrentTimeCalendar());
     }
 
@@ -141,7 +145,7 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore,
-            Collection<CRL> crls, Calendar calendar) {
+            Collection<CRL> crls, Calendar calendar) throws CertificateEncodingException, IOException {
         List<VerificationException> result = new ArrayList<>();
         for (int k = 0; k < certs.length; ++k) {
             X509Certificate cert = (X509Certificate) certs[k];
@@ -202,7 +206,8 @@ public class CertificateVerification {
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
      */
-    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore) {
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore)
+            throws CertificateEncodingException, IOException {
         return verifyCertificates(certs, keystore, DateTimeUtil.getCurrentTimeCalendar());
     }
 
@@ -217,7 +222,7 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore,
-            Calendar calendar) {
+            Calendar calendar) throws CertificateEncodingException, IOException {
         return verifyCertificates(certs, keystore, null, calendar);
     }
 

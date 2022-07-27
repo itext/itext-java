@@ -49,12 +49,14 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.LtvVerifier;
 import com.itextpdf.signatures.VerificationOK;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.signutils.Pkcs12FileHelper;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.List;
 import org.junit.AfterClass;
@@ -71,9 +73,11 @@ public class LtvVerifierTest extends ExtendedITextTest {
     
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
+    private static final Provider PROVIDER = FACTORY.createProvider();
+
     @BeforeClass
     public static void before() {
-        Security.addProvider(FACTORY.createProvider());
+        Security.addProvider(PROVIDER);
         ITextTest.removeCryptographyRestrictions();
     }
 
@@ -88,7 +92,7 @@ public class LtvVerifierTest extends ExtendedITextTest {
 
         LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)));
         verifier.setCertificateOption(LtvVerification.CertificateOption.WHOLE_CHAIN);
-        verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password));
+        verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password, PROVIDER));
         List<VerificationOK> verificationMessages = verifier.verify(null);
 
         Assert.assertEquals(7, verificationMessages.size());
@@ -102,7 +106,7 @@ public class LtvVerifierTest extends ExtendedITextTest {
         LtvVerifier verifier =
                 new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)), FACTORY.getProviderName());
         verifier.setCertificateOption(LtvVerification.CertificateOption.WHOLE_CHAIN);
-        verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password));
+        verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password, PROVIDER));
         List<VerificationOK> verificationMessages = verifier.verify(null);
 
         Assert.assertEquals(7, verificationMessages.size());

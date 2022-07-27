@@ -209,7 +209,7 @@ public class LtvVerification {
         ValidationData vd = new ValidationData();
         for (Certificate certificate : xc) {
             cert = (X509Certificate) certificate;
-            LOGGER.info("Certificate: " + cert.getSubjectDN());
+            LOGGER.info("Certificate: " + BOUNCY_CASTLE_FACTORY.createX500Name(cert));
             if (certOption == CertificateOption.SIGNING_CERTIFICATE
                     && !cert.equals(signingCert)) {
                 continue;

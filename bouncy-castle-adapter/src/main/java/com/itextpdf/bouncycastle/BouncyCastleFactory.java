@@ -121,6 +121,7 @@ import com.itextpdf.bouncycastle.tsp.TimeStampResponseGeneratorBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampTokenGeneratorBC;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleTestConstantsFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
@@ -299,6 +300,7 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     private static final String PROVIDER_NAME = new BouncyCastleProvider().getName();
+    private static final BouncyCastleTestConstantsFactory BOUNCY_CASTLE_TEST_CONSTANTS = new BouncyCastleTestConstantsFactory();
 
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
@@ -1012,8 +1014,13 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     @Override
     public IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException, IOException {
-        return new X500NameBC(X500Name.getInstance(
-                TBSCertificate.getInstance(ASN1Primitive.fromByteArray(certificate.getTBSCertificate())).getSubject()));
+        byte[] tbsCertificate = certificate.getTBSCertificate();
+        if (tbsCertificate.length != 0) {
+            return new X500NameBC(X500Name.getInstance(
+                    TBSCertificate.getInstance(ASN1Primitive.fromByteArray(tbsCertificate)).getSubject()));
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -1110,5 +1117,10 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public X509Certificate createX509Certificate(Object element) {
         return (X509Certificate) element;
+    }
+
+    @Override
+    public IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil() {
+        return BOUNCY_CASTLE_TEST_CONSTANTS;
     }
 }

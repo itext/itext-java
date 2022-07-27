@@ -54,9 +54,11 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -138,7 +140,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     }
 
     @Test
-    public void cannotGetEncodedWhenCertIsNullTest() {
+    public void cannotGetEncodedWhenCertIsNullTest() throws CertificateEncodingException, IOException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
         Assert.assertNull(crlClientOnline.getEncoded(null, ""));
         Assert.assertEquals(0, crlClientOnline.getUrlsSize());
@@ -153,7 +155,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
-    public void unreachableCrlDistributionPointTest() {
+    public void unreachableCrlDistributionPointTest() throws CertificateEncodingException, IOException {
         CrlClientOnline crlClientOnline = new CrlClientOnline("http://www.example.com/crl/test.crl");
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");
@@ -171,7 +173,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
-    public void unreachableCrlDistributionPointFromCertChainTest() {
+    public void unreachableCrlDistributionPointFromCertChainTest() throws CertificateEncodingException, IOException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");

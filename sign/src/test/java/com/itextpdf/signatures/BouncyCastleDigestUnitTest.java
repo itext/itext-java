@@ -28,7 +28,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -37,8 +36,9 @@ import org.junit.experimental.categories.Category;
 public class BouncyCastleDigestUnitTest extends ExtendedITextTest {
 
     @Test
-    public void getMessageDigestMD2Test() throws GeneralSecurityException {
-        getMessageDigestTest("MD2", "MD2");
+    public void getMessageDigestMD2Test() {
+        IExternalDigest digest = new BouncyCastleDigest();
+        Assert.assertThrows(NoSuchAlgorithmException.class, () -> digest.getMessageDigest("MD2"));
     }
 
     @Test
