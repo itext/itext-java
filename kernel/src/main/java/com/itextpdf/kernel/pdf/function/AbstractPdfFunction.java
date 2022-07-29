@@ -65,7 +65,7 @@ import java.util.Arrays;
  */
 public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfObjectWrapper<T> implements IPdfFunction {
 
-    final private int functionType;
+    private final int functionType;
     private double[] domain;
     private double[] range;
 
@@ -211,6 +211,10 @@ public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfOb
      */
     @Override
     public void setRange(double[] value) {
+        if (value == null) {
+            getPdfObject().remove(PdfName.Range);
+            return;
+        }
         range = Arrays.copyOf(value, value.length);
         getPdfObject().put(PdfName.Range, new PdfArray(range));
     }

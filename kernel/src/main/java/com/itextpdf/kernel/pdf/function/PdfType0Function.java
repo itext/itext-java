@@ -88,10 +88,10 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
         final PdfNumber orderObj = pdfObject.getAsNumber(PdfName.Order);
         order = orderObj == null ? 1 : orderObj.intValue();
 
-        PdfArray encodeObj = pdfObject.getAsArray(PdfName.Encode);
+        final PdfArray encodeObj = pdfObject.getAsArray(PdfName.Encode);
         initializeEncoding(encodeObj);
 
-        PdfArray decodeObj = pdfObject.getAsArray(PdfName.Decode);
+        final PdfArray decodeObj = pdfObject.getAsArray(PdfName.Decode);
         if (decodeObj == null) {
             decode = super.getRange();
         } else {
@@ -99,7 +99,7 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
         }
         outputDimension = super.getRange().length >> 1;
 
-        PdfNumber bitsPerSampleObj = pdfObject.getAsNumber(PdfName.BitsPerSample);
+        final PdfNumber bitsPerSampleObj = pdfObject.getAsNumber(PdfName.BitsPerSample);
         bitsPerSample = bitsPerSampleObj == null ? 0 : bitsPerSampleObj.intValue();
 
         decodeLimit = (1L << bitsPerSample) - 1;
@@ -365,7 +365,7 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
         } else {
             encode = encodeObj.toIntArray();
             for (int i = 0; i < size.length; ++i) {
-                int j = i << 1;
+                final int j = i << 1;
                 encode[j] = Math.max(0, encode[j]);
                 encode[j + 1] = Math.min(size[i] - 1, encode[j + 1]);
             }
@@ -378,7 +378,7 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
         } else {
             this.encode = new int[encode.length];
             for (int i = 0; i < size.length; ++i) {
-                int j = i << 1;
+                final int j = i << 1;
                 this.encode[j] = Math.max(0, encode[j]);
                 this.encode[j + 1] = Math.min(size[i] - 1, encode[j + 1]);
             }
@@ -388,7 +388,7 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
     private int[] getDefaultEncoding() {
         int[] result = new int[this.size.length << 1];
         int i = 0;
-        for (int sizeItem : size) {
+        for (final int sizeItem : size) {
             result[i++] = 0;
             result[i++] = sizeItem - 1;
         }
@@ -396,9 +396,9 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
     }
 
     private double[] interpolate(double[] normal, int[] floor) {
-        int floorPosition = getSamplePosition(floor, size);
-        double[] x = getFloorWeights(normal, encode);
-        int[] steps = getInputDimensionSteps();
+        final int floorPosition = getSamplePosition(floor, size);
+        final double[] x = getFloorWeights(normal, encode);
+        final int[] steps = getInputDimensionSteps();
         double[] result = new double[outputDimension];
         switch (order) {
             case 1:
@@ -420,16 +420,16 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
         if (inDim == 0) {
             return getValue(outDim, floorPosition);
         }
-        int step = steps[--inDim];
+        final int step = steps[--inDim];
         int encodeIndex = inDim << 1;
 
-        double value0 = interpolateOrder1(x, floorPosition, steps, inDim, outDim);
+        final double value0 = interpolateOrder1(x, floorPosition, steps, inDim, outDim);
         if (encode[encodeIndex] == encode[encodeIndex + 1]) {
             return value0;
         }
 
-        int ceilPosition = floorPosition + step;
-        double value1 = interpolateOrder1(x, ceilPosition, steps, inDim, outDim);
+        final int ceilPosition = floorPosition + step;
+        final double value1 = interpolateOrder1(x, ceilPosition, steps, inDim, outDim);
 
         return calculateLinearInterpolationFormula(x[inDim], value0, value1);
     }

@@ -43,8 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -52,9 +52,10 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.function.PdfFunctionFactory;
+import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfFunctionFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -125,8 +126,35 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             this(getSeparationCsArray(name, alternateSpace, tintTransform));
         }
 
+        /**
+         * Creates a new separation color space.
+         *
+         * @param name The name for the separation color
+         * @param alternateSpace The alternate colorspace
+         * @param tintTransform The function how the transform colors in the separation color space
+         *                      to the alternate color space
+         * @deprecated This constructor has been replaced
+         *             by {@link #Separation(String, PdfColorSpace, IPdfFunction)}
+         */
+        @Deprecated
         public Separation(String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
+            if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
+                throw new PdfException(
+                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
+            }
+        }
+
+        /**
+         * Creates a new separation color space.
+         *
+         * @param name The name for the separation color
+         * @param alternateSpace The alternate colorspace
+         * @param tintTransform The function how the transform colors in the separation color space
+         *                      to the alternate color space
+         */
+        public Separation(String name, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
+            this(new PdfName(name), alternateSpace.getPdfObject(), ((AbstractPdfFunction)tintTransform).getPdfObject());
             if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
@@ -180,9 +208,38 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             this(getDeviceNCsArray(names, alternateSpace, tintTransform));
         }
 
+        /**
+         * Creates a new DeviceN colorspace.
+         *
+         * @param names the names of the components
+         * @param alternateSpace the alternate colorspace
+         * @param tintTransform the function to transform colors to the alternate colorspace
+         *
+         * @deprecated Use constructor {@link #DeviceN(List, PdfColorSpace, IPdfFunction)} instead.
+         */
+
+        @Deprecated
         public DeviceN(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (tintTransform.getInputSize() != getNumberOfComponents() || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
+            if (tintTransform.getInputSize() != numOfComponents ||
+                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
+                throw new PdfException(
+                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
+            }
+        }
+
+        /**
+         * Creates a new DiviceN colorspace.
+         *
+         * @param names the names of the components
+         * @param alternateSpace the alternate colorspace
+         * @param tintTransform the function to transform colors to the alternate colorspace
+         */
+        public DeviceN(List<String> names, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
+            this(new PdfArray(names, true), alternateSpace.getPdfObject(),
+                    ((AbstractPdfFunction)tintTransform).getPdfObject());
+            if (tintTransform.getInputSize() != numOfComponents ||
+                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
             }
@@ -223,15 +280,49 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             this(getNChannelCsArray(names, alternateSpace, tintTransform, attributes));
         }
 
-        public NChannel(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform, PdfDictionary attributes) {
+        /**
+         * Creates a new NChannel colorspace.
+         *
+         * @param names the names for the components
+         * @param alternateSpace the alternative colorspace
+         * @param tintTransform the function to transform colors to the alternate color space
+         * @param attributes NChannel specific attributes
+         * @deprecated Use constructor {@link #NChannel(PdfArray, PdfObject, PdfObject, PdfDictionary) NChannel} instead
+         */
+
+        @Deprecated
+        public NChannel(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform,
+                PdfDictionary attributes) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject(), attributes);
-            if (tintTransform.getInputSize() != 1 || tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
+            if (tintTransform.getInputSize() != 1 ||
+                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
             }
         }
 
-        protected static PdfArray getNChannelCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform, PdfDictionary attributes) {
+        /**
+         * Creates a new NChannel colorspace.
+         *
+         * @param names the names for the components
+         * @param alternateSpace the alternative colorspace
+         * @param tintTransform the function to transform colors to the alternate color space
+         * @param attributes NChannel specific attributes
+         */
+        public NChannel(List<String> names, PdfColorSpace alternateSpace, IPdfFunction tintTransform,
+                PdfDictionary attributes) {
+            this(new PdfArray(names, true), alternateSpace.getPdfObject(),
+                    ((AbstractPdfFunction)tintTransform).getPdfObject(), attributes);
+            if (tintTransform.getInputSize() != 1 ||
+                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
+                throw new PdfException(
+                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
+            }
+        }
+
+
+        protected static PdfArray getNChannelCsArray(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform,
+                PdfDictionary attributes) {
             PdfArray nChannel = getDeviceNCsArray(names, alternateSpace, tintTransform);
             nChannel.add(attributes);
             return nChannel;
@@ -241,11 +332,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
     public static class Pattern extends PdfColorSpace {
 
-
-		@Override
-        protected boolean isWrappedObjectMustBeIndirect() {
-            return false;
-        }
 
         public Pattern() {
             super(PdfName.Pattern);
@@ -259,10 +345,23 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 0;
         }
+
+		@Override
+        protected boolean isWrappedObjectMustBeIndirect() {
+            return false;
+        }
     }
 
     public static class UncoloredTilingPattern extends Pattern {
 
+
+        public UncoloredTilingPattern(PdfArray pdfObject) {
+            super(pdfObject);
+        }
+
+        public UncoloredTilingPattern(PdfColorSpace underlyingColorSpace) {
+            super(new PdfArray(Arrays.asList(PdfName.Pattern, underlyingColorSpace.getPdfObject())));
+        }
 
         /**
          * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
@@ -276,17 +375,8 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             super.flush();
         }
 
-		@Override
-        protected boolean isWrappedObjectMustBeIndirect() {
-            return true;
-        }
-
-        public UncoloredTilingPattern(PdfArray pdfObject) {
-            super(pdfObject);
-        }
-
-        public UncoloredTilingPattern(PdfColorSpace underlyingColorSpace) {
-            super(new PdfArray(Arrays.asList(PdfName.Pattern, underlyingColorSpace.getPdfObject())));
+        public PdfColorSpace getUnderlyingColorSpace() {
+            return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1));
         }
 
         @Override
@@ -294,8 +384,9 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1)).getNumberOfComponents();
         }
 
-        public PdfColorSpace getUnderlyingColorSpace() {
-            return PdfColorSpace.makeColorSpace(((PdfArray) getPdfObject()).get(1));
+		@Override
+        protected boolean isWrappedObjectMustBeIndirect() {
+            return true;
         }
     }
 

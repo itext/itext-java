@@ -64,17 +64,16 @@ class ImagePdfBytesInfo {
             ITextCoreProductData.getInstance().getVersion() + " \u00a9" + ITextCoreProductData.getInstance()
             .getSinceCopyrightYear() + "-" + ITextCoreProductData.getInstance().getToCopyrightYear()
             + " iText Group NV";
-
+    private final int bpc;
+    private final int width;
+    private final int height;
+    private final PdfObject colorspace;
+    private final PdfArray decode;
     private int pngColorType;
     private int pngBitDepth;
-    private int bpc;
     private byte[] palette;
     private byte[] icc;
     private int stride;
-    private int width;
-    private int height;
-    private PdfObject colorspace;
-    private PdfArray decode;
 
     public ImagePdfBytesInfo(PdfImageXObject imageXObject) {
         pngColorType = -1;
@@ -169,7 +168,7 @@ class ImagePdfBytesInfo {
         }
 
 
-        stride = stride = (width * bpc * 3 + 7) / 8;;
+        stride = (width * bpc * 3 + 7) / 8;
         return processPng(newImageBytes, pngBitDepth, 2);
 
     }
@@ -262,7 +261,6 @@ class ImagePdfBytesInfo {
                 IPdfFunction fct = PdfFunctionFactory.create(ca.get(3));
                 int components = fct.getOutputSize();
                 pngColorType = components == 1? 1: 2;
-                components = 3;
                 pngBitDepth = 8;
             }
         }
