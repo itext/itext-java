@@ -70,12 +70,10 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.IMessageImprint;
+import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
-import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
-import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
-import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -157,12 +155,13 @@ public class PdfPKCS7 {
      * @param hashAlgorithm   the hash algorithm
      * @param provider        the provider or <code>null</code> for the default provider
      * @param hasRSAdata      <CODE>true</CODE> if the sub-filter is adbe.pkcs7.sha1
+     *
      * @throws InvalidKeyException      on error
      * @throws NoSuchProviderException  on error
      * @throws NoSuchAlgorithmException on error
      */
     public PdfPKCS7(PrivateKey privKey, Certificate[] certChain,
-                    String hashAlgorithm, String provider, IExternalDigest interfaceDigest, boolean hasRSAdata)
+            String hashAlgorithm, String provider, IExternalDigest interfaceDigest, boolean hasRSAdata)
             throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
         this.interfaceDigest = interfaceDigest;
@@ -193,7 +192,8 @@ public class PdfPKCS7 {
                 digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
             } else {
                 throw new PdfException(
-                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(digestEncryptionAlgorithmOid);
+                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(
+                        digestEncryptionAlgorithmOid);
             }
         }
 
@@ -274,9 +274,10 @@ public class PdfPKCS7 {
                         SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE);
             }
             IASN1ObjectIdentifier objId = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(signedData.getObjectAt(0));
-            if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
+            if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA)) {
                 throw new IllegalArgumentException(
                         SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA);
+            }
             IASN1Sequence content = BOUNCY_CASTLE_FACTORY.createASN1Sequence(
                     BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(signedData.getObjectAt(1)).getObject());
             // the positions that we care are:
@@ -311,7 +312,6 @@ public class PdfPKCS7 {
                 ++next;
             }
 
-
             // the certificates
 /*
             This should work, but that's not always the case because of a bug in BouncyCastle:
@@ -320,9 +320,10 @@ public class PdfPKCS7 {
 
             // the signerInfos
             IASN1Set signerInfos = BOUNCY_CASTLE_FACTORY.createASN1Set(content.getObjectAt(next));
-            if (signerInfos.size() != 1)
+            if (signerInfos.size() != 1) {
                 throw new IllegalArgumentException(
                         SignExceptionMessageConstant.THIS_PKCS7_OBJECT_HAS_MULTIPLE_SIGNERINFOS_ONLY_ONE_IS_SUPPORTED_AT_THIS_TIME);
+            }
             IASN1Sequence signerInfo = BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfos.getObjectAt(0));
             // the positions that we care are
             //     0 - version
@@ -334,9 +335,10 @@ public class PdfPKCS7 {
             // Get the signing certificate
             IASN1Sequence issuerAndSerialNumber = BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfo.getObjectAt(1));
             X500Principal issuer = SignUtils.getIssuerX500Principal(issuerAndSerialNumber);
-            BigInteger serialNumber = BOUNCY_CASTLE_FACTORY.createASN1Integer(issuerAndSerialNumber.getObjectAt(1)).getValue();
+            BigInteger serialNumber = BOUNCY_CASTLE_FACTORY.createASN1Integer(issuerAndSerialNumber.getObjectAt(1))
+                    .getValue();
             for (Object element : certs) {
-                X509Certificate cert = (X509Certificate) element;
+                X509Certificate cert = BOUNCY_CASTLE_FACTORY.createX509Certificate(element);
                 if (cert.getIssuerX500Principal().equals(issuer) && serialNumber.equals(cert.getSerialNumber())) {
                     signCert = cert;
                     break;
@@ -388,8 +390,10 @@ public class PdfPKCS7 {
                         MessageDigest m2 = SignUtils.getMessageDigest("SHA-1");
                         byte[] signCertHash = m2.digest(enc2);
                         byte[] hs2 = cerv2.getCertHash();
-                        if (!Arrays.equals(signCertHash, hs2))
-                            throw new IllegalArgumentException("Signing certificate doesn't match the ESS information.");
+                        if (!Arrays.equals(signCertHash, hs2)) {
+                            throw new IllegalArgumentException(
+                                    "Signing certificate doesn't match the ESS information.");
+                        }
                         foundCades = true;
                     } else if (isCades && idSeq2.equals(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2)) {
                         IASN1Set setout = BOUNCY_CASTLE_FACTORY.createASN1Set(seq2.getObjectAt(1));
@@ -403,23 +407,28 @@ public class PdfPKCS7 {
                                 = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(ai2.getAlgorithm().getId()));
                         byte[] signCertHash = m2.digest(enc2);
                         byte[] hs2 = cerv2.getCertHash();
-                        if (!Arrays.equals(signCertHash, hs2))
-                            throw new IllegalArgumentException("Signing certificate doesn't match the ESS information.");
+                        if (!Arrays.equals(signCertHash, hs2)) {
+                            throw new IllegalArgumentException(
+                                    "Signing certificate doesn't match the ESS information.");
+                        }
                         foundCades = true;
                     }
                 }
-                if (digestAttr == null)
+                if (digestAttr == null) {
                     throw new IllegalArgumentException(
                             SignExceptionMessageConstant.AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST);
+                }
                 ++next;
             }
-            if (isCades && !foundCades)
+            if (isCades && !foundCades) {
                 throw new IllegalArgumentException("CAdES ESS information missing.");
+            }
             digestEncryptionAlgorithmOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
                     BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
             digest = BOUNCY_CASTLE_FACTORY.createASN1OctetString(signerInfo.getObjectAt(next++)).getOctets();
             if (next < signerInfo.size()) {
-                IASN1TaggedObject taggedObject = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(signerInfo.getObjectAt(next));
+                IASN1TaggedObject taggedObject = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(
+                        signerInfo.getObjectAt(next));
                 if (taggedObject != null) {
                     IASN1Set unat = BOUNCY_CASTLE_FACTORY.createASN1Set(taggedObject, false);
                     IAttributeTable attble = BOUNCY_CASTLE_FACTORY.createAttributeTable(unat);
@@ -430,15 +439,14 @@ public class PdfPKCS7 {
                         IASN1Sequence tokenSequence =
                                 BOUNCY_CASTLE_FACTORY.createASN1SequenceInstance(attributeValues.getObjectAt(0));
                         IContentInfo contentInfo = BOUNCY_CASTLE_FACTORY.createContentInfo(tokenSequence);
-                        this.timeStampToken = BOUNCY_CASTLE_FACTORY.createTimeStampToken(contentInfo);
+                        this.timeStampTokenInfo = BOUNCY_CASTLE_FACTORY.createTSTInfo(contentInfo);
                     }
                 }
             }
             if (isTsp) {
                 IContentInfo contentInfoTsp = BOUNCY_CASTLE_FACTORY.createContentInfo(signedData);
-                this.timeStampToken = BOUNCY_CASTLE_FACTORY.createTimeStampToken(contentInfoTsp);
-                ITimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
-                String algOID = info.getHashAlgorithm().getAlgorithm().getId();
+                this.timeStampTokenInfo = BOUNCY_CASTLE_FACTORY.createTSTInfo(contentInfoTsp);
+                String algOID = timeStampTokenInfo.getMessageImprint().getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             } else {
                 if (this.rsaData != null || digestAttr != null) {
@@ -664,9 +672,9 @@ public class PdfPKCS7 {
      *
      * @param digest                    the digest. This is the actual signature
      * @param rsaData                   the extra data that goes into the data tag in PKCS#7
-     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the <CODE>digest</CODE>
-     *                                  is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
-     *                                  then it may be "RSA" or "DSA"
+     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the
+     *                                  <CODE>digest</CODE> is also <CODE>null</CODE>. If the <CODE>digest</CODE>
+     *                                  is not <CODE>null</CODE> then it may be "RSA" or "DSA"
      */
     public void setExternalDigest(byte[] digest, byte[] rsaData, String digestEncryptionAlgorithm) {
         externalDigest = digest;
@@ -714,8 +722,9 @@ public class PdfPKCS7 {
     private Signature initSignature(PublicKey key) throws NoSuchAlgorithmException, NoSuchProviderException,
             InvalidKeyException {
         String digestAlgorithm = getDigestAlgorithm();
-        if (PdfName.Adbe_x509_rsa_sha1.equals(getFilterSubtype()))
+        if (PdfName.Adbe_x509_rsa_sha1.equals(getFilterSubtype())) {
             digestAlgorithm = "SHA1withRSA";
+        }
         Signature signature = SignUtils.getSignatureHelper(digestAlgorithm, provider);
         signature.initVerify(key);
         return signature;
@@ -728,6 +737,7 @@ public class PdfPKCS7 {
      * @param buf the data buffer
      * @param off the offset in the data buffer
      * @param len the data length
+     *
      * @throws SignatureException on error
      */
     public void update(byte[] buf, int off, int len) throws SignatureException {
@@ -747,10 +757,11 @@ public class PdfPKCS7 {
      */
     public byte[] getEncodedPKCS1() {
         try {
-            if (externalDigest != null)
+            if (externalDigest != null) {
                 digest = externalDigest;
-            else
+            } else {
                 digest = sig.sign();
+            }
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
             IASN1OutputStream dout = BOUNCY_CASTLE_FACTORY.createASN1OutputStream(bOut);
@@ -779,6 +790,7 @@ public class PdfPKCS7 {
      * in the signerInfo can also be set. If either of the parameters is <CODE>null</CODE>, none will be used.
      *
      * @param secondDigest the digest in the authenticatedAttributes
+     *
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte[] secondDigest) {
@@ -791,21 +803,27 @@ public class PdfPKCS7 {
      * may be provided.
      *
      * @param secondDigest the digest in the authenticatedAttributes
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere: either basic CMS or CAdES
+     * @param sigtype      specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
+     *                     either basic CMS or CAdES
      * @param tsaClient    TSAClient - null or an optional time stamp authority client
-     * @param ocsp collection of DER-encoded BasicOCSPResponses for the  certificate in the signature certificates
-     *             chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
-     *                 or null if CRL revocation data is not to be added.
-     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
+     * @param ocsp         collection of DER-encoded BasicOCSPResponses for the  certificate in the signature
+     *                     certificates
+     *                     chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes     collection of DER-encoded CRL for certificates from the signature certificates chain,
+     *                     or null if CRL revocation data is not to be added.
+     *
      * @return byte[] the bytes for the PKCS7SignedData object
+     *
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
      */
-    public byte[] getEncodedPKCS7(byte[] secondDigest, PdfSigner.CryptoStandard sigtype, ITSAClient tsaClient, Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
+    public byte[] getEncodedPKCS7(byte[] secondDigest, PdfSigner.CryptoStandard sigtype, ITSAClient tsaClient,
+            Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
-                if (rsaData != null)
+                if (rsaData != null) {
                     rsaData = externalRsaData;
+                }
             } else if (externalRsaData != null && rsaData != null) {
                 rsaData = externalRsaData;
                 sig.update(rsaData);
@@ -831,7 +849,8 @@ public class PdfPKCS7 {
             IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
             v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA));
             if (rsaData != null) {
-                v.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(0, BOUNCY_CASTLE_FACTORY.createDEROctetString(rsaData)));
+                v.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(0,
+                        BOUNCY_CASTLE_FACTORY.createDEROctetString(rsaData)));
             }
             IDERSequence contentinfo = BOUNCY_CASTLE_FACTORY.createDERSequence(v);
 
@@ -840,7 +859,7 @@ public class PdfPKCS7 {
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
             for (Object element : certs) {
                 IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                        new ByteArrayInputStream(((X509Certificate) element).getEncoded()));
+                        new ByteArrayInputStream(BOUNCY_CASTLE_FACTORY.createX509Certificate(element).getEncoded()));
                 v.add(tempstream.readObject());
             }
 
@@ -929,17 +948,21 @@ public class PdfPKCS7 {
      * handled by the (vendor supplied) TSA request/response interface).
      *
      * @param timeStampToken byte[] - time stamp token, DER encoded signedData
+     *
      * @return {@link IASN1EncodableVector}
+     *
      * @throws IOException
      */
     private IASN1EncodableVector buildUnauthenticatedAttributes(byte[] timeStampToken) throws IOException {
-        if (timeStampToken == null)
+        if (timeStampToken == null) {
             return null;
+        }
 
         // @todo: move this together with the rest of the defintions
         String ID_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14"; // RFC 3161 id-aa-timeStampToken
 
-        IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(timeStampToken));
+        IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                new ByteArrayInputStream(timeStampToken));
         IASN1EncodableVector unauthAttributes = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
 
         IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
@@ -960,8 +983,8 @@ public class PdfPKCS7 {
      * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
      *
      * <p>
-     *     Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
-     *     only the DER-encoded IBasicOCSPResponse value contained in the response data.
+     * Note: do not pass in the full DER-encoded OCSPResponse object obtained from the responder,
+     * only the DER-encoded IBasicOCSPResponse value contained in the response data.
      *
      * <p>
      * A simple example:
@@ -982,13 +1005,16 @@ public class PdfPKCS7 {
      * </pre>
      *
      * @param secondDigest the content digest
-     * @param sigtype specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
-     *                either basic CMS or CAdES
-     * @param ocsp collection of DER-encoded BasicOCSPResponses for the  certificate in the signature certificates
-     *             chain, or null if OCSP revocation data is not to be added.
-     * @param crlBytes collection of DER-encoded CRL for certificates from the signature certificates chain,
-     *                 or null if CRL revocation data is not to be added.
+     * @param sigtype      specifies the PKCS7 standard flavor to which created PKCS7SignedData object will adhere:
+     *                     either basic CMS or CAdES
+     * @param ocsp         collection of DER-encoded BasicOCSPResponses for the  certificate in the signature
+     *                     certificates
+     *                     chain, or null if OCSP revocation data is not to be added.
+     * @param crlBytes     collection of DER-encoded CRL for certificates from the signature certificates chain,
+     *                     or null if CRL revocation data is not to be added.
+     *
      * @return the byte array representation of the authenticatedAttributes ready to be signed
+     *
      * @see <a href="https://datatracker.ietf.org/doc/html/rfc6960#section-4.2.1">RFC 6960 § 4.2.1</a>
      */
     public byte[] getAuthenticatedAttributeBytes(byte[] secondDigest, PdfSigner.CryptoStandard sigtype,
@@ -1006,6 +1032,7 @@ public class PdfPKCS7 {
      * exactly the same as in {@link #getEncodedPKCS7(byte[])}.
      *
      * @param secondDigest the content digest
+     *
      * @return the byte array representation of the authenticatedAttributes ready to be signed
      */
     private IDERSet getAuthenticatedAttributeSet(byte[] secondDigest, Collection<byte[]> ocsp,
@@ -1042,7 +1069,8 @@ public class PdfPKCS7 {
                         if (bCrl == null) {
                             continue;
                         }
-                        IASN1InputStream t = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(bCrl));
+                        IASN1InputStream t = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                                new ByteArrayInputStream(bCrl));
                         v2.add(t.readObject());
                     }
                     revocationV.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
@@ -1129,7 +1157,6 @@ public class PdfPKCS7 {
      */
     private boolean verifyResult;
 
-
     // verification
 
     /**
@@ -1138,22 +1165,26 @@ public class PdfPKCS7 {
      * is genuine and is created by the owner of private key that corresponds to the declared public certificate.
      * <p>
      * Even though signature can be authentic and signed data integrity can be intact,
-     * one shall also always check that signed data is not only a part of PDF contents but is actually a complete PDF file.
+     * one shall also always check that signed data is not only a part of PDF contents but is actually a complete PDF
+     * file.
      * In order to check that given signature covers the current {@link com.itextpdf.kernel.pdf.PdfDocument} please
      * use {@link SignatureUtil#signatureCoversWholeDocument(String)} method.
      *
      * @return <CODE>true</CODE> if the signature checks out, <CODE>false</CODE> otherwise
+     *
      * @throws java.security.GeneralSecurityException if this signature object is not initialized properly,
-     * the passed-in signature is improperly encoded or of the wrong type, if this signature algorithm is unable to
-     * process the input data provided, if the public key is invalid or if security provider or signature algorithm
-     * are not recognized, etc.
+     *                                                the passed-in signature is improperly encoded or of the wrong
+     *                                                type, if this signature algorithm is unable to
+     *                                                process the input data provided, if the public key is invalid or
+     *                                                if security provider or signature algorithm
+     *                                                are not recognized, etc.
      */
     public boolean verifySignatureIntegrityAndAuthenticity() throws GeneralSecurityException {
-        if (verified)
+        if (verified) {
             return verifyResult;
+        }
         if (isTsp) {
-            ITimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
-            IMessageImprint imprint = info.toASN1Structure().getMessageImprint();
+            IMessageImprint imprint = timeStampTokenInfo.getMessageImprint();
             byte[] md = messageDigest.digest();
             byte[] imphashed = imprint.getHashedMessage();
             verifyResult = Arrays.equals(md, imphashed);
@@ -1173,8 +1204,9 @@ public class PdfPKCS7 {
                 boolean sigVerify = verifySigAttributes(sigAttr) || verifySigAttributes(sigAttrDer);
                 verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
             } else {
-                if (rsaData != null)
-                    sig.update(messageDigest.digest());
+                if (rsaData != null) {
+                    SignUtils.updateVerifier(sig, messageDigest.digest());
+                }
                 verifyResult = sig.verify(digest);
             }
         }
@@ -1184,7 +1216,7 @@ public class PdfPKCS7 {
 
     private boolean verifySigAttributes(byte[] attr) throws GeneralSecurityException {
         Signature signature = initSignature(signCert.getPublicKey());
-        signature.update(attr);
+        SignUtils.updateVerifier(signature, attr);
         return signature.verify(digest);
     }
 
@@ -1192,16 +1224,16 @@ public class PdfPKCS7 {
      * Checks if the timestamp refers to this document.
      *
      * @return true if it checks false otherwise
+     *
      * @throws GeneralSecurityException on error
      */
     public boolean verifyTimestampImprint() throws GeneralSecurityException {
         // TODO DEVSIX-6011 ensure this method works correctly
-        if (timeStampToken == null) {
+        if (timeStampTokenInfo == null) {
             return false;
         }
-        ITimeStampTokenInfo info = timeStampToken.getTimeStampInfo();
-        IMessageImprint imprint = info.toASN1Structure().getMessageImprint();
-        String algOID = info.getHashAlgorithm().getAlgorithm().getId();
+        IMessageImprint imprint = timeStampTokenInfo.getMessageImprint();
+        String algOID = imprint.getHashAlgorithm().getAlgorithm().getId();
         byte[] md = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(digest);
         byte[] imphashed = imprint.getHashedMessage();
         return Arrays.equals(md, imphashed);
@@ -1319,16 +1351,16 @@ public class PdfPKCS7 {
     // Online Certificate Status Protocol
 
     /**
-     * BouncyCastle IBasicOCSPResp
+     * BouncyCastle IBasicOCSPResponse
      */
-    IBasicOCSPResp basicResp;
+    IBasicOCSPResponse basicResp;
 
     /**
      * Gets the OCSP basic response if there is one.
      *
      * @return the OCSP basic response or null
      */
-    public IBasicOCSPResp getOcsp() {
+    public IBasicOCSPResponse getOcsp() {
         return basicResp;
     }
 
@@ -1338,13 +1370,15 @@ public class PdfPKCS7 {
      * @return true if it checks, false otherwise
      */
     public boolean isRevocationValid() {
-        if (basicResp == null)
+        if (basicResp == null) {
             return false;
-        if (signCerts.size() < 2)
+        }
+        if (signCerts.size() < 2) {
             return false;
+        }
         try {
             X509Certificate[] cs = (X509Certificate[]) getSignCertificateChain();
-            ISingleResp sr = basicResp.getResponses()[0];
+            ISingleResp sr = BOUNCY_CASTLE_FACTORY.createSingleResp(basicResp);
             ICertificateID cid = sr.getCertID();
             X509Certificate sigcer = getSigningCertificate();
             X509Certificate isscer = cs[1];
@@ -1359,13 +1393,15 @@ public class PdfPKCS7 {
      * Helper method that creates the IBasicOCSPResp object.
      *
      * @param seq
+     *
      * @throws IOException
      */
     private void findOcsp(IASN1Sequence seq) throws IOException {
-        basicResp = (IBasicOCSPResp) null;
+        basicResp = null;
         boolean ret = false;
         while (true) {
-            IASN1ObjectIdentifier objectIdentifier = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(seq.getObjectAt(0));
+            IASN1ObjectIdentifier objectIdentifier = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                    seq.getObjectAt(0));
             IOCSPObjectIdentifiers ocspObjectIdentifiers = BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers();
             if (objectIdentifier != null
                     && objectIdentifier.getId().equals(ocspObjectIdentifiers.getIdPkixOcspBasic().getId())) {
@@ -1391,13 +1427,13 @@ public class PdfPKCS7 {
                     }
                 }
             }
-            if (ret)
+            if (ret) {
                 return;
+            }
         }
         IASN1OctetString os = BOUNCY_CASTLE_FACTORY.createASN1OctetString(seq.getObjectAt(1));
         IASN1InputStream inp = BOUNCY_CASTLE_FACTORY.createASN1InputStream(os.getOctets());
-        IBasicOCSPResponse resp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(inp.readObject());
-        basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(resp);
+        basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(inp.readObject());
     }
 
     // Time Stamps
@@ -1413,9 +1449,9 @@ public class PdfPKCS7 {
     private boolean isCades;
 
     /**
-     * BouncyCastle TimeStampToken.
+     * BouncyCastle TSTInfo.
      */
-    private ITimeStampToken timeStampToken;
+    private ITSTInfo timeStampTokenInfo;
 
     /**
      * Check if it's a PAdES-LTV time stamp.
@@ -1427,27 +1463,27 @@ public class PdfPKCS7 {
     }
 
     /**
-     * Gets the timestamp token if there is one.
+     * Gets the timestamp token info if there is one.
      *
-     * @return the timestamp token or null
+     * @return the timestamp token info or null
      */
-    public ITimeStampToken getTimeStampToken() {
-        return timeStampToken;
+    public ITSTInfo getTimeStampTokenInfo() {
+        return timeStampTokenInfo;
     }
 
     /**
      * Gets the timestamp date.
-     *
+     * <p>
      * In case the signed document doesn't contain timestamp,
      * {@link TimestampConstants#UNDEFINED_TIMESTAMP_DATE} will be returned.
      *
      * @return the timestamp date
      */
     public Calendar getTimeStampDate() {
-        if (timeStampToken == null) {
+        if (timeStampTokenInfo == null) {
             return (Calendar) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
         }
-        return SignUtils.getTimeStampDate(timeStampToken);
+        return SignUtils.getTimeStampDate(timeStampTokenInfo);
     }
 
     /**
@@ -1466,8 +1502,9 @@ public class PdfPKCS7 {
      */
     public String getEncryptionAlgorithm() {
         String encryptAlgo = EncryptionAlgorithms.getAlgorithm(digestEncryptionAlgorithmOid);
-        if (encryptAlgo == null)
+        if (encryptAlgo == null) {
             encryptAlgo = digestEncryptionAlgorithmOid;
+        }
         return encryptAlgo;
     }
 }

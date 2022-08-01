@@ -1,7 +1,9 @@
 package com.itextpdf.bouncycastle.asn1.tsp;
 
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
+import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.IMessageImprint;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 
 import org.bouncycastle.asn1.tsp.MessageImprint;
 
@@ -33,5 +35,13 @@ public class MessageImprintBC extends ASN1EncodableBC implements IMessageImprint
     @Override
     public byte[] getHashedMessage() {
         return getMessageImprint().getHashedMessage();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IAlgorithmIdentifier getHashAlgorithm() {
+        return new AlgorithmIdentifierBC(getMessageImprint().getHashAlgorithm());
     }
 }

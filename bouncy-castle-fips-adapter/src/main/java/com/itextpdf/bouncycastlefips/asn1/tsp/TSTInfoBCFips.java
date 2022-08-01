@@ -4,6 +4,8 @@ import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.IMessageImprint;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 
+import java.text.ParseException;
+import java.util.Date;
 import org.bouncycastle.asn1.tsp.TSTInfo;
 
 /**
@@ -34,5 +36,13 @@ public class TSTInfoBCFips extends ASN1EncodableBCFips implements ITSTInfo {
     @Override
     public IMessageImprint getMessageImprint() {
         return new MessageImprintBCFips(getTstInfo().getMessageImprint());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date getGenTime() throws ParseException {
+        return getTstInfo().getGenTime().getDate();
     }
 }

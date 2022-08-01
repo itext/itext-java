@@ -46,6 +46,7 @@ import com.itextpdf.bouncycastlefips.asn1.ocsp.OCSPResponseBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ocsp.OCSPResponseStatusBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ocsp.ResponseBytesBCFips;
 import com.itextpdf.bouncycastlefips.asn1.pcks.PKCSObjectIdentifiersBCFips;
+import com.itextpdf.bouncycastlefips.asn1.tsp.TSTInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.util.ASN1DumpBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x500.X500NameBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
@@ -80,6 +81,7 @@ import com.itextpdf.bouncycastlefips.cert.ocsp.OCSPRespBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.OCSPRespBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.RespIDBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.RevokedStatusBCFips;
+import com.itextpdf.bouncycastlefips.cert.ocsp.SingleRespBCFips;
 import com.itextpdf.bouncycastlefips.cert.ocsp.UnknownStatusBCFips;
 import com.itextpdf.bouncycastlefips.cms.CMSEnvelopedDataBCFips;
 import com.itextpdf.bouncycastlefips.cms.CMSExceptionBCFips;
@@ -143,6 +145,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
@@ -177,6 +180,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
@@ -188,6 +192,7 @@ import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
@@ -195,6 +200,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -231,6 +237,7 @@ import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -252,6 +259,8 @@ import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cert.ocsp.UnknownStatus;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
@@ -1065,5 +1074,28 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public ICRLReason createCRLReason() {
         return CRLReasonBCFips.getInstance();
+    }
+
+    @Override
+    public ITSTInfo createTSTInfo(IContentInfo contentInfo) throws AbstractTSPException, IOException {
+        try {
+            CMSTypedData content = new CMSSignedData(((ContentInfoBCFips) contentInfo).getContentInfo())
+                    .getSignedContent();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            content.write(out);
+            return new TSTInfoBCFips(TSTInfo.getInstance(ASN1Primitive.fromByteArray(out.toByteArray())));
+        } catch (CMSException e) {
+            throw new TSPExceptionBCFips(new TSPException("TSP parsing error: " + e.getMessage(), e.getCause()));
+        }
+    }
+
+    @Override
+    public ISingleResp createSingleResp(IBasicOCSPResponse basicResp) {
+        return new SingleRespBCFips(basicResp);
+    }
+
+    @Override
+    public X509Certificate createX509Certificate(Object element) {
+        return (X509Certificate) element;
     }
 }

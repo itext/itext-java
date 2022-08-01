@@ -52,14 +52,6 @@ public class ASN1EncodingBC implements IASN1Encoding {
      * {@inheritDoc}
      */
     @Override
-    public String getDl() {
-        return ASN1Encoding.DL;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getBer() {
         return ASN1Encoding.BER;
     }

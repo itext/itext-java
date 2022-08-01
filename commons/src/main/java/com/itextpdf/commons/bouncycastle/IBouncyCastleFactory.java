@@ -46,6 +46,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
@@ -80,6 +81,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.cms.AbstractCMSException;
 import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
@@ -395,4 +397,10 @@ public interface IBouncyCastleFactory {
     ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object obj);
 
     ICRLReason createCRLReason();
+
+    ITSTInfo createTSTInfo(IContentInfo contentInfo) throws AbstractTSPException, IOException;
+
+    ISingleResp createSingleResp(IBasicOCSPResponse basicResp);
+
+    X509Certificate createX509Certificate(Object element);
 }

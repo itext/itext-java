@@ -26,7 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
-import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -56,6 +56,7 @@ import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -179,7 +180,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     }
 
     @Test
-    public void ocspGetTest() throws IOException {
+    public void ocspGetTest() throws IOException, ParseException {
         PdfDocument outDocument = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "ltvEnabledSingleSignatureTest01.pdf"));
         SignatureUtil sigUtil = new SignatureUtil(outDocument);
@@ -188,20 +189,20 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         Assert.assertNull(pkcs7.getCRLs());
         // it's tested here that ocsp and time stamp token were found while
         // constructing PdfPKCS7 instance
-        ITimeStampToken timeStampToken = pkcs7.getTimeStampToken();
-        Assert.assertNotNull(timeStampToken);
+        ITSTInfo timeStampTokenInfo = pkcs7.getTimeStampTokenInfo();
+        Assert.assertNotNull(timeStampTokenInfo);
 
         // The number corresponds to 3 September, 2021 13:32:33.
         double expectedMillis = (double) 1630675953000L;
         Assert.assertEquals(
                 TimeTestUtil.getFullDaysMillis(expectedMillis),
                 TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(
-                        DateTimeUtil.getCalendar(timeStampToken.getTimeStampInfo().getGenTime()))),
+                        DateTimeUtil.getCalendar(timeStampTokenInfo.getGenTime()))),
                 EPS);
         Assert.assertEquals(
                 TimeTestUtil.getFullDaysMillis(expectedMillis),
                 TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(
-                        DateTimeUtil.getCalendar(pkcs7.getOcsp().getProducedAt()))),
+                        DateTimeUtil.getCalendar(pkcs7.getOcsp().getProducedAtDate()))),
                 EPS);
     }
 
@@ -243,10 +244,12 @@ public class PdfPKCS7Test extends ExtendedITextTest {
                 new PdfReader(SOURCE_FOLDER + "singleSignatureNotEmptyCRL.pdf"));
         SignatureUtil sigUtil = new SignatureUtil(outDocument);
         PdfPKCS7 pkcs7 = sigUtil.readSignatureData("Signature1");
-        List<X509CRL> crls = pkcs7.getCRLs().stream().map(crl -> (X509CRL)crl).collect(Collectors.toList());
+        List<X509CRL> crls = pkcs7.getCRLs().stream().map(crl -> (X509CRL) crl).collect(Collectors.toList());
         Assert.assertEquals(2, crls.size());
-        Assert.assertArrayEquals(crls.get(0).getEncoded(), Files.readAllBytes(Paths.get(SOURCE_FOLDER, "firstCrl.bin")));
-        Assert.assertArrayEquals(crls.get(1).getEncoded(), Files.readAllBytes(Paths.get(SOURCE_FOLDER, "secondCrl.bin")));
+        Assert.assertArrayEquals(crls.get(0).getEncoded(),
+                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "firstCrl.bin")));
+        Assert.assertArrayEquals(crls.get(1).getEncoded(),
+                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "secondCrl.bin")));
     }
 
     @Test
@@ -287,9 +290,9 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public void isRevocationValidLackOfSignCertsTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
-        pkcs7.basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
+        pkcs7.basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
                 BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject());
         pkcs7.signCerts = Collections.singleton(chain[0]);
         Assert.assertFalse(pkcs7.isRevocationValid());
     }
@@ -298,9 +301,9 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public void isRevocationValidExceptionDuringValidationTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, IOException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
-        pkcs7.basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
+        pkcs7.basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
                 BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject());
         pkcs7.signCerts = Arrays.asList(new Certificate[] {null, null});
         Assert.assertFalse(pkcs7.isRevocationValid());
     }

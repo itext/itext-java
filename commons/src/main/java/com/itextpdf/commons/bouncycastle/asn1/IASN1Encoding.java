@@ -13,13 +13,6 @@ public interface IASN1Encoding {
     String getDer();
 
     /**
-     * Gets {@code DL} constant for the wrapped ASN1Encoding.
-     *
-     * @return ASN1Encoding.DL value.
-     */
-    String getDl();
-
-    /**
      * Gets {@code BER} constant for the wrapped ASN1Encoding.
      *
      * @return ASN1Encoding.BER value.

@@ -1,11 +1,14 @@
 package com.itextpdf.bouncycastlefips.cert.ocsp;
 
+import com.itextpdf.bouncycastlefips.asn1.ocsp.BasicOCSPResponseBCFips;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 
 import java.util.Date;
 import java.util.Objects;
+import org.bouncycastle.asn1.ocsp.SingleResponse;
 import org.bouncycastle.cert.ocsp.SingleResp;
 
 /**
@@ -21,6 +24,16 @@ public class SingleRespBCFips implements ISingleResp {
      */
     public SingleRespBCFips(SingleResp singleResp) {
         this.singleResp = singleResp;
+    }
+
+    /**
+     * Creates new wrapper instance for {@link SingleResp}.
+     *
+     * @param basicResp {@link IBasicOCSPResponse} wrapper to get {@link SingleResp}
+     */
+    public SingleRespBCFips(IBasicOCSPResponse basicResp) {
+        this(new SingleResp(SingleResponse.getInstance(((BasicOCSPResponseBCFips) basicResp).getBasicOCSPResponse()
+                .getTbsResponseData().getResponses().getObjectAt(0))));
     }
 
     /**

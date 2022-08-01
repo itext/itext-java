@@ -50,6 +50,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
+import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
@@ -88,6 +89,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
@@ -95,6 +97,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -111,7 +114,7 @@ import javax.security.auth.x500.X500Principal;
 
 final class SignUtils {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    
+
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
         if (algorithm.equals("EC")) {
@@ -341,9 +344,11 @@ final class SignUtils {
         return false;
     }
 
-    static Calendar getTimeStampDate(ITimeStampToken timeStampToken) {
+    static Calendar getTimeStampDate(ITSTInfo timeStampTokenInfo) {
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(timeStampToken.getTimeStampInfo().getGenTime());
+        try {
+            calendar.setTime(timeStampTokenInfo.getGenTime());
+        } catch (ParseException e) {}
         return calendar;
     }
 
@@ -352,6 +357,10 @@ final class SignUtils {
         return provider == null
                 ? Signature.getInstance(algorithm)
                 : Signature.getInstance(algorithm, provider);
+    }
+
+    public static void updateVerifier(Signature signature, byte[] attr) throws SignatureException {
+        signature.update(attr);
     }
 
     static boolean verifyCertificateSignature(X509Certificate certificate, PublicKey issuerPublicKey, String provider) {
