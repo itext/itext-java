@@ -78,7 +78,8 @@ public class BaseInputOutPutConvertorsTest extends ExtendedITextTest {
 
     @Test
     public void testInvalidLengthForWordSize() throws IOException {
-        BaseInputOutPutConvertors.IInputConversionFunction inputConvertor = BaseInputOutPutConvertors.getInputConvertor(1, 1);
+        BaseInputOutPutConvertors.IInputConversionFunction inputConvertor = BaseInputOutPutConvertors.getInputConvertor(
+                1, 1);
 
         BaseInputOutPutConvertors.IOutputConversionFunction outputConvertor = BaseInputOutPutConvertors.getOutputConvertor(1, 1);
 

@@ -154,7 +154,8 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
          *                      to the alternate color space
          */
         public Separation(String name, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
-            this(new PdfName(name), alternateSpace.getPdfObject(), ((AbstractPdfFunction)tintTransform).getPdfObject());
+            this(new PdfName(name), alternateSpace.getPdfObject(),
+                    ((AbstractPdfFunction<PdfDictionary>)tintTransform).getPdfObject());
             if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
@@ -237,7 +238,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
          */
         public DeviceN(List<String> names, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(),
-                    ((AbstractPdfFunction)tintTransform).getPdfObject());
+                    ((AbstractPdfFunction<PdfDictionary>)tintTransform).getPdfObject());
             if (tintTransform.getInputSize() != numOfComponents ||
                     tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(
@@ -312,7 +313,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         public NChannel(List<String> names, PdfColorSpace alternateSpace, IPdfFunction tintTransform,
                 PdfDictionary attributes) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(),
-                    ((AbstractPdfFunction)tintTransform).getPdfObject(), attributes);
+                    ((AbstractPdfFunction<PdfDictionary>)tintTransform).getPdfObject(), attributes);
             if (tintTransform.getInputSize() != 1 ||
                     tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(
