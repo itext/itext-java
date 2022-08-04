@@ -52,6 +52,10 @@ public class PdfType4Function extends AbstractPdfFunction<PdfStream> {
         super(dict);
     }
 
+    public PdfType4Function(double[] domain, double[] range, byte[] code) {
+        super(new PdfStream(code), PdfFunctionFactory.FUNCTION_TYPE_4, domain, range);
+    }
+
     @Override
     public boolean checkCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
         return getInputSize() == 1 && getOutputSize() == alternateSpace.getNumberOfComponents();

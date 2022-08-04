@@ -43,6 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.function;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -75,7 +77,7 @@ public final class PdfFunctionFactory {
             switch (dict.getAsNumber(PdfName.FunctionType).intValue()) {
                 case FUNCTION_TYPE_0:
                     if (pdfObject.getType() != PdfObject.STREAM) {
-                        throw new PdfException("Invalid object type, a function type 0 requires a stream object");
+                        throw new PdfException(KernelExceptionMessageConstant.FUCTIONFACTORY_INVALID_OBJECT_TYPE_TYPE0);
                     }
                     return new PdfType0Function((PdfStream) pdfObject);
                 case FUNCTION_TYPE_2:
@@ -84,14 +86,15 @@ public final class PdfFunctionFactory {
                     return new PdfType3Function(dict);
                 case FUNCTION_TYPE_4:
                     if (pdfObject.getType() != PdfObject.STREAM) {
-                        throw new PdfException("Invalid object type, a function type 4 requires a stream object");
+                        throw new PdfException(KernelExceptionMessageConstant.FUCTIONFACTORY_INVALID_OBJECT_TYPE_TYPE4);
                     }
                     return new PdfType4Function((PdfStream) pdfObject);
                 default:
-                    throw new PdfException("Invalid function type %s",
-                            dict.getAsNumber(PdfName.FunctionType).intValue());
+                    throw new PdfException(MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.FUCTIONFACTORY_INVALID_FUNCTION_TYPE ,
+                            dict.getAsNumber(PdfName.FunctionType).intValue()));
             }
         }
-        throw new PdfException("Invalid object type, a function must be either a Dictionary or a Stream");
+        throw new PdfException(KernelExceptionMessageConstant.FUCTIONFACTORY_INVALID_OBJECT_TYPE);
     }
 }

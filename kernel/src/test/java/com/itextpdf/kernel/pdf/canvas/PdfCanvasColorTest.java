@@ -71,6 +71,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -78,11 +79,8 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.nio.charset.StandardCharsets;
-
 import java.util.ArrayList;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -263,7 +261,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(com.itextpdf.kernel.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes, "UTF-8")));
+        PdfSpecialCs.Indexed indexed = new PdfSpecialCs.Indexed(com.itextpdf.kernel.pdf.PdfName.DeviceRGB, 255, new PdfString(new String(bytes,
+                StandardCharsets.UTF_8)));
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.setFillColor(new Indexed(indexed, 85)).rectangle(50, 500, 50, 50).fill();
         canvas.setFillColor(new Indexed(indexed, 127)).rectangle(150, 500, 50, 50).fill();
@@ -276,7 +275,7 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
     }
     
     @Test
-    public void colorTest07() throws Exception {
+    public void colorTest07Depr() throws Exception {
         PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest07.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -297,7 +296,29 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void colorTest08() throws Exception {
+    public void colorTest07() throws Exception {
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest07.pdf");
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        //com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0 0}".getBytes(StandardCharsets.ISO_8859_1));
+        PdfType4Function function = new PdfType4Function(new double[]{0, 1}, new double[]{0, 1, 0, 1, 0, 1}, "{0 0}".getBytes(StandardCharsets.ISO_8859_1));
+        PdfSpecialCs.Separation separation = new PdfSpecialCs.Separation("MyRed", new PdfDeviceCs.Rgb(), function);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setFillColor(new Separation(separation, 0.25f)).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(new Separation(separation, 0.5f)).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(new Separation(separation, 0.75f)).rectangle(250, 500, 50, 50).fill();
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest07.pdf",
+                SOURCE_FOLDER + "cmp_colorTest07.pdf", DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void colorTest08Depr() throws Exception {
         PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest08.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
@@ -322,6 +343,32 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
     }
 
     @Test
+    public void colorTest08() throws Exception {
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "colorTest08.pdf");
+        writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(writer);
+        PdfPage page = document.addNewPage();
+
+        PdfType4Function function = new PdfType4Function(new double[]{0, 1, 0, 1}, new double[]{0, 1, 0, 1, 0, 1}, "{0}".getBytes(StandardCharsets.ISO_8859_1));
+
+        ArrayList<String> tmpArray = new ArrayList<String>(2);
+        tmpArray.add("MyRed");
+        tmpArray.add("MyGreen");
+        PdfSpecialCs.DeviceN deviceN = new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.setFillColor(new DeviceN(deviceN, new float[]{0, 0})).rectangle(50, 500, 50, 50).fill();
+        canvas.setFillColor(new DeviceN(deviceN, new float[]{0, 1})).rectangle(150, 500, 50, 50).fill();
+        canvas.setFillColor(new DeviceN(deviceN, new float[]{1, 0})).rectangle(250, 500, 50, 50).fill();
+        canvas.release();
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "colorTest08.pdf",
+                SOURCE_FOLDER + "cmp_colorTest08.pdf", DESTINATION_FOLDER, "diff_"));
+    }
+
+
+    @Test
     public void setColorsSameColorSpaces() throws IOException, InterruptedException {
         setColorSameColorSpacesTest("setColorsSameColorSpaces.pdf", false);
     }
@@ -329,56 +376,6 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
     @Test
     public void setColorsSameColorSpacesPattern() throws IOException, InterruptedException {
         setColorSameColorSpacesTest("setColorsSameColorSpacesPattern.pdf", true);
-    }
-
-    private void setColorSameColorSpacesTest(String pdfName, boolean pattern) throws IOException, InterruptedException {
-        String cmpFile = SOURCE_FOLDER + "cmp_" + pdfName;
-        String destFile = DESTINATION_FOLDER + pdfName;
-
-        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
-
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        PdfColorSpace space = pattern ? new PdfSpecialCs.Pattern() : PdfColorSpace.makeColorSpace(PdfName.DeviceRGB);
-        float[] colorValue1 = pattern ? null : new float[]{1.0f, 0.6f, 0.7f};
-        float[] colorValue2 = pattern ? null : new float[]{0.1f, 0.9f, 0.9f};
-
-        PdfPattern pattern1 = pattern? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 750, ColorConstants.PINK.getColorValue(),
-                100, 760, ColorConstants.MAGENTA.getColorValue())) : null;
-        PdfPattern pattern2 = pattern ? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 690, ColorConstants.BLUE.getColorValue(),
-                100, 710, ColorConstants.CYAN.getColorValue())) : null;
-
-        canvas.setColor(space, colorValue1, pattern1, true);
-        canvas.saveState();
-        canvas.beginText()
-                .moveText(50, 750)
-                .setFontAndSize(PdfFontFactory.createFont(), 16)
-                .showText("pinkish")
-                .endText();
-        canvas.saveState()
-                .beginText()
-                .setColor(space, colorValue2, pattern2, true)
-                .moveText(50, 720)
-                .setFontAndSize(PdfFontFactory.createFont(), 16)
-                .showText("bluish")
-                .endText()
-                .restoreState();
-        canvas.restoreState();
-        canvas.saveState()
-                .beginText()
-                .moveText(50, 690)
-                .setColor(space, colorValue2, pattern2, true)
-                .setFontAndSize(PdfFontFactory.createFont(), 16)
-                .showText("bluish")
-                .endText()
-                .restoreState();
-
-        canvas.release();
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -626,6 +623,56 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         PatternColor redCirclePattern = new PatternColor(circle, ColorConstants.RED);
 
         Assert.assertThrows(IllegalArgumentException.class, () -> new PatternColor(circle, redCirclePattern));
+    }
+
+    private void setColorSameColorSpacesTest(String pdfName, boolean pattern) throws IOException, InterruptedException {
+        String cmpFile = SOURCE_FOLDER + "cmp_" + pdfName;
+        String destFile = DESTINATION_FOLDER + pdfName;
+
+        PdfDocument document = new PdfDocument(new PdfWriter(destFile));
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        PdfColorSpace space = pattern ? new PdfSpecialCs.Pattern() : PdfColorSpace.makeColorSpace(PdfName.DeviceRGB);
+        float[] colorValue1 = pattern ? null : new float[]{1.0f, 0.6f, 0.7f};
+        float[] colorValue2 = pattern ? null : new float[]{0.1f, 0.9f, 0.9f};
+
+        PdfPattern pattern1 = pattern? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 750, ColorConstants.PINK.getColorValue(),
+                100, 760, ColorConstants.MAGENTA.getColorValue())) : null;
+        PdfPattern pattern2 = pattern ? new PdfPattern.Shading(new PdfShading.Axial(new PdfDeviceCs.Rgb(), 45, 690, ColorConstants.BLUE.getColorValue(),
+                100, 710, ColorConstants.CYAN.getColorValue())) : null;
+
+        canvas.setColor(space, colorValue1, pattern1, true);
+        canvas.saveState();
+        canvas.beginText()
+                .moveText(50, 750)
+                .setFontAndSize(PdfFontFactory.createFont(), 16)
+                .showText("pinkish")
+                .endText();
+        canvas.saveState()
+                .beginText()
+                .setColor(space, colorValue2, pattern2, true)
+                .moveText(50, 720)
+                .setFontAndSize(PdfFontFactory.createFont(), 16)
+                .showText("bluish")
+                .endText()
+                .restoreState();
+        canvas.restoreState();
+        canvas.saveState()
+                .beginText()
+                .moveText(50, 690)
+                .setColor(space, colorValue2, pattern2, true)
+                .setFontAndSize(PdfFontFactory.createFont(), 16)
+                .showText("bluish")
+                .endText()
+                .restoreState();
+
+        canvas.release();
+
+        document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     private static int countSubstringOccurrences(String str, String findStr) {

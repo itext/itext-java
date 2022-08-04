@@ -101,9 +101,7 @@ public class PdfType2Function extends AbstractPdfFunction<PdfDictionary> {
     }
 
     public PdfType2Function(double[] domain, double[] range, double[] c0, double[] c1, int n) {
-        super(new PdfDictionary());
-        super.setDomain(domain);
-        super.setRange(range);
+        super(new PdfDictionary(), PdfFunctionFactory.FUNCTION_TYPE_2, domain, range);
         setC0(c0);
         setC1(c1);
         setN(n);
@@ -123,11 +121,6 @@ public class PdfType2Function extends AbstractPdfFunction<PdfDictionary> {
         }
 
         return clipOutput(output);
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return false;
     }
 
     /**
@@ -198,6 +191,11 @@ public class PdfType2Function extends AbstractPdfFunction<PdfDictionary> {
     public final void setN(int value) {
         getPdfObject().put(PdfName.N, new PdfNumber(value));
         n = value;
+    }
+
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return false;
     }
 
     private static double[] initializeCArray(PdfArray c, PdfArray otherC, PdfArray range, double defaultValue) {
