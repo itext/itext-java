@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 
 import java.util.Objects;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.util.ASN1Dump;
 
 /**
@@ -71,7 +72,7 @@ public class ASN1DumpBCFips implements IASN1Dump {
         if (obj instanceof ASN1EncodableBCFips) {
             obj = ((ASN1EncodableBCFips) obj).getEncodable();
         }
-        return ASN1Dump.dumpAsString(obj, b);
+        return ASN1Dump.dumpAsString((ASN1Encodable) obj, b);
     }
 
     /**
@@ -82,7 +83,7 @@ public class ASN1DumpBCFips implements IASN1Dump {
         if (obj instanceof ASN1EncodableBCFips) {
             obj = ((ASN1EncodableBCFips) obj).getEncodable();
         }
-        return ASN1Dump.dumpAsString(obj);
+        return ASN1Dump.dumpAsString((ASN1Encodable) obj);
     }
 
     /**
