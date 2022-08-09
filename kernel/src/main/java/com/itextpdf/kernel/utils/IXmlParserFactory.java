@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.utils;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Transformer;
 import org.xml.sax.XMLReader;
 
 /**
@@ -69,4 +70,11 @@ public interface IXmlParserFactory {
      * @return instance of the {@link XMLReader}
      */
     XMLReader createXMLReaderInstance(boolean namespaceAware, boolean validating);
+
+    /**
+     * Creates the instance of the {@link Transformer}.
+     *
+     * @return instance of the {@link Transformer}
+     */
+    Transformer createTransformerInstance();
 }

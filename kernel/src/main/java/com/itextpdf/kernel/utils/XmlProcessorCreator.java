@@ -43,6 +43,7 @@
 package com.itextpdf.kernel.utils;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Transformer;
 import org.xml.sax.XMLReader;
 
 /**
@@ -96,7 +97,6 @@ public final class XmlProcessorCreator {
         return xmlParserFactory.createDocumentBuilderInstance(namespaceAware, ignoringComments);
     }
 
-
     /**
      * Creates {@link XMLReader} instance.
      * The default implementation is configured to prevent
@@ -111,5 +111,18 @@ public final class XmlProcessorCreator {
      */
     public static XMLReader createSafeXMLReader(boolean namespaceAware, boolean validating) {
         return xmlParserFactory.createXMLReaderInstance(namespaceAware, validating);
+    }
+
+    /**
+     * Creates {@link Transformer} instance.
+     * The default implementation is configured to prevent
+     * possible XML attacks (see {@link DefaultSafeXmlParserFactory}).
+     * But you can use {@link XmlProcessorCreator#setXmlParserFactory} to set your specific
+     * factory for creating xml parsers.
+     *
+     * @return safe {@link Transformer} instance
+     */
+    public static Transformer createSafeTransformer() {
+        return xmlParserFactory.createTransformerInstance();
     }
 }

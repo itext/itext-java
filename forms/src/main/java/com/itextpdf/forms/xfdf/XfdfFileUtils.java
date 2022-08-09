@@ -47,12 +47,10 @@ import com.itextpdf.kernel.utils.XmlProcessorCreator;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
@@ -98,11 +96,7 @@ final class XfdfFileUtils {
      */
     static void saveXfdfDocumentToFile(Document document, OutputStream outputStream)
             throws TransformerException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = XmlProcessorCreator.createSafeTransformer();
         DOMSource domSource = new DOMSource(document);
         StreamResult streamResult = new StreamResult(outputStream);
         transformer.transform(domSource, streamResult);

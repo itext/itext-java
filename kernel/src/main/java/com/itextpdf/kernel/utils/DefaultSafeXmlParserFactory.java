@@ -45,15 +45,18 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.EntityResolver;
@@ -145,9 +148,22 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         return xmlReader;
     }
 
+    @Override
+    public Transformer createTransformerInstance() {
+        TransformerFactory factory = TransformerFactory.newInstance();
+        configureSafeTransformerFactory(factory);
+        Transformer transformer;
+        try {
+            transformer = factory.newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new PdfException(e.getMessage(), e);
+        }
+        return transformer;
+    }
+
     /**
      * Creates a document builder factory implementation.
-     * 
+     *
      * @return result of {@link DocumentBuilderFactory#newInstance()} call
      */
     protected DocumentBuilderFactory createDocumentBuilderFactory() {
@@ -156,7 +172,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     /**
      * Creates a SAX parser factory implementation.
-     * 
+     *
      * @return result of {@link SAXParserFactory#newInstance()} call
      */
     protected SAXParserFactory createSAXParserFactory() {
@@ -165,7 +181,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     /**
      * Configures document builder factory to make it secure against xml attacks.
-     * 
+     *
      * @param factory {@link DocumentBuilderFactory} instance to be configured
      */
     protected void configureSafeDocumentBuilderFactory(DocumentBuilderFactory factory) {
@@ -190,6 +206,16 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false);
         // recommendations from Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
         factory.setXIncludeAware(false);
+    }
+
+    /**
+     * Configures transformer factory to make it secure against xml attacks.
+     *
+     * @param factory {@link TransformerFactory} instance to be configured
+     */
+    protected void configureSafeTransformerFactory(TransformerFactory factory) {
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
     }
 
     private void tryToSetFeature(DocumentBuilderFactory factory, String feature, boolean value) {
