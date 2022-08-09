@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.function;
 
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.function.BaseInputOutPutConvertors.IInputConversionFunction;
 import com.itextpdf.kernel.pdf.function.BaseInputOutPutConvertors.IOutputConversionFunction;
@@ -86,4 +87,6 @@ public interface IPdfFunction {
     double[] clipInput(double[] input);
 
     double[] clipOutput(double[] input);
+
+    PdfObject getAsPdfObject();
 }

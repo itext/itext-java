@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
@@ -101,14 +102,6 @@ public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfOb
         functionType = functionTypeObj == null ? -1 : functionTypeObj.intValue();
         final PdfArray domainObj = pdfObject.getAsArray(PdfName.Domain);
         domain = domainObj == null ? null : domainObj.toDoubleArray();
-        final PdfArray rangeObj = pdfObject.getAsArray(PdfName.Range);
-        range = rangeObj == null ? null : rangeObj.toDoubleArray();
-    }
-
-    /**
-     * The function type, (see ISO-320001 Table 38)
-        functionType = pdfObject.getAsNumber(PdfName.FunctionType).intValue();
-        domain = pdfObject.getAsArray(PdfName.Domain).toDoubleArray();
         final PdfArray rangeObj = pdfObject.getAsArray(PdfName.Range);
         range = rangeObj == null ? null : rangeObj.toDoubleArray();
     }
@@ -283,7 +276,6 @@ public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfOb
         return actualOutputConvertor.convert(outValues);
     }
 
-
     /**
      * Clip input values to the allowed domain.
      *
@@ -322,6 +314,11 @@ public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfOb
         }
 
         return clip(input, range);
+    }
+
+    @Override
+    public PdfObject getAsPdfObject() {
+        return super.getPdfObject();
     }
 
     protected static double[] clip(double[] values, double[] limits) {

@@ -52,7 +52,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfFunctionFactory;
@@ -155,7 +154,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
          */
         public Separation(String name, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
             this(new PdfName(name), alternateSpace.getPdfObject(),
-                    ((AbstractPdfFunction<PdfDictionary>)tintTransform).getPdfObject());
+                    tintTransform.getAsPdfObject());
             if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
@@ -238,7 +237,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
          */
         public DeviceN(List<String> names, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(),
-                    ((AbstractPdfFunction<PdfDictionary>)tintTransform).getPdfObject());
+                    tintTransform.getAsPdfObject());
             if (tintTransform.getInputSize() != numOfComponents ||
                     tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(
@@ -313,7 +312,7 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         public NChannel(List<String> names, PdfColorSpace alternateSpace, IPdfFunction tintTransform,
                 PdfDictionary attributes) {
             this(new PdfArray(names, true), alternateSpace.getPdfObject(),
-                    ((AbstractPdfFunction<PdfDictionary>)tintTransform).getPdfObject(), attributes);
+                    tintTransform.getAsPdfObject(), attributes);
             if (tintTransform.getInputSize() != 1 ||
                     tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
                 throw new PdfException(
