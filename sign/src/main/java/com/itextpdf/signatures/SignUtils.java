@@ -48,8 +48,6 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
-import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
-import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
@@ -109,7 +107,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
 import javax.security.auth.x500.X500Principal;
 
 final class SignUtils {
@@ -376,10 +373,6 @@ final class SignUtils {
         }
 
         return res;
-    }
-
-    static ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... sigPolicyQualifierInfo) {
-        return FACTORY.createSigPolicyQualifiers(sigPolicyQualifierInfo);
     }
 
     static Iterable<X509Certificate> getCertificates(final KeyStore keyStore) throws KeyStoreException {

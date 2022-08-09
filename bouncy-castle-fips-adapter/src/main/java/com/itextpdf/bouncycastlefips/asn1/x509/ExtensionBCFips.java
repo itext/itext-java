@@ -68,20 +68,6 @@ public class ExtensionBCFips extends ASN1EncodableBCFips implements IExtension {
     }
 
     /**
-     * Creates new wrapper instance for {@link Extension}.
-     *
-     * @param objectIdentifier ASN1ObjectIdentifier wrapper
-     * @param critical         boolean
-     * @param octetString      ASN1OctetString wrapper
-     */
-    public ExtensionBCFips(IASN1ObjectIdentifier objectIdentifier, boolean critical, IASN1OctetString octetString) {
-        super(new Extension(
-                ((ASN1ObjectIdentifierBCFips) objectIdentifier).getASN1ObjectIdentifier(),
-                critical,
-                ((ASN1OctetStringBCFips) octetString).getOctetString()));
-    }
-
-    /**
      * Gets wrapper instance.
      *
      * @return {@link ExtensionBCFips} instance.

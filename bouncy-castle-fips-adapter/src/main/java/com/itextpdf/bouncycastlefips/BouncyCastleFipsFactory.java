@@ -57,7 +57,6 @@ import com.itextpdf.bouncycastlefips.asn1.cms.RecipientIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.asn1.cms.RecipientInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.OtherHashAlgAndValueBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SigPolicyQualifierInfoBCFips;
-import com.itextpdf.bouncycastlefips.asn1.esf.SigPolicyQualifiersBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SignaturePolicyIdBCFips;
 import com.itextpdf.bouncycastlefips.asn1.esf.SignaturePolicyIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ess.SigningCertificateBCFips;
@@ -157,7 +156,6 @@ import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
-import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
@@ -265,6 +263,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -302,7 +301,8 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     private static final String PROVIDER_NAME = new BouncyCastleFipsProvider().getName();
-    private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS = new BouncyCastleFipsTestConstantsFactory();
+    private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS =
+            new BouncyCastleFipsTestConstantsFactory();
 
 
     @Override
@@ -695,7 +695,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IExtension createExtension(IASN1ObjectIdentifier objectIdentifier,
             boolean critical, IASN1OctetString octetString) {
-        return new ExtensionBCFips(objectIdentifier, critical, octetString);
+        return new ExtensionBCFips(new Extension(((ASN1ObjectIdentifierBCFips) objectIdentifier)
+                .getASN1ObjectIdentifier(), critical, ((ASN1OctetStringBCFips) octetString).getOctetString()));
     }
 
     @Override
@@ -716,15 +717,6 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IOCSPReqBuilder createOCSPReqBuilder() {
         return new OCSPReqBuilderBCFips(new OCSPReqBuilder());
-    }
-
-    @Override
-    public ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBCFips) {
-        SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[qualifierInfosBCFips.length];
-        for (int i = 0; i < qualifierInfos.length; ++i) {
-            qualifierInfos[i] = ((SigPolicyQualifierInfoBCFips) qualifierInfosBCFips[i]).getQualifierInfo();
-        }
-        return new SigPolicyQualifiersBCFips(qualifierInfos);
     }
 
     @Override
@@ -872,8 +864,12 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
             IOtherHashAlgAndValue algAndValue,
-            ISigPolicyQualifiers policyQualifiers) {
-        return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue, policyQualifiers);
+            ISigPolicyQualifierInfo... policyQualifiers) {
+        SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[policyQualifiers.length];
+        for (int i = 0; i < qualifierInfos.length; ++i) {
+            qualifierInfos[i] = ((SigPolicyQualifierInfoBCFips) policyQualifiers[i]).getQualifierInfo();
+        }
+        return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue, qualifierInfos);
     }
 
     @Override

@@ -68,20 +68,6 @@ public class ExtensionBC extends ASN1EncodableBC implements IExtension {
     }
 
     /**
-     * Creates new wrapper instance for {@link Extension}.
-     *
-     * @param objectIdentifier ASN1ObjectIdentifier wrapper
-     * @param critical         boolean
-     * @param octetString      ASN1OctetString wrapper
-     */
-    public ExtensionBC(IASN1ObjectIdentifier objectIdentifier, boolean critical, IASN1OctetString octetString) {
-        super(new Extension(
-                ((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(),
-                critical,
-                ((ASN1OctetStringBC) octetString).getASN1OctetString()));
-    }
-
-    /**
      * Gets wrapper instance.
      *
      * @return {@link ExtensionBC} instance.

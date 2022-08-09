@@ -49,7 +49,6 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
-import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
@@ -154,12 +153,13 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
         IASN1ObjectIdentifier asn1ObjectIdentifier = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(algId);
         IAlgorithmIdentifier algorithmIdentifier = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
                 asn1ObjectIdentifier);
-        IOtherHashAlgAndValue otherHashAlgAndValue = BOUNCY_CASTLE_FACTORY.createOtherHashAlgAndValue(algorithmIdentifier, derOctetString);
+        IOtherHashAlgAndValue otherHashAlgAndValue = BOUNCY_CASTLE_FACTORY.createOtherHashAlgAndValue(
+                algorithmIdentifier, derOctetString);
         IASN1ObjectIdentifier objectIdentifier = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(POLICY_IDENTIFIER);
-        IASN1ObjectIdentifier objectIdentifierInstance = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(objectIdentifier);
-        ISigPolicyQualifiers policyQualifiers = SignUtils.createSigPolicyQualifiers(sigPolicyQualifierInfo);
+        IASN1ObjectIdentifier objectIdentifierInstance = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                objectIdentifier);
         ISignaturePolicyId signaturePolicyId = BOUNCY_CASTLE_FACTORY.createSignaturePolicyId(objectIdentifierInstance,
-                otherHashAlgAndValue, policyQualifiers);
+                otherHashAlgAndValue, sigPolicyQualifierInfo);
 
         ISignaturePolicyIdentifier expected = BOUNCY_CASTLE_FACTORY.createSignaturePolicyIdentifier(signaturePolicyId);
 

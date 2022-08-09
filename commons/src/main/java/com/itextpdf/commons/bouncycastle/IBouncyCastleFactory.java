@@ -57,7 +57,6 @@ import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
-import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
@@ -279,8 +278,6 @@ public interface IBouncyCastleFactory {
 
     IOCSPReqBuilder createOCSPReqBuilder();
 
-    ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBC);
-
     ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier, IDERIA5String string);
 
     IASN1String createASN1String(IASN1Encodable encodable);
@@ -333,7 +330,7 @@ public interface IBouncyCastleFactory {
 
     ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
             IOtherHashAlgAndValue algAndValue,
-            ISigPolicyQualifiers policyQualifiers);
+            ISigPolicyQualifierInfo... policyQualifiers);
 
     ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId);
 

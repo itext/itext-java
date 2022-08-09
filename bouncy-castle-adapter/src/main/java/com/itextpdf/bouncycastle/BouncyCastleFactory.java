@@ -57,7 +57,6 @@ import com.itextpdf.bouncycastle.asn1.cms.RecipientIdentifierBC;
 import com.itextpdf.bouncycastle.asn1.cms.RecipientInfoBC;
 import com.itextpdf.bouncycastle.asn1.esf.OtherHashAlgAndValueBC;
 import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifierInfoBC;
-import com.itextpdf.bouncycastle.asn1.esf.SigPolicyQualifiersBC;
 import com.itextpdf.bouncycastle.asn1.esf.SignaturePolicyIdBC;
 import com.itextpdf.bouncycastle.asn1.esf.SignaturePolicyIdentifierBC;
 import com.itextpdf.bouncycastle.asn1.ess.SigningCertificateBC;
@@ -157,7 +156,6 @@ import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
-import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificate;
@@ -263,6 +261,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -300,7 +299,8 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     private static final String PROVIDER_NAME = new BouncyCastleProvider().getName();
-    private static final BouncyCastleTestConstantsFactory BOUNCY_CASTLE_TEST_CONSTANTS = new BouncyCastleTestConstantsFactory();
+    private static final BouncyCastleTestConstantsFactory BOUNCY_CASTLE_TEST_CONSTANTS =
+            new BouncyCastleTestConstantsFactory();
 
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
@@ -685,7 +685,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IExtension createExtension(IASN1ObjectIdentifier objectIdentifier,
             boolean critical, IASN1OctetString octetString) {
-        return new ExtensionBC(objectIdentifier, critical, octetString);
+        return new ExtensionBC(new Extension(((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(),
+                critical, ((ASN1OctetStringBC) octetString).getASN1OctetString()));
     }
 
     @Override
@@ -706,15 +707,6 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IOCSPReqBuilder createOCSPReqBuilder() {
         return new OCSPReqBuilderBC(new OCSPReqBuilder());
-    }
-
-    @Override
-    public ISigPolicyQualifiers createSigPolicyQualifiers(ISigPolicyQualifierInfo... qualifierInfosBC) {
-        SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[qualifierInfosBC.length];
-        for (int i = 0; i < qualifierInfos.length; ++i) {
-            qualifierInfos[i] = ((SigPolicyQualifierInfoBC) qualifierInfosBC[i]).getSigPolicyQualifierInfo();
-        }
-        return new SigPolicyQualifiersBC(qualifierInfos);
     }
 
     @Override
@@ -862,8 +854,12 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
             IOtherHashAlgAndValue algAndValue,
-            ISigPolicyQualifiers policyQualifiers) {
-        return new SignaturePolicyIdBC(objectIdentifier, algAndValue, policyQualifiers);
+            ISigPolicyQualifierInfo... policyQualifiers) {
+        SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[policyQualifiers.length];
+        for (int i = 0; i < qualifierInfos.length; ++i) {
+            qualifierInfos[i] = ((SigPolicyQualifierInfoBC) policyQualifiers[i]).getSigPolicyQualifierInfo();
+        }
+        return new SignaturePolicyIdBC(objectIdentifier, algAndValue, qualifierInfos);
     }
 
     @Override

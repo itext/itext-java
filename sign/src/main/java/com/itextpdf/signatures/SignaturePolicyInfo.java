@@ -55,16 +55,16 @@ import com.itextpdf.commons.utils.Base64;
 
 /**
  * Class that encapsulates the signature policy information
- *
+ * <p>
  * Sample:
- *
- *      SignaturePolicyInfo spi = new SignaturePolicyInfo("2.16.724.1.3.1.1.2.1.9",
- *      "G7roucf600+f03r/o0bAOQ6WAs0=", "SHA-1", "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf");
+ * <p>
+ * SignaturePolicyInfo spi = new SignaturePolicyInfo("2.16.724.1.3.1.1.2.1.9",
+ * "G7roucf600+f03r/o0bAOQ6WAs0=", "SHA-1", "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf");
  */
 public class SignaturePolicyInfo {
-    
+
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    
+
     private String policyIdentifier;
     private byte[] policyHash;
     private String policyDigestAlgorithm;
@@ -72,10 +72,11 @@ public class SignaturePolicyInfo {
 
     /**
      * Constructs a new {@link SignaturePolicyInfo} instance
-     * @param policyIdentifier the id of the signature policy
-     * @param policyHash the hash of the signature policy
+     *
+     * @param policyIdentifier      the id of the signature policy
+     * @param policyHash            the hash of the signature policy
      * @param policyDigestAlgorithm the digestion algorithm of the signature policy
-     * @param policyUri the uri of the full policy description
+     * @param policyUri             the uri of the full policy description
      */
     public SignaturePolicyInfo(String policyIdentifier, byte[] policyHash, String policyDigestAlgorithm,
             String policyUri) {
@@ -97,10 +98,11 @@ public class SignaturePolicyInfo {
 
     /**
      * Constructs a new {@link SignaturePolicyInfo} instance
-     * @param policyIdentifier the id of the signature policy
-     * @param policyHashBase64 the Base64 presentation of the hash of the signature policy
+     *
+     * @param policyIdentifier      the id of the signature policy
+     * @param policyHashBase64      the Base64 presentation of the hash of the signature policy
      * @param policyDigestAlgorithm the digestion algorithm of the signature policy
-     * @param policyUri the uri of the full policy description
+     * @param policyUri             the uri of the full policy description
      */
     public SignaturePolicyInfo(String policyIdentifier, String policyHashBase64, String policyDigestAlgorithm,
             String policyUri) {
@@ -144,8 +146,7 @@ public class SignaturePolicyInfo {
         IOtherHashAlgAndValue otherHashAlgAndValue = FACTORY.createOtherHashAlgAndValue(
                 FACTORY.createAlgorithmIdentifier(FACTORY.createASN1ObjectIdentifier(algId)),
                 FACTORY.createDEROctetString(this.policyHash));
-        ISignaturePolicyId signaturePolicyId = FACTORY.createSignaturePolicyId(identifier, otherHashAlgAndValue,
-                SignUtils.createSigPolicyQualifiers(spqi));
+        ISignaturePolicyId signaturePolicyId = FACTORY.createSignaturePolicyId(identifier, otherHashAlgAndValue, spqi);
         signaturePolicyIdentifier = FACTORY.createSignaturePolicyIdentifier(signaturePolicyId);
 
         return signaturePolicyIdentifier;

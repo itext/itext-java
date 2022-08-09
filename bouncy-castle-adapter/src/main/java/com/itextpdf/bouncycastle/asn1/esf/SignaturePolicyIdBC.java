@@ -26,9 +26,10 @@ import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
 import com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
-import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifiers;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 
+import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
+import org.bouncycastle.asn1.esf.SigPolicyQualifiers;
 import org.bouncycastle.asn1.esf.SignaturePolicyId;
 
 /**
@@ -49,14 +50,14 @@ public class SignaturePolicyIdBC extends ASN1EncodableBC implements ISignaturePo
      *
      * @param objectIdentifier ASN1ObjectIdentifier wrapper
      * @param algAndValue      OtherHashAlgAndValue wrapper
-     * @param policyQualifiers SigPolicyQualifiers wrapper
+     * @param policyQualifiers SigPolicyQualifierInfo array
      */
     public SignaturePolicyIdBC(IASN1ObjectIdentifier objectIdentifier,
-            IOtherHashAlgAndValue algAndValue, ISigPolicyQualifiers policyQualifiers) {
+            IOtherHashAlgAndValue algAndValue, SigPolicyQualifierInfo... policyQualifiers) {
         this(new SignaturePolicyId(
                 ((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(),
                 ((OtherHashAlgAndValueBC) algAndValue).getOtherHashAlgAndValue(),
-                ((SigPolicyQualifiersBC) policyQualifiers).getSigPolityQualifiers()));
+                new SigPolicyQualifiers(policyQualifiers)));
     }
 
     /**
