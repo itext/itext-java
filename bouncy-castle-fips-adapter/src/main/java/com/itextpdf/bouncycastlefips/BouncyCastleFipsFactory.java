@@ -229,6 +229,7 @@ import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -1128,5 +1129,10 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil() {
         return BOUNCY_CASTLE_FIPS_TEST_CONSTANTS;
+    }
+
+    @Override
+    public CRL createNullCrl() {
+        return null;
     }
 }

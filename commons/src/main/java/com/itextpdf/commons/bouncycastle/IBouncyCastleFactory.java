@@ -130,6 +130,7 @@ import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -424,4 +425,6 @@ public interface IBouncyCastleFactory {
     X509Certificate createX509Certificate(Object element);
 
     IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil();
+
+    CRL createNullCrl();
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -38,7 +39,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CRL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -59,7 +59,8 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
     @Test
     public void checkUnknownPdfExceptionWhenCrlIsNull() {
         Exception e = Assert.assertThrows(PdfException.class,
-                () -> listOfByteArrays = new CrlClientOffline((CRL) null).getEncoded(null, ""));
+                () -> listOfByteArrays = new CrlClientOffline(
+                        BouncyCastleFactoryCreator.getFactory().createNullCrl()).getEncoded(null, ""));
         Assert.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, e.getMessage());
     }
 
