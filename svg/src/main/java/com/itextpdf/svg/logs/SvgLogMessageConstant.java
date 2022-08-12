@@ -81,6 +81,9 @@ public final class SvgLogMessageConstant {
     public static final String PATTERN_WIDTH_OR_HEIGHT_IS_NEGATIVE =
             "Pattern width or height is negative value. This pattern will not be rendered.";
 
+    public static final String PERCENTAGE_VALUES_IN_STROKE_DASHARRAY_ARE_NOT_SUPPORTED =
+            "Percentage values in 'stroke-dasharray' attribute are not supported. Attribute will be ignored completely";
+
     public static final String MISSING_WIDTH =
             "Top Svg tag has no defined width attribute and viewbox width is not present, so browser default of 300px "
                     + "is used";
