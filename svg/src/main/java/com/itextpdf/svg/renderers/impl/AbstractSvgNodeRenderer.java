@@ -25,7 +25,6 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -42,6 +41,8 @@ import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Attributes;
+import com.itextpdf.svg.css.SvgStrokeParameterConverter;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -300,9 +301,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             PdfExtGState opacityGraphicsState = new PdfExtGState();
             if (!partOfClipPath) {
-                float generalOpacity = getOpacity();
                 // fill
                 {
+                    float generalOpacity = getOpacity();
                     String fillRawValue = getAttributeOrDefault(SvgConstants.Attributes.FILL, "black");
                     this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
 
@@ -329,47 +330,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         currentCanvas.setFillColor(fillColor);
                     }
                 }
-                // stroke
-                {
-                    String strokeRawValue = getAttributeOrDefault(SvgConstants.Attributes.STROKE,
-                            SvgConstants.Values.NONE);
 
-                    if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
-                        String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
+                applyStrokeProperties(context, currentCanvas, opacityGraphicsState);
 
-                        // 1 px = 0,75 pt
-                        float strokeWidth = 0.75f;
-
-                        if (strokeWidthRawValue != null) {
-                            strokeWidth = CssDimensionParsingUtils.parseAbsoluteLength(strokeWidthRawValue);
-                        }
-
-                        float strokeOpacity = getOpacityByAttributeName(SvgConstants.Attributes.STROKE_OPACITY,
-                                generalOpacity);
-
-                        Color strokeColor = null;
-                        TransparentColor transparentColor = getColorFromAttributeValue(
-                                context, strokeRawValue, (float) ((double) strokeWidth / 2.0), strokeOpacity);
-                        if (transparentColor != null) {
-                            strokeColor = transparentColor.getColor();
-                            strokeOpacity = transparentColor.getOpacity();
-                        }
-
-                        if (!CssUtils.compareFloats(strokeOpacity, 1f)) {
-                            opacityGraphicsState.setStrokeOpacity(strokeOpacity);
-                        }
-
-                        // as default value for stroke is 'none' we should not set
-                        // it in case when value obtaining fails
-                        if (strokeColor != null) {
-                            currentCanvas.setStrokeColor(strokeColor);
-                        }
-
-                        currentCanvas.setLineWidth(strokeWidth);
-
-                        doStroke = true;
-                    }
-                }
                 // opacity
                 {
                     if (!opacityGraphicsState.getPdfObject().isEmpty()) {
@@ -486,5 +449,56 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
 
         return result;
+    }
+
+    private void applyStrokeProperties(SvgDrawContext context, PdfCanvas currentCanvas,
+            PdfExtGState opacityGraphicsState) {
+        String strokeRawValue = getAttributeOrDefault(SvgConstants.Attributes.STROKE,
+                SvgConstants.Values.NONE);
+        if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
+            String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
+
+            // 1 px = 0,75 pt
+            float strokeWidth = 0.75f;
+
+            if (strokeWidthRawValue != null) {
+                strokeWidth = CssDimensionParsingUtils.parseAbsoluteLength(strokeWidthRawValue);
+            }
+
+            float generalOpacity = getOpacity();
+            float strokeOpacity = getOpacityByAttributeName(SvgConstants.Attributes.STROKE_OPACITY,
+                    generalOpacity);
+
+            Color strokeColor = null;
+            TransparentColor transparentColor = getColorFromAttributeValue(
+                    context, strokeRawValue, (float) ((double) strokeWidth / 2.0), strokeOpacity);
+            if (transparentColor != null) {
+                strokeColor = transparentColor.getColor();
+                strokeOpacity = transparentColor.getOpacity();
+            }
+
+            if (!CssUtils.compareFloats(strokeOpacity, 1f)) {
+                opacityGraphicsState.setStrokeOpacity(strokeOpacity);
+            }
+
+            String strokeDashArrayRawValue = getAttribute(Attributes.STROKE_DASHARRAY);
+            String strokeDashOffsetRawValue = getAttribute(Attributes.STROKE_DASHOFFSET);
+            SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters =
+                    SvgStrokeParameterConverter.convertStrokeDashParameters(strokeDashArrayRawValue,
+                            strokeDashOffsetRawValue);
+            if (lineDashParameters != null) {
+                currentCanvas.setLineDash(lineDashParameters.getDashArray(), lineDashParameters.getDashPhase());
+            }
+
+            // as default value for stroke is 'none' we should not set
+            // it in case when value obtaining fails
+            if (strokeColor != null) {
+                currentCanvas.setStrokeColor(strokeColor);
+            }
+
+            currentCanvas.setLineWidth(strokeWidth);
+
+            doStroke = true;
+        }
     }
 }

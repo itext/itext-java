@@ -61,6 +61,11 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void strokeWithDashesTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWithDashes");
+    }
+
+    @Test
     //TODO: update cmp-file after DEVSIX-2258
     public void advancedStrokeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeAdvanced");

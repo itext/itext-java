@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt">
+   <!-- No dash array -->
+   <line x1="100" y1="1" x2="230" y2="1" stroke="black" />
+
+   <!-- No dash offset -->
+   <line x1="100" y1="3" x2="230" y2="3" stroke="black" stroke-dasharray="30 10" />
+
+   <!--
+   The start of the dash array computation
+   is pulled by 30 user units
+   -->
+   <line
+           x1="100"
+           y1="5"
+           x2="230"
+           y2="5"
+           stroke="black"
+           stroke-dasharray="30 10"
+           stroke-dashoffset="30" />
+
+   <!--
+   The start of the dash array computation
+   is pushed by 30 user units
+   -->
+   <line
+           x1="100"
+           y1="7"
+           x2="230"
+           y2="7"
+           stroke="black"
+           stroke-dasharray="30 10"
+           stroke-dashoffset="-30" />
+
+   <!--
+   The start of the dash array computation
+   is pulled by 10 user units which ends up
+   in the same rendering as the previous example
+   -->
+   <line
+           x1="100"
+           y1="9"
+           x2="230"
+           y2="9"
+           stroke="black"
+           stroke-dasharray="30 10"
+           stroke-dashoffset="10" />
+
+   <!--
+   The start of the dash array computation
+   is pulled by 10 user units which ends up
+   in the same rendering as the previous example.
+   Use style.
+   -->
+   <line
+           x1="100"
+           y1="11"
+           x2="230"
+           y2="11"
+           style="stroke: black;stroke-dasharray: 30 10; stroke-dashoffset:10"
+   />
+
+   <circle r="60" cx="150" cy="400" fill="none" stroke="teal" stroke-opacity=".5" stroke-width="40" stroke-dasharray="40 40 30 30 20 20 10 10" stroke-dashoffset="5"></circle>
+
+</svg>
