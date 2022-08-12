@@ -57,7 +57,7 @@ chances of your issue being dealt with quickly:
   causing the problem (line of code or commit)
 * **Tag the question** - add the tag `itext7` to your question so we can find it.
 
-**If you get help, help others. Good karma rulez!**
+**If you get help, consider contributing back to the community by helping others.**
 
 
 ### Submitting a Pull Request
@@ -106,6 +106,17 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
   [Oracle's Code Conventions for the Java Programming Language][java-style-guide], with these additions:
     * Wrap all code at **100 characters**.
 
+
+## iText Development Plugin
+If you are using IntelliJ IDEA to make iText contributions, you may find the iText Development Plugin useful. 
+It contains some code inspections to avoid common problems as well as helper tools to make your work on a pull request more efficient.
+
+In particular, iText has a lot of integration tests where PDF files are created as a result of the test and compared to the reference PDF files.
+In case your contribution touches a lot of those files, the reference file replacing utility in the iText Development Plugin may help you fix the tests quicker.
+
+[Download the iText Development Plugin](https://to-be-filled-in)
+
+To install the plugin, use the [official instructions on installing the plugin from disk](https://www.jetbrains.com/help/idea/managing-plugins.html) from Jetbrains.
 
 ## <a name="commit">Git Commit Guidelines</a>
 
