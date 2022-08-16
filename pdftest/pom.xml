@@ -11,7 +11,7 @@
   <url>https://itextpdf.com/</url>
   <properties>
     <sonar.skip>true</sonar.skip>
-    <verapdf.version>1.20.1</verapdf.version>
+    <verapdf.version>1.20.2</verapdf.version>
   </properties>
   <dependencies>
     <dependency>
