@@ -83,11 +83,15 @@ public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfOb
     protected AbstractPdfFunction(T pdfObject, int functionType, double[] domain, double[] range) {
         super(pdfObject);
         this.functionType = functionType;
-        this.domain = Arrays.copyOf(domain, domain.length);
-        this.range = Arrays.copyOf(range, range.length);
+        if (domain != null) {
+            this.domain = Arrays.copyOf(domain, domain.length);
+            pdfObject.put(PdfName.Domain,new PdfArray(domain));
+        }
+        if (range != null) {
+            this.range = Arrays.copyOf(range, range.length);
+            pdfObject.put(PdfName.Range,new PdfArray(range));
+        }
         pdfObject.put(PdfName.FunctionType,new PdfNumber(functionType));
-        pdfObject.put(PdfName.Domain,new PdfArray(domain));
-        pdfObject.put(PdfName.Range,new PdfArray(range));
     }
 
 
