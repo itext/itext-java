@@ -35,7 +35,7 @@
   </dependencies>
   <profiles>
     <profile>
-      <id>bouncy-castle</id>
+      <id>bouncy-castle-test</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -47,30 +47,9 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <configuration>
-              <includes>
-                <include>**/*.java</include>
-              </includes>
-              <groups>${integrationtests}</groups>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <groups>${unittests}</groups>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
     <profile>
-      <id>bouncy-castle-fips</id>
+      <id>bouncy-castle-fips-test</id>
       <dependencies>
         <dependency>
           <groupId>com.itextpdf</groupId>
@@ -79,27 +58,6 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <configuration>
-              <includes>
-                <include>**/*.java</include>
-              </includes>
-              <groups>${bouncycastleintegrationtests}</groups>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <groups>${bouncycastleunittests}</groups>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 </project>

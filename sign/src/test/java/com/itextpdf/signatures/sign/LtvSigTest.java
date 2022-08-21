@@ -62,7 +62,7 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
@@ -84,7 +84,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class LtvSigTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();

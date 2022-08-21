@@ -37,7 +37,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -58,7 +58,7 @@ import org.junit.experimental.categories.Category;
  * The idea of this test is to check the {@link PdfSignatureAppearance}'s getters.
  * For actual result of setters invocations one should check the integration test for this class.
  */
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     // The source folder points to the integration test, so that the resources are nor duplicated
     public static final String SOURCE_FOLDER

@@ -36,7 +36,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
@@ -59,7 +59,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class AnnotationsSigningTest extends ExtendedITextTest {
     
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();

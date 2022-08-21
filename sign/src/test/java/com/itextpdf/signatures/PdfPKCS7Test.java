@@ -38,7 +38,7 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class PdfPKCS7Test extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/PdfPKCS7Test/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";

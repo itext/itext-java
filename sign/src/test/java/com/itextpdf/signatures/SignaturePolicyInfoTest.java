@@ -54,13 +54,13 @@ import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class SignaturePolicyInfoTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     private final static String POLICY_IDENTIFIER = "2.16.724.1.3.1.1.2.1.9";

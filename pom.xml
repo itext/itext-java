@@ -501,6 +501,8 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
+              <!-- TODO DEVSIX-7032 Remove this skip property -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
@@ -685,6 +687,31 @@
               to junit 4.13.2. See more in DEVSIX-4761. With the future jacoco/junit upgrades the necessity in
               setting this parameter might fade. It's not used for anything else but making sure code coverage is
               measured correctly. -->
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- This profile shall always go after test profile because it overrides several plugins -->
+    <profile>
+      <id>bouncy-castle-fips-test</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+              <groups>${bouncycastleintegrationtests}</groups>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <groups>${bouncycastleunittests}</groups>
             </configuration>
           </plugin>
         </plugins>

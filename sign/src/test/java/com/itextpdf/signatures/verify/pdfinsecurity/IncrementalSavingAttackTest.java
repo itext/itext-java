@@ -53,7 +53,7 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -63,7 +63,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class IncrementalSavingAttackTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 

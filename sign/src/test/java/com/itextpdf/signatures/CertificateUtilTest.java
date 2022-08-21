@@ -23,7 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,7 +31,7 @@ import org.junit.experimental.categories.Category;
 
 import java.security.cert.X509Certificate;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class CertificateUtilTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";

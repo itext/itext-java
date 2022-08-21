@@ -50,7 +50,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,7 +66,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class CrlClientOnlineTest extends ExtendedITextTest {
 
     private static final String certSrc = "./src/test/resources/com/itextpdf/signatures/sign/CrlClientOnlineTest/";

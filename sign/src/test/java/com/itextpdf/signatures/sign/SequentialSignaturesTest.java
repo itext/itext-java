@@ -60,7 +60,7 @@ import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,7 +73,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class SequentialSignaturesTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();

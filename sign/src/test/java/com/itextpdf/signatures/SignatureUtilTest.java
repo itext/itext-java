@@ -50,7 +50,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.security.Security;
 import org.junit.Assert;
@@ -61,7 +61,7 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 import java.util.List;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class SignatureUtilTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 

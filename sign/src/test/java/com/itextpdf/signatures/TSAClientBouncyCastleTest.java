@@ -31,7 +31,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.builder.TestTimestampTokenBuilder;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.security.GeneralSecurityException;
@@ -44,7 +44,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class TSAClientBouncyCastleTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 

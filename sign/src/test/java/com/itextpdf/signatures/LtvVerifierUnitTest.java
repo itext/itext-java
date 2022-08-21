@@ -26,7 +26,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class LtvVerifierUnitTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerifierUnitTest/";
 

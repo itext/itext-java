@@ -54,7 +54,7 @@ import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.cert.TestCertificateBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
@@ -73,7 +73,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class OcspVerifierTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 

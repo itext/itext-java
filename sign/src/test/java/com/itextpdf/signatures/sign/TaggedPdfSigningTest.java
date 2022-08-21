@@ -36,7 +36,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
@@ -61,7 +61,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class TaggedPdfSigningTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();

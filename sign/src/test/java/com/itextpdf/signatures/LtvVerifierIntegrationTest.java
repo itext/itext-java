@@ -31,7 +31,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -42,7 +42,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class LtvVerifierIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerifierIntegrationTest/";
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();

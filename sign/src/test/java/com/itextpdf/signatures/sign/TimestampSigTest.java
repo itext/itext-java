@@ -50,7 +50,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -65,7 +65,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class TimestampSigTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();

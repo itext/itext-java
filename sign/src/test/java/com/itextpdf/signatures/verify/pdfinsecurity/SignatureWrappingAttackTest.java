@@ -49,7 +49,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
@@ -58,7 +58,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class SignatureWrappingAttackTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 

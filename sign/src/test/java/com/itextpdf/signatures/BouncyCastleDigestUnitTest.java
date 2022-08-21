@@ -23,7 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -32,7 +32,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class BouncyCastleDigestUnitTest extends ExtendedITextTest {
 
     @Test

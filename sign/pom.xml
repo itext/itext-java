@@ -42,30 +42,9 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*.java</include>
-          </includes>
-          <groups>${integrationtests}</groups>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <groups>${unittests}</groups>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <profiles>
     <profile>
-      <id>bouncy-castle</id>
+      <id>bouncy-castle-test</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -79,7 +58,7 @@
       </dependencies>
     </profile>
     <profile>
-      <id>bouncy-castle-fips</id>
+      <id>bouncy-castle-fips-test</id>
       <dependencies>
         <dependency>
           <groupId>com.itextpdf</groupId>

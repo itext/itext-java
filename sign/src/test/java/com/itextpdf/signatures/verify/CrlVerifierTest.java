@@ -51,7 +51,7 @@ import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -67,7 +67,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class CrlVerifierTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     

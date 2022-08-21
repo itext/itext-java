@@ -51,7 +51,7 @@ import com.itextpdf.signatures.LtvVerifier;
 import com.itextpdf.signatures.VerificationOK;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
@@ -65,7 +65,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class LtvVerifierTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/verify/LtvVerifierTest/";
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";

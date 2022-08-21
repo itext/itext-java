@@ -60,7 +60,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
@@ -81,7 +81,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     private static final String ocspCertsSrc = "./src/test/resources/com/itextpdf/signatures/OcspClientBouncyCastleTest/";
     private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.p12";

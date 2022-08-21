@@ -63,7 +63,7 @@ import com.itextpdf.signatures.SignaturePolicyInfo;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import org.junit.Assert;
@@ -79,7 +79,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class PadesSigTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
