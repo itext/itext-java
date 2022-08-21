@@ -470,7 +470,6 @@ public abstract class RootRenderer extends AbstractRenderer {
         floatRendererAreas = new ArrayList<>();
         updateCurrentArea(overflowResult);
         initialCurrentArea = currentArea == null ? null : currentArea.clone();
-        // TODO how bout currentArea == null ?
         addWaitingNextPageRenderers();
     }
 

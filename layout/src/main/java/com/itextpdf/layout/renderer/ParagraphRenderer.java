@@ -292,13 +292,11 @@ public class ParagraphRenderer extends BlockRenderer {
             if (isFit && !RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
                 if (lineHasContent) {
                     float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent - (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) - processedRenderer.getMaxAscent();
-                    // TODO this is a workaround. To be refactored
-                    if (processedRenderer != null && processedRenderer.containsImage()) {
+                    if (processedRenderer.containsImage()) {
                         indentFromLastLine += previousDescent;
                     }
                     deltaY = lastYLine + indentFromLastLine - processedRenderer.getYLine();
                     lastLineBottomLeadingIndent = leading != null ? processedRenderer.getBottomLeadingIndent(leading) : 0;
-                    // TODO this is a workaround. To be refactored
                     if (lastLineBottomLeadingIndent < 0 && processedRenderer.containsImage()) {
                         lastLineBottomLeadingIndent = 0;
                     }
