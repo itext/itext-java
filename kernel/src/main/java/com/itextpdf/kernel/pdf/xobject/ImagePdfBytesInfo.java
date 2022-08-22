@@ -89,7 +89,7 @@ class ImagePdfBytesInfo {
         decode = imageXObject.getPdfObject().getAsArray(PdfName.Decode);
         findColorspace(colorspace, true);
     }
-    
+
     public int getPngColorType() {
         return pngColorType;
     }
@@ -189,7 +189,7 @@ class ImagePdfBytesInfo {
                     // if the decode array is 0,1, do nothing.  It's possible that the array could be 0,0 or 1,1 - but that would be silly, so we'll just ignore that case
                 }
             } else {
-                // todo: add decode transformation for other depths
+                // TODO DEVSIX-7015 add decode transformation for other depths
             }
         }
         png.writeHeader(width, height, pngBitDepth, pngColorType);

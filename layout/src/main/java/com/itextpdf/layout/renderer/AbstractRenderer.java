@@ -1731,8 +1731,7 @@ public abstract class AbstractRenderer implements IRenderer {
             return null;
         }
     }
-
-    //TODO is behavior of copying all properties in split case common to all renderers?
+    
     protected Map<Integer, Object> getOwnProperties() {
         return properties;
     }
