@@ -233,7 +233,8 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
         boolean propertyProcessedCorrectly = true;
         for (final String value : props) {
             final int slashCharInd = value.indexOf('/');
-            if (slashCharInd > 0 && slashCharInd < value.length() - 1 && !slashEncountered && !value.contains("url(")) {
+            if (slashCharInd > 0 && slashCharInd < value.length() - 1 && !slashEncountered && !value.contains("url(")
+                    && !value.contains("device-cmyk(")) {
                 slashEncountered = true;
                 propertyProcessedCorrectly = processValueWithSlash(value, slashCharInd, resolvedProps, usedTypes);
             } else {
