@@ -1513,7 +1513,7 @@ public class LineRenderer extends AbstractRenderer {
     /**
      * While resolving TextRenderer may split into several ones with different fonts.
      */
-    private void resolveChildrenFonts() {
+        private void resolveChildrenFonts() {
         final List<IRenderer> newChildRenderers = new ArrayList<>(getChildRenderers().size());
         boolean updateChildRenderers = false;
         for (final IRenderer child : getChildRenderers()) {

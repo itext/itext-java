@@ -238,12 +238,15 @@ public class ParagraphRenderer extends BlockRenderer {
             boolean isLastLineReLaidOut = false;
 
             if (result.getStatus() == LayoutResult.NOTHING) {
-                //Re-layout last line if it doesn't fit
+                //relayouting the child for allowing the vertical overflow in order to take into account the negative
+                // leading adjustment in case of a clipped-height context
                 if (layoutContext.isClippedHeight()) {
-                    OverflowPropertyValue previousOverflowProperty = currentRenderer.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+                    OverflowPropertyValue previousOverflowProperty = currentRenderer.<OverflowPropertyValue>getProperty(
+                            Property.OVERFLOW_Y);
                     currentRenderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
                     lineLayoutContext.setClippedHeight(true);
-                    result = (LineLayoutResult) ((LineRenderer) currentRenderer.setParent(this)).layout(lineLayoutContext);
+                    result = (LineLayoutResult) ((LineRenderer) currentRenderer.setParent(this)).layout(
+                            lineLayoutContext);
                     currentRenderer.setProperty(Property.OVERFLOW_Y, previousOverflowProperty);
                     isLastLineReLaidOut = true;
                 }
