@@ -43,8 +43,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
@@ -83,8 +83,8 @@ import com.itextpdf.layout.layout.PositionedLayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.Background;
-import com.itextpdf.layout.properties.BackgroundImage;
 import com.itextpdf.layout.properties.BackgroundBox;
+import com.itextpdf.layout.properties.BackgroundImage;
 import com.itextpdf.layout.properties.BaseDirection;
 import com.itextpdf.layout.properties.BlendMode;
 import com.itextpdf.layout.properties.BorderRadius;
@@ -1840,27 +1840,31 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
-        if (!paddings[0].isPointValue()) {
+        if (paddings[0] != null && !paddings[0].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_TOP));
         }
-        if (!paddings[1].isPointValue()) {
+        if (paddings[1] != null && !paddings[1].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_RIGHT));
         }
-        if (!paddings[2].isPointValue()) {
+        if (paddings[2] != null && !paddings[2].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_BOTTOM));
         }
-        if (!paddings[3].isPointValue()) {
+        if (paddings[3] != null && !paddings[3].isPointValue()) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_LEFT));
         }
-        return rect.applyMargins(paddings[0].getValue(), paddings[1].getValue(), paddings[2].getValue(), paddings[3].getValue(), reverse);
+        return rect.applyMargins(paddings[0] != null ? paddings[0].getValue() : 0,
+                paddings[1] != null ? paddings[1].getValue() : 0,
+                paddings[2] != null ? paddings[2].getValue() : 0,
+                paddings[3] != null ? paddings[3].getValue() : 3,
+                reverse);
     }
 
     /**

@@ -48,6 +48,8 @@ public final class LayoutExceptionMessageConstant {
             + "role.";
     public static final String ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE = "Role \"{0}\" in namespace {1} "
             + "is not mapped to any standard role.";
+    public static final String INLINE_VERTICAL_ALIGNMENT_DOESN_T_NEED_A_VALUE =
+            "Inline vertical alignment \"{0}\" doesn't need a value";
 
     private LayoutExceptionMessageConstant(){}
 }

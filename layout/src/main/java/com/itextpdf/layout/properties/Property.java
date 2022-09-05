@@ -210,6 +210,8 @@ public final class Property {
     public static final int UNDERLINE = 74;
     public static final int VERTICAL_ALIGNMENT = 75;
     public static final int VERTICAL_BORDER_SPACING = 116;
+    public static final int INLINE_VERTICAL_ALIGNMENT = 136;
+
     /**
      * Value of 1 is equivalent to no scaling
      **/

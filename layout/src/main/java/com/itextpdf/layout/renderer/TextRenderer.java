@@ -43,18 +43,18 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.EnumUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.font.PdfType1Font;

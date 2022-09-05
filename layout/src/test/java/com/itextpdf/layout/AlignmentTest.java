@@ -64,14 +64,19 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.InlineVerticalAlignment;
+import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
+import com.itextpdf.layout.properties.LineHeight;
 import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -419,6 +424,171 @@ public class AlignmentTest extends ExtendedITextTest {
     }
 
     @Test
+    public void inlineVerticalAlignmentTopTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentTop.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentTop.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.TOP);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentBottomTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentBottom.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentBottom.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.BOTTOM);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentMiddleTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentMiddle.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentMiddle.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.MIDDLE);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentBaseLineTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentBaseLine.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentBaseLine.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.BASELINE);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentTextTopTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentTextTop.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentTextTop.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.TEXT_TOP);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentTextBottomTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentTextBottom.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentTextBottom.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.TEXT_BOTTOM);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentFixedTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentFixed.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentFixed.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.FIXED);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentFractionTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentFraction.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentFraction.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.FRACTION);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentSubTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentSub.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentSub.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.SUB,  (d, p, t) -> t.setFontSize(20));
+    }
+
+    @Test
+    public void inlineVerticalAlignmentSuperTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentSuper.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentSuper.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.SUPER, (d, p, t) -> t.setFontSize(20));
+    }
+
+
+    @Test
+    public void inlineVerticalAlignmentmixedTest() throws IOException, InterruptedException {
+        // sub and super are resolved in html2Pdf to relative
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentMixed.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentMixed.pdf";
+
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+
+        Document doc = new Document(pdfDoc,  PageSize.A4.rotate());
+
+        Paragraph p = new Paragraph();
+        p.setBackgroundColor(new DeviceRgb(189, 239, 73));
+        p.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        p.setFontSize(20);
+
+        Text heightdefiner = new Text(" Xj ");
+
+        p.add(heightdefiner);
+
+        addAlignedElement(p, InlineVerticalAlignmentType.BASELINE);
+        addAlignedElement(p, InlineVerticalAlignmentType.TEXT_TOP);
+        addAlignedElement(p, InlineVerticalAlignmentType.TEXT_BOTTOM);
+        addAlignedElement(p, InlineVerticalAlignmentType.SUB);
+        addAlignedElement(p, InlineVerticalAlignmentType.SUPER);
+        addAlignedElement(p, InlineVerticalAlignmentType.FIXED);
+        addAlignedElement(p, InlineVerticalAlignmentType.FRACTION);
+        addAlignedElement(p, InlineVerticalAlignmentType.MIDDLE);
+        addAlignedElement(p, InlineVerticalAlignmentType.TOP);
+        addAlignedElement(p, InlineVerticalAlignmentType.BOTTOM);
+
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(SOURCE_FOLDER + "itis.jpg")));
+        Image image1 = new Image(xObject, 50);
+        p.add(image1);
+        p.add(heightdefiner);
+        doc.add(p);
+
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+
+    }
+
+    private void addAlignedElement(Paragraph p, InlineVerticalAlignmentType verticalAlignment) {
+        Text text1 = new Text(" " + verticalAlignment + " ");
+        text1.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+        text1.setFontSize(12);
+
+        if (verticalAlignment == InlineVerticalAlignmentType.FIXED) {
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(verticalAlignment, 20F));
+        } else if (verticalAlignment == InlineVerticalAlignmentType.FRACTION) {
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT,
+                    new InlineVerticalAlignment(verticalAlignment, 0.20F));
+        } else {
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(verticalAlignment));
+
+        }
+
+        p.add(text1);
+    }
+
+    @Test
+    public void inlineVerticalAlignmentWithLineHeightSettingTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentLineHeight.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentLineHeight.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.BOTTOM, (d, p,t)  ->
+                p.setProperty(Property.LINE_HEIGHT, LineHeight.createFixedValue(100)));
+    }
+
+    @Test
+    public void inlineVerticalAlignmentWithFloatsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inlineVerticalAlignmentWithFloat.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentWithFloat.pdf";
+
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, InlineVerticalAlignmentType.BOTTOM, (d, p,t)  -> {
+
+            PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createJpeg(UrlUtil.toURL(SOURCE_FOLDER + "itis.jpg")));
+            Image image1 = new Image(xObject, 200);
+            image1.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            d.add(image1);
+        });
+    }
+
+    @Test
     public void floatAlignmentTest03() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "floatAlignmentTest03.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_floatAlignmentTest03.pdf";
@@ -445,6 +615,52 @@ public class AlignmentTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
+
+    private static void createDocumentWithInlineAlignment(String outPdf, String cmpPdf,
+            InlineVerticalAlignmentType verticalAlignment1) throws IOException, InterruptedException {
+        createDocumentWithInlineAlignment(outPdf, cmpPdf, verticalAlignment1, null);
+
+    }
+
+
+    private static void createDocumentWithInlineAlignment(String outPdf, String cmpPdf,
+            InlineVerticalAlignmentType verticalAlignment1, IInlineTestObjectModifier adjustTestObjects)
+            throws IOException, InterruptedException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        Document doc = new Document(pdfDoc);
+        Paragraph p = new Paragraph();
+        p.setBackgroundColor(new DeviceRgb(189, 239, 73));
+        p.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        p.setFontSize(20);
+
+        Text heightdefiner = new Text(" Xj ");
+
+        p.add(heightdefiner);
+        Text text1 = new Text(" vAlign " + verticalAlignment1 + " ");
+        if (verticalAlignment1 == InlineVerticalAlignmentType.FIXED )
+        {
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(verticalAlignment1, 20F));
+        } else if (verticalAlignment1 == InlineVerticalAlignmentType.FRACTION)
+        {
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT,
+                    new InlineVerticalAlignment(verticalAlignment1, 0.20F));
+        } else {
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(verticalAlignment1));
+        }
+        text1.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+        text1.setFontSize(12);
+
+        if (adjustTestObjects != null) {
+            adjustTestObjects.modify(doc,p, text1);
+        }
+        p.add(text1);
+        p.add(heightdefiner);
+        doc.add(p);
+
+        pdfDoc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
 
     private static void createDocumentWithAlignment(String outPdf, String cmpPdf, VerticalAlignment verticalAlignment)
             throws IOException, InterruptedException {
@@ -492,4 +708,10 @@ public class AlignmentTest extends ExtendedITextTest {
                 "The text is laid out using the correct width, but  the alignment value uses the full width.")
                 .setTextAlignment(TextAlignment.JUSTIFIED));
     }
+
+    @FunctionalInterface
+    private static interface IInlineTestObjectModifier {
+        void modify(Document d, Paragraph p, Text t) throws MalformedURLException;
+    }
+
 }

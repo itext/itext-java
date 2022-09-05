@@ -237,4 +237,5 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
         Assert.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
+
 }
