@@ -44,6 +44,8 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -65,6 +67,7 @@ import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.utils.PemFileHelper;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -111,9 +114,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
 
-    public static final char[] PRIVATE_KEY_PASS = "kspass".toCharArray();
+    public static final char[] PRIVATE_KEY_PASS = "testpass".toCharArray();
     public static final String CERT = sourceFolder + "test.cer";
-    public static final String PRIVATE_KEY = sourceFolder + "test.p12";
+    public static final String PRIVATE_KEY = sourceFolder + "test.pem";
 
     static final String pageTextContent = "Hello world!";
 
@@ -196,49 +199,56 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptWithCertificateStandard128() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard128() throws IOException, InterruptedException, GeneralSecurityException,
+            AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard128.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateStandard40() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard40() throws IOException, InterruptedException, GeneralSecurityException,
+            AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard40.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateStandard128NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard128NoCompression() throws IOException, InterruptedException,
+            GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard128NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateStandard40NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateStandard40NoCompression() throws IOException, InterruptedException,
+            GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard40NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateAes128() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes128() throws IOException, InterruptedException, GeneralSecurityException,
+            AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes128.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateAes256() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes256() throws IOException, InterruptedException, GeneralSecurityException,
+            AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes256.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.DEFAULT_COMPRESSION);
     }
 
     @Test
-    public void encryptWithCertificateAes128NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes128NoCompression() throws IOException, InterruptedException,
+            GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes128NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -246,7 +256,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
 
     @Test
-    public void encryptWithCertificateAes256NoCompression() throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificateAes256NoCompression() throws IOException, InterruptedException,
+            GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
@@ -298,7 +309,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void openEncryptedDocWithWrongCertificate() throws IOException, GeneralSecurityException {
+    public void openEncryptedDocWithWrongCertificate()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
                         .setPublicKeySecurityParams(
@@ -315,12 +327,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void openEncryptedDocWithWrongPrivateKey() throws IOException, GeneralSecurityException {
+    public void openEncryptedDocWithWrongPrivateKey()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(CERT),
-                                CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
+                                PemFileHelper.readPrivateKeyFromPemFile(
+                                        new FileInputStream(sourceFolder + "wrong.pem"), PRIVATE_KEY_PASS),
                                 FACTORY.getProviderName(),
                                 null))) {
 
@@ -332,12 +346,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void openEncryptedDocWithWrongCertificateAndPrivateKey() throws IOException, GeneralSecurityException {
+    public void openEncryptedDocWithWrongCertificateAndPrivateKey()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
                         .setPublicKeySecurityParams(
                                 getPublicCertificate(sourceFolder + "wrong.cer"),
-                                CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(sourceFolder + "wrong.p12"), "demo", "password".toCharArray()),
+                                PemFileHelper.readPrivateKeyFromPemFile(
+                                        new FileInputStream(sourceFolder + "wrong.pem"), PRIVATE_KEY_PASS),
                                 FACTORY.getProviderName(),
                                 null))) {
 
@@ -361,7 +377,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void copyEncryptedDocument() throws GeneralSecurityException, IOException, InterruptedException {
+    public void copyEncryptedDocument() throws GeneralSecurityException, IOException, InterruptedException,
+            AbstractPKCSException, AbstractOperatorCreationException {
         PdfDocument srcDoc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties().
                         setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(), FACTORY.getProviderName(), null)));
@@ -644,7 +661,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         checkEncryptedWithPasswordDocumentAppending(filename, OWNER);
     }
 
-    public void encryptWithCertificate(String filename, int encryptionType, int compression) throws IOException, InterruptedException, GeneralSecurityException {
+    public void encryptWithCertificate(String filename, int encryptionType, int compression) throws IOException,
+            InterruptedException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         ITextTest.removeCryptographyRestrictions();
 
         String outFileName = destinationFolder + filename;
@@ -683,9 +701,10 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         return CryptoUtil.readPublicCertificate(is);
     }
 
-    public PrivateKey getPrivateKey() throws GeneralSecurityException, IOException {
+    public PrivateKey getPrivateKey() throws IOException, AbstractPKCSException, AbstractOperatorCreationException {
         if (privateKey == null) {
-            privateKey = CryptoUtil.readPrivateKeyFromPKCS12KeyStore(new FileInputStream(PRIVATE_KEY), "sandbox", PRIVATE_KEY_PASS);
+            privateKey = PemFileHelper.readPrivateKeyFromPemFile(
+                    new FileInputStream(PRIVATE_KEY), PRIVATE_KEY_PASS);
         }
         return privateKey;
     }
@@ -713,7 +732,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         document.close();
     }
 
-    public void checkDecryptedWithCertificateContent(String filename, Certificate certificate, String pageContent) throws IOException, GeneralSecurityException {
+    public void checkDecryptedWithCertificateContent(String filename, Certificate certificate, String pageContent)
+            throws IOException, AbstractPKCSException, AbstractOperatorCreationException {
         String src = destinationFolder + filename;
         PdfReader reader = new PdfReader(src, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
@@ -745,7 +765,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     // basically this is comparing content of decrypted by itext document with content of encrypted document
-    public void checkEncryptedWithCertificateDocumentStamping(String filename, Certificate certificate) throws IOException, InterruptedException, GeneralSecurityException {
+    public void checkEncryptedWithCertificateDocumentStamping(String filename, Certificate certificate)
+            throws IOException, InterruptedException, AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "stamped_" + filename;
         PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
@@ -781,7 +802,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         }
     }
 
-    public void checkEncryptedWithCertificateDocumentAppending(String filename, Certificate certificate) throws IOException, InterruptedException, GeneralSecurityException {
+    public void checkEncryptedWithCertificateDocumentAppending(String filename, Certificate certificate)
+            throws IOException, InterruptedException, AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "appended_" + filename;
         PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()

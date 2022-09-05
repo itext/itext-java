@@ -44,14 +44,16 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -84,13 +86,14 @@ public class TimestampSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void timestampTest01() throws IOException, GeneralSecurityException {
-        String tsaCertFileName = certsSrc + "tsCertRsa.p12";
+    public void timestampTest01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        String tsaCertFileName = certsSrc + "tsCertRsa.pem";
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         String outFileName = destinationFolder + "timestampTest01.pdf";
 
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertFileName, password);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertFileName, password, password);
+        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties());
 

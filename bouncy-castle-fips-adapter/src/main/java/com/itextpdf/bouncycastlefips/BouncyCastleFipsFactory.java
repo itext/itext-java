@@ -84,6 +84,7 @@ import com.itextpdf.bouncycastlefips.asn1.x509.KeyPurposeIdBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.KeyUsageBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.SubjectPublicKeyInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.TBSCertificateBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.TimeBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509CertificateHolderBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509ExtensionUtilsBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509v2CRLBuilderBCFips;
@@ -109,6 +110,9 @@ import com.itextpdf.bouncycastlefips.cms.CMSExceptionBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSignerInfoGeneratorBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
+import com.itextpdf.bouncycastlefips.openssl.PEMParserBCFips;
+import com.itextpdf.bouncycastlefips.openssl.jcajce.JcaPEMKeyConverterBCFips;
+import com.itextpdf.bouncycastlefips.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentSignerBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentVerifierProviderBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaDigestCalculatorProviderBuilderBCFips;
@@ -183,6 +187,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -208,6 +213,9 @@ import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
+import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
+import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
@@ -221,11 +229,11 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -270,6 +278,7 @@ import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.TBSCertificate;
+import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
@@ -288,6 +297,9 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -1136,5 +1148,25 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public CRL createNullCrl() {
         return null;
+    }
+
+    @Override
+    public IPEMParser createPEMParser(Reader reader) {
+        return new PEMParserBCFips(new PEMParser(reader));
+    }
+
+    @Override
+    public IJceOpenSSLPKCS8DecryptorProviderBuilder createJceOpenSSLPKCS8DecryptorProviderBuilder() {
+        return new JceOpenSSLPKCS8DecryptorProviderBuilderBCFips(new JceOpenSSLPKCS8DecryptorProviderBuilder());
+    }
+
+    @Override
+    public IJcaPEMKeyConverter createJcaPEMKeyConverter() {
+        return new JcaPEMKeyConverterBCFips(new JcaPEMKeyConverter());
+    }
+
+    @Override
+    public ITime createTime(Date date) {
+        return new TimeBCFips(new Time(date));
     }
 }

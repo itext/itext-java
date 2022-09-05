@@ -24,6 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
@@ -50,20 +52,17 @@ import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
@@ -97,10 +96,10 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Before
-    public void init() throws KeyStoreException, IOException, CertificateException,
-            NoSuchAlgorithmException, UnrecoverableKeyException {
-        pk = Pkcs12FileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.p12", PASSWORD, PASSWORD);
-        chain = Pkcs12FileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.p12", PASSWORD);
+    public void init()
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
+        pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
+        chain = PemFileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.pem");
     }
 
     @Test

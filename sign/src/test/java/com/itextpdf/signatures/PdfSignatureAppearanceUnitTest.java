@@ -36,14 +36,12 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -66,7 +64,7 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER
             = "./target/test/com/itextpdf/signatures/sign/PdfSignatureAppearanceUnitTest/";
     public static final String KEYSTORE_PATH
-            = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.p12";
+            = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.pem";
     public static final char[] PASSWORD = "kspass".toCharArray();
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -74,11 +72,10 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     private static Certificate[] chain;
 
     @BeforeClass
-    public static void before() throws KeyStoreException, IOException, CertificateException,
-            NoSuchAlgorithmException {
+    public static void before() throws IOException, CertificateException {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-        chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
+        chain = PemFileHelper.readFirstChain(KEYSTORE_PATH);
     }
 
     @Test

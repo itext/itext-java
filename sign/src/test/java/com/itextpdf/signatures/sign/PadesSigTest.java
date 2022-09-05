@@ -49,6 +49,8 @@ import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -61,10 +63,10 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignaturePolicyInfo;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -97,8 +99,9 @@ public class PadesSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void padesRsaSigTest01() throws IOException, GeneralSecurityException {
-        signApproval(certsSrc + "signCertRsa01.p12", destinationFolder + "padesRsaSigTest01.pdf");
+    public void padesRsaSigTest01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesRsaSigTest01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
@@ -106,8 +109,9 @@ public class PadesSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void padesRsaSigTestWithChain01() throws IOException, GeneralSecurityException {
-        signApproval(certsSrc + "signCertRsaWithChain.p12", destinationFolder + "padesRsaSigTestWithChain01.pdf");
+    public void padesRsaSigTestWithChain01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        signApproval(certsSrc + "signCertRsaWithChain.pem", destinationFolder + "padesRsaSigTestWithChain01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesRsaSigTestWithChain01.pdf", "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
@@ -116,13 +120,15 @@ public class PadesSigTest extends ExtendedITextTest {
 
     @Test
     @Ignore("DEVSIX-1620: For some reason signatures created with the given cert (either by iText or acrobat) are considered invalid")
-    public void padesDsaSigTest01() throws IOException, GeneralSecurityException {
-        signApproval(certsSrc + "signCertDsa01.p12", destinationFolder + "padesDsaSigTest01.pdf");
+    public void padesDsaSigTest01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        signApproval(certsSrc + "signCertDsa01.pem", destinationFolder + "padesDsaSigTest01.pdf");
     }
 
     @Test
-    public void padesEccSigTest01() throws IOException, GeneralSecurityException {
-        signApproval(certsSrc + "signCertEcc01.p12",
+    public void padesEccSigTest01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        signApproval(certsSrc + "signCertEcc01.pem",
                 destinationFolder + "padesEccSigTest01.pdf");
 
         basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
@@ -131,7 +137,8 @@ public class PadesSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void padesEpesProfileTest01() throws IOException, GeneralSecurityException {
+    public void padesEpesProfileTest01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String notExistingSignaturePolicyOid = "2.16.724.631.3.1.124.2.29.9";
         IASN1ObjectIdentifier asn1PolicyOid = FACTORY.createASN1ObjectIdentifierInstance(
                 FACTORY.createASN1ObjectIdentifier(notExistingSignaturePolicyOid));
@@ -146,7 +153,7 @@ public class PadesSigTest extends ExtendedITextTest {
                 FACTORY.createSignaturePolicyId(asn1PolicyOid, FACTORY.createOtherHashAlgAndValue(hashAlg, hash));
         ISignaturePolicyIdentifier sigPolicyIdentifier = FACTORY.createSignaturePolicyIdentifier(signaturePolicyId);
 
-        signApproval(certsSrc + "signCertRsa01.p12", destinationFolder + "padesEpesProfileTest01.pdf", sigPolicyIdentifier);
+        signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesEpesProfileTest01.pdf", sigPolicyIdentifier);
 
         basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder +
@@ -154,40 +161,43 @@ public class PadesSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signaturePolicyInfoUnavailableUrlTest() throws IOException, GeneralSecurityException {
+    public void signaturePolicyInfoUnavailableUrlTest()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String signedFileName = destinationFolder + "signaturePolicyInfoUnavailableUrl_signed.pdf";
 
         SignaturePolicyInfo spi = new SignaturePolicyInfo("1.2.3.4.5.6.7.8.9.10",
                 "aVRleHQ0TGlmZVJhbmRvbVRleHQ=", "SHA-1",
                 "https://signature-policy.org/not-available");
 
-        signApproval(certsSrc + "signCertRsa01.p12", signedFileName, spi);
+        signApproval(certsSrc + "signCertRsa01.pem", signedFileName, spi);
 
         basicCheckSignedDoc(signedFileName, "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(signedFileName,
                 sourceFolder + "cmp_signaturePolicyInfoUnavailableUrl_signed.pdf"));
     }
 
-    private void signApproval(String signCertFileName, String outFileName) throws IOException, GeneralSecurityException {
+    private void signApproval(String signCertFileName, String outFileName)
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         signApproval(signCertFileName, outFileName, null, null);
     }
 
     private void signApproval(String signCertFileName, String outFileName, SignaturePolicyInfo signaturePolicyInfo)
-            throws IOException, GeneralSecurityException {
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         signApproval(signCertFileName, outFileName, null, signaturePolicyInfo);
     }
 
     private void signApproval(String signCertFileName, String outFileName, ISignaturePolicyIdentifier signaturePolicyId)
-            throws IOException, GeneralSecurityException {
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         signApproval(signCertFileName, outFileName, signaturePolicyId, null);
     }
 
     private void signApproval(String signCertFileName, String outFileName,
             ISignaturePolicyIdentifier sigPolicyIdentifier,
-            SignaturePolicyInfo sigPolicyInfo) throws IOException, GeneralSecurityException {
+            SignaturePolicyInfo sigPolicyInfo)
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
-        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
         IExternalSignature pks =
                 new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 

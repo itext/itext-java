@@ -44,6 +44,8 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -57,8 +59,8 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
@@ -91,14 +93,15 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void sequentialSignOfFileWithAnnots() throws IOException, GeneralSecurityException {
-        String signCertFileName = certsSrc + "signCertRsa01.p12";
+    public void sequentialSignOfFileWithAnnots()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
         String outFileName = destinationFolder + "sequentialSignOfFileWithAnnots.pdf";
         String srcFileName = sourceFolder + "signedWithAnnots.pdf";
         String cmpFileName = sourceFolder + "cmp_sequentialSignOfFileWithAnnots.pdf";
 
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
-        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
         IExternalSignature pks =
                 new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 
@@ -118,15 +121,16 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void secondSignOfTaggedDocTest() throws IOException, GeneralSecurityException {
-        String signCertFileName = certsSrc + "signCertRsa01.p12";
+    public void secondSignOfTaggedDocTest()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
         String outFileName = destinationFolder + "secondSignOfTagged.pdf";
         String srcFileName = sourceFolder + "taggedAndSignedDoc.pdf";
         String cmpFileName = sourceFolder + "cmp_secondSignOfTagged.pdf";
 
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
 
-        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
 
         IExternalSignature pks = new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());

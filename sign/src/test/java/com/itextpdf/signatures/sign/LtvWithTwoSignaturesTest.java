@@ -44,6 +44,8 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -52,7 +54,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.LtvVerification;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
@@ -86,18 +88,19 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addLtvInfo() throws GeneralSecurityException, java.io.IOException {
-        String caCertFileName = certsSrc + "rootRsa.p12";
-        String interCertFileName = certsSrc + "intermediateRsa.p12";
+    public void addLtvInfo() throws GeneralSecurityException, java.io.IOException, AbstractPKCSException,
+            AbstractOperatorCreationException {
+        String caCertFileName = certsSrc + "rootRsa.pem";
+        String interCertFileName = certsSrc + "intermediateRsa.pem";
         String srcFileName = sourceFolder + "signedTwice.pdf";
         String ltvFileName = destinationFolder + "ltvEnabledTest01.pdf";
         String ltvFileName2 = destinationFolder + "ltvEnabledTest02.pdf";
 
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
 
-        X509Certificate interCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(interCertFileName, password)[0];
-        PrivateKey interPrivateKey = Pkcs12FileHelper.readFirstKey(interCertFileName, password, password);
+        X509Certificate interCert = (X509Certificate) PemFileHelper.readFirstChain(interCertFileName)[0];
+        PrivateKey interPrivateKey = PemFileHelper.readFirstKey(interCertFileName, password);
 
         TestOcspClient testOcspClient = new TestOcspClient()
                 .addBuilderForCertIssuer(interCert, interPrivateKey)

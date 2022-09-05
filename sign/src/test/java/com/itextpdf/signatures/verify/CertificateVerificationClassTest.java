@@ -44,6 +44,8 @@ package com.itextpdf.signatures.verify;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -51,6 +53,7 @@ import com.itextpdf.signatures.CertificateVerification;
 import com.itextpdf.signatures.SignaturesTestUtils;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
@@ -60,18 +63,14 @@ import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
@@ -114,11 +113,12 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    public void validCertificateChain01() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException {
-        Certificate[] certChain = Pkcs12FileHelper.readFirstChain(CERTS_SRC + "signCertRsaWithChain.p12", PASSWORD);
+    public void validCertificateChain01()
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        Certificate[] certChain = PemFileHelper.readFirstChain(CERTS_SRC + "signCertRsaWithChain.pem");
 
-        String caCertFileName = CERTS_SRC + "rootRsa.p12";
-        KeyStore caKeyStore = Pkcs12FileHelper.initStore(caCertFileName, PASSWORD, PROVIDER);
+        String caCertFileName = CERTS_SRC + "rootRsa.pem";
+        KeyStore caKeyStore = PemFileHelper.initStore(caCertFileName, PASSWORD, PROVIDER);
 
         List<VerificationException> verificationExceptions = CertificateVerification.verifyCertificates(certChain, caKeyStore);
 
@@ -127,9 +127,9 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @Test
     public void timestampCertificateAndKeyStoreCorrespondTest() throws Exception {
-        String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
+        String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
 
-        KeyStore caKeyStore = Pkcs12FileHelper.initStore(tsaCertFileName, PASSWORD, PROVIDER);
+        KeyStore caKeyStore = PemFileHelper.initStore(tsaCertFileName, PASSWORD, PROVIDER);
 
         Assert.assertTrue(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
     }
@@ -137,10 +137,10 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = "certificate hash does not match certID hash."))
     public void timestampCertificateAndKeyStoreDoNotCorrespondTest() throws Exception {
-        String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
-        String notTsaCertFileName = CERTS_SRC + "rootRsa.p12";
+        String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
+        String notTsaCertFileName = CERTS_SRC + "rootRsa.pem";
 
-        KeyStore caKeyStore = Pkcs12FileHelper.initStore(notTsaCertFileName, PASSWORD, PROVIDER);
+        KeyStore caKeyStore = PemFileHelper.initStore(notTsaCertFileName, PASSWORD, PROVIDER);
 
         Assert.assertFalse(verifyTimestampCertificates(tsaCertFileName, caKeyStore));
     }
@@ -148,17 +148,16 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = ANY_LOG_MESSAGE))
     public void keyStoreWithoutCertificatesTest() throws Exception {
-        String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
+        String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
 
         Assert.assertFalse(verifyTimestampCertificates(tsaCertFileName, null));
     }
 
     @Test
-    public void expiredCertificateTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+    public void expiredCertificateTest() throws CertificateException, IOException {
 
         final X509Certificate expiredCert =
-                (X509Certificate) Pkcs12FileHelper.readFirstChain(CERTS_SRC + "expiredCert.p12", PASSWORD)[0];
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "expiredCert.pem")[0];
 
         final String verificationResult = CertificateVerification.verifyCertificate(expiredCert, null);
         final String expectedResultString = SignaturesTestUtils.getExpiredMessage(expiredCert);
@@ -167,11 +166,9 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    public void unsupportedCriticalExtensionTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+    public void unsupportedCriticalExtensionTest() throws CertificateException, IOException {
 
-        final X509Certificate unsupportedExtensionCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(
-                CERTS_SRC + "unsupportedCriticalExtensionCert.p12", PASSWORD)[0];
+        final X509Certificate unsupportedExtensionCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "unsupportedCriticalExtensionCert.pem")[0];
 
         final String verificationResult = CertificateVerification.verifyCertificate(unsupportedExtensionCert, null);
 
@@ -180,15 +177,14 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @Test
     public void clrWithGivenCertificateTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
-            UnrecoverableKeyException, CRLException {
+            throws CertificateException, IOException, CRLException, AbstractPKCSException, AbstractOperatorCreationException {
 
-        final String caCertFileName = CERTS_SRC + "rootRsa.p12";
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, PASSWORD)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, PASSWORD, PASSWORD);
+        final String caCertFileName = CERTS_SRC + "rootRsa.pem";
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, PASSWORD);
 
-        final String checkCertFileName = CERTS_SRC + "signCertRsa01.p12";
-        X509Certificate checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(checkCertFileName, PASSWORD)[0];
+        final String checkCertFileName = CERTS_SRC + "signCertRsa01.pem";
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
 
         TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey,
                 DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
@@ -222,10 +218,9 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    public void validCertWithEmptyCrlCollectionTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        final String caCertFileName = CERTS_SRC + "rootRsa.p12";
-        X509Certificate rootCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, PASSWORD)[0];
+    public void validCertWithEmptyCrlCollectionTest() throws CertificateException, IOException {
+        final String caCertFileName = CERTS_SRC + "rootRsa.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
 
         final String verificationResult = CertificateVerification.verifyCertificate(rootCert, Collections.<CRL>emptyList());
 
@@ -234,16 +229,14 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @Test
     public void validCertWithCrlDoesNotContainCertTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
-            UnrecoverableKeyException, CRLException {
+            throws CertificateException, IOException, CRLException, AbstractPKCSException, AbstractOperatorCreationException {
         final int COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME = -1;
-        final String rootCertFileName = CERTS_SRC + "rootRsa.p12";
-        X509Certificate rootCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootCertFileName, PASSWORD)[0];
+        final String rootCertFileName = CERTS_SRC + "rootRsa.pem";
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
 
-        final String certForAddingToCrlName = CERTS_SRC + "signCertRsa01.p12";
-        X509Certificate certForCrl = (X509Certificate) Pkcs12FileHelper.readFirstChain(certForAddingToCrlName,
-                PASSWORD)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(certForAddingToCrlName, PASSWORD, PASSWORD);
+        final String certForAddingToCrlName = CERTS_SRC + "signCertRsa01.pem";
+        X509Certificate certForCrl = (X509Certificate) PemFileHelper.readFirstChain(certForAddingToCrlName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(certForAddingToCrlName, PASSWORD);
 
         TestCrlBuilder crlForCheckBuilder = new TestCrlBuilder(certForCrl, caPrivateKey,
                 DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(),
@@ -276,13 +269,12 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @Test
     public void validCertChainWithEmptyKeyStoreTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
-            NoSuchProviderException {
-        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithChain.p12";
-        final String emptyCertChain = CERTS_SRC + "emptyCertChain.p12";
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithChain.pem";
+        final String emptyCertChain = CERTS_SRC + "emptyCertChain.pem";
 
-        Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
-        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD, PROVIDER);
+        Certificate[] validCertChain = PemFileHelper.readFirstChain(validCertChainFileName);
+        KeyStore emptyKeyStore = PemFileHelper.initStore(emptyCertChain, PASSWORD, PROVIDER);
 
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
                 emptyKeyStore, (Collection<CRL>) null);
@@ -298,13 +290,12 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @Test
     public void validCertChainWithRootCertAsKeyStoreTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException,
-            NoSuchProviderException {
-        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithChain.p12";
-        final String emptyCertChain = CERTS_SRC + "rootRsa.p12";
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithChain.pem";
+        final String emptyCertChain = CERTS_SRC + "rootRsa.pem";
 
-        Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
-        KeyStore emptyKeyStore = Pkcs12FileHelper.initStore(emptyCertChain, PASSWORD, PROVIDER);
+        Certificate[] validCertChain = PemFileHelper.readFirstChain(validCertChainFileName);
+        KeyStore emptyKeyStore = PemFileHelper.initStore(emptyCertChain, PASSWORD, PROVIDER);
 
         List<VerificationException> resultedExceptionList = CertificateVerification.verifyCertificates(validCertChain,
                 emptyKeyStore, (Collection<CRL>) null);
@@ -314,10 +305,10 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     @Test
     public void certChainWithExpiredCertTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithExpiredChain.p12";
+            throws CertificateException, IOException {
+        final String validCertChainFileName = CERTS_SRC + "signCertRsaWithExpiredChain.pem";
 
-        Certificate[] validCertChain = Pkcs12FileHelper.readFirstChain(validCertChainFileName, PASSWORD);
+        Certificate[] validCertChain = PemFileHelper.readFirstChain(validCertChainFileName);
 
         X509Certificate expectedExpiredCert = (X509Certificate) validCertChain[1];
         final String expiredCertName = FACTORY.createX500Name(expectedExpiredCert).toString();
@@ -341,8 +332,8 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
 
     private static boolean verifyTimestampCertificates(String tsaClientCertificate, KeyStore caKeyStore)
             throws Exception {
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaClientCertificate, PASSWORD);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaClientCertificate, PASSWORD, PASSWORD);
+        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaClientCertificate);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaClientCertificate, PASSWORD);
 
         TestTsaClient testTsaClient = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 

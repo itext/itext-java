@@ -44,6 +44,8 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -64,11 +66,11 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -128,7 +130,7 @@ public class SignDeferredTest extends ExtendedITextTest {
     }
 
     @Test
-    public void prepareDocForSignDeferredNotEnoughSizeTest() throws IOException, GeneralSecurityException {
+    public void prepareDocForSignDeferredNotEnoughSizeTest() throws IOException {
         String input = sourceFolder + "helloWorldDoc.pdf";
 
         String sigFieldName = "DeferredSignature1";
@@ -179,14 +181,15 @@ public class SignDeferredTest extends ExtendedITextTest {
     }
 
     @Test
-    public void deferredHashCalcAndSignTest01() throws IOException, GeneralSecurityException, InterruptedException {
+    public void deferredHashCalcAndSignTest01() throws IOException, GeneralSecurityException, InterruptedException,
+            AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = sourceFolder + "templateForSignCMSDeferred.pdf";
         String outFileName = destinationFolder + "deferredHashCalcAndSignTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_deferredHashCalcAndSignTest01.pdf";
 
-        String signCertFileName = certsSrc + "signCertRsa01.p12";
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
-        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
         IExternalSignatureContainer extSigContainer = new CmsDeferredSigner(signPrivateKey, signChain);
 
         String sigFieldName = "DeferredSignature1";
@@ -204,7 +207,8 @@ public class SignDeferredTest extends ExtendedITextTest {
     }
 
     @Test
-    public void calcHashOnDocCreationThenDeferredSignTest01() throws IOException, GeneralSecurityException, InterruptedException {
+    public void calcHashOnDocCreationThenDeferredSignTest01() throws IOException, GeneralSecurityException,
+            InterruptedException, AbstractPKCSException, AbstractOperatorCreationException {
         String input = sourceFolder + "helloWorldDoc.pdf";
         String outFileName = destinationFolder + "calcHashOnDocCreationThenDeferredSignTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_calcHashOnDocCreationThenDeferredSignTest01.pdf";
@@ -232,9 +236,9 @@ public class SignDeferredTest extends ExtendedITextTest {
 
 
         // sign the hash
-        String signCertFileName = certsSrc + "signCertRsa01.p12";
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertFileName, password);
-        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertFileName, password, password);
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
         byte[] cmsSignature = signDocBytesHash(docBytesHash, signPrivateKey, signChain);
 
 

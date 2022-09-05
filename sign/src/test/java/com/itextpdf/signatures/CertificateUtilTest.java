@@ -22,9 +22,9 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -35,12 +35,11 @@ import java.security.cert.X509Certificate;
 public class CertificateUtilTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final char[] PASSWORD = "testpass".toCharArray();
 
     @Test
     public void getTSAURLAdobeExtensionTest() throws Exception {
         X509Certificate tsaCert =
-                (X509Certificate) Pkcs12FileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCert.p12", PASSWORD)[0];
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCert.pem")[0];
         String url = CertificateUtil.getTSAURL(tsaCert);
 
         Assert.assertEquals("https://itextpdf.com/en", url);
@@ -49,7 +48,7 @@ public class CertificateUtilTest extends ExtendedITextTest {
     @Test
     public void getTSAURLUsualTimestampCertificateTest() throws Exception {
         X509Certificate tsaCert =
-                (X509Certificate) Pkcs12FileHelper.readFirstChain(CERTS_SRC + "tsCertRsa.p12", PASSWORD)[0];
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "tsCertRsa.pem")[0];
         String url = CertificateUtil.getTSAURL(tsaCert);
 
         Assert.assertNull(url);
@@ -58,7 +57,7 @@ public class CertificateUtilTest extends ExtendedITextTest {
     @Test
     public void getTSAURLAdobeExtensionNotTaggedTest() throws Exception {
         X509Certificate tsaCert = (X509Certificate)
-                Pkcs12FileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCertWithoutTag.p12", PASSWORD)[0];
+                PemFileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCertWithoutTag.pem")[0];
 
         Assert.assertThrows(NullPointerException.class, () -> CertificateUtil.getTSAURL(tsaCert));
     }

@@ -84,6 +84,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -110,6 +111,9 @@ import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
+import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
+import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
@@ -126,6 +130,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -427,4 +432,12 @@ public interface IBouncyCastleFactory {
     IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil();
 
     CRL createNullCrl();
+    
+    IPEMParser createPEMParser(Reader reader);
+
+    IJceOpenSSLPKCS8DecryptorProviderBuilder createJceOpenSSLPKCS8DecryptorProviderBuilder();
+
+    IJcaPEMKeyConverter createJcaPEMKeyConverter();
+
+    ITime createTime(Date date);
 }

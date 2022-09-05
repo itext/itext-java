@@ -24,6 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -35,13 +37,13 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.LtvVerification.CertificateInclusion;
 import com.itextpdf.signatures.LtvVerification.CertificateOption;
 import com.itextpdf.signatures.LtvVerification.Level;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -85,7 +87,8 @@ public class LtvVerificationTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "CRL added", logLevel = LogLevelConstants.INFO),
             @LogMessage(messageTemplate = "Certificate: C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot", logLevel = LogLevelConstants.INFO)
     })
-    public void addVerificationToDocumentWithAlreadyExistedDss() throws IOException, GeneralSecurityException {
+    public void addVerificationToDocumentWithAlreadyExistedDss()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String input = SOURCE_FOLDER + "signingCertHasChainWithOcspOnlyForChildCert.pdf";
         String signatureHash = "C5CC1458AAA9B8BAB0677F9EA409983B577178A3";
 
@@ -109,9 +112,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), new PdfWriter(baos), new StampingProperties().useAppendMode())) {
             LtvVerification verification = new LtvVerification(pdfDocument);
 
-            String rootCertPath = CERT_FOLDER_PATH + "rootRsa.p12";
-            X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootCertPath, PASSWORD)[0];
-            PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootCertPath, PASSWORD, PASSWORD);
+            String rootCertPath = CERT_FOLDER_PATH + "rootRsa.pem";
+            X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertPath)[0];
+            PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootCertPath, PASSWORD);
 
             verification.addVerification("TestSignature", null, new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey),
                     CertificateOption.SIGNING_CERTIFICATE, Level.CRL, CertificateInclusion.NO);

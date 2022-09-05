@@ -29,10 +29,10 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.builder.TestTimestampTokenBuilder;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -198,11 +198,10 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
             this.signatureAlgorithm = signatureAlgorithm;
             this.allowedDigest = allowedDigest;
-            tsaPrivateKey = Pkcs12FileHelper
-                    .readFirstKey(CERTS_SRC + "signCertRsa01.p12", PASSWORD, PASSWORD);
+            tsaPrivateKey = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
 
-            String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
-            tsaCertificateChain = Arrays.asList(Pkcs12FileHelper.readFirstChain(tsaCertFileName, PASSWORD));
+            String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
+            tsaCertificateChain = Arrays.asList(PemFileHelper.readFirstChain(tsaCertFileName));
         }
 
         public byte[] getExpectedTsaResponseBytes() {

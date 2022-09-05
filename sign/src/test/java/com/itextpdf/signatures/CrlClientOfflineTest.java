@@ -31,14 +31,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -50,10 +48,8 @@ import org.junit.experimental.categories.Category;
 public class CrlClientOfflineTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/CrlClientOfflineTest/";
-    private static final char[] PASSWORD = "password".toCharArray();
     private static final String CRL_DISTRIBUTION_POINT = "http://www.example.com/";
-
-    private static X509Certificate checkCert;
+    
     private static Collection<byte[]> listOfByteArrays;
 
     @Test
@@ -65,81 +61,75 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getEncodedFromCrlEmptyByteArrayRealArgsTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        validateCrlBytes(null, checkCert, CRL_DISTRIBUTION_POINT);
+    public void getEncodedFromCrlEmptyByteArrayRealArgsTest() throws CertificateException, IOException {
+        validateCrlBytes(null, CRL_DISTRIBUTION_POINT);
     }
 
     @Test
-    public void getEncodedFromCrlEmptyByteArrayWithoutArgsTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        validateCrlBytes(null, null, "");
+    public void getEncodedFromCrlEmptyByteArrayWithoutArgsTest() throws CertificateException, IOException {
+        validateCrlBytes(null, "");
     }
 
     @Test
-    public void getEncodedFromCrlEmptyByteArrayUrlIsEmptyTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        validateCrlBytes(null, checkCert, "");
+    public void getEncodedFromCrlEmptyByteArrayUrlIsEmptyTest() throws CertificateException, IOException {
+        validateCrlBytes(null, "");
     }
 
     @Test
-    public void getEncodedFromCrlEmptyByteArrayNonExistingUrlTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        validateCrlBytes(null, checkCert, "http://nonexistingurl.com");
+    public void getEncodedFromCrlEmptyByteArrayNonExistingUrlTest() throws CertificateException, IOException {
+        validateCrlBytes(null, "http://nonexistingurl.com");
     }
 
     @Test
-    public void getEncodedFromCrlEmptyByteArrayCertIsNullNonExistingUrlTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        validateCrlBytes(null, null, "http://nonexistingurl.com");
+    public void getEncodedFromCrlEmptyByteArrayCertIsNullNonExistingUrlTest() throws CertificateException, IOException {
+        validateCrlBytes(null, "http://nonexistingurl.com");
     }
 
     @Test
-    public void getEncodedFromCrlEmptyByteArrayCertIsNullUrlIsRealTest()
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-        validateCrlBytes(null, null, CRL_DISTRIBUTION_POINT);
+    public void getEncodedFromCrlEmptyByteArrayCertIsNullUrlIsRealTest() throws CertificateException, IOException {
+        validateCrlBytes(null, CRL_DISTRIBUTION_POINT);
     }
 
     @Test
     public void getEncodedFromCrlObjectRealArgsTest() throws GeneralSecurityException, IOException {
         String fileName = SOURCE_FOLDER + "pdfWithCrl.pdf";
         byte[] testBytes = obtainCrlFromPdf(fileName);
-        validateCrlBytes(testBytes, checkCert, CRL_DISTRIBUTION_POINT);
+        validateCrlBytes(testBytes, CRL_DISTRIBUTION_POINT);
     }
 
     @Test
     public void getEncodedFromCrlObjectWithoutCertAndUrlTest() throws GeneralSecurityException, IOException {
         String fileName = SOURCE_FOLDER + "pdfWithCrl.pdf";
         byte[] testBytes = obtainCrlFromPdf(fileName);
-        validateCrlBytes(testBytes, null, "");
+        validateCrlBytes(testBytes, "");
     }
 
     @Test
     public void getEncodedFromCrlObjectUrlIsEmptyTest() throws GeneralSecurityException, IOException {
         String fileName = SOURCE_FOLDER + "pdfWithCrl.pdf";
         byte[] testBytes = obtainCrlFromPdf(fileName);
-        validateCrlBytes(testBytes, checkCert, "");
+        validateCrlBytes(testBytes, "");
     }
 
     @Test
     public void getEncodedFromCrlObjectNonExistingUrlTest() throws GeneralSecurityException, IOException {
         String fileName = SOURCE_FOLDER + "pdfWithCrl.pdf";
         byte[] testBytes = obtainCrlFromPdf(fileName);
-        validateCrlBytes(testBytes, checkCert, "http://nonexistingurl.com");
+        validateCrlBytes(testBytes, "http://nonexistingurl.com");
     }
 
     @Test
     public void getEncodedFromCrlObjectCertIsNullNonExistingUrlTest() throws GeneralSecurityException, IOException {
         String fileName = SOURCE_FOLDER + "pdfWithCrl.pdf";
         byte[] testBytes = obtainCrlFromPdf(fileName);
-        validateCrlBytes(testBytes, null, "http://nonexistingurl.com");
+        validateCrlBytes(testBytes, "http://nonexistingurl.com");
     }
 
     @Test
     public void getEncodedFromCrlObjectCertIsNullUrlIsRealTest() throws GeneralSecurityException, IOException {
         String fileName = SOURCE_FOLDER + "pdfWithCrl.pdf";
         byte[] testBytes = obtainCrlFromPdf(fileName);
-        validateCrlBytes(testBytes, null, CRL_DISTRIBUTION_POINT);
+        validateCrlBytes(testBytes, CRL_DISTRIBUTION_POINT);
     }
 
     //Get CRL from PDF. We expect the PDF to contain an array of CRLs from which we only take the first
@@ -152,11 +142,11 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
         return stream.getBytes();
     }
 
-    private static Collection<byte[]> validateCrlBytes(byte[] testBytes, X509Certificate checkCert, String crlDistPoint)
-            throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+    private static void validateCrlBytes(byte[] testBytes, String crlDistPoint)
+            throws CertificateException, IOException {
         CrlClientOffline crlClientOffline = new CrlClientOffline(testBytes);
-        checkCert = (X509Certificate) Pkcs12FileHelper
-                .readFirstChain(SOURCE_FOLDER + "crlDistPoint.p12", PASSWORD)[0];
+        X509Certificate checkCert =
+                (X509Certificate) PemFileHelper.readFirstChain(SOURCE_FOLDER + "crlDistPoint.pem")[0];
 
         listOfByteArrays = crlClientOffline.getEncoded(checkCert, crlDistPoint);
 
@@ -164,6 +154,5 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
         //and these are the same test bytes 
         Assert.assertEquals(1, listOfByteArrays.size());
         Assert.assertTrue(listOfByteArrays.contains(testBytes));
-        return listOfByteArrays;
     }
 }

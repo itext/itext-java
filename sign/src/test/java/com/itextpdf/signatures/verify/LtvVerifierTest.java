@@ -44,15 +44,17 @@ package com.itextpdf.signatures.verify;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.LtvVerifier;
 import com.itextpdf.signatures.VerificationOK;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -87,18 +89,20 @@ public class LtvVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void validLtvDocTest01() throws IOException, GeneralSecurityException {
+    public void validLtvDocTest01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String ltvTsFileName = sourceFolder + "ltvDoc.pdf";
 
         LtvVerifier verifier = new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)));
         verifier.setCertificateOption(LtvVerification.CertificateOption.WHOLE_CHAIN);
-        verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password, PROVIDER));
+        verifier.setRootStore(PemFileHelper.initStore(certsSrc + "rootStore.pem", password, PROVIDER));
         List<VerificationOK> verificationMessages = verifier.verify(null);
 
         Assert.assertEquals(7, verificationMessages.size());
     }
     @Test
-    public void validLtvDocTest02() throws IOException, GeneralSecurityException {
+    public void validLtvDocTest02()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String ltvTsFileName = sourceFolder + "ltvDoc.pdf";
 
         Security.addProvider(FACTORY.getProvider());
@@ -106,7 +110,7 @@ public class LtvVerifierTest extends ExtendedITextTest {
         LtvVerifier verifier =
                 new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)), FACTORY.getProviderName());
         verifier.setCertificateOption(LtvVerification.CertificateOption.WHOLE_CHAIN);
-        verifier.setRootStore(Pkcs12FileHelper.initStore(certsSrc + "rootStore.p12", password, PROVIDER));
+        verifier.setRootStore(PemFileHelper.initStore(certsSrc + "rootStore.pem", password, PROVIDER));
         List<VerificationOK> verificationMessages = verifier.verify(null);
 
         Assert.assertEquals(7, verificationMessages.size());

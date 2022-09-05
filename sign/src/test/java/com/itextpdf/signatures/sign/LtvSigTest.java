@@ -44,6 +44,8 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -57,22 +59,19 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -102,9 +101,10 @@ public class LtvSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ltvEnabledTest01() throws IOException, GeneralSecurityException {
-        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.p12";
-        String caCertP12FileName = CERTS_SRC + "rootRsa.p12";
+    public void ltvEnabledTest01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.pem";
+        String caCertP12FileName = CERTS_SRC + "rootRsa.pem";
         String srcFileName = SOURCE_FOLDER + "signedDoc.pdf";
         String ltvFileName = DESTINATION_FOLDER + "ltvEnabledTest01.pdf";
         String ltvTsFileName = DESTINATION_FOLDER + "ltvEnabledTsTest01.pdf";
@@ -133,15 +133,16 @@ public class LtvSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ltvEnabledSingleSignatureNoCrlDataTest() throws IOException, GeneralSecurityException {
-        String signCertP12FileName = CERTS_SRC + "signCertRsaWithChain.p12";
-        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.p12";
-        String intermediateCertP12FileName = CERTS_SRC + "intermediateRsa.p12";
-        String caCertP12FileName = CERTS_SRC + "rootRsa.p12";
+    public void ltvEnabledSingleSignatureNoCrlDataTest()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        String signCertP12FileName = CERTS_SRC + "signCertRsaWithChain.pem";
+        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.pem";
+        String intermediateCertP12FileName = CERTS_SRC + "intermediateRsa.pem";
+        String caCertP12FileName = CERTS_SRC + "rootRsa.pem";
         String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
         String ltvFileName = DESTINATION_FOLDER + "ltvEnabledSingleSignatureNoCrlDataTest.pdf";
 
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertP12FileName, PASSWORD);
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertP12FileName);
         IExternalSignature pks = prepareSignatureHandler(signCertP12FileName);
         TestTsaClient testTsa = prepareTsaClient(tsaCertP12FileName);
         TestOcspClient testOcspClient = prepareOcspClientForIssuer(intermediateCertP12FileName, caCertP12FileName);
@@ -164,15 +165,16 @@ public class LtvSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ltvEnabledSingleSignatureNoOcspDataTest() throws IOException, GeneralSecurityException {
-        String signCertP12FileName = CERTS_SRC + "signCertRsaWithChain.p12";
-        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.p12";
-        String intermediateCertP12FileName = CERTS_SRC + "intermediateRsa.p12";
-        String caCertP12FileName = CERTS_SRC + "rootRsa.p12";
+    public void ltvEnabledSingleSignatureNoOcspDataTest()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        String signCertP12FileName = CERTS_SRC + "signCertRsaWithChain.pem";
+        String tsaCertP12FileName = CERTS_SRC + "tsCertRsa.pem";
+        String intermediateCertP12FileName = CERTS_SRC + "intermediateRsa.pem";
+        String caCertP12FileName = CERTS_SRC + "rootRsa.pem";
         String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
         String ltvFileName = DESTINATION_FOLDER + "ltvEnabledSingleSignatureNoOcspDataTest.pdf";
 
-        Certificate[] signChain = Pkcs12FileHelper.readFirstChain(signCertP12FileName, PASSWORD);
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertP12FileName);
         IExternalSignature pks = prepareSignatureHandler(signCertP12FileName);
         TestTsaClient testTsa = prepareTsaClient(tsaCertP12FileName);
         TestCrlClient testCrlClient = prepareCrlClientForIssuer(caCertP12FileName, intermediateCertP12FileName);
@@ -188,9 +190,10 @@ public class LtvSigTest extends ExtendedITextTest {
     }
 
     @Test
-    public void secondLtvOriginalHasNoVri01() throws IOException, GeneralSecurityException {
-        String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
-        String caCertFileName = CERTS_SRC + "rootRsa.p12";
+    public void secondLtvOriginalHasNoVri01()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
+        String caCertFileName = CERTS_SRC + "rootRsa.pem";
         String srcFileName = SOURCE_FOLDER + "ltvEnabledNoVriEntry.pdf";
         String ltvFileName = DESTINATION_FOLDER + "secondLtvOriginalHasNoVri01.pdf";
         String ltvTsFileName = DESTINATION_FOLDER + "secondLtvOriginalHasNoVriTs01.pdf";
@@ -219,30 +222,30 @@ public class LtvSigTest extends ExtendedITextTest {
     }
 
     private static IExternalSignature prepareSignatureHandler(String signCertP12FileName)
-            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        PrivateKey signPrivateKey = Pkcs12FileHelper.readFirstKey(signCertP12FileName, PASSWORD, PASSWORD);
+            throws IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertP12FileName, PASSWORD);
         return new PrivateKeySignature(signPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
     }
 
     private static TestCrlClient prepareCrlClientForIssuer(String... issuerCertP12FileNames)
-            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
         TestCrlClient testCrlClient = new TestCrlClient();
         for (String issuerP12File : issuerCertP12FileNames) {
-            X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(issuerP12File, PASSWORD)[0];
-            PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(issuerP12File, PASSWORD, PASSWORD);
+            X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(issuerP12File)[0];
+            PrivateKey caPrivateKey = PemFileHelper.readFirstKey(issuerP12File, PASSWORD);
             testCrlClient.addBuilderForCertIssuer(caCert, caPrivateKey);
         }
         return testCrlClient;
     }
 
     private static TestOcspClient prepareOcspClientForIssuer(String... issuerCertP12FileNames)
-            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
 
         TestOcspClient ocspClient = new TestOcspClient();
         for (String issuerP12File : issuerCertP12FileNames) {
             X509Certificate issuerCertificate =
-                    (X509Certificate) Pkcs12FileHelper.readFirstChain(issuerP12File, PASSWORD)[0];
-            PrivateKey issuerPrivateKey = Pkcs12FileHelper.readFirstKey(issuerP12File, PASSWORD, PASSWORD);
+                    (X509Certificate) PemFileHelper.readFirstChain(issuerP12File)[0];
+            PrivateKey issuerPrivateKey = PemFileHelper.readFirstKey(issuerP12File, PASSWORD);
             ocspClient.addBuilderForCertIssuer(issuerCertificate, issuerPrivateKey);
         }
 
@@ -250,9 +253,9 @@ public class LtvSigTest extends ExtendedITextTest {
     }
 
     private static TestTsaClient prepareTsaClient(String tsaCertP12FileName)
-            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        Certificate[] tsaChain = Pkcs12FileHelper.readFirstChain(tsaCertP12FileName, PASSWORD);
-        PrivateKey tsaPrivateKey = Pkcs12FileHelper.readFirstKey(tsaCertP12FileName, PASSWORD, PASSWORD);
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
+        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertP12FileName);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertP12FileName, PASSWORD);
         return new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
     }
 

@@ -47,15 +47,16 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.cert.TestCertificateBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -79,7 +80,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] password = "testpass".toCharArray();
-    private static final String caCertFileName = certsSrc + "rootRsa.p12";
+    private static final String caCertFileName = certsSrc + "rootRsa.pem";
 
     @BeforeClass
     public static void before() {
@@ -87,18 +88,20 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void validOcspTest01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+    public void validOcspTest01()
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         Assert.assertTrue(verifyTest(builder));
     }
 
     @Test
-    public void invalidRevokedOcspTest01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+    public void invalidRevokedOcspTest01()
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         builder.setCertificateStatus(FACTORY.createRevokedStatus(
@@ -108,9 +111,10 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void invalidUnknownOcspTest01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+    public void invalidUnknownOcspTest01()
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         builder.setCertificateStatus(FACTORY.createUnknownStatus());
@@ -118,9 +122,10 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void invalidOutdatedOcspTest01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(caCertFileName, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(caCertFileName, password, password);
+    public void invalidOutdatedOcspTest01()
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         Calendar thisUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCurrentTimeCalendar(), -30);
@@ -131,17 +136,18 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     @Test
-    public void expiredIssuerCertTest01() throws GeneralSecurityException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(certsSrc + "intermediateExpiredCert.p12", password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(certsSrc + "intermediateExpiredCert.p12", password, password);
+    public void expiredIssuerCertTest01()
+            throws GeneralSecurityException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(certsSrc + "intermediateExpiredCert.pem")[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(certsSrc + "intermediateExpiredCert.pem", password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
-        Assert.assertTrue(verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.p12", caCert.getNotBefore()));
+        Assert.assertTrue(verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.pem", caCert.getNotBefore()));
     }
 
     @Test
     public void authorizedOCSPResponderTest() throws GeneralSecurityException, IOException,
-            AbstractOperatorCreationException {
+            AbstractPKCSException, AbstractOperatorCreationException {
         Date ocspResponderCertStartDate = DateTimeUtil.getCurrentTimeDate();
         Date ocspResponderCertEndDate = DateTimeUtil.addDaysToDate(ocspResponderCertStartDate, 365 * 100);
         Date checkDate = DateTimeUtil.getCurrentTimeDate();
@@ -152,7 +158,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     @Test
     public void expiredAuthorizedOCSPResponderTest_atValidPeriod() throws GeneralSecurityException, IOException,
-            AbstractOperatorCreationException {
+            AbstractPKCSException, AbstractOperatorCreationException {
         Date ocspResponderCertStartDate = DateTimeUtil.parse("15/10/2005", "dd/MM/yyyy");
         Date ocspResponderCertEndDate = DateTimeUtil.parse("15/10/2010", "dd/MM/yyyy");
         Date checkDate = DateTimeUtil.parse("15/10/2008", "dd/MM/yyyy");
@@ -175,11 +181,11 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder) throws IOException, GeneralSecurityException {
-        return verifyTest(rootRsaOcspBuilder, certsSrc + "signCertRsa01.p12", DateTimeUtil.getCurrentTimeDate());
+        return verifyTest(rootRsaOcspBuilder, certsSrc + "signCertRsa01.pem", DateTimeUtil.getCurrentTimeDate());
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder, String checkCertFileName, Date checkDate) throws IOException, GeneralSecurityException {
-        X509Certificate checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(checkCertFileName, password)[0];
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
 
         X509Certificate rootCert = rootRsaOcspBuilder.getIssuerCert();
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(rootCert, rootRsaOcspBuilder);
@@ -193,11 +199,12 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     public boolean verifyAuthorizedOCSPResponderTest(Date ocspResponderCertStartDate, Date ocspResponderCertEndDate,
-            Date checkDate) throws IOException, AbstractOperatorCreationException, GeneralSecurityException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(certsSrc + "intermediateRsa.p12", password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(certsSrc + "intermediateRsa.p12", password, password);
-        String checkCertFileName = certsSrc + "signCertRsaWithChain.p12";
-        X509Certificate checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(checkCertFileName, password)[0];
+            Date checkDate)
+            throws IOException, AbstractOperatorCreationException, GeneralSecurityException, AbstractPKCSException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(certsSrc + "intermediateRsa.pem")[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(certsSrc + "intermediateRsa.pem", password);
+        String checkCertFileName = certsSrc + "signCertRsaWithChain.pem";
+        X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
 
         KeyPairGenerator keyGen = SignTestPortUtil.buildRSA2048KeyPairGenerator();
         KeyPair key = keyGen.generateKeyPair();

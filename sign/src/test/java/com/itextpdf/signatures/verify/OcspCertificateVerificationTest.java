@@ -27,12 +27,12 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.CertificateVerification;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -55,9 +55,9 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
 
     private static final String ocspCertsSrc = "./src/test/resources/com/itextpdf/signatures/verify/OcspCertificateVerificationTest/";
 
-    private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.p12";
-    private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.p12";
-    private static final String notOcspAndOcspCert = ocspCertsSrc + "notOcspAndOcspCertificates.p12";
+    private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.pem";
+    private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.pem";
+    private static final String notOcspAndOcspCert = ocspCertsSrc + "notOcspAndOcspCertificates.pem";
 
     private static final char[] password = "testpass".toCharArray();
     private static final String ocspServiceUrl = "http://localhost:9000/demo/ocsp/ocsp-service";
@@ -68,8 +68,8 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
     @BeforeClass
     public static void before() throws Exception {
         Security.addProvider(PROVIDER);
-        checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(signOcspCert, password)[0];
-        rootCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootOcspCert, password)[0];
+        checkCert = (X509Certificate) PemFileHelper.readFirstChain(signOcspCert)[0];
+        rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootOcspCert)[0];
     }
 
     @Test
@@ -77,7 +77,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(rootOcspCert, password, PROVIDER), null));
+                response, PemFileHelper.initStore(rootOcspCert, password, PROVIDER), null));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(signOcspCert, password, PROVIDER), null));
+                response, PemFileHelper.initStore(signOcspCert, password, PROVIDER), null));
     }
 
     @Test
@@ -93,19 +93,19 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
         IBasicOCSPResp response = getOcspResponse();
 
         Assert.assertTrue(CertificateVerification.verifyOcspCertificates(
-                response, Pkcs12FileHelper.initStore(notOcspAndOcspCert, password, PROVIDER), null));
+                response, PemFileHelper.initStore(notOcspAndOcspCert, password, PROVIDER), null));
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = ANY_LOG_MESSAGE))
     public void keyStoreWithNotOcspCertificateTest() throws Exception {
         Assert.assertFalse(CertificateVerification.verifyOcspCertificates(
-                null, Pkcs12FileHelper.initStore(signOcspCert, password, PROVIDER), null));
+                null, PemFileHelper.initStore(signOcspCert, password, PROVIDER), null));
     }
 
     private static IBasicOCSPResp getOcspResponse() throws Exception {
         TestOcspClient testClient = new TestOcspClient();
-        PrivateKey key = Pkcs12FileHelper.readFirstKey(rootOcspCert, password, password);
+        PrivateKey key = PemFileHelper.readFirstKey(rootOcspCert, password);
         testClient.addBuilderForCertIssuer(rootCert, key);
         byte[] ocspResponseBytes = testClient.getEncoded(checkCert, rootCert, ocspServiceUrl);
         IASN1Primitive var2 = FACTORY.createASN1Primitive(ocspResponseBytes);

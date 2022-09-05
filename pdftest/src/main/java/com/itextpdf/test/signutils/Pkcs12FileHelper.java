@@ -57,6 +57,9 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
+/**
+ * This class doesn't support bouncy-castle FIPS so it shall not be used in itextcore.
+ */
 public final class Pkcs12FileHelper {
     private Pkcs12FileHelper() {
     }

@@ -44,6 +44,8 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -66,19 +68,16 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -98,8 +97,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/";
-    public static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.p12";
-    public static final char[] PASSWORD = "kspass".toCharArray();
+    public static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.pem";
+    public static final char[] PASSWORD = "testpass".toCharArray();
 
     private Certificate[] chain;
     private PrivateKey pk;
@@ -111,10 +110,10 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Before
-    public void init() throws KeyStoreException, IOException, CertificateException,
-            NoSuchAlgorithmException, UnrecoverableKeyException {
-        pk = Pkcs12FileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD, PASSWORD);
-        chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
+    public void init()
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
+        pk = PemFileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD);
+        chain = PemFileHelper.readFirstChain(KEYSTORE_PATH);
     }
 
     @Test

@@ -52,8 +52,10 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.test.ExtendedITextTest;
@@ -61,18 +63,14 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import org.junit.Assert;
@@ -84,8 +82,8 @@ import org.junit.experimental.categories.Category;
 @Category(BouncyCastleUnitTest.class)
 public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     private static final String ocspCertsSrc = "./src/test/resources/com/itextpdf/signatures/OcspClientBouncyCastleTest/";
-    private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.p12";
-    private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.p12";
+    private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.pem";
+    private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.pem";
     private static final char[] password = "testpass".toCharArray();
     private static final String ocspServiceUrl = "http://localhost:9000/demo/ocsp/ocsp-service";
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -101,9 +99,9 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
 
     @Before
     public void setUp()
-            throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
         builder = createBuilder(BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood());
-        checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(signOcspCert, password)[0];
+        checkCert = (X509Certificate) PemFileHelper.readFirstChain(signOcspCert)[0];
         rootCert = builder.getIssuerCert();
     }
 
@@ -209,8 +207,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_REVOKED),
     })
     public void ocspStatusIsRevokedTest()
-            throws UnrecoverableKeyException, CertificateException, KeyStoreException, IOException,
-            NoSuchAlgorithmException {
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
         IRevokedStatus status = BOUNCY_CASTLE_FACTORY.createRevokedStatus(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
                 BOUNCY_CASTLE_FACTORY.createOCSPResp().getSuccessful());
         TestOcspResponseBuilder responseBuilder = createBuilder(status);
@@ -225,8 +222,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN),
     })
     public void ocspStatusIsUnknownTest()
-            throws CertificateException, UnrecoverableKeyException, KeyStoreException, IOException,
-            NoSuchAlgorithmException {
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
         IUnknownStatus status = BOUNCY_CASTLE_FACTORY.createUnknownStatus();
         TestOcspResponseBuilder responseBuilder = createBuilder(status);
         OcspClientBouncyCastle ocspClientBouncyCastle = createTestOcspClient(responseBuilder);
@@ -249,9 +245,9 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     }
 
     private static TestOcspResponseBuilder createBuilder(ICertificateStatus status)
-            throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootOcspCert, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootOcspCert, password, password);
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootOcspCert)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootOcspCert, password);
         return new TestOcspResponseBuilder(caCert, caPrivateKey, status);
     }
 

@@ -84,6 +84,7 @@ import com.itextpdf.bouncycastle.asn1.x509.KeyPurposeIdBC;
 import com.itextpdf.bouncycastle.asn1.x509.KeyUsageBC;
 import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
 import com.itextpdf.bouncycastle.asn1.x509.TBSCertificateBC;
+import com.itextpdf.bouncycastle.asn1.x509.TimeBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
 import com.itextpdf.bouncycastle.cert.X509ExtensionUtilsBC;
 import com.itextpdf.bouncycastle.cert.X509v2CRLBuilderBC;
@@ -109,6 +110,9 @@ import com.itextpdf.bouncycastle.cms.CMSExceptionBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipientBC;
+import com.itextpdf.bouncycastle.openssl.PEMParserBC;
+import com.itextpdf.bouncycastle.openssl.jcajce.JcaPEMKeyConverterBC;
+import com.itextpdf.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaContentSignerBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilderBC;
@@ -183,6 +187,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -208,6 +213,9 @@ import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
+import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
+import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
+import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
@@ -225,6 +233,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -267,6 +276,7 @@ import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.TBSCertificate;
+import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
@@ -285,6 +295,9 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -1125,5 +1138,25 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public CRL createNullCrl() {
         return null;
+    }
+    
+    @Override
+    public IPEMParser createPEMParser(Reader reader) {
+        return new PEMParserBC(new PEMParser(reader));
+    }
+    
+    @Override
+    public IJceOpenSSLPKCS8DecryptorProviderBuilder createJceOpenSSLPKCS8DecryptorProviderBuilder() {
+        return new JceOpenSSLPKCS8DecryptorProviderBuilderBC(new JceOpenSSLPKCS8DecryptorProviderBuilder());
+    }
+    
+    @Override
+    public IJcaPEMKeyConverter createJcaPEMKeyConverter() {
+        return new JcaPEMKeyConverterBC(new JcaPEMKeyConverter());
+    }
+    
+    @Override
+    public ITime createTime(Date date) {
+        return new TimeBC(new Time(date));
     }
 }

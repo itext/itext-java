@@ -24,6 +24,8 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -40,19 +42,16 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/Pdf20SigningTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/Pdf20SigningTest/";
-    private static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.p12";
+    private static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.pem";
 
     private static final char[] PASSWORD = "testpass".toCharArray();
 
@@ -87,10 +86,10 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     }
 
     @Before
-    public void init() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException,
-            UnrecoverableKeyException {
-        pk = Pkcs12FileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD, PASSWORD);
-        chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
+    public void init()
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
+        pk = PemFileHelper.readFirstKey(KEYSTORE_PATH, PASSWORD);
+        chain = PemFileHelper.readFirstChain(KEYSTORE_PATH);
     }
 
     @Test
