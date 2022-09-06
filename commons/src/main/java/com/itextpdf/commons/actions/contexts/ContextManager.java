@@ -114,12 +114,12 @@ public class ContextManager {
 
     String getRecognisedNamespace(String className) {
         if (className != null) {
+            String normalizedClassName = normalize(className);
             // If both "a" and "a.b" namespaces are registered,
             // iText should consider the context of "a.b" for an "a.b" event,
             // that's why the contexts are sorted by the length of the namespace
             for (String namespace : contextMappings.keySet()) {
-                //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
-                if (className.toLowerCase().startsWith(namespace)) {
+                if (normalizedClassName.startsWith(namespace)) {
                     return namespace;
                 }
             }
@@ -129,7 +129,7 @@ public class ContextManager {
 
     void unregisterContext(Collection<String> namespaces) {
         for (String namespace : namespaces) {
-            contextMappings.remove(namespace);
+            contextMappings.remove(normalize(namespace));
         }
     }
 
@@ -143,9 +143,13 @@ public class ContextManager {
     void registerGenericContext(Collection<String> namespaces, Collection<String> products) {
         final GenericContext context = new GenericContext(products);
         for (String namespace : namespaces) {
-            //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
-            contextMappings.put(namespace.toLowerCase(), context);
+            contextMappings.put(normalize(namespace), context);
         }
+    }
+
+    private static String normalize(String namespace) {
+        // Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
+        return namespace.toLowerCase();
     }
 
     private static class LengthComparator implements Comparator<String> {
