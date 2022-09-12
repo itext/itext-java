@@ -83,7 +83,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(FACTORY.createProvider());
+        Security.addProvider(FACTORY.getProvider());
     }
 
     @Test

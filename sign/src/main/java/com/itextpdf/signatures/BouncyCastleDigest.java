@@ -43,12 +43,12 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
-
-import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 
 /**
  * Implementation for digests accessed directly from the BouncyCastle library bypassing
@@ -64,7 +64,7 @@ public class BouncyCastleDigest implements IExternalDigest {
             throw new NoSuchAlgorithmException(hashAlgorithm);
         }
         
-        Provider provider = BouncyCastleFactoryCreator.getFactory().createProvider();
+        Provider provider = BouncyCastleFactoryCreator.getFactory().getProvider();
         switch (oid) {
             // MD5
             case "1.2.840.113549.2.5":

@@ -221,6 +221,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -301,7 +302,8 @@ import org.bouncycastle.tsp.TimeStampToken;
  */
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
-    private static final String PROVIDER_NAME = new BouncyCastleFipsProvider().getName();
+    private static final Provider PROVIDER = new BouncyCastleFipsProvider();
+    private static final String PROVIDER_NAME = PROVIDER.getName();
     private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS =
             new BouncyCastleFipsTestConstantsFactory();
 
@@ -636,8 +638,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public Provider createProvider() {
-        return new BouncyCastleFipsProvider();
+    public Provider getProvider() {
+        return PROVIDER;
     }
 
     @Override

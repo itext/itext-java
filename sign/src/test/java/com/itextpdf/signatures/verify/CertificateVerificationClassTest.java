@@ -93,7 +93,7 @@ import org.junit.experimental.categories.Category;
 public class CertificateVerificationClassTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final Provider PROVIDER = FACTORY.createProvider();
+    private static final Provider PROVIDER = FACTORY.getProvider();
 
     // Such messageTemplate is equal to any log message. This is required for porting reasons.
     private static final String ANY_LOG_MESSAGE = "{0}";

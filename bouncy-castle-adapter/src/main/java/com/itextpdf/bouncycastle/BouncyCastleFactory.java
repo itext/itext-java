@@ -299,7 +299,8 @@ import org.bouncycastle.tsp.TimeStampToken;
  */
 public class BouncyCastleFactory implements IBouncyCastleFactory {
 
-    private static final String PROVIDER_NAME = new BouncyCastleProvider().getName();
+    private static final Provider PROVIDER = new BouncyCastleProvider();
+    private static final String PROVIDER_NAME = PROVIDER.getName();
     private static final BouncyCastleTestConstantsFactory BOUNCY_CASTLE_TEST_CONSTANTS =
             new BouncyCastleTestConstantsFactory();
 
@@ -626,8 +627,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public Provider createProvider() {
-        return new BouncyCastleProvider();
+    public Provider getProvider() {
+        return PROVIDER;
     }
 
     @Override

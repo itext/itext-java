@@ -136,7 +136,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
-        Security.addProvider(FACTORY.createProvider());
+        Security.addProvider(FACTORY.getProvider());
     }
 
     @Test

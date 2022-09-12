@@ -255,8 +255,7 @@ final class SignUtils {
     }
 
     static Collection<Certificate> readAllCerts(byte[] contentsKey) throws CertificateException {
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", FACTORY.createProvider());
-        return certificateFactory.generateCertificates(new ByteArrayInputStream(contentsKey))
+        return CertificateFactory.getInstance("X509").generateCertificates(new ByteArrayInputStream(contentsKey))
                 .stream().map((cert) -> (Certificate) cert).collect(Collectors.toList());
     }
 

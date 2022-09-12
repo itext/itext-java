@@ -76,7 +76,7 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     @BeforeClass
     public static void before() throws KeyStoreException, IOException, CertificateException,
             NoSuchAlgorithmException {
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
     }

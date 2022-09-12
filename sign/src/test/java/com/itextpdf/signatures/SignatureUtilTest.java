@@ -70,7 +70,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
 
     @Test

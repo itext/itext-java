@@ -76,7 +76,7 @@ public class AESCipher {
     
     static {
         try {
-            cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING, BOUNCY_CASTLE_FACTORY.createProvider());
+            cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }

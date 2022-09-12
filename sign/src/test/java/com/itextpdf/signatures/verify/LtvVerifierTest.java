@@ -73,7 +73,7 @@ public class LtvVerifierTest extends ExtendedITextTest {
     
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final Provider PROVIDER = FACTORY.createProvider();
+    private static final Provider PROVIDER = FACTORY.getProvider();
 
     @BeforeClass
     public static void before() {
@@ -101,7 +101,7 @@ public class LtvVerifierTest extends ExtendedITextTest {
     public void validLtvDocTest02() throws IOException, GeneralSecurityException {
         String ltvTsFileName = sourceFolder + "ltvDoc.pdf";
 
-        Security.addProvider(FACTORY.createProvider());
+        Security.addProvider(FACTORY.getProvider());
 
         LtvVerifier verifier =
                 new LtvVerifier(new PdfDocument(new PdfReader(ltvTsFileName)), FACTORY.getProviderName());

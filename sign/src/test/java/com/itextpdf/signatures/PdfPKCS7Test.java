@@ -85,7 +85,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     public static void init()
             throws KeyStoreException, IOException, CertificateException,
             NoSuchAlgorithmException, UnrecoverableKeyException {
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
 
         pk = Pkcs12FileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.p12", PASSWORD, PASSWORD);
         chain = Pkcs12FileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.p12", PASSWORD);

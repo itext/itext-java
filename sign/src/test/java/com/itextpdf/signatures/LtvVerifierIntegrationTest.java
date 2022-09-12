@@ -49,7 +49,7 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
 
     @Test

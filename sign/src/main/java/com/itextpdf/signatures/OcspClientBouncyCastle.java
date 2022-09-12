@@ -167,7 +167,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
     private static IOCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
             throws AbstractOCSPException, IOException, CertificateEncodingException, AbstractOperatorCreationException {
         //Add provider BC
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
 
         // Generate the id for the certificate we are looking for
         ICertificateID id = SignUtils.generateCertificateId(issuerCert, serialNumber,

@@ -61,7 +61,7 @@ public class CertificateSupportedCriticalExtensionsTest extends ExtendedITextTes
 
     @BeforeClass
     public static void beforeClass() {
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
 
     @Test

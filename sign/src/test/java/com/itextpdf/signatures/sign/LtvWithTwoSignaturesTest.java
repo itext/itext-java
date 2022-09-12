@@ -81,7 +81,7 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(FACTORY.createProvider());
+        Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(destinationFolder);
     }
 

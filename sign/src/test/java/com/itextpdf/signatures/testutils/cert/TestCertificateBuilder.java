@@ -144,7 +144,7 @@ public class TestCertificateBuilder {
 
         // -------------------------------------
 
-        return FACTORY.createJcaX509CertificateConverter().setProvider(FACTORY.createProvider())
+        return FACTORY.createJcaX509CertificateConverter().setProvider(FACTORY.getProvider())
                 .getCertificate(certBuilder.build(contentSigner));
     }
 

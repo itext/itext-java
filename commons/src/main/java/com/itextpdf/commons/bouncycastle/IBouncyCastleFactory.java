@@ -245,7 +245,7 @@ public interface IBouncyCastleFactory {
 
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable);
 
-    Provider createProvider();
+    Provider getProvider();
 
     String getProviderName();
 

@@ -73,7 +73,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() throws IOException {
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.createProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF));
         TEST_VERIFICATION = new LtvVerification(pdfDoc);
     }
