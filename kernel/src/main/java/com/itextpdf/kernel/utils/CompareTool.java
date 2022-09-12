@@ -810,8 +810,8 @@ public class CompareTool {
                 PdfReader readerCmp = new PdfReader(cmpPdf, getCmpReaderProperties());
                 PdfDocument cmpDocument = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
-            String[] cmpInfo = convertInfo(cmpDocument.getDocumentInfo());
-            String[] outInfo = convertInfo(outDocument.getDocumentInfo());
+            String[] cmpInfo = convertDocInfoToStrings(cmpDocument.getDocumentInfo());
+            String[] outInfo = convertDocInfoToStrings(outDocument.getDocumentInfo());
             for (int i = 0; i < cmpInfo.length; ++i) {
                 if (!cmpInfo[i].equals(outInfo[i])) {
                     message = MessageFormatUtil.format("Document info fail. Expected: \"{0}\", actual: \"{1}\"", cmpInfo[i], outInfo[i]);
@@ -926,7 +926,16 @@ public class CompareTool {
         return message;
     }
 
-    String[] convertInfo(PdfDocumentInfo info) {
+    /**
+     * Converts document info into a string array.
+     * <p>
+     * Converts document info into a string array. It can be used to compare PdfDocumentInfo later on.
+     * Default implementation retrieves title, author, subject, keywords and producer.
+     *
+     * @param info an instance of PdfDocumentInfo to be converted.
+     * @return String array with all the document info tester is interested in.
+     */
+    protected String[] convertDocInfoToStrings(PdfDocumentInfo info) {
         String[] convertedInfo = new String[]{"", "", "", "", ""};
         String infoValue = info.getTitle();
         if (infoValue != null)
@@ -1813,7 +1822,7 @@ public class CompareTool {
         private String currentOutPdfName;
 
         public PngFileFilter (String currentOutPdfName) {
-        this.currentOutPdfName = currentOutPdfName;
+            this.currentOutPdfName = currentOutPdfName;
         }
 
         public boolean accept(File pathname) {
