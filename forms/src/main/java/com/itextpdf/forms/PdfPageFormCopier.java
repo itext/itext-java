@@ -113,6 +113,10 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         List<PdfAnnotation> annots = toPage.getAnnotations();
 
         for (PdfAnnotation annot : annots) {
+            if (annot.getSubtype() == null) {
+                continue;
+            }
+   
             if (!annot.getSubtype().equals(PdfName.Widget)) {
                 continue;
             }
