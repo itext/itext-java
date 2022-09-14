@@ -54,7 +54,7 @@ public class PdfAXMPUtil {
                     "          <pdfaExtension:schemas>\n" +
                     "            <rdf:Bag>\n" +
                     "              <rdf:li rdf:parseType=\"Resource\">\n" +
-                    "                <pdfaSchema:namespaceURI>http://www.aiim.org/pdfua/ns/id/</pdfaSchema:namespaceURI>\n" +
+                    "                <pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>\n" +
                     "                <pdfaSchema:prefix>pdfuaid</pdfaSchema:prefix>\n" +
                     "                <pdfaSchema:schema>PDF/UA identification schema</pdfaSchema:schema>\n" +
                     "                <pdfaSchema:property>\n" +
