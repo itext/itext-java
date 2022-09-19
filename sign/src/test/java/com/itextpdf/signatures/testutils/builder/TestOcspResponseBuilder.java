@@ -121,7 +121,7 @@ public class TestOcspResponseBuilder {
         IReq[] requestList = ocspRequest.getRequestList();
 
         IExtension extNonce = ocspRequest.getExtension(FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNonce());
-        if (extNonce != null) {
+        if (!FACTORY.isNullExtension(extNonce)) {
             responseBuilder.setResponseExtensions(FACTORY.createExtensions(extNonce));
         }
 

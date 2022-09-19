@@ -440,4 +440,6 @@ public interface IBouncyCastleFactory {
     IJcaPEMKeyConverter createJcaPEMKeyConverter();
 
     ITime createTime(Date date);
+
+    boolean isNullExtension(IExtension extNonce);
 }

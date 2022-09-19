@@ -1139,24 +1139,29 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public CRL createNullCrl() {
         return null;
     }
-    
+
     @Override
     public IPEMParser createPEMParser(Reader reader) {
         return new PEMParserBC(new PEMParser(reader));
     }
-    
+
     @Override
     public IJceOpenSSLPKCS8DecryptorProviderBuilder createJceOpenSSLPKCS8DecryptorProviderBuilder() {
         return new JceOpenSSLPKCS8DecryptorProviderBuilderBC(new JceOpenSSLPKCS8DecryptorProviderBuilder());
     }
-    
+
     @Override
     public IJcaPEMKeyConverter createJcaPEMKeyConverter() {
         return new JcaPEMKeyConverterBC(new JcaPEMKeyConverter());
     }
-    
+
     @Override
     public ITime createTime(Date date) {
         return new TimeBC(new Time(date));
+    }
+
+    @Override
+    public boolean isNullExtension(IExtension ext) {
+        return ((ExtensionBC) ext).getExtension() == null;
     }
 }

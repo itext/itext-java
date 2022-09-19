@@ -1169,4 +1169,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public ITime createTime(Date date) {
         return new TimeBCFips(new Time(date));
     }
+
+    @Override
+    public boolean isNullExtension(IExtension ext) {
+        return ((ExtensionBCFips) ext).getExtension() == null;
+    }
 }
