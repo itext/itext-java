@@ -341,6 +341,26 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     @Override
+    public void checkSignature(PdfDictionary signatureDict) {
+        if (isAlreadyChecked(signatureDict)) {
+            return;
+        }
+
+        PdfArray references = signatureDict.getAsArray(PdfName.Reference);
+        if (references != null) {
+            for (int i = 0; i < references.size(); i++) {
+                PdfDictionary referenceDict = references.getAsDictionary(i);
+                if (referenceDict.containsKey(PdfName.DigestLocation)
+                        || referenceDict.containsKey(PdfName.DigestMethod)
+                        || referenceDict.containsKey(PdfName.DigestValue)) {
+                    throw new PdfAConformanceException(
+                            PdfAConformanceException.SIGNATURE_REFERENCES_DICTIONARY_SHALL_NOT_CONTAIN_DIGESTLOCATION_DIGESTMETHOD_DIGESTVALUE);
+                }
+            }
+        }
+    }
+
+    @Override
     protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
         String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
         // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
@@ -504,17 +524,7 @@ public class PdfA2Checker extends PdfA1Checker {
                 if (PdfName.DocMDP.equals(dictKey)) {
                     PdfDictionary signatureDict = permissions.getAsDictionary(PdfName.DocMDP);
                     if (signatureDict != null) {
-                        PdfArray references = signatureDict.getAsArray(PdfName.Reference);
-                        if (references != null) {
-                            for (int i = 0; i < references.size(); i++) {
-                                PdfDictionary referenceDict = references.getAsDictionary(i);
-                                if (referenceDict.containsKey(PdfName.DigestLocation)
-                                        || referenceDict.containsKey(PdfName.DigestMethod)
-                                        || referenceDict.containsKey(PdfName.DigestValue)) {
-                                    throw new PdfAConformanceException(PdfAConformanceException.SIGNATURE_REFERENCES_DICTIONARY_SHALL_NOT_CONTAIN_DIGESTLOCATION_DIGESTMETHOD_DIGESTVALUE);
-                                }
-                            }
-                        }
+                        checkSignature(signatureDict);
                     }
                 } else if (PdfName.UR3.equals(dictKey)) {
                 } else {

@@ -2291,6 +2291,14 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getPdfAConformanceLevelPdfDocumentNotReadTest() throws IOException {
+        PdfReader getModifiedFileIdReader = pdfDocumentNotReadTestInit();
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> getModifiedFileIdReader.getPdfAConformanceLevel());
+        Assert.assertEquals(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET, e.getMessage());
+    }
+
+    @Test
     public void xrefStreamPointsItselfTest() throws IOException {
         String fileName = SOURCE_FOLDER + "xrefStreamPointsItself.pdf";
 

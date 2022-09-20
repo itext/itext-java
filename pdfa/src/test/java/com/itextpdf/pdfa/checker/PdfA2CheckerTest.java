@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
@@ -60,6 +61,7 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -382,5 +384,46 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> {
             pdfA2Checker.checkColor(color, new PdfDictionary(), true, null);
         });
+    }
+
+    @Test
+    public void checkSignatureTest() {
+        PdfDictionary signatureDict = createSignatureDict();
+        pdfA2Checker.checkSignature(signatureDict);
+        Assert.assertTrue(pdfA2Checker.objectIsChecked(signatureDict));
+    }
+
+    @Test
+    public void checkSignatureDigestMethodTest() {
+        PdfDictionary signatureDict = createSignatureDict();
+        PdfArray types = (PdfArray) signatureDict.get(PdfName.Reference);
+        PdfDictionary reference = (PdfDictionary) types.get(0);
+        PdfArray digestMethod = new PdfArray();
+        digestMethod.add(new PdfName("SHA256"));
+        reference.put(PdfName.DigestMethod, digestMethod);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkSignature(signatureDict));
+        Assert.assertEquals(PdfAConformanceException.SIGNATURE_REFERENCES_DICTIONARY_SHALL_NOT_CONTAIN_DIGESTLOCATION_DIGESTMETHOD_DIGESTVALUE,
+                e.getMessage());
+    }
+
+    private static PdfDictionary createSignatureDict() {
+        PdfDictionary signatureDict = new PdfDictionary();
+
+        PdfDictionary reference = new PdfDictionary();
+        PdfDictionary transformParams = new PdfDictionary();
+        transformParams.put(PdfName.P, new PdfNumber(1));
+        transformParams.put(PdfName.V, new PdfName("1.2"));
+        transformParams.put(PdfName.Type, PdfName.TransformParams);
+        reference.put(PdfName.TransformMethod, PdfName.DocMDP);
+        reference.put(PdfName.Type, PdfName.SigRef);
+        reference.put(PdfName.TransformParams, transformParams);
+
+        PdfArray types = new PdfArray();
+        types.add(reference);
+        signatureDict.put(PdfName.Reference, types);
+
+        return signatureDict;
     }
 }

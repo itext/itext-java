@@ -47,7 +47,6 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
@@ -57,7 +56,7 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
@@ -76,11 +75,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import org.bouncycastle.asn1.esf.SignaturePolicyIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -271,12 +268,7 @@ public class PdfSigner {
     }
 
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel();
-        if (null == conformanceLevel) {
-            return new PdfDocument(reader, writer, properties);
-        } else {
-            return new PdfADocument(reader, writer, properties);
-        }
+        return new PdfAAgnosticPdfDocument(reader, writer, properties);
     }
 
     /**
@@ -909,6 +901,7 @@ public class PdfSigner {
             document.getCatalog().put(PdfName.Perms, docmdp);
             document.getCatalog().setModified();
         }
+        document.checkIsoConformance(cryptoDictionary.getPdfObject(), IsoKey.SIGNATURE);
         cryptoDictionary.getPdfObject().flush(false);
         document.close();
 

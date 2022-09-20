@@ -138,7 +138,7 @@ public abstract class PdfAChecker {
     /**
      * Contains some objects that are already checked.
      * NOTE: Not all objects that were checked are stored in that set. This set is used for avoiding double checks for
-     * actions, xObjects and page objects; and for letting those objects to be manually flushed.
+     * actions, signatures, xObjects and page objects; and for letting those objects to be manually flushed.
      *
      * Use this mechanism carefully: objects that are able to be changed (or at least if object's properties
      * that shall be checked are able to be changed) shouldn't be marked as checked if they are not to be
@@ -282,6 +282,15 @@ public abstract class PdfAChecker {
         // We don't check tag structure as there are no strict constraints,
         // so we just mark tag structure elements to be able to flush them
         checkedObjects.add(obj);
+    }
+
+    /**
+     * This method checks compliance of the signature dictionary
+     *
+     * @param signatureDict a {@link PdfDictionary} containing the signature.
+     */
+    public void checkSignature(PdfDictionary signatureDict) {
+        checkedObjects.add(signatureDict);
     }
 
     /**

@@ -109,4 +109,11 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
         // was or wasn't thrown. Successful scenario is tested here therefore
         // no assertion is provided
     }
+
+    @Test
+    public void checkSignatureTest() {
+        PdfDictionary dict = new PdfDictionary();
+        pdfA1Checker.checkSignature(dict);
+        Assert.assertTrue(pdfA1Checker.objectIsChecked(dict));
+    }
 }
