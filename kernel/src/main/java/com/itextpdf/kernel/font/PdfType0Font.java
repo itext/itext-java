@@ -224,6 +224,13 @@ public class PdfType0Font extends PdfFont {
         subset = false;
     }
 
+    /**
+     * Get Unicode mapping name from ordering.
+     * @param ordering the text ordering to base to unicode mapping on
+     * @param horizontal identifies whether the encoding is horizontal or vertical
+     *
+     * @return Unicode mapping name
+     */
     public static String getUniMapFromOrdering(String ordering, boolean horizontal) {
         String result = null;
         switch (ordering) {
@@ -254,7 +261,9 @@ public class PdfType0Font extends PdfFont {
     /**
      * Get Unicode mapping name from ordering.
      * @param ordering the text ordering to base to unicode mapping on
+     *
      * @return Unicode mapping name
+     *
      * @deprecated Replaced by {@link #getUniMapFromOrdering(String, boolean)}
      * for proper handling of IDENTITY_V encoding.
      */
