@@ -26,14 +26,12 @@ import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -111,5 +109,23 @@ public class PdfType0FontTest extends ExtendedITextTest {
         List<Glyph> glyphs = new ArrayList<>();
         type0Font.appendGlyphs(textWithThreeSurrogatePairs, 0, textWithThreeSurrogatePairs.length() - 1, glyphs);
         Assert.assertEquals(3, glyphs.size());
+    }
+
+    @Test
+    public void getUniMapFromOrderingTest() {
+        Assert.assertEquals("UniCNS-UTF16-H", PdfType0Font.getUniMapFromOrdering("CNS1", true));
+        Assert.assertEquals("UniCNS-UTF16-V", PdfType0Font.getUniMapFromOrdering("CNS1", false));
+
+        Assert.assertEquals("UniJIS-UTF16-H", PdfType0Font.getUniMapFromOrdering("Japan1", true));
+        Assert.assertEquals("UniJIS-UTF16-V", PdfType0Font.getUniMapFromOrdering("Japan1", false));
+
+        Assert.assertEquals("UniKS-UTF16-H", PdfType0Font.getUniMapFromOrdering("Korea1", true));
+        Assert.assertEquals("UniKS-UTF16-V", PdfType0Font.getUniMapFromOrdering("Korea1", false));
+
+        Assert.assertEquals("UniGB-UTF16-H", PdfType0Font.getUniMapFromOrdering("GB1", true));
+        Assert.assertEquals("UniGB-UTF16-V", PdfType0Font.getUniMapFromOrdering("GB1", false));
+
+        Assert.assertEquals("Identity-H", PdfType0Font.getUniMapFromOrdering("Identity", true));
+        Assert.assertEquals("Identity-V", PdfType0Font.getUniMapFromOrdering("Identity", false));
     }
 }
