@@ -165,12 +165,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
+    // Android-Ignore (TODO DEVSIX-7079 increase memory available for virtual machine while test running)
     public void testSeparationCSWithICCBasedAsAlternative() throws Exception {
         testFile("separationCSWithICCBasedAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
         Assert.assertThrows(UnsupportedOperationException.class, () ->
         {
@@ -185,12 +187,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceRGBAsAlternative() throws Exception {
         testFile("separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
+    // Android-Ignore (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceRGBAsAlternative2() throws Exception {
         testFile("spotColorImagesSmall.pdf", "Im1", "png");
     }

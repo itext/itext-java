@@ -51,6 +51,14 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/JsonUtilTest/";
 
+    private static boolean isRunOnJava = false;
+
+    // Android-Excise-Start
+    static {
+        isRunOnJava = true;
+    }
+    // Android-Excise-End
+
     @Test
     public void utf8CharsetStringTest() {
         Assert.assertEquals("\"©\"", JsonUtil.serializeToString("©"));
@@ -77,9 +85,15 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     @Test
     public void serializeInstanceWithEnumStreamTest() throws IOException {
-        String path = SOURCE_FOLDER + "classWithEnum.json";
+        String cmp;
+        if (isRunOnJava) {
+            cmp = SOURCE_FOLDER + "classWithEnum.json";
+        } else {
+            // Test is run on Android, so field order will be different from Java.
+            cmp = SOURCE_FOLDER + "classWithEnumAndroid.json";
+        }
 
-        try (InputStream inputStream = FileUtil.getInputStreamForFile(path);
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(cmp);
                 ByteArrayOutputStream baos = convertInputStreamToOutput(inputStream);
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToStream(serializationResult, createClassWithEnumObject());
@@ -102,9 +116,15 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     @Test
     public void serializeToMinimalInstanceWithEnumStreamTest() throws IOException {
-        String path = SOURCE_FOLDER + "minimalClassWithEnum.json";
+        String cmp;
+        if (isRunOnJava) {
+            cmp = SOURCE_FOLDER + "minimalClassWithEnum.json";
+        } else {
+            // Test is run on Android, so field order will be different from Java.
+            cmp = SOURCE_FOLDER + "minimalClassWithEnumAndroid.json";
+        }
 
-        try (InputStream inputStream = FileUtil.getInputStreamForFile(path);
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(cmp);
                 ByteArrayOutputStream baos = convertInputStreamToOutput(inputStream);
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToMinimalStream(serializationResult, createClassWithEnumObject());
@@ -175,9 +195,15 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     @Test
     public void serializeComplexStructureStreamTest() throws IOException {
-        String path = SOURCE_FOLDER + "complexStructure.json";
+        String cmp;
+        if (isRunOnJava) {
+            cmp = SOURCE_FOLDER + "complexStructure.json";
+        } else {
+            // Test is run on Android, so field order will be different from Java.
+            cmp = SOURCE_FOLDER + "complexStructureAndroid.json";
+        }
 
-        try (InputStream inputStream = FileUtil.getInputStreamForFile(path);
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(cmp);
                 ByteArrayOutputStream baos = convertInputStreamToOutput(inputStream);
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToStream(serializationResult, createComplexStructureObject());
@@ -200,9 +226,15 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     @Test
     public void serializeToMinimalComplexStructureStreamTest() throws IOException {
-        String path = SOURCE_FOLDER + "minimalComplexStructure.json";
+        String cmp;
+        if (isRunOnJava) {
+            cmp = SOURCE_FOLDER + "minimalComplexStructure.json";
+        } else {
+            // Test is run on Android, so field order will be different from Java.
+            cmp = SOURCE_FOLDER + "minimalComplexStructureAndroid.json";
+        }
 
-        try (InputStream inputStream = FileUtil.getInputStreamForFile(path);
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(cmp);
                 ByteArrayOutputStream baos = convertInputStreamToOutput(inputStream);
                 ByteArrayOutputStream serializationResult = new ByteArrayOutputStream()) {
             JsonUtil.serializeToMinimalStream(serializationResult, createComplexStructureObject());

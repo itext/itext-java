@@ -43,7 +43,7 @@
 package com.itextpdf.test;
 
 import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.pdfa.VeraPdfValidator;  // Android-Skip
 import com.itextpdf.test.utils.FileUtil;
 
 import java.io.IOException;
@@ -72,8 +72,8 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
         FileUtil.copy(SOURCE_FOLDER + fileNameWithWarnings, DESTINATION_FOLDER + fileNameWithWarnings);
         FileUtil.copy(SOURCE_FOLDER + fileNameWithoutWarnings, DESTINATION_FOLDER + fileNameWithoutWarnings);
 
-        Assert.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings));
+        Assert.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings)); // Android-Skip
         //We check that the logs are empty after the first check
-        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings));
+        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings)); // Android-Skip
     }
 }
