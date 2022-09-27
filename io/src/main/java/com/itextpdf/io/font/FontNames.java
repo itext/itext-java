@@ -242,6 +242,6 @@ public class FontNames {
     @Override
     public String toString() {
         String name = getFontName();
-        return name.length() > 0 ? name : super.toString();
+        return name != null && name.length() > 0 ? name : super.toString();
     }
 }
