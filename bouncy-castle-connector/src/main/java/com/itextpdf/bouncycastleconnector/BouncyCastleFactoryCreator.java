@@ -26,31 +26,47 @@ import com.itextpdf.bouncycastle.BouncyCastleFactory;
 import com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant;
 import com.itextpdf.bouncycastlefips.BouncyCastleFipsFactory;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.utils.SystemUtil;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides the ability to create {@link IBouncyCastleFactory} instance
- * to create bouncy-castle or bouncy-castle FIPS classes instances. User chooses which
- * bouncy-castle will be used by specifying dependency, so either bouncy-castle or
- * bouncy-castle-fips dependency must be added in order to use this class.
+ * This class provides the ability to create {@link IBouncyCastleFactory} instance.
+ * User chooses which bouncy-castle will be created by specifying dependency.
+ * Bouncy-castle dependency must be added in order to use this class.
  */
 public final class BouncyCastleFactoryCreator {
 
     private static IBouncyCastleFactory factory;
+    
+    private static Map<String, Supplier<IBouncyCastleFactory>> factories = new LinkedHashMap<>();
+    
+    private static final String FACTORY_ENVIRONMENT_VARIABLE_NAME = "ITEXT_BOUNCY_CASTLE_FACTORY_NAME";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BouncyCastleFactoryCreator.class);
 
     static {
-        try {
-            factory = new BouncyCastleFactory();
-        } catch (NoClassDefFoundError error) {
-            try {
-                factory = new BouncyCastleFipsFactory();
-            } catch (NoClassDefFoundError ignored) {
-                LOGGER.error(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+        populateFactoriesMap();
+        
+        String factoryName = SystemUtil.getPropertyOrEnvironmentVariable(FACTORY_ENVIRONMENT_VARIABLE_NAME);
+        Supplier<IBouncyCastleFactory> systemVariableFactoryCreator = factories.get(factoryName);
+        if (systemVariableFactoryCreator != null) {
+            tryCreateFactory(systemVariableFactoryCreator);
+        }
+        
+        for (Supplier<IBouncyCastleFactory> factorySupplier : factories.values()) {
+            if (factory != null) {
+                break;
             }
+            tryCreateFactory(factorySupplier);
+        }
+        
+        if (factory == null) {
+            LOGGER.error(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
         }
     }
 
@@ -59,12 +75,36 @@ public final class BouncyCastleFactoryCreator {
     }
 
     /**
-     * Returns {@link IBouncyCastleFactory} instance to create bouncy-castle or bouncy-castle FIPS
-     * classes instances depending on specified dependency.
+     * Sets {@link IBouncyCastleFactory} instance, which will be used for bouncy-castle classes creation.
+     * 
+     * @param newFactory {@link IBouncyCastleFactory} instance to be set.
+     */
+    public static void setFactory(IBouncyCastleFactory newFactory) {
+        factory = newFactory;
+    }
+
+    /**
+     * Returns {@link IBouncyCastleFactory} instance for bouncy-castle classes creation.
      *
-     * @return {@link IBouncyCastleFactory} appropriate implementation.
+     * @return {@link IBouncyCastleFactory} implementation.
      */
     public static IBouncyCastleFactory getFactory() {
         return factory;
+    }
+    
+    private static void tryCreateFactory(Supplier<IBouncyCastleFactory> factoryCreator) {
+        try {
+            createFactory(factoryCreator);
+        } catch (NoClassDefFoundError ignored) {
+        }
+    }
+    
+    private static void createFactory(Supplier<IBouncyCastleFactory> factoryCreator) {
+        factory = factoryCreator.get();
+    }
+
+    private static void populateFactoriesMap() {
+        factories.put("bouncy-castle", () -> new BouncyCastleFactory());
+        factories.put("bouncy-castle-fips", () -> new BouncyCastleFipsFactory());
     }
 }
