@@ -149,7 +149,6 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
     public void copySameLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
         String cmpFilePath = SOURCE_FOLDER + "cmp_copySameLinksWithGoToSmartMode.pdf";
         String outFilePath = DESTINATION_FOLDER + "copySameLinksWithGoToSmartMode.pdf";
@@ -160,7 +159,6 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
     public void copyDiffDestLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
         String cmpFilePath = SOURCE_FOLDER + "cmp_copyDiffDestLinksWithGoToSmartMode.pdf";
         String outFilePath = DESTINATION_FOLDER + "copyDiffDestLinksWithGoToSmartMode.pdf";
@@ -171,7 +169,6 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-4238 Update cmp file after the ticket DEVSIX-4238 will be resolved
     public void copyDiffDisplayLinksWithGoToSmartModeTest() throws IOException, InterruptedException {
         String cmpFilePath = SOURCE_FOLDER + "cmp_copyDiffDisplayLinksWithGoToSmartMode.pdf";
         String outFilePath = DESTINATION_FOLDER + "copyDiffDisplayLinksWithGoToSmartMode.pdf";
@@ -182,7 +179,6 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-6090 (update cmp file after fixing the issue)
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)})
     public void copyPagesWithWidgetAnnotGoToActionExplicitDestTest() throws IOException, InterruptedException {
@@ -194,7 +190,6 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-6090 (update cmp file after fixing the issue)
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)})
     public void copyPagesWithWidgetAnnotGoToActionNamedDestTest() throws IOException, InterruptedException {
@@ -206,7 +201,6 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-6090 (update cmp file after fixing the issue)
     public void copyPagesWithScreenAnnotGoToActionExplicitDestTest() throws IOException, InterruptedException {
         String srcFilePath = SOURCE_FOLDER + "pageToCopyWithScreenAnnotGoToActionExplicitDest.pdf";
         String cmpFilePath = SOURCE_FOLDER + "cmp_copyPagesWithScreenAnnotGoToActionExplicitDest.pdf";
