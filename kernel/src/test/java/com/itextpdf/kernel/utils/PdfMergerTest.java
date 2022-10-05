@@ -538,6 +538,8 @@ public class PdfMergerTest extends ExtendedITextTest {
         }
 
         Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        // We have to compare visually also because compareByContent doesn't catch the differences in OCGs with the same names
+        Assert.assertNull(new CompareTool().compareVisually(mergedDocument, cmpDocument, destinationFolder, "diff_"));
     }
 
     private void mergePdfs(List<File> sources, String destination) throws IOException {
