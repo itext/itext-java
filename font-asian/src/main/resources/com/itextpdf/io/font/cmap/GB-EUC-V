@@ -5,10 +5,9 @@
 %%IncludeResource: CMap (GB-EUC-H)
 %%BeginResource: CMap (GB-EUC-V)
 %%Title: (GB-EUC-V Adobe GB1 0)
-%%Version: 9.003
+%%Version: 9.006
 %%Copyright: -----------------------------------------------------------
-%%Copyright: Copyright 1990-2009 Adobe Systems Incorporated.
-%%Copyright: All rights reserved.
+%%Copyright: Copyright 1990-2019 Adobe. All rights reserved.
 %%Copyright:
 %%Copyright: Redistribution and use in source and binary forms, with or
 %%Copyright: without modification, are permitted provided that the
@@ -23,10 +22,9 @@
 %%Copyright: disclaimer in the documentation and/or other materials
 %%Copyright: provided with the distribution. 
 %%Copyright:
-%%Copyright: Neither the name of Adobe Systems Incorporated nor the names
-%%Copyright: of its contributors may be used to endorse or promote
-%%Copyright: products derived from this software without specific prior
-%%Copyright: written permission. 
+%%Copyright: Neither the name of Adobe nor the names of its contributors
+%%Copyright: may be used to endorse or promote products derived from
+%%Copyright: this software without specific prior written permission.
 %%Copyright:
 %%Copyright: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 %%Copyright: CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -59,7 +57,7 @@ begincmap
 end def
 
 /CMapName /GB-EUC-V def
-/CMapVersion 9.003 def
+/CMapVersion 9.006 def
 /CMapType 1 def
 
 /UIDOffset 310 def

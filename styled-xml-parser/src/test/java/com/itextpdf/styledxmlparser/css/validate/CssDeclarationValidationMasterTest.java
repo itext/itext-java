@@ -24,6 +24,8 @@ package com.itextpdf.styledxmlparser.css.validate;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.validate.impl.CssDefaultValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.CssDeviceCmykAwareValidator;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
@@ -369,5 +371,15 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
                 new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "space_evenly")));
         Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "flex-start left")));
+    }
+
+    @Test
+    public void changeValidatorTest() {
+        try {
+            CssDeclarationValidationMaster.setValidator(new CssDeviceCmykAwareValidator());
+            Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(CommonCssConstants.COLOR, "device-cmyk(0, 100%, 70%, 0)")));
+        } finally {
+            CssDeclarationValidationMaster.setValidator(new CssDefaultValidator());
+        }
     }
 }

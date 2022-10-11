@@ -44,6 +44,8 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -135,7 +137,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("structElemTest01.pdf", "cmp_structElemTest01.pdf", "diff_structElem_01_");
+        compareResult("structElemTest01.pdf", "cmp_structElemTest01.pdf");
     }
 
     @Test
@@ -167,7 +169,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("structElemTest02.pdf", "cmp_structElemTest02.pdf", "diff_structElem_02_");
+        compareResult("structElemTest02.pdf", "cmp_structElemTest02.pdf");
     }
 
     @Test
@@ -289,7 +291,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("structElemTest04.pdf", "cmp_structElemTest04.pdf", "diff_structElem_04_");
+        compareResult("structElemTest04.pdf", "cmp_structElemTest04.pdf");
     }
 
     @Test
@@ -330,7 +332,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("structElemTest05.pdf", "cmp_structElemTest05.pdf", "diff_structElem_05_");
+        compareResult("structElemTest05.pdf", "cmp_structElemTest05.pdf");
     }
 
     @Test
@@ -359,7 +361,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("structElemTest06.pdf", "cmp_structElemTest06.pdf", "diff_structElem_06_");
+        compareResult("structElemTest06.pdf", "cmp_structElemTest06.pdf");
     }
 
     @Test
@@ -401,7 +403,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("structElemTest07.pdf", "cmp_structElemTest07.pdf", "diff_structElem_07_");
+        compareResult("structElemTest07.pdf", "cmp_structElemTest07.pdf");
     }
 
     @Test
@@ -437,7 +439,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        compareResult("structElemTest08.pdf", "cmp_structElemTest08.pdf", "diff_structElem_08_");
+        compareResult("structElemTest08.pdf", "cmp_structElemTest08.pdf");
     }
 
     @Test
@@ -450,7 +452,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document.removePage(1);
         document.close();
 
-        compareResult("structElemTest09.pdf", "cmp_structElemTest09.pdf", "diff_structElem_09_");
+        compareResult("structElemTest09.pdf", "cmp_structElemTest09.pdf");
     }
 
     @Test
@@ -475,7 +477,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        compareResult("structTreeCopyingTest01.pdf", "cmp_structTreeCopyingTest01.pdf", "diff_copying_01_");
+        compareResult("structTreeCopyingTest01.pdf", "cmp_structTreeCopyingTest01.pdf");
     }
 
     @Test
@@ -495,7 +497,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        compareResult("structTreeCopyingTest02.pdf", "cmp_structTreeCopyingTest02.pdf", "diff_copying_02_");
+        compareResult("structTreeCopyingTest02.pdf", "cmp_structTreeCopyingTest02.pdf");
     }
 
     @Test
@@ -539,7 +541,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        compareResult("structTreeCopyingTest04.pdf", "cmp_structTreeCopyingTest04.pdf", "diff_copying_04_");
+        compareResult("structTreeCopyingTest04.pdf", "cmp_structTreeCopyingTest04.pdf");
     }
 
     @Test
@@ -557,7 +559,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document1.close();
         document2.close();
 
-        compareResult("structTreeCopyingTest05.pdf", "cmp_structTreeCopyingTest05.pdf", "diff_copying_05_");
+        compareResult("structTreeCopyingTest05.pdf", "cmp_structTreeCopyingTest05.pdf");
     }
 
     @Test
@@ -576,7 +578,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         destination.close();
         source.close();
 
-        compareResult("structTreeCopyingTest06.pdf", "cmp_structTreeCopyingTest06.pdf", "diff_copying_06_");
+        compareResult("structTreeCopyingTest06.pdf", "cmp_structTreeCopyingTest06.pdf");
     }
 
     @Test
@@ -611,7 +613,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document.close();
         document1.close();
 
-        compareResult("structTreeCopyingTest07.pdf", "cmp_structTreeCopyingTest07.pdf", "diff_copying_07_");
+        compareResult("structTreeCopyingTest07.pdf", "cmp_structTreeCopyingTest07.pdf");
     }
 
     @Test
@@ -626,7 +628,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document.close();
         document1.close();
 
-        compareResult("structTreeCopyingTest08.pdf", "cmp_structTreeCopyingTest08.pdf", "diff_copying_08_");
+        compareResult("structTreeCopyingTest08.pdf", "cmp_structTreeCopyingTest08.pdf");
     }
 
     @Test
@@ -642,7 +644,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document.close();
         document1.close();
 
-        compareResult("structTreeCopyingTest09.pdf", "cmp_structTreeCopyingTest09.pdf", "diff_copying_09_");
+        compareResult("structTreeCopyingTest09.pdf", "cmp_structTreeCopyingTest09.pdf");
     }
 
     @Test
@@ -662,7 +664,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document1.close();
         document2.close();
 
-        compareResult("structTreeCopyingTest10.pdf", "cmp_structTreeCopyingTest10.pdf", "diff_copying_10_");
+        compareResult("structTreeCopyingTest10.pdf", "cmp_structTreeCopyingTest10.pdf");
     }
 
     @Test
@@ -683,7 +685,33 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document1.close();
         document2.close();
 
-        compareResult("structTreeCopyingTest11.pdf", "cmp_structTreeCopyingTest11.pdf", "diff_copying_11_");
+        compareResult("structTreeCopyingTest11.pdf", "cmp_structTreeCopyingTest11.pdf");
+    }
+
+    @Test
+    public void structTreeCopyingToPartiallyFlushedDocumentTest() throws Exception {
+        String outFile = "structTreeCopyingToPartiallyFlushedDocumentTest.pdf";
+
+        PdfDocument resultDoc = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        resultDoc.setTagged();
+
+        PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));
+        document1.copyPagesTo(1, 1, resultDoc);
+        resultDoc.flushCopiedObjects(document1);
+        document1.close();
+
+        PdfDocument document2 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));
+        Exception e = Assert.assertThrows(PdfException.class, () -> {
+            document2.copyPagesTo(1, 1, resultDoc);
+        });
+        // TODO DEVSIX-7005 after exception is gone add assertion for the resulting document
+        Assert.assertEquals(
+                KernelExceptionMessageConstant.TAG_STRUCTURE_COPYING_FAILED_IT_MIGHT_BE_CORRUPTED_IN_ONE_OF_THE_DOCUMENTS,
+                e.getMessage()
+        );
+        document2.close();
+
+        resultDoc.close();
     }
 
     @Test
@@ -734,14 +762,14 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document.close();
     }
 
-    private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
+    private void compareResult(String outFileName, String cmpFileName)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
         String outPdf = destinationFolder + outFileName;
         String cmpPdf = sourceFolder + cmpFileName;
 
         String contentDifferences = compareTool.compareByContent(outPdf,
-                cmpPdf, destinationFolder, diffNamePrefix);
+                cmpPdf, destinationFolder);
         String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
 
         String errorMessage = "";

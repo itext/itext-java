@@ -1384,8 +1384,7 @@ public abstract class AbstractRenderer implements IRenderer {
             AbstractRenderer abstractChild = (AbstractRenderer) child;
             if (abstractChild.isRelativePosition())
                 abstractChild.applyRelativePositioningTranslation(false);
-            Div outlines = new Div();
-            outlines.getAccessibilityProperties().setRole(null);
+            Div outlines = new Div().setNeutralRole();
             if (transformProp != null)
                 outlines.setProperty(Property.TRANSFORM, transformProp);
             outlines.setProperty(Property.BORDER, outlineProp);
@@ -1732,8 +1731,7 @@ public abstract class AbstractRenderer implements IRenderer {
             return null;
         }
     }
-
-    //TODO is behavior of copying all properties in split case common to all renderers?
+    
     protected Map<Integer, Object> getOwnProperties() {
         return properties;
     }

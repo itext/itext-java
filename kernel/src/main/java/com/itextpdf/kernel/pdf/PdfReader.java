@@ -638,7 +638,10 @@ public class PdfReader implements Closeable {
      */
     public PdfAConformanceLevel getPdfAConformanceLevel() {
         if (pdfAConformanceLevel == null) {
-            if (pdfDocument != null && pdfDocument.getXmpMetadata() != null) {
+            if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
+                throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
+            }
+            if (pdfDocument.getXmpMetadata() != null) {
                 try {
                     pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(
                             XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata()));

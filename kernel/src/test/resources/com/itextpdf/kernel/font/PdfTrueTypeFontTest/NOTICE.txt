@@ -1,2 +1,2 @@
 This software uses the following test resources under the following licenses:
-//TODO DEVSIX-6473 Replace fonts in kernel
+| NotoSans-Regular.ttf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit a970ecbe0bf1e6ae5cb22d6abdea672448655f0c (03.03.2022) from "https://github.com/google/fonts"

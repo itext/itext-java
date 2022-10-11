@@ -152,6 +152,16 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
         return tagProperties;
     }
 
+    /**
+     * Give this element a neutral role. See also {@link AccessibilityProperties#setRole(String)}.
+     *
+     * @return this Element
+     */
+    public Text setNeutralRole() {
+        this.getAccessibilityProperties().setRole(null);
+        return this;
+    }
+
     @Override
     protected IRenderer makeNewRenderer() {
         return new TextRenderer(this, text);

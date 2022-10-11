@@ -764,6 +764,16 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         return tagProperties;
     }
 
+    /**
+     * Give this element a neutral role. See also {@link AccessibilityProperties#setRole(String)}.
+     *
+     * @return this Element
+     */
+    public Image setNeutralRole() {
+        this.getAccessibilityProperties().setRole(null);
+        return this;
+    }
+
     @Override
     protected IRenderer makeNewRenderer() {
         return new ImageRenderer(this);

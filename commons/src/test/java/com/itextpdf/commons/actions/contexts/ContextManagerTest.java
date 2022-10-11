@@ -48,6 +48,7 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -95,13 +96,27 @@ public class ContextManagerTest extends ExtendedITextTest {
     @Test
     public void unregisterNamespaceTest() {
         String testNamespace = "com.hello.world";
+        String testNamespaceWithCapitals = "com.Bye.World";
+        List<String> testNamespaces = Arrays.asList(
+                testNamespace,
+                testNamespaceWithCapitals
+        );
+
         ContextManager manager = new ContextManager();
         Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
-        manager.registerGenericContext(Arrays.asList(testNamespace), Arrays.asList("myProduct"));
+        Assert.assertNull(manager.getRecognisedNamespace(testNamespaceWithCapitals));
+
+        manager.registerGenericContext(testNamespaces, Arrays.asList("myProduct"));
+
         Assert.assertEquals(testNamespace,
                 manager.getRecognisedNamespace(testNamespace + ".MyClass"));
-        manager.unregisterContext(Arrays.asList(testNamespace));
+        Assert.assertEquals(testNamespaceWithCapitals.toLowerCase(),
+                manager.getRecognisedNamespace(testNamespaceWithCapitals + ".MyClass"));
+
+        manager.unregisterContext(testNamespaces);
+
         Assert.assertNull(manager.getRecognisedNamespace(testNamespace));
+        Assert.assertNull(manager.getRecognisedNamespace(testNamespaceWithCapitals));
     }
 
     @Test

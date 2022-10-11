@@ -43,6 +43,7 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
@@ -94,7 +95,7 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
                     new CssDeclaration(colorPropName, shorthandExpression));
         }
 
-        String[] props = shorthandExpression.split("\\s+");
+        List<String> props = CssUtils.extractShorthandProperties(shorthandExpression).get(0);
 
         String borderColorValue = null;
         String borderStyleValue = null;

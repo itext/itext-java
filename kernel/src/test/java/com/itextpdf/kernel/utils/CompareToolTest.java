@@ -48,9 +48,12 @@ import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -285,5 +288,28 @@ public class CompareToolTest extends ExtendedITextTest {
         secondDocument.close();
 
         Assert.assertNotNull(new CompareTool().compareLinkAnnotations(firstPdf, secondPdf));
+    }
+
+    @Test
+    public void convertDocInfoToStringsTest() throws IOException {
+        String inPdf = sourceFolder + "test.pdf";
+
+        class TestCompareTool extends CompareTool {
+            @Override
+            protected String[] convertDocInfoToStrings(PdfDocumentInfo info) {
+                return super.convertDocInfoToStrings(info);
+            }
+        }
+
+        CompareTool compareTool = new TestCompareTool();
+        try (PdfReader reader = new PdfReader(inPdf, compareTool.getOutReaderProperties());
+                PdfDocument doc = new PdfDocument(reader)) {
+            String[] docInfo = compareTool.convertDocInfoToStrings(doc.getDocumentInfo());
+            Assert.assertEquals("very long title to compare later on", docInfo[0]);
+            Assert.assertEquals("itext7core", docInfo[1]);
+            Assert.assertEquals("test file", docInfo[2]);
+            Assert.assertEquals("new job", docInfo[3]);
+            Assert.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);
+                }
     }
 }

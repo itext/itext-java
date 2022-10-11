@@ -46,6 +46,8 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.utils.ICopyFilter;
+import com.itextpdf.kernel.utils.NullCopyFilter;
 
 import org.slf4j.LoggerFactory;
 
@@ -364,7 +366,12 @@ public class PdfStream extends PdfDictionary {
 
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) {
-        super.copyContent(from, document);
+        copyContent(from, document, NullCopyFilter.getInstance());
+    }
+
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
+        super.copyContent(from, document, copyFilter);
         PdfStream stream = (PdfStream) from;
         assert inputStream == null : "Try to copy the PdfStream that has been just created.";
         byte[] bytes = stream.getBytes(false);

@@ -42,6 +42,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -65,6 +66,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.ListSymbolAlignment;
+import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
@@ -735,6 +737,58 @@ public class ListTest extends ExtendedITextTest {
         li.setProperty(Property.MARGIN_LEFT, UnitValue.createPercentValue(50));
         li.setBackgroundColor(ColorConstants.BLUE);
         l.add(li);
+
+        document.add(l);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void listItemWithImageSymbolPositionTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemWithImageSymbolPositionTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemWithImageSymbolPositionTest.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        List l = new List();
+        l.setMarginLeft(50);
+        l.setSymbolIndent(20);
+        l.setListSymbol("\u2022");
+        l.setBackgroundColor(ColorConstants.GREEN);
+
+        ImageData img = ImageDataFactory.create(sourceFolder + "red.png");
+        PdfImageXObject xObject = new PdfImageXObject(img);
+        ListItem listItemImg1 = new ListItem();
+        listItemImg1.add(new Image(xObject).setHeight(30));
+        listItemImg1.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.INSIDE);
+        l.add(listItemImg1);
+        ListItem listItemImg2 = new ListItem();
+        listItemImg2.add(new Image(xObject).setHeight(30));
+        listItemImg2.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.OUTSIDE);
+        l.add(listItemImg2);
+
+        document.add(l);
+        document.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    // TODO DEVSIX-6877 wrapping list item content in a div causes the bullet to be misaligned
+    @Test
+    public void listItemWrappedDivSymbolInside() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listItemWrappedDivSymbolInside.pdf";
+        String cmpFileName = sourceFolder + "cmp_listItemWrappedDivSymbolInside.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        List l = new List();
+        l.setMarginLeft(50);
+        l.setListSymbol("\u2022");
+        l.setBackgroundColor(ColorConstants.GREEN);
+
+        l.add("Regular item 1");
+        ListItem listItem = new ListItem();
+        listItem.add(new Div().add(new Paragraph("Wrapped text")));
+        listItem.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.INSIDE);
+        l.add(listItem);
+        l.add("Regular item 2");
 
         document.add(l);
         document.close();

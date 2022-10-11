@@ -45,6 +45,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
@@ -254,12 +255,11 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-5910 The wrapped document should be recognized as Pdf/A
     public void initPdfaDocumentTest() throws IOException {
         PdfSigner signer = new PdfSigner(
                 new PdfReader(new ByteArrayInputStream(createSimplePdfaDocument())),
                 new ByteArrayOutputStream(), new StampingProperties());
-        Assert.assertFalse(signer.getDocument() instanceof PdfADocument);
+        Assert.assertEquals(PdfAConformanceLevel.PDF_A_1A, ((PdfAAgnosticPdfDocument) signer.getDocument()).getConformanceLevel());
     }
 
     @Test

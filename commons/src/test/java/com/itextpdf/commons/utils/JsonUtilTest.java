@@ -72,7 +72,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(classWithEnum);
 
         String cmpString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(cmpString, resultString);
+        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(cmpString, resultString));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(classWithEnum);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(compareString, resultString);
+        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(stringsForSerialization);
 
         String cmpString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(cmpString, resultString);
+        Assert.assertEquals(cmpString,resultString);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(stringsForSerialization);
 
         String cmpString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(cmpString, resultString);
+        Assert.assertEquals(cmpString,resultString);
     }
 
     @Test
@@ -170,7 +170,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(compareString, resultString);
+        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -195,7 +195,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(compareString, resultString);
+        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -221,7 +221,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(compareString, resultString);
+        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test
@@ -247,7 +247,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         String resultString = JsonUtil.serializeToMinimalString(complexStructure);
 
         String compareString = getJsonStringFromFile(cmp);
-        Assert.assertEquals(compareString, resultString);
+        Assert.assertTrue(JsonUtil.areTwoJsonObjectEquals(compareString, resultString));
     }
 
     @Test

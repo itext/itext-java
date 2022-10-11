@@ -88,7 +88,6 @@ public class CssStyleSheet {
      *
      * @param anotherCssStyleSheet the other CSS style sheet
      */
-    // TODO move this functionality to the parser (parse into)
     public void appendCssStyleSheet(CssStyleSheet anotherCssStyleSheet) {
         statements.addAll(anotherCssStyleSheet.statements);
     }

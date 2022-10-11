@@ -95,7 +95,7 @@ public class AccessibleAttributesApplier {
         PdfDictionary attributes = new PdfDictionary();
         attributes.put(PdfName.O, PdfName.Layout);
 
-        //TODO WritingMode attribute applying when needed
+        // TODO DEVSIX-7016 WritingMode attribute applying when needed
 
         applyCommonLayoutAttributes(renderer, attributes);
         if (tagType == AccessibleTypes.BlockLevel) {

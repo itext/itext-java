@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -544,6 +545,17 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
      */
     public T setMinWidth(float minWidth) {
         setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(minWidth));
+        return (T) (Object) this;
+    }
+
+    /**
+     * Give this element a neutral role. See also {@link AccessibilityProperties#setRole(String)}.
+     *
+     * @return this Element
+     */
+    public T setNeutralRole() {
+        this.getAccessibilityProperties().setRole(null);
+        // cast to Object is necessary for autoporting reasons
         return (T) (Object) this;
     }
 }

@@ -233,6 +233,8 @@ final class OcgPropertiesCopier {
 
             String currentLayerName = toOcg.getAsString(PdfName.Name).toUnicodeString();
 
+            // Here we check on existed layer names only in destination document but not in source document.
+            // That is why there is no something like layerNames.add(currentLayerName); after this if statement
             if (layerNames.contains(currentLayerName)) {
                 hasConflictingNames = true;
                 int i = 0;

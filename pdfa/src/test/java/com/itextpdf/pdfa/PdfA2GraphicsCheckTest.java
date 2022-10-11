@@ -55,6 +55,7 @@ import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -62,6 +63,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
@@ -289,6 +291,78 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
         Assert.assertEquals(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+                e.getMessage());
+    }
+
+    @Test
+    public void defaultTextColorCheckTest() throws IOException {
+        String outPdf = destinationFolder + "defaultColorCheck.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_2B, null);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
+
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState();
+        canvas.beginText()
+                .moveText(36, 750)
+                .setFontAndSize(font, 16)
+                .showText("some text")
+                .endText()
+                .restoreState();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT),
+                e.getMessage());
+    }
+
+    @Test
+    public void defaultTextColorCheckForInvisibleTextTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "defaultColorCheckInvisibleText.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA2b_defaultColorCheckInvisibleText.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_2B, null);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
+
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState();
+        canvas.beginText()
+                .setTextRenderingMode(TextRenderingMode.INVISIBLE)
+                .moveText(36, 750)
+                .setFontAndSize(font, 16)
+                .showText("some text")
+                .endText()
+                .restoreState();
+
+        pdfDocument.close();
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void defaultStrokeColorCheckTest() throws IOException {
+        String outPdf = destinationFolder + "defaultColorCheck.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_2B, null);
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState();
+        float[] whitePoint = {0.9505f, 1f, 1.089f};
+        float[] gamma = {2.2f, 2.2f, 2.2f};
+        float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
+        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
+        canvas.getResources().setDefaultRgb(calRgb);
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.moveTo(pdfDocument.getDefaultPageSize().getLeft(), pdfDocument.getDefaultPageSize().getBottom());
+        canvas.lineTo(pdfDocument.getDefaultPageSize().getRight(), pdfDocument.getDefaultPageSize().getBottom());
+        canvas.lineTo(pdfDocument.getDefaultPageSize().getRight(), pdfDocument.getDefaultPageSize().getTop());
+        canvas.stroke();
+
+        // We set fill color but stroked so the exception should be thrown
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT),
                 e.getMessage());
     }
 

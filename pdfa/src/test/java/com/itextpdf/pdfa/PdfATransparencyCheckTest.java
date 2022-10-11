@@ -127,10 +127,11 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         String cmpPdf = cmpFolder + "cmp_transparencyAndCS.pdf";
 
         PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformanceLevel.PDF_A_3B, null);
-        PdfPage page = pdfDocument.addNewPage();
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
+        PdfPage page = pdfDocument.addNewPage();
+        page.getResources().setDefaultGray(new PdfCieBasedCs.CalGray(getCalGrayArray()));
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState();
         PdfExtGState state = new PdfExtGState();
@@ -149,8 +150,8 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         groupObj.put(PdfName.S, PdfName.Transparency);
         page.getPdfObject().put(PdfName.Group, groupObj);
 
-
         PdfPage page2 = pdfDocument.addNewPage();
+        page2.getResources().setDefaultGray(new PdfCieBasedCs.CalGray(getCalGrayArray()));
         canvas = new PdfCanvas(page2);
         canvas.saveState();
         canvas.beginText()
@@ -230,6 +231,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfCanvas canvas = new PdfCanvas(page);
+        page.getResources().setDefaultGray(new PdfCieBasedCs.CalGray(getCalGrayArray()));
         canvas.beginText()
                 .moveText(36, 750)
                 .setFontAndSize(font, 16)
@@ -240,8 +242,6 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         groupObj.put(PdfName.Type, PdfName.Group);
         groupObj.put(PdfName.S, PdfName.Transparency);
         page.getPdfObject().put(PdfName.Group, groupObj);
-
-        page.getResources().setDefaultGray(new PdfCieBasedCs.CalGray(getCalGrayArray()));
 
         pdfDocument.close();
         compareResult(outPdf, cmpPdf);

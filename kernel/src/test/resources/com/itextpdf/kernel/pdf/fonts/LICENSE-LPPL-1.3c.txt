@@ -1,0 +1,365 @@
+README for amsfonts 3.04 [2013/01/14]
+
+Copyright 2001, 2009, 2013 American Mathematical Society.
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License, either version 1.3c
+of this license or (at your option) any later version.
+The latest version of this license is in
+  http://www.latex-project.org/lppl.txt
+and version 1.3c or later is part of all distributions of LaTeX
+version 2005/12/01 or later.
+
+This work has the LPPL maintenance status `maintained'.
+
+The Current Maintainer of this work is the American Mathematical
+Society.
+
+American Mathematical Society
+Technical Support
+Publications Technical Group
+201 Charles Street
+Providence, RI 02904
+USA
+tel: (401) 455-4080
+     (800) 321-4267 (USA and Canada only)
+fax: (401) 331-3842
+email: tech-support@ams.org
+
+========================================================================
+
+If you have obtained a bundled AMSFonts collection (amsfonts.zip), this
+will unpack into the standard TeX Directory Structure (TDS) tree.
+First, determine the local TEXMF directory for your system, which we
+will call texmf-local in this 00README file; this directory should be
+identified in the documentation for the TeX distribution you're using.
+Place the zip file into a convenient directory and unpack it using
+the texmf-local directory as the "Extract to" target.  Some examples:
+
+  WinZIP:  Click on "Extract" and then in the "Extract to" box, enter
+           \sw\texmf-local  (or whatever the local branch of TEXMF is
+           on your system)
+  unzip:   unzip amsfonts.zip -d texmf-local
+
+See the web page
+  http://tug.org/fonts/fontinstall.html
+for some general information on identifying your local TEXMF tree and
+installing fonts on various platforms.  (This includes specific details
+for MikTeX, MacTeX, and other systems based on TeX Live.)
+
+If your installation is not arranged in a TDS tree, see also the section
+below, "Installing AMSFonts 3.0 on your system", as well as the user
+documentation for your TeX distribution.
+
+------------------------------------------------------------------------
+
+What changes were made between AMSFonts 3.03 and AMSFonts 3.04?
+
+Version 3.04 is a minor update to provide more fluid interoperability
+with stix.sty.  It should be fully compatible with version 3.03.
+
+------------------------------------------------------------------------
+
+What changes were made between AMSFonts 3.02 and AMSFonts 3.03?
+
+The Type 1 Euler fonts have been upgraded from version 003.002 to
+003.003 with the following changes:
+
+1) Some inconsistencies with the character widths in the corresponding
+   TFM files have been fixed.
+
+2) Minor optimizations were carried out on some of the character
+   outlines.
+
+The changes affect only the PFB, AFM, and PFM files.  Thanks to Taco
+Hoekwater and Stephen Moye.
+
+What changes were made between AMSFonts 3.01 and AMSFonts 3.02?
+
+The internal Unicode-compliant glyph names used for version 3.00 of
+the Type 1 fonts resulted in a major incompatibility in reusing PDF
+documents that had the previous version of the fonts embedded.  All
+glyph names have now been reverted to their previous values and some
+minor inconsistencies in the encoding vectors have been fixed.  This
+affects all PFB and AFM files.
+
+What changes were made between AMSFonts 3.00 and AMSFonts 3.01?
+
+The encoding vectors of several of the Type 1 fonts were augmented
+with some some duplicate entries in the high-bit range (128--255) for
+compatibility with earlier releases of the fonts and with some older
+PDF software that had trouble rendering characters with low character
+codes (0-31).  Also, a couple of typos in the latxfont.map file were
+fixed.
+
+What changes were made between AMSFonts 2.2d and AMSFonts 3.0?
+
+The licenses were restated to clarify the copying and redistribution
+conditions to make them more compatible with third-party collections
+such as TeX Live.  In particular, all Type 1 fonts and those .mf files
+originally created at AMS are now released under the SIL Open Font
+License (OFL), a copy of which is included with this distribution.
+
+.pk files are no longer distributed or supported by the AMS.  Where
+Type 1 fonts are available, modern TeX distributions do not require
+PK fonts.  When PK fonts are required for some specialized purpose,
+they can easily be generated on the fly.
+
+In the Computer Modern fonts, some shape changes made by Donald Knuth
+in 1992 were not included in the Type 1 fonts distributed in version 2.2
+of the AMSFonts collection.  These shape changes have now been made,
+and all CM glyph shapes should now be identical between Knuth's Metafont
+sources and the Type 1 fonts.  Since Knuth's original changes did not
+affect the metrics, no metrics were affected by this upgrade, and no
+changes to the .tfm files were needed.  However, owing to the system
+under which the reference copies of the .tfm files are archived, the
+original file dates have been lost; recent file dates do not imply
+any content changes.
+
+The Euler fonts, designed by Hermann Zapf, were originally released in
+the 1990s.  Zapf reshaped many of the glyphs, with implementation and
+assistance from Hans Hagen, Taco Hoekwater, and Volker RW Schaa.  The
+updated version 3.0 was presented to Donald Knuth on his birthday,
+January 10, 2008.  These updates were carefully designed to work with
+the metrics for version 2.2, so no changes to the .tfm files were
+needed.  Since the updates were made directly to the Type 1 files,
+the (incompatible) .mf files have been removed from the distribution.
+
+There have been no shape changes to the "extra symbols" or cyrillic.
+
+Where possible, all glyphs have been given Unicode-compliant names
+to make them work better with Unicode-aware viewers (e.g.,
+cut-and-paste of Cyrillic characters should work better).
+
+Some modifications were made in the LaTeX support files to adapt to
+the new set of (fully scalable) font sizes.  Now that Type 1 fonts
+are available for all defined sizes, the "psamsfonts" option is no
+longer needed.  This has been implemented in such a way as to ensure
+that existing LaTeX input calling for this option will still compile.
+In particular, any support files containing "57" in the file name
+have been either eliminated or converted to no-ops.
+
+The location of some files has changed, so if you are installing the
+new distribution on top of an existing one, be sure to delete the
+old copies from the previous locations.  Remove these directories
+that are no longer used:
+
+  doc/ams/amsfonts [replaced by doc/fonts/amsfonts]
+  fonts/source/ams [replaced by fonts/source/public/amsfonts]
+  fonts/tfm/ams [replaced by fonts/tfm/public/amsfonts]
+  tex/latex/amsfonts/obsolete [obsolete; not superseded]
+
+Also remove these files from the indicated areas:
+
+  fonts/source/public/misc/dummy*
+    [replaced by fonts/source/public/amsfonts/dummy]
+  fonts/tfm/public/misc/dummy*
+    [replaced by fonts/tfm/public/amsfonts/dummy]
+
+The manual (amsfndoc) will be updated later this year.  Some of the
+information it contains is incomplete or obsolete.  In particular,
+Appendix A, Installation Procedures, should be ignored completely;
+see below for installation procedures if your system is not based on
+a TDS structure.
+
+------------------------------------------------------------------------
+
+What changes were made between AMSFonts 2.2 and AMSFonts 2.2d?
+
+No changes were made to the fonts themselves, either to the Metafont
+sources, the .tfm or .pk files.
+
+The primary purpose of this upgrade was to fix bugs in the LaTeX
+support files and to update the User's Guide.
+
+------------------------------------------------------------------------
+
+What changes were made between AMSFonts 2.1 and AMSFonts 2.2?
+
+The primary change was the inclusion of LaTeX support macro files as
+part of the AMSFonts distribution.  The files in the "latex"
+subdirectory are compatible with LaTeX2e, the LaTeX standard since
+1995.  Users of LaTeX 2.09 are strongly encouraged to upgrade to
+LaTeX2e, as AMS no longer supports the use of AMSFonts with LaTeX 2.09.
+
+The only significant change to the characters in the fonts was a bug
+fix which corrected an anomaly in the Blackboard Bold N character from
+the MSBM fonts. That character printed incorrectly at a few resolutions
+(including 600dpi); it now prints correctly at all resolutions.  The
+metrics for AMSFonts 2.2 were unchanged from those for AMSFonts 2.1. 
+
+There was also a slight change to the file amssym.tex, and very
+significant changes to the User's Guide.
+
+------------------------------------------------------------------------
+
+INSTALLING AMSFonts 3.0 ON YOUR SYSTEM
+
+These instructions assume that you were unable to unzip the bundle
+directly into a TEXMF TDS tree.
+
+1. Installing the fonts:
+
+Unzip the bundle into a work area.  This will produce a tree with the
+following structure:
+
+  source
+  source/latex
+  source/latex/amsfonts
+  tex
+  tex/latex
+  tex/latex/amsfonts
+  tex/plain
+  tex/plain/amsfonts
+  fonts
+  fonts/source
+  fonts/source/public
+  fonts/source/public/amsfonts
+  fonts/source/public/amsfonts/cmextra
+  fonts/source/public/amsfonts/cyrillic
+  fonts/source/public/amsfonts/dummy
+  fonts/source/public/amsfonts/symbols
+  fonts/tfm
+  fonts/tfm/public
+  fonts/tfm/public/amsfonts
+  fonts/tfm/public/amsfonts/cmextra
+  fonts/tfm/public/amsfonts/cyrillic
+  fonts/tfm/public/amsfonts/dummy
+  fonts/tfm/public/amsfonts/euler
+  fonts/tfm/public/amsfonts/symbols
+  fonts/type1
+  fonts/type1/public
+  fonts/type1/public/amsfonts
+  fonts/type1/public/amsfonts/cm
+  fonts/type1/public/amsfonts/cmextra
+  fonts/type1/public/amsfonts/cyrillic
+  fonts/type1/public/amsfonts/euler
+  fonts/type1/public/amsfonts/latxfont
+  fonts/type1/public/amsfonts/symbols
+  fonts/afm
+  fonts/afm/public
+  fonts/afm/public/amsfonts
+  fonts/afm/public/amsfonts/cm
+  fonts/afm/public/amsfonts/cmextra
+  fonts/afm/public/amsfonts/cyrillic
+  fonts/afm/public/amsfonts/euler
+  fonts/afm/public/amsfonts/latxfont
+  fonts/afm/public/amsfonts/symbols
+  fonts/map
+  fonts/map/dvips
+  fonts/map/dvips/amsfonts
+  doc
+  doc/fonts
+  doc/fonts/amsfonts
+
+Move the files in the branch  fonts/type1/public/amsfonts/  to the
+directory where your system expects to find .pfb (Type 1) files.
+
+Move the files in the branch  fonts/tfm/public/amsfonts/  to the
+directory where your system expects to find .tfm files.
+
+Update the map files for your device drivers using the .map files in
+fonts/map/dvips/amsfonts/ ; consult the documentation for your TeX
+distribution for advice.
+
+Depending on what TeX system you use, it may also be necessary to update
+a filename database; see the documentation for your TeX distribution.
+
+2. Installing the (La)TeX support files:
+
+There are two sets of files which provide macros necessary for using
+AMSFonts 3.0 in TeX. One set is for Plain TeX or AMS-TeX, and one set
+is for LaTeX.  If you use Plain TeX or AMS-TeX, then the files in
+tex/plain/amsfonts/  should be placed in the directory (or a directory
+in the path) which your implementation of TeX searches for input files.
+If you use LaTeX, then the files in  tex/latex/amsfonts/  should be
+placed in that directory. (If you use LaTeX 2.09, then we strongly
+encourage you to upgrade to LaTeX2e; AMS does not provide support for
+use of AMSFonts in LaTeX 2.09.)  If you are likely to use both LaTeX
+and Plain TeX or AMS-TeX, then install the files from both directories
+where your TeX will find them for input.
+
+Depending on what TeX system you use, it may also be necessary to update
+a filename database; see the documentation for your TeX distribution.
+
+3. The User's Guide and other documentation:
+
+You can get a copy of the User's Guide via a link on the web page
+
+    http://www.ams.org/tex/amsfonts.html
+
+The User's Guide still describes AMSFonts 2.2d; however, processing and
+printing it from the files in this distribution is a good test of your
+AMSFonts installation.
+
+In order to TeX and print the User's Guide, you must first install the
+fonts.  The "source" subdirectory (source/latex/amsfonts/) contains
+five input files with names beginning with "amsfndoc".  When your font
+installation is complete, process the file "amsfndoc.tex" with Plain
+TeX (not AMS-TeX or LaTeX).  It will input four other "amsfndoc" files:
+.def, .cyr, .ins and .fnt.  The output will be a complete guide to the
+use of AMSFonts 2.2d.  Instructions for the use of the fonts themselves
+are still valid, though somewhat incomplete; however, the installation
+instructions in Appendix A are obsolete and should be ignored.  The
+User's Guide is scheduled to be updated later this year.
+
+The directory  source/latex/amsfonts/  contains a file named
+"amsfonts.faq" in which we will place frequently asked questions about
+AMSFonts.
+
+This directory also contains LaTeX .dtx files containing technical
+commentary on the source code for the LaTeX support files in the
+AMSFonts distribution.  Although these .dtx files are included for
+reference, most users can ignore them.
+
+------------------------------------------------------------------------
+
+USE OF THE LATEX "amsfonts" PACKAGE
+
+Version 3.0 of the LaTeX package amsfonts.sty is carefully constructed
+to allow it to be used for processing pre-existing documents.  This
+means that documents that load amsfonts.sty through statements such
+as the following should continue to work without change.
+
+1.  \documentclass{amsart}
+
+2.  \documentclass{article}
+    \usepackage{amsfonts}
+
+3.  \documentclass{article}
+    \usepackage{amsmath,amsthm}
+
+4.  \documentclass{article}
+    \usepackage{amssymb}
+
+There is an exception, however, for the variants 2 and 3: If your
+document was written a very long time ago AND if it uses any of the
+symbols
+
+  \square                \Box
+  \lozenge               \Diamond
+  \vartriangleright      \rhd
+  \vartriangleleft       \lhd
+  \trianglerighteq       \unrhd
+  \trianglelefteq        \unlhd
+  \rightsquigarrow       \leadsto
+                         \Join
+
+then you may find that those symbol commands now produce "Undefined
+control sequence" errors.  For the symbols in the first column, the
+easiest way to fix this is to load the amssymb package, i.e. change
+variants 2 and 3 to
+
+2a.  \documentclass{article}
+     \usepackage{amssymb}
+
+3a.  \documentclass{article}
+     \usepackage{amssymb,amsmath,amsthm}
+
+For symbols in the second column (\Box, etc.), you have a choice of
+either adding the latexsym package or defining them in terms of
+equivalent symbols from the amssymb package.
+
+If you are using an AMS document class (amsart, amsbook, amsproc), the
+amsfonts are automatically included; however, you must load the amssymb
+package to have access to the specific symbol names.

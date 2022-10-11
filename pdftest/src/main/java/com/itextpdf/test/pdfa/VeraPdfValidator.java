@@ -43,11 +43,17 @@ address: sales@itextpdf.com
 */
 package com.itextpdf.test.pdfa;
 
+import java.util.logging.Level;
+import org.verapdf.component.Log;
+import org.verapdf.component.LogsSummary;
+import org.verapdf.component.LogsSummaryImpl;
 import org.verapdf.core.VeraPDFException;
 import org.verapdf.features.FeatureExtractorConfig;
+import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 import org.verapdf.metadata.fixer.MetadataFixerConfig;
-import org.verapdf.pdfa.VeraGreenfieldFoundryProvider;
+import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
+import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 import org.verapdf.processor.BatchProcessor;
 import org.verapdf.processor.ProcessorConfig;
 import org.verapdf.processor.ProcessorFactory;
@@ -74,7 +80,8 @@ public class VeraPdfValidator {
             // Initializes default VeraPDF configurations
             ProcessorConfig customProfile = ProcessorFactory.defaultConfig();
             FeatureExtractorConfig featuresConfig = customProfile.getFeatureConfig();
-            ValidatorConfig valConfig = customProfile.getValidatorConfig();
+            ValidatorConfig valConfig = ValidatorFactory.createConfig(PDFAFlavour.NO_FLAVOUR, false, -1, false, true,
+                    Level.WARNING);
             PluginsCollectionConfig plugConfig = customProfile.getPluginsCollectionConfig();
             MetadataFixerConfig metaConfig = customProfile.getFixerConfig();
             ProcessorConfig resultConfig = ProcessorFactory.fromValues(valConfig, featuresConfig,
@@ -85,8 +92,9 @@ public class VeraPdfValidator {
 
             BatchSummary summary = processor.process(Collections.singletonList(new File(filePath)),
                     ProcessorFactory.getHandler(FormatOption.XML, true,
-                            new FileOutputStream(String.valueOf(xmlReport)), 125, false));
+                            new FileOutputStream(String.valueOf(xmlReport)), false));
 
+            LogsSummary logsSummary = LogsSummaryImpl.getSummary();
             String xmlReportPath = "file://" + xmlReport.toURI().normalize().getPath();
 
             if (summary.getFailedParsingJobs() != 0) {
@@ -95,6 +103,12 @@ public class VeraPdfValidator {
                 errorMessage = "VeraPDF execution failed - specified file is encrypted. See report:  " + xmlReportPath;
             } else if (summary.getValidationSummary().getNonCompliantPdfaCount() != 0) {
                 errorMessage = "VeraPDF verification failed. See verification results:  " + xmlReportPath;
+            } else if (logsSummary.getLogsCount() != 0) {
+                errorMessage = "The following warnings and errors occurred while parsing current file:";
+                for (Log log : logsSummary.getLogs()) {
+                    errorMessage += "\n" + log.getLevel() + ": " + log.getMessage();
+                }
+                errorMessage += "\nSee verification results:" + xmlReportPath;
             } else {
                 System.out.println("VeraPDF verification finished. See verification report: " + xmlReportPath);
             }

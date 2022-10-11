@@ -50,10 +50,13 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
@@ -363,9 +366,134 @@ public class TagTreePointerTest extends ExtendedITextTest {
         properties.setLanguage("EN-GB");
 
         pointer.moveToRoot().moveToKid(2, StandardRoles.P).getProperties().setRole(StandardRoles.H6);
+        String role = pointer.getProperties().getRole();
+        Assert.assertEquals("H6", role);
         document.close();
 
         compareResult("tagTreePointerTest08.pdf", "cmp_tagTreePointerTest08.pdf", "diff08_");
+    }
+
+    @Test
+    public void changeExistedBackedAccessibilityPropertiesTest() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "changeExistedBackedAccessibilityPropertiesTest.pdf",
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)).setCompressionLevel(
+                CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "taggedDocument2.pdf"), writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+        AccessibilityProperties properties = pointer.moveToKid(StandardRoles.DIV).getProperties();
+        String altDescription = "Alternate Description";
+        properties.setAlternateDescription(altDescription);
+        Assert.assertEquals(altDescription, properties.getAlternateDescription());
+        String expansion = "expansion";
+        properties.setExpansion(expansion);
+        Assert.assertEquals(expansion, properties.getExpansion());
+        properties.setNamespace(new PdfNamespace(StandardNamespaces.PDF_2_0));
+        Assert.assertEquals(StandardNamespaces.PDF_2_0, properties.getNamespace().getNamespaceName());
+        String phoneme = "phoneme";
+        properties.setPhoneme(phoneme);
+        Assert.assertEquals(phoneme, properties.getPhoneme());
+        String phoneticAlphabet = "Phonetic Alphabet";
+        properties.setPhoneticAlphabet(phoneticAlphabet);
+        Assert.assertEquals(phoneticAlphabet, properties.getPhoneticAlphabet());
+
+        document.close();
+
+        compareResult("changeExistedBackedAccessibilityPropertiesTest.pdf",
+                "cmp_changeExistedBackedAccessibilityPropertiesTest.pdf", "diffBackProp01_");
+    }
+
+    @Test
+    public void removeExistedBackedAccessibilityPropertiesTest() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "removeExistedBackedAccessibilityPropertiesTest.pdf",
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)).setCompressionLevel(
+                CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "taggedDocument2.pdf"), writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+        AccessibilityProperties properties = pointer.moveToKid(StandardRoles.DIV).getProperties();
+        Assert.assertNotNull(properties.getAttributesList());
+        Assert.assertNotNull(properties.addAttributes(0, null));
+        properties.clearAttributes();
+        Assert.assertTrue(properties.getAttributesList().isEmpty());
+        properties.addRef(pointer);
+        Assert.assertFalse(properties.getRefsList().isEmpty());
+        properties.clearRefs();
+        Assert.assertTrue(properties.getRefsList().isEmpty());
+
+        document.close();
+
+        compareResult("removeExistedBackedAccessibilityPropertiesTest.pdf",
+                "cmp_removeExistedBackedAccessibilityPropertiesTest.pdf", "diffBackProp02_");
+    }
+
+    @Test
+    public void setDefaultAccessibilityPropertiesTest() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "setDefaultAccessibilityPropertiesTest.pdf",
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)).setCompressionLevel(
+                CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "taggedDocument2.pdf"), writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+        AccessibilityProperties properties = new DefaultAccessibilityProperties(StandardRoles.DIV);
+        properties.setRole(StandardRoles.H6);
+        Assert.assertEquals(StandardRoles.H6, properties.getRole());
+        String actualText = "Test text";
+        properties.setActualText(actualText);
+        Assert.assertEquals(actualText, properties.getActualText());
+        String language = "EN-GB";
+        properties.setLanguage(language);
+        Assert.assertEquals(language, properties.getLanguage());
+        String alternateDescription = "Alternate Description";
+        properties.setAlternateDescription(alternateDescription);
+        Assert.assertEquals(alternateDescription, properties.getAlternateDescription());
+        String expansion = "expansion";
+        properties.setExpansion(expansion);
+        Assert.assertEquals(expansion, properties.getExpansion());
+        properties.setNamespace(new PdfNamespace(StandardNamespaces.PDF_2_0));
+        Assert.assertEquals(StandardNamespaces.PDF_2_0, properties.getNamespace().getNamespaceName());
+        String phoneme = "phoneme";
+        properties.setPhoneme(phoneme);
+        Assert.assertEquals(phoneme, properties.getPhoneme());
+        String phoneticAlphabet = "phoneticAlphabet";
+        properties.setPhoneticAlphabet(phoneticAlphabet);
+        Assert.assertEquals(phoneticAlphabet, properties.getPhoneticAlphabet());
+        properties.addRef(pointer);
+        Assert.assertFalse(properties.getRefsList().isEmpty());
+        pointer.addTag(properties);
+
+        document.close();
+
+        compareResult("setDefaultAccessibilityPropertiesTest.pdf", "cmp_setDefaultAccessibilityPropertiesTest.pdf",
+                "diffDefaultProp01_");
+    }
+
+    @Test
+    public void removeDefaultAccessibilityPropertiesTest() throws Exception {
+        PdfWriter writer = new PdfWriter(destinationFolder + "removeDefaultAccessibilityPropertiesTest.pdf",
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)).setCompressionLevel(
+                CompressionConstants.NO_COMPRESSION);
+        PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "taggedDocument2.pdf"), writer);
+
+        TagTreePointer pointer = new TagTreePointer(document);
+        AccessibilityProperties properties = new DefaultAccessibilityProperties(StandardRoles.DIV);
+        PdfStructureAttributes testAttr = new PdfStructureAttributes("test");
+        testAttr.addIntAttribute("N", 4);
+        properties.addAttributes(testAttr);
+        properties.addAttributes(1, testAttr);
+        properties.getAttributesList();
+        properties.clearAttributes();
+        Assert.assertTrue(properties.getAttributesList().isEmpty());
+        properties.addRef(pointer);
+        Assert.assertFalse(properties.getRefsList().isEmpty());
+        properties.clearRefs();
+        Assert.assertTrue(properties.getRefsList().isEmpty());
+        pointer.addTag(properties);
+
+        document.close();
+
+        compareResult("removeDefaultAccessibilityPropertiesTest.pdf",
+                "cmp_removeDefaultAccessibilityPropertiesTest.pdf", "diffDefaultProp02_");
     }
 
     @Test

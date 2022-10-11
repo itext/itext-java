@@ -43,54 +43,49 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.commons.utils.FileUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.kernel.utils.ICopyFilter;
+import com.itextpdf.kernel.utils.NullCopyFilter;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfWriter extends PdfOutputStream {
     private static final byte[] obj = ByteUtils.getIsoBytes(" obj\n");
     private static final byte[] endobj = ByteUtils.getIsoBytes("\nendobj\n");
 
     protected WriterProperties properties;
-
+    //forewarned is forearmed
+    protected boolean isUserWarnedAboutAcroFormCopying;
     /**
      * Currently active object stream.
      * Objects are written to the object stream if fullCompression set to true.
      */
     PdfObjectStream objectStream = null;
-
     /**
      * Is used to avoid duplications on object copying.
      * It stores hashes of the indirect reference from the source document and the corresponding
      * indirect references of the copied objects from the new document.
      */
     private Map<PdfIndirectReference, PdfIndirectReference> copiedObjects = new LinkedHashMap<>();
-
     /**
      * Is used in smart mode to serialize and store serialized objects content.
      */
     private SmartModePdfObjectsSerializer smartModeSerializer = new SmartModePdfObjectsSerializer();
 
-    //forewarned is forearmed
-    protected boolean isUserWarnedAboutAcroFormCopying;
-
     /**
      * Create a PdfWriter writing to the passed File and with default writer properties.
      *
      * @param file File to write to.
+     *
      * @throws FileNotFoundException if the file exists but is a directory
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
@@ -117,6 +112,7 @@ public class PdfWriter extends PdfOutputStream {
      * Create a PdfWriter writing to the passed filename and with default writer properties.
      *
      * @param filename filename of the resulting pdf.
+     *
      * @throws FileNotFoundException if the file exists but is a directory
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
@@ -130,6 +126,7 @@ public class PdfWriter extends PdfOutputStream {
      *
      * @param filename   filename of the resulting pdf.
      * @param properties writerproperties to use.
+     *
      * @throws FileNotFoundException if the file exists but is a directory
      *                               rather than a regular file, does not exist but cannot
      *                               be created, or cannot be opened for any other reason
@@ -162,6 +159,7 @@ public class PdfWriter extends PdfOutputStream {
      * For more details @see {@link com.itextpdf.io.source.DeflaterOutputStream}.
      *
      * @param compressionLevel compression level.
+     *
      * @return this {@link PdfWriter} instance
      */
     public PdfWriter setCompressionLevel(int compressionLevel) {
@@ -179,6 +177,7 @@ public class PdfWriter extends PdfOutputStream {
      * of the resulting PDF document.
      *
      * @param smartMode True for enabling smart mode.
+     *
      * @return this {@link PdfWriter} instance
      */
     public PdfWriter setSmartMode(boolean smartMode) {
@@ -186,28 +185,13 @@ public class PdfWriter extends PdfOutputStream {
         return this;
     }
 
-    /**
-     * Gets the current object stream.
-     *
-     * @return object stream.
-     */
-    PdfObjectStream getObjectStream() {
-        if (!isFullCompression())
-            return null;
-        if (objectStream == null) {
-            objectStream = new PdfObjectStream(document);
-        } else if (objectStream.getSize() == PdfObjectStream.MAX_OBJ_STREAM_SIZE) {
-            objectStream.flush();
-            objectStream = new PdfObjectStream(objectStream);
-        }
-        return objectStream;
-    }
-
     protected void initCryptoIfSpecified(PdfVersion version) {
         EncryptionProperties encryptProps = properties.encryptionProperties;
         if (properties.isStandardEncryptionUsed()) {
-            crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions,
-                    encryptProps.encryptionAlgorithm, ByteUtils.getIsoBytes(this.document.getOriginalDocumentId().getValue()), version);
+            crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword,
+                    encryptProps.standardEncryptPermissions,
+                    encryptProps.encryptionAlgorithm,
+                    ByteUtils.getIsoBytes(this.document.getOriginalDocumentId().getValue()), version);
         } else if (properties.isPublicKeyEncryptionUsed()) {
             crypto = new PdfEncryption(encryptProps.publicCertificates,
                     encryptProps.publicKeyEncryptPermissions, encryptProps.encryptionAlgorithm, version);
@@ -254,10 +238,33 @@ public class PdfWriter extends PdfOutputStream {
         }
     }
 
-
+    /**
+     * Copies a PdfObject either stand alone or as part of the PdfDocument passed as documentTo.
+     *
+     * @param obj object to copy
+     * @param documentTo optional target document
+     * @param allowDuplicating allow that some objects will become duplicated by this action
+     * @return the copies object
+     */
     protected PdfObject copyObject(PdfObject obj, PdfDocument documentTo, boolean allowDuplicating) {
-        if (obj instanceof PdfIndirectReference)
+        return copyObject(obj, documentTo, allowDuplicating, NullCopyFilter.getInstance());
+    }
+
+    /**
+     * Copies a PdfObject either stand alone or as part of the PdfDocument passed as documentTo.
+     *
+     * @param obj object to copy
+     * @param documentTo optional target document
+     * @param allowDuplicating allow that some objects will become duplicated by this action
+     * @param copyFilter  {@link  ICopyFilter} a filter to apply while copying arrays and dictionaries
+     *      *             Use {@link NullCopyFilter} for no filtering
+     * @return the copies object
+     */
+    protected PdfObject copyObject(PdfObject obj, PdfDocument documentTo, boolean allowDuplicating,
+            ICopyFilter copyFilter) {
+        if (obj instanceof PdfIndirectReference) {
             obj = ((PdfIndirectReference) obj).getRefersTo();
+        }
         if (obj == null) {
             obj = PdfNull.PDF_NULL;
         }
@@ -278,7 +285,8 @@ public class PdfWriter extends PdfOutputStream {
         }
 
         SerializedObjectContent serializedContent = null;
-        if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page)) {
+        if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page) &&
+                !checkTypeOfPdfDictionary(obj, PdfName.OCG)) {
             serializedContent = smartModeSerializer.serializeObject(obj);
             PdfIndirectReference objectRef = smartModeSerializer.getSavedSerializedObject(serializedContent);
             if (objectRef != null) {
@@ -295,7 +303,7 @@ public class PdfWriter extends PdfOutputStream {
             }
             copiedObjects.put(indirectReference, indRef);
         }
-        newObject.copyContent(obj, documentTo);
+        newObject.copyContent(obj, documentTo, copyFilter);
 
         return newObject;
     }
@@ -307,7 +315,8 @@ public class PdfWriter extends PdfOutputStream {
      */
     protected void writeToBody(PdfObject pdfObj) {
         if (crypto != null) {
-            crypto.setHashKeyForNextObject(pdfObj.getIndirectReference().getObjNumber(), pdfObj.getIndirectReference().getGenNumber());
+            crypto.setHashKeyForNextObject(pdfObj.getIndirectReference().getObjNumber(),
+                    pdfObj.getIndirectReference().getGenNumber());
         }
         writeInteger(pdfObj.getIndirectReference().getObjNumber()).
                 writeSpace().
@@ -365,7 +374,8 @@ public class PdfWriter extends PdfOutputStream {
         PdfXrefTable xref = document.getXref();
         for (int i = 1; i < xref.size(); i++) {
             PdfIndirectReference indirectReference = xref.get(i);
-            if (null != indirectReference && !indirectReference.isFree() && !forbiddenToFlush.contains(indirectReference)) {
+            if (null != indirectReference && !indirectReference.isFree() && !forbiddenToFlush.contains(
+                    indirectReference)) {
                 boolean isModified = indirectReference.checkState(PdfObject.MODIFIED);
                 if (isModified) {
                     PdfObject obj = indirectReference.getRefersTo(false);
@@ -381,6 +391,24 @@ public class PdfWriter extends PdfOutputStream {
             objectStream.flush();
             objectStream = null;
         }
+    }
+
+    /**
+     * Gets the current object stream.
+     *
+     * @return object stream.
+     */
+    PdfObjectStream getObjectStream() {
+        if (!isFullCompression()) {
+            return null;
+        }
+        if (objectStream == null) {
+            objectStream = new PdfObjectStream(document);
+        } else if (objectStream.getSize() == PdfObjectStream.MAX_OBJ_STREAM_SIZE) {
+            objectStream.flush();
+            objectStream = new PdfObjectStream(objectStream);
+        }
+        return objectStream;
     }
 
     /**

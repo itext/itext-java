@@ -25,10 +25,14 @@ package com.itextpdf.styledxmlparser.css.util;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.WebColors;
+import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceCmyk;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -390,6 +394,37 @@ public final class CssDimensionParsingUtils {
 
         return (float) f;
     }
+
+    /**
+     * Parses either RGBA or CMYK color.
+     *
+     * @param colorValue the color value
+     * @return an RGBA or CMYK value expressed as an array with four float values
+     */
+    public static TransparentColor parseColor(String colorValue) {
+        Color device = null;
+        float opacity = 1;
+        float[] color = WebColors.getRGBAColor(colorValue);
+        if (color == null) {
+            color = WebColors.getCMYKArray(colorValue);
+        } else {
+            device = new DeviceRgb(color[0], color[1], color[2]);
+            if (color.length == 4) {
+                opacity = color[3];
+            }
+        }
+        if (color == null) {
+            color = new float[] {0, 0, 0, 1};
+            device = new DeviceRgb(0, 0, 0);
+        } else if (device == null) {
+            device = new DeviceCmyk(color[0], color[1], color[2], color[3]);
+            if (color.length == 5) {
+                opacity = color[4];
+            }
+        }
+        return new TransparentColor(device, opacity);
+    }
+
 
     /**
      * Parses the RGBA color.

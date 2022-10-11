@@ -32,6 +32,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -49,6 +50,25 @@ public final class JsonUtil {
 
     private JsonUtil() {
         // empty constructor
+    }
+
+    /**
+     * Compares two json strings without considering the order of the elements.
+     *
+     * @param expectedString expected json string
+     * @param toCompare      string for comparison
+     *
+     * @return true if two json string are equals, false otherwise
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    public static boolean areTwoJsonObjectEquals(String expectedString, String toCompare) throws IOException {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode expectedObject = mapper.readTree(expectedString);
+        JsonNode actualObject = mapper.readTree(toCompare);
+
+        return actualObject.equals(expectedObject);
     }
 
     /**

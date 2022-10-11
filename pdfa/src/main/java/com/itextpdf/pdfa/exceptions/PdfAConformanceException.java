@@ -105,7 +105,7 @@ public class PdfAConformanceException extends PdfException {
     public static final String GRAPHICS_STATE_STACK_DEPTH_IS_GREATER_THAN_28 = "Graphics state stack depth is greater than 28";
     public static final String HALFTONES_SHALL_NOT_CONTAIN_HALFTONENAME = "Halftones shall not contain halftonename";
     public static final String IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT = "If device rgb cmyk gray used in file, that file shall contain pdfa outputintent";
-    public static final String IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT = "If device rgb cmyk gray used in file that file shall contain pdfa outputintent orDefaultRgb Cmyk Gray in usage context";
+    public static final String IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT = "If device rgb cmyk gray used in file that file shall contain pdfa outputintent or DefaultRgb Cmyk Gray in usage context";
     public static final String IF_OUTPUTINTENTS_ARRAY_HAS_MORE_THAN_ONE_ENTRY_WITH_DESTOUTPUTPROFILE_KEY_THE_SAME_INDIRECT_OBJECT_SHALL_BE_USED_AS_THE_VALUE_OF_THAT_OBJECT = "If outputintents array has more than one entry with destoutputprofile key the same indirect object shall be used as the value of that object";
     public static final String IF_SPECIFIED_RENDERING_SHALL_BE_ONE_OF_THE_FOLLOWING_RELATIVECOLORIMETRIC_ABSOLUTECOLORIMETRIC_PERCEPTUAL_OR_SATURATION = "If specified rendering shall be one of the following relativecolorimetric absolutecolorimetric perceptual or saturation";
     public static final String INTEGER_NUMBER_IS_OUT_OF_RANGE = "Integer number is out of range";

@@ -519,6 +519,29 @@ public class PdfMergerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
     }
 
+    @Test
+    public void MergeWithSameNamedOCGTest() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "sameNamdOCGSource.pdf";
+        String secondPdfDocument = sourceFolder + "doc2.pdf";
+        String cmpDocument = sourceFolder + "cmp_MergeWithSameNamedOCG.pdf";
+        String mergedDocument = destinationFolder + "mergeWithSameNamedOCG.pdf";
+
+        try (PdfDocument documentA = new PdfDocument(new PdfReader(firstPdfDocument));
+                PdfDocument documentB = new PdfDocument(new PdfReader(secondPdfDocument));
+                PdfDocument mergedPdf = new PdfDocument(new PdfWriter(mergedDocument))) {
+            mergedPdf.getWriter().setSmartMode(true);
+            PdfMerger merger = new PdfMerger(mergedPdf, false, true);
+            merger.merge(documentA, 1, documentA.getNumberOfPages());
+            merger.merge(documentB, 1, documentB.getNumberOfPages());
+
+            merger.close();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+        // We have to compare visually also because compareByContent doesn't catch the differences in OCGs with the same names
+        Assert.assertNull(new CompareTool().compareVisually(mergedDocument, cmpDocument, destinationFolder, "diff_"));
+    }
+
     private void mergePdfs(List<File> sources, String destination) throws IOException {
         PdfDocument mergedDoc = new PdfDocument(new PdfWriter(destination));
         PdfMerger merger = new PdfMerger(mergedDoc);

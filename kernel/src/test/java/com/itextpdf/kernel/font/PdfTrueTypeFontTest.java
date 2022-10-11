@@ -65,7 +65,7 @@ public class PdfTrueTypeFontTest extends ExtendedITextTest {
     @Test
     public void isNotBuiltInTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(
-                SOURCE_FOLDER + "NotoSans-Regular_v.1.8.2.ttf",
+                SOURCE_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.WINANSI);
         Assert.assertTrue(font instanceof PdfTrueTypeFont);
         Assert.assertFalse(((PdfTrueTypeFont) font).isBuiltInFont());
