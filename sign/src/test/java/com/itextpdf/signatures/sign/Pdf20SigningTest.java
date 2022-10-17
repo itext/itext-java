@@ -184,6 +184,24 @@ public class Pdf20SigningTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(30, 200, 200, 100);
 
         String fieldName = "Signature1";
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256,
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+                getTestMap(rect)));
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+    @Test
+    public void signPdf2CadesWithRIPEMD160Test() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = SOURCE_FOLDER + "signPdf2CadesWithRipemd.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signPdf2CadesWithRipemd.pdf";
+        String outPdf = DESTINATION_FOLDER + "signPdf2CadesWithRipemd.pdf";
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
