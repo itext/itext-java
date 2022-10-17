@@ -193,7 +193,6 @@ public class InlineBlockTest extends ExtendedITextTest {
             );
         }
 
-        // TODO DEVSIX-5796 inline-block should be wrapped to the next line
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 }

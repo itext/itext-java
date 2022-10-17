@@ -352,14 +352,20 @@ public class LineRenderer extends AbstractRenderer {
 
             MinMaxWidth childBlockMinMaxWidth = null;
             boolean isInlineBlockChild = isInlineBlockChild(childRenderer);
-            if (!childWidthWasReplaced) {
-                if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
-                    childBlockMinMaxWidth = ((AbstractRenderer) childRenderer).getMinMaxWidth();
-                    float childMaxWidth = childBlockMinMaxWidth.getMaxWidth();
-                    float lineFullAvailableWidth = layoutContext.getArea().getBBox().getWidth() - lineLayoutContext.getTextIndent();
-                    if (!noSoftWrap && childMaxWidth > bbox.getWidth() + MIN_MAX_WIDTH_CORRECTION_EPS && bbox.getWidth() != lineFullAvailableWidth) {
-                        childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
-                    } else {
+            if (isInlineBlockChild && childRenderer instanceof AbstractRenderer) {
+                final MinMaxWidth childBlockMinMaxWidthLocal = ((AbstractRenderer) childRenderer).getMinMaxWidth();
+                // Don't calculate childBlockMinMaxWidth in case of relative width here
+                // and further (childBlockMinMaxWidth != null)
+                if (!childWidthWasReplaced) {
+                    childBlockMinMaxWidth = childBlockMinMaxWidthLocal;
+                }
+
+                float childMaxWidth = childBlockMinMaxWidthLocal.getMaxWidth();
+                float lineFullAvailableWidth = layoutContext.getArea().getBBox().getWidth() - lineLayoutContext.getTextIndent();
+                if (!noSoftWrap && childMaxWidth > bbox.getWidth() + MIN_MAX_WIDTH_CORRECTION_EPS && bbox.getWidth() != lineFullAvailableWidth) {
+                    childResult = new LineLayoutResult(LayoutResult.NOTHING, null, null, childRenderer, childRenderer);
+                } else {
+                    if (childBlockMinMaxWidth != null) {
                         childMaxWidth += MIN_MAX_WIDTH_CORRECTION_EPS;
                         float inlineBlockWidth = Math.min(childMaxWidth, lineFullAvailableWidth);
 
@@ -376,8 +382,13 @@ public class LineRenderer extends AbstractRenderer {
                             childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
                         }
                     }
-                    childBlockMinMaxWidth.setChildrenMaxWidth(childBlockMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
-                    childBlockMinMaxWidth.setChildrenMinWidth(childBlockMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
+                }
+
+                if (childBlockMinMaxWidth != null) {
+                    childBlockMinMaxWidth.setChildrenMaxWidth(
+                            childBlockMinMaxWidth.getChildrenMaxWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
+                    childBlockMinMaxWidth.setChildrenMinWidth(
+                            childBlockMinMaxWidth.getChildrenMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS);
                 }
             }
 
