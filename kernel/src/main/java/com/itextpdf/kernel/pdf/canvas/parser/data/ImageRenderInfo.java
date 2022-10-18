@@ -64,22 +64,22 @@ public class ImageRenderInfo extends AbstractRenderInfo {
     /**
      * The coordinate transformation matrix that was in effect when the image was rendered.
      */
-    private Matrix ctm;
-    private PdfImageXObject image;
+    private final Matrix ctm;
+    private final PdfImageXObject image;
     /**
      * The color space dictionary from resources which are associated with the image.
      */
-    private PdfDictionary colorSpaceDictionary;
+    private final PdfDictionary colorSpaceDictionary;
     /**
      * Defines if the encountered image was inline.
      */
-    private boolean isInline;
-    private PdfName resourceName;
+    private final boolean isInline;
+    private final PdfName resourceName;
 
     /**
      * Hierarchy of nested canvas tags for the text from the most inner (nearest to text) tag to the most outer.
      */
-    private List<CanvasTag> canvasTagHierarchy;
+    private final List<CanvasTag> canvasTagHierarchy;
 
     /**
      * Creates an ImageRenderInfo.
@@ -93,8 +93,8 @@ public class ImageRenderInfo extends AbstractRenderInfo {
      * @param colorSpaceDictionary the color space dictionary from resources which are associated with the image
      * @param isInline             defines if the encountered image was inline
      */
-    public ImageRenderInfo(Stack<CanvasTag> canvasTagHierarchy, CanvasGraphicsState gs, Matrix ctm, PdfStream imageStream,
-                           PdfName resourceName, PdfDictionary colorSpaceDictionary, boolean isInline) {
+    public ImageRenderInfo(Stack<CanvasTag> canvasTagHierarchy, CanvasGraphicsState gs, Matrix ctm,
+            PdfStream imageStream, PdfName resourceName, PdfDictionary colorSpaceDictionary, boolean isInline) {
         super(gs);
         this.canvasTagHierarchy = Collections.<CanvasTag>unmodifiableList(new ArrayList<>(canvasTagHierarchy));
         this.resourceName = resourceName;
@@ -221,14 +221,14 @@ public class ImageRenderInfo extends AbstractRenderInfo {
     public boolean hasMcid(int mcid, boolean checkTheTopmostLevelOnly) {
         if (checkTheTopmostLevelOnly) {
             if (canvasTagHierarchy != null) {
-                int infoMcid = getMcid();
+                final int infoMcid = getMcid();
                 return infoMcid != -1 && infoMcid == mcid;
             }
         } else {
-            for (CanvasTag tag : canvasTagHierarchy) {
-                if (tag.hasMcid())
-                    if (tag.getMcid() == mcid)
-                        return true;
+            for (final CanvasTag tag : canvasTagHierarchy) {
+                if (tag.hasMcid() && (tag.getMcid() == mcid)) {
+                    return true;
+                }
             }
         }
         return false;

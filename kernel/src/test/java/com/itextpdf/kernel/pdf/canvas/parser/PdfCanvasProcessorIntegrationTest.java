@@ -44,6 +44,7 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
@@ -220,6 +221,36 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void checkImageRenderInfoProcessorTest() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "tableWithImageAndText.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
+
+        PdfPage page = document.getPage(1);
+        RecordFirstImageEventListener eventListener = new RecordFirstImageEventListener();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(eventListener);
+        processor.processPageContent(page);
+
+        // Check caught image's ImageRenderInfo
+        ImageRenderInfo imageRenderInfo = eventListener.getImageRenderInfo();
+        final float EPS = 0.001f;
+        Assert.assertFalse(imageRenderInfo.isInline());
+        Assert.assertEquals(1024, imageRenderInfo.getImage().getWidth(), EPS);
+        Assert.assertEquals(768, imageRenderInfo.getImage().getHeight(), EPS);
+        Assert.assertEquals("/Im1", imageRenderInfo.getImageResourceName().toString());
+        Assert.assertEquals(new com.itextpdf.kernel.geom.Vector(212.67f, 676.25f, 1),
+                imageRenderInfo.getStartPoint());
+        Assert.assertEquals(new Matrix(169.67f, 0, 0, 0, 127.25f, 0, 212.67f, 676.25f, 1),
+                imageRenderInfo.getImageCtm());
+        Assert.assertEquals(21590.508, imageRenderInfo.getArea(), EPS);
+        Assert.assertNull(imageRenderInfo.getColorSpaceDictionary());
+        Assert.assertEquals(1, imageRenderInfo.getCanvasTagHierarchy().size());
+        Assert.assertTrue(imageRenderInfo.hasMcid(5, true));
+        Assert.assertTrue(imageRenderInfo.hasMcid(5));
+        Assert.assertFalse(imageRenderInfo.hasMcid(1));
+        Assert.assertEquals(5, imageRenderInfo.getMcid());
+    }
+
     private static class ColorParsingEventListener implements IEventListener {
         private List<IEventData> content = new ArrayList<>();
         private static final String pathDataExpected = "Path data expected.";
@@ -264,6 +295,32 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         @Override
         public Set<EventType> getSupportedEvents() {
             return null;
+        }
+    }
+
+    private static class RecordFirstImageEventListener implements IEventListener {
+
+        private ImageRenderInfo imageRenderInfo = null;
+
+        RecordFirstImageEventListener() {
+        }
+
+        public void eventOccurred(IEventData data, EventType type) {
+            switch (type) {
+                case RENDER_IMAGE:
+                    if (imageRenderInfo == null) {
+                        imageRenderInfo = (ImageRenderInfo) data;
+                    }
+                    break;
+            }
+        }
+
+        public Set<EventType> getSupportedEvents() {
+            return null;
+        }
+
+        public ImageRenderInfo getImageRenderInfo() {
+            return imageRenderInfo;
         }
     }
 
