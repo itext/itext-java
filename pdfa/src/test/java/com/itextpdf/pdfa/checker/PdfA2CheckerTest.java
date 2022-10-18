@@ -61,7 +61,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

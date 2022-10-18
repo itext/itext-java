@@ -163,7 +163,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
     @Test
     public void getTimeStampTokenFailureExceptionTest() throws Exception {
-        String allowedDigest = "MD5";
+        String allowedDigest = "SHA1";
         String signatureAlgorithm = "SHA256withRSA";
         String url = "url";
 
