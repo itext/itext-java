@@ -290,6 +290,8 @@ public interface IBouncyCastleFactory {
 
     IASN1Primitive createASN1Primitive(IASN1Encodable encodable);
 
+    IASN1Primitive createASN1Primitive(byte[] array) throws IOException;
+
     IOCSPResp createOCSPResp(IOCSPResponse ocspResponse);
 
     IOCSPResp createOCSPResp(byte[] bytes) throws IOException;
@@ -313,8 +315,6 @@ public interface IBouncyCastleFactory {
     IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus);
 
     IRevokedStatus createRevokedStatus(Date date, int i);
-
-    IASN1Primitive createASN1Primitive(byte[] array) throws IOException;
 
     IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b);
 

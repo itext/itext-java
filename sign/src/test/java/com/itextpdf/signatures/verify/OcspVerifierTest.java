@@ -96,6 +96,16 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
         Assert.assertTrue(verifyTest(builder));
     }
+    
+    @Test
+    public void validOcspWithoutOcspResponseBuilderTest() throws IOException, GeneralSecurityException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem")[0];
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        Date checkDate = DateTimeUtil.getCurrentTimeDate();
+
+        OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
+        Assert.assertTrue(ocspVerifier.verify(caCert, rootCert, checkDate).isEmpty());
+    }
 
     @Test
     public void invalidRevokedOcspTest01()
@@ -178,6 +188,12 @@ public class OcspVerifierTest extends ExtendedITextTest {
         );
         // Not getting here because of exception
         //Assert.assertFalse(verifyRes);
+    }
+    
+    @Test
+    public void getOcspResponseNullTest() {
+        OCSPVerifier verifier = new OCSPVerifier(null, null);
+        Assert.assertNull(verifier.getOcspResponse(null, null));
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder) throws IOException, GeneralSecurityException {

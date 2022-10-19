@@ -258,10 +258,11 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         pkcs7input[23] = one;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        IASN1OutputStream k = CryptoUtil.createAsn1OutputStream(baos,
-                BOUNCY_CASTLE_FACTORY.createASN1Encoding().getDer());
-        IASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate) certificate);
-        k.writeObject(obj);
+        try (IASN1OutputStream k = 
+                CryptoUtil.createAsn1OutputStream(baos, BOUNCY_CASTLE_FACTORY.createASN1Encoding().getDer())) {
+            IASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate) certificate);
+            k.writeObject(obj);
+        }
         cms = baos.toByteArray();
         recipient.setCms(cms);
 
@@ -306,11 +307,11 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private IKeyTransRecipientInfo computeRecipientInfo(X509Certificate x509Certificate, byte[] abyte0)
             throws GeneralSecurityException, IOException {
-        IASN1InputStream asn1InputStream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                new ByteArrayInputStream(x509Certificate.getTBSCertificate()));
-        ITBSCertificate tbsCertificate = BOUNCY_CASTLE_FACTORY.createTBSCertificate(
-                asn1InputStream.readObject());
-        assert tbsCertificate != null;
+        ITBSCertificate tbsCertificate;
+        try (IASN1InputStream asn1InputStream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                new ByteArrayInputStream(x509Certificate.getTBSCertificate()))) {
+            tbsCertificate = BOUNCY_CASTLE_FACTORY.createTBSCertificate(asn1InputStream.readObject());
+        }
         IAlgorithmIdentifier algorithmIdentifier = tbsCertificate.getSubjectPublicKeyInfo().getAlgorithm();
         IIssuerAndSerialNumber issuerAndSerialNumber = BOUNCY_CASTLE_FACTORY.createIssuerAndSerialNumber(
                 tbsCertificate.getIssuer(),

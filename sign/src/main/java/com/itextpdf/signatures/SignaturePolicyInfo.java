@@ -55,8 +55,10 @@ import com.itextpdf.commons.utils.Base64;
 
 /**
  * Class that encapsulates the signature policy information
+ * 
  * <p>
  * Sample:
+ * 
  * <p>
  * SignaturePolicyInfo spi = new SignaturePolicyInfo("2.16.724.1.3.1.1.2.1.9",
  * "G7roucf600+f03r/o0bAOQ6WAs0=", "SHA-1", "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf");

@@ -335,9 +335,10 @@ public class LtvVerifier extends RootStoreVerifier {
     /**
      * Gets a list of X509CRL objects from a Document Security Store.
      *
+     * @return a list of CRLs
+     * 
      * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
      *                                  is not available
-     * @return a list of CRLs
      */
     public List<X509CRL> getCRLsFromDSS() throws GeneralSecurityException {
         List<X509CRL> crls = new ArrayList<>();

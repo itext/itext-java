@@ -128,8 +128,8 @@ public class CertificateVerification {
      * failed certificate and <CODE>error</CODE> is the error message
      * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
-    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls)
-            throws CertificateEncodingException {
+    public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore,
+            Collection<CRL> crls) throws CertificateEncodingException {
         return verifyCertificates(certs, keystore, crls, DateTimeUtil.getCurrentTimeCalendar());
     }
 

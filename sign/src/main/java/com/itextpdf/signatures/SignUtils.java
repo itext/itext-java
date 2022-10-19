@@ -255,8 +255,8 @@ final class SignUtils {
     }
 
     static Collection<Certificate> readAllCerts(byte[] contentsKey) throws CertificateException {
-        return CertificateFactory.getInstance("X509").generateCertificates(new ByteArrayInputStream(contentsKey))
-                .stream().map((cert) -> (Certificate) cert).collect(Collectors.toList());
+        return new ArrayList<>(
+                CertificateFactory.getInstance("X509").generateCertificates(new ByteArrayInputStream(contentsKey)));
     }
 
     static <T> T getFirstElement(Iterable<T> iterable) {
@@ -344,7 +344,9 @@ final class SignUtils {
         GregorianCalendar calendar = new GregorianCalendar();
         try {
             calendar.setTime(timeStampTokenInfo.getGenTime());
-        } catch (ParseException e) {}
+        } catch (ParseException ignored) {
+            // Do nothing.
+        }
         return calendar;
     }
 

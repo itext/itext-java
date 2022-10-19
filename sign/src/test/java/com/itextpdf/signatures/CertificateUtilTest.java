@@ -25,6 +25,11 @@ package com.itextpdf.signatures;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
+
+import java.io.IOException;
+import java.security.cert.CRL;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -60,5 +65,19 @@ public class CertificateUtilTest extends ExtendedITextTest {
                 PemFileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCertWithoutTag.pem")[0];
 
         Assert.assertThrows(NullPointerException.class, () -> CertificateUtil.getTSAURL(tsaCert));
+    }
+    
+    @Test
+    public void getCRLFromStringNullTest() throws CertificateException, CRLException, IOException {
+        Assert.assertNull(CertificateUtil.getCRL((String) null));
+    }
+
+    @Test
+    public void getCRLFromCertificateWithoutCRLTest() throws IOException, CertificateException, CRLException {
+        X509Certificate tsaCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "rootRsa.pem")[0];
+        CRL crl = CertificateUtil.getCRL(tsaCert);
+        
+        Assert.assertNull(crl);
     }
 }

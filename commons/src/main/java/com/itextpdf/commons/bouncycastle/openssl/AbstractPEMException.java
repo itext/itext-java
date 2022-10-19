@@ -28,5 +28,5 @@ import java.io.IOException;
  * This class represents the wrapper for PEMException that provides the ability
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
-public class AbstractPEMException extends IOException {
+public abstract class AbstractPEMException extends IOException {
 }

@@ -230,7 +230,8 @@ public class TSAClientBouncyCastle implements ITSAClient {
         }
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getTimeBasedSeed());
-        ITimeStampRequest request = tsqGenerator.generate(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
+        ITimeStampRequest request = tsqGenerator.generate(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
         byte[] requestBytes = request.getEncoded();
 
         // Call the communications layer

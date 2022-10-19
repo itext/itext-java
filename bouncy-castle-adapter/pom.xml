@@ -9,6 +9,11 @@
   <artifactId>bouncy-castle-adapter</artifactId>
   <name>iText 7 - Bouncy Castle Adapter</name>
   <url>https://itextpdf.com/</url>
+
+  <properties>
+    <sonar.skip>true</sonar.skip>
+  </properties>
+  
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>

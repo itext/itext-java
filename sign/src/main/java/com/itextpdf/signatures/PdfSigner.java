@@ -552,7 +552,8 @@ public class PdfSigner {
      */
     public void signDetached(IExternalDigest externalDigest, IExternalSignature externalSignature, Certificate[] chain,
             Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
-            CryptoStandard sigtype, ISignaturePolicyIdentifier signaturePolicy) throws IOException, GeneralSecurityException {
+            CryptoStandard sigtype, ISignaturePolicyIdentifier signaturePolicy)
+            throws IOException, GeneralSecurityException {
         if (closed) {
             throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
         }

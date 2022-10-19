@@ -67,6 +67,8 @@ import org.slf4j.LoggerFactory;
  * @author Paulo Soares
  */
 public class AESCipher {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AESCipher.class);
 
     private static final String CIPHER_WITH_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
 
@@ -108,8 +110,7 @@ public class AESCipher {
         try {
             return cipher.doFinal();
         } catch (IllegalBlockSizeException | BadPaddingException e) {
-            Logger logger = LoggerFactory.getLogger(AesDecryptor.class);
-            logger.info(KernelLogMessageConstant.ERROR_WHILE_FINALIZING_AES_CIPHER, e);
+            LOGGER.info(KernelLogMessageConstant.ERROR_WHILE_FINALIZING_AES_CIPHER, e);
             return null;
         }
     }

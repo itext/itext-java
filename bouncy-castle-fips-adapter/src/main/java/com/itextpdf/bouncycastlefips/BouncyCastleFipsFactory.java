@@ -759,6 +759,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IASN1Primitive createASN1Primitive(byte[] array) throws IOException {
+        return new ASN1PrimitiveBCFips(array);
+    }
+
+    @Override
     public IOCSPResp createOCSPResp(IOCSPResponse ocspResponse) {
         return new OCSPRespBCFips(ocspResponse);
     }
@@ -821,11 +826,6 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IRevokedStatus createRevokedStatus(Date date, int i) {
         return new RevokedStatusBCFips(new RevokedStatus(date, i));
-    }
-
-    @Override
-    public IASN1Primitive createASN1Primitive(byte[] array) throws IOException {
-        return new ASN1PrimitiveBCFips(array);
     }
 
     @Override

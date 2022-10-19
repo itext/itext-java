@@ -112,7 +112,8 @@ final class EncryptionUtils {
                 ICMSEnvelopedData data;
                 try {
                     data = BOUNCY_CASTLE_FACTORY.createCMSEnvelopedData(recipient.getValueBytes());
-                    Iterator<IRecipientInformation> recipientCertificatesIt = data.getRecipientInfos().getRecipients().iterator();
+                    Iterator<IRecipientInformation> recipientCertificatesIt =
+                            data.getRecipientInfos().getRecipients().iterator();
                     while (recipientCertificatesIt.hasNext()) {
                         IRecipientInformation recipientInfo = recipientCertificatesIt.next();
 
@@ -131,7 +132,8 @@ final class EncryptionUtils {
                 ICMSEnvelopedData data;
                 try {
                     data = BOUNCY_CASTLE_FACTORY.createCMSEnvelopedData(recipient.getValueBytes());
-                    IRecipientInformation recipientInfo = data.getRecipientInfos().get(externalDecryptionProcess.getCmsRecipientId());
+                    IRecipientInformation recipientInfo =
+                            data.getRecipientInfos().get(externalDecryptionProcess.getCmsRecipientId());
                     if (recipientInfo != null) {
                         envelopedData = recipientInfo.getContent(externalDecryptionProcess.getCmsRecipient());
                         foundRecipient = true;
@@ -176,8 +178,10 @@ final class EncryptionUtils {
         AlgorithmParameterGenerator algorithmparametergenerator = AlgorithmParameterGenerator.getInstance(s);
         AlgorithmParameters algorithmparameters = algorithmparametergenerator.generateParameters();
         ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(algorithmparameters.getEncoded("ASN.1"));
-        IASN1InputStream asn1inputstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(bytearrayinputstream);
-        IASN1Primitive derobject = asn1inputstream.readObject();
+        IASN1Primitive derobject;
+        try (IASN1InputStream asn1inputstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(bytearrayinputstream)) {
+            derobject = asn1inputstream.readObject();
+        }
         KeyGenerator keygenerator = KeyGenerator.getInstance(s);
         keygenerator.init(128);
         SecretKey secretkey = keygenerator.generateKey();
@@ -186,7 +190,8 @@ final class EncryptionUtils {
 
         parameters.abyte0 = secretkey.getEncoded();
         parameters.abyte1 = cipher.doFinal(in);
-        parameters.algorithmIdentifier = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(s), derobject);
+        parameters.algorithmIdentifier = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
+                BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(s), derobject);
 
         return parameters;
     }

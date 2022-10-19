@@ -68,6 +68,7 @@ public class VerificationException extends GeneralSecurityException {
      */
     public VerificationException(Certificate cert, String message) throws CertificateEncodingException {
         super(MessageFormatUtil.format(SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
-                cert == null ? "Unknown" : BOUNCY_CASTLE_FACTORY.createX500Name((X509Certificate) cert).toString(), message));
+                cert == null ? "Unknown" : BOUNCY_CASTLE_FACTORY.createX500Name(
+                        (X509Certificate) cert).toString(), message));
     }
 }

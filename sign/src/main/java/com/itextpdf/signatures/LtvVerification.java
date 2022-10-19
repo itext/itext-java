@@ -51,6 +51,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
@@ -209,7 +210,7 @@ public class LtvVerification {
         ValidationData vd = new ValidationData();
         for (Certificate certificate : xc) {
             cert = (X509Certificate) certificate;
-            LOGGER.info("Certificate: " + BOUNCY_CASTLE_FACTORY.createX500Name(cert));
+            LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
             if (certOption == CertificateOption.SIGNING_CERTIFICATE
                     && !cert.equals(signingCert)) {
                 continue;
@@ -254,31 +255,6 @@ public class LtvVerification {
     }
 
     /**
-     * Get the issuing certificate for a child certificate.
-     *
-     * @param cert  the certificate for which we search the parent
-     * @param certs an array with certificates that contains the parent
-     *
-     * @return the parent certificate
-     */
-    private X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
-        X509Certificate parent;
-        for (Certificate certificate : certs) {
-            parent = (X509Certificate) certificate;
-            if (!cert.getIssuerDN().equals(parent.getSubjectDN())) {
-                continue;
-            }
-            try {
-                cert.verify(parent.getPublicKey());
-                return parent;
-            } catch (Exception e) {
-                // do nothing
-            }
-        }
-        return null;
-    }
-
-    /**
      * Adds verification to the signature.
      *
      * @param signatureName name of the signature
@@ -313,6 +289,31 @@ public class LtvVerification {
         return true;
     }
 
+    /**
+     * Get the issuing certificate for a child certificate.
+     *
+     * @param cert  the certificate for which we search the parent
+     * @param certs an array with certificates that contains the parent
+     *
+     * @return the parent certificate
+     */
+    X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
+        X509Certificate parent;
+        for (Certificate certificate : certs) {
+            parent = (X509Certificate) certificate;
+            if (!cert.getIssuerDN().equals(parent.getSubjectDN())) {
+                continue;
+            }
+            try {
+                cert.verify(parent.getPublicKey());
+                return parent;
+            } catch (Exception e) {
+                // do nothing
+            }
+        }
+        return null;
+    }
+
     private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
         IDEROctetString doctet = BOUNCY_CASTLE_FACTORY.createDEROctetString(basicOcspResponse);
         IOCSPResponseStatus respStatus = BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus(
@@ -329,9 +330,10 @@ public class LtvVerification {
         byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
         byte[] bt = null;
         if (PdfName.ETSI_RFC3161.equals(sig.getSubFilter())) {
-            IASN1InputStream din = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(bc));
-            IASN1Primitive pkcs = din.readObject();
-            bc = pkcs.getEncoded();
+            try (IASN1InputStream din = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(bc))) {
+                IASN1Primitive pkcs = din.readObject();
+                bc = pkcs.getEncoded();
+            }
         }
         bt = hashBytesSha1(bc);
         return new PdfName(convertToHex(bt));

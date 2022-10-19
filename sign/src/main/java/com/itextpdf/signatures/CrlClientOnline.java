@@ -143,7 +143,8 @@ public class CrlClientOnline implements ICrlClient {
         }
         List<URL> urlList = new ArrayList<>(urls);
         if (urlList.size() == 0) {
-            LOGGER.info("Looking for CRL for certificate " + BOUNCY_CASTLE_FACTORY.createX500Name(checkCert));
+            LOGGER.info(MessageFormatUtil.format(
+                    "Looking for CRL for certificate {0}", BOUNCY_CASTLE_FACTORY.createX500Name(checkCert)));
             try {
                 if (url == null) {
                     url = CertificateUtil.getCRLURL(checkCert);

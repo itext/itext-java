@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.LtvVerification.CertificateInclusion;
 import com.itextpdf.signatures.LtvVerification.CertificateOption;
 import com.itextpdf.signatures.LtvVerification.Level;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.test.ExtendedITextTest;
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +151,34 @@ public class LtvVerificationTest extends ExtendedITextTest {
         certs.add(new byte[0]);
 
         Assert.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
+    }
+    
+    @Test
+    public void tryAddVerificationAfterMerge() throws IOException, GeneralSecurityException {
+        List<byte[]> crls = new ArrayList<>();
+        crls.add(new byte[0]);
+        List<byte[]> ocsps = new ArrayList<>();
+        ocsps.add(new byte[0]);
+        List<byte[]> certs = new ArrayList<>();
+        certs.add(new byte[0]);
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF), new PdfWriter(new ByteArrayOutputStream()))) {
+            LtvVerification verificationWithWriter = new LtvVerification(pdfDoc);
+
+            verificationWithWriter.merge();
+            verificationWithWriter.addVerification(SIG_FIELD_NAME, ocsps, crls, certs);
+            
+            verificationWithWriter.merge();
+            Exception exception1 = Assert.assertThrows(IllegalStateException.class,
+                    () -> verificationWithWriter.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
+            Assert.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception1.getMessage());
+
+            verificationWithWriter.merge();
+            Exception exception2 = Assert.assertThrows(IllegalStateException.class,
+                    () -> verificationWithWriter.addVerification(null, null, null,
+                            CertificateOption.SIGNING_CERTIFICATE, Level.CRL, CertificateInclusion.YES));
+            Assert.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception2.getMessage());
+        }
     }
 
     @Test
@@ -543,6 +573,14 @@ public class LtvVerificationTest extends ExtendedITextTest {
     public void validateSigNameWholeChainCrlNoTest() throws IOException, GeneralSecurityException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.WHOLE_CHAIN, Level.CRL,
                 CertificateInclusion.NO, true);
+    }
+    
+    @Test
+    public void getParentWithoutCertsTest() {
+        try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            LtvVerification verification = new LtvVerification(document);
+            Assert.assertNull(verification.getParent(null, new Certificate[0]));
+        }
     }
 
     private static void validateOptionLevelInclusion(String crlUrl, CertificateOption certificateOption, Level level,

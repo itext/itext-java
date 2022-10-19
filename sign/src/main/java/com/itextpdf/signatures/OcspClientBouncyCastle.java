@@ -139,10 +139,10 @@ public class OcspClientBouncyCastle implements IOcspClient {
                     ICertificateStatus status = resp.getCertStatus();
                     if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
                         return basicResponse.getEncoded();
-                    } else if (BOUNCY_CASTLE_FACTORY.createRevokedStatus(status) != null) {
-                        throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
+                    } else if (BOUNCY_CASTLE_FACTORY.createRevokedStatus(status) == null) {
+                        throw new IOException(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
                     } else {
-                        throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
+                        throw new IOException(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
                     }
                 }
             }

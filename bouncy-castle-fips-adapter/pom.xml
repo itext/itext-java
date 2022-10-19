@@ -13,6 +13,7 @@
   <properties>
     <bouncycastleFips.version>1.0.2.3</bouncycastleFips.version>
     <bouncycastlePkixFips.version>1.0.6</bouncycastlePkixFips.version>
+    <sonar.skip>true</sonar.skip>
   </properties>
 
   <dependencies>

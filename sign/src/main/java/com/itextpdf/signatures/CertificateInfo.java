@@ -50,7 +50,6 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
 import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.io.ByteArrayInputStream;
@@ -339,10 +338,10 @@ public class CertificateInfo {
                 char c = oid.charAt(end);
 
                 if (c == '"') {
-                    if (!escaped) {
-                        quoted = !quoted;
-                    } else {
+                    if (escaped) {
                         buf.append(c);
+                    } else {
+                        quoted = !quoted;
                     }
                     escaped = false;
                 } else {
@@ -392,10 +391,12 @@ public class CertificateInfo {
      */
     public static IASN1Primitive getIssuer(byte[] enc) {
         try {
-            IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(enc));
-            IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(in.readObject());
+            IASN1Sequence seq;
+            try (IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(enc))) {
+                seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(in.readObject());
+            }
             return BOUNCY_CASTLE_FACTORY.createASN1Primitive(
-                    seq.getObjectAt(BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(seq.getObjectAt(0)) != null ? 3 : 2));
+                    seq.getObjectAt(BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(seq.getObjectAt(0)) == null ? 2 : 3));
         } catch (IOException e) {
             throw new PdfException(e);
         }
@@ -431,10 +432,12 @@ public class CertificateInfo {
      */
     public static IASN1Primitive getSubject(byte[] enc) {
         try {
-            IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(enc));
-            IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(in.readObject());
+            IASN1Sequence seq;
+            try (IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(enc))) {
+                seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(in.readObject());
+            }
             return BOUNCY_CASTLE_FACTORY.createASN1Primitive(
-                    seq.getObjectAt(BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(seq.getObjectAt(0)) != null ? 5 : 4));
+                    seq.getObjectAt(BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(seq.getObjectAt(0)) == null ? 4 : 5));
         } catch (IOException e) {
             throw new PdfException(e);
         }

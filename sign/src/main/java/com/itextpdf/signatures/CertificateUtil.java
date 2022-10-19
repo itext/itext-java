@@ -43,15 +43,6 @@
  */
 package com.itextpdf.signatures;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.cert.CRL;
-import java.security.cert.CRLException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
@@ -68,6 +59,14 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.cert.CRL;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 /**
  * This class contains a series of static methods that
@@ -168,15 +167,11 @@ public class CertificateUtil {
             }
             IASN1Sequence accessDescriptions = FACTORY.createASN1Sequence(obj);
             for (int i = 0; i < accessDescriptions.size(); i++) {
-                IASN1Sequence AccessDescription = FACTORY.createASN1Sequence(accessDescriptions.getObjectAt(i));
-                IASN1ObjectIdentifier id = FACTORY.createASN1ObjectIdentifier(AccessDescription.getObjectAt(0));
-                if (AccessDescription.size() != 2) {
-                    // do nothing and continue
-                } else if (id != null) {
-                    if (SecurityIDs.ID_OCSP.equals(id.getId())) {
-                        IASN1Primitive description = FACTORY.createASN1Primitive(AccessDescription.getObjectAt(1));
-                        return getStringFromGeneralName(description);
-                    }
+                IASN1Sequence accessDescription = FACTORY.createASN1Sequence(accessDescriptions.getObjectAt(i));
+                IASN1ObjectIdentifier id = FACTORY.createASN1ObjectIdentifier(accessDescription.getObjectAt(0));
+                if (accessDescription.size() == 2 && id != null && SecurityIDs.ID_OCSP.equals(id.getId())) {
+                    IASN1Primitive description = FACTORY.createASN1Primitive(accessDescription.getObjectAt(1));
+                    return getStringFromGeneralName(description);
                 }
             }
         } catch (IOException e) {
@@ -217,18 +212,22 @@ public class CertificateUtil {
      * @param certificate the certificate from which we need the ExtensionValue
      * @param oid         the Object Identifier value for the extension.
      *
-     * @throws IOException
      * @return the extension value as an {@link IASN1Primitive} object
+     * 
+     * @throws IOException
      */
     private static IASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
         byte[] bytes = SignUtils.getExtensionValueByOid(certificate, oid);
         if (bytes == null) {
             return null;
         }
-        IASN1InputStream aIn = FACTORY.createASN1InputStream(new ByteArrayInputStream(bytes));
-        IASN1OctetString octs = FACTORY.createASN1OctetString(aIn.readObject());
-        aIn = FACTORY.createASN1InputStream(new ByteArrayInputStream(octs.getOctets()));
-        return aIn.readObject();
+        IASN1OctetString octs;
+        try (IASN1InputStream aIn = FACTORY.createASN1InputStream(new ByteArrayInputStream(bytes))) {
+            octs = FACTORY.createASN1OctetString(aIn.readObject());
+        }
+        try (IASN1InputStream aIn = FACTORY.createASN1InputStream(new ByteArrayInputStream(octs.getOctets()))) {
+            return aIn.readObject();
+        }
     }
 
     /**

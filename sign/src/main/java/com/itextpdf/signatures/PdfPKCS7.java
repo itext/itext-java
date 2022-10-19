@@ -227,8 +227,10 @@ public class PdfPKCS7 {
             signCert = (X509Certificate) SignUtils.getFirstElement(certs);
             crls = new ArrayList<>();
 
-            IASN1InputStream in = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(contentsKey));
-            digest = BOUNCY_CASTLE_FACTORY.createASN1OctetString(in.readObject()).getOctets();
+            try (IASN1InputStream in =
+                    BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(contentsKey))) {
+                digest = BOUNCY_CASTLE_FACTORY.createASN1OctetString(in.readObject()).getOctets();
+            }
 
             sig = SignUtils.getSignatureHelper("SHA1withRSA", provider);
             sig.initVerify(signCert.getPublicKey());
@@ -255,14 +257,14 @@ public class PdfPKCS7 {
         isCades = PdfName.ETSI_CAdES_DETACHED.equals(filterSubtype);
         try {
             this.provider = provider;
-            IASN1InputStream din = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(contentsKey));
 
             //
             // Basic checks to make sure it's a PKCS#7 SignedData Object
             //
             IASN1Primitive pkcs;
 
-            try {
+            try (IASN1InputStream din =
+                    BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(contentsKey))) {
                 pkcs = din.readObject();
             } catch (IOException e) {
                 throw new IllegalArgumentException(
@@ -858,9 +860,10 @@ public class PdfPKCS7 {
             //
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
             for (Object element : certs) {
-                IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                        new ByteArrayInputStream(BOUNCY_CASTLE_FACTORY.createX509Certificate(element).getEncoded()));
-                v.add(tempstream.readObject());
+                try (IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                        new ByteArrayInputStream(BOUNCY_CASTLE_FACTORY.createX509Certificate(element).getEncoded()))) {
+                    v.add(tempstream.readObject());
+                }
             }
 
             IDERSet dercertificates = BOUNCY_CASTLE_FACTORY.createDERSet(v);
@@ -960,15 +963,16 @@ public class PdfPKCS7 {
 
         // @todo: move this together with the rest of the defintions
         String ID_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14"; // RFC 3161 id-aa-timeStampToken
-
-        IASN1InputStream tempstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                new ByteArrayInputStream(timeStampToken));
+        
         IASN1EncodableVector unauthAttributes = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
 
         IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
         v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(ID_TIME_STAMP_TOKEN)); // id-aa-timeStampToken
-        IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(tempstream.readObject());
-        v.add(BOUNCY_CASTLE_FACTORY.createDERSet(seq));
+        try (IASN1InputStream tempstream =
+                BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(timeStampToken))) {
+            IASN1Sequence seq = BOUNCY_CASTLE_FACTORY.createASN1Sequence(tempstream.readObject());
+            v.add(BOUNCY_CASTLE_FACTORY.createDERSet(seq));
+        }
 
         unauthAttributes.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
         return unauthAttributes;
@@ -1069,9 +1073,10 @@ public class PdfPKCS7 {
                         if (bCrl == null) {
                             continue;
                         }
-                        IASN1InputStream t = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                                new ByteArrayInputStream(bCrl));
-                        v2.add(t.readObject());
+                        try (IASN1InputStream t =
+                                BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(bCrl))) {
+                            v2.add(t.readObject());
+                        }
                     }
                     revocationV.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(
                             true, 0, BOUNCY_CASTLE_FACTORY.createDERSequence(v2)));
@@ -1432,8 +1437,9 @@ public class PdfPKCS7 {
             }
         }
         IASN1OctetString os = BOUNCY_CASTLE_FACTORY.createASN1OctetString(seq.getObjectAt(1));
-        IASN1InputStream inp = BOUNCY_CASTLE_FACTORY.createASN1InputStream(os.getOctets());
-        basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(inp.readObject());
+        try (IASN1InputStream inp = BOUNCY_CASTLE_FACTORY.createASN1InputStream(os.getOctets())) {
+            basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(inp.readObject());
+        }
     }
 
     // Time Stamps
@@ -1473,6 +1479,7 @@ public class PdfPKCS7 {
 
     /**
      * Gets the timestamp date.
+     * 
      * <p>
      * In case the signed document doesn't contain timestamp,
      * {@link TimestampConstants#UNDEFINED_TIMESTAMP_DATE} will be returned.

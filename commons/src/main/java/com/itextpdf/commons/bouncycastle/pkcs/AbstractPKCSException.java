@@ -26,5 +26,5 @@ package com.itextpdf.commons.bouncycastle.pkcs;
  * This class represents the wrapper for PKCSException that provides the ability
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
-public class AbstractPKCSException extends Exception {
+public abstract class AbstractPKCSException extends Exception {
 }
