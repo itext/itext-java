@@ -44,8 +44,10 @@ package com.itextpdf.test.signutils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -64,7 +66,8 @@ public final class Pkcs12FileHelper {
     private Pkcs12FileHelper() {
     }
 
-    public static Certificate[] readFirstChain(String p12FileName, char[] ksPass) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+    public static Certificate[] readFirstChain(String p12FileName, char[] ksPass)
+            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         Certificate[] certChain = null;
 
         KeyStore p12 = KeyStore.getInstance("pkcs12");
@@ -82,7 +85,16 @@ public final class Pkcs12FileHelper {
         return certChain;
     }
 
-    public static PrivateKey readFirstKey(String p12FileName, char[] ksPass, char[] keyPass) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+    public static PrivateKey readPrivateKeyFromPKCS12KeyStore(InputStream keyStore, String pkAlias, char[] pkPassword)
+            throws GeneralSecurityException, IOException {
+        KeyStore keystore = KeyStore.getInstance("PKCS12");
+        keystore.load(keyStore, pkPassword);
+        return (PrivateKey) keystore.getKey(pkAlias, pkPassword);
+    }
+
+    public static PrivateKey readFirstKey(String p12FileName, char[] ksPass, char[] keyPass)
+            throws KeyStoreException, IOException, CertificateException,
+            NoSuchAlgorithmException, UnrecoverableKeyException {
         PrivateKey pk = null;
 
         KeyStore p12 = KeyStore.getInstance("pkcs12");
@@ -100,7 +112,9 @@ public final class Pkcs12FileHelper {
         return pk;
     }
 
-    public static KeyStore initStore(String p12FileName, char[] ksPass, Provider provider) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException {
+    public static KeyStore initStore(String p12FileName, char[] ksPass, Provider provider)
+            throws KeyStoreException, IOException, CertificateException,
+            NoSuchAlgorithmException, NoSuchProviderException {
         KeyStore p12 = KeyStore.getInstance("PKCS12", provider.getName());
         p12.load(Files.newInputStream(Paths.get(p12FileName)), ksPass);
         return p12;
