@@ -37,6 +37,7 @@ public interface IBasicOCSPResponse extends IASN1Encodable {
      * and calls actual {@code getProducedAt} method, then gets Date.
      *
      * @return produced at date.
+     * @throws ParseException when parsing cannot be completed.
      */
     Date getProducedAtDate() throws ParseException;
 }

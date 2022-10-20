@@ -48,7 +48,6 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -65,8 +64,9 @@ public class VerificationException extends GeneralSecurityException {
      *
      * @param cert is a failed certificate
      * @param message is a reason of failure
+     * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
-    public VerificationException(Certificate cert, String message) throws CertificateEncodingException, IOException {
+    public VerificationException(Certificate cert, String message) throws CertificateEncodingException {
         super(MessageFormatUtil.format(SignExceptionMessageConstant.CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE,
                 cert == null ? "Unknown" : BOUNCY_CASTLE_FACTORY.createX500Name((X509Certificate) cert).toString(), message));
     }

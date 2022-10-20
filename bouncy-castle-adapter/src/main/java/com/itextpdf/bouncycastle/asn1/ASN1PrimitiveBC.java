@@ -44,6 +44,7 @@ public class ASN1PrimitiveBC extends ASN1EncodableBC implements IASN1Primitive {
      * Creates new wrapper instance for {@link ASN1Primitive}.
      *
      * @param array byte array to create {@link ASN1Primitive} to be wrapped
+     * @throws IOException if {@link ASN1Primitive} cannot be created from byte array.
      */
     public ASN1PrimitiveBC(byte[] array) throws IOException {
         super(ASN1Primitive.fromByteArray(array));

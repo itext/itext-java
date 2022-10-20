@@ -54,6 +54,7 @@ public interface ITimeStampTokenGenerator {
      * @param date       token generation time
      *
      * @return {@link ITimeStampToken} the wrapper for the generated TimeStampToken object.
+     * @throws AbstractTSPException if TSPException occurs during wrapped object method call.
      */
     ITimeStampToken generate(ITimeStampRequest request, BigInteger bigInteger, Date date) throws AbstractTSPException;
 }

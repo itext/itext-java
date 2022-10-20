@@ -43,7 +43,6 @@
  */
 package com.itextpdf.signatures;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -93,7 +92,7 @@ public class CertificateVerifier {
      * @throws GeneralSecurityException thrown if the certificate has expired, isn't valid yet, or if an exception has been thrown in {@link java.security.cert.Certificate#verify(PublicKey) Certificate#verify}.
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException {
         // Check if the certificate is valid on the signDate
         if (signDate != null) {
             signCert.checkValidity(signDate);

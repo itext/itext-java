@@ -64,6 +64,7 @@ public class CertificateIDBC implements ICertificateID {
      * @param digestCalculator  DigestCalculator wrapper to create {@link CertificateID}
      * @param certificateHolder X509CertificateHolder wrapper to create {@link CertificateID}
      * @param bigInteger        BigInteger to create {@link CertificateID}
+     * @throws OCSPExceptionBC if {@link OCSPException} occurs during {@link CertificateID} instance creation.
      */
     public CertificateIDBC(IDigestCalculator digestCalculator,
             IX509CertificateHolder certificateHolder, BigInteger bigInteger) throws OCSPExceptionBC {

@@ -49,7 +49,6 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -134,11 +133,11 @@ public class CrlClientOnline implements ICrlClient {
      * URL with the path to the local file to this method. An other option is to use
      * the CrlClientOffline class.
      *
+     * @throws CertificateEncodingException if an encoding error occurs in {@link X509Certificate}.
      * @see ICrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
     @Override
-    public Collection<byte[]> getEncoded(X509Certificate checkCert, String url)
-            throws CertificateEncodingException, IOException {
+    public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) throws CertificateEncodingException {
         if (checkCert == null) {
             return null;
         }

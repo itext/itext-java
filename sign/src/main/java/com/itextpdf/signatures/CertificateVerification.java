@@ -49,7 +49,6 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 
-import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,9 +126,10 @@ public class CertificateVerification {
      * @return empty list if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
+     * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore, Collection<CRL> crls)
-            throws CertificateEncodingException, IOException {
+            throws CertificateEncodingException {
         return verifyCertificates(certs, keystore, crls, DateTimeUtil.getCurrentTimeCalendar());
     }
 
@@ -143,9 +143,10 @@ public class CertificateVerification {
      * @return empty list if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
+     * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore,
-            Collection<CRL> crls, Calendar calendar) throws CertificateEncodingException, IOException {
+            Collection<CRL> crls, Calendar calendar) throws CertificateEncodingException {
         List<VerificationException> result = new ArrayList<>();
         for (int k = 0; k < certs.length; ++k) {
             X509Certificate cert = (X509Certificate) certs[k];
@@ -205,9 +206,10 @@ public class CertificateVerification {
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
+     * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore)
-            throws CertificateEncodingException, IOException {
+            throws CertificateEncodingException {
         return verifyCertificates(certs, keystore, DateTimeUtil.getCurrentTimeCalendar());
     }
 
@@ -220,9 +222,10 @@ public class CertificateVerification {
      * @return <CODE>null</CODE> if the certificate chain could be validated or a
      * <CODE>Object[]{cert,error}</CODE> where <CODE>cert</CODE> is the
      * failed certificate and <CODE>error</CODE> is the error message
+     * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
     public static List<VerificationException> verifyCertificates(Certificate[] certs, KeyStore keystore,
-            Calendar calendar) throws CertificateEncodingException, IOException {
+            Calendar calendar) throws CertificateEncodingException {
         return verifyCertificates(certs, keystore, null, calendar);
     }
 

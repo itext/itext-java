@@ -1024,14 +1024,17 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     }
 
     @Override
-    public IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException, IOException {
+    public IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException {
         byte[] tbsCertificate = certificate.getTBSCertificate();
         if (tbsCertificate.length != 0) {
-            return new X500NameBC(X500Name.getInstance(
-                    TBSCertificate.getInstance(ASN1Primitive.fromByteArray(tbsCertificate)).getSubject()));
-        } else {
-            return null;
+            try {
+                return new X500NameBC(X500Name.getInstance(
+                        TBSCertificate.getInstance(ASN1Primitive.fromByteArray(tbsCertificate)).getSubject()));
+            } catch (IOException ignored) {
+                // Not expected to be thrown
+            }
         }
+        return null;
     }
 
     @Override

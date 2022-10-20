@@ -43,7 +43,6 @@
  */
 package com.itextpdf.signatures;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -88,7 +87,7 @@ public class RootStoreVerifier extends CertificateVerifier {
      * The list will be empty if the certificate couldn't be verified.
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert,
-            Date signDate) throws GeneralSecurityException, IOException {
+            Date signDate) throws GeneralSecurityException {
         // verify using the CertificateVerifier if root store is missing
         if (rootStore == null)
             return super.verify(signCert, issuerCert, signDate);

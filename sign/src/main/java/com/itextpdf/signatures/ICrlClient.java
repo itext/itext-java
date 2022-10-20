@@ -43,7 +43,6 @@
  */
 package com.itextpdf.signatures;
 
-import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -62,7 +61,8 @@ public interface ICrlClient {
      * @param    checkCert The certificate which a CRL URL can be obtained from.
      * @param    url    A CRL url if you don't want to obtain it from the certificate.
      * @return A collection of byte array each representing a crl. It may return null or an empty collection.
+     * @throws CertificateEncodingException if an encoding error occurs in {@link X509Certificate}.
      */
     Collection<byte[]> getEncoded(X509Certificate checkCert, String url)
-            throws CertificateEncodingException, IOException;
+            throws CertificateEncodingException;
 }

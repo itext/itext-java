@@ -117,12 +117,12 @@ public class LtvVerifier extends RootStoreVerifier {
      *
      * @throws GeneralSecurityException if some problem with signature or security are occurred
      */
-    public LtvVerifier(PdfDocument document) throws GeneralSecurityException, IOException {
+    public LtvVerifier(PdfDocument document) throws GeneralSecurityException {
         super(null);
         initLtvVerifier(document);
     }
 
-    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException, IOException {
+    public LtvVerifier(PdfDocument document, String securityProviderCode) throws GeneralSecurityException {
         super(null);
         this.securityProviderCode = securityProviderCode;
         initLtvVerifier(document);
@@ -279,7 +279,7 @@ public class LtvVerifier extends RootStoreVerifier {
      *         java.security.cert.X509Certificate, java.util.Date)
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException {
         // we'll verify against the rootstore (if present)
         RootStoreVerifier rootStoreVerifier = new RootStoreVerifier(verifier);
         rootStoreVerifier.setRootStore(rootStore);
@@ -390,7 +390,7 @@ public class LtvVerifier extends RootStoreVerifier {
         return ocsps;
     }
 
-    protected void initLtvVerifier(PdfDocument document) throws GeneralSecurityException, IOException {
+    protected void initLtvVerifier(PdfDocument document) throws GeneralSecurityException {
         this.document = document;
         this.acroForm = PdfAcroForm.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
@@ -414,7 +414,7 @@ public class LtvVerifier extends RootStoreVerifier {
      *
      * @throws GeneralSecurityException if some problems with signature or security occurred
      */
-    protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException, IOException {
+    protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
         PdfPKCS7 pkcs7 = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
             LOGGER.info("The timestamp covers whole document.");

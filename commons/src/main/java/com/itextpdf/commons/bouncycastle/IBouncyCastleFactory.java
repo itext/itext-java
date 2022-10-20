@@ -392,7 +392,7 @@ public interface IBouncyCastleFactory {
     ITimeStampTokenGenerator createTimeStampTokenGenerator(ISignerInfoGenerator siGen, IDigestCalculator dgCalc,
             IASN1ObjectIdentifier policy) throws AbstractTSPException;
 
-    IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException, IOException;
+    IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException;
 
     IX500Name createX500Name(String s);
 

@@ -47,6 +47,7 @@ public class X509CertificateHolderBC implements IX509CertificateHolder {
      * Creates new wrapper instance for {@link X509CertificateHolder}.
      *
      * @param bytes bytes array to create {@link X509CertificateHolder} to be wrapped
+     * @throws IOException {@link X509CertificateHolder} object cannot be created from byte array.
      */
     public X509CertificateHolderBC(byte[] bytes) throws IOException {
         this.certificateHolder = new X509CertificateHolder(bytes);

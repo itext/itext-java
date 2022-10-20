@@ -89,7 +89,7 @@ public class CRLVerifier extends RootStoreVerifier {
      *         java.security.cert.X509Certificate, java.util.Date)
      */
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException {
         List<VerificationOK> result = new ArrayList<>();
         int validCrlsFound = 0;
         // first check the list of CRLs that is provided
@@ -131,7 +131,7 @@ public class CRLVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException thrown when certificate has been revoked
      */
     public boolean verify(X509CRL crl, X509Certificate signCert, X509Certificate issuerCert, Date signDate)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException {
         if (crl == null || signDate == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
             return false;
         }

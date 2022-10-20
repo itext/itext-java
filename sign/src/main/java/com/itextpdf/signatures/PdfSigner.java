@@ -806,9 +806,10 @@ public class PdfSigner {
      * @param cert    a Certificate if one of the CrlList implementations needs to retrieve the CRL URL from it.
      * @param crlList a list of CrlClient implementations
      * @return a collection of CRL bytes that can be embedded in a PDF
+     * @throws CertificateEncodingException if an encoding error occurs in {@link Certificate}.
      */
     protected Collection<byte[]> processCrl(Certificate cert, Collection<ICrlClient> crlList)
-            throws CertificateEncodingException, IOException {
+            throws CertificateEncodingException {
         if (crlList == null) {
             return null;
         }

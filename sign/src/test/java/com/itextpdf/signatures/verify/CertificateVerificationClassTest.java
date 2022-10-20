@@ -255,7 +255,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    public void emptyCertChainTest() throws CertificateEncodingException, IOException {
+    public void emptyCertChainTest() throws CertificateEncodingException {
         Certificate[] emptyCertChain = new Certificate[] {};
         final String expectedResult = MessageFormatUtil.format("Certificate Unknown failed: {0}",
                 SignExceptionMessageConstant.INVALID_STATE_WHILE_CHECKING_CERT_CHAIN);

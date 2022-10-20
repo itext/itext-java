@@ -43,6 +43,7 @@ public interface ITSTInfo extends IASN1Encodable {
      * Calls actual {@code getGenTime} method for the wrapped TSTInfo object and gets date.
      *
      * @return the received {@link Date} object.
+     * @throws ParseException when parsing cannot be completed.
      */
     Date getGenTime() throws ParseException;
 }

@@ -38,6 +38,7 @@ public interface ITimeStampResponseGenerator {
      * @param date       generation time for the response token
      *
      * @return {@link ITimeStampResponse} the wrapper for the generated TimeStampResponse object.
+     * @throws AbstractTSPException if TSPException occurs during wrapped object method call.
      */
     ITimeStampResponse generate(ITimeStampRequest request, BigInteger bigInteger, Date date)
             throws AbstractTSPException;

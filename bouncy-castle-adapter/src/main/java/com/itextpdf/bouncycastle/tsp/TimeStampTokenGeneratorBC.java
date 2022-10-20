@@ -61,6 +61,7 @@ public class TimeStampTokenGeneratorBC implements ITimeStampTokenGenerator {
      * @param siGen  SignerInfoGenerator wrapper
      * @param dgCalc DigestCalculator wrapper
      * @param policy ASN1ObjectIdentifier wrapper
+     * @throws TSPExceptionBC if {@link TSPException} occurs during wrapped object method call.
      */
     public TimeStampTokenGeneratorBC(ISignerInfoGenerator siGen, IDigestCalculator dgCalc, IASN1ObjectIdentifier policy)
             throws TSPExceptionBC {
