@@ -66,7 +66,7 @@ public class DigestAlgorithmsManualTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void digestSHA256SUNTest() throws GeneralSecurityException, IOException {
         InputStream data = new ByteArrayInputStream(new byte[] {13, 16, 20, 0, 10});
         byte[] hash = DigestAlgorithms.digest(data, DigestAlgorithms.SHA256, "SUN");

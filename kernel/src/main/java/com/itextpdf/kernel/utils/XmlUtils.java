@@ -61,8 +61,6 @@ final class XmlUtils {
     public static void writeXmlDocToStream(Document xmlReport, OutputStream stream) throws TransformerException {
         TransformerFactory tFactory = TransformerFactory.newInstance();
         try {
-            tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         } catch (Exception exc) {}
         Transformer transformer = tFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
