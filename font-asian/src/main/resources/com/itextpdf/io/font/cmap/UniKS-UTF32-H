@@ -3,10 +3,9 @@
 %%IncludeResource: ProcSet (CIDInit)
 %%BeginResource: CMap (UniKS-UTF32-H)
 %%Title: (UniKS-UTF32-H Adobe Korea1 1)
-%%Version: 1.004
+%%Version: 1.008
 %%Copyright: -----------------------------------------------------------
-%%Copyright: Copyright 1990-2010 Adobe Systems Incorporated.
-%%Copyright: All rights reserved.
+%%Copyright: Copyright 1990-2019 Adobe. All rights reserved.
 %%Copyright:
 %%Copyright: Redistribution and use in source and binary forms, with or
 %%Copyright: without modification, are permitted provided that the
@@ -21,10 +20,9 @@
 %%Copyright: disclaimer in the documentation and/or other materials
 %%Copyright: provided with the distribution. 
 %%Copyright:
-%%Copyright: Neither the name of Adobe Systems Incorporated nor the names
-%%Copyright: of its contributors may be used to endorse or promote
-%%Copyright: products derived from this software without specific prior
-%%Copyright: written permission. 
+%%Copyright: Neither the name of Adobe nor the names of its contributors
+%%Copyright: may be used to endorse or promote products derived from
+%%Copyright: this software without specific prior written permission.
 %%Copyright:
 %%Copyright: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 %%Copyright: CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -55,7 +53,7 @@ begincmap
 end def
 
 /CMapName /UniKS-UTF32-H def
-/CMapVersion 1.004 def
+/CMapVersion 1.008 def
 /CMapType 1 def
 
 /XUID [1 10 25542] def
@@ -6765,7 +6763,7 @@ endcidchar
 <0000f96a> 5367
 endcidchar
 
-84 begincidchar
+86 begincidchar
 <0000f96b> 7083
 <0000f96c> 5362
 <0000f96d> 5485
@@ -6844,6 +6842,8 @@ endcidchar
 <0000fa09> 3558
 <0000fa0a> 3644
 <0000fa0b> 3815
+<0000fa2e> 4419
+<0000fa2f> 4510
 <0000ff3c> 112
 <0000ff5e> 113
 <0000ffe2> 194

@@ -44,6 +44,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.kernel.utils.ICopyFilter;
 
 /**
  * Representation of the null object in the PDF specification.
@@ -87,7 +88,7 @@ public class PdfNull extends PdfPrimitiveObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
+    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
 
     }
 

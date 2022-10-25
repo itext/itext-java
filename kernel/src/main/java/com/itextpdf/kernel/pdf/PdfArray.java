@@ -46,6 +46,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.utils.ICopyFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -598,11 +599,13 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
-        super.copyContent(from, document);
+    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
+        super.copyContent(from, document, copyFilter);
         PdfArray array = (PdfArray) from;
         for (PdfObject entry : array.list) {
-            add(entry.processCopying(document, false));
+            if (copyFilter.shouldProcess(this, null, entry)) {
+                add(entry.processCopying(document, false, copyFilter));
+            }
         }
     }
 

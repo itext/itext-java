@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>7.2.3</version>
+    <version>7.2.4</version>
   </parent>
   <artifactId>io-android</artifactId>
   <name>iText 7 - io</name>

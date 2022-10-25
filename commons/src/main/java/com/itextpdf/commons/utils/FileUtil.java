@@ -111,6 +111,21 @@ public final class FileUtil {
     }
 
     /**
+     * Checks whether is provided file not empty.
+     *
+     * @param path the path to the file to be checked on emptiness
+     *
+     * @return {@code true} if such file is not empty, {@code false} otherwise
+     */
+    public static boolean isFileNotEmpty(String path) {
+        if (path != null) {
+            File f = new File(path);
+            return f.exists() && f.isFile() && f.length() > 0;
+        }
+        return false;
+    }
+
+    /**
      * Checks whether there is a directory at the provided path.
      *
      * @param path the path to the directory to be checked on existence

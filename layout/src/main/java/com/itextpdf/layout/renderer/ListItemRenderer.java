@@ -46,8 +46,6 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
@@ -227,7 +225,8 @@ public class ListItemRenderer extends DivRenderer {
             }
 
             // consider page area without margins
-            Rectangle effectiveArea = obtainEffectiveArea(drawContext);
+            RootRenderer root = getRootRenderer();
+            Rectangle effectiveArea = root.getCurrentArea().getBBox();
 
             // symbols are not drawn here, because they are in page margins
             if (!isRtl && symbolRenderer.getOccupiedArea().getBBox().getRight() > effectiveArea.getLeft()
@@ -280,6 +279,7 @@ public class ListItemRenderer extends DivRenderer {
                 boolean isRtl = BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION));
                 if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
                     ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
+                    // TODO DEVSIX-6876 LIST_SYMBOL_INDENT is not inherited
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
 
                         if (symbolRenderer instanceof LineRenderer) {
@@ -297,32 +297,30 @@ public class ListItemRenderer extends DivRenderer {
                         }
                     symbolAddedInside = true;
                 } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
-                    Paragraph p = new Paragraph();
-                    p.getAccessibilityProperties().setRole(null);
-                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
-                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                    if (symbolIndent != null) {
-                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                    }
-                    paragraphRenderer.addChild(symbolRenderer);
+                    IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
                     paragraphRenderer.addChild(childRenderers.get(0));
                     childRenderers.set(0, paragraphRenderer);
                     symbolAddedInside = true;
                 }
                 if (!symbolAddedInside) {
-                    Paragraph p = new Paragraph();
-                    p.getAccessibilityProperties().setRole(null);
-                    IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
-                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                    if (symbolIndent != null) {
-                        symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                    }
-                    paragraphRenderer.addChild(symbolRenderer);
+                    IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
                     childRenderers.add(0, paragraphRenderer);
                     symbolAddedInside = true;
                 }
             }
         }
+    }
+
+    private IRenderer renderSymbolInNeutralParagraph() {
+        Paragraph p = new Paragraph().setNeutralRole();
+        IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
+        Float symbolIndent = (Float) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_INDENT);
+        if (symbolIndent != null) {
+            // cast to float is necessary for autoporting reasons
+            symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
+        }
+        paragraphRenderer.addChild(symbolRenderer);
+        return paragraphRenderer;
     }
 
     private boolean isListSymbolEmpty(IRenderer listSymbolRenderer) {
@@ -347,37 +345,5 @@ public class ListItemRenderer extends DivRenderer {
             return new float[] {fontSize.getValue() * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, fontSize.getValue() * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
         }
         return new float[] {0, 0};
-    }
-
-    private Rectangle obtainEffectiveArea(DrawContext drawContext) {
-        PdfDocument pdfDocument = drawContext.getDocument();
-
-        // for the time being iText creates a single symbol renderer for a list.
-        // This renderer will be used for all the items across all the pages, which mean that it could
-        // be layouted at page i and used at page j, j>i.
-        int pageNumber = parent.getOccupiedArea().getPageNumber();
-        Rectangle pageSize;
-        if (pageNumber != 0) {
-            PdfPage page = pdfDocument.getPage(pageNumber);
-            pageSize = page.getPageSize();
-        } else {
-            pageSize = pdfDocument.getDefaultPageSize();
-        }
-
-        RootRenderer rootRenderer = this.getRootRenderer();
-        //TODO DEVSIX-6372 Obtaining DocumentRenderer's margins results in a ClassCastException
-        Float[] margins = new Float[] {rootRenderer.<Float>getProperty(Property.MARGIN_TOP),
-                rootRenderer.<Float>getProperty(Property.MARGIN_RIGHT),
-                rootRenderer.<Float>getProperty(Property.MARGIN_BOTTOM),
-                rootRenderer.<Float>getProperty(Property.MARGIN_LEFT)};
-        for (int i = 0; i < margins.length; i++) {
-            margins[i] = replaceIfNull(margins[i], 0f);
-        }
-        return new Rectangle(pageSize)
-                .applyMargins((float) margins[0], (float) margins[1], (float) margins[2], (float) margins[3], false);
-    }
-
-    private static float replaceIfNull(Float value, float defaultValue) {
-        return (float) (null == value ? defaultValue : value);
     }
 }

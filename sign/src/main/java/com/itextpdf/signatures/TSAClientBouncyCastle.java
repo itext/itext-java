@@ -143,8 +143,9 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * the same imprint length).
      *
      * @param url             Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
-     * @param username        user(account) name
-     * @param password        password
+     * @param username        user(account) name, optional
+     * @param password        password, optional if used in combination with username, the credentials will be used in
+     *                        basic authentication. Use only in combination with a https url to ensure encryption
      * @param tokSzEstimate   estimated size of received time stamp token (DER encoded)
      * @param digestAlgorithm is a hash algorithm
      */

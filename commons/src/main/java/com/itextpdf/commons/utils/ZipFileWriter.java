@@ -51,7 +51,7 @@ public class ZipFileWriter implements Closeable {
         if (archivePath == null) {
             throw new IOException(CommonsExceptionMessageConstant.FILE_NAME_CAN_NOT_BE_NULL);
         }
-        if (FileUtil.fileExists(archivePath) || FileUtil.directoryExists(archivePath)) {
+        if (FileUtil.isFileNotEmpty(archivePath) || FileUtil.directoryExists(archivePath)) {
             throw new IOException(
                     MessageFormatUtil.format(CommonsExceptionMessageConstant.FILE_NAME_ALREADY_EXIST, archivePath));
         }

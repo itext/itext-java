@@ -42,6 +42,7 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -50,6 +51,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
@@ -143,6 +145,39 @@ public class PdfASigningTest extends ExtendedITextTest {
 
     }
 
+    @Test
+    public void failedSigningPdfA2DocumentTest() throws IOException {
+        String src = sourceFolder + "simplePdfADocument.pdf";
+        String out = destinationFolder + "signedPdfADocument2.pdf";
+
+        PdfReader reader = new PdfReader(new FileInputStream(src));
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(out), new StampingProperties());
+        signer.setFieldLockDict(new PdfSigFieldLock());
+        signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
+
+        int x = 36;
+        int y = 548;
+        int w = 200;
+        int h = 100;
+        Rectangle rect = new Rectangle(x, y, w, h);
+        PdfFont font = PdfFontFactory.createFont("Helvetica","WinAnsi",
+                EmbeddingStrategy.PREFER_EMBEDDED);
+
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
+                .setReason("pdfA test")
+                .setLocation("TestCity")
+                .setLayer2Font(font)
+                .setReuseAppearance(false)
+                .setPageRect(rect);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, BouncyCastleProvider.PROVIDER_NAME);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () ->
+                signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
+                        0, PdfSigner.CryptoStandard.CADES));
+        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
+                        "Helvetica"), e.getMessage());
+    }
 
     protected void sign(String src, String name, String dest,
                         Certificate[] chain, PrivateKey pk,

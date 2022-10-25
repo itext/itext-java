@@ -901,8 +901,9 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
 
         doc.add(new Paragraph("Set Image role to null and add to div with role \"Figure\""));
-        Image img = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(200);
-        img.getAccessibilityProperties().setRole(null);
+        Image img = new Image(ImageDataFactory.create(sourceFolder + imageName))
+                .setWidth(200)
+                .setNeutralRole();
         Div div = new Div();
         div.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
         div.add(img);
@@ -915,11 +916,9 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         div = new Div();
         div.getAccessibilityProperties().setRole(StandardRoles.CODE);
         Text txt = new Text("// Prints Hello world!");
-        txt.getAccessibilityProperties().setRole(null);
-        div.add(new Paragraph(txt).setMarginBottom(0));
+        div.add(new Paragraph(txt.setNeutralRole()).setMarginBottom(0));
         txt = new Text("System.out.println(\"Hello world!\");");
-        txt.getAccessibilityProperties().setRole(null);
-        div.add(new Paragraph(txt).setMarginTop(0));
+        div.add(new Paragraph(txt.setNeutralRole()).setMarginTop(0));
         doc.add(div);
 
         doc.close();
@@ -1081,6 +1080,49 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         compareResult("createTaggedVersionOneDotFourTest01.pdf", "cmp_createTaggedVersionOneDotFourTest01.pdf");
     }
 
+    @Test
+    public void neutralRoleTaggingTest() throws Exception {
+        String outFile = "neutralRoleTaggingTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+
+        Document document = new Document(pdfDocument);
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth()
+                .setWidth(UnitValue.createPercentValue(100))
+                .setFixedLayout();
+
+        Cell cell1 = new Cell()
+                .add(new Paragraph(new Text("This is bare text").setNeutralRole()).setNeutralRole());
+        table.addCell(cell1);
+
+        Paragraph untaggedPara = new Paragraph()
+                .setNeutralRole()
+                .add(new Text("This is text in an ").setNeutralRole())
+                .add(new Text("untagged"))
+                .add(new Text(" paragraph").setNeutralRole());
+        Div untaggedDiv = new Div().setNeutralRole().add(untaggedPara);
+        table.addCell(new Cell().add(untaggedDiv));
+
+        Div listGroup = new Div();
+        listGroup.getAccessibilityProperties().setRole(StandardRoles.L);
+        List list1 = new List().setNeutralRole()
+                .add(new ListItem("Item 1"))
+                .add(new ListItem("Item 2"));
+        listGroup.add(list1);
+        Paragraph filler = new Paragraph(new Text("<pretend this is an artifact>").setNeutralRole());
+        filler.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+        listGroup.add(filler);
+        List list2 = new List().setNeutralRole()
+                .add(new ListItem("More items!"))
+                .add(new ListItem("Moooore items!!"));
+        listGroup.add(list2);
+        table.addCell(new Cell().add(listGroup));
+
+        document.add(table);
+        document.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
     private Paragraph createParagraph1() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");
@@ -1117,14 +1159,12 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         if (useCaption) {
             Div div = new Div();
             div.getAccessibilityProperties().setRole(StandardRoles.TABLE);
-            Paragraph p = new Paragraph("Caption");
-            p.getAccessibilityProperties().setRole(null);
+            Paragraph p = new Paragraph("Caption").setNeutralRole();
             p.setTextAlignment(TextAlignment.CENTER).setBold();
             Div caption = new Div().add(p);
             caption.getAccessibilityProperties().setRole(StandardRoles.CAPTION);
             div.add(caption);
-            table.getAccessibilityProperties().setRole(null);
-            div.add(table);
+            div.add(table.setNeutralRole());
             return div;
         } else
             return table;

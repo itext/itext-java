@@ -4,4 +4,6 @@ This software uses the following test resources under the following licenses:
 | NotoSansSC-Regular.otf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.03.2021) from repository: "https://github.com/googlefonts/noto-cjk"
 | NotoSansCJKjp-Bold.otf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit f36eda03dfa5582a6d49abbfb5c83d0209584158 (01.07.2015) from repository: "https://github.com/googlefonts/noto-cjk"
 | NotoSerif-Regular_v1.7.ttf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit 5a89b487c648c34c2b6d1b9ebb73bb3fab1df4b2 (20.09.2017) from "https://github.com/googlefonts/noto-fonts"
-| SourceSerif4-Black.woff | OFL-1.1 | LICENSE-OFL-1.1.txt Based on commit a9eaef81588dddd479f2275d87b3707ed7ae2847 (26.01.2021) from "https://github.com/adobe-fonts/source-serif"
+| SourceSerif4-Black.woff | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit a9eaef81588dddd479f2275d87b3707ed7ae2847 (26.01.2021) from "https://github.com/adobe-fonts/source-serif"
+| SourceHanSerifKR-Regular.otf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit 59e61fd2e39967b6d3b713cdb47612893ab989e1 (26.01.2022) from "https://github.com/adobe-fonts/source-han-serif"
+| cmr10.afm | LPPL-1.3c | LICENSE-LPPL-1.3c.txt | https://ctan.org/tex-archive/fonts/amsfonts/afm?lang=en (26.06.2022)

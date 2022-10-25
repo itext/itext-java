@@ -155,5 +155,100 @@ public class WebColorsTest extends ExtendedITextTest {
         Assert.assertArrayEquals(cmpRgba, resultRgba, delta);
     }
 
+    @Test
+    public void getCMYKColorByDeviceCmykTest() {
+        //corresponding color name = "violet"
+        String cmykString = "device-cmyk(44% 100% 0% 0%)";
+        float[] cmpCmyk = new float[]{0.44f, 1f, 0f, 0f, 1f};
+        float delta = (float)(0.0001);
 
+        float[] resultCmyk = WebColors.getCMYKArray(cmykString);
+
+        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+    }
+
+    @Test
+    public void getCMYKColorByDeviceCmykWithOpacityTest() {
+        //corresponding color name = "violet"
+        String cmykString = "device-cmyk(44% 100% 0% 0% / .8)";
+        float[] cmpCmyk = new float[]{0.44f, 1f, 0f, 0f, 0.8f};
+        float delta = (float)(0.0001);
+
+        float[] resultCmyk = WebColors.getCMYKArray(cmykString);
+
+        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+    }
+
+
+    @Test
+    public void getCMYKColorByDeviceCmykWithOpacityAndFallbackTest() {
+        //corresponding color name = "violet"
+        String cmykString = "device-cmyk(44% 100% 0% 0% / .8 rgb(238,130,238))";
+        float[] cmpCmyk = new float[]{0.44f, 1f, 0f, 0f, 0.8f};
+        float delta = (float)(0.0001);
+
+        float[] resultCmyk = WebColors.getCMYKArray(cmykString);
+
+        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+    }
+
+    @Test
+    public void getCMYKColorWithNoBlack() {
+        String cmykString = "device-cmyk(44% 100% 0%))";
+        float[] cmpCmyk = new float[]{0.44f, 1f, 0f, 1f, 1f};
+        float delta = (float)(0.0001);
+
+        float[] resultCmyk = WebColors.getCMYKArray(cmykString);
+
+        Assert.assertArrayEquals(cmpCmyk, resultCmyk, delta);
+    }
+
+    @Test
+    public void getCMYKColorWithInvalidDeviceCmykDefinition() {
+        String cmykString = "cmyk(44% 100% 0% 1%))";
+
+        float[] resultCmyk = WebColors.getCMYKArray(cmykString);
+
+        Assert.assertNull(resultCmyk);
+    }
+
+    @Test
+    public void getCMYKColorWithExceptionDuringParsing() {
+        float[] resultCmyk = WebColors.getCMYKArray(null);
+        Assert.assertNull(resultCmyk);
+    }
+
+    @Test
+    public void getCMYKColorTest() {
+        //corresponding color name = "violet"
+        String cmykString = "device-cmyk(44% 100% 0% 0%)";
+        float[] cmpCmyk = new float[]{0.44f, 1f, 0f, 0f};
+        float delta = (float)(0.0001);
+
+        DeviceCmyk resultCmyk = WebColors.getCMYKColor(cmykString);
+
+        Assert.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
+    }
+
+    @Test
+    public void getCMYKColorFloatTest() {
+        String cmykString = "device-cmyk(0.44 1 0.2 0.2)";
+        float[] cmpCmyk = new float[]{0.44f, 1f, 0.2f, 0.2f};
+        float delta = (float)(0.0001);
+
+        DeviceCmyk resultCmyk = WebColors.getCMYKColor(cmykString);
+
+        Assert.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
+    }
+
+    @Test
+    public void getCMYKColorNullTest() {
+        String cmykString = "null";
+        float[] cmpCmyk = new float[]{0f, 0f, 0f, 1f};
+        float delta = (float)(0.0001);
+
+        DeviceCmyk resultCmyk = WebColors.getCMYKColor(cmykString);
+
+        Assert.assertArrayEquals(cmpCmyk, resultCmyk.colorValue, delta);
+    }
 }

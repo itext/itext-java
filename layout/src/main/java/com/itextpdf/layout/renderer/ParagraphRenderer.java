@@ -152,7 +152,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         Float blockMaxHeight = retrieveMaxHeight();
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
-                    && !wasParentsHeightClipped
+                && !wasParentsHeightClipped
                 ? OverflowPropertyValue.FIT
                 : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
@@ -220,6 +220,7 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler.startChildMarginsHandling(null, layoutBox);
         }
         boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
+
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, this.getPropertyAsFloat(Property.TAB_DEFAULT));
             currentRenderer.setProperty(Property.TAB_STOPS, this.<Object>getProperty(Property.TAB_STOPS));
@@ -234,8 +235,22 @@ public class ParagraphRenderer extends BlockRenderer {
                     .setTextIndent(lineIndent)
                     .setFloatOverflowedToNextPageWithNothing(floatOverflowedToNextPageWithNothing);
             LineLayoutResult result = (LineLayoutResult)((LineRenderer) currentRenderer.setParent(this)).layout(lineLayoutContext);
+            boolean isLastLineReLaidOut = false;
 
             if (result.getStatus() == LayoutResult.NOTHING) {
+                //relayouting the child for allowing the vertical overflow in order to take into account the negative
+                // leading adjustment in case of a clipped-height context
+                if (layoutContext.isClippedHeight()) {
+                    OverflowPropertyValue previousOverflowProperty = currentRenderer.<OverflowPropertyValue>getProperty(
+                            Property.OVERFLOW_Y);
+                    currentRenderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+                    lineLayoutContext.setClippedHeight(true);
+                    result = (LineLayoutResult) ((LineRenderer) currentRenderer.setParent(this)).layout(
+                            lineLayoutContext);
+                    currentRenderer.setProperty(Property.OVERFLOW_Y, previousOverflowProperty);
+                    isLastLineReLaidOut = true;
+                }
+
                 Float lineShiftUnderFloats = FloatingHelper.calculateLineShiftUnderFloats(floatRendererAreas, layoutBox);
                 if (lineShiftUnderFloats != null) {
                     layoutBox.decreaseHeight((float) lineShiftUnderFloats);
@@ -292,13 +307,11 @@ public class ParagraphRenderer extends BlockRenderer {
             if (isFit && !RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
                 if (lineHasContent) {
                     float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent - (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) - processedRenderer.getMaxAscent();
-                    // TODO this is a workaround. To be refactored
-                    if (processedRenderer != null && processedRenderer.containsImage()) {
+                    if (processedRenderer.containsImage()) {
                         indentFromLastLine += previousDescent;
                     }
                     deltaY = lastYLine + indentFromLastLine - processedRenderer.getYLine();
                     lastLineBottomLeadingIndent = leading != null ? processedRenderer.getBottomLeadingIndent(leading) : 0;
-                    // TODO this is a workaround. To be refactored
                     if (lastLineBottomLeadingIndent < 0 && processedRenderer.containsImage()) {
                         lastLineBottomLeadingIndent = 0;
                     }
@@ -308,7 +321,12 @@ public class ParagraphRenderer extends BlockRenderer {
                 if (firstLineInBox) {
                     deltaY = processedRenderer != null && leading != null ? -processedRenderer.getTopLeadingIndent(leading) : 0;
                 }
-                isFit = leading == null || processedRenderer.getOccupiedArea().getBBox().getY() + deltaY >= layoutBox.getY();
+
+                if (isLastLineReLaidOut) {
+                    isFit = leading == null || processedRenderer.getOccupiedArea().getBBox().getY() + deltaY - lastLineBottomLeadingIndent >= layoutBox.getY();
+                } else {
+                    isFit = leading == null || processedRenderer.getOccupiedArea().getBBox().getY() + deltaY >= layoutBox.getY();
+                }
             }
 
             if (!isFit && (null == processedRenderer || isOverflowFit(overflowY))) {
@@ -714,7 +732,7 @@ public class ParagraphRenderer extends BlockRenderer {
     }
 
     private void applyTextAlignment(TextAlignment textAlignment, LineLayoutResult result, LineRenderer processedRenderer,
-                        Rectangle layoutBox, List<Rectangle> floatRendererAreas, boolean onlyOverflowedFloatsLeft, float lineIndent) {
+            Rectangle layoutBox, List<Rectangle> floatRendererAreas, boolean onlyOverflowedFloatsLeft, float lineIndent) {
         if (textAlignment == TextAlignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
                 textAlignment == TextAlignment.JUSTIFIED_ALL) {
             if (processedRenderer != null) {

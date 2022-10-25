@@ -44,6 +44,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -51,11 +52,14 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
@@ -228,15 +232,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the object that knows the place to draw this element and maintains its state
      */
     protected abstract void doDraw(SvgDrawContext context);
-
-    static float getAlphaFromRGBA(String value) {
-        try {
-            return WebColors.getRGBAColor(value)[3];
-        } catch (ArrayIndexOutOfBoundsException | NullPointerException exc) {
-            return 1f;
-        }
-    }
-
 
     /**
      * Calculate the transformation for the viewport based on the context. Only used by elements that can create
@@ -458,8 +453,11 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (token != null) {
             String value = token.getValue();
             if (!SvgConstants.Values.NONE.equalsIgnoreCase(value)) {
-                return new TransparentColor(WebColors.getRGBColor(value),
-                        parentOpacity * getAlphaFromRGBA(value));
+                if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(CommonCssConstants.COLOR, value))) {
+                    return new TransparentColor(new DeviceRgb(0.0f, 0.0f, 0.0f), 1.0f);
+                }
+                TransparentColor result = CssDimensionParsingUtils.parseColor(value);
+                return new TransparentColor(result.getColor(), result.getOpacity() * parentOpacity);
             }
         }
         return null;

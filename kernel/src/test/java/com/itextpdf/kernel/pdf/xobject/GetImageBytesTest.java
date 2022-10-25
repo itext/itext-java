@@ -76,10 +76,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+
 @Category(IntegrationTest.class)
 public class GetImageBytesTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject"
+            + "/GetImageBytesTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
 
     @BeforeClass
@@ -163,32 +165,38 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
-    public void testSeparationCSWithICCBasedAsAlternative() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile(
-                "separationCSWithICCBasedAsAlternative.pdf", "Im1", "tif"));
-
-        Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported, PdfName.Separation), e.getMessage());
+    @org.junit.Ignore
+    public void testSeparationCSWithICCBasedAsAlternative() throws Exception {
+        testFile("separationCSWithICCBasedAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
-    public void testSeparationCSWithDeviceCMYKAsAlternative() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile(
-                "separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "tif"));
+    @org.junit.Ignore
+    public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
+        Assert.assertThrows(UnsupportedOperationException.class, () ->
+        {
+            testFile("separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "png");
+        });
+    }
 
-        Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported, PdfName.Separation), e.getMessage());
+    @Test
+    public void testGrayScalePng() throws Exception {
+        testFile("grayImages.pdf", "Im1", "png");
     }
 
     @Test
     // TODO: DEVSIX-3538 (update test after fix)
-    public void testSeparationCSWithDeviceRGBAsAlternative() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile(
-                "separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "tif"));
+    @org.junit.Ignore
+    public void testSeparationCSWithDeviceRGBAsAlternative() throws Exception {
+        testFile("separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "png");
+    }
 
-        Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported, PdfName.Separation), e.getMessage());
+    @Test
+    // TODO: DEVSIX-3538 (update test after fix)
+    @org.junit.Ignore
+    public void testSeparationCSWithDeviceRGBAsAlternative2() throws Exception {
+        testFile("spotColorImagesSmall.pdf", "Im1", "png");
     }
 
     @Test
@@ -240,31 +248,12 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    private class ImageExtractor implements IEventListener {
-        private java.util.List<byte[]> images = new ArrayList<>();
-
-        public void eventOccurred(IEventData data, EventType type) {
-            switch (type) {
-                case RENDER_IMAGE:
-                    ImageRenderInfo renderInfo = (ImageRenderInfo) data;
-                    byte[] bytes = renderInfo.getImage().getImageBytes();
-                    images.add(bytes);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public Set<EventType> getSupportedEvents() {
-            return null;
-        }
-
-        public java.util.List<byte[]> getImages() {
-            return images;
-        }
+    private void testFile(String filename, String objectid, String expectedImageFormat) throws Exception {
+        testFile(filename, objectid, expectedImageFormat, false);
     }
 
-    private void testFile(String filename, String objectid, String expectedImageFormat) throws Exception {
+    private void testFile(String filename, String objectid, String expectedImageFormat, boolean saveResult)
+            throws Exception {
         try (PdfReader reader = new PdfReader(SOURCE_FOLDER + filename);
                 PdfDocument pdfDocument = new PdfDocument(reader)) {
             PdfResources resources = pdfDocument.getPage(1).getResources();
@@ -280,9 +269,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
             Assert.assertEquals(expectedImageFormat, img.identifyImageFileExtension());
 
             byte[] result = img.getImageBytes(true);
+            if (saveResult) {
+                Files.write(Paths.get(
+                                SOURCE_FOLDER,
+                                filename.substring(0, filename.length() - 4) + ".new." + expectedImageFormat),
+                        result);
+            }
             byte[] cmpBytes = Files.readAllBytes(Paths.get(
                     SOURCE_FOLDER, filename.substring(0, filename.length() - 4) + "." + expectedImageFormat));
-
             if (img.identifyImageFileExtension().equals("tif")) {
                 compareTiffImages(cmpBytes, result);
             } else {
@@ -380,5 +374,29 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     private byte[] subArray(byte[] array, int beg, int end) {
         return Arrays.copyOfRange(array, beg, end + 1);
+    }
+
+    private class ImageExtractor implements IEventListener {
+        private final java.util.List<byte[]> images = new ArrayList<>();
+
+        public void eventOccurred(IEventData data, EventType type) {
+            switch (type) {
+                case RENDER_IMAGE:
+                    ImageRenderInfo renderInfo = (ImageRenderInfo) data;
+                    byte[] bytes = renderInfo.getImage().getImageBytes();
+                    images.add(bytes);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public Set<EventType> getSupportedEvents() {
+            return null;
+        }
+
+        public java.util.List<byte[]> getImages() {
+            return images;
+        }
     }
 }

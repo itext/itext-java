@@ -51,6 +51,7 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
@@ -173,6 +174,10 @@ public class PdfCanvas {
     private static final PdfSpecialCs.Pattern pattern = new PdfSpecialCs.Pattern();
 
     private static final float IDENTITY_MATRIX_EPS = 1e-4f;
+
+    // Flag showing whether to check the color on drawing or not
+    // Normally the color is checked on setColor but not the default one which is DeviceGray.BLACK
+    private boolean defaultDeviceGrayBlackColorCheckRequired = true;
 
     /**
      * a LIFO stack of graphics state saved states.
@@ -539,6 +544,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas newlineShowText(String text) {
+        checkDefaultDeviceGrayBlackColor(getColorKeyForText());
+
         showTextInt(text);
         contentStream.getOutputStream()
                 .writeByte('\'')
@@ -555,6 +562,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas newlineShowText(float wordSpacing, float charSpacing, String text) {
+        checkDefaultDeviceGrayBlackColor(getColorKeyForText());
+
         contentStream.getOutputStream()
                 .writeFloat(wordSpacing)
                 .writeSpace()
@@ -702,6 +711,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(String text) {
+        checkDefaultDeviceGrayBlackColor(getColorKeyForText());
+
         showTextInt(text);
         contentStream.getOutputStream().writeBytes(Tj);
         return this;
@@ -726,7 +737,9 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
+        checkDefaultDeviceGrayBlackColor(getColorKeyForText());
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
+
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
             throw new PdfException(
@@ -898,7 +911,9 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas showText(PdfArray textArray) {
+        checkDefaultDeviceGrayBlackColor(getColorKeyForText());
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
+
         if (currentGs.getFont() == null)
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
@@ -1269,6 +1284,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathEoFillStroke() {
+        checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
+
         contentStream.getOutputStream().writeBytes(bStar);
         return this;
     }
@@ -1279,6 +1296,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas closePathFillStroke() {
+        checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
+
         contentStream.getOutputStream().writeBytes(b);
         return this;
     }
@@ -1299,6 +1318,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas stroke() {
+        checkDefaultDeviceGrayBlackColor(CheckColorMode.STROKE);
+
         contentStream.getOutputStream().writeBytes(S);
         return this;
     }
@@ -1341,6 +1362,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fill() {
+        checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL);
+
         contentStream.getOutputStream().writeBytes(f);
         return this;
     }
@@ -1351,6 +1374,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas fillStroke() {
+        checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
+
         contentStream.getOutputStream().writeBytes(B);
         return this;
     }
@@ -1361,6 +1386,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFill() {
+        checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL);
+
         contentStream.getOutputStream().writeBytes(fStar);
         return this;
     }
@@ -1371,6 +1398,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas eoFillStroke() {
+        checkDefaultDeviceGrayBlackColor(CheckColorMode.FILL_AND_STROKE);
+
         contentStream.getOutputStream().writeBytes(BStar);
         return this;
     }
@@ -2479,6 +2508,40 @@ public class PdfCanvas {
         return this;
     }
 
+    private void checkDefaultDeviceGrayBlackColor(CheckColorMode checkColorMode) {
+        if (defaultDeviceGrayBlackColorCheckRequired) {
+            // It's enough to check DeviceGray.BLACK once for fill color or stroke color
+            // But it's still important to do not check fill color if it's not used and vice versa
+            if (currentGs.getFillColor() == DeviceGray.BLACK &&
+                    (checkColorMode == CheckColorMode.FILL || checkColorMode == CheckColorMode.FILL_AND_STROKE)) {
+                document.checkIsoConformance(currentGs, IsoKey.FILL_COLOR, resources, contentStream);
+                defaultDeviceGrayBlackColorCheckRequired = false;
+            } else if (currentGs.getStrokeColor() == DeviceGray.BLACK &&
+                    (checkColorMode == CheckColorMode.STROKE || checkColorMode == CheckColorMode.FILL_AND_STROKE)) {
+                document.checkIsoConformance(currentGs, IsoKey.STROKE_COLOR, resources, contentStream);
+                defaultDeviceGrayBlackColorCheckRequired = false;
+            } else {
+                // Nothing
+            }
+        }
+    }
+
+    private CheckColorMode getColorKeyForText() {
+        switch (currentGs.getTextRenderingMode()) {
+            case PdfCanvasConstants.TextRenderingMode.FILL:
+            case PdfCanvasConstants.TextRenderingMode.FILL_CLIP:
+                return CheckColorMode.FILL;
+            case PdfCanvasConstants.TextRenderingMode.STROKE:
+            case PdfCanvasConstants.TextRenderingMode.STROKE_CLIP:
+                return CheckColorMode.STROKE;
+            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE:
+            case PdfCanvasConstants.TextRenderingMode.FILL_STROKE_CLIP:
+                return CheckColorMode.FILL_AND_STROKE;
+            default:
+                return CheckColorMode.NONE;
+        }
+    }
+
     private static PdfStream getPageStream(PdfPage page) {
         PdfStream stream = page.getLastContentStream();
         return stream == null || stream.getOutputStream() == null || stream.containsKey(PdfName.Filter) ? page.newContentStreamAfter() : stream;
@@ -2507,5 +2570,12 @@ public class PdfCanvas {
     private static boolean isIdentityMatrix(float a, float b, float c, float d, float e, float f) {
         return Math.abs(1 - a) < IDENTITY_MATRIX_EPS && Math.abs(b) < IDENTITY_MATRIX_EPS && Math.abs(c) < IDENTITY_MATRIX_EPS &&
                 Math.abs(1 - d) < IDENTITY_MATRIX_EPS && Math.abs(e) < IDENTITY_MATRIX_EPS && Math.abs(f) < IDENTITY_MATRIX_EPS;
+    }
+
+    private enum CheckColorMode {
+        NONE,
+        FILL,
+        STROKE,
+        FILL_AND_STROKE
     }
 }

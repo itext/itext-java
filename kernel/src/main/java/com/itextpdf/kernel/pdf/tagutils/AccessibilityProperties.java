@@ -75,6 +75,11 @@ public abstract class AccessibilityProperties {
      * <p>
      * See also {@link StandardRoles}.
      *
+     * <p>
+     * Calling this method with a null argument will make the tagging on the associated layout
+     * element "neutral". The effect is that all children of the layout element will be
+     * tagged as if they were direct children of the parent element.
+     *
      * @param role the role to be set
      *
      * @return this {@link AccessibilityProperties} instance

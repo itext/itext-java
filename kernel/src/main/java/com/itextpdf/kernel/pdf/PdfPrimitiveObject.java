@@ -44,6 +44,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.utils.ICopyFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,8 +112,8 @@ public abstract class PdfPrimitiveObject extends PdfObject {
     }
 
     @Override
-    protected void copyContent(PdfObject from, PdfDocument document) {
-        super.copyContent(from, document);
+    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
+        super.copyContent(from, document, copyFilter);
         PdfPrimitiveObject object = (PdfPrimitiveObject) from;
         if (object.content != null)
             content = Arrays.copyOf(object.content, object.content.length);

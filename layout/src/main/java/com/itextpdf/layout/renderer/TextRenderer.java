@@ -544,7 +544,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                             lineCopy.end++;
                                             line = lineCopy;
 
-                                            // TODO these values are based on whole word. recalculate properly based on hyphenated part
+                                            // TODO DEVSIX-7010 recalculate line properties in case of word hyphenation.
+                                            // These values are based on whole word. Recalculate properly based on hyphenated part.
                                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
                                             currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);

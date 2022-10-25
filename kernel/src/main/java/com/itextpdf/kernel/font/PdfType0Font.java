@@ -43,7 +43,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.CFFFontSubset;
 import com.itextpdf.io.font.CMapEncoding;
 import com.itextpdf.io.font.CidFont;
@@ -56,14 +56,14 @@ import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -74,6 +74,7 @@ import com.itextpdf.kernel.pdf.PdfOutputStream;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,9 +165,11 @@ public class PdfType0Font extends PdfFont {
         PdfObject cmap = fontDictionary.get(PdfName.Encoding);
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
         CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
-        if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) || PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
+        if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
+                PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
             if (toUnicodeCMap == null) {
-                String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
+                String uniMap = getUniMapFromOrdering(getOrdering(cidFont),
+                        PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()));
                 toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap == null) {
                     toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
@@ -180,7 +183,7 @@ public class PdfType0Font extends PdfFont {
             embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
-            String uniMap = getUniMapFromOrdering(getOrdering(cidFont));
+            String uniMap = getUniMapFromOrdering(getOrdering(cidFont), true);
             if (uniMap != null && uniMap.startsWith("Uni") && CidFontProperties.isCidFont(cidFontName, uniMap)) {
                 try {
                     fontProgram = FontProgramFactory.createFont(cidFontName);
@@ -201,10 +204,12 @@ public class PdfType0Font extends PdfFont {
             }
             if (fontProgram == null) {
                 throw new PdfException(MessageFormatUtil.format(
-                        KernelExceptionMessageConstant.CANNOT_RECOGNISE_DOCUMENT_FONT_WITH_ENCODING, cidFontName, cmap));
+                        KernelExceptionMessageConstant.CANNOT_RECOGNISE_DOCUMENT_FONT_WITH_ENCODING,
+                        cidFontName, cmap));
             }
         }
-        // DescendantFonts is a one-element array specifying the CIDFont dictionary that is the descendant of this Type 0 font.
+        // DescendantFonts is a one-element array specifying the CIDFont dictionary
+        // that is the descendant of this Type 0 font.
         PdfDictionary cidFontDictionary = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
         // Required according to the spec
         PdfName subtype = cidFontDictionary.getAsName(PdfName.Subtype);
@@ -219,6 +224,50 @@ public class PdfType0Font extends PdfFont {
         subset = false;
     }
 
+    /**
+     * Get Unicode mapping name from ordering.
+     * @param ordering the text ordering to base to unicode mapping on
+     * @param horizontal identifies whether the encoding is horizontal or vertical
+     *
+     * @return Unicode mapping name
+     */
+    public static String getUniMapFromOrdering(String ordering, boolean horizontal) {
+        String result = null;
+        switch (ordering) {
+            case "CNS1":
+                result = "UniCNS-UTF16-";
+                break;
+            case "Japan1":
+                result = "UniJIS-UTF16-";
+                break;
+            case "Korea1":
+                result = "UniKS-UTF16-";
+                break;
+            case "GB1":
+                result = "UniGB-UTF16-";
+                break;
+            case "Identity":
+                result = "Identity-";
+                break;
+            default:
+                return null;
+        }
+        if (horizontal) {
+            return result + 'H';
+        }
+        return result + 'V';
+    }
+
+    /**
+     * Get Unicode mapping name from ordering.
+     * @param ordering the text ordering to base to unicode mapping on
+     *
+     * @return Unicode mapping name
+     *
+     * @deprecated Replaced by {@link #getUniMapFromOrdering(String, boolean)}
+     * for proper handling of IDENTITY_V encoding.
+     */
+    @Deprecated
     public static String getUniMapFromOrdering(String ordering) {
         switch (ordering) {
             case "CNS1":
@@ -841,18 +890,18 @@ public class PdfType0Font extends PdfFont {
     public PdfStream getToUnicode() {
         OutputStream<ByteArrayOutputStream> stream = new OutputStream<>(new ByteArrayOutputStream());
         stream.writeString("/CIDInit /ProcSet findresource begin\n" +
-                        "12 dict begin\n" +
-                        "begincmap\n" +
-                        "/CIDSystemInfo\n" +
-                        "<< /Registry (Adobe)\n" +
-                        "/Ordering (UCS)\n" +
-                        "/Supplement 0\n" +
-                        ">> def\n" +
-                        "/CMapName /Adobe-Identity-UCS def\n" +
-                        "/CMapType 2 def\n" +
-                        "1 begincodespacerange\n" +
-                        "<0000><FFFF>\n" +
-                        "endcodespacerange\n");
+                "12 dict begin\n" +
+                "begincmap\n" +
+                "/CIDSystemInfo\n" +
+                "<< /Registry (Adobe)\n" +
+                "/Ordering (UCS)\n" +
+                "/Supplement 0\n" +
+                ">> def\n" +
+                "/CMapName /Adobe-Identity-UCS def\n" +
+                "/CMapType 2 def\n" +
+                "1 begincodespacerange\n" +
+                "<0000><FFFF>\n" +
+                "endcodespacerange\n");
 
         //accumulate long tag into a subset and write it.
         ArrayList<Glyph> glyphGroup = new ArrayList<>(100);

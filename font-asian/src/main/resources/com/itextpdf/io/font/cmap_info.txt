@@ -38,26 +38,21 @@ from Adobe to use these fonts.
 
 The *.cmap and *.properties files in this jar, do not contain
 any font program. They contain information (mappings, metrics,...)
-that is based on font information distributed on Adobe's site:
-http://partners.adobe.com/public/developer/acrobat/index_advanced.html#pci
+that is based on font information distributed by Adobe on:
+https://github.com/adobe-type-tools/cmap-resources
 
-The original copyright notice of the mappings is as follows:
-"Copyright 1990-2000 Adobe Systems Incorporated.
- All Rights Reserved.
+The copyright notice of the mappings is as follows:
+"Copyright 1990-2019 Adobe. All rights reserved.
 
- Patents Pending
+ Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
- NOTICE: All information contained herein is the property
- of Adobe Systems Incorporated.
+ Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 
- Permission is granted for redistribution of this file
- provided this copyright notice is maintained intact and
- that the contents of this file are not altered in any
- way from its original form.
+ Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 
- PostScript and Display PostScript are trademarks of
- Adobe Systems Incorporated which may be registered in
- certain jurisdictions."
+ Neither the name of Adobe nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 The original files with the mappings are plain text files,
 and therefore not optimized for being read by a computer

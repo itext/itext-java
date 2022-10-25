@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <report>
-<errors count="4">
+<errors count="5">
 <error>
 <message>PdfStream. Bytes are different.
 First bytes difference is encountered at index 1715. Expected: 3 ( 502 196.13 16 re S ). Found: 5 ( 502 196.15 16 re S ). Total number of different bytes: 1</message>
 <path>
 <base cmp="3 0 obj" out="3 0 obj"/>
 <offset>1715</offset>
+</path>
+</error>
+<error>
+<message>PdfNumber. Expected: 842. Found: 843</message>
+<path>
+<base cmp="5 0 obj" out="5 0 obj"/>
+<dictKey>/MediaBox</dictKey>
+<arrayIndex>3</arrayIndex>
 </path>
 </error>
 <error>
@@ -24,11 +32,11 @@ First bytes difference is encountered at index 1715. Expected: 3 ( 502 196.13 16
 </path>
 </error>
 <error>
-<message>PdfNumber. Expected: 595. Found: 594</message>
+<message>PdfNumber. Expected: 842. Found: 843</message>
 <path>
 <base cmp="6 0 obj" out="6 0 obj"/>
 <dictKey>/MediaBox</dictKey>
-<arrayIndex>2</arrayIndex>
+<arrayIndex>3</arrayIndex>
 </path>
 </error>
 </errors>

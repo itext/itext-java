@@ -259,7 +259,7 @@ public class LineRenderer extends AbstractRenderer {
                 childResult = null;
                 MinMaxWidth kidMinMaxWidth = FloatingHelper.calculateMinMaxWidthForFloat((AbstractRenderer) childRenderer, kidFloatPropertyVal);
                 float floatingBoxFullWidth = kidMinMaxWidth.getMaxWidth();
-                // TODO width will be recalculated on float layout;
+                // Width will be recalculated on float layout;
                 // also not taking it into account (i.e. not setting it on child renderer) results in differences with html
                 // when floating span is split on other line;
                 // TODO DEVSIX-1730: may be process floating spans as inline blocks always?
@@ -288,7 +288,6 @@ public class LineRenderer extends AbstractRenderer {
                     if (!childWidthWasReplaced) {
                         minChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMinWidth();
                     }
-                    // TODO if percents width was used, max width might be huge
                     maxChildWidth = ((MinMaxWidthLayoutResult) childResult).getMinMaxWidth().getMaxWidth();
                     widthHandler.updateMinChildWidth(minChildWidth + AbstractRenderer.EPS);
                     widthHandler.updateMaxChildWidth(maxChildWidth + AbstractRenderer.EPS);
@@ -1514,7 +1513,7 @@ public class LineRenderer extends AbstractRenderer {
     /**
      * While resolving TextRenderer may split into several ones with different fonts.
      */
-    private void resolveChildrenFonts() {
+        private void resolveChildrenFonts() {
         final List<IRenderer> newChildRenderers = new ArrayList<>(getChildRenderers().size());
         boolean updateChildRenderers = false;
         for (final IRenderer child : getChildRenderers()) {
@@ -1535,8 +1534,6 @@ public class LineRenderer extends AbstractRenderer {
 
     private float decreaseRelativeWidthByChildAdditionalWidth(IRenderer childRenderer, float normalizedChildWidth) {
         // Decrease the calculated width by margins, paddings and borders so that even for 100% width the content definitely fits.
-        // TODO Actually, from html/css point of view - this is wrong, however we still do it, in order to avoid NOTHING due to
-        // horizontal overflow. Probably remove this when overflow-x is supported.
         if (childRenderer instanceof AbstractRenderer) {
             Rectangle dummyRect = new Rectangle(normalizedChildWidth, 0);
             ((AbstractRenderer) childRenderer).applyMargins(dummyRect, false);

@@ -44,14 +44,15 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.utils.ICopyFilter;
+import com.itextpdf.kernel.utils.NullCopyFilter;
 
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class PdfObject {
 
@@ -159,15 +160,18 @@ public abstract class PdfObject {
      */
     public final void flush(boolean canBeInObjStm) {
         if (isFlushed() || getIndirectReference() == null || getIndirectReference().isFree()) {
-            // TODO DEVSIX-744: here we should take into account and log the case when object is MustBeIndirect, but has no indirect reference
+// TODO DEVSIX-744: here we should take into account and log the case when object is MustBeIndirect,
+//  but has no indirect reference
 //            Logger logger = LoggerFactory.getLogger(PdfObject.class);
 //            if (isFlushed()) {
 //                logger.warn("Meaningless call, the object has already flushed");
 //            } else if (isIndirect()){
-//                logger.warn("Meaningless call, the object will be transformed into indirect on closing, but at the moment it doesn't have an indirect reference and therefore couldn't be flushed. " +
+//                logger.warn("Meaningless call, the object will be transformed into indirect on closing," +
+//                " but at the moment it doesn't have an indirect reference and therefore couldn't be flushed. " +
 //                        "To flush it now call makeIndirect(PdfDocument) method before calling flush() method.");
 //            } else {
-//                logger.warn("Meaningless call, the object is direct object. It will be flushed along with the indirect object that contains it.");
+//                logger.warn("Meaningless call, the object is direct object. It will be flushed along with" +
+//                " the indirect object that contains it.");
 //            }
             return;
         }
@@ -218,8 +222,9 @@ public abstract class PdfObject {
     /**
      * Marks object to be saved as indirect.
      *
-     * @param document a document the indirect reference will belong to.
+     * @param document  a document the indirect reference will belong to.
      * @param reference indirect reference which will be associated with this document
+     *
      * @return object itself.
      */
     public PdfObject makeIndirect(PdfDocument document, PdfIndirectReference reference) {
@@ -247,6 +252,7 @@ public abstract class PdfObject {
      * Marks object to be saved as indirect.
      *
      * @param document a document the indirect reference will belong to.
+     *
      * @return object itself.
      */
     public PdfObject makeIndirect(PdfDocument document) {
@@ -282,43 +288,101 @@ public abstract class PdfObject {
     @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
     public PdfObject clone() {
+        return clone(NullCopyFilter.getInstance());
+    }
+
+    /**
+     * Creates clone of the object which belongs to the same document as original object.
+     * New object shall not be used in other documents.
+     *
+     * @param filter Filter what will be copied or not
+     *
+     * @return cloned object.
+     */
+    public PdfObject clone(ICopyFilter filter) {
         PdfObject newObject = newInstance();
         if (indirectReference != null || checkState(MUST_BE_INDIRECT)) {
             newObject.setState(MUST_BE_INDIRECT);
         }
-        newObject.copyContent(this, null);
+        newObject.copyContent(this, null, filter);
         return newObject;
     }
 
     /**
      * Copies object to a specified document.
      * <br><br>
-     * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
+     * NOTE: Works only for objects that are read from document opened in reading mode,
+     * otherwise an exception is thrown.
      *
      * @param document document to copy object to.
+     *
      * @return copied object.
      */
     public PdfObject copyTo(PdfDocument document) {
-        return copyTo(document, true);
+        return copyTo(document, true, NullCopyFilter.getInstance());
     }
 
     /**
      * Copies object to a specified document.
      * <br><br>
-     * NOTE: Works only for objects that are read from document opened in reading mode, otherwise an exception is thrown.
+     * NOTE: Works only for objects that are read from document opened in reading mode,
+     * otherwise an exception is thrown.
      *
      * @param document         document to copy object to.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     *                         If object is associated with any indirect reference and allowDuplicating is
+     *                         false then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect
+     *                         reference will be assigned.
+     *
      * @return copied object.
      */
     public PdfObject copyTo(PdfDocument document, boolean allowDuplicating) {
+        return copyTo(document, allowDuplicating, NullCopyFilter.getInstance());
+    }
+
+    /**
+     * Copies object to a specified document.
+     * <br><br>
+     * NOTE: Works only for objects that are read from document opened in reading mode,
+     * otherwise an exception is thrown.
+     *
+     * @param document   document to copy object to.
+     * @param copyFilter {@link  ICopyFilter} a filter to apply while copying arrays and dictionaries
+     *                   Use {@link NullCopyFilter} for no filtering
+     *
+     * @return copied object.
+     */
+
+    public PdfObject copyTo(PdfDocument document, ICopyFilter copyFilter) {
+        return copyTo(document, true, copyFilter);
+    }
+
+    /**
+     * Copies object to a specified document.
+     * <br><br>
+     * NOTE: Works only for objects that are read from document opened in reading mode,
+     * otherwise an exception is thrown.
+     *
+     * @param document         document to copy object to.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false
+     *                         then already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference
+     *                         will be assigned.
+     * @param copyFilter       {@link  ICopyFilter} a filter to apply while copying arrays and dictionaries
+     *                         Use {@link NullCopyFilter} for no filtering
+     *
+     * @return copied object.
+     */
+
+    public PdfObject copyTo(PdfDocument document, boolean allowDuplicating, ICopyFilter copyFilter) {
         if (document == null)
             throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_FOR_COPY_TO_CANNOT_BE_NULL);
 
         if (indirectReference != null) {
-            // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also DEVSIX-602
+            // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also
+            //  DEVSIX-602
             if (indirectReference.getWriter() != null || checkState(MUST_BE_INDIRECT)) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.CANNOT_COPY_INDIRECT_OBJECT_FROM_THE_DOCUMENT_THAT_IS_BEING_WRITTEN);
@@ -328,11 +392,12 @@ public abstract class PdfObject {
             }
         }
 
-        return processCopying(document, allowDuplicating);
+        return processCopying(document, allowDuplicating, copyFilter);
     }
 
     /**
-     * Sets the 'modified' flag to the indirect object, the flag denotes that the object was modified since the document opening.
+     * Sets the 'modified' flag to the indirect object, the flag denotes that the object was modified since
+     * the document opening.
      * It is recommended to set this flag after changing any PDF object.
      * <p>
      * For example flag is used in the append mode (see {@link StampingProperties#useAppendMode()}).
@@ -469,6 +534,11 @@ public abstract class PdfObject {
         return getType() == INDIRECT_REFERENCE;
     }
 
+    protected PdfObject setIndirectReference(PdfIndirectReference indirectReference) {
+        this.indirectReference = indirectReference;
+        return this;
+    }
+
     /**
      * Checks if this <CODE>PdfObject</CODE> is of the type
      * <CODE>PdfLiteral</CODE>.
@@ -487,15 +557,11 @@ public abstract class PdfObject {
      */
     protected abstract PdfObject newInstance();
 
-    protected PdfObject setIndirectReference(PdfIndirectReference indirectReference) {
-        this.indirectReference = indirectReference;
-        return this;
-    }
-
     /**
      * Checks state of the flag of current object.
      *
      * @param state special flag to check
+     *
      * @return true if the state was set.
      */
     protected boolean checkState(short state) {
@@ -506,6 +572,7 @@ public abstract class PdfObject {
      * Sets special states of current object.
      *
      * @param state special flag of current object
+     *
      * @return this {@link PdfObject}
      */
     protected PdfObject setState(short state) {
@@ -517,6 +584,7 @@ public abstract class PdfObject {
      * Clear state of the flag of current object.
      *
      * @param state special flag state to clear
+     *
      * @return this {@link PdfObject}
      */
     protected PdfObject clearState(short state) {
@@ -531,8 +599,30 @@ public abstract class PdfObject {
      * @param document document to copy object to.
      */
     protected void copyContent(PdfObject from, PdfDocument document) {
+        copyContent(from, document, NullCopyFilter.getInstance());
+    }
+
+    /**
+     * Copies object content from object 'from'.
+     *
+     * @param from     object to copy content from.
+     * @param document document to copy object to.
+     * @param filter   {@link ICopyFilter} a filter that will apply on dictionaries and array
+     *                 Use {@link NullCopyFilter} for no filtering
+     */
+    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter filter) {
         if (isFlushed())
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_COPY_FLUSHED_OBJECT, this);
+    }
+
+    static boolean equalContent(PdfObject obj1, PdfObject obj2) {
+        PdfObject direct1 = obj1 != null && obj1.isIndirectReference()
+                ? ((PdfIndirectReference) obj1).getRefersTo(true)
+                : obj1;
+        PdfObject direct2 = obj2 != null && obj2.isIndirectReference()
+                ? ((PdfIndirectReference) obj2).getRefersTo(true)
+                : obj2;
+        return direct1 != null && direct1.equals(direct2);
     }
 
     /**
@@ -547,17 +637,45 @@ public abstract class PdfObject {
      *
      * @param documentTo       if not null: document to copy object to; otherwise indicates that object is to be cloned.
      * @param allowDuplicating indicates if to allow copy objects which already have been copied.
-     *                         If object is associated with any indirect reference and allowDuplicating is false then already existing reference will be returned instead of copying object.
-     *                         If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then
+     *                         already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect
+     *                         reference will be assigned.
+     *
      * @return copied object.
      */
     PdfObject processCopying(PdfDocument documentTo, boolean allowDuplicating) {
+        return processCopying(documentTo, allowDuplicating, NullCopyFilter.getInstance());
+    }
+
+    /**
+     * Processes two cases of object copying:
+     * <ol>
+     * <li>copying to the other document
+     * <li>cloning inside of the current document
+     * </ol>
+     * <p>
+     * This two cases are distinguished by the state of {@code document} parameter:
+     * the second case is processed if {@code document} is {@code null}.
+     *
+     * @param documentTo       if not null: document to copy object to; otherwise indicates that object is to be cloned.
+     * @param allowDuplicating indicates if to allow copy objects which already have been copied.
+     *                         If object is associated with any indirect reference and allowDuplicating is false then
+     *                         already existing reference will be returned instead of copying object.
+     *                         If allowDuplicating is true then object will be copied and new indirect reference will
+     *                         be assigned.
+     * @param filter           filters what will be copies or not
+     *
+     * @return copied object.
+     */
+
+    PdfObject processCopying(PdfDocument documentTo, boolean allowDuplicating, ICopyFilter filter) {
         if (documentTo != null) {
             //copyTo case
             PdfWriter writer = documentTo.getWriter();
             if (writer == null)
                 throw new PdfException(KernelExceptionMessageConstant.CANNOT_COPY_TO_DOCUMENT_OPENED_IN_READING_MODE);
-            return writer.copyObject(this, documentTo, allowDuplicating);
+            return writer.copyObject(this, documentTo, allowDuplicating, filter);
 
         } else {
             //clone case
@@ -571,15 +689,5 @@ public abstract class PdfObject {
             }
             return obj.clone();
         }
-    }
-
-    static boolean equalContent(PdfObject obj1, PdfObject obj2) {
-        PdfObject direct1 = obj1 != null && obj1.isIndirectReference()
-                ? ((PdfIndirectReference)obj1).getRefersTo(true)
-                : obj1;
-        PdfObject direct2 = obj2 != null && obj2.isIndirectReference()
-                ? ((PdfIndirectReference)obj2).getRefersTo(true)
-                : obj2;
-        return direct1 != null && direct1.equals(direct2);
     }
 }

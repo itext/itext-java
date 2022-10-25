@@ -44,6 +44,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.utils.ICopyFilter;
+import com.itextpdf.kernel.utils.NullCopyFilter;
 
 import java.util.Collection;
 import java.util.List;
@@ -158,21 +160,24 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfArray getAsArray(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.ARRAY)
+        if (direct != null && direct.getType() == PdfObject.ARRAY) {
             return (PdfArray)direct;
+        }
         return null;
     }
 
     /**
-     * Returns the value associated to this key as a PdfDictionary. If the value isn't a PdfDictionary, null is returned.
+     * Returns the value associated to this key as a PdfDictionary.
+     * If the value isn't a PdfDictionary, null is returned.
      *
      * @param key the key of which the associated value needs to be returned
      * @return PdfDictionary associated with this key
      */
     public PdfDictionary getAsDictionary(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.DICTIONARY)
+        if (direct != null && direct.getType() == PdfObject.DICTIONARY) {
             return (PdfDictionary)direct;
+        }
         return null;
     }
 
@@ -184,8 +189,9 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfStream getAsStream(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.STREAM)
+        if (direct != null && direct.getType() == PdfObject.STREAM) {
             return (PdfStream)direct;
+        }
         return null;
     }
 
@@ -197,8 +203,9 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfNumber getAsNumber(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.NUMBER)
+        if (direct != null && direct.getType() == PdfObject.NUMBER) {
             return (PdfNumber)direct;
+        }
         return null;
     }
 
@@ -210,8 +217,9 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfName getAsName(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.NAME)
+        if (direct != null && direct.getType() == PdfObject.NAME) {
             return (PdfName)direct;
+        }
         return null;
     }
 
@@ -223,8 +231,9 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfString getAsString(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.STRING)
+        if (direct != null && direct.getType() == PdfObject.STRING) {
             return (PdfString)direct;
+        }
         return null;
     }
 
@@ -236,8 +245,9 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfBoolean getAsBoolean(PdfName key) {
         PdfObject direct = get(key, true);
-        if (direct != null && direct.getType() == PdfObject.BOOLEAN)
+        if (direct != null && direct.getType() == PdfObject.BOOLEAN) {
             return (PdfBoolean)direct;
+        }
         return null;
     }
 
@@ -400,7 +410,9 @@ public class PdfDictionary extends PdfObject {
             String string = "<<";
             for (Map.Entry<PdfName, PdfObject> entry : map.entrySet()) {
                 PdfIndirectReference indirectReference = entry.getValue().getIndirectReference();
-                string = string + entry.getKey().toString() + " " + (indirectReference == null ? entry.getValue().toString() : indirectReference.toString()) + " ";
+                string = string + entry.getKey().toString() + " " +
+                        (indirectReference == null ?
+                                entry.getValue().toString() : indirectReference.toString()) + " ";
             }
             string += ">>";
             return string;
@@ -420,8 +432,9 @@ public class PdfDictionary extends PdfObject {
         Map<PdfName, PdfObject> excluded = new TreeMap<>();
         for (PdfName key : excludeKeys) {
             PdfObject obj = map.get(key);
-            if (obj != null)
+            if (obj != null) {
                 excluded.put(key, map.remove(key));
+            }
         }
         PdfDictionary dictionary = (PdfDictionary) clone();
         map.putAll(excluded);
@@ -438,13 +451,30 @@ public class PdfDictionary extends PdfObject {
      * @return copied dictionary.
      */
     public PdfDictionary copyTo(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating) {
+        return copyTo(document, excludeKeys, allowDuplicating, NullCopyFilter.getInstance());
+    }
+
+    /**
+     * Copies dictionary to specified document.
+     * It's possible to pass a list of keys to exclude when copying.
+     *
+     * @param document    document to copy dictionary to.
+     * @param excludeKeys list of objects to exclude when copying dictionary.
+     * @param allowDuplicating {@link PdfObject#copyTo(PdfDocument, boolean)}
+     * @param copyFilter {@link  ICopyFilter} a filter to apply while copying arrays and dictionaries
+     *                                      Use {@link NullCopyFilter} for no filtering
+     * @return copied dictionary.
+     */
+    public PdfDictionary copyTo(PdfDocument document, List<PdfName> excludeKeys, boolean allowDuplicating,
+           ICopyFilter copyFilter) {
         Map<PdfName, PdfObject> excluded = new TreeMap<>();
         for (PdfName key : excludeKeys) {
             PdfObject obj = map.get(key);
-            if (obj != null)
+            if (obj != null) {
                 excluded.put(key, map.remove(key));
+            }
         }
-        PdfDictionary dictionary = (PdfDictionary) copyTo(document, allowDuplicating);
+        final PdfDictionary dictionary = (PdfDictionary) copyTo(document, allowDuplicating, copyFilter);
         map.putAll(excluded);
         return dictionary;
     }
@@ -456,14 +486,15 @@ public class PdfDictionary extends PdfObject {
      * @return key if indirect reference is present
      */
     public PdfObject get(PdfName key, boolean asDirect) {
-        if (!asDirect)
+        if (!asDirect) {
             return map.get(key);
-        else {
+        } else {
             PdfObject obj = map.get(key);
-            if (obj != null && obj.getType() == INDIRECT_REFERENCE)
+            if (obj != null && obj.getType() == INDIRECT_REFERENCE) {
                 return ((PdfIndirectReference)obj).getRefersTo(true);
-            else
+            } else {
                 return obj;
+            }
         }
     }
 
@@ -473,8 +504,9 @@ public class PdfDictionary extends PdfObject {
      */
     public void mergeDifferent(PdfDictionary other){
         for (PdfName key : other.keySet()){
-            if(!containsKey(key))
+            if(!containsKey(key)) {
                 put(key, other.get(key));
+            }
         }
     }
 
@@ -483,12 +515,25 @@ public class PdfDictionary extends PdfObject {
         return new PdfDictionary();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void copyContent(PdfObject from, PdfDocument document) {
-        super.copyContent(from, document);
+        copyContent(from, document, NullCopyFilter.getInstance());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
+        super.copyContent(from, document, copyFilter);
         PdfDictionary dictionary = (PdfDictionary) from;
         for (Map.Entry<PdfName, PdfObject> entry : dictionary.map.entrySet()) {
-            map.put(entry.getKey(), entry.getValue().processCopying(document, false));
+            if (copyFilter.shouldProcess(this,entry.getKey(), entry.getValue())) {
+                map.put(entry.getKey(), entry.getValue().processCopying(document, false, copyFilter));
+            }
         }
     }
 

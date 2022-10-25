@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.android</groupId>
   <artifactId>root-android</artifactId>
-  <version>7.2.3</version>
+  <version>7.2.4</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -215,7 +215,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>4.2.0</version>
+        <version>5.1.6</version>
         <extensions>true</extensions>
         <executions>
           <execution>

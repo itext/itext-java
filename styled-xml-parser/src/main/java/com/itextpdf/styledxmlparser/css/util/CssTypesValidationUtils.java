@@ -24,6 +24,9 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 
 /**
  * Utilities class for CSS types validating operations.
@@ -85,8 +88,7 @@ public final class CssTypesValidationUtils {
      * @return true, if the value contains a color property
      */
     public static boolean isColorProperty(String value) {
-        return value.startsWith("rgb(") || value.startsWith("rgba(") || value.startsWith("#")
-                || WebColors.NAMES.containsKey(value.toLowerCase()) || CommonCssConstants.TRANSPARENT.equals(value);
+        return CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(CommonCssConstants.COLOR, value));
     }
 
     /**
