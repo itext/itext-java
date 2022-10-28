@@ -43,6 +43,7 @@ import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -63,6 +64,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -350,6 +352,31 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         IASN1Primitive cmpStream = BOUNCY_CASTLE_FACTORY.createASN1Primitive(cmpBytes);
         Assert.assertEquals("SHA256withRSA", pkcs7.getDigestAlgorithm());
         Assert.assertEquals(outStream, cmpStream);
+    }
+
+    @Test
+    public void verifyEd25519SignatureTest()
+            throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
+    }
+
+    @Test
+    public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
+        Assume.assumeFalse(
+                "SHAKE256 is not available in BCFIPS", "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName())
+        );
+        verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
+    }
+
+    public void verifyIsoExtensionExample(String expectedSigAlgo, String fileName)
+            throws IOException, GeneralSecurityException {
+        File infile = Paths.get(SOURCE_FOLDER, "extensions", fileName).toFile();
+        try (PdfReader r = new PdfReader(infile); PdfDocument pdfDoc = new PdfDocument(r)) {
+            SignatureUtil u = new SignatureUtil(pdfDoc);
+            PdfPKCS7 data = u.readSignatureData("Signature");
+            Assert.assertEquals(expectedSigAlgo, data.getDigestAlgorithm());
+            Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
+        }
     }
 
     // PdfPKCS7 is created here the same way it's done in PdfSigner#signDetached
