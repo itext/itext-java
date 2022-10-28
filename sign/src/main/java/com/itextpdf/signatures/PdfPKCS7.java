@@ -107,7 +107,7 @@ import javax.security.auth.x500.X500Principal;
 
 /**
  * This class does all the processing related to signing
- * and verifying a PKCS#7 signature.
+ * and verifying a PKCS#7 / CMS signature.
  */
 public class PdfPKCS7 {
 
@@ -154,14 +154,13 @@ public class PdfPKCS7 {
      * @param interfaceDigest the interface digest
      * @param hashAlgorithm   the hash algorithm
      * @param provider        the provider or <code>null</code> for the default provider
-     * @param hasRSAdata      <CODE>true</CODE> if the sub-filter is adbe.pkcs7.sha1
-     *
+     * @param hasEncapContent <CODE>true</CODE> if the sub-filter is adbe.pkcs7.sha1
      * @throws InvalidKeyException      on error
      * @throws NoSuchProviderException  on error
      * @throws NoSuchAlgorithmException on error
      */
     public PdfPKCS7(PrivateKey privKey, Certificate[] certChain,
-            String hashAlgorithm, String provider, IExternalDigest interfaceDigest, boolean hasRSAdata)
+                    String hashAlgorithm, String provider, IExternalDigest interfaceDigest, boolean hasEncapContent)
             throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
         this.interfaceDigest = interfaceDigest;
@@ -185,21 +184,20 @@ public class PdfPKCS7 {
 
         // find the signing algorithm (RSA or DSA)
         if (privKey != null) {
-            digestEncryptionAlgorithmOid = SignUtils.getPrivateKeyAlgorithm(privKey);
-            if (digestEncryptionAlgorithmOid.equals("RSA")) {
-                digestEncryptionAlgorithmOid = SecurityIDs.ID_RSA;
-            } else if (digestEncryptionAlgorithmOid.equals("DSA")) {
-                digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
+            signatureAlgorithmOid = SignUtils.getPrivateKeyAlgorithm(privKey);
+            if (signatureAlgorithmOid.equals("RSA")) {
+                signatureAlgorithmOid = SecurityIDs.ID_RSA;
+            } else if (signatureAlgorithmOid.equals("DSA")) {
+                signatureAlgorithmOid = SecurityIDs.ID_DSA;
             } else {
                 throw new PdfException(
-                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(
-                        digestEncryptionAlgorithmOid);
+                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(signatureAlgorithmOid);
             }
         }
 
-        // initialize the RSA data
-        if (hasRSAdata) {
-            rsaData = new byte[0];
+        // initialize the encapsulated content
+        if (hasEncapContent) {
+            encapMessageContent = new byte[0];
             messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
         }
 
@@ -229,7 +227,7 @@ public class PdfPKCS7 {
 
             try (IASN1InputStream in =
                     BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(contentsKey))) {
-                digest = BOUNCY_CASTLE_FACTORY.createASN1OctetString(in.readObject()).getOctets();
+                signatureValue = BOUNCY_CASTLE_FACTORY.createASN1OctetString(in.readObject()).getOctets();
             }
 
             sig = SignUtils.getSignatureHelper("SHA1withRSA", provider);
@@ -237,7 +235,7 @@ public class PdfPKCS7 {
 
             // setting the oid to SHA1withRSA
             digestAlgorithmOid = "1.2.840.10040.4.3";
-            digestEncryptionAlgorithmOid = "1.3.36.3.3.1.2";
+            signatureAlgorithmOid = "1.3.36.3.3.1.2";
         } catch (Exception e) {
             throw new PdfException(e);
         }
@@ -302,11 +300,11 @@ public class PdfPKCS7 {
             }
 
             // the possible ID_PKCS7_DATA
-            IASN1Sequence rsaData = BOUNCY_CASTLE_FACTORY.createASN1Sequence(content.getObjectAt(2));
-            if (rsaData.size() > 1) {
-                IASN1OctetString rsaDataContent = BOUNCY_CASTLE_FACTORY.createASN1OctetString(
-                        BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(rsaData.getObjectAt(1)).getObject());
-                this.rsaData = rsaDataContent.getOctets();
+            IASN1Sequence encapContentInfo = BOUNCY_CASTLE_FACTORY.createASN1Sequence(content.getObjectAt(2));
+            if (encapContentInfo.size() > 1) {
+                IASN1OctetString encapContent = BOUNCY_CASTLE_FACTORY.createASN1OctetString(
+                        BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(encapContentInfo.getObjectAt(1)).getObject());
+                this.encapMessageContent = encapContent.getOctets();
             }
 
             int next = 3;
@@ -315,9 +313,6 @@ public class PdfPKCS7 {
             }
 
             // the certificates
-/*
-            This should work, but that's not always the case because of a bug in BouncyCastle:
-*/
             certs = SignUtils.readAllCerts(contentsKey);
 
             // the signerInfos
@@ -425,9 +420,9 @@ public class PdfPKCS7 {
             if (isCades && !foundCades) {
                 throw new IllegalArgumentException("CAdES ESS information missing.");
             }
-            digestEncryptionAlgorithmOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+            signatureAlgorithmOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
                     BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
-            digest = BOUNCY_CASTLE_FACTORY.createASN1OctetString(signerInfo.getObjectAt(next++)).getOctets();
+            signatureValue = BOUNCY_CASTLE_FACTORY.createASN1OctetString(signerInfo.getObjectAt(next++)).getOctets();
             if (next < signerInfo.size()) {
                 IASN1TaggedObject taggedObject = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(
                         signerInfo.getObjectAt(next));
@@ -451,7 +446,7 @@ public class PdfPKCS7 {
                 String algOID = timeStampTokenInfo.getMessageImprint().getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             } else {
-                if (this.rsaData != null || digestAttr != null) {
+                if (this.encapMessageContent != null || digestAttr != null) {
                     if (PdfName.Adbe_pkcs7_sha1.equals(getFilterSubtype())) {
                         messageDigest = DigestAlgorithms.getMessageDigest("SHA1", provider);
                     } else {
@@ -627,25 +622,32 @@ public class PdfPKCS7 {
     // Encryption algorithm
 
     /**
-     * The encryption algorithm.
+     * The signature algorithm.
      */
-    private String digestEncryptionAlgorithmOid;
+    private String signatureAlgorithmOid;
 
     /**
-     * Getter for the digest encryption algorithm.
+     * Getter for the signature algorithm OID.
      * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
      *
-     * @return the encryption algorithm
+     * <p>
+     * This method is named {@code getDigestEncryptionAlgorithmOid} for historical reasons.
+     *
+     * @return the signature algorithm OID
      */
     public String getDigestEncryptionAlgorithmOid() {
-        return digestEncryptionAlgorithmOid;
+        return signatureAlgorithmOid;
     }
 
     /**
-     * Get the algorithm used to calculate the message digest, e.g. "SHA1withRSA".
+     * Get the signature mechanism identifier, including both the digest function
+     * and the signature algorithm, e.g. "SHA1withRSA".
      * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
      *
-     * @return the algorithm used to calculate the message digest
+     * <p>
+     * This method is named {@code getDigestAlgorithm} for historical reasons.
+     *
+     * @return the algorithm used to calculate the signature
      */
     public String getDigestAlgorithm() {
         return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
@@ -659,35 +661,35 @@ public class PdfPKCS7 {
     // The signature is created externally
 
     /**
-     * The signed digest if created outside this class
+     * The signature value or signed digest, if created outside this class
      */
-    private byte externalDigest[];
+    private byte[] externalSignatureValue;
 
     /**
-     * External RSA data
+     * Externally specified encapsulated message content.
      */
-    private byte externalRsaData[];
+    private byte[] externalEncapMessageContent;
 
 
     /**
      * Sets the digest/signature to an external calculated value.
      *
      * @param digest                    the digest. This is the actual signature
-     * @param rsaData                   the extra data that goes into the data tag in PKCS#7
+     * @param signedMessageContent      the extra data that goes into the data tag in PKCS#7
      * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the
      *                                  <CODE>digest</CODE> is also <CODE>null</CODE>. If the <CODE>digest</CODE>
      *                                  is not <CODE>null</CODE> then it may be "RSA" or "DSA"
      */
-    public void setExternalDigest(byte[] digest, byte[] rsaData, String digestEncryptionAlgorithm) {
-        externalDigest = digest;
-        externalRsaData = rsaData;
+    public void setExternalDigest(byte[] digest, byte[] signedMessageContent, String digestEncryptionAlgorithm) {
+        externalSignatureValue = digest;
+        externalEncapMessageContent = signedMessageContent;
         if (digestEncryptionAlgorithm != null) {
             if (digestEncryptionAlgorithm.equals("RSA")) {
-                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_RSA;
+                this.signatureAlgorithmOid = SecurityIDs.ID_RSA;
             } else if (digestEncryptionAlgorithm.equals("DSA")) {
-                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_DSA;
+                this.signatureAlgorithmOid = SecurityIDs.ID_DSA;
             } else if (digestEncryptionAlgorithm.equals("ECDSA")) {
-                this.digestEncryptionAlgorithmOid = SecurityIDs.ID_ECDSA;
+                this.signatureAlgorithmOid = SecurityIDs.ID_ECDSA;
             } else {
                 throw new PdfException(SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM)
                         .setMessageParams(digestEncryptionAlgorithm);
@@ -703,14 +705,14 @@ public class PdfPKCS7 {
     private Signature sig;
 
     /**
-     * The signed digest as calculated by this class (or extracted from an existing PDF)
+     * The raw signature value as calculated by this class (or extracted from an existing PDF)
      */
-    private byte[] digest;
+    private byte[] signatureValue;
 
     /**
-     * The RSA data
+     * The content to which the signature applies, if encapsulated in the PKCS #7 payload.
      */
-    private byte[] rsaData;
+    private byte[] encapMessageContent;
 
     // Signing functionality.
 
@@ -723,11 +725,14 @@ public class PdfPKCS7 {
 
     private Signature initSignature(PublicKey key) throws NoSuchAlgorithmException, NoSuchProviderException,
             InvalidKeyException {
-        String digestAlgorithm = getDigestAlgorithm();
+
+        String signatureMechanism;
         if (PdfName.Adbe_x509_rsa_sha1.equals(getFilterSubtype())) {
-            digestAlgorithm = "SHA1withRSA";
+            signatureMechanism = "SHA1withRSA";
+        } else {
+            signatureMechanism = getDigestAlgorithm();
         }
-        Signature signature = SignUtils.getSignatureHelper(digestAlgorithm, provider);
+        Signature signature = SignUtils.getSignatureHelper(signatureMechanism, provider);
         signature.initVerify(key);
         return signature;
     }
@@ -743,7 +748,7 @@ public class PdfPKCS7 {
      * @throws SignatureException on error
      */
     public void update(byte[] buf, int off, int len) throws SignatureException {
-        if (rsaData != null || digestAttr != null || isTsp) {
+        if (encapMessageContent != null || digestAttr != null || isTsp) {
             messageDigest.update(buf, off, len);
         } else {
             sig.update(buf, off, len);
@@ -759,15 +764,14 @@ public class PdfPKCS7 {
      */
     public byte[] getEncodedPKCS1() {
         try {
-            if (externalDigest != null) {
-                digest = externalDigest;
-            } else {
-                digest = sig.sign();
-            }
+            if (externalSignatureValue != null)
+                signatureValue = externalSignatureValue;
+            else
+                signatureValue = sig.sign();
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
             IASN1OutputStream dout = BOUNCY_CASTLE_FACTORY.createASN1OutputStream(bOut);
-            dout.writeObject(BOUNCY_CASTLE_FACTORY.createDEROctetString(digest));
+            dout.writeObject(BOUNCY_CASTLE_FACTORY.createDEROctetString(signatureValue));
             dout.close();
 
             return bOut.toByteArray();
@@ -821,21 +825,20 @@ public class PdfPKCS7 {
     public byte[] getEncodedPKCS7(byte[] secondDigest, PdfSigner.CryptoStandard sigtype, ITSAClient tsaClient,
             Collection<byte[]> ocsp, Collection<byte[]> crlBytes) {
         try {
-            if (externalDigest != null) {
-                digest = externalDigest;
-                if (rsaData != null) {
-                    rsaData = externalRsaData;
-                }
-            } else if (externalRsaData != null && rsaData != null) {
-                rsaData = externalRsaData;
-                sig.update(rsaData);
-                digest = sig.sign();
+            if (externalSignatureValue != null) {
+                signatureValue = externalSignatureValue;
+                if (encapMessageContent != null)
+                    encapMessageContent = externalEncapMessageContent;
+            } else if (externalEncapMessageContent != null && encapMessageContent != null) {
+                encapMessageContent = externalEncapMessageContent;
+                sig.update(encapMessageContent);
+                signatureValue = sig.sign();
             } else {
-                if (rsaData != null) {
-                    rsaData = messageDigest.digest();
-                    sig.update(rsaData);
+                if (encapMessageContent != null) {
+                    encapMessageContent = messageDigest.digest();
+                    sig.update(encapMessageContent);
                 }
-                digest = sig.sign();
+                signatureValue = sig.sign();
             }
 
             // Create the set of Hash algorithms
@@ -850,9 +853,9 @@ public class PdfPKCS7 {
             // Create the contentInfo.
             IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
             v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA));
-            if (rsaData != null) {
+            if (encapMessageContent != null) {
                 v.add(BOUNCY_CASTLE_FACTORY.createDERTaggedObject(0,
-                        BOUNCY_CASTLE_FACTORY.createDEROctetString(rsaData)));
+                        BOUNCY_CASTLE_FACTORY.createDEROctetString(encapMessageContent)));
             }
             IDERSequence contentinfo = BOUNCY_CASTLE_FACTORY.createDERSequence(v);
 
@@ -893,18 +896,18 @@ public class PdfPKCS7 {
             }
             // Add the digestEncryptionAlgorithm
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
-            v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestEncryptionAlgorithmOid));
+            v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(signatureAlgorithmOid));
             v.add(BOUNCY_CASTLE_FACTORY.createDERNull());
             signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // Add the digest
-            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(digest));
+            signerinfo.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(signatureValue));
 
             // When requested, go get and add the timestamp. May throw an exception.
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null) {
-                byte[] tsImprint = tsaClient.getMessageDigest().digest(digest);
+                byte[] tsImprint = tsaClient.getMessageDigest().digest(signatureValue);
                 byte[] tsToken = tsaClient.getTimeStampToken(tsImprint);
                 if (tsToken != null) {
                     IASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
@@ -1196,23 +1199,23 @@ public class PdfPKCS7 {
         } else {
             if (sigAttr != null || sigAttrDer != null) {
                 final byte[] msgDigestBytes = messageDigest.digest();
-                boolean verifyRSAdata = true;
+                boolean verifySignedMessageContent = true;
                 // Stefan Santesson fixed a bug, keeping the code backward compatible
                 boolean encContDigestCompare = false;
-                if (rsaData != null) {
-                    verifyRSAdata = Arrays.equals(msgDigestBytes, rsaData);
-                    encContDigest.update(rsaData);
+                if (encapMessageContent != null) {
+                    verifySignedMessageContent = Arrays.equals(msgDigestBytes, encapMessageContent);
+                    encContDigest.update(encapMessageContent);
                     encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
                 }
                 boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
                 boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
                 boolean sigVerify = verifySigAttributes(sigAttr) || verifySigAttributes(sigAttrDer);
-                verifyResult = concludingDigestCompare && sigVerify && verifyRSAdata;
+                verifyResult = concludingDigestCompare && sigVerify && verifySignedMessageContent;
             } else {
-                if (rsaData != null) {
+                if (encapMessageContent != null) {
                     SignUtils.updateVerifier(sig, messageDigest.digest());
                 }
-                verifyResult = sig.verify(digest);
+                verifyResult = sig.verify(signatureValue);
             }
         }
         verified = true;
@@ -1222,7 +1225,7 @@ public class PdfPKCS7 {
     private boolean verifySigAttributes(byte[] attr) throws GeneralSecurityException {
         Signature signature = initSignature(signCert.getPublicKey());
         SignUtils.updateVerifier(signature, attr);
-        return signature.verify(digest);
+        return signature.verify(signatureValue);
     }
 
     /**
@@ -1239,7 +1242,7 @@ public class PdfPKCS7 {
         }
         IMessageImprint imprint = timeStampTokenInfo.getMessageImprint();
         String algOID = imprint.getHashAlgorithm().getAlgorithm().getId();
-        byte[] md = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(digest);
+        byte[] md = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(signatureValue);
         byte[] imphashed = imprint.getHashedMessage();
         return Arrays.equals(md, imphashed);
     }
@@ -1508,9 +1511,9 @@ public class PdfPKCS7 {
      * @return the name of an encryption algorithm
      */
     public String getEncryptionAlgorithm() {
-        String encryptAlgo = EncryptionAlgorithms.getAlgorithm(digestEncryptionAlgorithmOid);
+        String encryptAlgo = EncryptionAlgorithms.getAlgorithm(signatureAlgorithmOid);
         if (encryptAlgo == null) {
-            encryptAlgo = digestEncryptionAlgorithmOid;
+            encryptAlgo = signatureAlgorithmOid;
         }
         return encryptAlgo;
     }
