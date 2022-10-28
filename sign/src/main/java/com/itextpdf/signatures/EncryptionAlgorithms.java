@@ -88,6 +88,22 @@ public class EncryptionAlgorithms {
         algorithmNames.put("1.2.840.10045.4.3.3", "ECDSA");
         // Elliptic curve Digital Signature Algorithm (DSA) coupled with the Secure Hashing Algorithm (SHA512) algorithm
         algorithmNames.put("1.2.840.10045.4.3.4", "ECDSA");
+
+        // Signing algorithms with SHA-3 digest functions (from NIST CSOR)
+        algorithmNames.put("2.16.840.1.101.3.4.3.5", "DSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.6", "DSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.7", "DSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.8", "DSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.9", "ECDSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.10", "ECDSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.11", "ECDSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.12", "ECDSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.13", "RSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.14", "RSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.15", "RSA");
+        algorithmNames.put("2.16.840.1.101.3.4.3.16", "RSA");
+
+        // EdDSA
         algorithmNames.put(SecurityIDs.ID_ED25519, "Ed25519");
         algorithmNames.put(SecurityIDs.ID_ED448, "Ed448");
     }
