@@ -47,11 +47,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class that contains a map with the different encryption algorithms.
+ * Class that contains a map with the different signature algorithms.
+ *
+ * <p>
+ * This class is named {@code EncryptionAlgorithms} for historical reasons
  */
 public class EncryptionAlgorithms {
 
-    /** Maps IDs of encryption algorithms with its human-readable name. */
+    /** Maps IDs of signature algorithms with its human-readable name. */
     static final Map<String, String> algorithmNames = new HashMap<>();
 
     static {
