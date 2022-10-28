@@ -368,12 +368,44 @@ public class PdfPKCS7Test extends ExtendedITextTest {
         verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
     }
 
+    @Test
+    public void verifyNistECDSASha2SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("SHA256withECDSA", "sample-nistp256-sha256.pdf");
+    }
+
+    @Test
+    public void verifyNistECDSASha3SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("SHA3-256withECDSA", "sample-nistp256-sha3_256.pdf");
+    }
+
+    @Test
+    public void verifyBrainpoolSha2SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("SHA384withECDSA", "sample-brainpoolP384r1-sha384.pdf");
+    }
+
+    @Test
+    public void verifyBrainpoolSha3SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("SHA3-384withECDSA", "sample-brainpoolP384r1-sha3_384.pdf");
+    }
+
+    @Test
+    public void verifyRsaSha3SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("SHA3-256withRSA", "sample-rsa-sha3_256.pdf");
+    }
+
     public void verifyIsoExtensionExample(String expectedSigAlgo, String fileName)
             throws IOException, GeneralSecurityException {
         File infile = Paths.get(SOURCE_FOLDER, "extensions", fileName).toFile();
         try (PdfReader r = new PdfReader(infile); PdfDocument pdfDoc = new PdfDocument(r)) {
             SignatureUtil u = new SignatureUtil(pdfDoc);
-            PdfPKCS7 data = u.readSignatureData("Signature");
+            /*
+            We specify the security provider explicitly; we're not testing security provider fallback here.
+
+            Also, default providers (in 2022) don't always have the parameters for Brainpool curves,
+            but a curve param mismatch doesn't factor into the algorithm support fallback logic, so
+            it causes a runtime error.
+            */
+            PdfPKCS7 data = u.readSignatureData("Signature", BOUNCY_CASTLE_FACTORY.getProviderName());
             Assert.assertEquals(expectedSigAlgo, data.getDigestAlgorithm());
             Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
         }

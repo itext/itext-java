@@ -71,8 +71,10 @@ public final class SignExceptionMessageConstant {
     public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNKNOWN_HASH_ALGORITHM = "Unknown hash algorithm: {0}.";
-    public static final String UNKNOWN_KEY_ALGORITHM = "Unknown key algorithm: {0}.";
+    public static final String COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID = "Could not determine OID for signature algorithm {0} with digest {1}.";
     public static final String VERIFICATION_ALREADY_OUTPUT = "Verification already output.";
+
+    public static final String ALGO_REQUIRES_SPECIFIC_HASH = "{0} requires the document to be digested using {1}, not {2}";
 
     private SignExceptionMessageConstant(){
         // Private constructor will prevent the instantiation of this class directly

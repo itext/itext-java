@@ -43,9 +43,14 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+
 import java.security.GeneralSecurityException;
+import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.Signature;
+import java.security.UnrecoverableKeyException;
 
 /**
  * Implementation of the {@link IExternalSignature} interface that
@@ -58,22 +63,22 @@ public class PrivateKeySignature implements IExternalSignature {
     /**
      * The private key object.
      */
-    private PrivateKey pk;
+    private final PrivateKey pk;
 
     /**
      * The hash algorithm.
      */
-    private String hashAlgorithm;
+    private final String hashAlgorithm;
 
     /**
      * The encryption algorithm (obtained from the private key)
      */
-    private String encryptionAlgorithm;
+    private final String signatureAlgorithm;
 
     /**
      * The security provider
      */
-    private String provider;
+    private final String provider;
 
     /**
      * Creates a {@link PrivateKeySignature} instance.
@@ -85,8 +90,24 @@ public class PrivateKeySignature implements IExternalSignature {
     public PrivateKeySignature(PrivateKey pk, String hashAlgorithm, String provider) {
         this.pk = pk;
         this.provider = provider;
-        this.hashAlgorithm = DigestAlgorithms.getDigest(DigestAlgorithms.getAllowedDigest(hashAlgorithm));
-        this.encryptionAlgorithm = SignUtils.getPrivateKeyAlgorithm(pk);
+        String digestAlgorithmOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
+        this.hashAlgorithm = DigestAlgorithms.getDigest(digestAlgorithmOid);
+        this.signatureAlgorithm = SignUtils.getPrivateKeyAlgorithm(pk);
+
+        if ("Ed25519".equals(this.signatureAlgorithm)
+                && !SecurityIDs.ID_SHA512.equals(digestAlgorithmOid)) {
+            throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
+                    .setMessageParams("Ed25519", "SHA-512", this.hashAlgorithm);
+        } else if ("Ed448".equals(this.signatureAlgorithm)
+                && !SecurityIDs.ID_SHAKE256.equals(digestAlgorithmOid)) {
+            throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
+                    .setMessageParams("Ed448", "512-bit SHAKE256", this.hashAlgorithm);
+        } else if ("EdDSA".equals(this.signatureAlgorithm)) {
+            throw new IllegalArgumentException(
+                    "Key algorithm of EdDSA PrivateKey instance provied by " + pk.getClass()
+                            + " is not clear. Expected Ed25519 or Ed448, but got EdDSA. "
+                            + "Try a different security provider.");
+        }
     }
 
     /**
@@ -102,7 +123,7 @@ public class PrivateKeySignature implements IExternalSignature {
      */
     @Override
     public String getEncryptionAlgorithm() {
-        return encryptionAlgorithm;
+        return signatureAlgorithm;
     }
 
     /**
@@ -110,10 +131,21 @@ public class PrivateKeySignature implements IExternalSignature {
      */
     @Override
     public byte[] sign(byte[] message) throws GeneralSecurityException {
-        String algorithm = hashAlgorithm + "with" + encryptionAlgorithm;
+        String algorithm = getSignatureMechanism();
         Signature sig = SignUtils.getSignatureHelper(algorithm, provider);
         sig.initSign(pk);
         sig.update(message);
         return sig.sign();
     }
+
+    public String getSignatureMechanism() {
+        String signatureAlgorithm = this.getEncryptionAlgorithm();
+        // Ed25519 and Ed448 do not involve a choice of hashing algorithm
+        if ("Ed25519".equals(signatureAlgorithm) || "Ed448".equals(signatureAlgorithm)) {
+            return signatureAlgorithm;
+        } else {
+            return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
+        }
+    }
+
 }

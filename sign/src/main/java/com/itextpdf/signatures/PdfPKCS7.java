@@ -182,17 +182,15 @@ public class PdfPKCS7 {
         digestalgos = new HashSet<>();
         digestalgos.add(digestAlgorithmOid);
 
-        // find the signing algorithm (RSA or DSA)
+        // find the signing algorithm
         if (privKey != null) {
-            signatureAlgorithmOid = SignUtils.getPrivateKeyAlgorithm(privKey);
-            if (signatureAlgorithmOid.equals("RSA")) {
-                signatureAlgorithmOid = SecurityIDs.ID_RSA;
-            } else if (signatureAlgorithmOid.equals("DSA")) {
-                signatureAlgorithmOid = SecurityIDs.ID_DSA;
-            } else {
-                throw new PdfException(
-                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(signatureAlgorithmOid);
+            String signatureAlgo = SignUtils.getPrivateKeyAlgorithm(privKey);
+            String mechanismOid = EncryptionAlgorithms.getSignatureMechanismOid(signatureAlgo, hashAlgorithm);
+            if (mechanismOid == null) {
+                throw new PdfException(SignExceptionMessageConstant.COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID)
+                        .setMessageParams(signatureAlgo, hashAlgorithm);
             }
+            this.signatureAlgorithmOid = mechanismOid;
         }
 
         // initialize the encapsulated content
@@ -601,6 +599,11 @@ public class PdfPKCS7 {
     private PdfName filterSubtype;
 
     /**
+     * The signature algorithm.
+     */
+    private String signatureAlgorithmOid;
+
+    /**
      * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1".
      * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
      *
@@ -616,15 +619,22 @@ public class PdfPKCS7 {
      * @return the digest algorithm name, e.g. "SHA256"
      */
     public String getHashAlgorithm() {
-        return DigestAlgorithms.getDigest(digestAlgorithmOid);
+        String hashAlgoName = DigestAlgorithms.getDigest(digestAlgorithmOid);
+        // Ed25519 and Ed448 do not allow a choice of hashing algorithm,
+        // and ISO 32002 requires using a fixed hashing algorithm to
+        // digest the document content
+        if (SecurityIDs.ID_ED25519.equals(this.signatureAlgorithmOid)
+                && !SecurityIDs.ID_SHA512.equals(digestAlgorithmOid)) {
+            // We compare based on OID to ensure that there are no name normalisation issues.
+            throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
+                    .setMessageParams("Ed25519", "SHA-512", hashAlgoName);
+        } else if (SecurityIDs.ID_ED448.equals(this.signatureAlgorithmOid)
+                    && !SecurityIDs.ID_SHAKE256.equals(digestAlgorithmOid)) {
+            throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
+                    .setMessageParams("Ed448", "512-bit SHAKE256", hashAlgoName);
+        }
+        return hashAlgoName;
     }
-
-    // Encryption algorithm
-
-    /**
-     * The signature algorithm.
-     */
-    private String signatureAlgorithmOid;
 
     /**
      * Getter for the signature algorithm OID.
@@ -679,28 +689,29 @@ public class PdfPKCS7 {
 
 
     /**
-     * Sets the digest/signature to an external calculated value.
+     * Sets the signature to an externally calculated value.
      *
-     * @param digest                    the digest. This is the actual signature
+     * <p>
+     * This method is named {@code setExternalDigest} for historical reasons.
+     *
+     * @param signatureValue            the signature value
      * @param signedMessageContent      the extra data that goes into the data tag in PKCS#7
-     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the
-     *                                  <CODE>digest</CODE> is also <CODE>null</CODE>. If the <CODE>digest</CODE>
-     *                                  is not <CODE>null</CODE> then it may be "RSA" or "DSA"
+     * @param signatureAlgorithm        the signature algorithm. It must be <CODE>null</CODE> if the
+     *                                  <CODE>signatureValue</CODE> is also <CODE>null</CODE>.
+     *                                  If the <CODE>signatureValue</CODE> is not <CODE>null</CODE>,
+     *                                  possible values include "RSA", "DSA", "ECDSA", "Ed25519" and "Ed448".
      */
-    public void setExternalDigest(byte[] digest, byte[] signedMessageContent, String digestEncryptionAlgorithm) {
-        externalSignatureValue = digest;
+    public void setExternalDigest(byte[] signatureValue, byte[] signedMessageContent, String signatureAlgorithm) {
+        externalSignatureValue = signatureValue;
         externalEncapMessageContent = signedMessageContent;
-        if (digestEncryptionAlgorithm != null) {
-            if (digestEncryptionAlgorithm.equals("RSA")) {
-                this.signatureAlgorithmOid = SecurityIDs.ID_RSA;
-            } else if (digestEncryptionAlgorithm.equals("DSA")) {
-                this.signatureAlgorithmOid = SecurityIDs.ID_DSA;
-            } else if (digestEncryptionAlgorithm.equals("ECDSA")) {
-                this.signatureAlgorithmOid = SecurityIDs.ID_ECDSA;
-            } else {
-                throw new PdfException(SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM)
-                        .setMessageParams(digestEncryptionAlgorithm);
+        if (signatureAlgorithm != null) {
+            String digestAlgo = this.getHashAlgorithm();
+            String oid = EncryptionAlgorithms.getSignatureMechanismOid(signatureAlgorithm, digestAlgo);
+            if (oid == null) {
+                throw new PdfException(SignExceptionMessageConstant.COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID)
+                        .setMessageParams(signatureAlgorithm, digestAlgo);
             }
+            this.signatureAlgorithmOid = oid;
         }
     }
 
@@ -973,7 +984,7 @@ public class PdfPKCS7 {
 
         // @todo: move this together with the rest of the defintions
         String ID_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14"; // RFC 3161 id-aa-timeStampToken
-        
+
         IASN1EncodableVector unauthAttributes = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
 
         IASN1EncodableVector v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
@@ -1489,7 +1500,7 @@ public class PdfPKCS7 {
 
     /**
      * Gets the timestamp date.
-     * 
+     *
      * <p>
      * In case the signed document doesn't contain timestamp,
      * {@link TimestampConstants#UNDEFINED_TIMESTAMP_DATE} will be returned.
