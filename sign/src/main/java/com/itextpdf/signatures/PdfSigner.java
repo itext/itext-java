@@ -589,7 +589,16 @@ public class PdfSigner {
         if (sigtype == CryptoStandard.CADES && !isDocumentPdf2()) {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }
+        if (externalSignature.getEncryptionAlgorithm().startsWith("Ed")) {
+            addDeveloperExtension(PdfDeveloperExtension.ISO_32002);
+            // Note: at this level of abstraction, we have no easy way of determining whether we are signing using a
+            // specific ECDSA curve, so we can't auto-declare the extension safely, since we don't know whether
+            // the curve is on the ISO/TS 32002 allowed curves list. That responsibility is delegated to the user.
+        }
         String hashAlgorithm = externalSignature.getHashAlgorithm();
+        if(hashAlgorithm.startsWith("SHA3-") || hashAlgorithm.equals(DigestAlgorithms.SHAKE256)) {
+            addDeveloperExtension(PdfDeveloperExtension.ISO_32001);
+        }
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES
                 ? PdfName.ETSI_CAdES_DETACHED
                 : PdfName.Adbe_pkcs7_detached);

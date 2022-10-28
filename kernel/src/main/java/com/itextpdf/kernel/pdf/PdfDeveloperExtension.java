@@ -69,6 +69,24 @@ public class PdfDeveloperExtension {
     public static final PdfDeveloperExtension ESIC_1_7_EXTENSIONLEVEL5 =
             new PdfDeveloperExtension(PdfName.ESIC, PdfName.Pdf_Version_1_7, 5);
 
+    /** An instance of this class for ISO/TS 32001 */
+    public static final PdfDeveloperExtension ISO_32001 = new PdfDeveloperExtension(
+            PdfName.ISO_,
+            PdfName.Pdf_Version_2_0,
+            32001,
+            "https://www.iso.org/standard/45874.html",
+            ":2022",
+            true);
+
+    /** An instance of this class for ISO/TS 32002 */
+    public static final PdfDeveloperExtension ISO_32002 = new PdfDeveloperExtension(
+            PdfName.ISO_,
+            PdfName.Pdf_Version_2_0,
+            32002,
+            "https://www.iso.org/standard/45875.html",
+            ":2022",
+            true);
+
     /** The prefix used in the Extensions dictionary added to the Catalog. */
     protected PdfName prefix;
 
