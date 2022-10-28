@@ -182,17 +182,15 @@ public class PdfPKCS7 {
         digestalgos = new HashSet<>();
         digestalgos.add(digestAlgorithmOid);
 
-        // find the signing algorithm (RSA or DSA)
+        // find the signing algorithm
         if (privKey != null) {
-            signatureAlgorithmOid = SignUtils.getPrivateKeyAlgorithm(privKey);
-            if (signatureAlgorithmOid.equals("RSA")) {
-                signatureAlgorithmOid = SecurityIDs.ID_RSA;
-            } else if (signatureAlgorithmOid.equals("DSA")) {
-                signatureAlgorithmOid = SecurityIDs.ID_DSA;
-            } else {
-                throw new PdfException(
-                        SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM).setMessageParams(signatureAlgorithmOid);
+            String signatureAlgo = SignUtils.getPrivateKeyAlgorithm(privKey);
+            String mechanismOid = EncryptionAlgorithms.getSignatureMechanismOid(signatureAlgo, hashAlgorithm);
+            if (mechanismOid == null) {
+                throw new PdfException(SignExceptionMessageConstant.COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID)
+                        .setMessageParams(signatureAlgo, hashAlgorithm);
             }
+            this.signatureAlgorithmOid = mechanismOid;
         }
 
         // initialize the encapsulated content
@@ -691,28 +689,29 @@ public class PdfPKCS7 {
 
 
     /**
-     * Sets the digest/signature to an external calculated value.
+     * Sets the signature to an externally calculated value.
      *
-     * @param digest                    the digest. This is the actual signature
+     * <p>
+     * This method is named {@code setExternalDigest} for historical reasons.
+     *
+     * @param signatureValue            the signature value
      * @param signedMessageContent      the extra data that goes into the data tag in PKCS#7
-     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the
-     *                                  <CODE>digest</CODE> is also <CODE>null</CODE>. If the <CODE>digest</CODE>
-     *                                  is not <CODE>null</CODE> then it may be "RSA" or "DSA"
+     * @param signatureAlgorithm        the signature algorithm. It must be <CODE>null</CODE> if the
+     *                                  <CODE>signatureValue</CODE> is also <CODE>null</CODE>.
+     *                                  If the <CODE>signatureValue</CODE> is not <CODE>null</CODE>,
+     *                                  possible values include "RSA", "DSA", "ECDSA", "Ed25519" and "Ed448".
      */
-    public void setExternalDigest(byte[] digest, byte[] signedMessageContent, String digestEncryptionAlgorithm) {
-        externalSignatureValue = digest;
+    public void setExternalDigest(byte[] signatureValue, byte[] signedMessageContent, String signatureAlgorithm) {
+        externalSignatureValue = signatureValue;
         externalEncapMessageContent = signedMessageContent;
-        if (digestEncryptionAlgorithm != null) {
-            if (digestEncryptionAlgorithm.equals("RSA")) {
-                this.signatureAlgorithmOid = SecurityIDs.ID_RSA;
-            } else if (digestEncryptionAlgorithm.equals("DSA")) {
-                this.signatureAlgorithmOid = SecurityIDs.ID_DSA;
-            } else if (digestEncryptionAlgorithm.equals("ECDSA")) {
-                this.signatureAlgorithmOid = SecurityIDs.ID_ECDSA;
-            } else {
-                throw new PdfException(SignExceptionMessageConstant.UNKNOWN_KEY_ALGORITHM)
-                        .setMessageParams(digestEncryptionAlgorithm);
+        if (signatureAlgorithm != null) {
+            String digestAlgo = this.getHashAlgorithm();
+            String oid = EncryptionAlgorithms.getSignatureMechanismOid(signatureAlgorithm, digestAlgo);
+            if (oid == null) {
+                throw new PdfException(SignExceptionMessageConstant.COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID)
+                        .setMessageParams(signatureAlgorithm, digestAlgo);
             }
+            this.signatureAlgorithmOid = oid;
         }
     }
 
