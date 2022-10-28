@@ -367,7 +367,28 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (extensions == null) {
             extensions = new PdfDictionary();
             put(PdfName.Extensions, extensions);
+        }
+
+        if (extension.isMultiValued()) {
+            // for multivalued extensions, we only check whether one of the same level is present or not
+            // (main use case: ISO extensions)
+            PdfArray existingExtensionArray = extensions.getAsArray(extension.getPrefix());
+            if (existingExtensionArray == null) {
+                existingExtensionArray = new PdfArray();
+                extensions.put(extension.getPrefix(), existingExtensionArray);
+            } else {
+                for (int i = 0; i < existingExtensionArray.size(); i++) {
+                    PdfDictionary pdfDict = existingExtensionArray.getAsDictionary(i);
+                    // for array-based extensions, we check for membership only, since comparison doesn't make sense
+                    if (pdfDict.getAsNumber(PdfName.ExtensionLevel).intValue() == extension.getExtensionLevel()) {
+                        return;
+                    }
+                }
+            }
+            existingExtensionArray.add(extension.getDeveloperExtensions());
+            existingExtensionArray.setModified();
         } else {
+            // for single-valued extensions, we compare against the existing extension level
             PdfDictionary existingExtensionDict = extensions.getAsDictionary(extension.getPrefix());
             if (existingExtensionDict != null) {
                 int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
@@ -378,9 +399,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 if (diff <= 0)
                     return;
             }
+            extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
         }
-
-        extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
     }
 
     /**

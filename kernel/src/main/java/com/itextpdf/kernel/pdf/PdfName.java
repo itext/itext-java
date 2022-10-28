@@ -341,6 +341,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Extends = createDirectName("Extends");
     public static final PdfName Extensions = createDirectName("Extensions");
     public static final PdfName ExtensionLevel = createDirectName("ExtensionLevel");
+    public static final PdfName ExtensionRevision = createDirectName("ExtensionRevision");
     public static final PdfName ExtGState = createDirectName("ExtGState");
     public static final PdfName F = createDirectName("F");
     public static final PdfName False = createDirectName("false");
@@ -645,6 +646,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Pdf_Version_1_5 = createDirectName("1.5");
     public static final PdfName Pdf_Version_1_6 = createDirectName("1.6");
     public static final PdfName Pdf_Version_1_7 = createDirectName("1.7");
+    public static final PdfName Pdf_Version_2_0 = createDirectName("2.0");
     public static final PdfName Pg = createDirectName("Pg");
     public static final PdfName PI = createDirectName("PI");
     public static final PdfName PickTrayByPDFSize = createDirectName("PickTrayByPDFSize");
