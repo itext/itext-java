@@ -81,6 +81,21 @@ public class BouncyCastleDigest implements IExternalDigest {
             // SHA512
             case "2.16.840.1.101.3.4.2.3":
                 return MessageDigest.getInstance("SHA512", provider);
+            // SHA3-224
+            case "2.16.840.1.101.3.4.2.7":
+                return MessageDigest.getInstance("SHA3-224", provider);
+            // SHA3-256
+            case "2.16.840.1.101.3.4.2.8":
+                return MessageDigest.getInstance("SHA3-256", provider);
+            // SHA3-384
+            case "2.16.840.1.101.3.4.2.9":
+                return MessageDigest.getInstance("SHA3-384", provider);
+            // SHA3-512
+            case "2.16.840.1.101.3.4.2.10":
+                return MessageDigest.getInstance("SHA3-512", provider);
+            // SHAKE-256 (512-bit)
+            case "2.16.840.1.101.3.4.2.12":
+                return MessageDigest.getInstance("SHAKE256", provider);
             // RIPEMD128
             case "1.3.36.3.2.2":
                 return MessageDigest.getInstance("RIPEMD128", provider);

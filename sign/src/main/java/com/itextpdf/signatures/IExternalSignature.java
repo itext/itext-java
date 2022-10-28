@@ -60,8 +60,12 @@ public interface IExternalSignature {
     String getHashAlgorithm();
 
     /**
-     * Returns the encryption algorithm used for signing.
-     * @return The encryption algorithm ("RSA" or "DSA").
+     * Returns the signature algorithm used for signing.
+     *
+     * <p>
+     * This method is named {@code getEncryptionAlgorithm} for historical reasons.
+     *
+     * @return The encryption algorithm ("RSA", "DSA", "ECDSA", "Ed25519" or "Ed448").
      */
     String getEncryptionAlgorithm();
 
