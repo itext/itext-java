@@ -27,7 +27,10 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
@@ -51,9 +54,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,6 +69,11 @@ import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Category(IntegrationTest.class)
 public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
@@ -163,6 +174,71 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
         );
     }
 
+    @Test
+    public void testRsaWithSha3ExtensionDeclarations() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        doSign("rsa", DigestAlgorithms.SHA3_256, baos);
+        checkIsoExtensions(baos.toByteArray(), Collections.singleton(32001));
+    }
+
+    @Test
+    public void testEd25519ExtensionDeclarations() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        doSign("ed25519", DigestAlgorithms.SHA512, baos);
+        checkIsoExtensions(baos.toByteArray(), Collections.singleton(32002));
+    }
+
+    @Test
+    public void testEd448ExtensionDeclarations() throws Exception {
+        skipShake256IfBcFips();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        doSign("ed448", DigestAlgorithms.SHAKE256, baos);
+        checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
+    }
+
+    @Test
+    public void testIsoExtensionsWithMultipleSignatures() throws Exception {
+        String keySample1 = "rsa";
+        String keySample2 = "ed25519";
+        Path sourceFolder = Paths.get(SOURCE_FOLDER);
+
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        Certificate root = readCertificate(sourceFolder.resolve("ca.crt"));
+        Certificate signerCert1 = readCertificate(sourceFolder.resolve(keySample1 + ".crt"));
+        Certificate signerCert2 = readCertificate(sourceFolder.resolve(keySample2 + ".crt"));
+        Certificate[] signChain1 = new Certificate[] {signerCert1, root};
+        Certificate[] signChain2 = new Certificate[] {signerCert2, root};
+
+        try(InputStream in1 = new FileInputStream(SOURCE_FILE)) {
+            PrivateKey signPrivateKey = readUnencryptedPrivateKey(sourceFolder.resolve(keySample1 + ".key.pem"));
+            IExternalSignature pks = new PrivateKeySignature(
+                    signPrivateKey, DigestAlgorithms.SHA3_256, BOUNCY_CASTLE_FACTORY.getProviderName()
+            );
+
+            PdfSigner signer = new PdfSigner(new PdfReader(in1), baos1, new StampingProperties());
+            signer.setFieldName("Signature1");
+            signer.signDetached(
+                    new BouncyCastleDigest(), pks, signChain1, null, null, null, 0,
+                    PdfSigner.CryptoStandard.CMS);
+        }
+
+        try(InputStream in2 = new ByteArrayInputStream(baos1.toByteArray())) {
+            PrivateKey signPrivateKey = readUnencryptedPrivateKey(sourceFolder.resolve(keySample2 + ".key.pem"));
+            IExternalSignature pks = new PrivateKeySignature(
+                    signPrivateKey, DigestAlgorithms.SHA512, BOUNCY_CASTLE_FACTORY.getProviderName()
+            );
+
+            PdfSigner signer = new PdfSigner(new PdfReader(in2), baos2, new StampingProperties());
+            signer.setFieldName("Signature2");
+            signer.signDetached(
+                    new BouncyCastleDigest(), pks, signChain2, null, null, null, 0,
+                    PdfSigner.CryptoStandard.CMS);
+        }
+
+        checkIsoExtensions(baos2.toByteArray(), Arrays.asList(32001, 32002));
+    }
+
     private void doRoundTrip(String keySampleName, String digestAlgo, ASN1ObjectIdentifier expectedSigAlgoIdentifier) throws GeneralSecurityException, IOException {
         String outFile = Paths.get(DESTINATION_FOLDER, keySampleName + "-" + digestAlgo + ".pdf").toString();
         doSign(keySampleName, digestAlgo, outFile);
@@ -210,6 +286,28 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
                 ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(data.getDigestEncryptionAlgorithmOid());
                 Assert.assertEquals(expectedSigAlgoIdentifier, oid);
             }
+        }
+    }
+
+    private void checkIsoExtensions(byte[] fileData, Collection<Integer> expectedLevels)
+            throws IOException {
+        try (PdfReader r = new PdfReader(new ByteArrayInputStream(fileData));
+             PdfDocument pdfDoc = new PdfDocument(r)) {
+            PdfArray isoExtensions = pdfDoc
+                    .getCatalog()
+                    .getPdfObject()
+                    .getAsDictionary(PdfName.Extensions)
+                    .getAsArray(PdfName.ISO_);
+            Assert.assertEquals(expectedLevels.size(), isoExtensions.size());
+
+            Set<Integer> actualLevels = new HashSet<>();
+            for (int i = 0; i < isoExtensions.size(); i++) {
+                PdfDictionary extDict = isoExtensions.getAsDictionary(i);
+                actualLevels.add(extDict.getAsNumber(PdfName.ExtensionLevel).intValue());
+            }
+
+            Set<Integer> expectedLevelSet = new HashSet<>(expectedLevels);
+            Assert.assertEquals(expectedLevelSet, actualLevels);
         }
     }
 
