@@ -78,16 +78,42 @@ public class PdfDeveloperExtension {
     /** The extension level within the base version. */
     protected int extensionLevel;
 
+    /** The extension URL (ISO 32000-2:2020) */
+    private final String url;
+
+    /** The extension revision (ISO 32000-2:2020) */
+    private final String extensionRevision;
+
+    /** Whether the extension prefix is multivalued (ISO 32000-2:2020) */
+    private final boolean isMultiValued;
+
     /**
      * Creates a PdfDeveloperExtension object.
      * @param prefix	the prefix referring to the developer
      * @param baseVersion	the number of the base version
-     * @param extensionLevel	the extension level within the baseverion.
+     * @param extensionLevel	the extension level within the base version
      */
     public PdfDeveloperExtension(PdfName prefix, PdfName baseVersion, int extensionLevel) {
+        this(prefix, baseVersion, extensionLevel, null, null, false);
+    }
+
+    /**
+     * Creates a PdfDeveloperExtension object.
+     * @param prefix	the prefix referring to the developer
+     * @param baseVersion	the number of the base version
+     * @param extensionLevel	the extension level within the base version
+     * @param extensionRevision  the extension revision identifier
+     * @param url  the URL specifying where to find more information about the extension
+     * @param isMultiValued  flag indicating whether the extension prefix can have multiple values
+     */
+    public PdfDeveloperExtension(PdfName prefix, PdfName baseVersion, int extensionLevel,
+                                 String url, String extensionRevision, boolean isMultiValued) {
         this.prefix = prefix;
         this.baseVersion = baseVersion;
         this.extensionLevel = extensionLevel;
+        this.url = url;
+        this.extensionRevision = extensionRevision;
+        this.isMultiValued = isMultiValued;
     }
 
     /**
@@ -115,6 +141,13 @@ public class PdfDeveloperExtension {
     }
 
     /**
+     * Indicates whether the extension prefix is multivalued (ISO 32000-2:2020).
+     */
+    public boolean isMultiValued() {
+        return isMultiValued;
+    }
+
+    /**
      * Generations the developer extension dictionary corresponding
      * with the prefix.
      * @return	a PdfDictionary
@@ -123,7 +156,12 @@ public class PdfDeveloperExtension {
         PdfDictionary developerextensions = new PdfDictionary();
         developerextensions.put(PdfName.BaseVersion, baseVersion);
         developerextensions.put(PdfName.ExtensionLevel, new PdfNumber(extensionLevel));
-
+        if (url != null) {
+            developerextensions.put(PdfName.URL, new PdfString(url));
+        }
+        if (extensionRevision != null) {
+            developerextensions.put(PdfName.ExtensionRevision, new PdfString(extensionRevision));
+        }
         return developerextensions;
     }
 }
