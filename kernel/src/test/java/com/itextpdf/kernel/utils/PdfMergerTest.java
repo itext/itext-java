@@ -43,21 +43,15 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfOutline;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,11 +59,9 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-import static org.junit.Assert.assertNull;
 
 @Category(IntegrationTest.class)
 public class PdfMergerTest extends ExtendedITextTest {
@@ -310,7 +302,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         List<File> sources = new ArrayList<File>();
         sources.add(new File(pdfAcro1));
         sources.add(new File(pdfAcro2));
-        mergePdfs(sources, outFileName);
+        mergePdfs(sources, outFileName, false);
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
@@ -330,7 +322,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         sources.add(new File(pdfWithOCG2));
         sources.add(new File(pdfWithOCG2));
         sources.add(new File(pdfWithOCG2));
-        mergePdfs(sources, outPdf);
+        mergePdfs(sources, outPdf, false);
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
@@ -348,7 +340,7 @@ public class PdfMergerTest extends ExtendedITextTest {
         List<File> sources = new ArrayList<File>();
         sources.add(new File(pdfWithOCG1));
         sources.add(new File(pdfWithOCG2));
-        mergePdfs(sources, outPdf);
+        mergePdfs(sources, outPdf, false);
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
@@ -520,32 +512,46 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
-    public void MergeWithSameNamedOCGTest() throws IOException, InterruptedException {
+    public void MergeWithSameNamedOcgTest() throws IOException, InterruptedException {
         String firstPdfDocument = sourceFolder + "sameNamdOCGSource.pdf";
         String secondPdfDocument = sourceFolder + "doc2.pdf";
         String cmpDocument = sourceFolder + "cmp_MergeWithSameNamedOCG.pdf";
         String mergedDocument = destinationFolder + "mergeWithSameNamedOCG.pdf";
 
-        try (PdfDocument documentA = new PdfDocument(new PdfReader(firstPdfDocument));
-                PdfDocument documentB = new PdfDocument(new PdfReader(secondPdfDocument));
-                PdfDocument mergedPdf = new PdfDocument(new PdfWriter(mergedDocument))) {
-            mergedPdf.getWriter().setSmartMode(true);
-            PdfMerger merger = new PdfMerger(mergedPdf, false, true);
-            merger.merge(documentA, 1, documentA.getNumberOfPages());
-            merger.merge(documentB, 1, documentB.getNumberOfPages());
-
-            merger.close();
-        }
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, true);
 
         Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
         // We have to compare visually also because compareByContent doesn't catch the differences in OCGs with the same names
         Assert.assertNull(new CompareTool().compareVisually(mergedDocument, cmpDocument, destinationFolder, "diff_"));
     }
 
-    private void mergePdfs(List<File> sources, String destination) throws IOException {
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES)
+    })
+    public void MergeWithSameNamedOcgOcmdDTest() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "Layer doc1.pdf";
+        String secondPdfDocument = sourceFolder + "Layer doc2.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeWithSameNamedOCMD.pdf";
+        String mergedDocument = destinationFolder + "mergeWithSameNamedOCMD.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    private void mergePdfs(List<File> sources, String destination, boolean smartMode) throws IOException {
         PdfDocument mergedDoc = new PdfDocument(new PdfWriter(destination));
+        mergedDoc.getWriter().setSmartMode(smartMode);
         PdfMerger merger = new PdfMerger(mergedDoc);
-        for(File source : sources){
+        for (File source: sources) {
             PdfDocument sourcePdf = new PdfDocument(new PdfReader(source));
             merger.merge(sourcePdf, 1, sourcePdf.getNumberOfPages()).setCloseSourceDocuments(true);
             sourcePdf.close();
