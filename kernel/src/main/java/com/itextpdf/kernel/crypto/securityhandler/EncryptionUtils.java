@@ -76,6 +76,21 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 final class EncryptionUtils {
+    /*
+    256-bit AES, PKCS#5 padding.
+    SonarQube doesn't like the fact that we're using unauthenticated modes and bad padding schemes (and it rightly
+    calls those out as insecure) but unfortunately this is the best that the standard allows.
+    According to ISO 32000-2 (7.6.5.3 Public-key encryption algorithms):
+        The algorithms that shall be used to encrypt the enveloped data in the CMS object are:
+        • RC4 with key lengths up to 256-bits (deprecated);
+        • DES, Triple DES, RC2 with key lengths up to 128 bits (deprecated);
+        • 128-bit AES in Cipher Block Chaining (CBC) mode (deprecated);
+        • 192-bit AES in CBC mode (deprecated);
+        • 256-bit AES in CBC mode.
+    */
+    private static final String ENVELOPE_ENCRYPTION_ALGORITHM_OID = "2.16.840.1.101.3.4.1.42";
+    private static final String ENVELOPE_ENCRYPTION_ALGORITHM_JCA_NAME = "AES/CBC/PKCS5Padding";
+    private static final int ENVELOPE_ENCRYPTION_KEY_LENGTH = 256;
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -96,7 +111,7 @@ final class EncryptionUtils {
     }
 
     static byte[] fetchEnvelopedData(Key certificateKey, Certificate certificate, String certificateKeyProvider,
-                                     IExternalDecryptionProcess externalDecryptionProcess, PdfArray recipients) {
+            IExternalDecryptionProcess externalDecryptionProcess, PdfArray recipients) {
         boolean foundRecipient = false;
         byte[] envelopedData = null;
 
@@ -118,7 +133,8 @@ final class EncryptionUtils {
                         IRecipientInformation recipientInfo = recipientCertificatesIt.next();
 
                         if (recipientInfo.getRID().match(certHolder) && !foundRecipient) {
-                            envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey) certificateKey, certificateKeyProvider);
+                            envelopedData = PdfEncryptor.getContent(recipientInfo, (PrivateKey) certificateKey,
+                                    certificateKeyProvider);
                             foundRecipient = true;
                         }
                     }
@@ -132,8 +148,8 @@ final class EncryptionUtils {
                 ICMSEnvelopedData data;
                 try {
                     data = BOUNCY_CASTLE_FACTORY.createCMSEnvelopedData(recipient.getValueBytes());
-                    IRecipientInformation recipientInfo =
-                            data.getRecipientInfos().get(externalDecryptionProcess.getCmsRecipientId());
+                    IRecipientInformation recipientInfo = data.getRecipientInfos()
+                            .get(externalDecryptionProcess.getCmsRecipientId());
                     if (recipientInfo != null) {
                         envelopedData = recipientInfo.getContent(externalDecryptionProcess.getCmsRecipient());
                         foundRecipient = true;
@@ -161,37 +177,28 @@ final class EncryptionUtils {
         return cipher.doFinal(abyte0);
     }
 
-    static DERForRecipientParams calculateDERForRecipientParams(byte[] in) throws IOException, GeneralSecurityException {
-        /*
-        According to ISO 32000-2 (7.6.5.3 Public-key encryption algorithms) RC-2 algorithm is outdated
-        and should be replaced with a safer one 256-bit AES-CBC:
-            The algorithms that shall be used to encrypt the enveloped data in the CMS object are:
-            • RC4 with key lengths up to 256-bits (deprecated);
-            • DES, Triple DES, RC2 with key lengths up to 128 bits (deprecated);
-            • 128-bit AES in Cipher Block Chaining (CBC) mode (deprecated);
-            • 192-bit AES in CBC mode (deprecated);
-            • 256-bit AES in CBC mode.
-         */
-        String s = "1.2.840.113549.3.2";
+    static DERForRecipientParams calculateDERForRecipientParams(byte[] in)
+            throws IOException, GeneralSecurityException {
         DERForRecipientParams parameters = new DERForRecipientParams();
 
-        AlgorithmParameterGenerator algorithmparametergenerator = AlgorithmParameterGenerator.getInstance(s);
+        AlgorithmParameterGenerator algorithmparametergenerator = AlgorithmParameterGenerator.getInstance(
+                ENVELOPE_ENCRYPTION_ALGORITHM_OID);
         AlgorithmParameters algorithmparameters = algorithmparametergenerator.generateParameters();
         ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(algorithmparameters.getEncoded("ASN.1"));
         IASN1Primitive derobject;
         try (IASN1InputStream asn1inputstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(bytearrayinputstream)) {
             derobject = asn1inputstream.readObject();
         }
-        KeyGenerator keygenerator = KeyGenerator.getInstance(s);
-        keygenerator.init(128);
+        KeyGenerator keygenerator = KeyGenerator.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_OID);
+        keygenerator.init(ENVELOPE_ENCRYPTION_KEY_LENGTH);
         SecretKey secretkey = keygenerator.generateKey();
-        Cipher cipher = Cipher.getInstance(s);
+        Cipher cipher = Cipher.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_JCA_NAME, BOUNCY_CASTLE_FACTORY.getProvider());
         cipher.init(Cipher.ENCRYPT_MODE, secretkey, algorithmparameters);
 
         parameters.abyte0 = secretkey.getEncoded();
         parameters.abyte1 = cipher.doFinal(in);
         parameters.algorithmIdentifier = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
-                BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(s), derobject);
+                BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(ENVELOPE_ENCRYPTION_ALGORITHM_OID), derobject);
 
         return parameters;
     }
