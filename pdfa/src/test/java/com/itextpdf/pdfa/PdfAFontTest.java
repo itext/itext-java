@@ -60,6 +60,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -262,7 +264,10 @@ public class PdfAFontTest extends ExtendedITextTest {
     public void cidFontCheckTest2() throws IOException, InterruptedException {
         String outPdf = outputDir + "pdfA2b_cidFontCheckTest2.pdf";
         String cmpPdf = sourceFolder + "cmp/PdfAFontTest/cmp_pdfA2b_cidFontCheckTest2.pdf";
-        generateAndValidatePdfA2WithCidFont("Puritan2.otf", outPdf);
+        String expectedVeraPdfWarning = "The following warnings and errors were logged during validation:\n"
+                + "WARNING: The Top DICT does not begin with ROS operator";
+
+        generateAndValidatePdfA2WithCidFont("Puritan2.otf", outPdf, expectedVeraPdfWarning);
         compareResult(outPdf, cmpPdf);
     }
 
@@ -358,23 +363,33 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     private void generateAndValidatePdfA2WithCidFont(String fontFile, String outPdf) throws IOException {
-        PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        PdfPage page = doc.addNewPage();
-        // Identity-H must be embedded
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + fontFile,
-                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(page);
-        canvas.saveState()
-                .beginText()
-                .moveText(36, 700)
-                .setFontAndSize(font, 12)
-                .showText("Hello World")
-                .endText()
-                .restoreState();
+        generateAndValidatePdfA2WithCidFont(fontFile, outPdf, null);
+    }
 
-        doc.close();
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf));
+    private void generateAndValidatePdfA2WithCidFont(String fontFile, String outPdf, String expectedVeraPdfWarning) throws IOException {
+        try (PdfWriter writer = new PdfWriter(outPdf);
+                InputStream is = Files.newInputStream(Paths.get(sourceFolder + "sRGB Color Space Profile.icm"));
+                PdfDocument doc = new PdfADocument(
+                        writer,
+                        PdfAConformanceLevel.PDF_A_2B,
+                        new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is)
+                )
+        ) {
+
+
+            PdfPage page = doc.addNewPage();
+            // Identity-H must be embedded
+            PdfFont font = PdfFontFactory.createFont(sourceFolder + fontFile,
+                    "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(font, 12)
+                    .showText("Hello World")
+                    .endText()
+                    .restoreState();
+        }
+        Assert.assertEquals(expectedVeraPdfWarning, new VeraPdfValidator().validate(outPdf));
     }
 }
