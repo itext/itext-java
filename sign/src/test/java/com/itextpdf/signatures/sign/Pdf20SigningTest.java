@@ -69,12 +69,12 @@ import org.junit.experimental.categories.Category;
 public class Pdf20SigningTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    
+
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/Pdf20SigningTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/Pdf20SigningTest/";
     private static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.pem";
 
-    private static final char[] PASSWORD = "testpass".toCharArray();
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private Certificate[] chain;
     private PrivateKey pk;
@@ -122,7 +122,9 @@ public class Pdf20SigningTest extends ExtendedITextTest {
                 () -> sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
                         PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true,
                         PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, null));
-        Assert.assertEquals(SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS, e.getMessage());
+        Assert.assertEquals(
+                SignExceptionMessageConstant.CERTIFICATION_SIGNATURE_CREATION_FAILED_DOC_SHALL_NOT_CONTAIN_SIGS,
+                e.getMessage());
     }
 
     @Test
@@ -185,24 +187,6 @@ public class Pdf20SigningTest extends ExtendedITextTest {
 
         String fieldName = "Signature1";
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256,
-                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
-
-        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
-                getTestMap(rect)));
-
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
-    }
-
-    @Test
-    public void signPdf2CadesWithRIPEMD160Test() throws GeneralSecurityException, IOException, InterruptedException {
-        String srcFile = SOURCE_FOLDER + "signPdf2CadesWithRipemd.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_signPdf2CadesWithRipemd.pdf";
-        String outPdf = DESTINATION_FOLDER + "signPdf2CadesWithRipemd.pdf";
-
-        Rectangle rect = new Rectangle(30, 200, 200, 100);
-
-        String fieldName = "Signature1";
-        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.RIPEMD160,
                 PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
 
         Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",

@@ -63,7 +63,6 @@ import java.io.IOException;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -166,15 +165,9 @@ final class EncryptionUtils {
         return envelopedData;
     }
 
-    static byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmidentifier)
+    static byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
-        Cipher cipher = Cipher.getInstance(algorithmidentifier.getAlgorithm().getId());
-        try {
-            cipher.init(Cipher.ENCRYPT_MODE, x509certificate);
-        } catch (InvalidKeyException e) {
-            cipher.init(Cipher.ENCRYPT_MODE, x509certificate.getPublicKey());
-        }
-        return cipher.doFinal(abyte0);
+        return BOUNCY_CASTLE_FACTORY.cipherBytes(x509certificate, abyte0, algorithmIdentifier);
     }
 
     static DERForRecipientParams calculateDERForRecipientParams(byte[] in)
@@ -189,8 +182,9 @@ final class EncryptionUtils {
         try (IASN1InputStream asn1inputstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(bytearrayinputstream)) {
             derobject = asn1inputstream.readObject();
         }
-        KeyGenerator keygenerator = KeyGenerator.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_OID);
-        keygenerator.init(ENVELOPE_ENCRYPTION_KEY_LENGTH);
+        KeyGenerator keygenerator = KeyGenerator.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_OID,
+                BOUNCY_CASTLE_FACTORY.getProvider());
+        keygenerator.init(ENVELOPE_ENCRYPTION_KEY_LENGTH, BOUNCY_CASTLE_FACTORY.getSecureRandom());
         SecretKey secretkey = keygenerator.generateKey();
         Cipher cipher = Cipher.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_JCA_NAME, BOUNCY_CASTLE_FACTORY.getProvider());
         cipher.init(Cipher.ENCRYPT_MODE, secretkey, algorithmparameters);

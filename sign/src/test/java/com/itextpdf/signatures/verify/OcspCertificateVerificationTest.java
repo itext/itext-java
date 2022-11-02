@@ -59,7 +59,7 @@ public class OcspCertificateVerificationTest extends ExtendedITextTest {
     private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.pem";
     private static final String notOcspAndOcspCert = ocspCertsSrc + "notOcspAndOcspCertificates.pem";
 
-    private static final char[] password = "testpass".toCharArray();
+    private static final char[] password = "testpassphrase".toCharArray();
     private static final String ocspServiceUrl = "http://localhost:9000/demo/ocsp/ocsp-service";
 
     private static X509Certificate checkCert;

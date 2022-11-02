@@ -114,7 +114,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptionTest/";
 
-    public static final char[] PRIVATE_KEY_PASS = "testpass".toCharArray();
+    public static final char[] PRIVATE_KEY_PASS = "testpassphrase".toCharArray();
     public static final String CERT = sourceFolder + "test.cer";
     public static final String PRIVATE_KEY = sourceFolder + "test.pem";
 

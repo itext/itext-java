@@ -79,7 +79,7 @@ public class LtvWithTwoSignaturesTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/LtvWithTwoSignaturesTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/LtvWithTwoSignaturesTest/";
 
-    private static final char[] password = "testpass".toCharArray();
+    private static final char[] password = "testpassphrase".toCharArray();
 
     @BeforeClass
     public static void before() {

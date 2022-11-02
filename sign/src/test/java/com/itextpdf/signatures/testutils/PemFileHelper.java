@@ -79,8 +79,8 @@ public final class PemFileHelper {
 
     public static KeyStore initStore(String pemFileName, char[] keyPass, Provider provider)
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
-        KeyStore p12 = KeyStore.getInstance("PKCS12", provider.getName());
-        p12.load(null);
+        KeyStore p12 = KeyStore.getInstance("BCFKS", provider.getName());
+        p12.load(null, null);
         Certificate[] firstChain = readFirstChain(pemFileName);
         PrivateKey privateKey = readFirstKey(pemFileName, keyPass);
         if (privateKey != null) {

@@ -235,9 +235,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -245,6 +248,8 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -296,6 +301,10 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
+import org.bouncycastle.crypto.EntropySourceProvider;
+import org.bouncycastle.crypto.fips.FipsDRBG;
+import org.bouncycastle.crypto.util.BasicEntropySourceProvider;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -308,6 +317,7 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.util.Strings;
 
 /**
  * This class implements {@link IBouncyCastleFactory} and creates bouncy-castle FIPS classes instances.
@@ -318,7 +328,6 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     private static final String PROVIDER_NAME = PROVIDER.getName();
     private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS =
             new BouncyCastleFipsTestConstantsFactory();
-
 
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
@@ -1176,5 +1185,29 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public boolean isNullExtension(IExtension ext) {
         return ((ExtensionBCFips) ext).getExtension() == null;
+    }
+
+    @Override
+    public SecureRandom getSecureRandom() {
+        return ((BouncyCastleFipsProvider)PROVIDER).getDefaultSecureRandom();
+    }
+
+    @Override
+    public boolean isInApprovedOnlyMode() {
+        return CryptoServicesRegistrar.isInApprovedOnlyMode();
+    }
+
+    @Override
+    public byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
+            throws GeneralSecurityException {
+        System.out.println(algorithmIdentifier.getAlgorithm().getId());
+        Cipher cipher;
+        try {
+            cipher = Cipher.getInstance(algorithmIdentifier.getAlgorithm().getId(), PROVIDER);
+        } catch (NoSuchAlgorithmException ignored) {
+            cipher = Cipher.getInstance("RSA", PROVIDER);
+        }
+        cipher.init(Cipher.WRAP_MODE, x509certificate.getPublicKey());
+        return cipher.wrap(new SecretKeySpec(abyte0, "AES"));
     }
 }

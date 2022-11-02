@@ -99,7 +99,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     private static final int COUNTER_TO_MAKE_CRL_AVAILABLE_AT_THE_CURRENT_TIME = -1;
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final char[] PASSWORD = "testpass".toCharArray();
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     @BeforeClass
     public static void before() {

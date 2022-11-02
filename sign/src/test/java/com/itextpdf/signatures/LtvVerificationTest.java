@@ -71,7 +71,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
     private static final String SIG_FIELD_NAME = "Signature1";
     private static final String CRL_DISTRIBUTION_POINT = "http://example.com";
     private static final String CERT_FOLDER_PATH = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final char[] PASSWORD = "testpass".toCharArray();
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private static LtvVerification TEST_VERIFICATION;
 

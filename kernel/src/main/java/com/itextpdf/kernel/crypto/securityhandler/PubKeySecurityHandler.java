@@ -258,7 +258,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         pkcs7input[23] = one;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (IASN1OutputStream k = 
+        try (IASN1OutputStream k =
                 CryptoUtil.createAsn1OutputStream(baos, BOUNCY_CASTLE_FACTORY.createASN1Encoding().getDer())) {
             IASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate) certificate);
             k.writeObject(obj);

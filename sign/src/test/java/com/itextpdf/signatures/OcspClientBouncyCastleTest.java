@@ -84,7 +84,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     private static final String ocspCertsSrc = "./src/test/resources/com/itextpdf/signatures/OcspClientBouncyCastleTest/";
     private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.pem";
     private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.pem";
-    private static final char[] password = "testpass".toCharArray();
+    private static final char[] password = "testpassphrase".toCharArray();
     private static final String ocspServiceUrl = "http://localhost:9000/demo/ocsp/ocsp-service";
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 

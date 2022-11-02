@@ -235,9 +235,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -245,6 +248,7 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import javax.crypto.Cipher;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -1166,5 +1170,27 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public boolean isNullExtension(IExtension ext) {
         return ((ExtensionBC) ext).getExtension() == null;
+    }
+
+    @Override
+    public SecureRandom getSecureRandom() {
+        return new SecureRandom();
+    }
+
+    @Override
+    public boolean isInApprovedOnlyMode() {
+        return false;
+    }
+
+    @Override
+    public byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
+            throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance(algorithmIdentifier.getAlgorithm().getId());
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, x509certificate);
+        } catch (InvalidKeyException e) {
+            cipher.init(Cipher.ENCRYPT_MODE, x509certificate.getPublicKey());
+        }
+        return cipher.doFinal(abyte0);
     }
 }

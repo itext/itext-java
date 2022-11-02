@@ -79,7 +79,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final char[] password = "testpass".toCharArray();
+    private static final char[] password = "testpassphrase".toCharArray();
     private static final String caCertFileName = certsSrc + "rootRsa.pem";
 
     @BeforeClass

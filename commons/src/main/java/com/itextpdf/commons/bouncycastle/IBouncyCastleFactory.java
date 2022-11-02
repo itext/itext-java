@@ -132,9 +132,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -432,7 +434,7 @@ public interface IBouncyCastleFactory {
     IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil();
 
     CRL createNullCrl();
-    
+
     IPEMParser createPEMParser(Reader reader);
 
     IJceOpenSSLPKCS8DecryptorProviderBuilder createJceOpenSSLPKCS8DecryptorProviderBuilder();
@@ -442,4 +444,11 @@ public interface IBouncyCastleFactory {
     ITime createTime(Date date);
 
     boolean isNullExtension(IExtension extNonce);
+
+    SecureRandom getSecureRandom();
+
+    boolean isInApprovedOnlyMode();
+
+    byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
+            throws GeneralSecurityException;
 }
