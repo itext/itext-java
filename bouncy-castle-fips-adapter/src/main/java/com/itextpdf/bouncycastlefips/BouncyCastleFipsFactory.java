@@ -1582,7 +1582,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IJcaPEMKeyConverter createJcaPEMKeyConverter() {
-        return new JcaPEMKeyConverterBCFips(new JcaPEMKeyConverter());
+        JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+        converter.setProvider(PROVIDER);
+        return new JcaPEMKeyConverterBCFips(converter);
     }
 
     /**
