@@ -27,6 +27,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -273,5 +274,30 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         };
 
         Assert.assertEquals(FlexContainerRenderer.class, flexContainerRenderer.getNextRenderer().getClass());
+    }
+
+    @Test
+    public void hypotheticalCrossSizeCacheTest() {
+        FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
+        flexRenderer.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(150));
+
+        FlexContainerRenderer flexRendererChild = new FlexContainerRenderer(new Div());
+        flexRendererChild.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(150));
+
+        DivRenderer divRenderer = new DivRenderer(new Div());
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(125));
+
+        flexRendererChild.addChild(divRenderer);
+        flexRenderer.addChild(flexRendererChild);
+
+        // In general it's possible that we might call layout more than once for 1 renderer
+        flexRenderer.layout(new LayoutContext(
+                new LayoutArea(0, new Rectangle(100, 0))));
+        flexRenderer.layout(new LayoutContext(
+                new LayoutArea(0, new Rectangle(200, 0))));
+
+        // Test that hypotheticalCrossSizes can contain more than 1 value
+        Assert.assertNotNull(flexRendererChild.getHypotheticalCrossSize(125F));
+        Assert.assertNotNull(flexRendererChild.getHypotheticalCrossSize(150F));
     }
 }

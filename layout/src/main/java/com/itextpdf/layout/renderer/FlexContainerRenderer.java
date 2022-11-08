@@ -58,11 +58,19 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class FlexContainerRenderer extends DivRenderer {
+
+    /* Used for caching purposes in FlexUtil
+     * We couldn't find the real use case when this map contains more than 1 entry
+     * but let it still be a map to be on a safe(r) side
+     * Map mainSize (always width in our case) - hypotheticalCrossSize
+     */
+    private final Map<Float, Float> hypotheticalCrossSizes = new HashMap<>();
 
     private List<List<FlexItemInfo>> lines;
 
@@ -320,6 +328,14 @@ public class FlexContainerRenderer extends DivRenderer {
             }
         }
         return layoutBoxCopy;
+    }
+
+    void setHypotheticalCrossSize(Float mainSize, Float hypotheticalCrossSize) {
+        hypotheticalCrossSizes.put(mainSize.floatValue(), hypotheticalCrossSize);
+    }
+
+    Float getHypotheticalCrossSize(Float mainSize) {
+        return hypotheticalCrossSizes.get(mainSize.floatValue());
     }
 
     private FlexItemInfo findFlexItemInfo(AbstractRenderer renderer) {
