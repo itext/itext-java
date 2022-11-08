@@ -39,8 +39,9 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
     @Test
     public void getCurrentTest() {
-        Date date = new Date();
-        Assert.assertEquals(date.toString(), DateTimeUtil.getCurrentTimeDate().toString());
+        long nowEpoch = new Date().getTime();
+        long nowDateTimeUtilEpoch = DateTimeUtil.getCurrentTimeDate().getTime();
+        Assert.assertEquals(nowEpoch, nowDateTimeUtilEpoch, ONE_SECOND_DELTA);
     }
 
     @Test
