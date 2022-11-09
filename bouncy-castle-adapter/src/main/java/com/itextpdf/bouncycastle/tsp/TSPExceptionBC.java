@@ -39,6 +39,7 @@ public class TSPExceptionBC extends AbstractTSPException {
      * @param tspException {@link TSPException} to be wrapped
      */
     public TSPExceptionBC(TSPException tspException) {
+        super();
         this.tspException = tspException;
     }
 

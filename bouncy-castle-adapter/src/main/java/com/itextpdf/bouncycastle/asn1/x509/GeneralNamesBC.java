@@ -57,7 +57,7 @@ public class GeneralNamesBC extends ASN1EncodableBC implements IGeneralNames {
     @Override
     public IGeneralName[] getNames() {
         GeneralName[] generalNames = getGeneralNames().getNames();
-        IGeneralName[] generalNamesBC = new GeneralNameBC[generalNames.length];
+        IGeneralName[] generalNamesBC = new IGeneralName[generalNames.length];
 
         for (int i = 0; i < generalNames.length; ++i) {
             generalNamesBC[i] = new GeneralNameBC(generalNames[i]);

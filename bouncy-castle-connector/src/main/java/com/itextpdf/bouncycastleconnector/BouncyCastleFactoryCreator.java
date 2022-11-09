@@ -96,6 +96,7 @@ public final class BouncyCastleFactoryCreator {
         try {
             createFactory(factoryCreator);
         } catch (NoClassDefFoundError ignored) {
+            // Do nothing if factory cannot be created.
         }
     }
     

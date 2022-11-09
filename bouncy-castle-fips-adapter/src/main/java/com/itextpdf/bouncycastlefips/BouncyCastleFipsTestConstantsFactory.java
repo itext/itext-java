@@ -24,7 +24,11 @@ package com.itextpdf.bouncycastlefips;
 
 import com.itextpdf.commons.bouncycastle.IBouncyCastleTestConstantsFactory;
 
-public class BouncyCastleFipsTestConstantsFactory implements IBouncyCastleTestConstantsFactory {
+class BouncyCastleFipsTestConstantsFactory implements IBouncyCastleTestConstantsFactory {
+
+    BouncyCastleFipsTestConstantsFactory() {
+        // Empty constructor.
+    }
 
     @Override
     public String getCertificateInfoTestConst() {

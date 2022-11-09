@@ -57,7 +57,7 @@ public class GeneralNamesBCFips extends ASN1EncodableBCFips implements IGeneralN
     @Override
     public IGeneralName[] getNames() {
         GeneralName[] generalNames = getGeneralNames().getNames();
-        IGeneralName[] generalNamesBC = new GeneralNameBCFips[generalNames.length];
+        IGeneralName[] generalNamesBC = new IGeneralName[generalNames.length];
 
         for (int i = 0; i < generalNames.length; ++i) {
             generalNamesBC[i] = new GeneralNameBCFips(generalNames[i]);

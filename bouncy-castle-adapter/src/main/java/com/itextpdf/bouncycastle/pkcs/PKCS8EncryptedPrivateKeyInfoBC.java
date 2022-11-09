@@ -59,6 +59,7 @@ public class PKCS8EncryptedPrivateKeyInfoBC implements IPKCS8EncryptedPrivateKey
     /**
      * {@inheritDoc}
      */
+    @Override
     public IPrivateKeyInfo decryptPrivateKeyInfo(IInputDecryptorProvider decryptorProvider) throws PKCSExceptionBC {
         try {
             return new PrivateKeyInfoBC(privateKeyInfo.decryptPrivateKeyInfo(

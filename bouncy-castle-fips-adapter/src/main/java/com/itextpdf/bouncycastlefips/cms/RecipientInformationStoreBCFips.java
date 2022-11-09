@@ -61,12 +61,12 @@ public class RecipientInformationStoreBCFips implements IRecipientInformationSto
      */
     @Override
     public Collection<IRecipientInformation> getRecipients() {
-        ArrayList<IRecipientInformation> iRecipientInformations = new ArrayList<>();
+        ArrayList<IRecipientInformation> recipientInformation = new ArrayList<>();
         Collection<RecipientInformation> recipients = recipientInformationStore.getRecipients();
         for (RecipientInformation recipient : recipients) {
-            iRecipientInformations.add(new RecipientInformationBCFips(recipient));
+            recipientInformation.add(new RecipientInformationBCFips(recipient));
         }
-        return iRecipientInformations;
+        return recipientInformation;
     }
 
     /**

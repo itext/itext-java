@@ -61,12 +61,12 @@ public class RecipientInformationStoreBC implements IRecipientInformationStore {
      */
     @Override
     public Collection<IRecipientInformation> getRecipients() {
-        ArrayList<IRecipientInformation> iRecipientInformations = new ArrayList<>();
+        ArrayList<IRecipientInformation> recipientInformation = new ArrayList<>();
         Collection<RecipientInformation> recipients = recipientInformationStore.getRecipients();
         for (RecipientInformation recipient : recipients) {
-            iRecipientInformations.add(new RecipientInformationBC(recipient));
+            recipientInformation.add(new RecipientInformationBC(recipient));
         }
-        return iRecipientInformations;
+        return recipientInformation;
     }
 
     /**

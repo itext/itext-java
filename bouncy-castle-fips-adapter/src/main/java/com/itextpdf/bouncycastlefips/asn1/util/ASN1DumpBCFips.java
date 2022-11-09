@@ -70,7 +70,7 @@ public class ASN1DumpBCFips implements IASN1Dump {
     @Override
     public String dumpAsString(Object obj, boolean b) {
         if (obj instanceof ASN1EncodableBCFips) {
-            obj = ((ASN1EncodableBCFips) obj).getEncodable();
+            return ASN1Dump.dumpAsString(((ASN1EncodableBCFips) obj).getEncodable(), b);
         }
         return ASN1Dump.dumpAsString((ASN1Encodable) obj, b);
     }
@@ -81,7 +81,7 @@ public class ASN1DumpBCFips implements IASN1Dump {
     @Override
     public String dumpAsString(Object obj) {
         if (obj instanceof ASN1EncodableBCFips) {
-            obj = ((ASN1EncodableBCFips) obj).getEncodable();
+            return ASN1Dump.dumpAsString(((ASN1EncodableBCFips) obj).getEncodable());
         }
         return ASN1Dump.dumpAsString((ASN1Encodable) obj);
     }

@@ -70,7 +70,7 @@ public class ASN1DumpBC implements IASN1Dump {
     @Override
     public String dumpAsString(Object obj, boolean b) {
         if (obj instanceof ASN1EncodableBC) {
-            obj = ((ASN1EncodableBC) obj).getEncodable();
+            return ASN1Dump.dumpAsString(((ASN1EncodableBC) obj).getEncodable(), b);
         }
         return ASN1Dump.dumpAsString((ASN1Encodable) obj, b);
     }
@@ -81,7 +81,7 @@ public class ASN1DumpBC implements IASN1Dump {
     @Override
     public String dumpAsString(Object obj) {
         if (obj instanceof ASN1EncodableBC) {
-            obj = ((ASN1EncodableBC) obj).getEncodable();
+            return ASN1Dump.dumpAsString(((ASN1EncodableBC) obj).getEncodable());
         }
         return ASN1Dump.dumpAsString((ASN1Encodable) obj);
     }

@@ -22,6 +22,15 @@
  */
 package com.itextpdf.commons.bouncycastle;
 
+/**
+ * {@link IBouncyCastleTestConstantsFactory} contains methods for constants creation required in tests.
+ */
 public interface IBouncyCastleTestConstantsFactory {
+    
+    /**
+     * Get constant for certificate info.
+     * 
+     * @return constant for certificate info
+     */
     String getCertificateInfoTestConst();
 }

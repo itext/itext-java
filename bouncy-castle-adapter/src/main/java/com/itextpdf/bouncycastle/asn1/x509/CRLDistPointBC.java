@@ -57,7 +57,7 @@ public class CRLDistPointBC extends ASN1EncodableBC implements ICRLDistPoint {
     @Override
     public IDistributionPoint[] getDistributionPoints() {
         DistributionPoint[] distributionPoints = getCrlDistPoint().getDistributionPoints();
-        IDistributionPoint[] distributionPointsBC = new DistributionPointBC[distributionPoints.length];
+        IDistributionPoint[] distributionPointsBC = new IDistributionPoint[distributionPoints.length];
 
         for (int i = 0; i < distributionPoints.length; ++i) {
             distributionPointsBC[i] = new DistributionPointBC(distributionPoints[i]);

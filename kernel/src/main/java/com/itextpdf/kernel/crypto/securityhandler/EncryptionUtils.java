@@ -167,7 +167,7 @@ final class EncryptionUtils {
 
     static byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
-        return BOUNCY_CASTLE_FACTORY.cipherBytes(x509certificate, abyte0, algorithmIdentifier);
+        return BOUNCY_CASTLE_FACTORY.createCipherBytes(x509certificate, abyte0, algorithmIdentifier);
     }
 
     static DERForRecipientParams calculateDERForRecipientParams(byte[] in)

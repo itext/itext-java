@@ -24,8 +24,12 @@ package com.itextpdf.bouncycastle;
 
 import com.itextpdf.commons.bouncycastle.IBouncyCastleTestConstantsFactory;
 
-public class BouncyCastleTestConstantsFactory implements IBouncyCastleTestConstantsFactory {
-
+class BouncyCastleTestConstantsFactory implements IBouncyCastleTestConstantsFactory {
+    
+    BouncyCastleTestConstantsFactory() {
+        // Empty constructor.
+    }
+    
     @Override
     public String getCertificateInfoTestConst() {
         return "corrupted stream - out of bounds length found: 8 >= 6";

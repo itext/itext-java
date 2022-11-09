@@ -328,7 +328,17 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     private static final String PROVIDER_NAME = PROVIDER.getName();
     private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS =
             new BouncyCastleFipsTestConstantsFactory();
+    
+    /**
+     * Creates {@link IBouncyCastleFactory} for bouncy-castle FIPS module.
+     */
+    public BouncyCastleFipsFactory() {
+        // Empty constructor.
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -338,36 +348,42 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(String str) {
         return new ASN1ObjectIdentifierBCFips(str);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifierInstance(Object object) {
         return new ASN1ObjectIdentifierBCFips(ASN1ObjectIdentifier.getInstance(object instanceof ASN1EncodableBCFips ?
                 ((ASN1EncodableBCFips) object).getEncodable() : object));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1InputStream createASN1InputStream(InputStream stream) {
         return new ASN1InputStreamBCFips(stream);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1InputStream createASN1InputStream(byte[] bytes) {
         return new ASN1InputStreamBCFips(bytes);
     }
 
-    @Override
-    public IASN1OctetString createASN1OctetString(IASN1Primitive primitive) {
-        ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
-        if (primitiveBCFips.getPrimitive() instanceof ASN1OctetString) {
-            return new ASN1OctetStringBCFips((ASN1OctetString) primitiveBCFips.getPrimitive());
-        }
-        return null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1OctetString createASN1OctetString(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -377,16 +393,25 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b) {
         return new ASN1OctetStringBCFips(taggedObject, b);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1OctetString createASN1OctetString(byte[] bytes) {
         return new ASN1OctetStringBCFips(ASN1OctetString.getInstance(bytes));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Sequence createASN1Sequence(Object object) {
         if (object instanceof ASN1Sequence) {
@@ -395,6 +420,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Sequence createASN1Sequence(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -404,29 +432,44 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Sequence createASN1Sequence(byte[] array) throws IOException {
-        return new ASN1SequenceBCFips((ASN1Sequence) ASN1Sequence.fromByteArray(array));
+        return new ASN1SequenceBCFips((ASN1Sequence) ASN1Primitive.fromByteArray(array));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Sequence createASN1SequenceInstance(Object object) {
         return new ASN1SequenceBCFips(object instanceof ASN1EncodableBCFips ?
                 ((ASN1EncodableBCFips) object).getEncodable() : object);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERSequence createDERSequence(IASN1EncodableVector encodableVector) {
         ASN1EncodableVectorBCFips vectorBCFips = (ASN1EncodableVectorBCFips) encodableVector;
         return new DERSequenceBCFips(vectorBCFips.getEncodableVector());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERSequence createDERSequence(IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         return new DERSequenceBCFips(primitiveBCFips.getPrimitive());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1TaggedObject createASN1TaggedObject(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -436,6 +479,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Integer createASN1Integer(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -445,16 +491,25 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Integer createASN1Integer(int i) {
         return new ASN1IntegerBCFips(i);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Integer createASN1Integer(BigInteger i) {
         return new ASN1IntegerBCFips(i);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Set createASN1Set(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -464,42 +519,63 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Set createASN1Set(Object encodable) {
         return encodable instanceof ASN1Set ? new ASN1SetBCFips((ASN1Set) encodable) : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Set createASN1Set(IASN1TaggedObject taggedObject, boolean b) {
         ASN1TaggedObjectBCFips taggedObjectBCFips = (ASN1TaggedObjectBCFips) taggedObject;
         return new ASN1SetBCFips(taggedObjectBCFips.getTaggedObject(), b);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Set createNullASN1Set() {
         return new ASN1SetBCFips(null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1OutputStream createASN1OutputStream(OutputStream stream) {
         return new ASN1OutputStreamBCFips(stream);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding) {
-        if (asn1Encoding.equals("DER")) {
+        if ("DER".equals(asn1Encoding)) {
             return new ASN1OutputStreamBCFips(new DEROutputStream(outputStream));
         } else {
-            return new ASN1OutputStreamBCFips((asn1Encoding.equals("DL") ? new DLOutputStream(outputStream)
-                    : new ASN1OutputStream(outputStream)));
+            return new ASN1OutputStreamBCFips("DL".equals(asn1Encoding) ? new DLOutputStream(outputStream) 
+                    : new ASN1OutputStream(outputStream));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDEROctetString createDEROctetString(byte[] bytes) {
         return new DEROctetStringBCFips(bytes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDEROctetString createDEROctetString(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -509,46 +585,70 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1EncodableVector createASN1EncodableVector() {
         return new ASN1EncodableVectorBCFips();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERNull createDERNull() {
         return DERNullBCFips.INSTANCE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERTaggedObject createDERTaggedObject(int i, IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         return new DERTaggedObjectBCFips(i, primitiveBCFips.getPrimitive());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERTaggedObject createDERTaggedObject(boolean b, int i, IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         return new DERTaggedObjectBCFips(b, i, primitiveBCFips.getPrimitive());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERSet createDERSet(IASN1EncodableVector encodableVector) {
         ASN1EncodableVectorBCFips encodableVectorBCFips = (ASN1EncodableVectorBCFips) encodableVector;
         return new DERSetBCFips(encodableVectorBCFips.getEncodableVector());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERSet createDERSet(IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         return new DERSetBCFips(primitiveBCFips.getPrimitive());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERSet createDERSet(ISignaturePolicyIdentifier identifier) {
         SignaturePolicyIdentifierBCFips identifierBCFips = (SignaturePolicyIdentifierBCFips) identifier;
         return new DERSetBCFips(identifierBCFips.getSignaturePolicyIdentifier());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERSet createDERSet(IRecipientInfo recipientInfo) {
         RecipientInfoBCFips recipientInfoBCFips = (RecipientInfoBCFips) recipientInfo;
@@ -556,27 +656,42 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Enumerated createASN1Enumerated(int i) {
         return new ASN1EnumeratedBCFips(i);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Encoding createASN1Encoding() {
         return ASN1EncodingBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IAttributeTable createAttributeTable(IASN1Set unat) {
         ASN1SetBCFips asn1SetBCFips = (ASN1SetBCFips) unat;
         return new AttributeTableBCFips(asn1SetBCFips.getASN1Set());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IPKCSObjectIdentifiers createPKCSObjectIdentifiers() {
         return PKCSObjectIdentifiersBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IAttribute createAttribute(IASN1ObjectIdentifier attrType, IASN1Set attrValues) {
         ASN1ObjectIdentifierBCFips attrTypeBCFips = (ASN1ObjectIdentifierBCFips) attrType;
@@ -585,17 +700,26 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
                 new Attribute(attrTypeBCFips.getASN1ObjectIdentifier(), attrValuesBCFips.getASN1Set()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IContentInfo createContentInfo(IASN1Sequence sequence) {
         ASN1SequenceBCFips sequenceBCFips = (ASN1SequenceBCFips) sequence;
         return new ContentInfoBCFips(ContentInfo.getInstance(sequenceBCFips.getASN1Sequence()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IContentInfo createContentInfo(IASN1ObjectIdentifier objectIdentifier, IASN1Encodable encodable) {
         return new ContentInfoBCFips(objectIdentifier, encodable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws TSPExceptionBCFips, IOException {
         ContentInfoBCFips contentInfoBCFips = (ContentInfoBCFips) contentInfo;
@@ -606,30 +730,45 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISigningCertificate createSigningCertificate(IASN1Sequence sequence) {
         ASN1SequenceBCFips sequenceBCFips = (ASN1SequenceBCFips) sequence;
         return new SigningCertificateBCFips(SigningCertificate.getInstance(sequenceBCFips.getASN1Sequence()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISigningCertificateV2 createSigningCertificateV2(IASN1Sequence sequence) {
         ASN1SequenceBCFips sequenceBCFips = (ASN1SequenceBCFips) sequence;
         return new SigningCertificateV2BCFips(SigningCertificateV2.getInstance(sequenceBCFips.getASN1Sequence()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicOCSPResponse createBasicOCSPResponse(IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         return new BasicOCSPResponseBCFips(BasicOCSPResponse.getInstance(primitiveBCFips.getPrimitive()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicOCSPResp createBasicOCSPResp(IBasicOCSPResponse response) {
         BasicOCSPResponseBCFips responseBCFips = (BasicOCSPResponseBCFips) response;
         return new BasicOCSPRespBCFips(new BasicOCSPResp(responseBCFips.getBasicOCSPResponse()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicOCSPResp createBasicOCSPResp(Object response) {
         if (response instanceof BasicOCSPResp) {
@@ -638,17 +777,26 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPObjectIdentifiers createOCSPObjectIdentifiers() {
         return OCSPObjectIdentifiersBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm) {
         ASN1ObjectIdentifierBCFips algorithmBCFips = (ASN1ObjectIdentifierBCFips) algorithm;
         return new AlgorithmIdentifierBCFips(new AlgorithmIdentifier(algorithmBCFips.getASN1ObjectIdentifier(), null));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm,
             IASN1Encodable encodable) {
@@ -658,41 +806,65 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
                 new AlgorithmIdentifier(algorithmBCFips.getASN1ObjectIdentifier(), encodableBCFips.getEncodable()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Provider getProvider() {
         return PROVIDER;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getProviderName() {
         return PROVIDER_NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBCFips(new JceKeyTransEnvelopedRecipient(privateKey));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaContentVerifierProviderBuilder createJcaContentVerifierProviderBuilder() {
         return new JcaContentVerifierProviderBuilderBCFips(new JcaContentVerifierProviderBuilder());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaSimpleSignerInfoVerifierBuilder createJcaSimpleSignerInfoVerifierBuilder() {
         return new JcaSimpleSignerInfoVerifierBuilderBCFips(new JcaSimpleSignerInfoVerifierBuilder());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaX509CertificateConverter createJcaX509CertificateConverter() {
         return new JcaX509CertificateConverterBCFips(new JcaX509CertificateConverter());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaDigestCalculatorProviderBuilder createJcaDigestCalculatorProviderBuilder() {
         return new JcaDigestCalculatorProviderBuilderBCFips(new JcaDigestCalculatorProviderBuilder());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICertificateID createCertificateID(IDigestCalculator digestCalculator,
             IX509CertificateHolder certificateHolder,
@@ -700,22 +872,34 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return new CertificateIDBCFips(digestCalculator, certificateHolder, bigInteger);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICertificateID createCertificateID() {
         return CertificateIDBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509CertificateHolder createX509CertificateHolder(byte[] bytes) throws IOException {
         return new X509CertificateHolderBCFips(bytes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaX509CertificateHolder createJcaX509CertificateHolder(X509Certificate certificate)
             throws CertificateEncodingException {
         return new JcaX509CertificateHolderBCFips(new JcaX509CertificateHolder(certificate));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IExtension createExtension(IASN1ObjectIdentifier objectIdentifier,
             boolean critical, IASN1OctetString octetString) {
@@ -723,32 +907,50 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
                 .getASN1ObjectIdentifier(), critical, ((ASN1OctetStringBCFips) octetString).getOctetString()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IExtension createExtension() {
         return ExtensionBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IExtensions createExtensions(IExtension extension) {
         return new ExtensionsBCFips(extension);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IExtensions createNullExtensions() {
         return new ExtensionsBCFips((Extensions) null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPReqBuilder createOCSPReqBuilder() {
         return new OCSPReqBuilderBCFips(new OCSPReqBuilder());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
             IDERIA5String string) {
         return new SigPolicyQualifierInfoBCFips(objectIdentifier, string);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1String createASN1String(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -758,6 +960,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Primitive createASN1Primitive(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -767,62 +972,98 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Primitive createASN1Primitive(byte[] array) throws IOException {
         return new ASN1PrimitiveBCFips(array);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPResp createOCSPResp(IOCSPResponse ocspResponse) {
         return new OCSPRespBCFips(ocspResponse);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPResp createOCSPResp(byte[] bytes) throws IOException {
         return new OCSPRespBCFips(new OCSPResp(bytes));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPResp createOCSPResp() {
         return OCSPRespBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPResponse createOCSPResponse(IOCSPResponseStatus respStatus, IResponseBytes responseBytes) {
         return new OCSPResponseBCFips(respStatus, responseBytes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IResponseBytes createResponseBytes(IASN1ObjectIdentifier asn1ObjectIdentifier,
             IDEROctetString derOctetString) {
         return new ResponseBytesBCFips(asn1ObjectIdentifier, derOctetString);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPRespBuilder createOCSPRespBuilderInstance() {
         return OCSPRespBuilderBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPRespBuilder createOCSPRespBuilder() {
         return new OCSPRespBuilderBCFips(new OCSPRespBuilder());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPResponseStatus createOCSPResponseStatus(int status) {
         return new OCSPResponseStatusBCFips(new OCSPResponseStatus(status));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPResponseStatus createOCSPResponseStatus() {
         return OCSPResponseStatusBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICertificateStatus createCertificateStatus() {
         return CertificateStatusBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus) {
         CertificateStatusBCFips certificateStatusBCFips = (CertificateStatusBCFips) certificateStatus;
@@ -832,33 +1073,51 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRevokedStatus createRevokedStatus(Date date, int i) {
         return new RevokedStatusBCFips(new RevokedStatus(date, i));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
         return new DERIA5StringBCFips(DERIA5String.getInstance(
                 ((ASN1TaggedObjectBCFips) taggedObject).getTaggedObject(), b));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDERIA5String createDERIA5String(String str) {
         return new DERIA5StringBCFips(str);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICRLDistPoint createCRLDistPoint(Object object) {
         return new CRLDistPointBCFips(CRLDistPoint.getInstance(object instanceof ASN1EncodableBCFips ?
                 ((ASN1EncodableBCFips) object).getEncodable() : object));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDistributionPointName createDistributionPointName() {
         return DistributionPointNameBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IGeneralNames createGeneralNames(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -868,23 +1127,35 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IGeneralName createGeneralName() {
         return GeneralNameBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
             IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBCFips(algorithmIdentifier, octetString);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
             IOtherHashAlgAndValue algAndValue) {
         return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
             IOtherHashAlgAndValue algAndValue,
@@ -896,54 +1167,84 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return new SignaturePolicyIdBCFips(objectIdentifier, algAndValue, qualifierInfos);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId) {
         return new SignaturePolicyIdentifierBCFips(policyId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IEnvelopedData createEnvelopedData(IOriginatorInfo originatorInfo, IASN1Set set,
             IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
         return new EnvelopedDataBCFips(originatorInfo, set, encryptedContentInfo, set1);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRecipientInfo createRecipientInfo(IKeyTransRecipientInfo keyTransRecipientInfo) {
         return new RecipientInfoBCFips(keyTransRecipientInfo);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
             IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
         return new EncryptedContentInfoBCFips(data, algorithmIdentifier, octetString);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITBSCertificate createTBSCertificate(IASN1Encodable encodable) {
         return new TBSCertificateBCFips(TBSCertificate.getInstance(((ASN1EncodableBCFips) encodable).getEncodable()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value) {
         return new IssuerAndSerialNumberBCFips(issuer, value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRecipientIdentifier createRecipientIdentifier(IIssuerAndSerialNumber issuerAndSerialNumber) {
         return new RecipientIdentifierBCFips(issuerAndSerialNumber);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IKeyTransRecipientInfo createKeyTransRecipientInfo(IRecipientIdentifier recipientIdentifier,
             IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
         return new KeyTransRecipientInfoBCFips(recipientIdentifier, algorithmIdentifier, octetString);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOriginatorInfo createNullOriginatorInfo() {
         return new OriginatorInfoBCFips(null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICMSEnvelopedData createCMSEnvelopedData(byte[] bytes) throws CMSExceptionBCFips {
         try {
@@ -953,11 +1254,17 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITimeStampRequestGenerator createTimeStampRequestGenerator() {
         return new TimeStampRequestGeneratorBCFips(new TimeStampRequestGenerator());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITimeStampResponse createTimeStampResponse(byte[] respBytes) throws TSPExceptionBCFips, IOException {
         try {
@@ -967,21 +1274,33 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AbstractOCSPException createAbstractOCSPException(Exception e) {
         return new OCSPExceptionBCFips(new OCSPException(e.getMessage()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IUnknownStatus createUnknownStatus() {
         return new UnknownStatusBCFips(new UnknownStatus());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1Dump createASN1Dump() {
         return ASN1DumpBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1BitString createASN1BitString(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -991,6 +1310,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1GeneralizedTime createASN1GeneralizedTime(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -1000,6 +1322,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IASN1UTCTime createASN1UTCTime(IASN1Encodable encodable) {
         ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
@@ -1009,39 +1334,60 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaCertStore createJcaCertStore(List<Certificate> certificates) throws CertificateEncodingException {
         return new JcaCertStoreBCFips(new JcaCertStore(certificates));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITimeStampResponseGenerator createTimeStampResponseGenerator(ITimeStampTokenGenerator tokenGenerator,
             Set<String> algorithms) {
         return new TimeStampResponseGeneratorBCFips(tokenGenerator, algorithms);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITimeStampRequest createTimeStampRequest(byte[] bytes) throws IOException {
         return new TimeStampRequestBCFips(new TimeStampRequest(bytes));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaContentSignerBuilder createJcaContentSignerBuilder(String algorithm) {
         return new JcaContentSignerBuilderBCFips(new JcaContentSignerBuilder(algorithm));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaSignerInfoGeneratorBuilder createJcaSignerInfoGeneratorBuilder(
             IDigestCalculatorProvider digestCalcProviderProvider) {
         return new JcaSignerInfoGeneratorBuilderBCFips(digestCalcProviderProvider);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITimeStampTokenGenerator createTimeStampTokenGenerator(ISignerInfoGenerator siGen, IDigestCalculator dgCalc,
             IASN1ObjectIdentifier policy) throws TSPExceptionBCFips {
         return new TimeStampTokenGeneratorBCFips(siGen, dgCalc, policy);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException {
         byte[] tbsCertificate = certificate.getTBSCertificate();
@@ -1056,31 +1402,49 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX500Name createX500Name(String s) {
         return new X500NameBCFips(new X500Name(s));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRespID createRespID(IX500Name x500Name) {
         return new RespIDBCFips(x500Name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicOCSPRespBuilder createBasicOCSPRespBuilder(IRespID respID) {
         return new BasicOCSPRespBuilderBCFips(respID);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IOCSPReq createOCSPReq(byte[] requestBytes) throws IOException {
         return new OCSPReqBCFips(new OCSPReq(requestBytes));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509v2CRLBuilder createX509v2CRLBuilder(IX500Name x500Name, Date date) {
         return new X509v2CRLBuilderBCFips(x500Name, date);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaX509v3CertificateBuilder createJcaX509v3CertificateBuilder(X509Certificate signingCert,
             BigInteger certSerialNumber, Date startDate, Date endDate, IX500Name subjectDnName, PublicKey publicKey) {
@@ -1088,47 +1452,74 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
                 publicKey);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBasicConstraints createBasicConstraints(boolean b) {
         return new BasicConstraintsBCFips(new BasicConstraints(b));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IKeyUsage createKeyUsage() {
         return KeyUsageBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IKeyUsage createKeyUsage(int i) {
         return new KeyUsageBCFips(new KeyUsage(i));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IKeyPurposeId createKeyPurposeId() {
         return KeyPurposeIdBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId purposeId) {
         return new ExtendedKeyUsageBCFips(purposeId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IX509ExtensionUtils createX509ExtensionUtils(IDigestCalculator digestCalculator) {
         return new X509ExtensionUtilsBCFips(digestCalculator);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object object) {
         return new SubjectPublicKeyInfoBCFips(object instanceof ASN1EncodableBCFips ?
                 ((ASN1EncodableBCFips) object).getEncodable() : object);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICRLReason createCRLReason() {
         return CRLReasonBCFips.getInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITSTInfo createTSTInfo(IContentInfo contentInfo) throws AbstractTSPException, IOException {
         try {
@@ -1142,65 +1533,100 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISingleResp createSingleResp(IBasicOCSPResponse basicResp) {
         return new SingleRespBCFips(basicResp);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public X509Certificate createX509Certificate(Object element) {
         return (X509Certificate) element;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil() {
         return BOUNCY_CASTLE_FIPS_TEST_CONSTANTS;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CRL createNullCrl() {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IPEMParser createPEMParser(Reader reader) {
         return new PEMParserBCFips(new PEMParser(reader));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJceOpenSSLPKCS8DecryptorProviderBuilder createJceOpenSSLPKCS8DecryptorProviderBuilder() {
         return new JceOpenSSLPKCS8DecryptorProviderBuilderBCFips(new JceOpenSSLPKCS8DecryptorProviderBuilder());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IJcaPEMKeyConverter createJcaPEMKeyConverter() {
         return new JcaPEMKeyConverterBCFips(new JcaPEMKeyConverter());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ITime createTime(Date date) {
         return new TimeBCFips(new Time(date));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isNullExtension(IExtension ext) {
         return ((ExtensionBCFips) ext).getExtension() == null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SecureRandom getSecureRandom() {
         return ((BouncyCastleFipsProvider)PROVIDER).getDefaultSecureRandom();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isInApprovedOnlyMode() {
         return CryptoServicesRegistrar.isInApprovedOnlyMode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
+    public byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
-        System.out.println(algorithmIdentifier.getAlgorithm().getId());
         Cipher cipher;
         try {
             cipher = Cipher.getInstance(algorithmIdentifier.getAlgorithm().getId(), PROVIDER);
