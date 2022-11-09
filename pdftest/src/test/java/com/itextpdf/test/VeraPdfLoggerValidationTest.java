@@ -72,7 +72,12 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
         FileUtil.copy(SOURCE_FOLDER + fileNameWithWarnings, DESTINATION_FOLDER + fileNameWithWarnings);
         FileUtil.copy(SOURCE_FOLDER + fileNameWithoutWarnings, DESTINATION_FOLDER + fileNameWithoutWarnings);
 
-        Assert.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings));
+        String expectedWarningsForFileWithWarnings = "The following warnings and errors were logged during validation:\n"
+                + "WARNING: Invalid embedded cff font. Charset range exceeds number of glyphs\n"
+                + "WARNING: Missing OutputConditionIdentifier in an output intent dictionary\n"
+                + "WARNING: The Top DICT does not begin with ROS operator";
+        Assert.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings));
+
         //We check that the logs are empty after the first check
         Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings));
     }

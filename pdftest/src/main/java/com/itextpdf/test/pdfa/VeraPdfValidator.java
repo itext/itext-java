@@ -44,7 +44,7 @@ address: sales@itextpdf.com
 package com.itextpdf.test.pdfa;
 
 import java.util.logging.Level;
-import org.verapdf.component.Log;
+import java.util.stream.Collectors;
 import org.verapdf.component.LogsSummary;
 import org.verapdf.component.LogsSummaryImpl;
 import org.verapdf.core.VeraPDFException;
@@ -103,14 +103,16 @@ public class VeraPdfValidator {
                 errorMessage = "VeraPDF execution failed - specified file is encrypted. See report:  " + xmlReportPath;
             } else if (summary.getValidationSummary().getNonCompliantPdfaCount() != 0) {
                 errorMessage = "VeraPDF verification failed. See verification results:  " + xmlReportPath;
-            } else if (logsSummary.getLogsCount() != 0) {
-                errorMessage = "The following warnings and errors occurred while parsing current file:";
-                for (Log log : logsSummary.getLogs()) {
-                    errorMessage += "\n" + log.getLevel() + ": " + log.getMessage();
-                }
-                errorMessage += "\nSee verification results:" + xmlReportPath;
             } else {
                 System.out.println("VeraPDF verification finished. See verification report: " + xmlReportPath);
+
+                if (logsSummary.getLogsCount() != 0) {
+                    errorMessage = "The following warnings and errors were logged during validation:";
+                    errorMessage += logsSummary.getLogs().stream()
+                            .map(log -> "\n" + log.getLevel() + ": " + log.getMessage())
+                            .sorted()
+                            .collect(Collectors.joining());
+                }
             }
         } catch (IOException | VeraPDFException exc) {
             errorMessage = "VeraPDF execution failed:\n" + exc.getMessage();
