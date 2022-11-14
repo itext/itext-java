@@ -388,7 +388,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      *
      * @param pageNum page number.
      *
-     * @return page by page number. may return {@code null} in case the page tree is broken
+     * @return page by page number.
+     *
+     * @throws PdfException in case the page tree is broken
      */
     public PdfPage getPage(int pageNum) {
         checkClosingStatus();
