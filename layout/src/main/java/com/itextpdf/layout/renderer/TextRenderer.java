@@ -378,10 +378,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
 
-                float potentialWidth =
+                final float potentialWidth =
                         nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition;
-                if (!noSoftWrap && (potentialWidth > layoutBox.getWidth() - currentLineWidth + EPS)
-                        && firstCharacterWhichExceedsAllowedWidth == -1
+                final boolean symbolNotFitOnLine = potentialWidth > layoutBox.getWidth() - currentLineWidth + EPS;
+                if ((!noSoftWrap && symbolNotFitOnLine && firstCharacterWhichExceedsAllowedWidth == -1)
                         || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                     boolean spaceOrWhitespace = TextUtil.isSpaceOrWhitespace(text.get(ind));
@@ -423,8 +423,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 previousCharPos = ind;
 
-                if (!noSoftWrap
-                        && nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
+                if (!noSoftWrap && symbolNotFitOnLine
                         && (0 == nonBreakingHyphenRelatedChunkWidth || ind + 1 == text.end || !glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind + 1))) {
                     if (isOverflowFit(overflowX)) {
                         // we have extracted all the information we wanted and we do not want to continue.
