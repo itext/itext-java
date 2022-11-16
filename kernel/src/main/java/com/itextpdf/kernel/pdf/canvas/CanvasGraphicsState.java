@@ -240,7 +240,7 @@ public class CanvasGraphicsState {
 
 
     /**
-     * Gets the current cap style, see ISO-320001, 8.4.3.3 Line Cap Style.
+     * Gets the current line cap style, see ISO-320001, 8.4.3.3 Line Cap Style.
      *
      * @return The current cap style.
      * @see PdfCanvas#setLineCapStyle(int) for more info.
@@ -250,7 +250,7 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets the current cap style, see ISO-320001, 8.4.3.3 Line Cap Style.
+     * Sets the current line cap style, see ISO-320001, 8.4.3.3 Line Cap Style.
      *
      * @param lineCapStyle The new cap style value.
      * @see PdfCanvas#setLineCapStyle(int) for more info.
@@ -301,7 +301,8 @@ public class CanvasGraphicsState {
 
 
     /**
-     * Gets line dash pattern value, {@code D} key, see ISO-320001, 8.4.3.6 Line Dash Pattern.
+     * Gets line dash pattern value, {@code D} key, see ISO-320001, 8.4.3.6 Line Dash Pattern,
+     * {@link com.itextpdf.kernel.pdf.extgstate.PdfExtGState#setDashPattern }.
      *
      * @return a {@code PdfArray}, that represents line dash pattern.
      */
@@ -310,7 +311,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets line dash pattern value, {@code D} key, see ISO-320001, 8.4.3.6 Line Dash Pattern.
+     * Sets line dash pattern value, {@code D} key, see ISO-320001, 8.4.3.6 Line Dash Pattern,
+     * {@link com.itextpdf.kernel.pdf.extgstate.PdfExtGState#setDashPattern }.
      *
      * @param dashPattern a {@code PdfArray}, that represents line dash pattern.
      */
@@ -319,7 +321,7 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the rendering intent see {@link PdfExtGState#getRenderingIntent()}.
+     * Gets the rendering intent, see {@link PdfExtGState#getRenderingIntent()}.
      *
      * @return the rendering intent name.
      */
@@ -327,7 +329,7 @@ public class CanvasGraphicsState {
         return renderingIntent;
     }
     /**
-     * Sets the rendering intent see {@link PdfExtGState#getRenderingIntent()}.
+     * Sets the rendering intent, see {@link PdfExtGState#getRenderingIntent()}.
      *
      * @param renderingIntent the rendering intent name.
      */
@@ -373,7 +375,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Text Rendering Mode, see ISO-320001, 9.3.6 Text Rendering Mode.
+     * Gets the current Text Rendering Mode, see ISO-320001, 9.3.6 Text Rendering Mode,
+     * {@link PdfCanvas#setTextRenderingMode}.
      *
      * @return The current text rendering mode.
      */
@@ -382,7 +385,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets the current Text Rendering Mode, see ISO-320001, 9.3.6 Text Rendering Mode.
+     * Sets the current Text Rendering Mode, see ISO-320001, 9.3.6 Text Rendering Mode,
+     * {@link PdfCanvas#setTextRenderingMode}.
      *
      * @param textRenderingMode The new text rendering mode.
      */
@@ -391,7 +395,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Get the current Text Rise, see ISO-320001, 9.3.7 Text Rise.
+     * Get the current Text Rise, see ISO-320001, 9.3.7 Text Rise,
+     * {@link PdfCanvas#setTextRise}.
      *
      * @return The current text rise.
      */
@@ -400,7 +405,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Set the current Text Rise, see ISO-320001, 9.3.7 Text Rise.
+     * Set the current Text Rise, see ISO-320001, 9.3.7 Text Rise
+     * {@link PdfCanvas#setTextRise}.
      *
      * @param textRise The new text rise value.
      */
@@ -409,7 +415,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Flatness Tolerance, see ISO-320001, 10.6.2 Flatness Tolerance.
+     * Gets the current Flatness Tolerance, see ISO-320001, 10.6.2 Flatness Tolerance,
+     * {@link PdfCanvas#setFlatnessTolerance(float)}.
      *
      * @return The current flatness tolerance.
      */
@@ -418,7 +425,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets the current Flatness Tolerance, see ISO-320001, 10.6.2 Flatness Tolerance.
+     * Sets the current Flatness Tolerance, see ISO-320001, 10.6.2 Flatness Tolerance,
+     * {@link PdfCanvas#setFlatnessTolerance(float)}.
      *
      * @param flatnessTolerance The new flatness tolerance value.
      */
@@ -427,7 +435,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets the Word Spacing, see ISO-320001, 9.3.3 Word Spacing.
+     * Sets the Word Spacing, see ISO-320001, 9.3.3 Word Spacing,
+     * {@link PdfCanvas#setWordSpacing(float)}.
      *
      * @param wordSpacing The new word spacing value.
      */
@@ -436,7 +445,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Word Spacing, see ISO-320001, 9.3.3 Word Spacing.
+     * Gets the current Word Spacing, see ISO-320001, 9.3.3 Word Spacing,
+     * {@link PdfCanvas#setWordSpacing(float)}
      *
      * @return The current word spacing
      */
@@ -445,7 +455,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets the Character Spacing, see ISO-320001, 9.3.2 Character Spacing.
+     * Sets the Character Spacing, see ISO-320001, 9.3.2 Character Spacing,
+     * {@link PdfCanvas#setCharacterSpacing(float)}
      *
      * @param characterSpacing The new character spacing value.
      */
@@ -454,7 +465,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Character Spacing, see ISO-320001, 9.3.2 Character Spacing.
+     * Gets the current Character Spacing, see ISO-320001, 9.3.2 Character Spacing,
+     * {@link PdfCanvas#setCharacterSpacing(float)}.
      *
      * @return The current character spacing value.
      */
@@ -463,7 +475,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Leading, see ISO-320001, 9.3.5 Leading.
+     * Gets the current Leading, see ISO-320001, 9.3.5 Leading,
+     * {@link PdfCanvas#setLeading(float)}.
      *
      * @return The current leading value.
      */
@@ -472,7 +485,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets the  Leading, see ISO-320001, 9.3.5 Leading
+     * Sets the  Leading, see ISO-320001, 9.3.5 Leading,
+     * {@link PdfCanvas#setLeading(float)}.
      *
      * @param leading The new leading value.
      */
@@ -481,7 +495,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Horizontal Scaling percentage, see ISO-320001, 9.3.4 Horizontal Scaling
+     * Gets the current Horizontal Scaling percentage, see ISO-320001, 9.3.4 Horizontal Scaling.
+     * {@link PdfCanvas#setHorizontalScaling(float)}.
      *
      * @return The current horizontal scaling factor.
      */
@@ -490,7 +505,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Sets the Horizontal Scaling percentage for text, see ISO-320001, 9.3.4 Horizontal Scaling
+     * Sets the Horizontal Scaling percentage for text, see ISO-320001, 9.3.4 Horizontal Scaling,
+     * {@link PdfCanvas#setHorizontalScaling(float)}.
      *
      * @param scale The new horizontal scaling factor.
      */
@@ -499,8 +515,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Get the Stroke Overprint flag, see ISO 32000-1, see ISO 32000-1, 8.6.7 Overprint Control
-     * and 11.7.4.5 Summary of Overprinting Behaviour.
+     * Get the Stroke Overprint flag, see ISO 32000-1, 8.6.7 Overprint Control
+     * and 11.7.4.5 Summary of Overprinting Behaviour, {@link PdfExtGState#getStrokeOverprintFlag()}.
      *
      * @return The current stroke overprint flag.
      */
@@ -510,7 +526,7 @@ public class CanvasGraphicsState {
 
     /**
      * Get the Fill Overprint flag, see ISO 32000-1, 8.6.7 Overprint Control
-     * and 11.7.4.5 Summary of Overprinting Behaviour.
+     * and 11.7.4.5 Summary of Overprinting Behaviour, {@link PdfExtGState#getFillOverprintFlag()}.
      *
      * @return The current stroke overprint flag.
      */
@@ -519,8 +535,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Get the Overprint Mode, see ISO 32000-1, see ISO 32000-1, 8.6.7 Overprint Control
-     * and 11.7.4.5 Summary of Overprinting Behaviour.
+     * Get the Overprint Mode, see ISO 32000-1, 8.6.7 Overprint Control
+     * and 11.7.4.5 Summary of Overprinting Behaviour, {@link PdfExtGState#getOverprintMode()}.
      *
      * @return The current overprint mode.
      */
@@ -531,7 +547,8 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current Black-generation function, see ISO32000-1, 11.7.5.3 Rendering Intent and Colour Conversions and
-     * Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * Table 58 – Entries in a Graphics State Parameter Dictionary,
+     * {@link PdfExtGState#getBlackGenerationFunction()}.
      *
      * @return the current black-generation function.
      */
@@ -542,7 +559,8 @@ public class CanvasGraphicsState {
     /**
      * Gets the current overruling Black-generation function,
      * see ISO32000-1, 11.7.5.3 Rendering Intent and Colour Conversions and
-     * Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * Table 58 – Entries in a Graphics State Parameter Dictionary,
+     * {@link PdfExtGState#getBlackGenerationFunction2()}.
      *
      * @return the current overruling black-generation function.
      */
@@ -553,7 +571,8 @@ public class CanvasGraphicsState {
     /**
      * Gets the current Undercolor-removal function,
      * see ISO32000-1, 11.7.5.3 Rendering Intent and Colour Conversions and
-     * Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * Table 58 – Entries in a Graphics State Parameter Dictionary
+     * {@link PdfExtGState#getUndercolorRemovalFunction()}.
      *
      * @return the current black-generation function.
      */
@@ -564,7 +583,8 @@ public class CanvasGraphicsState {
     /**
      * Gets the current overruling Undercolor-removal function,
      * see ISO32000-1, 11.7.5.3 Rendering Intent and Colour Conversions and
-     * Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * Table 58 – Entries in a Graphics State Parameter Dictionary,
+     * {@link PdfExtGState#getUndercolorRemovalFunction2()}.
      *
      * @return the current undercolor-removal function.
      */
@@ -575,7 +595,8 @@ public class CanvasGraphicsState {
     /**
      * Gets the current Transfer function,
      * see ISO32000-1, 11.7.5.3 Rendering Intent and Colour Conversions and
-     * Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * Table 58 – Entries in a Graphics State Parameter Dictionary,
+     * {@link PdfExtGState#getTransferFunction()}.
      *
      * @return the current transfer function.
      */
@@ -586,7 +607,8 @@ public class CanvasGraphicsState {
     /**
      * Gets the current overruling transer function,
      * see ISO32000-1, 11.7.5.3 Rendering Intent and Colour Conversions and
-     * Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * Table 58 – Entries in a Graphics State Parameter Dictionary,
+     * {@link PdfExtGState#getTransferFunction2()}.
      *
      * @return the current overruling transer function.
      */
@@ -596,7 +618,8 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current halftone ,
-     * see ISO32000-1, 10.5 Halftones and Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * see ISO32000-1, 10.5 Halftones and Table 58 – Entries in a Graphics State Parameter Dictionary,
+     * {@link PdfExtGState#getHalftone()}.
      *
      * @return the current halftone.
      */
@@ -607,7 +630,8 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current Smoothness Tolerance,
-     * see ISO32000-1, 10.6.3 Smoothness Tolerance and Table 58 – Entries in a Graphics State Parameter Dictionary.
+     * see ISO32000-1, 10.6.3 Smoothness Tolerance and Table 58 – Entries in a Graphics State Parameter Dictionary,
+     * {@link PdfExtGState#getSmothnessTolerance()}.
      *
      * @return the current smoothness tolerance function.
      */
@@ -616,7 +640,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Apply Automatic Stroke Adjustment flag, see ISO 32000-1, 10.6.5 Automatic Stroke Adjustment.
+     * Gets the current Apply Automatic Stroke Adjustment flag, see ISO 32000-1, 10.6.5 Automatic Stroke Adjustment,
+     * {@link PdfExtGState#getAutomaticStrokeAdjustmentFlag()}.
      *
      * @return The current automatic stroke adjustment flag.
      */
@@ -626,7 +651,8 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current Blend Mode, see ISO 32000-1, 11.3.5 Blend Mode and
-     * 11.6.3 Specifying Blending Colour Space and Blend Mode.
+     * 11.6.3 Specifying Blending Colour Space and Blend Mode,
+     * {@link PdfExtGState#getBlendMode()}.
      *
      * @return The current blend mode.
      */
@@ -636,7 +662,8 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current Soft Mask, see ISO 32000-1, 11.3.7.2 Source Shape and Opacity,
-     * 11.6.4.3 Mask Shape and Opacity and 11.6.5.2 Soft-Mask Dictionaries.
+     * 11.6.4.3 Mask Shape and Opacity and 11.6.5.2 Soft-Mask Dictionaries,
+     * {@link PdfExtGState#getSoftMask()}.
      *
      * @return The current soft mask.
      */
@@ -646,7 +673,7 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current Stroke Opacity value, see ISO 32000-1, 11.3.7.2 Source Shape and Opacity
-     * and 11.6.4.4 Constant Shape and Opacity.
+     * and 11.6.4.4 Constant Shape and Opacity, {@link PdfExtGState#getStrokeOpacity()}.
      *
      * @return the current stroke opacity value.
      */
@@ -656,7 +683,7 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current Fill Opacity value, see ISO 32000-1, 11.3.7.2 Source Shape and Opacity
-     * and 11.6.4.4 Constant Shape and Opacity.
+     * and 11.6.4.4 Constant Shape and Opacity, {@link PdfExtGState#getFillOpacity()}.
      *
      * @return the current fill opacity value.
      */
@@ -666,7 +693,7 @@ public class CanvasGraphicsState {
 
     /**
      * Gets the current Alpha is shape flag, see ISO 32000-1, 11.3.7.2 Source Shape and Opacity and
-     * 11.6.4.3 Mask Shape and Opacity.
+     * 11.6.4.3 Mask Shape and Opacity, {@link PdfExtGState#getAlphaSourceFlag()} .
      *
      * @return The current alpha is shape flag.
      */
@@ -675,7 +702,8 @@ public class CanvasGraphicsState {
     }
 
     /**
-     * Gets the current Text Knockout flag, see ISO 32000-1, 9.3.8 Text Knockout.
+     * Gets the current Text Knockout flag, see ISO 32000-1, 9.3.8 Text Knockout,
+     * {@link PdfExtGState#getTextKnockoutFlag()}.
      *
      * @return The current text knockout flag.
      */
@@ -686,7 +714,7 @@ public class CanvasGraphicsState {
     /**
      * Gets the current Halftone Phase, see Portable Document Format Reference Manual Version 1.2,
      * 7.12 Extended graphics states and PostScript Language Reference Manual, Second Edition,
-     * 7.3.3, “Halftone Phase.
+     * 7.3.3, Halftone Phase.
      *
      * @return the current halftone phase.
      */
