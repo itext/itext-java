@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 
 /**
@@ -83,6 +84,7 @@ import java.util.Set;
  * XSS attack examples (that jsoup will safegaurd against the default Cleaner and Safelist configuration).
  */
 public class Safelist {
+    private static final Pattern SPACE_PATTERN = Pattern.compile("\\s");
     private Set<TagName> tagNames; // tags allowed, lower case. e.g. [p, br, span]
     private Map<TagName, Set<AttributeKey>> attributes; // tag -> attribute[]. allowed attributes [href] for a tag.
     private Map<TagName, Map<AttributeKey, AttributeValue>> enforcedAttributes; // always set these attribute values
@@ -572,7 +574,7 @@ public class Safelist {
     }
 
     private boolean isValidAnchor(String value) {
-        return value.startsWith("#") && !value.matches(".*\\s.*");
+        return value.startsWith("#") && !SPACE_PATTERN.matcher(value).find();
     }
 
     Attributes getEnforcedAttributes(String tagName) {

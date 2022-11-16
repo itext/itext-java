@@ -319,7 +319,7 @@ public class QueryParser {
     }
     
     //pseudo selectors :first-child, :last-child, :nth-child, ...
-    private static final Pattern NTH_AB = Pattern.compile("(([+-])?(\\d+)?)n(\\s*([+-])?\\s*\\d+)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NTH_AB = Pattern.compile("(([+-])?(\\d+)?)n(([+-])?\\d+)?", Pattern.CASE_INSENSITIVE);
     private static final Pattern NTH_B  = Pattern.compile("([+-])?(\\d+)");
 
 	private void cssNthChild(boolean backwards, boolean ofType) {

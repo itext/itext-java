@@ -48,6 +48,7 @@ import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +126,10 @@ public class FontShorthandResolver implements IShorthandResolver {
         String lineHeightValue = null;
         String fontFamilyValue = null;
 
-        List<String> properties = getFontProperties(shorthandExpression.replaceAll("\\s*,\\s*", ","));
+        final String[] props = shorthandExpression.split(",");
+        final String shExprFixed = String.join(",",
+                Arrays.stream(props).map(str -> str.trim()).collect(Collectors.toList()));
+        List<String> properties = getFontProperties(shExprFixed);
         for (String value : properties) {
             int slashSymbolIndex = value.indexOf('/');
             if (CommonCssConstants.ITALIC.equals(value) || CommonCssConstants.OBLIQUE.equals(value)) {

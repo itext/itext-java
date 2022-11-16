@@ -148,6 +148,20 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void emptyStringsSplitValueTest() {
+        String input = " \n1,,\n 2   a  ,\tb  ,";
+        List<String> expected = new ArrayList<>();
+        expected.add("1");
+        expected.add("2");
+        expected.add("a");
+        expected.add("b");
+
+        List<String> actual = SvgCssUtils.splitValueList(input);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void nullSplitValueTest() {
         List<String> actual = SvgCssUtils.splitValueList(null);
 

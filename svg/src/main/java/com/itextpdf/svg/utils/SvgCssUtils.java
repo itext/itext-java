@@ -68,8 +68,12 @@ public final class SvgCssUtils {
         if (value != null && value.length() > 0) {
             value = value.trim();
 
-            String[] list = value.split("\\s*(,|\\s)\\s*");
-            result.addAll(Arrays.asList(list));
+            String[] list = value.split("[,|\\s]");
+            for (String element: list) {
+                if (!element.isEmpty()) {
+                    result.add(element);
+                }
+            }
         }
 
         return result;

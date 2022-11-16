@@ -93,10 +93,10 @@ public abstract class AbstractCornersShorthandResolver implements IShorthandReso
      */
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
-        String[] props = shorthandExpression.split("\\s*\\/\\s*");
+        String[] props = shorthandExpression.split("\\/");
         String[][] properties = new String[props.length][];
         for (int i = 0; i < props.length; i++) {
-            properties[i] = props[i].split("\\s+");
+            properties[i] = props[i].trim().split("\\s+");
         }
 
         String[] resultExpressions = new String[4];
