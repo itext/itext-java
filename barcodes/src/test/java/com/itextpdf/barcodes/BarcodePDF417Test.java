@@ -43,8 +43,10 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
+import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -486,6 +488,37 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfException.class,
                 () -> barcodePDF417.paintCode());
         Assert.assertEquals(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
+    }
+
+    @Test
+    public void ccittImageFromBarcodeTest() throws IOException, InterruptedException {
+        String filename = "ccittImage01.pdf";
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfDocument document = new PdfDocument(writer);
+
+        PdfPage page = document.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        String text = "Call me Ishmael. Some years ago--never mind how long "
+                + "precisely --having little or no money in my purse, and nothing "
+                + "particular to interest me on shore, I thought I would sail about "
+                + "a little and see the watery part of the world.";
+
+        BarcodePDF417 barcode = new BarcodePDF417();
+        barcode.setCode(text);
+        barcode.paintCode();
+
+        byte g4[] = CCITTG4Encoder.compress(barcode.getOutBits(), barcode.getBitColumns(), barcode.getCodeRows());
+        ImageData img = ImageDataFactory.create(barcode.getBitColumns(), barcode.getCodeRows(), false,
+                RawImageData.CCITTG4, 0, g4, null);
+
+        canvas.addImageAt(img, 100, 100, false);
+
+        document.close();
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                        DESTINATION_FOLDER, "diff_"));
     }
 
     private PdfFormXObject createMacroBarcodePart(PdfDocument document, String text, float mh, float mw, int segmentId) {
