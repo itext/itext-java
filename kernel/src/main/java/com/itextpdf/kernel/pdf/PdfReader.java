@@ -61,6 +61,9 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -70,10 +73,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
-
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +104,8 @@ public class PdfReader implements Closeable {
 
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
+
+    private XMPMeta xmpMeta;
 
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
@@ -641,14 +642,18 @@ public class PdfReader implements Closeable {
             if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
                 throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
             }
-            if (pdfDocument.getXmpMetadata() != null) {
-                try {
-                    pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(
-                            XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata()));
-                } catch (XMPException ignored) {
+
+            try {
+                if (xmpMeta == null && pdfDocument.getXmpMetadata() != null) {
+                    xmpMeta = XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata());
                 }
+                if (xmpMeta != null) {
+                    pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(xmpMeta);
+                }
+            } catch (XMPException ignored) {
             }
         }
+
         return pdfAConformanceLevel;
     }
 

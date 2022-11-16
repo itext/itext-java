@@ -60,7 +60,11 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.options.PropertyOptions;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -2299,6 +2303,12 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getPdfAConformanceLevelNoMetadataTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(createPdfDocumentForTest())));
+        Assert.assertNull(pdfDoc.getReader().getPdfAConformanceLevel());
+    }
+
+    @Test
     public void xrefStreamPointsItselfTest() throws IOException {
         String fileName = SOURCE_FOLDER + "xrefStreamPointsItself.pdf";
 
@@ -2636,6 +2646,26 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void conformanceLevelCacheTest() throws IOException, XMPException {
+        String filename = DESTINATION_FOLDER + "simpleDoc.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        XMPMeta xmp = XMPMetaFactory.create();
+        xmp.appendArrayItem(XMPConst.NS_DC, "subject",
+                new PropertyOptions(PropertyOptions.ARRAY), "Hello World", null);
+        pdfDoc.setXmpMetadata(xmp);
+
+        pdfDoc.addNewPage();
+        pdfDoc.close();
+
+        TestPdfDocumentCache pdfTestDoc = new TestPdfDocumentCache(new PdfReader(filename));
+        for(int i = 0; i < 1000; ++i) {
+            pdfTestDoc.getReader().getPdfAConformanceLevel();
+        }
+        Assert.assertEquals(2, pdfTestDoc.getCounter());
+    }
+
     private static PdfDictionary getTestPdfDictionary() {
         HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
         tmpMap.put(new PdfName("b"), new PdfName("c"));
@@ -2648,6 +2678,24 @@ public class PdfReaderTest extends ExtendedITextTest {
                 pdfDoc.addNewPage();
             }
             return baos.toByteArray();
+        }
+    }
+
+    private class TestPdfDocumentCache extends PdfDocument {
+        private int getXmpMetadataCounter;
+
+        public TestPdfDocumentCache(PdfReader pdfReader) {
+            super(pdfReader);
+        }
+
+        @Override
+        public byte[] getXmpMetadata(boolean createNew) {
+            ++getXmpMetadataCounter;
+            return super.getXmpMetadata(createNew);
+        }
+
+        public int getCounter() {
+            return getXmpMetadataCounter;
         }
     }
 }
