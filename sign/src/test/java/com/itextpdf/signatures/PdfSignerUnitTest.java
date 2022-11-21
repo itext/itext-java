@@ -34,6 +34,7 @@ import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -54,6 +55,8 @@ import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
@@ -103,6 +106,8 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void createNewSignatureFormFieldInvisibleAnnotationTest() throws IOException {
         PdfSigner signer = new PdfSigner(new PdfReader(
                 new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
@@ -120,6 +125,8 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void createNewSignatureFormFieldNotInvisibleAnnotationTest() throws IOException {
         PdfSigner signer = new PdfSigner(
                 new PdfReader(new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
@@ -184,6 +191,8 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void populateExistingSignatureFormFieldInvisibleAnnotationTest() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument document = new PdfDocument(new PdfWriter(outputStream,
@@ -212,6 +221,8 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void populateExistingSignatureFormFieldNotInvisibleAnnotationTest() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument document = new PdfDocument(new PdfWriter(outputStream,

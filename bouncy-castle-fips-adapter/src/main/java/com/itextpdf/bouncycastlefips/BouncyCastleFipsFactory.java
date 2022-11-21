@@ -302,9 +302,6 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
-import org.bouncycastle.crypto.EntropySourceProvider;
-import org.bouncycastle.crypto.fips.FipsDRBG;
-import org.bouncycastle.crypto.util.BasicEntropySourceProvider;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -317,7 +314,6 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.util.Strings;
 
 /**
  * This class implements {@link IBouncyCastleFactory} and creates bouncy-castle FIPS classes instances.
@@ -328,7 +324,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     private static final String PROVIDER_NAME = PROVIDER.getName();
     private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS =
             new BouncyCastleFipsTestConstantsFactory();
-    
+
     /**
      * Creates {@link IBouncyCastleFactory} for bouncy-castle FIPS module.
      */
@@ -560,7 +556,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         if ("DER".equals(asn1Encoding)) {
             return new ASN1OutputStreamBCFips(new DEROutputStream(outputStream));
         } else {
-            return new ASN1OutputStreamBCFips("DL".equals(asn1Encoding) ? new DLOutputStream(outputStream) 
+            return new ASN1OutputStreamBCFips("DL".equals(asn1Encoding) ? new DLOutputStream(outputStream)
                     : new ASN1OutputStream(outputStream));
         }
     }
@@ -1610,7 +1606,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public SecureRandom getSecureRandom() {
-        return ((BouncyCastleFipsProvider)PROVIDER).getDefaultSecureRandom();
+        return ((BouncyCastleFipsProvider) PROVIDER).getDefaultSecureRandom();
     }
 
     /**
@@ -1625,7 +1621,8 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
-    public byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
+    public byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0,
+            IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
         Cipher cipher;
         try {

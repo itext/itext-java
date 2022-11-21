@@ -43,14 +43,21 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.security.MessageDigest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SecurityHandler {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityHandler.class);
 
     /**
      * The global encryption key
@@ -59,12 +66,14 @@ public abstract class SecurityHandler {
 
     /**
      * The encryption key for a particular object/generation.
-     * It is recalculated with {@link #setHashKeyForNextObject(int,int)} for every object individually based in its object/generation.
+     * It is recalculated with {@link #setHashKeyForNextObject(int, int)} for every object individually based in its
+     * object/generation.
      */
     protected byte[] nextObjectKey;
     /**
      * The encryption key length for a particular object/generation
-     * It is recalculated with {@link #setHashKeyForNextObject(int,int)} for every object individually based in its object/generation.
+     * It is recalculated with {@link #setHashKeyForNextObject(int, int)} for every object individually based in its
+     * object/generation.
      */
     protected int nextObjectKeySize;
 
@@ -83,7 +92,7 @@ public abstract class SecurityHandler {
      * Note: For most of the supported security handlers algorithm to calculate encryption key for particular object
      * is the same.
      *
-     * @param objNumber number of particular object for encryption
+     * @param objNumber     number of particular object for encryption
      * @param objGeneration generation of particular object for encryption
      */
     public void setHashKeyForNextObject(int objNumber, int objGeneration) {
@@ -110,6 +119,9 @@ public abstract class SecurityHandler {
     private void safeInitMessageDigest() {
         try {
             md5 = MessageDigest.getInstance("MD5");
+            if (FACTORY.isInApprovedOnlyMode()) {
+                LOGGER.warn(KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT);
+            }
         } catch (Exception e) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }

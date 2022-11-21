@@ -152,36 +152,36 @@ import java.util.Set;
 public interface IBouncyCastleFactory {
     /**
      * Cast ASN1 encodable wrapper to the ASN1 object identifier wrapper.
-     * 
+     *
      * @param encodable wrapper to be cast
-     * 
+     *
      * @return casted wrapper
      */
     IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable);
 
     /**
      * Create ASN1 Object identifier wrapper from {@link String}.
-     * 
+     *
      * @param str {@link String} to create object identifier from
-     * 
+     *
      * @return created object identifier
      */
     IASN1ObjectIdentifier createASN1ObjectIdentifier(String str);
 
     /**
      * Create ASN1 Object identifier wrapper from {@link Object} using {@code getInstance} method call.
-     * 
+     *
      * @param object {@link Object} to create object identifier from
-     * 
+     *
      * @return created object identifier
      */
     IASN1ObjectIdentifier createASN1ObjectIdentifierInstance(Object object);
 
     /**
      * Create ASN1 Input stream wrapper from {@link InputStream}.
-     * 
+     *
      * @param stream {@link InputStream} to create ASN1 Input stream from
-     * 
+     *
      * @return created ASN1 Input stream
      */
     IASN1InputStream createASN1InputStream(InputStream stream);
@@ -206,28 +206,28 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create ASN1 Octet string wrapper from ASN1 Tagged object wrapper and {@code boolean} parameter.
-     * 
+     *
      * @param taggedObject ASN1 Tagged object wrapper to create ASN1 Octet string wrapper from
-     * @param b boolean to create ASN1 Octet string wrapper
-     * 
+     * @param b            boolean to create ASN1 Octet string wrapper
+     *
      * @return created ASN1 Octet string wrapper
      */
     IASN1OctetString createASN1OctetString(IASN1TaggedObject taggedObject, boolean b);
 
     /**
      * Create ASN1 Octet string wrapper from {@code byte[]}.
-     * 
+     *
      * @param bytes {@code byte[]} to create ASN1 Octet string wrapper from
-     * 
+     *
      * @return created ASN1 Octet string wrapper
      */
     IASN1OctetString createASN1OctetString(byte[] bytes);
 
     /**
      * Cast {@link Object} to ASN1 Sequence wrapper.
-     * 
+     *
      * @param object {@link Object} to be cast. Must be instance of ASN1 Sequence
-     * 
+     *
      * @return casted ASN1 Sequence wrapper
      */
     IASN1Sequence createASN1Sequence(Object object);
@@ -243,29 +243,29 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create ASN1 Sequence wrapper from {@code byte[]}.
-     * 
+     *
      * @param array {@code byte[]} to create ASN1 Sequence wrapper from
-     * 
+     *
      * @return created ASN1 Sequence wrapper
-     * 
+     *
      * @throws IOException if issues occur during ASN1 Sequence creation
      */
     IASN1Sequence createASN1Sequence(byte[] array) throws IOException;
 
     /**
      * Create ASN1 Sequence wrapper from {@link Object} using {@code getInstance} method call.
-     * 
+     *
      * @param object {@link Object} to create ASN1 Sequence wrapper from
-     * 
+     *
      * @return created ASN1 Sequence wrapper
      */
     IASN1Sequence createASN1SequenceInstance(Object object);
 
     /**
      * Create DER Sequence wrapper from ASN1 Encodable vector wrapper.
-     * 
+     *
      * @param encodableVector ASN1 Encodable vector wrapper to create DER Sequence wrapper from
-     * 
+     *
      * @return created DER Sequence wrapper
      */
     IDERSequence createDERSequence(IASN1EncodableVector encodableVector);
@@ -299,9 +299,9 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create ASN1 Integer wrapper from {@code int}.
-     * 
+     *
      * @param i {@code int} to create ASN1 Integer wrapper from
-     * 
+     *
      * @return created ASN1 Integer wrapper
      */
     IASN1Integer createASN1Integer(int i);
@@ -310,7 +310,7 @@ public interface IBouncyCastleFactory {
      * Create ASN1 Integer wrapper from {@link BigInteger}.
      *
      * @param i {@link BigInteger} to create ASN1 Integer wrapper from
-     * 
+     *
      * @return created ASN1 Integer wrapper
      */
     IASN1Integer createASN1Integer(BigInteger i);
@@ -326,9 +326,9 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create ASN1 Set wrapper from {@link Object}.
-     * 
+     *
      * @param encodable {@link Object} to create ASN1 Set wrapper from. Must be instance of ASN1 Set
-     * 
+     *
      * @return created ASN1 Set wrapper
      */
     IASN1Set createASN1Set(Object encodable);
@@ -337,7 +337,7 @@ public interface IBouncyCastleFactory {
      * Create ASN1 Set wrapper from ASN1 Tagged object wrapper and {@code boolean} parameter.
      *
      * @param taggedObject ASN1 Tagged object wrapper to create ASN1 Set wrapper from
-     * @param b boolean to create ASN1 Set wrapper
+     * @param b            boolean to create ASN1 Set wrapper
      *
      * @return created ASN1 Set wrapper
      */
@@ -345,7 +345,7 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create ASN1 Set wrapper which will store {@code null}.
-     * 
+     *
      * @return ASN1 Set wrapper with {@code null} value
      */
     IASN1Set createNullASN1Set();
@@ -354,7 +354,7 @@ public interface IBouncyCastleFactory {
      * Create ASN1 Output stream wrapper from {@link OutputStream}.
      *
      * @param stream {@link OutputStream} to create ASN1 Output stream wrapper from
-     * 
+     *
      * @return created ASN1 Output stream wrapper
      */
     IASN1OutputStream createASN1OutputStream(OutputStream stream);
@@ -364,49 +364,49 @@ public interface IBouncyCastleFactory {
      *
      * @param outputStream {@link OutputStream} to create ASN1 Output stream wrapper from
      * @param asn1Encoding ASN1 Encoding to be used
-     * 
+     *
      * @return created ASN1 Output stream wrapper
      */
     IASN1OutputStream createASN1OutputStream(OutputStream outputStream, String asn1Encoding);
 
     /**
      * Create DER Octet string wrapper from {@code byte[]}.
-     * 
+     *
      * @param bytes {@code byte[]} to create DER Octet string wrapper from
-     * 
+     *
      * @return created DER Octet string wrapper
      */
     IDEROctetString createDEROctetString(byte[] bytes);
 
     /**
      * Cast ASN1 Encodable wrapper to DER Octet string wrapper.
-     * 
+     *
      * @param encodable ASN1 Encodable wrapper to be casted
-     * 
+     *
      * @return DER Octet string wrapper
      */
     IDEROctetString createDEROctetString(IASN1Encodable encodable);
 
     /**
      * Create ASN1 Encodable wrapper without parameters.
-     * 
+     *
      * @return created ASN1 Encodable wrapper
      */
     IASN1EncodableVector createASN1EncodableVector();
 
     /**
      * Create DER Null wrapper without parameters.
-     * 
+     *
      * @return created DER Null wrapper
      */
     IDERNull createDERNull();
 
     /**
      * Create DER Tagged object wrapper from {@code int} value and ASN1 Primitive wrapper.
-     * 
-     * @param i {@code int} value for DER Tagged object wrapper creation
+     *
+     * @param i         {@code int} value for DER Tagged object wrapper creation
      * @param primitive ASN1 Primitive wrapper to create DER Tagged object wrapper from
-     * 
+     *
      * @return created DER Tagged object wrapper
      */
     IDERTaggedObject createDERTaggedObject(int i, IASN1Primitive primitive);
@@ -414,8 +414,8 @@ public interface IBouncyCastleFactory {
     /**
      * Create DER Tagged object wrapper from {@code int} value, {@code boolean} value and ASN1 Primitive wrapper.
      *
-     * @param b {@code boolean} value for DER Tagged object wrapper creation
-     * @param i {@code int} value for DER Tagged object wrapper creation
+     * @param b         {@code boolean} value for DER Tagged object wrapper creation
+     * @param i         {@code int} value for DER Tagged object wrapper creation
      * @param primitive ASN1 Primitive wrapper to create DER Tagged object wrapper from
      *
      * @return created DER Tagged object wrapper
@@ -424,9 +424,9 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create DER Set wrapper from ASN1 Encodable vector wrapper.
-     * 
+     *
      * @param encodableVector ASN1 Encodable vector wrapper to create DER Set wrapper from
-     * 
+     *
      * @return created DER Set wrapper
      */
     IDERSet createDERSet(IASN1EncodableVector encodableVector);
@@ -460,51 +460,51 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create ASN1 Enumerated wrapper from {@code int} value.
-     * 
+     *
      * @param i {@code int} to create ASN1 Enumerated wrapper from
-     * 
+     *
      * @return created ASN1 Enumerated wrapper
      */
     IASN1Enumerated createASN1Enumerated(int i);
 
     /**
      * Create ASN1 Encoding without parameters.
-     * 
+     *
      * @return created ASN1 Encoding
      */
     IASN1Encoding createASN1Encoding();
 
     /**
      * Create attribute table wrapper from ASN1 Set wrapper.
-     * 
+     *
      * @param unat ASN1 Set wrapper to create attribute table wrapper from
-     * 
+     *
      * @return created attribute table wrapper
      */
     IAttributeTable createAttributeTable(IASN1Set unat);
 
     /**
      * Create PKCS Object identifiers wrapper without parameters.
-     * 
+     *
      * @return created PKCS Object identifiers
      */
     IPKCSObjectIdentifiers createPKCSObjectIdentifiers();
 
     /**
      * Create attribute wrapper from ASN1 Object identifier wrapper and ASN1 Set wrapper.
-     * 
-     * @param attrType ASN1 Object identifier wrapper to create attribute wrapper from
+     *
+     * @param attrType   ASN1 Object identifier wrapper to create attribute wrapper from
      * @param attrValues ASN1 Object identifier wrapper to create attribute wrapper from
-     * 
+     *
      * @return created attribute wrapper
      */
     IAttribute createAttribute(IASN1ObjectIdentifier attrType, IASN1Set attrValues);
 
     /**
      * Create content info wrapper from ASN1 Sequence wrapper.
-     * 
+     *
      * @param sequence ASN1 Sequence wrapper to create content info wrapper from
-     * 
+     *
      * @return created content info wrapper
      */
     IContentInfo createContentInfo(IASN1Sequence sequence);
@@ -513,7 +513,7 @@ public interface IBouncyCastleFactory {
      * Create content info wrapper from ASN1 Object identifier wrapper and ASN1 Encodable wrapper.
      *
      * @param objectIdentifier ASN1 Object identifier wrapper to create content info wrapper from
-     * @param encodable ASN1 Encodable wrapper to create content info wrapper from
+     * @param encodable        ASN1 Encodable wrapper to create content info wrapper from
      *
      * @return created content info wrapper
      */
@@ -521,21 +521,21 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create timestamp token wrapper from content info wrapper.
-     * 
+     *
      * @param contentInfo content info wrapper to create timestamp token wrapper from
-     * 
+     *
      * @return created timestamp token wrapper
-     * 
+     *
      * @throws AbstractTSPException if actual TSP Exception occurs during wrapper creation
-     * @throws IOException if input-output exception occurs during wrapper creation
+     * @throws IOException          if input-output exception occurs during wrapper creation
      */
     ITimeStampToken createTimeStampToken(IContentInfo contentInfo) throws AbstractTSPException, IOException;
 
     /**
      * Create signing certificate wrapper from ASN1 Sequence wrapper.
-     * 
+     *
      * @param sequence ASN1 Sequence wrapper to create signing certificate wrapper from
-     * 
+     *
      * @return created signing certificate wrapper
      */
     ISigningCertificate createSigningCertificate(IASN1Sequence sequence);
@@ -551,43 +551,43 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create basic OCSP Response wrapper from ASN1 Primitive wrapper.
-     * 
+     *
      * @param primitive ASN1 Primitive wrapper to create basic OCSP response wrapper from
-     * 
+     *
      * @return created basic OCSP response wrapper
      */
     IBasicOCSPResponse createBasicOCSPResponse(IASN1Primitive primitive);
 
     /**
      * Create basic OCSP Resp wrapper from basic OCSP Response wrapper.
-     * 
+     *
      * @param response basic OCSP Response wrapper to create basic OCSP Resp wrapper from
-     * 
+     *
      * @return created basic OCSP Resp wrapper
      */
     IBasicOCSPResp createBasicOCSPResp(IBasicOCSPResponse response);
 
     /**
      * Create basic OCSP Resp wrapper from {@link Object}.
-     * 
+     *
      * @param response {@link Object} to create basic OCSP Resp wrapper from. Must be actual basic OCSP Resp instance
-     * 
+     *
      * @return created basic OCSP Resp wrapper
      */
     IBasicOCSPResp createBasicOCSPResp(Object response);
 
     /**
      * Create OCSP Object identifiers wrapper without parameters.
-     * 
+     *
      * @return created OCSP Object identifiers wrapper
      */
     IOCSPObjectIdentifiers createOCSPObjectIdentifiers();
 
     /**
      * Create algorithm identifier wrapper from ASN1 Object identifier wrapper.
-     * 
+     *
      * @param algorithm ASN1 Object identifier wrapper to create algorithm identifier wrapper from
-     * 
+     *
      * @return created algorithm identifier wrapper
      */
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm);
@@ -604,64 +604,64 @@ public interface IBouncyCastleFactory {
 
     /**
      * Get {@link Provider} instance for this factory.
-     * 
+     *
      * @return {@link Provider} instance
      */
     Provider getProvider();
 
     /**
      * Get {@link String} which represents providers name for this factory.
-     * 
+     *
      * @return {@link String} which represents providers name
      */
     String getProviderName();
 
     /**
      * Create Jce Key trans enveloped recipient wrapper from {@link PrivateKey}.
-     * 
+     *
      * @param privateKey {@link PrivateKey} to create Jce Key trans enveloped recipient wrapper from
-     * 
+     *
      * @return created Jce Key trans enveloped recipient wrapper
      */
     IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey);
 
     /**
      * Create Jca Content verifier provider builder wrapper without parameters.
-     * 
+     *
      * @return created Jca Content verifier provider builder wrapper
      */
     IJcaContentVerifierProviderBuilder createJcaContentVerifierProviderBuilder();
 
     /**
      * Create Jca Simple signer info verifier builder wrapper without parameters.
-     * 
+     *
      * @return created Jca Simple signer info verifier builder wrapper
      */
     IJcaSimpleSignerInfoVerifierBuilder createJcaSimpleSignerInfoVerifierBuilder();
 
     /**
      * Create Jca X509 Certificate converter wrapper without parameters.
-     * 
+     *
      * @return created Jca X509 Certificate converter wrapper
      */
     IJcaX509CertificateConverter createJcaX509CertificateConverter();
 
     /**
-     * Create Jca Digest calculator provider builder wrapper without parameters. 
-     * 
+     * Create Jca Digest calculator provider builder wrapper without parameters.
+     *
      * @return created Jca Digest calculator provider builder wrapper
      */
     IJcaDigestCalculatorProviderBuilder createJcaDigestCalculatorProviderBuilder();
 
     /**
      * Create certificate ID wrapper from digest calculator, X509 Certificate holder wrappers and {@link BigInteger}.
-     * 
-     * @param digestCalculator digest calculator wrapper to create certificate ID wrapper from
+     *
+     * @param digestCalculator  digest calculator wrapper to create certificate ID wrapper from
      * @param certificateHolder X509 Certificate holder wrapper to create certificate ID wrapper from
-     * @param bigInteger {@link BigInteger} to create certificate ID wrapper from
-     * 
+     * @param bigInteger        {@link BigInteger} to create certificate ID wrapper from
+     *
      * @return created certificate ID wrapper
-     * 
+     *
      * @throws AbstractOCSPException if actual OCSP Exception occurs during wrapper creation
      */
     ICertificateID createCertificateID(IDigestCalculator digestCalculator, IX509CertificateHolder certificateHolder,
@@ -669,29 +669,29 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create certificate ID wrapper without parameters.
-     * 
+     *
      * @return created certificate ID wrapper
      */
     ICertificateID createCertificateID();
 
     /**
      * Create X509 Certificate holder wrapper from {@code byte[]}.
-     * 
+     *
      * @param bytes {@code byte[]} value to create X509 Certificate holder wrapper from
-     * 
+     *
      * @return created X509 Certificate holder wrapper
-     * 
+     *
      * @throws IOException if input-output exception occurs during wrapper creation
      */
     IX509CertificateHolder createX509CertificateHolder(byte[] bytes) throws IOException;
 
     /**
      * Create Jca X509 Certificate holder wrapper from {@link X509Certificate}.
-     * 
+     *
      * @param certificate {@link X509Certificate} to create Jca X509 Certificate holder wrapper from
-     * 
+     *
      * @return created Jca X509 Certificate holder wrapper
-     * 
+     *
      * @throws CertificateEncodingException if certificate encoding exception occurs during wrapper creation
      */
     IJcaX509CertificateHolder createJcaX509CertificateHolder(X509Certificate certificate)
@@ -699,60 +699,60 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create extension wrapper from ASN1 Object identifier wrapper, {@code boolean} and ASN1 Octet string wrapper.
-     * 
+     *
      * @param objectIdentifier ASN1 Object identifier wrapper to create extension wrapper from
-     * @param critical {@code boolean} to create extension wrapper
-     * @param octetString ASN1 Octet string wrapper to create extension wrapper from
-     * 
+     * @param critical         {@code boolean} to create extension wrapper
+     * @param octetString      ASN1 Octet string wrapper to create extension wrapper from
+     *
      * @return created extension wrapper
      */
     IExtension createExtension(IASN1ObjectIdentifier objectIdentifier, boolean critical, IASN1OctetString octetString);
 
     /**
      * Create extension wrapper without parameters.
-     * 
+     *
      * @return created extension wrapper
      */
     IExtension createExtension();
 
     /**
      * Create extensions wrapper from extension wrapper.
-     * 
+     *
      * @param extension extension wrapper to create extensions wrapper from
-     * 
+     *
      * @return created extensions wrapper
      */
     IExtensions createExtensions(IExtension extension);
 
     /**
      * Create extensions wrapper for {@code null} value.
-     * 
+     *
      * @return created extensions wrapper
      */
     IExtensions createNullExtensions();
 
     /**
      * Create OCSP Req builder wrapper without parameters.
-     * 
+     *
      * @return created OCSP Req builder wrapper
      */
     IOCSPReqBuilder createOCSPReqBuilder();
 
     /**
      * Create sig policy qualifier info wrapper from ASN1 Object identifier wrapper and DERIA5 String wrapper.
-     * 
+     *
      * @param objectIdentifier ASN1 Object identifier wrapper to create sig policy qualifier info wrapper from
-     * @param string DERIA5 String wrapper to create sig policy qualifier info wrapper from
-     * 
+     * @param string           DERIA5 String wrapper to create sig policy qualifier info wrapper from
+     *
      * @return created sig policy qualifier info wrapper
      */
     ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier, IDERIA5String string);
 
     /**
      * Cast ASN1 Encodable wrapper to ASN1 String wrapper.
-     * 
+     *
      * @param encodable ASN1 Encodable wrapper to be cast
-     * 
+     *
      * @return casted ASN1 String wrapper
      */
     IASN1String createASN1String(IASN1Encodable encodable);
@@ -768,65 +768,65 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create ASN1 Primitive wrapper from {@code byte[]} value.
-     * 
+     *
      * @param array {@code byte[]} value to create ASN1 Primitive wrapper from
-     * 
+     *
      * @return created ASN1 Primitive wrapper
-     * 
+     *
      * @throws IOException if input-output exception occurs during creation
      */
     IASN1Primitive createASN1Primitive(byte[] array) throws IOException;
 
     /**
      * Create OCSP Resp wrapper from OCSP Response wrapper.
-     * 
+     *
      * @param ocspResponse OCSP Response wrapper to create OCSP Resp wrapper from
-     * 
+     *
      * @return created OCSP Resp wrapper
      */
     IOCSPResp createOCSPResp(IOCSPResponse ocspResponse);
 
     /**
      * Create OCSP Resp wrapper from {@code byte[]} value.
-     * 
+     *
      * @param bytes {@code byte[]} value to create OCSP Resp wrapper from
-     * 
+     *
      * @return created OCSP Resp wrapper
-     * 
+     *
      * @throws IOException if input-output exception occurs during creation
      */
     IOCSPResp createOCSPResp(byte[] bytes) throws IOException;
 
     /**
      * Create OCSP Resp wrapper without parameters.
-     * 
+     *
      * @return created OCSP Resp wrapper
      */
     IOCSPResp createOCSPResp();
 
     /**
      * Create OCSP Response wrapper from OCSP Response status wrapper and response bytes wrapper.
-     * 
-     * @param respStatus OCSP Response status wrapper to create OCSP Response wrapper from
+     *
+     * @param respStatus    OCSP Response status wrapper to create OCSP Response wrapper from
      * @param responseBytes response bytes wrapper to create OCSP Response wrapper from
-     * 
+     *
      * @return created OCSP Response wrapper
      */
     IOCSPResponse createOCSPResponse(IOCSPResponseStatus respStatus, IResponseBytes responseBytes);
 
     /**
      * Create response bytes wrapper from ASN1 Object identifier wrapper and DER Octet string wrapper.
-     * 
+     *
      * @param asn1ObjectIdentifier ASN1 Object identifier wrapper to create response bytes wrapper from
-     * @param derOctetString DER Octet string wrapper to create response bytes wrapper from
-     * 
+     * @param derOctetString       DER Octet string wrapper to create response bytes wrapper from
+     *
      * @return created response bytes wrapper
      */
     IResponseBytes createResponseBytes(IASN1ObjectIdentifier asn1ObjectIdentifier, IDEROctetString derOctetString);
 
     /**
      * Create OCSP Resp builder wrapper using {@code getInstance} call.
-     * 
+     *
      * @return created OCSP Resp builder wrapper
      */
     IOCSPRespBuilder createOCSPRespBuilderInstance();
@@ -840,103 +840,103 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create OCSP Response status wrapper from {@code int} value.
-     * 
+     *
      * @param status {@code int} value to create OCSP Response status wrapper from
-     * 
+     *
      * @return created OCSP Response status wrapper
      */
     IOCSPResponseStatus createOCSPResponseStatus(int status);
 
     /**
      * Create OCSP Response status wrapper without parameters.
-     * 
+     *
      * @return created OCSP Response status wrapper
      */
     IOCSPResponseStatus createOCSPResponseStatus();
 
     /**
      * Create certificate status wrapper without parameters.
-     * 
+     *
      * @return created certificate status wrapper
      */
     ICertificateStatus createCertificateStatus();
 
     /**
      * Create revoked status wrapper from certificate status wrapper.
-     * 
+     *
      * @param certificateStatus certificate status wrapper to create revoked status wrapper from
-     * 
+     *
      * @return created revoked status wrapper
      */
     IRevokedStatus createRevokedStatus(ICertificateStatus certificateStatus);
 
     /**
      * Create revoked status wrapper from {@link Date} and {@code int} value.
-     * 
+     *
      * @param date {@link Date} to create revoked status wrapper from
-     * @param i {@code int} value to create revoked status wrapper from
-     * 
+     * @param i    {@code int} value to create revoked status wrapper from
+     *
      * @return created revoked status wrapper
      */
     IRevokedStatus createRevokedStatus(Date date, int i);
 
     /**
      * Create DERIA5 String wrapper from ASN1 Tagged object wrapper and {@code boolean} value.
-     * 
+     *
      * @param taggedObject ASN1 Tagged object wrapper to create DERIA5 String wrapper from
-     * @param b {@code boolean} value to create DERIA5 String wrapper from
-     * 
+     * @param b            {@code boolean} value to create DERIA5 String wrapper from
+     *
      * @return created DERIA5 String wrapper
      */
     IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b);
 
     /**
      * Create DERIA5 String wrapper from {@link String} value.
-     * 
+     *
      * @param str {@link String} value to create DERIA5 String wrapper from
-     * 
+     *
      * @return created DERIA5 String wrapper
      */
     IDERIA5String createDERIA5String(String str);
 
     /**
      * Create CRL Dist point wrapper from {@link Object}.
-     * 
+     *
      * @param object {@link Object} to create CRL Dist point wrapper from
-     * 
+     *
      * @return created CRL Dist point wrapper
      */
     ICRLDistPoint createCRLDistPoint(Object object);
 
     /**
      * Create distribution point name wrapper without parameters.
-     * 
+     *
      * @return created distribution point name wrapper
      */
     IDistributionPointName createDistributionPointName();
 
     /**
      * Cast ASN1 Encodable wrapper to general names wrapper.
-     * 
+     *
      * @param encodable ASN1 Encodable wrapper to be cast
-     * 
+     *
      * @return casted general names wrapper
      */
     IGeneralNames createGeneralNames(IASN1Encodable encodable);
 
     /**
      * Create general name wrapper without parameters.
-     * 
+     *
      * @return created general name wrapper
      */
     IGeneralName createGeneralName();
 
     /**
      * Create other hash alg and value wrapper from algorithm identifier wrapper and ASN1 Octet string wrapper.
-     * 
+     *
      * @param algorithmIdentifier algorithm identifier wrapper to create other hash alg and value wrapper from
-     * @param octetString ASN1 Octet string wrapper to create other hash alg and value wrapper from
-     * 
+     * @param octetString         ASN1 Octet string wrapper to create other hash alg and value wrapper from
+     *
      * @return created other hash alg and value wrapper
      */
     IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
@@ -944,10 +944,10 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create signature policy id wrapper from ASN1 Object identifier wrapper and other hash alg and value wrapper.
-     * 
+     *
      * @param objectIdentifier ASN1 Object identifier wrapper to create signature policy id wrapper from
-     * @param algAndValue other hash alg and value wrapper to create signature policy id wrapper from
-     * 
+     * @param algAndValue      other hash alg and value wrapper to create signature policy id wrapper from
+     *
      * @return created signature policy id wrapper
      */
     ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
@@ -958,7 +958,7 @@ public interface IBouncyCastleFactory {
      * and sig policy qualifier info wrappers.
      *
      * @param objectIdentifier ASN1 Object identifier wrapper to create signature policy id wrapper from
-     * @param algAndValue other hash alg and value wrapper to create signature policy id wrapper from
+     * @param algAndValue      other hash alg and value wrapper to create signature policy id wrapper from
      * @param policyQualifiers sig policy qualifier info wrappers to create signature policy id wrapper from
      *
      * @return created signature policy id wrapper
@@ -969,22 +969,22 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create signature policy identifier wrapper from signature policy id wrapper.
-     * 
+     *
      * @param policyId signature policy id wrapper to create signature policy identifier wrapper from
-     * 
+     *
      * @return created signature policy identifier wrapper
      */
     ISignaturePolicyIdentifier createSignaturePolicyIdentifier(ISignaturePolicyId policyId);
 
     /**
-     * Create enveloped data wrapper from originator info wrapper, ASN1 Set wrapper, 
+     * Create enveloped data wrapper from originator info wrapper, ASN1 Set wrapper,
      * encrypted content info wrapper and another ASN1 Set wrapper.
-     * 
-     * @param originatorInfo originator info wrapper to create enveloped data wrapper from
-     * @param set ASN1 Set wrapper to create enveloped data wrapper from
+     *
+     * @param originatorInfo       originator info wrapper to create enveloped data wrapper from
+     * @param set                  ASN1 Set wrapper to create enveloped data wrapper from
      * @param encryptedContentInfo encrypted content info wrapper to create enveloped data wrapper from
-     * @param set1 ASN1 Set wrapper to create enveloped data wrapper from
-     * 
+     * @param set1                 ASN1 Set wrapper to create enveloped data wrapper from
+     *
      * @return created enveloped data wrapper
      */
     IEnvelopedData createEnvelopedData(IOriginatorInfo originatorInfo, IASN1Set set,
@@ -992,21 +992,21 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create recipient info wrapper from key trans recipient info wrapper.
-     * 
+     *
      * @param keyTransRecipientInfo key trans recipient info wrapper to create recipient info wrapper from
-     * 
+     *
      * @return created recipient info wrapper
      */
     IRecipientInfo createRecipientInfo(IKeyTransRecipientInfo keyTransRecipientInfo);
 
     /**
-     * Create encrypted content info wrapper from ASN1 Object identifier wrapper, 
+     * Create encrypted content info wrapper from ASN1 Object identifier wrapper,
      * algorithm identifier wrapper and ASN1 Octet string wrapper.
-     * 
-     * @param data ASN1 Object identifier wrapper to create encrypted content info wrapper from
+     *
+     * @param data                ASN1 Object identifier wrapper to create encrypted content info wrapper from
      * @param algorithmIdentifier algorithm identifier wrapper to create encrypted content info wrapper from
-     * @param octetString ASN1 Octet string wrapper to create encrypted content info wrapper from
-     * 
+     * @param octetString         ASN1 Octet string wrapper to create encrypted content info wrapper from
+     *
      * @return created encrypted content info wrapper
      */
     IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
@@ -1014,40 +1014,40 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create TBS Certificate wrapper from ASN1 Encodable wrapper.
-     * 
+     *
      * @param encodable ASN1 Encodable wrapper to create TBS Certificate wrapper from
-     * 
+     *
      * @return created TBS Certificate wrapper
      */
     ITBSCertificate createTBSCertificate(IASN1Encodable encodable);
 
     /**
      * Create issuer and serial number wrapper from X500 Name wrapper and {@link BigInteger}.
-     * 
+     *
      * @param issuer X500 Name wrapper to create issuer and serial number wrapper from
-     * @param value {@link BigInteger} to create issuer and serial number wrapper from
-     * 
+     * @param value  {@link BigInteger} to create issuer and serial number wrapper from
+     *
      * @return created issuer and serial number wrapper
      */
     IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value);
 
     /**
      * Create recipient identifier wrapper from issuer and serial number wrapper.
-     * 
+     *
      * @param issuerAndSerialNumber issuer and serial number wrapper to create recipient identifier wrapper from
-     * 
+     *
      * @return created recipient identifier wrapper
      */
     IRecipientIdentifier createRecipientIdentifier(IIssuerAndSerialNumber issuerAndSerialNumber);
 
     /**
-     * Create key trans recipient info wrapper from recipient identifier wrapper, 
+     * Create key trans recipient info wrapper from recipient identifier wrapper,
      * algorithm identifier wrapper and ASN1 Octet string wrapper.
-     * 
+     *
      * @param recipientIdentifier recipient identifier wrapper to create key trans recipient info wrapper from
      * @param algorithmIdentifier algorithm identifier wrapper to create key trans recipient info wrapper from
-     * @param octetString ASN1 Octet string wrapper to create key trans recipient info wrapper from
-     * 
+     * @param octetString         ASN1 Octet string wrapper to create key trans recipient info wrapper from
+     *
      * @return created key trans recipient info wrapper
      */
     IKeyTransRecipientInfo createKeyTransRecipientInfo(IRecipientIdentifier recipientIdentifier,
@@ -1055,69 +1055,69 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create originator info wrapper with {@code null} value.
-     * 
+     *
      * @return created originator info wrapper
      */
     IOriginatorInfo createNullOriginatorInfo();
 
     /**
      * Create CMS enveloped data from {@code byte[]} value.
-     * 
+     *
      * @param valueBytes {@code byte[]} value to create CMS enveloped data from
-     * 
+     *
      * @return created CMS enveloped data
-     * 
+     *
      * @throws AbstractCMSException if actual CMS Exception occurs during creation.
      */
     ICMSEnvelopedData createCMSEnvelopedData(byte[] valueBytes) throws AbstractCMSException;
 
     /**
      * Create timestamp request generator wrapper without parameters.
-     * 
+     *
      * @return created timestamp request generator wrapper
      */
     ITimeStampRequestGenerator createTimeStampRequestGenerator();
 
     /**
      * Create timestamp response wrapper from {@code byte[]} value.
-     * 
+     *
      * @param respBytes {@code byte[]} value to create timestamp response wrapper from
-     * 
+     *
      * @return created timestamp response wrapper
-     * 
+     *
      * @throws AbstractTSPException if actual TSP Exception was thrown during wrapper creation
-     * @throws IOException if input-output exception occurs during creation
+     * @throws IOException          if input-output exception occurs during creation
      */
     ITimeStampResponse createTimeStampResponse(byte[] respBytes) throws AbstractTSPException, IOException;
 
     /**
      * Create OCSP Exception wrapper from usual {@link Exception}.
-     * 
+     *
      * @param e {@link Exception} to create OCSP Exception wrapper from
-     * 
+     *
      * @return created OCSP Exception wrapper
      */
     AbstractOCSPException createAbstractOCSPException(Exception e);
 
     /**
      * Create unknown status wrapper without parameters.
-     * 
+     *
      * @return created unknown status wrapper
      */
     IUnknownStatus createUnknownStatus();
 
     /**
      * Create ASN1 Dump wrapper without parameters.
-     * 
+     *
      * @return created ASN1 Dump wrapper
      */
     IASN1Dump createASN1Dump();
 
     /**
      * Cast ASN1 Encodable wrapper to ASN1 Bit string wrapper.
-     * 
+     *
      * @param encodable ASN1 Encodable wrapper to be cast
-     * 
+     *
      * @return casted ASN1 Bit string wrapper
      */
     IASN1BitString createASN1BitString(IASN1Encodable encodable);
@@ -1142,21 +1142,21 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create Jca cert store wrapper from {@link List} of {@link Certificate} objects.
-     * 
+     *
      * @param certificates {@link List} of {@link Certificate} objects to create Jca cert store wrapper from
-     * 
+     *
      * @return created Jca cert store wrapper
-     * 
+     *
      * @throws CertificateEncodingException if certificate encoding exception occurs during wrapper creation
      */
     IJcaCertStore createJcaCertStore(List<Certificate> certificates) throws CertificateEncodingException;
 
     /**
      * Create timestamp response generator wrapper from timestamp token generator wrapper and {@link Set} of algorithms.
-     * 
+     *
      * @param tokenGenerator timestamp token generator wrapper to create timestamp response generator wrapper from
-     * @param algorithms {@link Set} of algorithms to create timestamp response generator wrapper from
-     * 
+     * @param algorithms     {@link Set} of algorithms to create timestamp response generator wrapper from
+     *
      * @return created timestamp response generator wrapper
      */
     ITimeStampResponseGenerator createTimeStampResponseGenerator(ITimeStampTokenGenerator tokenGenerator,
@@ -1164,44 +1164,44 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create timestamp request wrapper from {@code byte[]} value.
-     * 
+     *
      * @param bytes {@code byte[]} value to create timestamp request wrapper from
-     * 
+     *
      * @return created timestamp request wrapper
-     * 
+     *
      * @throws IOException if input-output exception occurs during creation
      */
     ITimeStampRequest createTimeStampRequest(byte[] bytes) throws IOException;
 
     /**
      * Create Jca content signer builder wrapper from {@link String} algorithm.
-     * 
+     *
      * @param algorithm {@link String} algorithm to create Jca content signer builder wrapper from
-     * 
+     *
      * @return created Jca content signer builder wrapper
      */
     IJcaContentSignerBuilder createJcaContentSignerBuilder(String algorithm);
 
     /**
      * Create Jca signer info generator builder wrapper from digest calculator provider wrapper.
-     * 
+     *
      * @param digestCalcProviderProvider digest calculator provider wrapper to create builder wrapper from
-     * 
+     *
      * @return created Jca signer info generator builder wrapper
      */
     IJcaSignerInfoGeneratorBuilder createJcaSignerInfoGeneratorBuilder(
             IDigestCalculatorProvider digestCalcProviderProvider);
 
     /**
-     * Create timestamp token generator wrapper from signer info generator wrapper, 
+     * Create timestamp token generator wrapper from signer info generator wrapper,
      * digest calculator wrapper and ASN1 Object identifier wrapper.
-     * 
-     * @param siGen signer info generator wrapper to create timestamp token generator wrapper from
+     *
+     * @param siGen  signer info generator wrapper to create timestamp token generator wrapper from
      * @param dgCalc digest calculator wrapper to create timestamp token generator wrapper from
      * @param policy ASN1 Object identifier wrapper to create timestamp token generator wrapper from
-     * 
+     *
      * @return created timestamp token generator wrapper
-     * 
+     *
      * @throws AbstractTSPException if actual TSP Exception occurs during wrapper creation
      */
     ITimeStampTokenGenerator createTimeStampTokenGenerator(ISignerInfoGenerator siGen, IDigestCalculator dgCalc,
@@ -1209,74 +1209,74 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create X500 Name wrapper from {@link X509Certificate}.
-     * 
+     *
      * @param certificate {@link X509Certificate} to create X500 Name wrapper from
-     * 
+     *
      * @return created X500 Name wrapper
-     * 
+     *
      * @throws CertificateEncodingException if certificate encoding exception occurs during wrapper creation
      */
     IX500Name createX500Name(X509Certificate certificate) throws CertificateEncodingException;
 
     /**
      * Create X500 Name wrapper from {@link String}.
-     * 
+     *
      * @param s {@link String} to create X500 Name wrapper from
-     * 
+     *
      * @return created X500 Name wrapper
      */
     IX500Name createX500Name(String s);
 
     /**
      * Create resp ID wrapper from X500 Name wrapper.
-     * 
+     *
      * @param x500Name X500 Name wrapper to create resp ID wrapper from
-     * 
+     *
      * @return created resp ID wrapper
      */
     IRespID createRespID(IX500Name x500Name);
 
     /**
      * Create basic OCSP Resp builder wrapper from resp ID wrapper.
-     * 
+     *
      * @param respID resp ID wrapper to create basic OCSP Resp builder wrapper from
-     * 
+     *
      * @return created basic OCSP Resp builder wrapper
      */
     IBasicOCSPRespBuilder createBasicOCSPRespBuilder(IRespID respID);
 
     /**
      * Create OCSP Req wrapper from {@code byte[]}.
-     * 
+     *
      * @param requestBytes {@code byte[]} to create OCSP Req wrapper from
-     * 
+     *
      * @return created OCSP Req wrapper
-     * 
+     *
      * @throws IOException if input-output exception occurs during creation
      */
     IOCSPReq createOCSPReq(byte[] requestBytes) throws IOException;
 
     /**
      * Create X509 Version 2 CRL Builder wrapper from X500 Name wrapper and {@link Date}.
-     * 
-     * @param x500Name X500 Name wrapper to create X509 Version 2 CRL Builder wrapper from
+     *
+     * @param x500Name   X500 Name wrapper to create X509 Version 2 CRL Builder wrapper from
      * @param thisUpdate {@link Date} to create X509 Version 2 CRL Builder wrapper from
-     * 
+     *
      * @return created X509 Version 2 CRL Builder wrapper
      */
     IX509v2CRLBuilder createX509v2CRLBuilder(IX500Name x500Name, Date thisUpdate);
 
     /**
-     * Create Jca X509 Version 3 certificate builder wrapper from {@link X509Certificate}, 
+     * Create Jca X509 Version 3 certificate builder wrapper from {@link X509Certificate},
      * {@link BigInteger}, start {@link Date}, end {@link Date}, X500 Name wrapper and {@link PublicKey}.
-     * 
-     * @param signingCert {@link X509Certificate} to create Jca X509 Version 3 certificate builder wrapper from
+     *
+     * @param signingCert      {@link X509Certificate} to create Jca X509 Version 3 certificate builder wrapper from
      * @param certSerialNumber {@link BigInteger} to create Jca X509 Version 3 certificate builder wrapper from
-     * @param startDate start {@link Date} to create Jca X509 Version 3 certificate builder wrapper from
-     * @param endDate end {@link Date} to create Jca X509 Version 3 certificate builder wrapper from
-     * @param subjectDnName X500 Name wrapper to create Jca X509 Version 3 certificate builder wrapper from
-     * @param publicKey {@link PublicKey} to create Jca X509 Version 3 certificate builder wrapper from
-     * 
+     * @param startDate        start {@link Date} to create Jca X509 Version 3 certificate builder wrapper from
+     * @param endDate          end {@link Date} to create Jca X509 Version 3 certificate builder wrapper from
+     * @param subjectDnName    X500 Name wrapper to create Jca X509 Version 3 certificate builder wrapper from
+     * @param publicKey        {@link PublicKey} to create Jca X509 Version 3 certificate builder wrapper from
+     *
      * @return created Jca X509 Version 3 certificate builder wrapper
      */
     IJcaX509v3CertificateBuilder createJcaX509v3CertificateBuilder(X509Certificate signingCert,
@@ -1284,178 +1284,178 @@ public interface IBouncyCastleFactory {
 
     /**
      * Create basic constraints wrapper from {@code boolean} value.
-     * 
+     *
      * @param b {@code boolean} value to create basic constraints wrapper from
-     * 
+     *
      * @return created basic constraints wrapper
      */
     IBasicConstraints createBasicConstraints(boolean b);
 
     /**
      * Create key usage wrapper without parameters.
-     * 
+     *
      * @return created key usage wrapper
      */
     IKeyUsage createKeyUsage();
 
     /**
      * Create key usage wrapper from {@code int} value.
-     * 
+     *
      * @param i {@code int} value to create key usage wrapper from
-     * 
+     *
      * @return created key usage wrapper
      */
     IKeyUsage createKeyUsage(int i);
 
     /**
      * Create key purpose id wrapper without parameters.
-     * 
+     *
      * @return created key purpose id wrapper
      */
     IKeyPurposeId createKeyPurposeId();
 
     /**
      * Create extended key usage wrapper from key purpose id wrapper.
-     * 
+     *
      * @param purposeId key purpose id wrapper to create extended key usage wrapper from
-     * 
+     *
      * @return created extended key usage wrapper
      */
     IExtendedKeyUsage createExtendedKeyUsage(IKeyPurposeId purposeId);
 
     /**
      * Create X509 Extension utils wrapper from digest calculator wrapper.
-     * 
+     *
      * @param digestCalculator digest calculator wrapper to create X509 Extension utils wrapper from
-     * 
+     *
      * @return created X509 Extension utils wrapper
      */
     IX509ExtensionUtils createX509ExtensionUtils(IDigestCalculator digestCalculator);
 
     /**
      * Create subject public key info wrapper from {@link Object}.
-     * 
+     *
      * @param obj {@link Object} to create subject public ket info wrapper from
-     * 
+     *
      * @return created subject public ket info wrapper
      */
     ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object obj);
 
     /**
      * Create CRL Reason wrapper without parameters.
-     * 
+     *
      * @return created CRL Reason wrapper
      */
     ICRLReason createCRLReason();
 
     /**
      * Create TST Info wrapper from content info wrapper.
-     * 
+     *
      * @param contentInfo content info wrapper to create TST Info wrapper from
-     * 
+     *
      * @return created TST Info wrapper
-     * 
+     *
      * @throws AbstractTSPException if actual TSP Exception occurs during wrapper creation
-     * @throws IOException if input-output exception occurs during creation
+     * @throws IOException          if input-output exception occurs during creation
      */
     ITSTInfo createTSTInfo(IContentInfo contentInfo) throws AbstractTSPException, IOException;
 
     /**
      * Create single resp wrapper from basic OCSP Response wrapper.
-     * 
+     *
      * @param basicResp basic OCSP Response wrapper to create single resp wrapper from
-     * 
+     *
      * @return created single resp wrapper
      */
     ISingleResp createSingleResp(IBasicOCSPResponse basicResp);
 
     /**
      * Cast {@link Object} element to {@link X509Certificate}.
-     * 
+     *
      * @param element {@link Object} to be cast
-     * 
+     *
      * @return casted {@link X509Certificate}
      */
     X509Certificate createX509Certificate(Object element);
 
     /**
      * Get {@link IBouncyCastleTestConstantsFactory} corresponding to this {@link IBouncyCastleFactory}.
-     * 
+     *
      * @return {@link IBouncyCastleTestConstantsFactory} instance
      */
     IBouncyCastleTestConstantsFactory getBouncyCastleFactoryTestUtil();
 
     /**
      * Create {@code null} as {@link CRL} object.
-     * 
+     *
      * @return {@code null} as {@link CRL} object
      */
     CRL createNullCrl();
-    
+
     /**
      * Create PEM Parser wrapper from {@link Reader}.
-     * 
+     *
      * @param reader {@link Reader} to create PEM Parser wrapper from
-     * 
+     *
      * @return created PEM Parser wrapper
      */
     IPEMParser createPEMParser(Reader reader);
 
     /**
      * Create Jce open SSL PKCS8 Decryptor provider builder wrapper without parameters.
-     * 
+     *
      * @return created Jce open SSL PKCS8 Decryptor provider builder wrapper
      */
     IJceOpenSSLPKCS8DecryptorProviderBuilder createJceOpenSSLPKCS8DecryptorProviderBuilder();
 
     /**
      * Create Jca PEM Key converter wrapper without parameters.
-     * 
+     *
      * @return created Jca PEM Key converter wrapper
      */
     IJcaPEMKeyConverter createJcaPEMKeyConverter();
 
     /**
      * Create time wrapper from {@link Date}.
-     * 
+     *
      * @param date {@link Date} to create time wrapper from
-     * 
+     *
      * @return created time wrapper
      */
     ITime createTime(Date date);
 
     /**
      * Checks if provided extension wrapper wraps {@code null}.
-     * 
+     *
      * @param extNonce extension wrapper to check
-     * 
+     *
      * @return {@code true} if provided extension wrapper wraps {@code null}, {@code false} otherwise
      */
     boolean isNullExtension(IExtension extNonce);
 
     /**
      * Get {@link SecureRandom} implementation from the factory.
-     * 
+     *
      * @return {@link SecureRandom} implementation
      */
     SecureRandom getSecureRandom();
 
     /**
      * Check if this bouncy-castle corresponding to this factory is in approved mode.
-     * 
+     *
      * @return {@code true} if approved mode is enabled, {@code false} otherwise
      */
     boolean isInApprovedOnlyMode();
 
     /**
      * Create cipher bytes from {@link X509Certificate}, {@code byte[]} value and algorithm identifier wrapper.
-     * 
-     * @param x509certificate {@link X509Certificate} to create cipher bytes from
-     * @param abyte0 {@code byte[]} value to create cipher bytes from
+     *
+     * @param x509certificate     {@link X509Certificate} to create cipher bytes from
+     * @param abyte0              {@code byte[]} value to create cipher bytes from
      * @param algorithmIdentifier algorithm identifier wrapper to create cipher bytes from
-     * 
+     *
      * @return {@code byte[]} representing created cipher bytes
-     * 
+     *
      * @throws GeneralSecurityException if general security exception occurs during cipher bytes creation
      */
     byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)

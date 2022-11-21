@@ -47,7 +47,8 @@ public class BouncyCastleDigestUnitTest extends ExtendedITextTest {
 
     @Test
     public void getMessageDigestMD5Test() throws GeneralSecurityException {
-        getMessageDigestTest("MD5", "MD5");
+        IExternalDigest digest = new BouncyCastleDigest();
+        Assert.assertThrows(NoSuchAlgorithmException.class, () -> digest.getMessageDigest("MD5"));
     }
 
     @Test

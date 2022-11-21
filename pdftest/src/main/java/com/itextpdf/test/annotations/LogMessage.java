@@ -70,4 +70,14 @@ public @interface LogMessage {
     int count() default 1;
 
     int logLevel() default LogLevelConstants.UNKNOWN;
+
+    /**
+     * Defines whether the {@link LogListener} algorithm should be ignored. If
+     * ignored, no checks will be done on the certain log message.
+     *
+     * Defaults to {@code false}.
+     *
+     * @return whether to ignore the {@link LogListener} algorithm for a particular log message
+     */
+    boolean ignore() default false;
 }

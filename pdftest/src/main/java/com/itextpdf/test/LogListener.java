@@ -168,7 +168,7 @@ public class LogListener extends TestWatcher {
             LogMessage[] messages = logMessages.messages();
             for (LogMessage logMessage : messages) {
                 int foundCount = contains(logMessage);
-                if (foundCount != logMessage.count() && !logMessages.ignore()) {
+                if (foundCount != logMessage.count() && !logMessages.ignore() && !logMessage.ignore()) {
                     LoggerHelper.failWrongMessageCount(logMessage.count(), foundCount, logMessage.messageTemplate(),
                             description);
                 } else {

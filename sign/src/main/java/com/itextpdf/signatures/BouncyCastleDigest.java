@@ -66,9 +66,6 @@ public class BouncyCastleDigest implements IExternalDigest {
         
         Provider provider = BouncyCastleFactoryCreator.getFactory().getProvider();
         switch (oid) {
-            // MD5
-            case "1.2.840.113549.2.5":
-                return MessageDigest.getInstance("MD5", provider);
             // SHA1
             case "1.3.14.3.2.26":
                 return MessageDigest.getInstance("SHA1", provider);

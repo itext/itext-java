@@ -22,10 +22,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
@@ -133,6 +136,8 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void checkEncryptionInXrefStmInIncrementsTest() throws IOException, InterruptedException {
         String inFileName = sourceFolder + "encryptedDocWithXrefStm.pdf";
         String outFileName = destinationFolder + "checkEncryptionInXrefStmInIncrements.pdf";

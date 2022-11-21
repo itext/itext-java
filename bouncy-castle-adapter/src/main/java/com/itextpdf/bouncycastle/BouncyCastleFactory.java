@@ -1609,7 +1609,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
-    public byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
+    public byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0,
+            IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(algorithmIdentifier.getAlgorithm().getId());
         try {

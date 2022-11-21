@@ -48,9 +48,10 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -77,12 +78,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -92,7 +89,11 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import static org.junit.Assert.fail;
 
 /**
@@ -107,7 +108,7 @@ import static org.junit.Assert.fail;
  * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
  * are available for download from http://java.oracle.com/ in eligible countries.
  */
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class PdfEncryptionTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -143,6 +144,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordStandard128() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard128.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
@@ -150,6 +153,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordStandard40() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard40.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
@@ -157,6 +162,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordStandard128NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard128NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_128;
@@ -164,6 +171,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordStandard40NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordStandard40NoCompression.pdf";
         int encryptionType = EncryptionConstants.STANDARD_ENCRYPTION_40;
@@ -171,6 +180,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordAes128() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes128.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
@@ -178,6 +189,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordAes256() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -185,6 +198,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordAes128NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes128NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
@@ -192,6 +207,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordAes256NoCompression() throws IOException, InterruptedException {
         String filename = "encryptWithPasswordAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -199,6 +216,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateStandard128() throws IOException, InterruptedException, GeneralSecurityException,
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard128.pdf";
@@ -207,6 +226,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateStandard40() throws IOException, InterruptedException, GeneralSecurityException,
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard40.pdf";
@@ -215,6 +236,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateStandard128NoCompression() throws IOException, InterruptedException,
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard128NoCompression.pdf";
@@ -223,6 +246,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateStandard40NoCompression() throws IOException, InterruptedException,
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateStandard40NoCompression.pdf";
@@ -231,6 +256,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateAes128() throws IOException, InterruptedException, GeneralSecurityException,
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes128.pdf";
@@ -239,6 +266,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateAes256() throws IOException, InterruptedException, GeneralSecurityException,
             AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes256.pdf";
@@ -247,6 +276,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateAes128NoCompression() throws IOException, InterruptedException,
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes128NoCompression.pdf";
@@ -256,6 +287,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithCertificateAes256NoCompression() throws IOException, InterruptedException,
             GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String filename = "encryptWithCertificateAes256NoCompression.pdf";
@@ -264,6 +297,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void openEncryptedDocWithoutPassword() throws IOException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf")) {
             Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader));
@@ -272,6 +307,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void openEncryptedDocWithWrongPassword() throws IOException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf",
                 new ReaderProperties().setPassword("wrong_password".getBytes(StandardCharsets.ISO_8859_1)))) {
@@ -286,12 +323,15 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf")) {
 
             Exception e = Assert.assertThrows(PdfException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE,
+            Assert.assertEquals(
+                    KernelExceptionMessageConstant.CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE,
                     e.getMessage());
         }
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void openEncryptedDocWithoutPrivateKey() throws IOException, CertificateException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties()
@@ -309,6 +349,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void openEncryptedDocWithWrongCertificate()
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
@@ -327,6 +369,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void openEncryptedDocWithWrongPrivateKey()
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
@@ -346,6 +390,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void openEncryptedDocWithWrongCertificateAndPrivateKey()
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
@@ -365,6 +411,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void metadataReadingInEncryptedDoc() throws IOException, XMPException {
         PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPlainMetadata.pdf",
                 new ReaderProperties().setPassword(OWNER));
@@ -377,11 +425,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void copyEncryptedDocument() throws GeneralSecurityException, IOException, InterruptedException,
             AbstractPKCSException, AbstractOperatorCreationException {
         PdfDocument srcDoc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties().
-                        setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(), FACTORY.getProviderName(), null)));
+                        setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(),
+                                FACTORY.getProviderName(), null)));
         String fileName = "copiedEncryptedDoc.pdf";
         PdfDocument destDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
         srcDoc.copyPagesTo(1, 1, destDoc);
@@ -396,10 +447,13 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         destDoc.close();
 
         Assert.assertNull(new CompareTool()
-                .compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder, "diff_"));
+                .compareByContent(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, destinationFolder,
+                        "diff_"));
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void openDocNoUserPassword() throws IOException {
         String fileName = "noUserPassword.pdf";
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName));
@@ -409,6 +463,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void stampDocNoUserPassword() throws IOException {
         String fileName = "stampedNoPassword.pdf";
 
@@ -421,6 +477,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordAes128EmbeddedFilesOnly() throws IOException {
         String filename = "encryptWithPasswordAes128EmbeddedFilesOnly.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.EMBEDDED_FILES_ONLY;
@@ -438,11 +496,11 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         String descripton = "encryptedFile";
         String path = sourceFolder + "pageWithContent.pdf";
-        document.addFileAttachment(descripton, PdfFileSpec.createEmbeddedFileSpec(document, path, descripton, path, null, null));
+        document.addFileAttachment(descripton,
+                PdfFileSpec.createEmbeddedFileSpec(document, path, descripton, path, null, null));
 
         page.flush();
         document.close();
-
 
         //TODO DEVSIX-5355 Specific crypto filters for EFF StmF and StrF are not supported at the moment.
         // However we can read embedded files only mode.
@@ -452,6 +510,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256Pdf2NotEncryptMetadata() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
@@ -459,6 +519,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256Pdf2NotEncryptMetadata02() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2NotEncryptMetadata02.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA;
@@ -466,6 +528,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256EncryptedStampingPreserve() throws InterruptedException, IOException {
         String filename = "encryptAes256EncryptedStampingPreserve.pdf";
         String src = sourceFolder + "encryptedWithPlainMetadata.pdf";
@@ -479,13 +543,16 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        String compareResult = compareTool.compareByContent(out, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
+        String compareResult = compareTool.compareByContent(out, sourceFolder + "cmp_" + filename, destinationFolder,
+                "diff_", USER, USER);
         if (compareResult != null) {
             Assert.fail(compareResult);
         }
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256EncryptedStampingUpdate() throws InterruptedException, IOException {
         String filename = "encryptAes256EncryptedStampingUpdate.pdf";
         String src = sourceFolder + "encryptedWithPlainMetadata.pdf";
@@ -494,19 +561,23 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(
                 new PdfReader(src, new ReaderProperties().setPassword(OWNER)),
                 new PdfWriter(out, new WriterProperties()
-                        .setStandardEncryption(USER, OWNER, EncryptionConstants.ALLOW_PRINTING, EncryptionConstants.STANDARD_ENCRYPTION_40)),
+                        .setStandardEncryption(USER, OWNER, EncryptionConstants.ALLOW_PRINTING,
+                                EncryptionConstants.STANDARD_ENCRYPTION_40)),
                 new StampingProperties());
 
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        String compareResult = compareTool.compareByContent(out, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
+        String compareResult = compareTool.compareByContent(out, sourceFolder + "cmp_" + filename, destinationFolder,
+                "diff_", USER, USER);
         if (compareResult != null) {
             Assert.fail(compareResult);
         }
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256FullCompression() throws InterruptedException, IOException {
         String filename = "encryptAes256FullCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -514,6 +585,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordAes256Pdf2() throws InterruptedException, IOException {
         String filename = "encryptWithPasswordAes256Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
@@ -521,7 +594,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS))
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true),
+            @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS)})
     public void encryptWithPasswordAes128Pdf2() throws InterruptedException, IOException {
         String filename = "encryptWithPasswordAes128Pdf2.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_128;
@@ -529,7 +604,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS))
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true),
+            @LogMessage(messageTemplate = VersionConforming.DEPRECATED_ENCRYPTION_ALGORITHMS)})
     public void stampAndUpdateVersionPreserveStandard40() throws InterruptedException, IOException {
         String filename = "stampAndUpdateVersionPreserveStandard40.pdf";
         PdfDocument doc = new PdfDocument(
@@ -544,7 +621,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = VersionConforming.DEPRECATED_AES256_REVISION))
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, ignore = true),
+            @LogMessage(messageTemplate = VersionConforming.DEPRECATED_AES256_REVISION)})
     public void stampAndUpdateVersionPreserveAes256() throws InterruptedException, IOException {
         String filename = "stampAndUpdateVersionPreserveAes256.pdf";
         PdfDocument doc = new PdfDocument(
@@ -558,6 +637,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void stampAndUpdateVersionNewAes256() throws InterruptedException, IOException {
         String filename = "stampAndUpdateVersionNewAes256.pdf";
         PdfDocument doc = new PdfDocument(
@@ -572,14 +653,18 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256Pdf2Permissions() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2Permissions.pdf";
-        int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
+        int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS
+                | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         PdfDocument doc = new PdfDocument(
                 new PdfWriter(destinationFolder + filename,
                         new WriterProperties()
                                 .setPdfVersion(PdfVersion.PDF_2_0)
-                                .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
+                                .setStandardEncryption(USER, OWNER, permissions,
+                                        EncryptionConstants.ENCRYPTION_AES_256)));
         doc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
         writeTextBytesOnPageContent(doc.addNewPage(), pageTextContent);
         doc.close();
@@ -587,11 +672,14 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptWithPasswordAes128NoMetadataCompression() throws Exception {
         String srcFilename = "srcEncryptWithPasswordAes128NoMetadataCompression.pdf";
         PdfReader reader = new PdfReader(sourceFolder + srcFilename, new ReaderProperties());
         WriterProperties props = new WriterProperties()
-                .setStandardEncryption("superuser".getBytes(), "superowner".getBytes(), EncryptionConstants.ALLOW_PRINTING,
+                .setStandardEncryption("superuser".getBytes(), "superowner".getBytes(),
+                        EncryptionConstants.ALLOW_PRINTING,
                         EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA);
         String outFilename = "encryptWithPasswordAes128NoMetadataCompression.pdf";
         PdfWriter writer = new PdfWriter(destinationFolder + outFilename, props);
@@ -607,14 +695,25 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         Assert.assertNull(compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
+    @Test
+    public void checkMD5LogAbsenceInUnapprovedMode() throws IOException {
+        Assume.assumeTrue(!FACTORY.isInApprovedOnlyMode());
+        String fileName = "noUserPassword.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName))) {
+            // this test checks log message absence
+        }
+    }
 
-    public void encryptWithPassword2(String filename, int encryptionType, int compression) throws IOException, InterruptedException {
+    public void encryptWithPassword2(String filename, int encryptionType, int compression)
+            throws IOException, InterruptedException {
         encryptWithPassword2(filename, encryptionType, compression, false);
     }
 
-    public void encryptWithPassword2(String filename, int encryptionType, int compression, boolean isPdf2) throws IOException, InterruptedException {
+    public void encryptWithPassword2(String filename, int encryptionType, int compression, boolean isPdf2)
+            throws IOException, InterruptedException {
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
-        WriterProperties writerProperties = new WriterProperties().setStandardEncryption(USER, OWNER, permissions, encryptionType);
+        WriterProperties writerProperties = new WriterProperties().setStandardEncryption(USER, OWNER, permissions,
+                encryptionType);
         if (isPdf2) {
             writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         }
@@ -634,11 +733,13 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         checkEncryptedWithPasswordDocumentAppending(filename, OWNER);
     }
 
-    public void encryptWithPassword(String filename, int encryptionType, int compression) throws IOException, InterruptedException {
+    public void encryptWithPassword(String filename, int encryptionType, int compression)
+            throws IOException, InterruptedException {
         encryptWithPassword(filename, encryptionType, compression, false);
     }
 
-    public void encryptWithPassword(String filename, int encryptionType, int compression, boolean fullCompression) throws IOException, InterruptedException {
+    public void encryptWithPassword(String filename, int encryptionType, int compression, boolean fullCompression)
+            throws IOException, InterruptedException {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         PdfWriter writer = new PdfWriter(outFileName,
@@ -669,7 +770,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         Certificate cert = getPublicCertificate(CERT);
         PdfWriter writer = new PdfWriter(outFileName, new WriterProperties()
-                .setPublicKeyEncryption(new Certificate[]{cert}, new int[]{permissions}, encryptionType)
+                .setPublicKeyEncryption(new Certificate[] {cert}, new int[] {permissions}, encryptionType)
                 .addXmpMetadata());
         writer.setCompressionLevel(compression);
         PdfDocument document = new PdfDocument(writer);
@@ -683,9 +784,12 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         checkDecryptedWithCertificateContent(filename, cert, pageTextContent);
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        compareTool.getOutReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(), FACTORY.getProviderName(), null);
-        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(), FACTORY.getProviderName(), null);
-        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        compareTool.getOutReaderProperties()
+                .setPublicKeySecurityParams(cert, getPrivateKey(), FACTORY.getProviderName(), null);
+        compareTool.getCmpReaderProperties()
+                .setPublicKeySecurityParams(cert, getPrivateKey(), FACTORY.getProviderName(), null);
+        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename,
+                destinationFolder, "diff_");
         if (compareResult != null) {
             fail(compareResult);
         }
@@ -709,17 +813,20 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         return privateKey;
     }
 
-    public static void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent) throws IOException {
+    public static void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent)
+            throws IOException {
         checkDecryptedWithPasswordContent(src, password, pageContent, false);
     }
 
-    private static void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent, boolean expectError) throws IOException {
+    private static void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent,
+            boolean expectError) throws IOException {
         PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(src, new ReaderProperties().setPassword(password));
         PdfDocument document = new com.itextpdf.kernel.pdf.PdfDocument(reader);
         PdfPage page = document.getPage(1);
 
         boolean expectedContentFound = new String(page.getStreamBytes(0)).contains(pageContent);
-        String actualCustomInfoEntry = document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey)).toUnicodeString();
+        String actualCustomInfoEntry = document.getTrailer().getAsDictionary(PdfName.Info)
+                .getAsString(new PdfName(customInfoEntryKey)).toUnicodeString();
 
         if (!expectError) {
             Assert.assertTrue("Expected content: \n" + pageContent, expectedContentFound);
@@ -742,13 +849,16 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         String s = new String(page.getStreamBytes(0));
         Assert.assertTrue("Expected content: \n" + pageContent, s.contains(pageContent));
-        Assert.assertEquals("Encrypted custom", customInfoEntryValue, document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey)).toUnicodeString());
+        Assert.assertEquals("Encrypted custom", customInfoEntryValue,
+                document.getTrailer().getAsDictionary(PdfName.Info).getAsString(new PdfName(customInfoEntryKey))
+                        .toUnicodeString());
 
         document.close();
     }
 
     // basically this is comparing content of decrypted by itext document with content of encrypted document
-    public void checkEncryptedWithPasswordDocumentStamping(String filename, byte[] password) throws IOException, InterruptedException {
+    public void checkEncryptedWithPasswordDocumentStamping(String filename, byte[] password)
+            throws IOException, InterruptedException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "stamped_" + filename;
         PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(password));
@@ -757,7 +867,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
 
-        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
+        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename,
+                destinationFolder, "diff_", USER, USER);
 
         if (compareResult != null) {
             fail(compareResult);
@@ -775,19 +886,23 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         document.close();
 
         CompareTool compareTool = new CompareTool();
-        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
-        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        compareTool.getCmpReaderProperties()
+                .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
+        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_" + filename,
+                destinationFolder, "diff_");
 
         if (compareResult != null) {
             fail(compareResult);
         }
     }
 
-    public void checkEncryptedWithPasswordDocumentAppending(String filename, byte[] password) throws IOException, InterruptedException {
+    public void checkEncryptedWithPasswordDocumentAppending(String filename, byte[] password)
+            throws IOException, InterruptedException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "appended_" + filename;
         PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(password));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName), new StampingProperties().useAppendMode());
+        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName),
+                new StampingProperties().useAppendMode());
         PdfPage newPage = document.addNewPage();
         newPage.put(PdfName.Default, new PdfString("Hello world string"));
         writeTextBytesOnPageContent(newPage, "Hello world page_2!");
@@ -795,7 +910,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
 
-        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_appended_" + filename, destinationFolder, "diff_", USER, USER);
+        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_appended_" + filename,
+                destinationFolder, "diff_", USER, USER);
 
         if (compareResult != null) {
             fail(compareResult);
@@ -808,7 +924,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "appended_" + filename;
         PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName), new StampingProperties().useAppendMode());
+        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName),
+                new StampingProperties().useAppendMode());
         PdfPage newPage = document.addNewPage();
         String helloWorldStringValue = "Hello world string";
         newPage.put(PdfName.Default, new PdfString(helloWorldStringValue));
@@ -825,10 +942,13 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         appendedDoc.close();
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        compareTool.getOutReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
-        compareTool.getCmpReaderProperties().setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
+        compareTool.getOutReaderProperties()
+                .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
+        compareTool.getCmpReaderProperties()
+                .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null);
 
-        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_appended_" + filename, destinationFolder, "diff_");
+        String compareResult = compareTool.compareByContent(outFileName, sourceFolder + "cmp_appended_" + filename,
+                destinationFolder, "diff_");
 
         if (compareResult != null) {
             fail(compareResult);
@@ -853,7 +973,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         checkDecryptedWithPasswordContent(destinationFolder + filename, USER, pageTextContent);
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
-        String compareResult = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
+        String compareResult = compareTool.compareByContent(destinationFolder + filename,
+                sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
         if (compareResult != null) {
             fail(compareResult);
         }

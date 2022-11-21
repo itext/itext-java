@@ -46,6 +46,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -149,6 +150,8 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void cryptFilterFlushedBeforeReadStreamTest() throws IOException {
         String file = sourceFolder + "cryptFilterTest.pdf";
         String destFile = destinationFolder + "cryptFilterReadStreamTest.pdf";
@@ -173,6 +176,8 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void cryptFilterFlushedBeforeStreamTest() throws IOException {
         String file = sourceFolder + "cryptFilterTest.pdf";
         String destFile = destinationFolder + "cryptFilterStreamNotReadTest.pdf";
@@ -196,6 +201,8 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void cryptFilterFlushedAfterStreamTest() throws IOException, InterruptedException {
         String file = sourceFolder + "cryptFilterTest.pdf";
         String cmpFile = sourceFolder + "cmp_cryptFilterTest.pdf";

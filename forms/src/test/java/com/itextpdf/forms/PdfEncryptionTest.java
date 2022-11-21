@@ -46,6 +46,7 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -55,6 +56,8 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -89,6 +92,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     static final String customInfoEntryValue = "String";
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptedDocumentWithFormFields() throws IOException {
         PdfReader reader = new PdfReader(sourceFolder + "encryptedDocumentWithFormFields.pdf",
                 new ReaderProperties().setPassword("12345".getBytes(StandardCharsets.ISO_8859_1)));
@@ -101,6 +106,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256Pdf2PermissionsTest01() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2PermissionsTest01.pdf";
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
@@ -131,6 +138,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
     public void encryptAes256Pdf2PermissionsTest02() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2PermissionsTest02.pdf";
         // This test differs from the previous one (encryptAes256Pdf2PermissionsTest01) only in permissions.
