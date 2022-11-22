@@ -278,7 +278,7 @@ public class ImageTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     public void imageTest08() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageTest08.pdf";

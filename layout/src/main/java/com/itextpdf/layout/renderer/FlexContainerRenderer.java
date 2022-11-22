@@ -330,6 +330,12 @@ public class FlexContainerRenderer extends DivRenderer {
         return layoutBoxCopy;
     }
 
+    @Override
+    void handleForcedPlacement(boolean anythingPlaced) {
+        // In (horizontal) FlexContainerRenderer Property.FORCED_PLACEMENT is still valid for other children
+        // so do nothing
+    }
+
     void setHypotheticalCrossSize(Float mainSize, Float hypotheticalCrossSize) {
         hypotheticalCrossSizes.put(mainSize.floatValue(), hypotheticalCrossSize);
     }

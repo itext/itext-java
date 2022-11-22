@@ -184,6 +184,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         // the first renderer (one of childRenderers or their children) to produce LayoutResult.NOTHING
         IRenderer causeOfNothing = null;
         boolean anythingPlaced = false;
+        // We have to remember initial FORCED_PLACEMENT property of this renderer to use it later
+        // to define if rotated content should be placed or not
+        final boolean initialForcePlacementForRotationAdjustments =
+                Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         for (int childPos = 0; childPos < childRenderers.size(); childPos++) {
             IRenderer childRenderer = childRenderers.get(childPos);
             LayoutResult result;
@@ -334,6 +338,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
             }
             anythingPlaced = anythingPlaced || result.getStatus() != LayoutResult.NOTHING;
+            handleForcedPlacement(anythingPlaced);
 
             // The second condition check (after &&) is needed only if margins collapsing is enabled
             if (result.getOccupiedArea() != null && (!FloatingHelper.isRendererFloating(childRenderer) || includeFloatsInOccupiedArea)) {
@@ -373,7 +378,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         int layoutResult = LayoutResult.FULL;
-        boolean processOverflowedFloats = !waitingOverflowFloatRenderers.isEmpty() && !wasHeightClipped && !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
+        boolean processOverflowedFloats = !waitingOverflowFloatRenderers.isEmpty() && !wasHeightClipped &&
+                !Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
 
         AbstractRenderer overflowRenderer = null;
         if (!includeFloatsInOccupiedArea || !processOverflowedFloats) {
@@ -453,7 +459,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     LoggerFactory.getLogger(getClass())
                             .warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                                     "It fits by height so it will be forced placed"));
-                } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+                } else if (!initialForcePlacementForRotationAdjustments) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                 }
@@ -645,7 +651,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (childResult.getStatus() == LayoutResult.PARTIAL && childResult.getSplitRenderer() != null) {
             splitRenderer.childRenderers.add(childResult.getSplitRenderer());
         }
-
 
         replaceSplitRendererKidFloats(waitingFloatsSplitRenderers, splitRenderer);
         for (IRenderer renderer : splitRenderer.childRenderers) {
@@ -1082,6 +1087,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         return minMaxWidth;
+    }
+
+    void handleForcedPlacement(boolean anythingPlaced) {
+        // We placed something meaning that we don't need this property anymore while processing other children
+        // to do not force place them
+        if (anythingPlaced && hasOwnProperty(Property.FORCED_PLACEMENT)) {
+            deleteOwnProperty(Property.FORCED_PLACEMENT);
+        }
     }
 
     private void replaceSplitRendererKidFloats(Map<Integer, IRenderer> waitingFloatsSplitRenderers, IRenderer splitRenderer) {
