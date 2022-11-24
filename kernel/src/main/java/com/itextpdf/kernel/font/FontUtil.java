@@ -52,15 +52,19 @@ import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.cmap.ICMapLocation;
 import com.itextpdf.io.util.IntHashtable;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +75,12 @@ public class FontUtil {
     public static String addRandomSubsetPrefixForFontName(final String fontName) {
         final StringBuilder newFontName = new StringBuilder(fontName.length() + 7);
         for (int k = 0; k < 6; ++k) {
-            newFontName.append((char) (Math.random() * 26 + 'A'));
+            try {
+                Random instanceStrong = SecureRandom.getInstanceStrong();
+                newFontName.append((char) (instanceStrong.nextInt() * 26 + 'A'));
+            } catch (NoSuchAlgorithmException e) {
+                throw new PdfException(e);
+            }
         }
         newFontName.append('+').append(fontName);
         return newFontName.toString();

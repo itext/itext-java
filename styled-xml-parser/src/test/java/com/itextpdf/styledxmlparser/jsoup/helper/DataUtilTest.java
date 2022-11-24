@@ -110,16 +110,6 @@ public class DataUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    public void generatesMimeBoundaries() {
-        String m1 = DataUtil.mimeBoundary();
-        String m2 = DataUtil.mimeBoundary();
-
-        Assert.assertEquals(DataUtil.boundaryLength, m1.length());
-        Assert.assertEquals(DataUtil.boundaryLength, m2.length());
-        Assert.assertNotSame(m1, m2);
-    }
-
-    @Test
     public void wrongMetaCharsetFallback() throws IOException {
         String html = "<html><head><meta charset=iso-8></head><body></body></html>";
 

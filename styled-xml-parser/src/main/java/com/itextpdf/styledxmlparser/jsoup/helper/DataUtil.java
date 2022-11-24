@@ -266,18 +266,6 @@ public final class DataUtil {
         return null;
     }
 
-    /**
-     * Creates a random string, suitable for use as a mime boundary
-     */
-    static String mimeBoundary() {
-        final StringBuilder mime = StringUtil.borrowBuilder();
-        final Random rand = new Random();
-        for (int i = 0; i < boundaryLength; i++) {
-            mime.append(mimeBoundaryChars[rand.nextInt(mimeBoundaryChars.length)]);
-        }
-        return StringUtil.releaseBuilder(mime);
-    }
-
     private static BomCharset detectCharsetFromBom(final ByteBuffer byteData) {
         @SuppressWarnings("UnnecessaryLocalVariable") final Buffer buffer = byteData; // .mark and rewind used to return Buffer, now ByteBuffer, so cast for backward compat
         buffer.mark();
