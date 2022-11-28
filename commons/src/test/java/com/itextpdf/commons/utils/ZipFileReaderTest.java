@@ -23,13 +23,15 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
+import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
@@ -77,6 +79,43 @@ public class ZipFileReaderTest extends ExtendedITextTest {
             Assert.assertTrue(nameSet.contains("subfolder/fourthFile.txt"));
             Assert.assertTrue(nameSet.contains("subfolder/subsubfolder/fifthFile.txt"));
             Assert.assertTrue(nameSet.contains("subfolder/subsubfolder/sixthFile.txt"));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = CommonsLogMessageConstant.UNCOMPRESSED_DATA_SIZE_IS_TOO_MUCH))
+    public void getFileNamesFromZipBombBySettingThresholdSizeTest() throws IOException {
+        try (ZipFileReader fileReader = new ZipFileReader(SOURCE_FOLDER + "zipBombTest.zip")) {
+            fileReader.setThresholdRatio(1000);
+            fileReader.setThresholdSize(10000);
+            Set<String> nameSet = fileReader.getFileNames();
+
+            Assert.assertNotNull(nameSet);
+            Assert.assertEquals(0, nameSet.size());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = CommonsLogMessageConstant.RATIO_IS_HIGHLY_SUSPICIOUS))
+    public void getFileNamesFromZipBombBySettingThresholdRatioTest() throws IOException {
+        try (ZipFileReader fileReader = new ZipFileReader(SOURCE_FOLDER + "zipBombTest.zip")) {
+            fileReader.setThresholdRatio(5);
+            Set<String> nameSet = fileReader.getFileNames();
+
+            Assert.assertNotNull(nameSet);
+            Assert.assertEquals(0, nameSet.size());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = CommonsLogMessageConstant.TOO_MUCH_ENTRIES_IN_ARCHIVE))
+    public void getFileNamesFromZipBombBySettingThresholdEntriesTest() throws IOException {
+        try (ZipFileReader fileReader = new ZipFileReader(SOURCE_FOLDER + "archive.zip")) {
+            fileReader.setThresholdEntries(5);
+            Set<String> nameSet = fileReader.getFileNames();
+
+            Assert.assertNotNull(nameSet);
+            Assert.assertTrue(nameSet.size() <= 5);
         }
     }
 
