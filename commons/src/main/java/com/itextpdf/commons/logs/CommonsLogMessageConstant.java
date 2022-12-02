@@ -48,6 +48,11 @@ package com.itextpdf.commons.logs;
  */
 public final class CommonsLogMessageConstant {
     /**
+     * Message notifies that base64 encoding or decoding failed.
+     */
+    public static final String BASE_64_EXCEPTION = "Exception during base64 encoding or decoding.";
+
+    /**
      * Message notifies that an invalid statistics name was received, because there is no aggregator for it.
      *
      * <ul>

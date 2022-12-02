@@ -1,5 +1,10 @@
 package com.itextpdf.commons.utils;
 
+import com.itextpdf.commons.logs.CommonsLogMessageConstant;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Encodes and decodes to and from Base64 notation.
  * <p>
@@ -117,6 +122,10 @@ public class Base64 {
 
     /* ********  P R I V A T E   F I E L D S  ******** */
 
+    /**
+     * The Logger instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Base64.class);
 
     /**
      * Maximum line length (76) of Base64 output.
@@ -578,7 +587,7 @@ public class Base64 {
             oos.writeObject(serializableObject);
         }   // end try
         catch (java.io.IOException e) {
-            e.printStackTrace();
+            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
             return null;
         }   // end catch
         finally {
@@ -709,7 +718,7 @@ public class Base64 {
                 gzos.close();
             }   // end try
             catch (java.io.IOException e) {
-                e.printStackTrace();
+                LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
                 return null;
             }   // end catch
             finally {
@@ -1013,6 +1022,49 @@ public class Base64 {
 
 
     /**
+     * Attempts to decode Base64 data and deserialize a Java
+     * Object within. Returns <tt>null</tt> if there was an error.
+     *
+     * @param encodedObject The Base64 data to decode
+     * @return The decoded and deserialized object
+     * @since 1.5
+     */
+    public static Object decodeToObject(String encodedObject) {
+        // Decode and gunzip if necessary
+        byte[] objBytes = decode(encodedObject);
+
+        java.io.ByteArrayInputStream bais = null;
+        java.io.ObjectInputStream ois = null;
+        Object obj = null;
+
+        try {
+            bais = new java.io.ByteArrayInputStream(objBytes);
+            ois = new java.io.ObjectInputStream(bais);
+
+            obj = ois.readObject();
+        }   // end try
+        catch (java.io.IOException e) {
+            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
+        }   // end catch
+        catch (java.lang.ClassNotFoundException e) {
+            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
+        }   // end catch
+        finally {
+            try {
+                bais.close();
+            } catch (Exception e) {
+            }
+            try {
+                ois.close();
+            } catch (Exception e) {
+            }
+        }   // end finally
+
+        return obj;
+    }   // end decodeObject
+
+
+    /**
      * Convenience method for encoding data to a file.
      *
      * @param dataToEncode byte array of data to encode in base64 form
@@ -1190,7 +1242,7 @@ public class Base64 {
             out.write(encoded.getBytes("US-ASCII")); // Strict, 7-bit output.
         }   // end try
         catch (java.io.IOException ex) {
-            ex.printStackTrace();
+            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , ex);
         }   // end catch
         finally {
             try {
@@ -1217,7 +1269,7 @@ public class Base64 {
             out.write(decoded);
         }   // end try
         catch (java.io.IOException ex) {
-            ex.printStackTrace();
+            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , ex);
         }   // end catch
         finally {
             try {
