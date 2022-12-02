@@ -11,7 +11,8 @@
   <url>https://itextpdf.com/</url>
   
   <properties>
-    <sonar.skip>true</sonar.skip>
+    <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
+    <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
   </properties>
   
   <dependencies>
