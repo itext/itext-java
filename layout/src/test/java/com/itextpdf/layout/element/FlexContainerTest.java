@@ -23,6 +23,7 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -283,6 +284,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
     public void flexContainerDifferentChildrenDontFitVerticallyTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
         String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
@@ -322,6 +324,7 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
     public void flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
         String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
