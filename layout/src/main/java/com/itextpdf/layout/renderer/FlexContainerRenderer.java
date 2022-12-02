@@ -136,6 +136,7 @@ public class FlexContainerRenderer extends DivRenderer {
                         UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
             }
         }
+
         final LayoutResult result = super.layout(layoutContext);
 
         // We must set back widths of the children because multiple layouts are possible
@@ -195,17 +196,25 @@ public class FlexContainerRenderer extends DivRenderer {
                                                        List<IRenderer> waitingOverflowFloatRenderers) {
         final AbstractRenderer splitRenderer = createSplitRenderer(layoutStatus);
         final AbstractRenderer overflowRenderer = createOverflowRenderer(layoutStatus);
+
         final IRenderer childRenderer = getChildRenderers().get(childPos);
         final boolean forcedPlacement = Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT));
         boolean metChildRenderer = false;
         for (final List<FlexItemInfo> line : lines) {
-            metChildRenderer = metChildRenderer ||
-                    line.stream().anyMatch(flexItem -> flexItem.getRenderer() == childRenderer);
-            for (final FlexItemInfo itemInfo : line) {
-                if (metChildRenderer && !forcedPlacement) {
-                    overflowRenderer.addChildRenderer(itemInfo.getRenderer());
-                } else {
-                    splitRenderer.addChildRenderer(itemInfo.getRenderer());
+            final boolean isSplitLine = line.stream().anyMatch(flexItem -> flexItem.getRenderer() == childRenderer);
+            metChildRenderer = metChildRenderer || isSplitLine;
+
+            // If the renderer to split is in the current line
+            if (isSplitLine && !forcedPlacement && layoutStatus == LayoutResult.PARTIAL) {
+                fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
+                        childResult);
+            } else {
+                for (final FlexItemInfo itemInfo : line) {
+                    if (metChildRenderer && !forcedPlacement) {
+                        overflowRenderer.addChildRenderer(itemInfo.getRenderer());
+                    } else {
+                        splitRenderer.addChildRenderer(itemInfo.getRenderer());
+                    }
                 }
             }
         }
@@ -224,8 +233,16 @@ public class FlexContainerRenderer extends DivRenderer {
                                            List<Rectangle> areas, int currentAreaPos, Rectangle layoutBox,
                                            Set<Rectangle> nonChildFloatingRendererAreas, IRenderer causeOfNothing,
                                            boolean anythingPlaced, int childPos, LayoutResult result) {
-
         final boolean keepTogether = isKeepTogether(causeOfNothing);
+        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
+            final AbstractRenderer splitRenderer = keepTogether ? null : createSplitRenderer(result.getStatus());
+            if (splitRenderer != null) {
+                splitRenderer.setChildRenderers(getChildRenderers());
+            }
+
+            return new LayoutResult(LayoutResult.FULL,
+                    getOccupiedAreaInCaseNothingWasWrappedWithFull(result, splitRenderer), splitRenderer, null, null);
+        }
 
         final AbstractRenderer[] splitAndOverflowRenderers = createSplitAndOverflowRenderers(
                 childPos, result.getStatus(), result, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers);
@@ -233,13 +250,13 @@ public class FlexContainerRenderer extends DivRenderer {
         AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
         final AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
         overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
+        updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
 
         if (isRelativePosition() && !positionedRenderers.isEmpty()) {
             overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
         }
 
         // TODO DEVSIX-5086 When flex-wrap will be fully supported we'll need to update height on split
-
         if (keepTogether) {
             splitRenderer = null;
             overflowRenderer.setChildRenderers(getChildRenderers());
@@ -249,23 +266,15 @@ public class FlexContainerRenderer extends DivRenderer {
 
         applyAbsolutePositionIfNeeded(layoutContext);
 
-        if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
-            if (splitRenderer != null) {
-                splitRenderer.setChildRenderers(getChildRenderers());
-            }
-            return new LayoutResult(LayoutResult.FULL,
-                    getOccupiedAreaInCaseNothingWasWrappedWithFull(result, splitRenderer), splitRenderer, null, null);
+        applyPaddings(occupiedArea.getBBox(), paddings, true);
+        applyBorderBox(occupiedArea.getBBox(), borders, true);
+        applyMargins(occupiedArea.getBBox(), true);
+        if (splitRenderer == null || splitRenderer.getChildRenderers().isEmpty()) {
+            return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer,
+                    result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
         } else {
-            applyPaddings(occupiedArea.getBBox(), paddings, true);
-            applyBorderBox(occupiedArea.getBBox(), borders, true);
-            applyMargins(occupiedArea.getBBox(), true);
-            if (splitRenderer == null || splitRenderer.getChildRenderers().isEmpty()) {
-                return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer,
-                        result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
-            } else {
-                return new LayoutResult(LayoutResult.PARTIAL, layoutContext.getArea(), splitRenderer,
-                        overflowRenderer, null).setAreaBreak(result.getAreaBreak());
-            }
+            return new LayoutResult(LayoutResult.PARTIAL, layoutContext.getArea(), splitRenderer,
+                    overflowRenderer, null).setAreaBreak(result.getAreaBreak());
         }
     }
 
@@ -354,7 +363,7 @@ public class FlexContainerRenderer extends DivRenderer {
         }
         return null;
     }
-
+    
     @Override
     void fixOccupiedAreaIfOverflowedX(OverflowPropertyValue overflowX, Rectangle layoutBox) {
         // TODO DEVSIX-5087 Support overflow visible/hidden property correctly
@@ -371,6 +380,71 @@ public class FlexContainerRenderer extends DivRenderer {
         // on the ticket one may come to some more satifactory approach
         renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         super.addChild(renderer);
+    }
+
+    private void fillSplitOverflowRenderersForPartialResult(AbstractRenderer splitRenderer,
+            AbstractRenderer overflowRenderer, List<FlexItemInfo> line, IRenderer childRenderer,
+            LayoutResult childResult) {
+        // If we split, we remove (override) Property.ALIGN_ITEMS for the overflow renderer.
+        // because we have to layout the remaining part at the top of the layout context.
+        // TODO DEVSIX-5086 When flex-wrap will be fully supported we'll need to reconsider this.
+        // The question is what should be set/calculated for the next line
+        overflowRenderer.setProperty(Property.ALIGN_ITEMS, null);
+
+        float occupiedSpace = 0;
+        boolean metChildRendererInLine = false;
+        for (final FlexItemInfo itemInfo : line) {
+            // Split the line
+            if (itemInfo.getRenderer() == childRenderer) {
+                metChildRendererInLine = true;
+                if (childResult.getSplitRenderer() != null) {
+                    splitRenderer.addChildRenderer(childResult.getSplitRenderer());
+                }
+
+                if (childResult.getOverflowRenderer() != null) {
+                    overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
+                }
+            } else if (metChildRendererInLine) {
+                // Process all following renderers in the current line
+                // We have to layout them to understand what goes where
+                final Rectangle neighbourBbox = getOccupiedAreaBBox().clone();
+                // Move bbox by occupied space
+                neighbourBbox.setX(neighbourBbox.getX() + occupiedSpace);
+                neighbourBbox.setWidth(itemInfo.getRectangle().getWidth());
+
+                // Y of the renderer has been already calculated, move bbox accordingly
+                neighbourBbox.setY(neighbourBbox.getY() - itemInfo.getRectangle().getY());
+
+                final LayoutResult neighbourLayoutResult = itemInfo.getRenderer().layout(new LayoutContext(
+                        new LayoutArea(childResult.getOccupiedArea().getPageNumber(), neighbourBbox)));
+                // Handle result
+                if (neighbourLayoutResult.getStatus() == LayoutResult.PARTIAL &&
+                        neighbourLayoutResult.getSplitRenderer() != null) {
+                    splitRenderer.addChildRenderer(neighbourLayoutResult.getSplitRenderer());
+                } else if (neighbourLayoutResult.getStatus() == LayoutResult.FULL) {
+                    splitRenderer.addChildRenderer(itemInfo.getRenderer());
+                } else {
+                    // LayoutResult.NOTHING
+                }
+
+                if (neighbourLayoutResult.getOverflowRenderer() != null) {
+                    overflowRenderer.addChildRenderer(neighbourLayoutResult.getOverflowRenderer());
+                } else {
+                    // Here we might need to still occupy the space on overflow renderer
+                    addSimulateDiv(overflowRenderer, itemInfo.getRectangle().getWidth());
+                }
+            } else {
+                // Process all preceeding renderers in the current line
+                // They all were layouted as FULL so add them into split renderer
+                splitRenderer.addChildRenderer(itemInfo.getRenderer());
+
+                // But we also need to occupy the space on overflow renderer
+                addSimulateDiv(overflowRenderer, itemInfo.getRectangle().getWidth());
+            }
+
+            // X is nonzero only for the 1st renderer in line serving for alignment adjustments
+            occupiedSpace += itemInfo.getRectangle().getX() + itemInfo.getRectangle().getWidth();
+        }
     }
 
     private void findMinMaxWidthIfCorrespondingPropertiesAreNotSet(MinMaxWidth minMaxWidth,
@@ -390,4 +464,9 @@ public class FlexContainerRenderer extends DivRenderer {
         }
     }
 
+    private static void addSimulateDiv(AbstractRenderer overflowRenderer, float width) {
+        final IRenderer fakeOverflowRenderer = new DivRenderer(
+                new Div().setMinWidth(width).setMaxWidth(width));
+        overflowRenderer.addChildRenderer(fakeOverflowRenderer);
+    }
 }
