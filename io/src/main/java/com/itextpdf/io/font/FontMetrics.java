@@ -50,7 +50,7 @@ public class FontMetrics {
     protected float normalizationCoef = 1f;
 
     // head.unitsPerEm
-    private int unitsPerEm = 1000;
+    private int unitsPerEm = FontProgram.UNITS_NORMALIZATION;
     // maxp.numGlyphs
     private int numOfGlyphs;
     // hmtx
@@ -242,7 +242,7 @@ public class FontMetrics {
 
     protected void setUnitsPerEm(int unitsPerEm) {
         this.unitsPerEm = unitsPerEm;
-        normalizationCoef = (float) FontProgram.UNITS_NORMALIZATION / unitsPerEm;
+        normalizationCoef =  (float) FontProgram.UNITS_NORMALIZATION / unitsPerEm;
     }
 
     protected void updateBbox(float llx, float lly, float urx, float ury) {

@@ -171,7 +171,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         double[] fontBBoxRect = readFontBBox();
         double[] widthsArray = readWidths(fontDictionary);
 
-        setGlyphSpaceNormalizationFactor(fontMatrixArray[0] * FontProgram.UNITS_NORMALIZATION);
+        setGlyphSpaceNormalizationFactor(FontProgram.convertGlyphSpaceToTextSpace(fontMatrixArray[0]));
 
         PdfDictionary charProcsDic = fontDictionary.getAsDictionary(PdfName.CharProcs);
         PdfDictionary encoding = fontDictionary.getAsDictionary(PdfName.Encoding);

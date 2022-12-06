@@ -2991,7 +2991,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
         float fs;
         float height = bBox.getHeight() - borderWidth * 2;
         int[] fontBbox = localFont.getFontProgram().getFontMetrics().getBbox();
-        fs = height / (fontBbox[2] - fontBbox[1]) * FontProgram.UNITS_NORMALIZATION;
+        fs = FontProgram.convertGlyphSpaceToTextSpace(height / (fontBbox[2] - fontBbox[1]));
 
         float baseWidth = localFont.getWidth(value, 1);
         if (baseWidth != 0) {

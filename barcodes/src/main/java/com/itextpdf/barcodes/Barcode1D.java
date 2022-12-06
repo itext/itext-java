@@ -545,7 +545,7 @@ public abstract class Barcode1D {
     }
 
     protected float getDescender() {
-        float sizeCoef = size / FontProgram.UNITS_NORMALIZATION;
-        return font.getFontProgram().getFontMetrics().getTypoDescender() * sizeCoef;
+        final float sizeCoefficient = FontProgram.convertTextSpaceToGlyphSpace(size);
+        return font.getFontProgram().getFontMetrics().getTypoDescender() * sizeCoefficient;
     }
 }

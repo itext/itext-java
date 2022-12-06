@@ -502,9 +502,9 @@ class OpenTypeParser implements Closeable {
         glyphWidthsByIndex = new int[readNumGlyphs()];
         raf.seek(table_location[0]);
         for (int k = 0; k < numberOfHMetrics; ++k) {
-            glyphWidthsByIndex[k] = raf.readUnsignedShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm;
-            @SuppressWarnings("unused")
-            int leftSideBearing = raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm;
+            glyphWidthsByIndex[k] = FontProgram.convertGlyphSpaceToTextSpace(raf.readUnsignedShort()) / unitsPerEm;
+            @SuppressWarnings("unused") final int leftSideBearing =
+                    FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm;
         }
         // If the font is monospaced, only one entry need be in the array, but that entry is required.
         // The last entry applies to all subsequent glyphs.
@@ -543,7 +543,7 @@ class OpenTypeParser implements Closeable {
                 raf.skipBytes(6);
                 for (int j = 0; j < nPairs; ++j) {
                     int pair = raf.readInt();
-                    int value = raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm;
+                    final int value = FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm;
                     kerning.put(pair, value);
                 }
             }
@@ -604,11 +604,11 @@ class OpenTypeParser implements Closeable {
             int start = locaTable[glyph];
             if (start != locaTable[glyph + 1]) {
                 raf.seek(tableGlyphOffset + start + 2);
-                bboxes[glyph] = new int[]{
-                        raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm,
-                        raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm,
-                        raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm,
-                        raf.readShort() * TrueTypeFont.UNITS_NORMALIZATION / unitsPerEm
+                bboxes[glyph] = new int[] {
+                        FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm,
+                        FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm,
+                        FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm,
+                        FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm,
                 };
             }
         }

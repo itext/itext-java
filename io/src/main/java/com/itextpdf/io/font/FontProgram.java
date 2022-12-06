@@ -54,8 +54,26 @@ import java.util.Map;
 public abstract class FontProgram {
 
 
+    public static final int HORIZONTAL_SCALING_FACTOR = 100;
     public static final int DEFAULT_WIDTH = 1000;
     public static final int UNITS_NORMALIZATION = 1000;
+
+
+    public static float convertTextSpaceToGlyphSpace(float value) {
+        return value / UNITS_NORMALIZATION;
+    }
+
+    public static float convertGlyphSpaceToTextSpace(float value) {
+        return value * UNITS_NORMALIZATION;
+    }
+
+    public static double convertGlyphSpaceToTextSpace(double value) {
+        return value * UNITS_NORMALIZATION;
+    }
+
+    public static int convertGlyphSpaceToTextSpace(int value) {
+        return value * UNITS_NORMALIZATION;
+    }
 
     // In case Type1: char code to glyph.
     // In case TrueType: glyph index to glyph.
@@ -71,7 +89,8 @@ public abstract class FontProgram {
 
     /**
      * The font's encoding name. This encoding is 'StandardEncoding' or 'AdobeStandardEncoding' for a font
-     * that can be totally encoded according to the characters names. For all other names the font is treated as symbolic.
+     * that can be totally encoded according to the characters names. For all other names the font is treated as
+     * symbolic.
      */
     protected String encodingScheme = FontEncoding.FONT_SPECIFIC;
 
@@ -107,6 +126,7 @@ public abstract class FontProgram {
      * Get glyph's width.
      *
      * @param unicode a unicode symbol or FontSpecif code.
+     *
      * @return Gets width in normalized 1000 units.
      */
     public int getWidth(int unicode) {
@@ -122,6 +142,7 @@ public abstract class FontProgram {
      * Get glyph's bbox.
      *
      * @param unicode a unicode symbol or FontSpecif code.
+     *
      * @return Gets bbox in normalized 1000 units.
      */
     public int[] getCharBBox(int unicode) {
@@ -147,6 +168,7 @@ public abstract class FontProgram {
      *
      * @param first  the first unicode value
      * @param second the second unicode value
+     *
      * @return the kerning to be applied
      */
     public int getKerning(int first, int second) {
@@ -158,6 +180,7 @@ public abstract class FontProgram {
      *
      * @param first  the first glyph
      * @param second the second glyph
+     *
      * @return the kerning to be applied
      */
     public abstract int getKerning(Glyph first, Glyph second);
@@ -167,6 +190,7 @@ public abstract class FontProgram {
      * Default value is false unless overridden.
      *
      * @param fontName a font name or path to a font program
+     *
      * @return true, if the FontProgram was built with the fontProgram. Otherwise false.
      */
     public boolean isBuiltWith(String fontName) {
@@ -181,6 +205,7 @@ public abstract class FontProgram {
      * Gets the name without the modifiers Bold, Italic or BoldItalic.
      *
      * @param name the full name of the font
+     *
      * @return the name without the modifiers Bold, Italic or BoldItalic
      */
     static String trimFontStyle(String name) {
@@ -233,7 +258,8 @@ public abstract class FontProgram {
      * Sets the PostScript italic angle.
      *
      * <p>
-     * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
+     * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans
+     * to the right (forward).
      *
      * @param italicAngle in counter-clockwise degrees from the vertical
      */

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -342,7 +343,10 @@ public class ListItemRenderer extends DivRenderer {
                         Property.FONT_SIZE));
             }
             float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
-            return new float[] {fontSize.getValue() * ascenderDescender[0] / TextRenderer.TEXT_SPACE_COEFF, fontSize.getValue() * ascenderDescender[1] / TextRenderer.TEXT_SPACE_COEFF};
+            return new float[] {
+                    fontSize.getValue() * FontProgram.convertTextSpaceToGlyphSpace(ascenderDescender[0]),
+                    fontSize.getValue() * FontProgram.convertTextSpaceToGlyphSpace(ascenderDescender[1])
+            };
         }
         return new float[] {0, 0};
     }

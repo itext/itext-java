@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -581,8 +582,8 @@ public class PdfCanvasProcessor {
      * @param tj the text adjustment
      */
     private void applyTextAdjust(float tj) {
-        float adjustBy = -tj / 1000f * getGraphicsState().getFontSize() * (getGraphicsState().getHorizontalScaling() / 100f);
-
+        final float adjustBy = FontProgram.convertTextSpaceToGlyphSpace(-tj) * getGraphicsState().getFontSize() * (
+                getGraphicsState().getHorizontalScaling() / 100F);
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
     }
 

@@ -50,7 +50,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.renderer.TextRenderer;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgTextUtil;
@@ -110,8 +109,10 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
             final float textLength = getTextContentLength(parentFontSize, parentFont);
             final float[] fontAscenderDescenderFromMetrics = TextRenderer
                     .calculateAscenderDescender(parentFont, RenderingMode.HTML_MODE);
-            final float fontAscender = fontAscenderDescenderFromMetrics[0] / FontProgram.UNITS_NORMALIZATION * parentFontSize;
-            final float fontDescender = fontAscenderDescenderFromMetrics[1] / FontProgram.UNITS_NORMALIZATION * parentFontSize;
+            final float fontAscender =
+                    FontProgram.convertTextSpaceToGlyphSpace(fontAscenderDescenderFromMetrics[0]) * parentFontSize;
+            final float fontDescender = FontProgram.convertTextSpaceToGlyphSpace(
+                    fontAscenderDescenderFromMetrics[1]) * parentFontSize;
             // TextRenderer#calculateAscenderDescender returns fontDescender as a negative value so we should subtract this value
             final float textHeight = fontAscender - fontDescender;
             return new TextRectangle((float) basePoint.getX(), (float) basePoint.getY() - fontAscender, textLength,

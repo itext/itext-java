@@ -22,10 +22,15 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -37,13 +42,17 @@ import java.util.List;
 public class OtfReadCommonTest extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/OtfReadCommonTest/";
 
+    private static final String RESOURCE_FOLDER_2 = "./src/test/resources/com/itextpdf/io/font/otf"
+            + "/GposLookupType7Test/";
+
     @Test
     public void testReadCoverageFormat1() throws IOException {
         // Based on Example 5 from the specification
         // https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2
         // 0001 0005 0038 003B 0041 1042 A04A
         String path = RESOURCE_FOLDER + "coverage-format-1.bin";
-        RandomAccessFileOrArray rf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(path));
+        RandomAccessFileOrArray rf = new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createBestSource(path));
         List<Integer> glyphIds = OtfReadCommon.readCoverageFormat(rf, 0);
         Assert.assertEquals(5, glyphIds.size());
         Assert.assertEquals(0x38, (int) glyphIds.get(0));
@@ -59,10 +68,60 @@ public class OtfReadCommonTest extends ExtendedITextTest {
         // https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2
         // 0002 0001 A04E A057 0000
         String path = RESOURCE_FOLDER + "coverage-format-2.bin";
-        RandomAccessFileOrArray rf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(path));
+        RandomAccessFileOrArray rf = new RandomAccessFileOrArray(
+                new RandomAccessSourceFactory().createBestSource(path));
         List<Integer> glyphIds = OtfReadCommon.readCoverageFormat(rf, 0);
         Assert.assertEquals(10, glyphIds.size());
         Assert.assertEquals(0xA04E, (int) glyphIds.get(0));
         Assert.assertEquals(0xA057, (int) glyphIds.get(9));
+    }
+
+    @Test
+    public void testConversionGlyphToTextSpace() throws IOException {
+        OpenTypeFontTableReaderTest gposTableReader = new OpenTypeFontTableReaderTest(new RandomAccesArrayTest(null), 0,
+                null, null, 1);
+        // at 15 we fill up all values
+        GposValueRecord valueRecord = OtfReadCommon.readGposValueRecord(gposTableReader, 15);
+        Assert.assertEquals(2000,valueRecord.XAdvance);
+        Assert.assertEquals(2000,valueRecord.XPlacement);
+        Assert.assertEquals(2000,valueRecord.YAdvance);
+        Assert.assertEquals(2000,valueRecord.YPlacement);
+    }
+
+    class OpenTypeFontTableReaderTest extends OpenTypeFontTableReader {
+        protected OpenTypeFontTableReaderTest(RandomAccessFileOrArray rf, int tableLocation,
+                OpenTypeGdefTableReader gdef,
+                Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) {
+            super(rf, tableLocation, gdef, indexGlyphMap, unitsPerEm);
+        }
+
+        @Override
+        protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
+                throws IOException {
+            return null;
+        }
+    }
+
+    class RandomAccesArrayTest extends RandomAccessFileOrArray {
+
+        /**
+         * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
+         * this RandomAccessFileOrArray is closed.
+         *
+         * @param byteSource the byte source to wrap
+         */
+        public RandomAccesArrayTest(IRandomAccessSource byteSource) {
+            super(byteSource);
+        }
+
+        @Override
+        public short readShort() throws IOException {
+            return 2;
+        }
+
+        @Override
+        public long skip(long n) {
+            return 2;
+        }
     }
 }

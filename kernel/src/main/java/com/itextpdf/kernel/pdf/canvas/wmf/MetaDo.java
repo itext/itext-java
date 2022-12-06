@@ -632,7 +632,7 @@ public class MetaDo {
         for (byte b : bytes) {
             normalizedWidth += fp.getWidth(0xff & b);
         }
-        float textWidth = fontSize / FontProgram.UNITS_NORMALIZATION * normalizedWidth;
+        final float textWidth = FontProgram.convertTextSpaceToGlyphSpace(fontSize) * normalizedWidth;
         float tx = 0;
         float ty = 0;
         float descender = fp.getFontMetrics().getTypoDescender();

@@ -43,6 +43,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.ActualTextIterator;
 import com.itextpdf.io.font.otf.Glyph;
@@ -745,7 +746,7 @@ public class PdfCanvas {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
-        float fontSize = currentGs.getFontSize() / 1000f;
+        final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
@@ -866,7 +867,7 @@ public class PdfCanvas {
      * XAdvance is not taken into account neither before `from` nor after `to` glyphs.
      */
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
-        float fontSize = currentGs.getFontSize() / 1000f;
+        final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         float width = 0;
@@ -885,7 +886,7 @@ public class PdfCanvas {
     }
 
     private float getSubrangeYDelta(GlyphLine text, int from, int to) {
-        float fontSize = currentGs.getFontSize() / 1000f;
+        final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float yDelta = 0;
         for (int iter = from; iter < to; iter++) {
             yDelta += text.get(iter).getYAdvance() * fontSize;

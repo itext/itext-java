@@ -465,8 +465,9 @@ public class TextRenderInfo extends AbstractRenderInfo {
         if (charWidth == 0) {
             charWidth = gs.getFont().getFontProgram().getAvgWidth();
         }
-        float w = (float) ((double) charWidth / FontProgram.UNITS_NORMALIZATION);
-        return (w * gs.getFontSize() + gs.getCharSpacing() + gs.getWordSpacing()) * gs.getHorizontalScaling() / 100f;
+        final float charWidthInGlyphSpace = FontProgram.convertTextSpaceToGlyphSpace(charWidth);
+        return (charWidthInGlyphSpace * gs.getFontSize() + gs.getCharSpacing() + gs.getWordSpacing())
+                * gs.getHorizontalScaling() / 100F;
     }
 
     /**
@@ -499,11 +500,10 @@ public class TextRenderInfo extends AbstractRenderInfo {
      */
     private float[] getWidthAndWordSpacing(PdfString string) {
         checkGraphicsState();
-        float[] result = new float[2];
-
-        result[0] = (float) ((double) gs.getFont().getContentWidth(string) / FontProgram.UNITS_NORMALIZATION);
-        result[1] = " ".equals(string.getValue()) ? gs.getWordSpacing() : 0;
-        return result;
+        return new float[] {
+                FontProgram.convertTextSpaceToGlyphSpace(gs.getFont().getContentWidth(string)),
+                " ".equals(string.getValue()) ? gs.getWordSpacing() : 0,
+        };
     }
 
     /**
@@ -566,7 +566,7 @@ public class TextRenderInfo extends AbstractRenderInfo {
             descent = -descent;
         }
 
-        float scale = ascent - descent < 700 ? ascent - descent : 1000;
+        final float scale = (ascent - descent < 700) ? (ascent - descent) : FontProgram.UNITS_NORMALIZATION;
         descent = descent / scale * gs.getFontSize();
         ascent = ascent / scale * gs.getFontSize();
         return new float[]{ascent, descent};

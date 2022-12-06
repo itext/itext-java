@@ -265,7 +265,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (RenderingMode.HTML_MODE.equals(mode)) {
             currentLineAscender = ascenderDescender[0];
             currentLineDescender = ascenderDescender[1];
-            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
+            currentLineHeight = (currentLineAscender - currentLineDescender) * FontProgram.convertTextSpaceToGlyphSpace(
+                    fontSize.getValue()) + textRise;
         }
 
         savedWordBreakAtLineEnding = null;
@@ -372,10 +373,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     tabAnchorCharacter = null;
                 }
 
-                float glyphWidth = getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                final float glyphWidth = FontProgram.convertTextSpaceToGlyphSpace(
+                        getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing));
                 float xAdvance = previousCharPos != -1 ? text.get(previousCharPos).getXAdvance() : 0;
                 if (xAdvance != 0) {
-                    xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
+                    xAdvance = FontProgram.convertTextSpaceToGlyphSpace(
+                            scaleXAdvance(xAdvance, fontSize.getValue(), hScale));
                 }
 
                 final float potentialWidth =
@@ -419,7 +422,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 nonBreakablePartMaxAscender = Math.max(nonBreakablePartMaxAscender, ascender);
                 nonBreakablePartMaxDescender = Math.min(nonBreakablePartMaxDescender, descender);
-                nonBreakablePartMaxHeight = (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
+                nonBreakablePartMaxHeight = FontProgram.convertTextSpaceToGlyphSpace(
+                        (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize.getValue()) + textRise;
 
                 previousCharPos = ind;
 
@@ -623,8 +627,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             // process empty line (e.g. '\n')
                             currentLineAscender = ascender;
                             currentLineDescender = descender;
-                            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
-                            currentLineWidth += getCharWidth(line.get(line.start), fontSize.getValue(), hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                            currentLineHeight = FontProgram.convertTextSpaceToGlyphSpace(
+                                    (currentLineAscender - currentLineDescender) * fontSize.getValue()) + textRise;
+                            currentLineWidth += FontProgram.convertTextSpaceToGlyphSpace(
+                                    getCharWidth(line.get(line.start), fontSize.getValue(), hScale, characterSpacing,
+                                            wordSpacing));
                         }
                     }
                     if (line.end <= line.start) {
@@ -663,7 +670,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
-        yLineOffset = currentLineAscender * fontSize.getValue() / TEXT_SPACE_COEFF;
+        yLineOffset = FontProgram.convertTextSpaceToGlyphSpace(currentLineAscender * fontSize.getValue());
 
         occupiedArea.getBBox().moveDown(currentLineHeight);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
@@ -947,7 +954,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     // For PdfType0Font we must add word manually with glyph offsets
                     for (int gInd = line.start; gInd < line.end; gInd++) {
                         if (TextUtil.isUni0020(line.get(gInd))) {
-                            short advance = (short) (TextRenderer.TEXT_SPACE_COEFF * (float) wordSpacing / fontSize.getValue());
+                            final short advance = (short) (FontProgram.convertGlyphSpaceToTextSpace((float) wordSpacing)
+                                    / fontSize.getValue());
                             Glyph copy = new Glyph(line.get(gInd));
                             copy.setXAdvance(advance);
                             line.set(gInd, copy);
@@ -1081,8 +1089,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             saveWordBreakIfNotYetSaved(currentGlyph);
 
-            float currentCharWidth = getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize.getValue(), hScale) / TEXT_SPACE_COEFF : 0;
+            final float currentCharWidth = FontProgram.convertTextSpaceToGlyphSpace(
+                    getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing));
+            final float xAdvance = firstNonSpaceCharIndex > line.start ? FontProgram.convertTextSpaceToGlyphSpace(
+                    scaleXAdvance(line.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize.getValue(), hScale)) : 0;
             trimmedSpace += currentCharWidth - xAdvance;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
@@ -1683,10 +1693,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         float resultWidth = g.getWidth() * fontSize * (float) hScale;
         if (characterSpacing != null) {
-            resultWidth += (float) characterSpacing * (float) hScale * TEXT_SPACE_COEFF;
+            resultWidth += FontProgram.convertGlyphSpaceToTextSpace((float) characterSpacing * (float) hScale);
         }
         if (wordSpacing != null && g.getUnicode() == ' ') {
-            resultWidth += (float) wordSpacing * (float) hScale * TEXT_SPACE_COEFF;
+            resultWidth += FontProgram.convertGlyphSpaceToTextSpace((float) wordSpacing * (float) hScale);
         }
         return resultWidth;
     }
@@ -1705,7 +1715,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 width += xAdvance;
             }
         }
-        return width / TEXT_SPACE_COEFF;
+        return FontProgram.convertTextSpaceToGlyphSpace(width);
     }
 
     private int[] getWordBoundsForHyphenation(GlyphLine text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {

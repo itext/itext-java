@@ -128,12 +128,12 @@ public class BarcodeEANSUPP extends Barcode1D {
      */
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color barColor, Color textColor) {
-        if (supp.getFont() != null) {
-            float sizeCoef = supp.getSize() / FontProgram.UNITS_NORMALIZATION;
-            supp.setBarHeight(ean.getBarHeight() + supp.getBaseline()
-                    - supp.getFont().getFontProgram().getFontMetrics().getCapHeight() * sizeCoef);
-        } else {
+        if (supp.getFont() == null) {
             supp.setBarHeight(ean.getBarHeight());
+        } else {
+            final float sizeCoefficient = FontProgram.convertTextSpaceToGlyphSpace(supp.getSize());
+            supp.setBarHeight(ean.getBarHeight() + supp.getBaseline()
+                    - supp.getFont().getFontProgram().getFontMetrics().getCapHeight() * sizeCoefficient);
         }
         Rectangle eanR = ean.getBarcodeSize();
         canvas.saveState();
