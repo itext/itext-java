@@ -501,7 +501,6 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
-              <!-- TODO DEVSIX-7032 Remove this skip property -->
               <skip>true</skip>
             </configuration>
           </plugin>
