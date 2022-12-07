@@ -42,16 +42,16 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -101,6 +101,22 @@ public class PdfCanvasTest extends ExtendedITextTest {
     private static final String CREATOR = "iText 7";
     private static final String TITLE = "Empty iText 7 Document";
 
+    private static final ContentProvider DEFAULT_CONTENT_PROVIDER = new ContentProvider() {
+        @Override
+        public void drawOnCanvas(PdfCanvas canvas, int pageNumber) throws IOException {
+            canvas
+                    .saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
+                    .showText(Integer.toString(pageNumber + 1))
+                    .endText()
+                    .restoreState();
+            canvas.rectangle(100, 500, 100, 100).fill();
+        }
+    };
+
+
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -108,7 +124,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
     @Test
     public void createSimpleCanvas() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "simpleCanvas.pdf"));
+        String filename = DESTINATION_FOLDER + "simpleCanvas.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
                 setCreator(CREATOR).
                 setTitle(TITLE);
@@ -118,17 +135,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvas.pdf");
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
-        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        reader.close();
+        assertStandardDocument(filename, 1);
     }
 
     @Test
@@ -166,9 +173,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
     @Test
     public void createSimpleCanvasWithDrawing() throws IOException {
 
-        final String fileName = "simpleCanvasWithDrawing.pdf";
+        final String fileName = DESTINATION_FOLDER + "simpleCanvasWithDrawing.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
         pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
                 setCreator(CREATOR).
                 setTitle(TITLE);
@@ -223,25 +230,15 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(DESTINATION_FOLDER + fileName);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
-        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        pdfDocument.close();
+        assertStandardDocument(fileName, 1);
     }
 
     @Test
     public void createSimpleCanvasWithText() throws IOException {
 
-        final String fileName = "simpleCanvasWithText.pdf";
+        final String fileName = DESTINATION_FOLDER + "simpleCanvasWithText.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
         pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
                 setCreator(CREATOR).
                 setTitle(TITLE);
@@ -304,22 +301,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(DESTINATION_FOLDER + fileName);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
-        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        pdfDocument.close();
+        assertStandardDocument(fileName, 1);
     }
 
     @Test
     public void createSimpleCanvasWithPageFlush() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "simpleCanvasWithPageFlush.pdf"));
+        String filename = DESTINATION_FOLDER + "simpleCanvasWithPageFlush.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
                 setCreator(CREATOR).
                 setTitle(TITLE);
@@ -330,23 +318,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvasWithPageFlush.pdf");
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
-        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        pdfDocument.close();
+        assertStandardDocument(filename, 1);
     }
 
     @Test
     public void createSimpleCanvasWithFullCompression() throws IOException {
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "simpleCanvasWithFullCompression.pdf",
-                new WriterProperties().setFullCompressionMode(true));
+        String filename = DESTINATION_FOLDER + "simpleCanvasWithFullCompression.pdf";
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
                 setCreator(CREATOR).
@@ -357,22 +335,13 @@ public class PdfCanvasTest extends ExtendedITextTest {
         canvas.release();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvasWithFullCompression.pdf");
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
-        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        pdfDocument.close();
+        assertStandardDocument(filename, 1);
     }
 
     @Test
     public void createSimpleCanvasWithPageFlushAndFullCompression() throws IOException {
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "simpleCanvasWithPageFlushAndFullCompression.pdf", new WriterProperties().setFullCompressionMode(true));
+        String filename = DESTINATION_FOLDER + "simpleCanvasWithPageFlushAndFullCompression.pdf";
+        PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
                 setCreator(CREATOR).
@@ -384,17 +353,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         page1.flush();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "simpleCanvasWithPageFlushAndFullCompression.pdf");
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
-        PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
-        Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        pdfDocument.close();
+        assertStandardDocument(filename, 1);
     }
 
     @Test
@@ -402,81 +361,21 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int pageCount = 1000;
         String filename = DESTINATION_FOLDER + pageCount + "PagesDocument.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            canvas.rectangle(100, 500, 100, 100).fill();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
+        createStandardDocument(new PdfWriter(filename), pageCount, DEFAULT_CONTENT_PROVIDER);
 
-        PdfReader reader = new PdfReader(DESTINATION_FOLDER + "1000PagesDocument.pdf");
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
+
+
 
     @Test
     public void create100PagesDocument() throws IOException {
         int pageCount = 100;
         String filename = DESTINATION_FOLDER + pageCount + "PagesDocument.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            canvas.rectangle(100, 500, 100, 100).fill();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
+        createStandardDocument(new PdfWriter(filename), pageCount, DEFAULT_CONTENT_PROVIDER);
 
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
 
     @Test
@@ -484,40 +383,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int pageCount = 10;
         String filename = DESTINATION_FOLDER + pageCount + "PagesDocument.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            canvas.rectangle(100, 500, 100, 100).fill();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
+        createStandardDocument(new PdfWriter(filename), pageCount, DEFAULT_CONTENT_PROVIDER);
 
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
 
     @Test
@@ -525,39 +393,21 @@ public class PdfCanvasTest extends ExtendedITextTest {
         int pageCount = 1000;
         final String filename = DESTINATION_FOLDER + "1000PagesDocumentWithText.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas.saveState()
-                    .beginText()
-                    .moveText(36, 650)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 16)
-                    .showText("Page " + (i + 1))
-                    .endText();
+        createStandardDocument(new PdfWriter(filename), pageCount, new ContentProvider() {
+            @Override
+            public void drawOnCanvas(PdfCanvas canvas, int pageNumber) throws IOException {
+                canvas.saveState()
+                        .beginText()
+                        .moveText(36, 650)
+                        .setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER), 16)
+                        .showText("Page " + (pageNumber + 1))
+                        .endText();
 
-            canvas.rectangle(100, 100, 100, 100).fill();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
+                canvas.rectangle(100, 100, 100, 100).fill();
+            }
+        });
 
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
 
     @Test
@@ -566,41 +416,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "1000PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            canvas.rectangle(100, 500, 100, 100).fill();
-            canvas.release();
-            page.flush();
+        createStandardDocument(writer, pageCount, DEFAULT_CONTENT_PROVIDER);
 
-        }
-        pdfDoc.close();
-
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
 
     @Test
@@ -627,19 +445,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
-
-        page = pdfDocument.getPage(1);
-        Assert.assertEquals(PdfName.Page, page.getPdfObject().get(PdfName.Type));
-
-        pdfDocument.close();
+        assertStandardDocument(filename, 1);
     }
 
     @Test
@@ -648,40 +454,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            canvas.rectangle(100, 500, 100, 100).fill();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
+        createStandardDocument(writer, pageCount, DEFAULT_CONTENT_PROVIDER);
 
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
 
     @Test
@@ -690,40 +465,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            canvas.rectangle(100, 500, 100, 100).fill();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
+        createStandardDocument(writer, pageCount, DEFAULT_CONTENT_PROVIDER);
 
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
 
     @Test
@@ -732,40 +476,9 @@ public class PdfCanvasTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + pageCount + "PagesDocumentWithFullCompression.pdf";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties().setFullCompressionMode(true));
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
-                setCreator(CREATOR).
-                setTitle(TITLE);
-        for (int i = 0; i < pageCount; i++) {
-            PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas
-                    .saveState()
-                    .beginText()
-                    .moveText(36, 700)
-                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 72)
-                    .showText(Integer.toString(i + 1))
-                    .endText()
-                    .restoreState();
-            canvas.rectangle(100, 500, 100, 100).fill();
-            canvas.release();
-            page.flush();
-        }
-        pdfDoc.close();
+        createStandardDocument(writer, pageCount, DEFAULT_CONTENT_PROVIDER);
 
-        PdfReader reader = new PdfReader(filename);
-        PdfDocument pdfDocument = new PdfDocument(reader);
-        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
-        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
-        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
-        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
-        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
-        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
-        for (int i = 1; i <= pageCount; i++) {
-            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
-            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
-        }
-        pdfDocument.close();
+        assertStandardDocument(filename, pageCount);
     }
 
     @Test
@@ -1954,4 +1667,44 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
+
+    private void createStandardDocument(PdfWriter writer, int pageCount, ContentProvider contentProvider) throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.getDocumentInfo().setAuthor(AUTHOR).
+                setCreator(CREATOR).
+                setTitle(TITLE);
+        for (int i = 0; i < pageCount; i++) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            contentProvider.drawOnCanvas(canvas, i);
+
+            canvas.release();
+            page.flush();
+
+        }
+        pdfDoc.close();
+    }
+
+    private void assertStandardDocument(String filename, int pageCount) throws IOException {
+        PdfReader reader = new PdfReader(filename);
+        PdfDocument pdfDocument = new PdfDocument(reader);
+        Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
+        PdfDictionary info = pdfDocument.getTrailer().getAsDictionary(PdfName.Info);
+        Assert.assertEquals("Author", AUTHOR, info.get(PdfName.Author).toString());
+        Assert.assertEquals("Creator", CREATOR, info.get(PdfName.Creator).toString());
+        Assert.assertEquals("Title", TITLE, info.get(PdfName.Title).toString());
+        Assert.assertEquals("Page count", pageCount, pdfDocument.getNumberOfPages());
+        for (int i = 1; i <= pageCount; i++) {
+            PdfDictionary page = pdfDocument.getPage(i).getPdfObject();
+            Assert.assertEquals(PdfName.Page, page.get(PdfName.Type));
+        }
+        pdfDocument.close();
+    }
+
+
+    @FunctionalInterface
+    private interface ContentProvider {
+        void drawOnCanvas(PdfCanvas canvas, int pageNumber) throws IOException;
+    }
+
 }
