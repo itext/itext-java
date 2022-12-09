@@ -54,20 +54,18 @@ import java.security.GeneralSecurityException;
 public interface IExternalSignature {
 
     /**
-     * Returns the hash algorithm.
-     * @return	The hash algorithm (e.g. "SHA-1", "SHA-256,...").
+     * Returns the digest algorithm.
+     *
+     * @return	The digest algorithm (e.g. "SHA-1", "SHA-256,...").
      */
-    String getHashAlgorithm();
+    String getDigestAlgorithmName();
 
     /**
-     * Returns the signature algorithm used for signing.
+     * Returns the signature algorithm used for signing, disregarding the digest function.
      *
-     * <p>
-     * This method is named {@code getEncryptionAlgorithm} for historical reasons.
-     *
-     * @return The encryption algorithm ("RSA", "DSA", "ECDSA", "Ed25519" or "Ed448").
+     * @return The signature algorithm ("RSA", "DSA", "ECDSA", "Ed25519" or "Ed448").
      */
-    String getEncryptionAlgorithm();
+    String getSignatureAlgorithmName();
 
     /**
      * Signs the given message using the encryption algorithm in combination

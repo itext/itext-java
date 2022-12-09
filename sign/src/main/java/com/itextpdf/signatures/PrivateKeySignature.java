@@ -47,10 +47,8 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.security.GeneralSecurityException;
-import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.security.UnrecoverableKeyException;
 
 /**
  * Implementation of the {@link IExternalSignature} interface that
@@ -114,7 +112,7 @@ public class PrivateKeySignature implements IExternalSignature {
      * {@inheritDoc}
      */
     @Override
-    public String getHashAlgorithm() {
+    public String getDigestAlgorithmName() {
         return hashAlgorithm;
     }
 
@@ -122,7 +120,7 @@ public class PrivateKeySignature implements IExternalSignature {
      * {@inheritDoc}
      */
     @Override
-    public String getEncryptionAlgorithm() {
+    public String getSignatureAlgorithmName() {
         return signatureAlgorithm;
     }
 
@@ -131,20 +129,20 @@ public class PrivateKeySignature implements IExternalSignature {
      */
     @Override
     public byte[] sign(byte[] message) throws GeneralSecurityException {
-        String algorithm = getSignatureMechanism();
+        String algorithm = getSignatureMechanismName();
         Signature sig = SignUtils.getSignatureHelper(algorithm, provider);
         sig.initSign(pk);
         sig.update(message);
         return sig.sign();
     }
 
-    public String getSignatureMechanism() {
-        String signatureAlgorithm = this.getEncryptionAlgorithm();
+    public String getSignatureMechanismName() {
+        String signatureAlgorithm = this.getSignatureAlgorithmName();
         // Ed25519 and Ed448 do not involve a choice of hashing algorithm
         if ("Ed25519".equals(signatureAlgorithm) || "Ed448".equals(signatureAlgorithm)) {
             return signatureAlgorithm;
         } else {
-            return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
+            return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();
         }
     }
 
