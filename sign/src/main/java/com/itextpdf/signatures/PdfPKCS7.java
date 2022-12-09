@@ -185,18 +185,18 @@ public class PdfPKCS7 {
         // find the signing algorithm
         if (privKey != null) {
             String signatureAlgo = SignUtils.getPrivateKeyAlgorithm(privKey);
-            String mechanismOid = EncryptionAlgorithms.getSignatureMechanismOid(signatureAlgo, hashAlgorithm);
+            String mechanismOid = SignatureMechanisms.getSignatureMechanismOid(signatureAlgo, hashAlgorithm);
             if (mechanismOid == null) {
                 throw new PdfException(SignExceptionMessageConstant.COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID)
                         .setMessageParams(signatureAlgo, hashAlgorithm);
             }
-            this.signatureAlgorithmOid = mechanismOid;
+            this.signatureMechanismOid = mechanismOid;
         }
 
         // initialize the encapsulated content
         if (hasEncapContent) {
             encapMessageContent = new byte[0];
-            messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+            messageDigest = DigestAlgorithms.getMessageDigest(getDigestAlgorithmName(), provider);
         }
 
         // initialize the Signature object
@@ -233,7 +233,7 @@ public class PdfPKCS7 {
 
             // setting the oid to SHA1withRSA
             digestAlgorithmOid = "1.2.840.10040.4.3";
-            signatureAlgorithmOid = "1.3.36.3.3.1.2";
+            signatureMechanismOid = "1.3.36.3.3.1.2";
         } catch (Exception e) {
             throw new PdfException(e);
         }
@@ -418,7 +418,8 @@ public class PdfPKCS7 {
             if (isCades && !foundCades) {
                 throw new IllegalArgumentException("CAdES ESS information missing.");
             }
-            signatureAlgorithmOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+
+            signatureMechanismOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
                     BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfo.getObjectAt(next)).getObjectAt(0)).getId();
             ++next;
             signatureValue = BOUNCY_CASTLE_FACTORY.createASN1OctetString(signerInfo.getObjectAt(next)).getOctets();
@@ -450,9 +451,9 @@ public class PdfPKCS7 {
                     if (PdfName.Adbe_pkcs7_sha1.equals(getFilterSubtype())) {
                         messageDigest = DigestAlgorithms.getMessageDigest("SHA1", provider);
                     } else {
-                        messageDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                        messageDigest = DigestAlgorithms.getMessageDigest(getDigestAlgorithmName(), provider);
                     }
-                    encContDigest = DigestAlgorithms.getMessageDigest(getHashAlgorithm(), provider);
+                    encContDigest = DigestAlgorithms.getMessageDigest(getDigestAlgorithmName(), provider);
                 }
                 sig = initSignature(signCert.getPublicKey());
             }
@@ -603,7 +604,7 @@ public class PdfPKCS7 {
     /**
      * The signature algorithm.
      */
-    private String signatureAlgorithmOid;
+    private String signatureMechanismOid;
 
     /**
      * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1".
@@ -620,17 +621,17 @@ public class PdfPKCS7 {
      *
      * @return the digest algorithm name, e.g. "SHA256"
      */
-    public String getHashAlgorithm() {
+    public String getDigestAlgorithmName() {
         String hashAlgoName = DigestAlgorithms.getDigest(digestAlgorithmOid);
         // Ed25519 and Ed448 do not allow a choice of hashing algorithm,
         // and ISO 32002 requires using a fixed hashing algorithm to
         // digest the document content
-        if (SecurityIDs.ID_ED25519.equals(this.signatureAlgorithmOid)
+        if (SecurityIDs.ID_ED25519.equals(this.signatureMechanismOid)
                 && !SecurityIDs.ID_SHA512.equals(digestAlgorithmOid)) {
             // We compare based on OID to ensure that there are no name normalisation issues.
             throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
                     .setMessageParams("Ed25519", "SHA-512", hashAlgoName);
-        } else if (SecurityIDs.ID_ED448.equals(this.signatureAlgorithmOid)
+        } else if (SecurityIDs.ID_ED448.equals(this.signatureMechanismOid)
                     && !SecurityIDs.ID_SHAKE256.equals(digestAlgorithmOid)) {
             throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
                     .setMessageParams("Ed448", "512-bit SHAKE256", hashAlgoName);
@@ -642,13 +643,10 @@ public class PdfPKCS7 {
      * Getter for the signature algorithm OID.
      * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
      *
-     * <p>
-     * This method is named {@code getDigestEncryptionAlgorithmOid} for historical reasons.
-     *
      * @return the signature algorithm OID
      */
-    public String getDigestEncryptionAlgorithmOid() {
-        return signatureAlgorithmOid;
+    public String getSignatureMechanismOid() {
+        return signatureMechanismOid;
     }
 
     /**
@@ -656,21 +654,32 @@ public class PdfPKCS7 {
      * and the signature algorithm, e.g. "SHA1withRSA".
      * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
      *
-     * <p>
-     * This method is named {@code getDigestAlgorithm} for historical reasons.
-     *
      * @return the algorithm used to calculate the signature
      */
-    public String getDigestAlgorithm() {
+    public String getSignatureMechanismName() {
         // Ed25519 and Ed448 do not involve a choice of hashing algorithm
-        switch (signatureAlgorithmOid) {
+        switch (signatureMechanismOid) {
             case SecurityIDs.ID_ED25519:
                 return "Ed25519";
             case SecurityIDs.ID_ED448:
                 return "Ed448";
             default:
-                return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
+                return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();
         }
+    }
+
+
+    /**
+     * Returns the name of the signature algorithm only (disregarding the digest function, if any).
+     *
+     * @return the name of an encryption algorithm
+     */
+    public String getSignatureAlgorithmName() {
+        String signAlgo = SignatureMechanisms.getAlgorithm(signatureMechanismOid);
+        if (signAlgo == null) {
+            signAlgo = signatureMechanismOid;
+        }
+        return signAlgo;
     }
 
     /*
@@ -694,9 +703,6 @@ public class PdfPKCS7 {
     /**
      * Sets the signature to an externally calculated value.
      *
-     * <p>
-     * This method is named {@code setExternalDigest} for historical reasons.
-     *
      * @param signatureValue            the signature value
      * @param signedMessageContent      the extra data that goes into the data tag in PKCS#7
      * @param signatureAlgorithm        the signature algorithm. It must be <CODE>null</CODE> if the
@@ -704,17 +710,17 @@ public class PdfPKCS7 {
      *                                  If the <CODE>signatureValue</CODE> is not <CODE>null</CODE>,
      *                                  possible values include "RSA", "DSA", "ECDSA", "Ed25519" and "Ed448".
      */
-    public void setExternalDigest(byte[] signatureValue, byte[] signedMessageContent, String signatureAlgorithm) {
+    public void setExternalSignatureValue(byte[] signatureValue, byte[] signedMessageContent, String signatureAlgorithm) {
         externalSignatureValue = signatureValue;
         externalEncapMessageContent = signedMessageContent;
         if (signatureAlgorithm != null) {
-            String digestAlgo = this.getHashAlgorithm();
-            String oid = EncryptionAlgorithms.getSignatureMechanismOid(signatureAlgorithm, digestAlgo);
+            String digestAlgo = this.getDigestAlgorithmName();
+            String oid = SignatureMechanisms.getSignatureMechanismOid(signatureAlgorithm, digestAlgo);
             if (oid == null) {
                 throw new PdfException(SignExceptionMessageConstant.COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID)
                         .setMessageParams(signatureAlgorithm, digestAlgo);
             }
-            this.signatureAlgorithmOid = oid;
+            this.signatureMechanismOid = oid;
         }
     }
 
@@ -739,7 +745,7 @@ public class PdfPKCS7 {
 
     private Signature initSignature(PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException,
             InvalidKeyException {
-        Signature signature = SignUtils.getSignatureHelper(getDigestAlgorithm(), provider);
+        Signature signature = SignUtils.getSignatureHelper(getSignatureMechanismName(), provider);
         signature.initSign(key);
         return signature;
     }
@@ -751,7 +757,7 @@ public class PdfPKCS7 {
         if (PdfName.Adbe_x509_rsa_sha1.equals(getFilterSubtype())) {
             signatureMechanism = "SHA1withRSA";
         } else {
-            signatureMechanism = getDigestAlgorithm();
+            signatureMechanism = getSignatureMechanismName();
         }
         Signature signature = SignUtils.getSignatureHelper(signatureMechanism, provider);
         signature.initVerify(key);
@@ -919,7 +925,7 @@ public class PdfPKCS7 {
             }
             // Add the digestEncryptionAlgorithm
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
-            v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(signatureAlgorithmOid));
+            v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(signatureMechanismOid));
             v.add(BOUNCY_CASTLE_FACTORY.createDERNull());
             signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
@@ -1138,7 +1144,7 @@ public class PdfPKCS7 {
                 IAlgorithmIdentifier algoId = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
                         BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
                 aaV2.add(algoId);
-                MessageDigest md = SignUtils.getMessageDigest(getHashAlgorithm(), interfaceDigest);
+                MessageDigest md = SignUtils.getMessageDigest(getDigestAlgorithmName(), interfaceDigest);
                 byte[] dig = md.digest(signCert.getEncoded());
                 aaV2.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(dig));
 
@@ -1526,18 +1532,5 @@ public class PdfPKCS7 {
      */
     public PdfName getFilterSubtype() {
         return filterSubtype;
-    }
-
-    /**
-     * Returns the encryption algorithm
-     *
-     * @return the name of an encryption algorithm
-     */
-    public String getEncryptionAlgorithm() {
-        String encryptAlgo = EncryptionAlgorithms.getAlgorithm(signatureAlgorithmOid);
-        if (encryptAlgo == null) {
-            encryptAlgo = signatureAlgorithmOid;
-        }
-        return encryptAlgo;
     }
 }

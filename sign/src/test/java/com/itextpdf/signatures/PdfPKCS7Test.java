@@ -86,7 +86,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         Assert.assertEquals(expectedOid, pkcs7.getDigestAlgorithmOid());
         Assert.assertEquals(chain[0], pkcs7.getSigningCertificate());
         Assert.assertArrayEquals(chain, pkcs7.getCertificates());
-        Assert.assertNull(pkcs7.getDigestEncryptionAlgorithmOid());
+        Assert.assertNull(pkcs7.getSignatureMechanismOid());
 
         // test default fields
         Assert.assertEquals(1, pkcs7.getVersion());
@@ -103,7 +103,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         Assert.assertEquals(expectedOid, pkcs7.getDigestAlgorithmOid());
         Assert.assertEquals(chain[0], pkcs7.getSigningCertificate());
         Assert.assertArrayEquals(chain, pkcs7.getCertificates());
-        Assert.assertEquals(SecurityIDs.ID_RSA_WITH_SHA256, pkcs7.getDigestEncryptionAlgorithmOid());
+        Assert.assertEquals(SecurityIDs.ID_RSA_WITH_SHA256, pkcs7.getSignatureMechanismOid());
     }
 
     @Test
@@ -328,7 +328,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs7.txt"));
         IASN1Primitive outStream = BOUNCY_CASTLE_FACTORY.createASN1Primitive(bytes);
         IASN1Primitive cmpStream = BOUNCY_CASTLE_FACTORY.createASN1Primitive(cmpBytes);
-        Assert.assertEquals("SHA256withRSA", pkcs7.getDigestAlgorithm());
+        Assert.assertEquals("SHA256withRSA", pkcs7.getSignatureMechanismName());
         Assert.assertEquals(outStream, cmpStream);
     }
 

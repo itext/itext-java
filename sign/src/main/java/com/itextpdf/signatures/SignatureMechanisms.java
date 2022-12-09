@@ -47,12 +47,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class that contains a map with the different signature algorithms.
- *
- * <p>
- * This class is named {@code EncryptionAlgorithms} for historical reasons
+ * Class that contains OID mappings to extract a signature algorithm name
+ * from a signature mechanism OID, and conversely, to retrieve the appropriate
+ * signature mechanism OID given a signature algorithm and a digest function.
  */
-public class EncryptionAlgorithms {
+public class SignatureMechanisms {
 
     /** Maps IDs of signature algorithms with its human-readable name. */
     static final Map<String, String> algorithmNames = new HashMap<>();

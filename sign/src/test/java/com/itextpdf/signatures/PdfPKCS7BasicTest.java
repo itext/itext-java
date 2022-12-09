@@ -65,7 +65,7 @@ public class PdfPKCS7BasicTest extends ExtendedITextTest {
         chain = PemFileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.pem");
     }
 
-    static void verifyIsoExtensionExample(String expectedSigAlgo, String fileName)
+    static void verifyIsoExtensionExample(String expectedSigMechanismName, String fileName)
             throws IOException, GeneralSecurityException {
         String infile = SOURCE_FOLDER + "extensions/" + fileName;
         try (PdfReader r = new PdfReader(infile); PdfDocument pdfDoc = new PdfDocument(r)) {
@@ -78,7 +78,7 @@ public class PdfPKCS7BasicTest extends ExtendedITextTest {
             it causes a runtime error.
             */
             PdfPKCS7 data = u.readSignatureData("Signature", BOUNCY_CASTLE_FACTORY.getProviderName());
-            Assert.assertEquals(expectedSigAlgo, data.getDigestAlgorithm());
+            Assert.assertEquals(expectedSigMechanismName, data.getSignatureMechanismName());
             Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
         }
     }

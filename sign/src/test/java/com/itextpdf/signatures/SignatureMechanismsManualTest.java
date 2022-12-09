@@ -30,10 +30,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class EncryptionAlgorithmsManualTest extends ExtendedITextTest {
+public class SignatureMechanismsManualTest extends ExtendedITextTest {
 
     @Test
     public void getAlgorithmNullTest() {
-        Assert.assertNull(EncryptionAlgorithms.getAlgorithm(null));
+        Assert.assertNull(SignatureMechanisms.getAlgorithm(null));
     }
 }

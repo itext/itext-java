@@ -30,30 +30,30 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class EncryptionAlgorithmsTest extends ExtendedITextTest {
+public class SignatureMechanismsTest extends ExtendedITextTest {
 
     @Test
     public void getAlgorithmRSATest() {
-        Assert.assertEquals("RSA", EncryptionAlgorithms.getAlgorithm("1.2.840.113549.1.1.1"));
+        Assert.assertEquals("RSA", SignatureMechanisms.getAlgorithm("1.2.840.113549.1.1.1"));
     }
 
     @Test
     public void getAlgorithmECDSATest() {
-        Assert.assertEquals("ECDSA", EncryptionAlgorithms.getAlgorithm("1.2.840.10045.2.1"));
+        Assert.assertEquals("ECDSA", SignatureMechanisms.getAlgorithm("1.2.840.10045.2.1"));
     }
 
     @Test
     public void getAlgorithmEmptyTest() {
-        Assert.assertEquals("", EncryptionAlgorithms.getAlgorithm(""));
+        Assert.assertEquals("", SignatureMechanisms.getAlgorithm(""));
     }
 
     @Test
     public void getAlgorithmEmptySpaceTest() {
-        Assert.assertEquals(" ", EncryptionAlgorithms.getAlgorithm(" "));
+        Assert.assertEquals(" ", SignatureMechanisms.getAlgorithm(" "));
     }
 
     @Test
     public void getAlgorithmUndefinedTest() {
-        Assert.assertEquals("undefined", EncryptionAlgorithms.getAlgorithm("undefined"));
+        Assert.assertEquals("undefined", SignatureMechanisms.getAlgorithm("undefined"));
     }
 }

@@ -117,7 +117,7 @@ public class PrivateKeySignature implements IExternalSignature {
      * {@inheritDoc}
      */
     @Override
-    public String getHashAlgorithm() {
+    public String getDigestAlgorithmName() {
         return hashAlgorithm;
     }
 
@@ -125,7 +125,7 @@ public class PrivateKeySignature implements IExternalSignature {
      * {@inheritDoc}
      */
     @Override
-    public String getEncryptionAlgorithm() {
+    public String getSignatureAlgorithmName() {
         return signatureAlgorithm;
     }
 
@@ -134,20 +134,20 @@ public class PrivateKeySignature implements IExternalSignature {
      */
     @Override
     public byte[] sign(byte[] message) throws GeneralSecurityException {
-        String algorithm = getSignatureMechanism();
+        String algorithm = getSignatureMechanismName();
         Signature sig = SignUtils.getSignatureHelper(algorithm, provider);
         sig.initSign(pk);
         sig.update(message);
         return sig.sign();
     }
 
-    private String getSignatureMechanism() {
-        final String signatureAlgo = this.getEncryptionAlgorithm();
+    private String getSignatureMechanismName() {
+        final String signatureAlgo = this.getSignatureAlgorithmName();
         // Ed25519 and Ed448 do not involve a choice of hashing algorithm
         if ("Ed25519".equals(signatureAlgo) || "Ed448".equals(signatureAlgo)) {
             return signatureAlgo;
         } else {
-            return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
+            return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();
         }
     }
 }

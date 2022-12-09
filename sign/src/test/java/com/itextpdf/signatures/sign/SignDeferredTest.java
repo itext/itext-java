@@ -304,7 +304,7 @@ public class SignDeferredTest extends ExtendedITextTest {
                     new PrivateKeySignature(pk, HASH_ALGORITHM, FACTORY.getProviderName());
             byte[] attrSign = signature.sign(attributes);
 
-            pkcs7.setExternalDigest(attrSign, null, signature.getEncryptionAlgorithm());
+            pkcs7.setExternalSignatureValue(attrSign, null, signature.getSignatureAlgorithmName());
             signatureContent = pkcs7.getEncodedPKCS7(docBytesHash);
         } catch (GeneralSecurityException e) {
             // dummy catch clause

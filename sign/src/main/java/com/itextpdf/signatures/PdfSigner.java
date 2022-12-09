@@ -591,13 +591,13 @@ public class PdfSigner {
         if (sigtype == CryptoStandard.CADES && !isDocumentPdf2()) {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }
-        if (externalSignature.getEncryptionAlgorithm().startsWith("Ed")) {
+        if (externalSignature.getSignatureAlgorithmName().startsWith("Ed")) {
             addDeveloperExtension(PdfDeveloperExtension.ISO_32002);
             // Note: at this level of abstraction, we have no easy way of determining whether we are signing using a
             // specific ECDSA curve, so we can't auto-declare the extension safely, since we don't know whether
             // the curve is on the ISO/TS 32002 allowed curves list. That responsibility is delegated to the user.
         }
-        String hashAlgorithm = externalSignature.getHashAlgorithm();
+        String hashAlgorithm = externalSignature.getDigestAlgorithmName();
         if(hashAlgorithm.startsWith("SHA3-") || hashAlgorithm.equals(DigestAlgorithms.SHAKE256)) {
             addDeveloperExtension(PdfDeveloperExtension.ISO_32001);
         }
@@ -632,7 +632,7 @@ public class PdfSigner {
         }
         byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, sigtype, ocspList, crlBytes);
         byte[] extSignature = externalSignature.sign(sh);
-        sgn.setExternalDigest(extSignature, null, externalSignature.getEncryptionAlgorithm());
+        sgn.setExternalSignatureValue(extSignature, null, externalSignature.getSignatureAlgorithmName());
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, sigtype, tsaClient, ocspList, crlBytes);
 

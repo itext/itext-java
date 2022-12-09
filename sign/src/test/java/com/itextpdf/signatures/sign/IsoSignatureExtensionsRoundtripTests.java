@@ -300,7 +300,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
             PdfPKCS7 data = u.readSignatureData(SIGNATURE_FIELD, BOUNCY_CASTLE_FACTORY.getProviderName());
             Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
             if (expectedSigAlgoIdentifier != null) {
-                ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(data.getDigestEncryptionAlgorithmOid());
+                ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(data.getSignatureMechanismOid());
                 Assert.assertEquals(expectedSigAlgoIdentifier, oid);
             }
         }
