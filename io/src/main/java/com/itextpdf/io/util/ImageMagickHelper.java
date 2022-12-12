@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,8 +45,9 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.io.IoExceptionMessage;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A utility class that is used as an interface to run 3rd-party tool ImageMagick.
@@ -69,6 +70,9 @@ public class ImageMagickHelper {
     static final String MAGICK_COMPARE_KEYWORD = "ImageMagick Studio LLC";
 
     private static final String TEMP_FILE_PREFIX = "itext_im_io_temp";
+    private static final String DIFF_PIXELS_OUTPUT_REGEXP = "^\\d+\\.*\\d*(e\\+\\d+)?";
+
+    private static final Pattern pattern = Pattern.compile(DIFF_PIXELS_OUTPUT_REGEXP);
 
     private String compareExec;
 
@@ -139,6 +143,58 @@ public class ImageMagickHelper {
      */
     public boolean runImageMagickImageCompare(String outImageFilePath, String cmpImageFilePath,
             String diffImageName, String fuzzValue) throws IOException, InterruptedException {
+        ImageMagickCompareResult compareResult = runImageMagickImageCompareAndGetResult(outImageFilePath,
+                cmpImageFilePath, diffImageName, fuzzValue);
+
+        return compareResult.isComparingResultSuccessful();
+    }
+
+    /**
+     * Runs imageMagick to visually compare images with the specified fuzziness value and given threshold
+     * and generate difference output.
+     *
+     * @param outImageFilePath Path to the output image file
+     * @param cmpImageFilePath Path to the cmp image file
+     * @param diffImageName    Path to the difference output image file
+     * @param fuzzValue        String fuzziness value to compare images. Should be formatted as string with integer
+     *                         or decimal number. Can be null, if it is not required to use fuzziness
+     * @param threshold        Long value of accepted threshold.
+     *
+     * @return boolean result of comparing: true - images are visually equal
+     *
+     * @throws IOException          if there are file's reading/writing issues
+     * @throws InterruptedException if there is thread interruption while executing ImageMagick.
+     */
+    public boolean runImageMagickImageCompareWithThreshold(String outImageFilePath, String cmpImageFilePath,
+            String diffImageName, String fuzzValue, long threshold) throws IOException, InterruptedException {
+        ImageMagickCompareResult compareResult = runImageMagickImageCompareAndGetResult(outImageFilePath,
+                cmpImageFilePath, diffImageName, fuzzValue);
+
+        if (compareResult.isComparingResultSuccessful()) {
+            return true;
+        } else {
+            return compareResult.getDiffPixels() <= threshold;
+        }
+    }
+
+    /**
+     * Runs imageMagick to visually compare images with the specified fuzziness value and generate difference output.
+     * This method returns an object of {@link ImageMagickCompareResult}, containing comparing result information,
+     * such as boolean result value and the number of different pixels.
+     *
+     * @param outImageFilePath Path to the output image file
+     * @param cmpImageFilePath Path to the cmp image file
+     * @param diffImageName    Path to the difference output image file
+     * @param fuzzValue        String fuzziness value to compare images. Should be formatted as string with integer
+     *                         or decimal number. Can be null, if it is not required to use fuzziness
+     *
+     * @return an object of {@link ImageMagickCompareResult}. containing comparing result information.
+     *
+     * @throws IOException          if there are file's reading/writing issues
+     * @throws InterruptedException if there is thread interruption while executing ImageMagick.
+     */
+    public ImageMagickCompareResult runImageMagickImageCompareAndGetResult(String outImageFilePath,
+            String cmpImageFilePath, String diffImageName, String fuzzValue) throws IOException, InterruptedException {
         if (!validateFuzziness(fuzzValue)) {
             throw new IllegalArgumentException("Invalid fuzziness value: " + fuzzValue);
         }
@@ -151,17 +207,22 @@ public class ImageMagickHelper {
             replacementOutFile = FileUtil.createTempCopy(outImageFilePath, TEMP_FILE_PREFIX, null);
             replacementCmpFile = FileUtil.createTempCopy(cmpImageFilePath, TEMP_FILE_PREFIX, null);
 
-            replacementDiff = FileUtil.createTempFile(TEMP_FILE_PREFIX, null).toString();
+            // ImageMagick generates difference images in .png format, therefore we can specify it.
+            // For some reason .webp comparison fails if the extension of diff image is not specified.
+            replacementDiff = FileUtil.createTempFile(TEMP_FILE_PREFIX, ".png").getAbsolutePath();
             String currCompareParams = fuzzValue + " '"
                     + replacementOutFile + "' '"
                     + replacementCmpFile + "' '"
                     + replacementDiff + "'";
-            boolean result = SystemUtil.runProcessAndWait(compareExec, currCompareParams);
+            ProcessInfo processInfo = SystemUtil.runProcessAndGetProcessInfo(compareExec, currCompareParams);
+            boolean comparingResult = processInfo.getExitCode() == 0;
+            long diffPixels = parseImageMagickProcessOutput(processInfo.getProcessErrOutput());
+            ImageMagickCompareResult resultInfo = new ImageMagickCompareResult(comparingResult, diffPixels);
 
             if (FileUtil.fileExists(replacementDiff)) {
                 FileUtil.copy(replacementDiff, diffImageName);
             }
-            return result;
+            return resultInfo;
         } finally {
             FileUtil.removeFiles(new String[] {replacementOutFile, replacementCmpFile, replacementDiff});
         }
@@ -179,5 +240,30 @@ public class ImageMagickHelper {
                 return false;
             }
         }
+    }
+
+    private static long parseImageMagickProcessOutput(String processOutput) throws IOException {
+        if (null == processOutput) {
+            throw new IllegalArgumentException(IoExceptionMessage.IMAGE_MAGICK_OUTPUT_IS_NULL);
+        }
+
+        if (processOutput.isEmpty()) {
+            return 0L;
+        }
+
+        String[] processOutputLines = processOutput.split("\n");
+
+        for (String line : processOutputLines) {
+            try {
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    return (long) Double.valueOf(matcher.group()).longValue();
+                }
+            } catch (NumberFormatException e) {
+                // Nothing should be done here because of the exception, that will be thrown later.
+            }
+        }
+
+        throw new IOException(IoExceptionMessage.IMAGE_MAGICK_PROCESS_EXECUTION_FAILED + processOutput);
     }
 }

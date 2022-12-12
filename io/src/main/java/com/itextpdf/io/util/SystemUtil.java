@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ package com.itextpdf.io.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -132,6 +133,14 @@ public final class SystemUtil {
         return printProcessErrorsOutput(runProcess(execPath, params, null));
     }
 
+    public static ProcessInfo runProcessAndGetProcessInfo(String command, String params) throws IOException,
+            InterruptedException {
+        Process p = runProcess(command, params, null);
+        String processStdOutput = printProcessStandardOutput(p).toString();
+        String processErrOutput = printProcessErrorsOutput(p).toString();
+        return new ProcessInfo(p.waitFor(), processStdOutput, processErrOutput);
+    }
+
     static Process runProcess(String execPath, String params, String workingDirPath) throws IOException {
         List<String> cmdList = prepareProcessArguments(execPath, params);
         String[] cmdArray = cmdList.toArray(new String[cmdList.size()]);
@@ -183,8 +192,16 @@ public final class SystemUtil {
     }
 
     static StringBuilder printProcessErrorsOutput(Process p) throws IOException {
+        return printProcessOutput(p.getErrorStream());
+    }
+
+    static StringBuilder printProcessStandardOutput(Process p) throws IOException {
+        return printProcessOutput(p.getInputStream());
+    }
+
+    private static StringBuilder printProcessOutput(InputStream processStream) throws IOException {
         StringBuilder builder = new StringBuilder();
-        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+        BufferedReader bre = new BufferedReader(new InputStreamReader(processStream));
         String line;
         while ((line = bre.readLine()) != null) {
             System.out.println(line);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -51,12 +51,11 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
@@ -78,108 +77,108 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void markerPathAutoOrientTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAutoOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAutoOrient");
     }
 
     @Test
     public void markerPathAngleOrientTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAngleOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAngleOrient");
     }
 
     @Test
     public void markerPathRefXRefYNoAspectRatioPreservationTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathRefXRefYNoAspectRatioPreservationTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathRefXRefYNoAspectRatioPreservation");
     }
 
     @Test
     public void markerPathRefXAndRefYTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAutoOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAutoOrient");
     }
 
     @Test
     public void markerPathViewboxRightOrientTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxRightOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxRightOrient");
     }
 
     @Test
     // TODO (DEVSIX-3621) fix cmp after fixing
     public void markerPathViewboxRightOrientNoAspectRatioPreservationTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,
-                "markerPathViewboxRightOrientNoAspectRatioPreservationTest");
+                "markerPathViewboxRightOrientNoAspectRatioPreservation");
     }
 
     @Test
     public void markerPathViewboxLeftOrientTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxLeftOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxLeftOrient");
     }
 
     @Test
     public void markerPathViewboxUpOrientTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxUpOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxUpOrient");
     }
 
     @Test
     public void markerPathViewboxDownOrientTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxDownOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxDownOrient");
     }
 
 
     @Test
     public void markerPathViewboxAngledOrientTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxAngledOrientTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxAngledOrient");
     }
 
     @Test
     // TODO (DEVSIX-3621) fix cmp after fixing
     public void markerPathPreserveAspectRatioTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathPreserveAspectRatioTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathPreserveAspectRatio");
     }
 
     // Markers in different elements
     @Test
     // TODO: update when DEVSIX-3397 will be closed
     public void markerTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "marker");
     }
 
     @Test
     // TODO: update when DEVSIX-3397 will be closed
     public void markerInLineElementTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInLineElementTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInLineElement");
     }
 
     @Test
     // TODO: update when DEVSIX-3397 will be closed
     public void markerInPolylineElementTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolylineElementTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolylineElement");
     }
 
     @Test
     // TODO: update when DEVSIX-3397, DEVSIX-2719 will be closed
     public void markerInPolygonElementTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolygonElementTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolygonElement");
     }
 
     @Test
     // TODO: update when DEVSIX-3397 will be closed
     public void markerInPathTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPathTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPath");
     }
 
     @Test
     public void markerUnitsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerUnitsTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerUnits");
     }
 
     @Test
     public void markerRefXYTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerRefXYTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerRefXY");
     }
 
     // orient attribute tests
     @Test
     public void markerOrientTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOrientTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOrient");
     }
 
     @Test
@@ -200,97 +199,97 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO DEVSIX-3432 relative values doesn't support correctly for stroke-width attribute
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3))
-    public void testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsFontRelativeValues() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsFontRelativeValues");
+    public void markerUnitsStrokeWidthWhenParentStrokeWidthIsFontRelativeValuesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "parentStrokeWidthIsFontRelativeValues");
     }
 
     @Test
-    public void testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsMetricValues() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsMetricValues");
+    public void markerUnitsStrokeWidthWhenParentStrokeWidthIsMetricValuesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "parentStrokeWidthIsMetricValues");
     }
 
     @Test
     // TODO DEVSIX-3432 relative values doesn't support correctly for stroke-width attribute
     @LogMessages(messages = @LogMessage(messageTemplate = LogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3))
-    public void testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsPercentageValues() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "testMarkerUnitsStrokeWidthWhenParentStrokeWidthIsPercentageValues");
+    public void markerUnitsStrokeWidthWhenParentStrokeWidthIsPercentageValuesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "parentStrokeWidthIsPercentageValues");
     }
 
     @Test
     public void markerDefaultValuesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerDefaultValuesTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerDefaultValues");
     }
 
     // Style inheritance
     @Test
     public void markerInheritFillAttributeTest0() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInheritFillAttributeTest0");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInheritFillAttribute0");
     }
 
     @Test
     public void markerInheritFillAttributeTest1() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInheritFillAttributeTest1");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInheritFillAttribute1");
     }
 
     @Test
     public void markerInheritFillAttributeTest2() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInheritFillAttributeTest2");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInheritFillAttribute2");
     }
 
     @Test
-    public void markerInheritFillAttributeNestedMarker() throws IOException, InterruptedException {
+    public void markerInheritFillAttributeNestedMarkerTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInheritFillAttributeNestedMarker");
     }
 
     @Test
-    public void fontRelativeValueInRefX() throws IOException, InterruptedException {
+    public void fontRelativeValueInRefXTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fontRelativeValueInRefX");
     }
 
     @Test
-    public void fontRelativeValueInRefXDefault() throws IOException, InterruptedException {
+    public void fontRelativeValueInRefXDefaultTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fontRelativeValueInRefXDefault");
     }
 
     @Test
     public void markerAspectRatioTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerAspectRatioTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerAspectRatio");
     }
 
     // Overflow attribute
     @Test
     public void markerOverflowVisibleIncreaseViewBoxScaleRootElementTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleIncreaseViewBoxScaleRootElementTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleIncreaseViewBoxScaleRootElement");
     }
 
     @Test
     public void markerOverflowVisibleIncreaseViewBoxScaleSvgElementTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleIncreaseViewBoxScaleSvgElementTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleIncreaseViewBoxScaleSvgElement");
     }
 
     @Test
     public void markerOverflowVisibleTransformScaleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleTransformScaleTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleTransformScale");
     }
 
     @Test
     public void markerOverflowVisibleTransformTranslateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleTransformTranslateTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleTransformTranslate");
     }
 
     @Test
     public void markerOverflowVisibleNestedSvgViewBoxesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleNestedSvgViewBoxesTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleNestedSvgViewBoxes");
     }
 
     @Test
     public void markerOverflowVisibleNestedSvgViewBoxes2Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleNestedSvgViewBoxes2Test");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleNestedSvgViewBoxes2");
     }
 
     @Test
     public void markerOverflowVisibleTransformRotateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleTransformRotateTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleTransformRotate");
     }
 
     @Test
@@ -301,12 +300,12 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = "markerHeight has negative value. Marker will not be rendered.")
     })
     public void markerEspecialMarkerWidthHeightValuesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerEspecialMarkerWidthHeightValuesTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerEspecialMarkerWidthHeightValues");
     }
 
     @Test
     // TODO (DEVSIX-3621) change cmp after fixing
-    public void deformationWhenRotationAndPreserveAspectRationNone() throws IOException, InterruptedException {
+    public void deformationWhenRotationAndPreserveAspectRationNoneTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "deformationWhenRotationAndPreserveAspectRationNone");
     }
 
@@ -314,6 +313,6 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     // TODO DEVSIX-4130 fix after ticket will be completed
     // Compare with Chrome browser
     public void markerParentElementTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerParentElementTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerParentElement");
     }
 }

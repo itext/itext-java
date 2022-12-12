@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,104 +61,104 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void basicEllipseTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipse");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicEllipse");
     }
 
     @Test
     public void ellipseCxCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCxCyAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseCxCyAbsent");
     }
 
     @Test
     public void ellipseCxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCxAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseCxAbsent");
     }
 
     @Test
     public void ellipseCxNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCxNegative");}
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseCxNegative");}
 
     @Test
     public void ellipseCyNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCyNegative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseCyNegative");
     }
 
     @Test
     public void ellipseCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseCyAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseCyAbsent");
     }
 
     @Test
     //TODO: update cmp_ when DEVSIX-3119
     public void ellipseRxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRxAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRxAbsent");
     }
 
     @Test
     //TODO: update cmp_ when DEVSIX-3119
     public void ellipseRyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRyAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRyAbsent");
     }
 
     @Test
     public void ellipseRxNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRxNegative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRxNegative");
     }
 
     @Test
     public void ellipseRyNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRyNegative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRyNegative");
     }
 
     @Test
     public void ellipseTranslatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseTranslated");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseTranslated");
     }
 
     @Test
     public void ellipseRotatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseRotated");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRotated");
     }
 
     @Test
     public void ellipseScaledUpTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseScaledUp");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseScaledUp");
     }
 
     @Test
     public void ellipseScaledDownTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseScaledDown");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseScaledDown");
     }
 
     @Test
     public void ellipseScaledXYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseScaledXY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseScaledXY");
     }
 
     @Test
     public void ellipseSkewXTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseSkewX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseSkewX");
     }
 
     @Test
     public void ellipseSkewYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseSkewY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseSkewY");
     }
 
     @Test
-    public void parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest() throws java.io.IOException, InterruptedException {
-        String filename = "parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+    public void parseParametersAndCalculateCoordinatesWithBetterPrecisionEllipseTest() throws java.io.IOException {
+        String filename = "calculateCoordinatesWithBetterPrecision.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         EllipseSvgNodeRenderer ellipseRenderer = new EllipseSvgNodeRenderer();
@@ -191,6 +191,6 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: DEVSIX-3932 update cmp_ after fix
     public void ellipseWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipseWithBigStrokeWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseWithBigStrokeWidth");
     }
 }

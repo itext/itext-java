@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219145711+03'00')/ModDate(D:20191219145711+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20220808181117+03'00')/ModDate(D:20220808181117+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +39,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 412.5 300]/Length 3300/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 412.5 300]/Length 3256/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 412.5 300 re
 W
 n
@@ -52,17 +52,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 78.75 42.15 Tm
 0 Tr
 /F1 9 Tf
-q
 0 0 Td
 (My Average Day)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -92,17 +90,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 65.4 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Work)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -127,17 +123,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 79.65 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Eat)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -162,17 +156,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 93.9 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (TV)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -197,17 +189,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 108.15 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Gym)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -232,17 +222,15 @@ Q
 q
 q
 0.13333 0.13333 0.13333 rg
+q
 BT
 1 0 0 -1 263.25 122.4 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (Sleep)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -273,17 +261,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 193.61 125.69 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (33.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -301,17 +287,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 189.3 195.83 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (8.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -330,17 +314,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 95.89 125.69 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (33.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -358,17 +340,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 105.45 195.83 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (8.3%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -386,17 +366,15 @@ B
 Q
 q
 1 1 1 rg
+q
 BT
 1 0 0 -1 144.75 217.97 Tm
 0 Tr
 /F2 9 Tf
-q
 0 0 Td
 (16.7%)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -434,20 +412,20 @@ xref
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000528 00000 n 
 0000000438 00000 n 
+0000000527 00000 n 
 0000000668 00000 n 
 0000000853 00000 n 
-0000004380 00000 n 
-0000004406 00000 n 
-0000004432 00000 n 
-0000004458 00000 n 
-0000004484 00000 n 
-0000004510 00000 n 
-0000004536 00000 n 
+0000004336 00000 n 
+0000004362 00000 n 
+0000004388 00000 n 
+0000004414 00000 n 
+0000004440 00000 n 
+0000004466 00000 n 
+0000004492 00000 n 
 trailer
-<</ID [<a215d7a103788bebc6a82618e62fd73a><a215d7a103788bebc6a82618e62fd73a>]/Info 3 0 R/Root 1 0 R/Size 17>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<af8c0a6d09ea7e4114e4072ba62b237a><af8c0a6d09ea7e4114e4072ba62b237a>]/Info 3 0 R/Root 1 0 R/Size 17>>
+%iText-7.1.18-SNAPSHOT
 startxref
-4562
+4518
 %%EOF

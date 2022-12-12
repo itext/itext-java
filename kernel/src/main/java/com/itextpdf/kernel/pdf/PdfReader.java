@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,7 @@ import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.io.util.MessageFormatUtil;
 import com.itextpdf.kernel.PdfException;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 
@@ -63,6 +64,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.itextpdf.kernel.xmp.XMPException;
@@ -381,8 +384,9 @@ public class PdfReader implements Closeable, Serializable {
      */
     public byte[] readStreamBytesRaw(PdfStream stream) throws IOException {
         PdfName type = stream.getAsName(PdfName.Type);
-        if (!PdfName.XRefStm.equals(type) && !PdfName.ObjStm.equals(type))
+        if (!PdfName.XRef.equals(type) && !PdfName.ObjStm.equals(type)) {
             checkPdfStreamLength(stream);
+        }
         long offset = stream.getOffset();
         if (offset <= 0)
             return null;
@@ -392,7 +396,7 @@ public class PdfReader implements Closeable, Serializable {
         RandomAccessFileOrArray file = tokens.getSafeFile();
         byte[] bytes = null;
         try {
-            file.seek(stream.getOffset());
+            file.seek(offset);
             bytes = new byte[length];
             file.readFully(bytes);
             boolean embeddedStream = pdfDocument.doesStreamBelongToEmbeddedFile(stream);
@@ -934,9 +938,11 @@ public class PdfReader implements Closeable, Serializable {
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                    tokens.throwError(PdfException.UnexpectedGtGt);
+                    tokens.throwError(MessageFormatUtil.
+                            format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"));
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                    tokens.throwError(PdfException.UnexpectedCloseBracket);
+                    tokens.throwError(MessageFormatUtil.
+                            format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "]"));
             }
             dic.put(name, obj);
         }
@@ -948,10 +954,10 @@ public class PdfReader implements Closeable, Serializable {
         while (true) {
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
-                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
-                    break;
-                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
-                    tokens.throwError(PdfException.UnexpectedGtGt);
+                if (tokens.getTokenType() != PdfTokenizer.TokenType.EndArray) {
+                    processArrayReadError();
+                }
+                break;
             }
             array.add(obj);
         }
@@ -1286,6 +1292,17 @@ public class PdfReader implements Closeable, Serializable {
         return memorySavingMode;
     }
 
+    private void processArrayReadError() {
+        final String error = MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN,
+                new String(tokens.getByteContent(), StandardCharsets.UTF_8));
+        if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
+            final Logger logger = LoggerFactory.getLogger(PdfReader.class);
+            logger.error(error);
+        } else {
+            tokens.throwError(error);
+        }
+    }
+
     private void readDecryptObj() {
         if (encrypted)
             return;
@@ -1416,10 +1433,13 @@ public class PdfReader implements Closeable, Serializable {
                 line.reset();
 
                 // added boolean because of mailing list issue (17 Feb. 2014)
-                if (!tokens.readLineSegment(line, false))
+                if (!tokens.readLineSegment(line, false)) {
+                    if (!StrictnessLevel.CONSERVATIVE.isStricter(this.strictnessLevel)) {
+                        throw new PdfException(KernelExceptionMessageConstant.STREAM_SHALL_END_WITH_ENDSTREAM);
+                    }
                     break;
+                }
                 if (line.startsWith(endstream)) {
-                    streamLength = (int) (pos - start);
                     break;
                 } else if (line.startsWith(endobj)) {
                     tokens.seek(pos - 16);
@@ -1427,10 +1447,10 @@ public class PdfReader implements Closeable, Serializable {
                     int index = s.indexOf(endstream1);
                     if (index >= 0)
                         pos = pos - 16 + index;
-                    streamLength = (int) (pos - start);
                     break;
                 }
             }
+            streamLength = (int) (pos - start);
             tokens.seek(pos - 2);
             if (tokens.read() == 13) {
                 streamLength--;

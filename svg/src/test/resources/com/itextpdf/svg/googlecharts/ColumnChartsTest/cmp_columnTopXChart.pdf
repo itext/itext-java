@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219144336+03'00')/ModDate(D:20191219144336+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808181042+03'00')/ModDate(D:20220808181042+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 450]/Length 4447/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 450]/Length 4375/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 450 re
 W
 n
@@ -53,31 +53,27 @@ B
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 0 11.7 Tm
 0 Tr
 /F1 12 Tf
-q
 0 0 Td
 (Chess opening moves)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.74118 0.74118 0.74118 rg
+q
 BT
 1 0 0 -1 0 27.29 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (popularity by percentage)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -285,227 +281,195 @@ q
 0 0 0 rg
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 76.38 92.18 Tm
 0 Tr
 /F1 9 Tf
-q
 -32.93 0 Td
 (King's pawn \(e4\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 191.94 92.18 Tm
 0 Tr
 /F1 9 Tf
-q
 -36.76 0 Td
 (Queen's pawn \(d4\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 307.5 92.18 Tm
 0 Tr
 /F1 9 Tf
-q
 -43.11 0 Td
 (Knight to King 3 \(Nf3\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 423.06 92.18 Tm
 0 Tr
 /F1 9 Tf
-q
 -51.2 0 Td
 (Queen's bishop pawn \(c4\))Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 538.62 92.18 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.95 0 Td
 (Other)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.25882 0.25882 0.25882 rg
+q
 BT
 1 0 0 -1 307.5 66.98 Tm
 0 Tr
 /F1 9 Tf
-q
 -28.65 0 Td
 (White to move)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 447.53 Tm
 0 Tr
 /F1 9 Tf
-q
 -5.05 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 409.2 Tm
 0 Tr
 /F1 9 Tf
-q
 -5.05 0 Td
 (5)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 370.87 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (10)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 332.54 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (15)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 294.2 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (20)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 255.87 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (25)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 217.53 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (30)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 179.2 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (35)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 140.86 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (40)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.45882 0.45882 0.45882 rg
+q
 BT
 1 0 0 -1 10.88 102.53 Tm
 0 Tr
 /F1 9 Tf
-q
 -10.11 0 Td
 (45)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -537,11 +501,11 @@ xref
 0000000438 00000 n 
 0000000579 00000 n 
 0000000762 00000 n 
-0000005369 00000 n 
-0000005394 00000 n 
+0000005297 00000 n 
+0000005322 00000 n 
 trailer
-<</ID [<b31f0c00bc5418f4a7ba6cbc03dcba35><b31f0c00bc5418f4a7ba6cbc03dcba35>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<0fa3e6665aeb43e6b42e1cb2ad2a267c><0fa3e6665aeb43e6b42e1cb2ad2a267c>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-7.1.18-SNAPSHOT
 startxref
-5420
+5348
 %%EOF

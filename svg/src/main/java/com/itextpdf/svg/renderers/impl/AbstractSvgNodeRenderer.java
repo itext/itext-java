@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2021 iText Group NV
+    Copyright (c) 1998-2022 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -284,7 +284,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     currentCanvas.clip();
                 }
                 currentCanvas.endPath();
-            } else {
+            } else if (!(this instanceof ISvgTextNodeRenderer)) {
                 if (doFill && canElementFill()) {
                     String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
 
@@ -303,10 +303,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     }
                 } else if (doStroke) {
                     currentCanvas.stroke();
-                } else if (!TextSvgBranchRenderer.class.isInstance(this)) {
+                } else {
                     currentCanvas.endPath();
                 }
-
             }
             // Marker drawing
             if (this instanceof IMarkerCapable) {
@@ -404,6 +403,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         }
 
                         currentCanvas.setLineWidth(strokeWidth);
+
                         doStroke = true;
                     }
                 }

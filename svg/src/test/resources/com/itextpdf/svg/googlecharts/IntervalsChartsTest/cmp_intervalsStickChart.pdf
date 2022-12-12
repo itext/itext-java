@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20191219144027+03'00')/ModDate(D:20191219144027+03'00')/Producer(iText® 7.1.10-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20220808181106+03'00')/ModDate(D:20220808181106+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +39,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 5160/Resources<</ExtGState<</Gs1 10 0 R/Gs10 11 0 R/Gs11 12 0 R/Gs12 13 0 R/Gs13 14 0 R/Gs14 15 0 R/Gs15 16 0 R/Gs16 17 0 R/Gs17 18 0 R/Gs18 19 0 R/Gs19 20 0 R/Gs2 21 0 R/Gs20 22 0 R/Gs21 23 0 R/Gs22 24 0 R/Gs23 25 0 R/Gs24 26 0 R/Gs25 27 0 R/Gs26 28 0 R/Gs3 29 0 R/Gs4 30 0 R/Gs5 31 0 R/Gs6 32 0 R/Gs7 33 0 R/Gs8 34 0 R/Gs9 35 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 5116/Resources<</ExtGState<</Gs1 10 0 R/Gs10 11 0 R/Gs11 12 0 R/Gs12 13 0 R/Gs13 14 0 R/Gs14 15 0 R/Gs15 16 0 R/Gs16 17 0 R/Gs17 18 0 R/Gs18 19 0 R/Gs19 20 0 R/Gs2 21 0 R/Gs20 22 0 R/Gs21 23 0 R/Gs22 24 0 R/Gs23 25 0 R/Gs24 26 0 R/Gs25 27 0 R/Gs26 28 0 R/Gs3 29 0 R/Gs4 30 0 R/Gs5 31 0 R/Gs6 32 0 R/Gs7 33 0 R/Gs8 34 0 R/Gs9 35 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -52,17 +52,15 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 120.75 53.17 Tm
 0 Tr
 /F1 10.5 Tf
-q
 0 0 Td
 (Sticks, default)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 1 1 1 rg
@@ -433,161 +431,141 @@ q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 121.13 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (0.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 229.5 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (2.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 337.88 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (4.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 446.25 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (6.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 554.63 319.42 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -6.56 0 Td
 (8.5)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 307.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -5.25 0 Td
 (0)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 249.3 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (40)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 191.55 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -10.5 0 Td
 (80)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 133.8 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -15.75 0 Td
 (120)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 q
 0.26667 0.26667 0.26667 rg
+q
 BT
 1 0 0 -1 110.25 76.05 Tm
 0 Tr
 /F2 10.5 Tf
-q
 -15.75 0 Td
 (160)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 Q
@@ -684,39 +662,39 @@ xref
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000528 00000 n 
 0000000438 00000 n 
+0000000527 00000 n 
 0000000668 00000 n 
 0000000851 00000 n 
-0000006462 00000 n 
-0000006488 00000 n 
-0000006516 00000 n 
-0000006544 00000 n 
-0000006572 00000 n 
-0000006600 00000 n 
-0000006628 00000 n 
-0000006656 00000 n 
-0000006684 00000 n 
-0000006712 00000 n 
-0000006740 00000 n 
-0000006768 00000 n 
-0000006794 00000 n 
-0000006822 00000 n 
-0000006850 00000 n 
-0000006878 00000 n 
-0000006906 00000 n 
-0000006934 00000 n 
-0000006962 00000 n 
-0000006990 00000 n 
-0000007018 00000 n 
-0000007046 00000 n 
-0000007074 00000 n 
-0000007102 00000 n 
-0000007130 00000 n 
-0000007158 00000 n 
+0000006418 00000 n 
+0000006444 00000 n 
+0000006472 00000 n 
+0000006500 00000 n 
+0000006528 00000 n 
+0000006556 00000 n 
+0000006584 00000 n 
+0000006612 00000 n 
+0000006640 00000 n 
+0000006668 00000 n 
+0000006696 00000 n 
+0000006724 00000 n 
+0000006750 00000 n 
+0000006778 00000 n 
+0000006806 00000 n 
+0000006834 00000 n 
+0000006862 00000 n 
+0000006890 00000 n 
+0000006918 00000 n 
+0000006946 00000 n 
+0000006974 00000 n 
+0000007002 00000 n 
+0000007030 00000 n 
+0000007058 00000 n 
+0000007086 00000 n 
+0000007114 00000 n 
 trailer
-<</ID [<2a6888d057c5a5e100b66e9b47bcc6c4><2a6888d057c5a5e100b66e9b47bcc6c4>]/Info 3 0 R/Root 1 0 R/Size 36>>
-%iText-7.1.10-SNAPSHOT
+<</ID [<4c7af0e37f06d4759586ce96bf1f6da9><4c7af0e37f06d4759586ce96bf1f6da9>]/Info 3 0 R/Root 1 0 R/Size 36>>
+%iText-7.1.18-SNAPSHOT
 startxref
-7186
+7142
 %%EOF

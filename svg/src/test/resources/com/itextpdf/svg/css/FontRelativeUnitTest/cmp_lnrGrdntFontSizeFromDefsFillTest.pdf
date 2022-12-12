@@ -16,13 +16,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20201007144843+03'00')/ModDate(D:20201007144843+03'00')/Producer(iText® 7.1.13-SNAPSHOT ©2000-2020 iText Group NV \(AGPL-version\))>>
-endobj
-7 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20220808181029+03'00')/ModDate(D:20220808181029+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Courier/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -39,7 +39,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 450 300]/Length 395/Resources<</Font<</F1 6 0 R/F2 7 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 383/Resources<</Font<</F1 6 0 R/F2 7 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 300 re
 W
 n
@@ -52,46 +52,40 @@ q
 /Pattern cs
 
 /P1 scn
+q
 BT
 1 0 0 -1 7.5 112.5 Tm
 0 Tr
 /F1 90 Tf
-q
 0 0 Td
 (iText)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 150 Tm
 0 Tr
 /F2 15 Tf
-q
 0 0 Td
 (Test passes when the end of the iText word is green)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0 0 0 rg
+q
 BT
 1 0 0 -1 7.5 172.5 Tm
 0 Tr
 /F2 15 Tf
-q
 0 0 Td
 (Gradient x2="50em" should calculated from defs font-size)Tj
-n
-Q
 ET
-f
+Q
 Q
 
 endstream
@@ -119,18 +113,18 @@ xref
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000528 00000 n 
 0000000438 00000 n 
+0000000524 00000 n 
 0000000665 00000 n 
 0000000848 00000 n 
-0000001398 00000 n 
-0000001461 00000 n 
-0000001573 00000 n 
-0000001674 00000 n 
-0000001752 00000 n 
+0000001386 00000 n 
+0000001449 00000 n 
+0000001561 00000 n 
+0000001662 00000 n 
+0000001740 00000 n 
 trailer
-<</ID [<1e61957c0109a68d2323882a28a7886d><1e61957c0109a68d2323882a28a7886d>]/Info 3 0 R/Root 1 0 R/Size 15>>
-%iText-7.1.13-SNAPSHOT
+<</ID [<51e4717315c9530e0ef1ed7df8eb6c85><51e4717315c9530e0ef1ed7df8eb6c85>]/Info 3 0 R/Root 1 0 R/Size 15>>
+%iText-7.1.18-SNAPSHOT
 startxref
-1830
+1818
 %%EOF

@@ -16,7 +16,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20190809155828+02'00')/ModDate(D:20190809155828+02'00')/Producer(iText® 7.1.8-SNAPSHOT ©2000-2019 iText Group NV \(AGPL-version\))>>
+<</CreationDate(D:20220808181130+03'00')/ModDate(D:20220808181130+03'00')/Producer(iText® 7.1.18-SNAPSHOT ©2000-2021 iText Group NV \(AGPL-version\))>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,7 +36,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 135]/Length 1770/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 135]/Length 1750/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 135 re
 W
 n
@@ -150,45 +150,39 @@ S
 Q
 q
 0.30196 0.30196 0.30196 rg
+q
 BT
 1 0 0 -1 60.75 18.78 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -47.12 0 Td
 (Washington)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.30196 0.30196 0.30196 rg
+q
 BT
 1 0 0 -1 60.75 49.53 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -27.62 0 Td
 (Adams)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.30196 0.30196 0.30196 rg
+q
 BT
 1 0 0 -1 60.75 80.27 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -35.73 0 Td
 (Jefferson)Tj
-n
-Q
 ET
-f
+Q
 Q
 q
 0.60392 0.60392 0.60392 RG
@@ -201,30 +195,26 @@ Q
 q
 0 0 0 rg
 q
+q
 BT
 1 0 0 -1 88.48 108.02 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -9.75 0 Td
 (1790)Tj
-n
-Q
 ET
-f
 Q
+Q
+q
 q
 BT
 1 0 0 -1 355.31 108.02 Tm
 0 Tr
 /F1 9.75 Tf
-q
 -9.75 0 Td
 (1800)Tj
-n
-Q
 ET
-f
+Q
 Q
 Q
 q
@@ -270,16 +260,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000226 00000 n 
-0000000527 00000 n 
+0000000528 00000 n 
 0000000271 00000 n 
 0000000089 00000 n 
 0000000015 00000 n 
-0000000437 00000 n 
-0000000578 00000 n 
-0000000761 00000 n 
+0000000438 00000 n 
+0000000579 00000 n 
+0000000762 00000 n 
 trailer
-<</ID [<1f69f3c852e96607da6f2b92547081ea><1f69f3c852e96607da6f2b92547081ea>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-7.1.8-SNAPSHOT
+<</ID [<0e44efbc8892a04bc440ffcec26742ba><0e44efbc8892a04bc440ffcec26742ba>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-7.1.18-SNAPSHOT
 startxref
-2656
+2637
 %%EOF
