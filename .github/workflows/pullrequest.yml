@@ -24,5 +24,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'adopt'
+      - name: Build with Maven
+        run: mvn clean install -Dmaven.test.skip=true
       - name: Test with Maven
         run: mvn test -B --file pom.xml
