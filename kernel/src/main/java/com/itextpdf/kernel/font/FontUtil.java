@@ -52,35 +52,32 @@ import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.cmap.ICMapLocation;
 import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FontUtil {
+    private static final SecureRandom NUMBER_GENERATOR = new SecureRandom();
 
     private static final HashMap<String, CMapToUnicode> uniMaps = new HashMap<>();
 
+    private FontUtil() {}
+
     public static String addRandomSubsetPrefixForFontName(final String fontName) {
         final StringBuilder newFontName = new StringBuilder(fontName.length() + 7);
+        byte[] randomByte = new byte[1];
         for (int k = 0; k < 6; ++k) {
-            try {
-                Random instanceStrong = SecureRandom.getInstanceStrong();
-                newFontName.append((char) (instanceStrong.nextInt() * 26 + 'A'));
-            } catch (NoSuchAlgorithmException e) {
-                throw new PdfException(e);
-            }
+            NUMBER_GENERATOR.nextBytes(randomByte);
+            newFontName.append((char) (Math.abs(randomByte[0]%26) + 'A'));
         }
         newFontName.append('+').append(fontName);
         return newFontName.toString();
