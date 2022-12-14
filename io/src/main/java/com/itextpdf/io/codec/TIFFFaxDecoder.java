@@ -852,7 +852,7 @@ public class TIFFFaxDecoder {
         fillBits = (int) ((tiffT4Options & 0x04) >> 2);
 
         // The data must start with an EOL code
-        if (readEOL(true) != 1) {
+        if (readEOL() != 1) {
             throw new IOException(IOException.FirstScanlineMustBe1dEncoded);
         }
 
@@ -868,7 +868,7 @@ public class TIFFFaxDecoder {
 
             // Every line must begin with an EOL followed by a bit which
             // indicates whether the following scanline is 1D or 2D encoded.
-            if (readEOL(false) == 0) {
+            if (readEOL() == 0) {
                 // 2D encoded scanline follows
 
                 // Initialize previous scanlines changing elements, and
@@ -1386,61 +1386,16 @@ public class TIFFFaxDecoder {
         return runLength;
     }
 
-    private int readEOL(boolean isFirstEOL) {
-        if (fillBits == 0) {
-            int next12Bits = nextNBits(12);
-            if (isFirstEOL && next12Bits == 0) {
-
-                // Might have the case of EOL padding being used even
-                // though it was not flagged in the T4Options field.
-                // This was observed to be the case in TIFFs produced
-                // by a well known vendor who shall remain nameless.
-
-                if (nextNBits(4) == 1) {
-
-                    // EOL must be padded: reset the fillBits flag.
-
-                    fillBits = 1;
-                    return 1;
-                }
-            }
-            if (next12Bits != 1) {
-                throw new IOException(IOException.ScanlineMustBeginWithEolCodeWord);
-            }
-        } else if (fillBits == 1) {
-
-            // First EOL code word xxxx 0000 0000 0001 will occur
-            // As many fill bits will be present as required to make
-            // the EOL code of 12 bits end on a byte boundary.
-
-            int bitsLeft = 8 - bitPointer;
-
-            if (nextNBits(bitsLeft) != 0) {
-                throw new IOException(IOException.AllFillBitsPrecedingEolCodeMustBe0);
-            }
-
-            // If the number of bitsLeft is less than 8, then to have a 12
-            // bit EOL sequence, two more bytes are certainly going to be
-            // required. The first of them has to be all zeros, so ensure
-            // that.
-            if (bitsLeft < 4) {
-                if (nextNBits(8) != 0) {
-                    throw new IOException(IOException.AllFillBitsPrecedingEolCodeMustBe0);
-                }
-            }
-
-            // There might be a random number of fill bytes with 0s, so
-            // loop till the EOL of 0000 0001 is found, as long as all
-            // the bytes preceding it are 0's.
-            int n;
-            while ((n = nextNBits(8)) != 1) {
-                // If not all zeros
-                if (n != 0) {
-                    throw new IOException(IOException.AllFillBitsPrecedingEolCodeMustBe0);
-                }
-            }
+    private int readEOL() {
+        // scan to first none 0  bit and return 12 bits
+        while (nextLesserThan8Bits(1) == 0) {
+            // nothing to do here
         }
-
+        updatePointer(12);
+        int next12Bits = nextNBits(12);
+        if (next12Bits != 1) {
+            throw new IOException(IOException.AllFillBitsPrecedingEolCodeMustBe0);
+        }
         // If one dimensional encoding mode, then always return 1
         if (oneD == 0) {
             return 1;
@@ -1606,14 +1561,9 @@ public class TIFFFaxDecoder {
 
     // Move pointer backwards by given amount of bits
     private void updatePointer(int bitsToMoveBack) {
-        int i = bitPointer - bitsToMoveBack;
-
-        if (i < 0) {
-            bytePointer--;
-            bitPointer = 8 + i;
-        } else {
-            bitPointer = i;
-        }
+        int totalBits = bytePointer * 8 + bitPointer - bitsToMoveBack;
+        bitPointer = totalBits % 8;
+        bytePointer = totalBits / 8;
     }
 
     // Move to the next byte boundary

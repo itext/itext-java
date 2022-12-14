@@ -42,7 +42,6 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -164,15 +163,11 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
-    public void group3CompressionTiffImageTest() {
+    public void group3CompressionTiffImageTest() throws IOException {
         String image = SOURCE_FOLDER + "group3CompressionImage.tif";
-
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () -> ImageDataFactory.create(UrlUtil.toURL(image)));
-
-        Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+        convertAndCompare(DESTINATION_FOLDER + "group3CompressionTiffImage.pdf",
+                SOURCE_FOLDER + "cmp_group3CompressionTiffImage.pdf",
+                new PdfImageXObject(ImageDataFactory.create(UrlUtil.toURL(image))));
     }
 
     @Test
@@ -196,22 +191,22 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
-    public void group3CompTiffImgNoRecoverErrorAndNotDirectTest() {
+    public void group3CompTiffImgNoRecoverErrorAndNotDirectTest() throws IOException {
         String image = SOURCE_FOLDER + "group3CompressionImage.tif";
 
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () -> ImageDataFactory.createTiff(UrlUtil.toURL(image),
-                        false, 1, false));
-
-        Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+        convertAndCompare(DESTINATION_FOLDER + "group3CompTiffImgNoRecoverErrorAndNotDirect.pdf",
+                SOURCE_FOLDER + "cmp_group3CompTiffImgNoRecoverErrorAndNotDirect.pdf",
+                new PdfImageXObject(ImageDataFactory.createTiff(UrlUtil.toURL(image),
+                        false, 1, false)));
     }
 
     private void convertAndCompare(String outFilename, String cmpFilename, String imageFilename)
             throws IOException {
+
+        System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outFilename));
+        System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpFilename)+ "\n");
+
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFilename));
-        PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFilename));
 
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(imageFilename));
 
@@ -222,14 +217,41 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         PdfDocument outDoc = new PdfDocument(new PdfReader(outFilename));
 
         PdfStream outStream = outDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
+
+        PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFilename));
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
 
         Assert.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
 
+        cmpDoc.close();
+        outDoc.close();
+    }
+
+    private void convertAndCompare(String outFilename, String cmpFilename,PdfImageXObject imageXObject )
+            throws IOException {
+
+        System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outFilename));
+        System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpFilename)+ "\n");
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFilename));
+
+
+        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+        canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(10, 20, 575 , 802));
+        pdfDoc.close();
+
+        PdfDocument outDoc = new PdfDocument(new PdfReader(outFilename));
+
+        PdfStream outStream = outDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
+
+        PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFilename));
+        PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
+
+
+        Assert.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
 
         cmpDoc.close();
         outDoc.close();
-
     }
 }
