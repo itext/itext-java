@@ -260,7 +260,7 @@ public class PdfFormField extends PdfObjectWrapper<PdfDictionary> {
                 } else {
                      Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
                      logger.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
-                             pdfObject.getIndirectReference() == null ? pdfObject : pdfObject.getIndirectReference()));
+                             pdfObject.getIndirectReference() == null ? pdfObject : (PdfObject)pdfObject.getIndirectReference()));
                 }
             }
         }
