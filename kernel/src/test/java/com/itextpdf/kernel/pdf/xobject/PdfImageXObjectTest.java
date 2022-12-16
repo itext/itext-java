@@ -51,11 +51,13 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -206,6 +208,20 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
 
         Assert.assertEquals(MessageFormatUtil.format(
                 com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+    }
+
+    @Test
+    public void redundantDecodeParmsTest() throws IOException, InterruptedException {
+        String srcFilename = SOURCE_FOLDER + "redundantDecodeParms.pdf";
+        String destFilename = DESTINATION_FOLDER + "redundantDecodeParms.pdf";
+        String cmpFilename = SOURCE_FOLDER + "cmp_redundantDecodeParms.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFilename),
+                new PdfWriter(new FileOutputStream(destFilename)),
+                new StampingProperties())) {
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, DESTINATION_FOLDER));
     }
 
     private void convertAndCompare(String outFilename, String cmpFilename, String imageFilename)

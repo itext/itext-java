@@ -443,6 +443,9 @@ public class PdfOutputStream extends OutputStream<PdfOutputStream> {
     protected void updateCompressionFilter(PdfStream pdfStream) {
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter == null) {
+            // Remove if any
+            pdfStream.remove(PdfName.DecodeParms);
+            
             pdfStream.put(PdfName.Filter, PdfName.FlateDecode);
             return;
         }
