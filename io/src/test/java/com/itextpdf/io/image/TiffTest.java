@@ -137,6 +137,20 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
+    public void group3CompressionBECreateTiffImageTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImageBE.tif";
+        createTiff(sourceFile, 1, 1024D, 768D);
+    }
+
+
+    @Test
+    public void group3Compression2DCreateTiffImageTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImage2d.tif";
+        createTiff(sourceFile, 1, 1024D, 768D);
+    }
+
+
+    @Test
     public void group3CompressionEolErrorCreateTiffImageTest() throws MalformedURLException {
         String sourceFile = SOURCE_FOLDER + "group3CompressionImageWithEolError.tif";
 
