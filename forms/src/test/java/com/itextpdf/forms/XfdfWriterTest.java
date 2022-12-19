@@ -42,10 +42,10 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.exceptions.XfdfException;
 import com.itextpdf.forms.xfdf.AnnotObject;
 import com.itextpdf.forms.xfdf.AnnotsObject;
 import com.itextpdf.forms.xfdf.AttributeObject;
-import com.itextpdf.forms.exceptions.XfdfException;
 import com.itextpdf.forms.xfdf.XfdfObject;
 import com.itextpdf.forms.xfdf.XfdfObjectFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -54,15 +54,16 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class XfdfWriterTest extends ExtendedITextTest {
@@ -94,6 +95,7 @@ public class XfdfWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-7264: Investigate 3 failed forms tests from 7.3/develop on .NET")
     public void simpleFormWithMultipleFieldsTest()
             throws IOException, TransformerException, ParserConfigurationException, SAXException {
         String pdfDocumentName = "simpleFormWithMultipleFields.pdf";

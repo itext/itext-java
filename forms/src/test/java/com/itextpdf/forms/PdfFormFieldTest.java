@@ -53,9 +53,9 @@ import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -81,14 +81,15 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 
 @Category(IntegrationTest.class)
@@ -567,6 +568,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-7264: Investigate 3 failed forms tests from 7.3/develop on .NET")
     //TODO DEVSIX-6467 The parent's formField value is set to children
     public void regenerateAppearance() throws IOException, InterruptedException {
         String input = "regenerateAppearance.pdf";

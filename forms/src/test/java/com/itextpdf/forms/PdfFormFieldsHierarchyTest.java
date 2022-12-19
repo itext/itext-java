@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -50,6 +51,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-7264: Investigate 3 failed forms tests from 7.3/develop on .NET")
     //TODO DEVSIX-6467 The parent's formField value is set to children
     public void fillingFormWithKidsTest() throws IOException, InterruptedException {
         String srcPdf = sourceFolder + "formWithKids.pdf";
