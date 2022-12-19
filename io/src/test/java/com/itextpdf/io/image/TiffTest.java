@@ -137,6 +137,18 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
+    public void group3CompressionEolErrorCreateTiffImageTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImageWithEolError.tif";
+
+        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> createTiff(sourceFile, 1, 1024D, 768D));
+
+        Assert.assertEquals(MessageFormatUtil.format(
+                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+    }
+
+
+    @Test
     public void group3CompressionCreateImageDataTest() throws MalformedURLException {
         String sourceFile = SOURCE_FOLDER + "group3CompressionImage.tif";
         ImageData img = ImageDataFactory.create(UrlUtil.toURL(SOURCE_FOLDER + "group3CompressionImage.tif"));
