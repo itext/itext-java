@@ -357,6 +357,7 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     @Test
     public void verifyEd25519SignatureTest()
             throws IOException, GeneralSecurityException {
+        Assume.assumeFalse("ED25519 is not available in FIPS approved mode", BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode());
         verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
     }
 
