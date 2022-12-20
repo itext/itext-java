@@ -106,7 +106,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import javax.security.auth.x500.X500Principal;
 
 final class SignUtils {
@@ -255,8 +254,8 @@ final class SignUtils {
     }
 
     static Collection<Certificate> readAllCerts(byte[] contentsKey) throws CertificateException {
-        return new ArrayList<>(
-                CertificateFactory.getInstance("X509").generateCertificates(new ByteArrayInputStream(contentsKey)));
+        final CertificateFactory factory = CertificateFactory.getInstance("X509", FACTORY.getProvider());
+        return new ArrayList<>(factory.generateCertificates(new ByteArrayInputStream(contentsKey)));
     }
 
     static <T> T getFirstElement(Iterable<T> iterable) {

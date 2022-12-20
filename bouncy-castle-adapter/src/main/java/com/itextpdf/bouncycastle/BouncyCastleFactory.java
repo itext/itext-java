@@ -835,7 +835,10 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IJcaX509CertificateConverter createJcaX509CertificateConverter() {
-        return new JcaX509CertificateConverterBC(new JcaX509CertificateConverter());
+        final IJcaX509CertificateConverter converter =
+                new JcaX509CertificateConverterBC(new JcaX509CertificateConverter());
+        converter.setProvider(PROVIDER);
+        return converter;
     }
 
     /**
