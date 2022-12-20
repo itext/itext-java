@@ -2060,7 +2060,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     info = new PdfDocumentInfo(this).addCreationDate();
                 }
                 getDocumentInfo().addModDate();
-                trailer = new PdfDictionary();
+
+                if (trailer == null ) {
+                    trailer = new PdfDictionary();
+                }
+                // We keep the original trailer of the document to preserve the original document keys,
+                // but we have to remove the Encrypt key because it will be recalculated later if needed
+                trailer.remove(PdfName.Encrypt);
+
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, getDocumentInfo().getPdfObject().getIndirectReference());
 

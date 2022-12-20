@@ -51,6 +51,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,6 +71,8 @@ public class TrailerTest extends ExtendedITextTest {
 
     private ProductData productData;
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TrailerTest/";
+    private static final byte[] USERPASS = "user".getBytes();
+    private static final byte[] OWNERPASS = "owner".getBytes();
 
     @BeforeClass
     public static void beforeClass() {
@@ -96,6 +100,63 @@ public class TrailerTest extends ExtendedITextTest {
 
         Assert.assertTrue(doesTrailerContainFingerprint(new File(destinationFolder + "output.pdf"), MessageFormatUtil
                 .format("%iText-{0}-{1}\n", productData.getProductName(), productData.getVersion())));
+    }
+
+    @Test
+    /**
+     * This tests if iText will keep the all entries in the trailer dictionary
+     * while stamping a document that has custom or non-mandatory entries in the trailer.
+     */
+    public void existingTrailerValuesTest() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfName expectedKey = new PdfName("Custom");
+        PdfName expectedValue = new PdfName("Value");
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));) {
+            pdfDocument.getTrailer().put(expectedKey, expectedValue);
+        }
+        try (PdfDocument stampingDocument = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baos.toByteArray())),
+                new PdfWriter(new ByteArrayOutputStream()));
+        ) {
+            PdfDictionary trailer = stampingDocument.getTrailer();
+            boolean keyPresent = trailer.containsKey(expectedKey);
+            PdfName actualValue = trailer.getAsName(expectedKey);
+            stampingDocument.close();
+            Assert.assertTrue(keyPresent);
+            Assert.assertEquals(expectedValue, actualValue);
+        }
+    }
+
+    @Test
+    /**
+     * This tests if iText will keep the all entries in the trailer dictionary
+     * while stamping a document that has custom or non-mandatory entries in the trailer.
+     */
+    public void existingTrailerValuesTestWithEncryption() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setStandardEncryption(USERPASS, OWNERPASS, EncryptionConstants.ALLOW_PRINTING,
+                EncryptionConstants.ENCRYPTION_AES_128);
+        PdfName expectedKey = new PdfName("Custom");
+        PdfName expectedValue = new PdfName("Value");
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos, writerProperties))) {
+            pdfDocument.getTrailer().put(expectedKey, expectedValue);
+        }
+        ReaderProperties readerProperties = new ReaderProperties().setPassword(OWNERPASS);
+        try (PdfDocument stampingDocument = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baos.toByteArray()), readerProperties),
+                new PdfWriter(new ByteArrayOutputStream())
+        )) {
+            PdfDictionary trailer = stampingDocument.getTrailer();
+            boolean keyPresent = trailer.containsKey(expectedKey);
+            PdfName actualValue = trailer.getAsName(expectedKey);
+
+            stampingDocument.close();
+
+            Assert.assertTrue(keyPresent);
+            Assert.assertEquals(expectedValue, actualValue);
+        }
     }
 
     private boolean doesTrailerContainFingerprint(File file, String fingerPrint) throws IOException {
