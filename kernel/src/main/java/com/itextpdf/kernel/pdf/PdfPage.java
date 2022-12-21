@@ -1401,6 +1401,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent),
                         true, NullCopyFilter.getInstance());
             }
+            if (oldParent == oldParent.getAsDictionary(PdfName.Parent)) {
+                return;
+            }
             rebuildFormFieldParent(oldParent, newParent, toDocument);
 
             PdfArray kids = newParent.getAsArray(PdfName.Kids);

@@ -43,17 +43,26 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -118,6 +127,22 @@ public class PdfMergerTest extends ExtendedITextTest {
         sourceDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_mergeDocumentOutlinesWithNullDestinationTest01.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void mergeDocumentWithCycleRefInAcroFormTest() throws IOException, InterruptedException {
+        String filename1 = sourceFolder + "doc1.pdf";
+        String filename2 = sourceFolder + "pdfWithCycleRefInAnnotationParent.pdf";
+        String resultFile = destinationFolder + "resultFileWithoutStackOverflow.pdf";
+        try (PdfDocument pdfDocument1 = new PdfDocument(new PdfReader(filename2));
+             PdfDocument pdfDocument2 = new PdfDocument(new PdfReader(filename1),
+                        new PdfWriter(resultFile).setSmartMode(true));) {
+            PdfMerger merger = new PdfMerger(pdfDocument2);
+            merger.merge(pdfDocument1, 1, pdfDocument1.getNumberOfPages());
+        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_resultFileWithoutStackOverflow.pdf",
+                        destinationFolder, "diff_"));
     }
 
     @Test
