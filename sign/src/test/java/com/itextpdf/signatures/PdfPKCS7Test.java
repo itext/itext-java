@@ -22,13 +22,9 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
-import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
-import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
-import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -37,13 +33,10 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
-import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -51,11 +44,8 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.Security;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -64,33 +54,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleUnitTest.class)
-public class PdfPKCS7Test extends ExtendedITextTest {
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/PdfPKCS7Test/";
-    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
-
-    private static final char[] PASSWORD = "testpassphrase".toCharArray();
+public class PdfPKCS7Test extends PdfPKCS7BasicTest {
 
     private static final double EPS = 0.001;
-
-    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
-
-    private static Certificate[] chain;
-    private static PrivateKey pk;
-
-    @BeforeClass
-    public static void init()
-            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
-        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
-
-        pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
-        chain = PemFileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.pem");
-    }
 
     @Test
     // PdfPKCS7 is created here the same way it's done in PdfSigner#signDetached,
@@ -355,18 +325,14 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     }
 
     @Test
-    public void verifyEd25519SignatureTest()
-            throws IOException, GeneralSecurityException {
-        Assume.assumeFalse("ED25519 is not available in FIPS approved mode", BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode());
-        verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
-    }
-
-    @Test
     public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
-        Assume.assumeFalse(
-                "SHAKE256 is not available in BCFIPS", "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName())
-        );
-        verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
+        // SHAKE256 is not available in BCFIPS
+        if ("BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            Assert.assertThrows(PdfException.class,
+                    () -> verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf"));
+        } else {
+            verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
+        }
     }
 
     @Test
@@ -375,41 +341,8 @@ public class PdfPKCS7Test extends ExtendedITextTest {
     }
 
     @Test
-    public void verifyNistECDSASha3SignatureTest() throws IOException, GeneralSecurityException {
-        verifyIsoExtensionExample("SHA3-256withECDSA", "sample-nistp256-sha3_256.pdf");
-    }
-
-    @Test
     public void verifyBrainpoolSha2SignatureTest() throws IOException, GeneralSecurityException {
         verifyIsoExtensionExample("SHA384withECDSA", "sample-brainpoolP384r1-sha384.pdf");
-    }
-
-    @Test
-    public void verifyBrainpoolSha3SignatureTest() throws IOException, GeneralSecurityException {
-        verifyIsoExtensionExample("SHA3-384withECDSA", "sample-brainpoolP384r1-sha3_384.pdf");
-    }
-
-    @Test
-    public void verifyRsaSha3SignatureTest() throws IOException, GeneralSecurityException {
-        verifyIsoExtensionExample("SHA3-256withRSA", "sample-rsa-sha3_256.pdf");
-    }
-
-    public void verifyIsoExtensionExample(String expectedSigAlgo, String fileName)
-            throws IOException, GeneralSecurityException {
-        File infile = Paths.get(SOURCE_FOLDER, "extensions", fileName).toFile();
-        try (PdfReader r = new PdfReader(infile); PdfDocument pdfDoc = new PdfDocument(r)) {
-            SignatureUtil u = new SignatureUtil(pdfDoc);
-            /*
-            We specify the security provider explicitly; we're not testing security provider fallback here.
-
-            Also, default providers (in 2022) don't always have the parameters for Brainpool curves,
-            but a curve param mismatch doesn't factor into the algorithm support fallback logic, so
-            it causes a runtime error.
-            */
-            PdfPKCS7 data = u.readSignatureData("Signature", BOUNCY_CASTLE_FACTORY.getProviderName());
-            Assert.assertEquals(expectedSigAlgo, data.getDigestAlgorithm());
-            Assert.assertTrue(data.verifySignatureIntegrityAndAuthenticity());
-        }
     }
 
     // PdfPKCS7 is created here the same way it's done in PdfSigner#signDetached

@@ -312,8 +312,8 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     }
 
     private void skipShake256IfBcFips() {
-        String message = "SHAKE256 is currently not supported in BCFIPS provider";
-        Assume.assumeFalse(message,  "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName()));
+        // SHAKE256 is currently not supported in BCFIPS
+        Assume.assumeTrue(!"BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName()));
     }
 
     private Certificate readCertificate(Path path) throws IOException, GeneralSecurityException {
