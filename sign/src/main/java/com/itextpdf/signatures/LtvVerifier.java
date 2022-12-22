@@ -309,7 +309,6 @@ public class LtvVerifier extends RootStoreVerifier {
         if (cal == TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
             cal = pkcs7.getSignDate();
         }
-        // TODO: get date from signature
         signDate = cal.getTime();
         List<String> names = sgnUtil.getSignatureNames();
         if (names.size() > 1) {
