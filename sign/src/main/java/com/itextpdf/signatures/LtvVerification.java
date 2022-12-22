@@ -498,8 +498,6 @@ public class LtvVerification {
         public List<byte[]> certs = new ArrayList<>();
     }
 
-    // TODO: Refactor. Copied from itext5 Utilities
-
     /**
      * Converts an array of bytes to a String of hexadecimal values
      *
