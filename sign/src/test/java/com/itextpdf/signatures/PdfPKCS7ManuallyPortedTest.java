@@ -61,4 +61,10 @@ public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
     public void verifyRsaSha3SignatureTest() throws IOException, GeneralSecurityException {
         verifyIsoExtensionExample("SHA3-256withRSA", "sample-rsa-sha3_256.pdf");
     }
+
+    @Test
+    public void verifyRsaPssSha3SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("RSASSA-PSS", "sample-pss-sha3_256.pdf");
+    }
+
 }
