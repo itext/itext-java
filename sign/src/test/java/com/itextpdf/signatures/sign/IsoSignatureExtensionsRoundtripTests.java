@@ -134,6 +134,11 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     }
 
     @Test
+    public void testRsaSsaPssWithSha3_256() throws Exception {
+        doRoundTrip("rsa", DigestAlgorithms.SHA3_256, "RSASSA-PSS", new ASN1ObjectIdentifier(SecurityIDs.ID_RSASSA_PSS));
+    }
+
+    @Test
     public void testRsaWithSha3_256() throws Exception {
         doRoundTrip("dsa", DigestAlgorithms.SHA3_256, NISTObjectIdentifiers.id_dsa_with_sha3_256);
     }
@@ -141,7 +146,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     @Test
     public void testEd25519ForceSha512WhenSigning() {
         Exception e = Assert.assertThrows(PdfException.class, () ->
-            doSign("ed25519", DigestAlgorithms.SHA1, new ByteArrayOutputStream())
+            doSign("ed25519", DigestAlgorithms.SHA1, null, new ByteArrayOutputStream())
         );
         Assert.assertEquals(
                 "Ed25519 requires the document to be digested using SHA-512, not SHA1", e.getMessage()
@@ -152,7 +157,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     public void testEd448ForceShake256WhenSigning() {
         if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
             Exception e = Assert.assertThrows(PdfException.class, () ->
-                    doSign("ed448", DigestAlgorithms.SHA1, new ByteArrayOutputStream())
+                    doSign("ed448", DigestAlgorithms.SHA1, null, new ByteArrayOutputStream())
             );
             Assert.assertEquals(
                     "Ed448 requires the document to be digested using 512-bit SHAKE256, not SHA1", e.getMessage()
@@ -160,7 +165,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
         } else {
             // SHAKE256 is currently not supported in BCFIPS
             Exception e = Assert.assertThrows(PdfException.class, () ->
-                    doSign("ed448", DigestAlgorithms.SHA1, new ByteArrayOutputStream()));
+                    doSign("ed448", DigestAlgorithms.SHA1, null, new ByteArrayOutputStream()));
         }
     }
 
@@ -189,14 +194,14 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     @Test
     public void testRsaWithSha3ExtensionDeclarations() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        doSign("rsa", DigestAlgorithms.SHA3_256, baos);
+        doSign("rsa", DigestAlgorithms.SHA3_256, null, baos);
         checkIsoExtensions(baos.toByteArray(), Collections.singleton(32001));
     }
 
     @Test
     public void testEd25519ExtensionDeclarations() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        doSign("ed25519", DigestAlgorithms.SHA512, baos);
+        doSign("ed25519", DigestAlgorithms.SHA512, null, baos);
         checkIsoExtensions(baos.toByteArray(), Collections.singleton(32002));
     }
 
@@ -204,12 +209,12 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     public void testEd448ExtensionDeclarations() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            doSign("ed448", DigestAlgorithms.SHAKE256, baos);
+            doSign("ed448", DigestAlgorithms.SHAKE256, null, baos);
             checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
         } else {
             // SHAKE256 is currently not supported in BCFIPS
             Exception e = Assert.assertThrows(NoSuchAlgorithmException.class, () ->
-                    doSign("ed448", DigestAlgorithms.SHAKE256, baos));
+                    doSign("ed448", DigestAlgorithms.SHAKE256, null, baos));
         }
     }
 
@@ -256,21 +261,25 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
         checkIsoExtensions(baos2.toByteArray(), Arrays.asList(32001, 32002));
     }
 
-    private void doRoundTrip(String keySampleName, String digestAlgo, ASN1ObjectIdentifier expectedSigAlgoIdentifier) throws GeneralSecurityException, IOException {
+    private void doRoundTrip(String keySampleName, String digestAlgo, String signatureAlgo, ASN1ObjectIdentifier expectedSigAlgoIdentifier) throws GeneralSecurityException, IOException {
         String outFile = Paths.get(DESTINATION_FOLDER, keySampleName + "-" + digestAlgo + ".pdf").toString();
-        doSign(keySampleName, digestAlgo, outFile);
+        doSign(keySampleName, digestAlgo, signatureAlgo, outFile);
         doVerify(outFile, expectedSigAlgoIdentifier);
     }
 
-    private void doSign(String keySampleName, String digestAlgo, String outFile)
+    private void doRoundTrip(String keySampleName, String digestAlgo, ASN1ObjectIdentifier expectedSigAlgoIdentifier) throws GeneralSecurityException, IOException {
+        doRoundTrip(keySampleName, digestAlgo, null, expectedSigAlgoIdentifier);
+    }
+
+    private void doSign(String keySampleName, String digestAlgo, String signatureAlgo, String outFile)
             throws IOException, GeneralSecurityException {
         // write to a file for easier inspection when debugging
         try (FileOutputStream fos = new FileOutputStream(outFile)) {
-            doSign(keySampleName, digestAlgo, fos);
+            doSign(keySampleName, digestAlgo, signatureAlgo, fos);
         }
     }
 
-    private void doSign(String keySampleName, String digestAlgo, OutputStream os)
+    private void doSign(String keySampleName, String digestAlgo, String signatureAlgo, OutputStream os)
             throws IOException, GeneralSecurityException {
         Certificate root = readCertificate(Paths.get(SOURCE_FOLDER, "ca.crt"));
         Certificate signerCert = readCertificate(Paths.get(SOURCE_FOLDER, keySampleName + ".crt"));
@@ -278,7 +287,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
         PrivateKey signPrivateKey = readUnencryptedPrivateKey(Paths.get(SOURCE_FOLDER, keySampleName + ".key.pem"));
         // The default provider doesn't necessarily distinguish between different types of EdDSA keys
         // and accessing that information requires APIs that are not available in older JDKs we still support.
-        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, digestAlgo, BOUNCY_CASTLE_FACTORY.getProviderName());
+        IExternalSignature pks = new PrivateKeySignature(signPrivateKey, digestAlgo, signatureAlgo, BOUNCY_CASTLE_FACTORY.getProviderName(), null);
 
         PdfSigner signer = new PdfSigner(new PdfReader(SOURCE_FILE), os, new StampingProperties());
         signer.setFieldName(SIGNATURE_FIELD);

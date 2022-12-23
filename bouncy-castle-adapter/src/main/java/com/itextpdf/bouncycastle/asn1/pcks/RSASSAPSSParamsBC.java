@@ -20,51 +20,63 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.bouncycastle.asn1.x509;
+package com.itextpdf.bouncycastle.asn1.pcks;
 
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
-import com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import java.math.BigInteger;
 
 /**
- * Wrapper class for {@link AlgorithmIdentifier}.
+ * BC wrapper implementation for {@link IRSASSAPSSParams}.
  */
-public class AlgorithmIdentifierBC extends ASN1EncodableBC implements IAlgorithmIdentifier {
-    /**
-     * Creates new wrapper instance for {@link AlgorithmIdentifier}.
-     *
-     * @param algorithmIdentifier {@link AlgorithmIdentifier} to be wrapped
-     */
-    public AlgorithmIdentifierBC(AlgorithmIdentifier algorithmIdentifier) {
-        super(algorithmIdentifier);
-    }
+public class RSASSAPSSParamsBC extends ASN1EncodableBC implements IRSASSAPSSParams {
+
+    private final RSASSAPSSparams params;
 
     /**
-     * Gets actual org.bouncycastle object being wrapped.
+     * Creates new wrapper instance for {@link RSASSAPSSparams}.
      *
-     * @return wrapped {@link AlgorithmIdentifier}.
+     * @param params {@link RSASSAPSSparams} to be wrapped
      */
-    public AlgorithmIdentifier getAlgorithmIdentifier() {
-        return (AlgorithmIdentifier) getEncodable();
+    public RSASSAPSSParamsBC(RSASSAPSSparams params) {
+        super(params);
+        this.params = params;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IASN1ObjectIdentifier getAlgorithm() {
-        return new ASN1ObjectIdentifierBC(getAlgorithmIdentifier().getAlgorithm());
+    public IAlgorithmIdentifier getHashAlgorithm() {
+        return new AlgorithmIdentifierBC(params.getHashAlgorithm());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IASN1Encodable getParameters() {
-        return new ASN1EncodableBC(getAlgorithmIdentifier().getParameters());
+    public IAlgorithmIdentifier getMaskGenAlgorithm() {
+        return new AlgorithmIdentifierBC(params.getMaskGenAlgorithm());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BigInteger getSaltLength() {
+        return params.getSaltLength();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BigInteger getTrailerField() {
+        return params.getTrailerField();
+    }
+
 }

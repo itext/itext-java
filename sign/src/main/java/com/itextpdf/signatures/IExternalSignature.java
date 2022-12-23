@@ -68,6 +68,16 @@ public interface IExternalSignature {
     String getSignatureAlgorithmName();
 
     /**
+     * Return the algorithm parameters that need to be encoded together with the signature mechanism identifier.
+     * If there are no parameters, return `null`.
+     * A non-null value is required for RSASSA-PSS; see {@link RSASSAPSSMechanismParams}.
+     *
+     * @return algorithm parameters
+     */
+    ISignatureMechanismParams getSignatureMechanismParameters();
+    // can't make this a default method due to autoporting concerns
+
+    /**
      * Signs the given message using the encryption algorithm in combination
      * with the hash algorithm.
      * @param message The message you want to be hashed and signed.

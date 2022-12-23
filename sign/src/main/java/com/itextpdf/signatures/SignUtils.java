@@ -79,6 +79,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -95,6 +96,8 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -354,6 +357,13 @@ final class SignUtils {
         return provider == null
                 ? Signature.getInstance(algorithm)
                 : Signature.getInstance(algorithm, provider);
+    }
+
+    static void setRSASSAPSSParamsWithMGF1(Signature signature, String digestAlgoName, int saltLen, int trailerField)
+            throws InvalidAlgorithmParameterException {
+        MGF1ParameterSpec mgf1Spec = new MGF1ParameterSpec(digestAlgoName);
+        PSSParameterSpec spec = new PSSParameterSpec(digestAlgoName, "MGF1", mgf1Spec, saltLen, trailerField);
+        signature.setParameter(spec);
     }
 
     public static void updateVerifier(Signature signature, byte[] attr) throws SignatureException {

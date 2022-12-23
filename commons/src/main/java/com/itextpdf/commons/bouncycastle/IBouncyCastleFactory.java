@@ -67,6 +67,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
@@ -593,14 +594,37 @@ public interface IBouncyCastleFactory {
     IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm);
 
     /**
-     * Create algorithm identifier wrapper from ASN1 Object identifier wrapper and ASN1 Encodable wrapper.
+     * Create algorithm identifier wrapper from ASN1 Object identifier wrapper and ASN1 Encodable wrapper
+     * for the parameters.
      *
      * @param algorithm ASN1 Object identifier wrapper to create algorithm identifier wrapper from
-     * @param encodable ASN1 Encodable wrapper to create algorithm identifier wrapper from
+     * @param parameters ASN1 Encodable wrapper to create algorithm parameters.
      *
      * @return created algorithm identifier wrapper
      */
-    IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable);
+    IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable parameters);
+
+    /**
+     * Create a RSASSA-PSS params wrapper from an ASN1 Encodable wrapper.
+     *
+     * @param encodable ASN1 Encodable wrapper to create RSASSA-PSS params wrapper from
+     *
+     * @return created RSASSA-PSS params wrapper
+     */
+    IRSASSAPSSParams createRSASSAPSSParams(IASN1Encodable encodable);
+
+    /**
+     * Create a RSASSA-PSS params wrapper from a digest algorithm OID, a salt length and a trailer field length.
+     * The mask generation function will be set to MGF1, and the same digest algorithm will be used to populate the
+     * MGF parameters.
+     *
+     * @param digestAlgoOid  identifier of the digest algorithm to be used both in the MGF and in the signature
+     * @param saltLen        salt length value
+     * @param trailerField   trailer field value
+     *
+     * @return an {@link IRSASSAPSSParams} object initialised with the parameters supplied
+     */
+    IRSASSAPSSParams createRSASSAPSSParamsWithMGF1(IASN1ObjectIdentifier digestAlgoOid, int saltLen, int trailerField);
 
     /**
      * Get {@link Provider} instance for this factory.

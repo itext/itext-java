@@ -79,6 +79,11 @@ public class PrivateKeySignature implements IExternalSignature {
     private final String provider;
 
     /**
+     * The algorithm parameters.
+     */
+    private final IApplicableSignatureParams parameters;
+
+    /**
      * Creates a {@link PrivateKeySignature} instance.
      *
      * @param pk            A {@link PrivateKey} object.
@@ -86,11 +91,22 @@ public class PrivateKeySignature implements IExternalSignature {
      * @param provider      A security provider (e.g. "BC").
      */
     public PrivateKeySignature(PrivateKey pk, String hashAlgorithm, String provider) {
+        this(pk, hashAlgorithm, null, provider, null);
+    }
+
+    /**
+     * Creates a {@link PrivateKeySignature} instance.
+     *
+     * @param pk            A {@link PrivateKey} object.
+     * @param hashAlgorithm A hash algorithm (e.g. "SHA-1", "SHA-256",...).
+     * @param provider      A security provider (e.g. "BC").
+     */
+    public PrivateKeySignature(PrivateKey pk, String hashAlgorithm, String signatureAlgorithm, String provider, IApplicableSignatureParams params) {
         this.pk = pk;
         this.provider = provider;
         String digestAlgorithmOid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
         this.hashAlgorithm = DigestAlgorithms.getDigest(digestAlgorithmOid);
-        this.signatureAlgorithm = SignUtils.getPrivateKeyAlgorithm(pk);
+        this.signatureAlgorithm = signatureAlgorithm == null ? SignUtils.getPrivateKeyAlgorithm(pk) : signatureAlgorithm;
 
         switch (this.signatureAlgorithm) {
             case "Ed25519":
@@ -98,18 +114,32 @@ public class PrivateKeySignature implements IExternalSignature {
                     throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
                             .setMessageParams("Ed25519", "SHA-512", this.hashAlgorithm);
                 }
+                this.parameters = null;
                 break;
             case "Ed448":
                 if (!SecurityIDs.ID_SHAKE256.equals(digestAlgorithmOid)) {
                     throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
                             .setMessageParams("Ed448", "512-bit SHAKE256", this.hashAlgorithm);
                 }
+                this.parameters = null;
                 break;
             case "EdDSA":
                 throw new IllegalArgumentException(
                         "Key algorithm of EdDSA PrivateKey instance provided by " + pk.getClass()
                                 + " is not clear. Expected Ed25519 or Ed448, but got EdDSA. "
                                 + "Try a different security provider.");
+            case "RSA/PSS":
+            case "RSASSA-PSS":
+                if (params == null) {
+                    this.parameters = RSASSAPSSMechanismParams.createForDigestAlgorithm(hashAlgorithm);
+                } else if (params instanceof RSASSAPSSMechanismParams) {
+                    this.parameters = params;
+                } else {
+                    throw new IllegalArgumentException("Expected RSASSA-PSS parameters; got " + params);
+                }
+                break;
+            default:
+                this.parameters = null;
         }
     }
 
@@ -133,9 +163,20 @@ public class PrivateKeySignature implements IExternalSignature {
      * {@inheritDoc}
      */
     @Override
+    public ISignatureMechanismParams getSignatureMechanismParameters() {
+        return parameters;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public byte[] sign(byte[] message) throws GeneralSecurityException {
         String algorithm = getSignatureMechanismName();
         Signature sig = SignUtils.getSignatureHelper(algorithm, provider);
+        if (parameters != null) {
+            parameters.apply(sig);
+        }
         sig.initSign(pk);
         sig.update(message);
         return sig.sign();
@@ -144,7 +185,9 @@ public class PrivateKeySignature implements IExternalSignature {
     private String getSignatureMechanismName() {
         final String signatureAlgo = this.getSignatureAlgorithmName();
         // Ed25519 and Ed448 do not involve a choice of hashing algorithm
-        if ("Ed25519".equals(signatureAlgo) || "Ed448".equals(signatureAlgo)) {
+        // and RSASSA-PSS is parameterised
+        if ("Ed25519".equals(signatureAlgo) || "Ed448".equals(signatureAlgo)
+                || "RSASSA-PSS".equals(signatureAlgo)) {
             return signatureAlgo;
         } else {
             return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();

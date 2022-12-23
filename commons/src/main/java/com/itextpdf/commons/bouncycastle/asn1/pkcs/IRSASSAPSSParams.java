@@ -20,27 +20,40 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.commons.bouncycastle.asn1.x509;
+package com.itextpdf.commons.bouncycastle.asn1.pkcs;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+
+import java.math.BigInteger;
 
 /**
- * This interface represents the wrapper for AlgorithmIdentifier that provides the ability
- * to switch between bouncy-castle and bouncy-castle FIPS implementations.
+ * Wrapper interface for BouncyCastle's representation of RSASSA-PSS parameters in ASN.1.
  */
-public interface IAlgorithmIdentifier extends IASN1Encodable {
+public interface IRSASSAPSSParams extends IASN1Encodable {
     /**
-     * Calls actual {@code getAlgorithm} method for the wrapped AlgorithmIdentifier object.
+     * Return the {@link IAlgorithmIdentifier} describing the digest algorithm to be used in the signature.
      *
-     * @return {@link IASN1ObjectIdentifier} wrapped algorithm ASN1ObjectIdentifier.
+     * @return an {@link IAlgorithmIdentifier}
      */
-    IASN1ObjectIdentifier getAlgorithm();
+    IAlgorithmIdentifier getHashAlgorithm();
 
     /**
-     * Calls actual {@code getParameters} method for the wrapped AlgorithmIdentifier object.
+     * Return the {@link IAlgorithmIdentifier} describing the mask generation function to be used in the signature.
      *
-     * @return {@link IASN1Encodable} wrapped algorithm parameters.
+     * @return an {@link IAlgorithmIdentifier}
      */
-    IASN1Encodable getParameters();
+    IAlgorithmIdentifier getMaskGenAlgorithm();
+
+    /**
+     * Return the salt length parameter. This is a {@link BigInteger} for API consistency reasons, but typical
+     * values will be small.
+     */
+    BigInteger getSaltLength();
+
+    /**
+     * Return the trailer field parameter. This is a {@link BigInteger} for API consistency reasons, but typical
+     * values will be small.
+     */
+    BigInteger getTrailerField();
 }

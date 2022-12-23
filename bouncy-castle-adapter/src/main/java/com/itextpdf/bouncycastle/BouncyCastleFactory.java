@@ -67,6 +67,7 @@ import com.itextpdf.bouncycastle.asn1.ocsp.OCSPResponseBC;
 import com.itextpdf.bouncycastle.asn1.ocsp.OCSPResponseStatusBC;
 import com.itextpdf.bouncycastle.asn1.ocsp.ResponseBytesBC;
 import com.itextpdf.bouncycastle.asn1.pcks.PKCSObjectIdentifiersBC;
+import com.itextpdf.bouncycastle.asn1.pcks.RSASSAPSSParamsBC;
 import com.itextpdf.bouncycastle.asn1.tsp.TSTInfoBC;
 import com.itextpdf.bouncycastle.asn1.util.ASN1DumpBC;
 import com.itextpdf.bouncycastle.asn1.x500.X500NameBC;
@@ -170,6 +171,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
@@ -270,6 +272,8 @@ import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -783,11 +787,35 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
-    public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable) {
+    public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable parameters) {
         ASN1ObjectIdentifierBC algorithmBc = (ASN1ObjectIdentifierBC) algorithm;
-        ASN1EncodableBC encodableBc = (ASN1EncodableBC) encodable;
+        ASN1EncodableBC encodableBc = (ASN1EncodableBC) parameters;
         return new AlgorithmIdentifierBC(
                 new AlgorithmIdentifier(algorithmBc.getASN1ObjectIdentifier(), encodableBc.getEncodable()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRSASSAPSSParams createRSASSAPSSParams(IASN1Encodable encodable) {
+        if (encodable == null) {
+            throw new IllegalArgumentException("Expected non-null RSASSA-PSS parameter data");
+        }
+        ASN1EncodableBC encodableBC = (ASN1EncodableBC) encodable;
+        return new RSASSAPSSParamsBC(RSASSAPSSparams.getInstance(encodableBC.getEncodable()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRSASSAPSSParams createRSASSAPSSParamsWithMGF1(IASN1ObjectIdentifier digestAlgoOid, int saltLen, int trailerField) {
+        ASN1ObjectIdentifier oid = ((ASN1ObjectIdentifierBC) digestAlgoOid).getASN1ObjectIdentifier();
+        AlgorithmIdentifier digestAlgo = new AlgorithmIdentifier(oid);
+        AlgorithmIdentifier mgf = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, digestAlgo);
+        RSASSAPSSparams params = new RSASSAPSSparams(digestAlgo, mgf, new ASN1Integer(saltLen), new ASN1Integer(trailerField));
+        return new RSASSAPSSParamsBC(params);
     }
 
     /**
