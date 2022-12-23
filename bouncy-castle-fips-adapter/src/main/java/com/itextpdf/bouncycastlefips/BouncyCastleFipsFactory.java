@@ -67,6 +67,7 @@ import com.itextpdf.bouncycastlefips.asn1.ocsp.OCSPResponseBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ocsp.OCSPResponseStatusBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ocsp.ResponseBytesBCFips;
 import com.itextpdf.bouncycastlefips.asn1.pcks.PKCSObjectIdentifiersBCFips;
+import com.itextpdf.bouncycastlefips.asn1.pcks.RSASSAPSSParamsBCFips;
 import com.itextpdf.bouncycastlefips.asn1.tsp.TSTInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.util.ASN1DumpBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x500.X500NameBCFips;
@@ -116,6 +117,7 @@ import com.itextpdf.bouncycastlefips.openssl.jcajce.JceOpenSSLPKCS8DecryptorProv
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentSignerBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentVerifierProviderBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaDigestCalculatorProviderBuilderBCFips;
+
 import com.itextpdf.bouncycastlefips.tsp.TSPExceptionBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampRequestBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampRequestGeneratorBCFips;
@@ -170,6 +172,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
@@ -273,6 +276,8 @@ import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.ocsp.BasicOCSPResponse;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -795,11 +800,37 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm,
-            IASN1Encodable encodable) {
+            IASN1Encodable parameters) {
         ASN1ObjectIdentifierBCFips algorithmBCFips = (ASN1ObjectIdentifierBCFips) algorithm;
-        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) parameters;
         return new AlgorithmIdentifierBCFips(
                 new AlgorithmIdentifier(algorithmBCFips.getASN1ObjectIdentifier(), encodableBCFips.getEncodable()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRSASSAPSSParams createRSASSAPSSParams(IASN1Encodable encodable) {
+        if (encodable == null) {
+            throw new IllegalArgumentException("Expected non-null RSASSA-PSS parameter data");
+        }
+        ASN1EncodableBCFips encodableBCFips = (ASN1EncodableBCFips) encodable;
+        return new RSASSAPSSParamsBCFips(RSASSAPSSparams.getInstance(encodableBCFips.getEncodable()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRSASSAPSSParams createRSASSAPSSParamsWithMGF1(IASN1ObjectIdentifier digestAlgoOid, int saltLen,
+                                                          int trailerField) {
+        ASN1ObjectIdentifier oid = ((ASN1ObjectIdentifierBCFips) digestAlgoOid).getASN1ObjectIdentifier();
+        AlgorithmIdentifier digestAlgo = new AlgorithmIdentifier(oid);
+        AlgorithmIdentifier mgf = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, digestAlgo);
+        RSASSAPSSparams params = new RSASSAPSSparams(digestAlgo, mgf, new ASN1Integer(saltLen),
+                new ASN1Integer(trailerField));
+        return new RSASSAPSSParamsBCFips(params);
     }
 
     /**

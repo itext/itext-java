@@ -20,27 +20,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.commons.bouncycastle.asn1.x509;
+package com.itextpdf.signatures;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import java.security.Signature;
 
 /**
- * This interface represents the wrapper for AlgorithmIdentifier that provides the ability
- * to switch between bouncy-castle and bouncy-castle FIPS implementations.
+ * Extension interface of {@link ISignatureMechanismParams} that also supports applying the parameters to
+ * a {@link Signature}.
  */
-public interface IAlgorithmIdentifier extends IASN1Encodable {
+public interface IApplicableSignatureParams extends ISignatureMechanismParams {
     /**
-     * Calls actual {@code getAlgorithm} method for the wrapped AlgorithmIdentifier object.
+     * Apply the parameters to a {@link Signature}.
      *
-     * @return {@link IASN1ObjectIdentifier} wrapped algorithm ASN1ObjectIdentifier.
+     * @param signature  an uninitialised {@link Signature} object
      */
-    IASN1ObjectIdentifier getAlgorithm();
-
-    /**
-     * Calls actual {@code getParameters} method for the wrapped AlgorithmIdentifier object.
-     *
-     * @return {@link IASN1Encodable} wrapped algorithm parameters.
-     */
-    IASN1Encodable getParameters();
+    void apply(Signature signature);
 }

@@ -45,6 +45,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
@@ -69,11 +70,13 @@ import com.itextpdf.commons.bouncycastle.asn1.ess.ISigningCertificateV2;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.IMessageImprint;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -83,6 +86,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -418,10 +422,14 @@ public class PdfPKCS7 {
             if (isCades && !foundCades) {
                 throw new IllegalArgumentException("CAdES ESS information missing.");
             }
-
-            signatureMechanismOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
-                    BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfo.getObjectAt(next)).getObjectAt(0)).getId();
+            IASN1Sequence signatureMechanismInfo = BOUNCY_CASTLE_FACTORY
+                    .createASN1Sequence(signerInfo.getObjectAt(next));
             ++next;
+            signatureMechanismOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                    signatureMechanismInfo.getObjectAt(0)).getId();
+            if (signatureMechanismInfo.size() > 1) {
+                signatureMechanismParameters = signatureMechanismInfo.getObjectAt(1);
+            }
             signatureValue = BOUNCY_CASTLE_FACTORY.createASN1OctetString(signerInfo.getObjectAt(next)).getOctets();
             ++next;
             if (next < signerInfo.size()) {
@@ -606,6 +614,8 @@ public class PdfPKCS7 {
      */
     private String signatureMechanismOid;
 
+    private IASN1Encodable signatureMechanismParameters = null;
+
     /**
      * Getter for the ID of the digest algorithm, e.g. "2.16.840.1.101.3.4.2.1".
      * See ISO-32000-1, section 12.8.3.3 PKCS#7 Signatures as used in ISO 32000
@@ -657,12 +667,16 @@ public class PdfPKCS7 {
      * @return the algorithm used to calculate the signature
      */
     public String getSignatureMechanismName() {
-        // Ed25519 and Ed448 do not involve a choice of hashing algorithm
-        switch (signatureMechanismOid) {
+        switch (this.signatureMechanismOid) {
             case SecurityIDs.ID_ED25519:
+                // Ed25519 and Ed448 do not involve a choice of hashing algorithm
                 return "Ed25519";
             case SecurityIDs.ID_ED448:
                 return "Ed448";
+            case SecurityIDs.ID_RSASSA_PSS:
+                // For RSASSA-PSS, the algorithm parameters dictate everything, so
+                // there's no need to duplicate that information in the algorithm name.
+                return "RSASSA-PSS";
             default:
                 return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();
         }
@@ -711,6 +725,24 @@ public class PdfPKCS7 {
      *                                  possible values include "RSA", "DSA", "ECDSA", "Ed25519" and "Ed448".
      */
     public void setExternalSignatureValue(byte[] signatureValue, byte[] signedMessageContent, String signatureAlgorithm) {
+        setExternalSignatureValue(signatureValue, signedMessageContent, signatureAlgorithm, null);
+    }
+
+    /**
+     * Sets the signature to an externally calculated value.
+     *
+     * @param signatureValue            the signature value
+     * @param signedMessageContent      the extra data that goes into the data tag in PKCS#7
+     * @param signatureAlgorithm        the signature algorithm. It must be <CODE>null</CODE> if the
+     *                                  <CODE>signatureValue</CODE> is also <CODE>null</CODE>.
+     *                                  If the <CODE>signatureValue</CODE> is not <CODE>null</CODE>,
+     *                                  possible values include "RSA", "RSASSA-PSS", "DSA",
+     *                                  "ECDSA", "Ed25519" and "Ed448".
+     * @param signatureMechanismParams  parameters for the signature mechanism, if required
+     */
+    public void setExternalSignatureValue(
+            byte[] signatureValue, byte[] signedMessageContent,
+            String signatureAlgorithm, ISignatureMechanismParams signatureMechanismParams) {
         externalSignatureValue = signatureValue;
         externalEncapMessageContent = signedMessageContent;
         if (signatureAlgorithm != null) {
@@ -722,8 +754,10 @@ public class PdfPKCS7 {
             }
             this.signatureMechanismOid = oid;
         }
+        if (signatureMechanismParams != null) {
+            this.signatureMechanismParameters = signatureMechanismParams.toEncodable();
+        }
     }
-
     // The signature is created internally
 
     /**
@@ -760,8 +794,51 @@ public class PdfPKCS7 {
             signatureMechanism = getSignatureMechanismName();
         }
         Signature signature = SignUtils.getSignatureHelper(signatureMechanism, provider);
+        configureSignatureMechanismParameters(signature);
         signature.initVerify(key);
         return signature;
+    }
+
+    private void configureSignatureMechanismParameters(Signature signature) {
+        if (SecurityIDs.ID_RSASSA_PSS.equals(this.signatureMechanismOid)) {
+            IRSASSAPSSParams params = BOUNCY_CASTLE_FACTORY.createRSASSAPSSParams(this.signatureMechanismParameters);
+            String mgfOid = params.getMaskGenAlgorithm().getAlgorithm().getId();
+            if (!SecurityIDs.ID_MGF1.equals(mgfOid)) {
+                throw new IllegalArgumentException(SignExceptionMessageConstant.ONLY_MGF1_SUPPORTED_IN_RSASSA_PSS);
+            }
+            // Even though having separate digests at all "layers" is mathematically fine,
+            // it's bad practice at best (and a security problem at worst).
+            // We don't support such hybridisation outside RSASSA-PSS either.
+            // => on the authority of RFC 8933 we enforce the restriction here.
+            String mechParamDigestAlgoOid = params.getHashAlgorithm().getAlgorithm().getId();
+            if (!this.digestAlgorithmOid.equals(mechParamDigestAlgoOid)) {
+                throw new IllegalArgumentException(MessageFormatUtil.format(
+                        SignExceptionMessageConstant.RSASSA_PSS_DIGESTMISSMATCH,
+                        mechParamDigestAlgoOid, this.digestAlgorithmOid));
+            }
+
+            // This is actually morally an IAlgorithmIdentifier too, but since it's pretty much always going to be a
+            // one-element sequence, it's probably not worth putting in a conversion method in the factory interface
+            IASN1Sequence mgfParams = BOUNCY_CASTLE_FACTORY.createASN1Sequence(
+                    params.getMaskGenAlgorithm().getParameters()
+            );
+            String mgfParamDigestAlgoOid = BOUNCY_CASTLE_FACTORY
+                    .createASN1ObjectIdentifier(mgfParams.getObjectAt(0))
+                    .getId();
+            if (!this.digestAlgorithmOid.equals(mgfParamDigestAlgoOid)) {
+                throw new IllegalArgumentException(
+                        MessageFormatUtil.format(
+                                SignExceptionMessageConstant.DISGEST_ALGORITM_MGF_MISMATCH,
+                         mgfParamDigestAlgoOid , this.digestAlgorithmOid));
+            }
+            try {
+                int saltLength = params.getSaltLength().intValue();
+                int trailerField = params.getTrailerField().intValue();
+                SignUtils.setRSASSAPSSParamsWithMGF1(signature, getDigestAlgorithmName(), saltLength, trailerField);
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new IllegalArgumentException(SignExceptionMessageConstant.INVALID_ARGUMENTS,e);
+            }
+        }
     }
 
     /**
@@ -926,7 +1003,11 @@ public class PdfPKCS7 {
             // Add the digestEncryptionAlgorithm
             v = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
             v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(signatureMechanismOid));
-            v.add(BOUNCY_CASTLE_FACTORY.createDERNull());
+            if (this.signatureMechanismParameters == null) {
+                v.add(BOUNCY_CASTLE_FACTORY.createDERNull());
+            } else {
+                v.add(this.signatureMechanismParameters.toASN1Primitive());
+            }
             signerinfo.add(BOUNCY_CASTLE_FACTORY.createDERSequence(v));
 
             // Add the digest

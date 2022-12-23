@@ -70,6 +70,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
@@ -399,6 +400,17 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
 
     @Override
     public IAlgorithmIdentifier createAlgorithmIdentifier(IASN1ObjectIdentifier algorithm, IASN1Encodable encodable) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public IRSASSAPSSParams createRSASSAPSSParams(IASN1Encodable encodable) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public IRSASSAPSSParams createRSASSAPSSParamsWithMGF1(IASN1ObjectIdentifier digestAlgoOid, int saltLen,
+                                                          int trailerField) {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
 

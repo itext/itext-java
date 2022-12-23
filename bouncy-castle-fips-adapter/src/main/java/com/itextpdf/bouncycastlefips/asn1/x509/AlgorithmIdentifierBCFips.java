@@ -24,6 +24,7 @@ package com.itextpdf.bouncycastlefips.asn1.x509;
 
 import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 
@@ -57,5 +58,13 @@ public class AlgorithmIdentifierBCFips extends ASN1EncodableBCFips implements IA
     @Override
     public IASN1ObjectIdentifier getAlgorithm() {
         return new ASN1ObjectIdentifierBCFips(getAlgorithmIdentifier().getAlgorithm());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1Encodable getParameters() {
+        return new ASN1EncodableBCFips(getAlgorithmIdentifier().getParameters());
     }
 }

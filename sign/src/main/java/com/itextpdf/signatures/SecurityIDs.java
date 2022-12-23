@@ -51,6 +51,7 @@ public class SecurityIDs {
     public static final String ID_PKCS7_DATA = "1.2.840.113549.1.7.1";
     public static final String ID_PKCS7_SIGNED_DATA = "1.2.840.113549.1.7.2";
     public static final String ID_RSA = "1.2.840.113549.1.1.1";
+    public static final String ID_RSASSA_PSS = "1.2.840.113549.1.1.10";
     public static final String ID_RSA_WITH_SHA256 = "1.2.840.113549.1.1.11";
     public static final String ID_RSA_WITH_SHA3_512 = "2.16.840.1.101.3.4.3.16";
     public static final String ID_DSA = "1.2.840.10040.4.1";
@@ -68,4 +69,5 @@ public class SecurityIDs {
     public static final String ID_OCSP = "1.3.6.1.5.5.7.48.1";
     public static final String ID_AA_SIGNING_CERTIFICATE_V1 = "1.2.840.113549.1.9.16.2.12";
     public static final String ID_AA_SIGNING_CERTIFICATE_V2 = "1.2.840.113549.1.9.16.2.47";
+    public static final String ID_MGF1 = "1.2.840.113549.1.1.8";
 }

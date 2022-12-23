@@ -632,7 +632,12 @@ public class PdfSigner {
         }
         byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, sigtype, ocspList, crlBytes);
         byte[] extSignature = externalSignature.sign(sh);
-        sgn.setExternalSignatureValue(extSignature, null, externalSignature.getSignatureAlgorithmName());
+        sgn.setExternalSignatureValue(
+                extSignature,
+                null,
+                externalSignature.getSignatureAlgorithmName(),
+                externalSignature.getSignatureMechanismParameters()
+        );
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, sigtype, tsaClient, ocspList, crlBytes);
 

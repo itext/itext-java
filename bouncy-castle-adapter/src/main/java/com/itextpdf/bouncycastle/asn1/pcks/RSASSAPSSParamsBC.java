@@ -20,51 +20,70 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.bouncycastle.asn1.x509;
+package com.itextpdf.bouncycastle.asn1.pcks;
 
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
-import com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
-import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
+import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
+import java.math.BigInteger;
 
 /**
- * Wrapper class for {@link AlgorithmIdentifier}.
+ * BC wrapper implementation for {@link IRSASSAPSSParams}.
  */
-public class AlgorithmIdentifierBC extends ASN1EncodableBC implements IAlgorithmIdentifier {
+public class RSASSAPSSParamsBC extends ASN1EncodableBC implements IRSASSAPSSParams {
+
     /**
-     * Creates new wrapper instance for {@link AlgorithmIdentifier}.
+     * Creates new wrapper instance for {@link RSASSAPSSparams}.
      *
-     * @param algorithmIdentifier {@link AlgorithmIdentifier} to be wrapped
+     * @param params {@link RSASSAPSSparams} to be wrapped
      */
-    public AlgorithmIdentifierBC(AlgorithmIdentifier algorithmIdentifier) {
-        super(algorithmIdentifier);
+    public RSASSAPSSParamsBC(RSASSAPSSparams params) {
+        super(params);
     }
 
     /**
      * Gets actual org.bouncycastle object being wrapped.
      *
-     * @return wrapped {@link AlgorithmIdentifier}.
+     * @return wrapped {@link RSASSAPSSparams}.
      */
-    public AlgorithmIdentifier getAlgorithmIdentifier() {
-        return (AlgorithmIdentifier) getEncodable();
+    public RSASSAPSSparams getRSASSAPSSparams() {
+        return (RSASSAPSSparams) super.getEncodable();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IAlgorithmIdentifier getHashAlgorithm() {
+        return new AlgorithmIdentifierBC(getRSASSAPSSparams().getHashAlgorithm());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IASN1ObjectIdentifier getAlgorithm() {
-        return new ASN1ObjectIdentifierBC(getAlgorithmIdentifier().getAlgorithm());
+    public IAlgorithmIdentifier getMaskGenAlgorithm() {
+        return new AlgorithmIdentifierBC(getRSASSAPSSparams().getMaskGenAlgorithm());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IASN1Encodable getParameters() {
-        return new ASN1EncodableBC(getAlgorithmIdentifier().getParameters());
+    public BigInteger getSaltLength() {
+        return getRSASSAPSSparams().getSaltLength();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BigInteger getTrailerField() {
+        return getRSASSAPSSparams().getTrailerField();
+    }
+
 }

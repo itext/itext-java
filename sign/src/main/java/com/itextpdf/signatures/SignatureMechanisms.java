@@ -105,6 +105,18 @@ public class SignatureMechanisms {
         algorithmNames.put("2.16.840.1.101.3.4.3.15", "RSA");
         algorithmNames.put("2.16.840.1.101.3.4.3.16", "RSA");
 
+        /*
+         * We tolerate two naming conventions for RSASSA-PSS:
+         *
+         *  - RSASSA-PSS
+         *  - <digest>withRSA/PSS
+         *
+         * The former is considered the canonical one because it's the standard name in JCA,
+         * the digest is required to be specified in the algorithm params anyway,
+         * and the OID does not depend on the digest. BouncyCastle accepts both.
+         */
+        algorithmNames.put(SecurityIDs.ID_RSASSA_PSS, "RSASSA-PSS");
+
         // EdDSA
         algorithmNames.put(SecurityIDs.ID_ED25519, "Ed25519");
         algorithmNames.put(SecurityIDs.ID_ED448, "Ed448");
@@ -162,6 +174,9 @@ public class SignatureMechanisms {
                 return SecurityIDs.ID_ED25519;
             case "Ed448":
                 return SecurityIDs.ID_ED448;
+            case "RSASSA-PSS":
+            case "RSA/PSS":
+                return SecurityIDs.ID_RSASSA_PSS;
             default:
                 return null;
         }
