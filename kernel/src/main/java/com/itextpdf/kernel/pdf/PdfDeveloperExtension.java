@@ -69,7 +69,7 @@ public class PdfDeveloperExtension {
     public static final PdfDeveloperExtension ESIC_1_7_EXTENSIONLEVEL5 =
             new PdfDeveloperExtension(PdfName.ESIC, PdfName.Pdf_Version_1_7, 5);
 
-    /** An instance of this class for ISO/TS 32001 */
+    /** An instance of this class for ISO/TS 32001. */
     public static final PdfDeveloperExtension ISO_32001 = new PdfDeveloperExtension(
             PdfName.ISO_,
             PdfName.Pdf_Version_2_0,
@@ -78,7 +78,7 @@ public class PdfDeveloperExtension {
             ":2022",
             true);
 
-    /** An instance of this class for ISO/TS 32002 */
+    /** An instance of this class for ISO/TS 32002. */
     public static final PdfDeveloperExtension ISO_32002 = new PdfDeveloperExtension(
             PdfName.ISO_,
             PdfName.Pdf_Version_2_0,
@@ -96,13 +96,13 @@ public class PdfDeveloperExtension {
     /** The extension level within the base version. */
     protected int extensionLevel;
 
-    /** The extension URL (ISO 32000-2:2020) */
+    /** The extension URL (ISO 32000-2:2020). */
     private final String url;
 
-    /** The extension revision (ISO 32000-2:2020) */
+    /** The extension revision (ISO 32000-2:2020). */
     private final String extensionRevision;
 
-    /** Whether the extension prefix is multivalued (ISO 32000-2:2020) */
+    /** Whether the extension prefix is multivalued (ISO 32000-2:2020). */
     private final boolean isMultiValued;
 
     /**

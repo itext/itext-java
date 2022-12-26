@@ -106,6 +106,7 @@ public class DigestAlgorithms {
      * Algorithm available for signatures since PDF 2.0
      * extended by ISO/TS 32001.
      *
+     * <p>
      * The output length is fixed at 512 bits (64 bytes).
      */
     public static final String SHAKE256 = "SHAKE256";

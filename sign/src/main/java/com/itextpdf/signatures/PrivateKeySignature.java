@@ -47,10 +47,8 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.security.GeneralSecurityException;
-import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.security.UnrecoverableKeyException;
 
 /**
  * Implementation of the {@link IExternalSignature} interface that
@@ -138,14 +136,13 @@ public class PrivateKeySignature implements IExternalSignature {
         return sig.sign();
     }
 
-    public String getSignatureMechanism() {
-        String signatureAlgorithm = this.getEncryptionAlgorithm();
+    private String getSignatureMechanism() {
+        final String signatureAlgo = this.getEncryptionAlgorithm();
         // Ed25519 and Ed448 do not involve a choice of hashing algorithm
-        if ("Ed25519".equals(signatureAlgorithm) || "Ed448".equals(signatureAlgorithm)) {
-            return signatureAlgorithm;
+        if ("Ed25519".equals(signatureAlgo) || "Ed448".equals(signatureAlgo)) {
+            return signatureAlgo;
         } else {
             return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
         }
     }
-
 }

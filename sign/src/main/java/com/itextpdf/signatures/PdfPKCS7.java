@@ -419,8 +419,10 @@ public class PdfPKCS7 {
                 throw new IllegalArgumentException("CAdES ESS information missing.");
             }
             signatureAlgorithmOid = BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
-                    BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
-            signatureValue = BOUNCY_CASTLE_FACTORY.createASN1OctetString(signerInfo.getObjectAt(next++)).getOctets();
+                    BOUNCY_CASTLE_FACTORY.createASN1Sequence(signerInfo.getObjectAt(next)).getObjectAt(0)).getId();
+            ++next;
+            signatureValue = BOUNCY_CASTLE_FACTORY.createASN1OctetString(signerInfo.getObjectAt(next)).getOctets();
+            ++next;
             if (next < signerInfo.size()) {
                 IASN1TaggedObject taggedObject = BOUNCY_CASTLE_FACTORY.createASN1TaggedObject(
                         signerInfo.getObjectAt(next));
@@ -782,10 +784,11 @@ public class PdfPKCS7 {
      */
     public byte[] getEncodedPKCS1() {
         try {
-            if (externalSignatureValue != null)
+            if (externalSignatureValue != null) {
                 signatureValue = externalSignatureValue;
-            else
+            } else {
                 signatureValue = sig.sign();
+            }
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
             IASN1OutputStream dout = BOUNCY_CASTLE_FACTORY.createASN1OutputStream(bOut);
@@ -845,8 +848,9 @@ public class PdfPKCS7 {
         try {
             if (externalSignatureValue != null) {
                 signatureValue = externalSignatureValue;
-                if (encapMessageContent != null)
+                if (encapMessageContent != null) {
                     encapMessageContent = externalEncapMessageContent;
+                }
             } else if (externalEncapMessageContent != null && encapMessageContent != null) {
                 encapMessageContent = externalEncapMessageContent;
                 sig.update(encapMessageContent);
