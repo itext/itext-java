@@ -191,7 +191,7 @@ public class PdfDeveloperExtensionTest {
             for (int i = 0; i < exts.size(); i++) {
                 int level = exts
                         .getAsDictionary(i)
-                        .getAsInt(PdfName.ExtensionLevel);
+                        .getAsInt(PdfName.ExtensionLevel).intValue();
                 assertTrue("Level " + level + " is not in expected level list", expectedLevels.contains(level));
                 assertFalse("Level " + level + " appears multiple times", seen.contains(level));
                 seen.add(level);
