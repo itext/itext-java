@@ -663,12 +663,13 @@ public class PdfPKCS7 {
      */
     public String getDigestAlgorithm() {
         // Ed25519 and Ed448 do not involve a choice of hashing algorithm
-        if (SecurityIDs.ID_ED25519.equals(this.signatureAlgorithmOid)) {
-            return "Ed25519";
-        } else if (SecurityIDs.ID_ED448.equals(this.signatureAlgorithmOid)) {
-            return "Ed448";
-        } else {
-            return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
+        switch (signatureAlgorithmOid) {
+            case SecurityIDs.ID_ED25519:
+                return "Ed25519";
+            case SecurityIDs.ID_ED448:
+                return "Ed448";
+            default:
+                return getHashAlgorithm() + "with" + getEncryptionAlgorithm();
         }
     }
 

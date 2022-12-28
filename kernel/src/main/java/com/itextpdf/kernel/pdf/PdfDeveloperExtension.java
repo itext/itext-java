@@ -160,6 +160,8 @@ public class PdfDeveloperExtension {
 
     /**
      * Indicates whether the extension prefix is multivalued (ISO 32000-2:2020).
+     *
+     * @return true if multivalued
      */
     public boolean isMultiValued() {
         return isMultiValued;
