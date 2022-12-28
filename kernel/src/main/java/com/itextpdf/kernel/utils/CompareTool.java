@@ -333,6 +333,9 @@ public class CompareTool {
      * Compares two documents visually. For the comparison two external tools are used: Ghostscript and ImageMagick.
      * For more info about needed configuration for visual comparison process see {@link CompareTool} class description.
      * <p>
+     * Note, that this method uses {@link ImageMagickHelper} and {@link GhostscriptHelper} classes and therefore may
+     * create temporary files and directories.
+     * <p>
      * During comparison for every page of the two documents an image file will be created in the folder specified by
      * outPath parameter. Then those page images will be compared and if there are any differences for some pages,
      * another image file will be created with marked differences on it.
@@ -355,6 +358,9 @@ public class CompareTool {
     /**
      * Compares two documents visually. For the comparison two external tools are used: Ghostscript and ImageMagick.
      * For more info about needed configuration for visual comparison process see {@link CompareTool} class description.
+     * <p>
+     * Note, that this method uses {@link ImageMagickHelper} and {@link GhostscriptHelper} classes and therefore may
+     * create temporary files and directories.
      * <p>
      * During comparison for every page of two documents an image file will be created in the folder specified by
      * outPath parameter. Then those page images will be compared and if there are any differences for some pages,

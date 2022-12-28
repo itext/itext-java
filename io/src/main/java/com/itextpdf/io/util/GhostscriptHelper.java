@@ -124,6 +124,9 @@ public class GhostscriptHelper {
 
     /**
      * Runs Ghostscript to render the PDF's pages as PNG images.
+     * 
+     * <p>
+     * Note, that this method  may create temporary directory and files.
      *
      * @param pdf    Path to the PDF file to be rendered
      * @param outDir Path to the output directory, in which the rendered pages will be stored
@@ -145,6 +148,9 @@ public class GhostscriptHelper {
 
     /**
      * Runs Ghostscript to render the PDF's pages as PNG images.
+     * 
+     * <p>
+     * Note, that this method  may create temporary directory and files.
      *
      * @param pdf    Path to the PDF file to be rendered
      * @param outDir Path to the output directory, in which the rendered pages will be stored

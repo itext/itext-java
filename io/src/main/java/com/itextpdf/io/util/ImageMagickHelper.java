@@ -119,6 +119,9 @@ public class ImageMagickHelper {
 
     /**
      * Runs imageMagick to visually compare images and generate difference output.
+     * 
+     * <p>
+     * Note, that this method may create temporary files.
      *
      * @param outImageFilePath Path to the output image file
      * @param cmpImageFilePath Path to the cmp image file
@@ -134,6 +137,9 @@ public class ImageMagickHelper {
 
     /**
      * Runs imageMagick to visually compare images with the specified fuzziness value and generate difference output.
+     * 
+     * <p>
+     * Note, that this method may create temporary files.
      *
      * @param outImageFilePath Path to the output image file
      * @param cmpImageFilePath Path to the cmp image file
@@ -155,6 +161,9 @@ public class ImageMagickHelper {
     /**
      * Runs imageMagick to visually compare images with the specified fuzziness value and given threshold
      * and generate difference output.
+     * 
+     * <p>
+     * Note, that this method may create temporary files.
      *
      * @param outImageFilePath Path to the output image file
      * @param cmpImageFilePath Path to the cmp image file
@@ -184,6 +193,9 @@ public class ImageMagickHelper {
      * Runs imageMagick to visually compare images with the specified fuzziness value and generate difference output.
      * This method returns an object of {@link ImageMagickCompareResult}, containing comparing result information,
      * such as boolean result value and the number of different pixels.
+     * 
+     * <p>
+     * Note, that this method may create temporary files.
      *
      * @param outImageFilePath Path to the output image file
      * @param cmpImageFilePath Path to the cmp image file

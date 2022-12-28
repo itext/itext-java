@@ -63,6 +63,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -301,6 +302,10 @@ public final class FileUtil {
 
     /**
      * Creates a temporary file.
+     * 
+     * <p>
+     * Note, that this method creates temporary file with provided file's prefix and postfix
+     * using {@link File#createTempFile(String, String)}.
      *
      * @param tempFilePrefix  the prefix of the copied file's name
      * @param tempFilePostfix the postfix of the copied file's name
@@ -315,6 +320,10 @@ public final class FileUtil {
 
     /**
      * Creates a temporary copy of a file.
+     * 
+     * <p>
+     * Note, that this method creates temporary file with provided file's prefix and postfix
+     * using {@link Files#createTempFile(String, String, FileAttribute[])}.
      *
      * @param file            the path to the file to be copied
      * @param tempFilePrefix  the prefix of the copied file's name
@@ -355,6 +364,10 @@ public final class FileUtil {
 
     /**
      * Creates a temporary directory.
+     * 
+     * <p>
+     * Note, that this method creates temporary directory with provided directory prefix
+     * using {@link Files#createTempDirectory(String, FileAttribute[])}.
      *
      * @param tempFilePrefix the prefix of the temporary directory's name
      *
