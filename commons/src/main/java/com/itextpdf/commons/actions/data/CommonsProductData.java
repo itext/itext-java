@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,7 +30,7 @@ public final class CommonsProductData {
     static final String COMMONS_PRODUCT_NAME = "commons";
     static final String COMMONS_VERSION = "7.2.5-SNAPSHOT";
     static final int COMMONS_COPYRIGHT_SINCE = 2000;
-    static final int COMMONS_COPYRIGHT_TO = 2022;
+    static final int COMMONS_COPYRIGHT_TO = 2023;
 
     private static final ProductData COMMONS_PRODUCT_DATA = new ProductData(COMMONS_PUBLIC_PRODUCT_NAME,
             COMMONS_PRODUCT_NAME, COMMONS_VERSION, COMMONS_COPYRIGHT_SINCE, COMMONS_COPYRIGHT_TO);

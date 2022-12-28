@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,7 +32,7 @@ public final class ITextCoreProductData {
     private static final String CORE_PUBLIC_PRODUCT_NAME = "Core";
     private static final String CORE_VERSION = "7.2.5-SNAPSHOT";
     private static final int CORE_COPYRIGHT_SINCE = 2000;
-    private static final int CORE_COPYRIGHT_TO = 2022;
+    private static final int CORE_COPYRIGHT_TO = 2023;
 
     private static final ProductData ITEXT_PRODUCT_DATA = new ProductData(CORE_PUBLIC_PRODUCT_NAME,
             ProductNameConstant.ITEXT_CORE, CORE_VERSION, CORE_COPYRIGHT_SINCE, CORE_COPYRIGHT_TO);
