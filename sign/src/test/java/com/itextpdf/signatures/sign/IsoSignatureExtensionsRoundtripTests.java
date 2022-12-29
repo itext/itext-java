@@ -44,6 +44,8 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.security.NoSuchAlgorithmException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -100,8 +102,13 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
 
     @Test
     public void testEd448() throws Exception {
-        skipShake256IfBcFips();
-        doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448);
+        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448);
+        } else {
+            // SHAKE256 is currently not supported in BCFIPS
+            Exception e = Assert.assertThrows(NoSuchAlgorithmException.class, () ->
+                    doRoundTrip("ed448", DigestAlgorithms.SHAKE256, EdECObjectIdentifiers.id_Ed448));
+        }
     }
 
     @Test
@@ -143,13 +150,18 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
 
     @Test
     public void testEd448ForceShake256WhenSigning() {
-        skipShake256IfBcFips();
-        Exception e = Assert.assertThrows(PdfException.class, () ->
-                doSign("ed448", DigestAlgorithms.SHA1, new ByteArrayOutputStream())
-        );
-        Assert.assertEquals(
-                "Ed448 requires the document to be digested using 512-bit SHAKE256, not SHA1", e.getMessage()
-        );
+        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            Exception e = Assert.assertThrows(PdfException.class, () ->
+                    doSign("ed448", DigestAlgorithms.SHA1, new ByteArrayOutputStream())
+            );
+            Assert.assertEquals(
+                    "Ed448 requires the document to be digested using 512-bit SHAKE256, not SHA1", e.getMessage()
+            );
+        } else {
+            // SHAKE256 is currently not supported in BCFIPS
+            Exception e = Assert.assertThrows(PdfException.class, () ->
+                    doSign("ed448", DigestAlgorithms.SHA1, new ByteArrayOutputStream()));
+        }
     }
 
     @Test
@@ -190,10 +202,15 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
 
     @Test
     public void testEd448ExtensionDeclarations() throws Exception {
-        skipShake256IfBcFips();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        doSign("ed448", DigestAlgorithms.SHAKE256, baos);
-        checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
+        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            doSign("ed448", DigestAlgorithms.SHAKE256, baos);
+            checkIsoExtensions(baos.toByteArray(), Arrays.asList(32001, 32002));
+        } else {
+            // SHAKE256 is currently not supported in BCFIPS
+            Exception e = Assert.assertThrows(NoSuchAlgorithmException.class, () ->
+                    doSign("ed448", DigestAlgorithms.SHAKE256, baos));
+        }
     }
 
     @Test
@@ -309,11 +326,6 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
             Set<Integer> expectedLevelSet = new HashSet<>(expectedLevels);
             Assert.assertEquals(expectedLevelSet, actualLevels);
         }
-    }
-
-    private void skipShake256IfBcFips() {
-        // SHAKE256 is currently not supported in BCFIPS
-        Assume.assumeTrue(!"BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName()));
     }
 
     private Certificate readCertificate(Path path) throws IOException, GeneralSecurityException {

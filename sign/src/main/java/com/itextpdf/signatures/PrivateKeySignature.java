@@ -92,19 +92,24 @@ public class PrivateKeySignature implements IExternalSignature {
         this.hashAlgorithm = DigestAlgorithms.getDigest(digestAlgorithmOid);
         this.signatureAlgorithm = SignUtils.getPrivateKeyAlgorithm(pk);
 
-        if ("Ed25519".equals(this.signatureAlgorithm)
-                && !SecurityIDs.ID_SHA512.equals(digestAlgorithmOid)) {
-            throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
-                    .setMessageParams("Ed25519", "SHA-512", this.hashAlgorithm);
-        } else if ("Ed448".equals(this.signatureAlgorithm)
-                && !SecurityIDs.ID_SHAKE256.equals(digestAlgorithmOid)) {
-            throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
-                    .setMessageParams("Ed448", "512-bit SHAKE256", this.hashAlgorithm);
-        } else if ("EdDSA".equals(this.signatureAlgorithm)) {
-            throw new IllegalArgumentException(
-                    "Key algorithm of EdDSA PrivateKey instance provied by " + pk.getClass()
-                            + " is not clear. Expected Ed25519 or Ed448, but got EdDSA. "
-                            + "Try a different security provider.");
+        switch (this.signatureAlgorithm) {
+            case "Ed25519":
+                if (!SecurityIDs.ID_SHA512.equals(digestAlgorithmOid)) {
+                    throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
+                            .setMessageParams("Ed25519", "SHA-512", this.hashAlgorithm);
+                }
+                break;
+            case "Ed448":
+                if (!SecurityIDs.ID_SHAKE256.equals(digestAlgorithmOid)) {
+                    throw new PdfException(SignExceptionMessageConstant.ALGO_REQUIRES_SPECIFIC_HASH)
+                            .setMessageParams("Ed448", "512-bit SHAKE256", this.hashAlgorithm);
+                }
+                break;
+            case "EdDSA":
+                throw new IllegalArgumentException(
+                        "Key algorithm of EdDSA PrivateKey instance provided by " + pk.getClass()
+                                + " is not clear. Expected Ed25519 or Ed448, but got EdDSA. "
+                                + "Try a different security provider.");
         }
     }
 
