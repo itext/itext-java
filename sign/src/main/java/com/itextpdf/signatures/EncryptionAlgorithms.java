@@ -114,6 +114,10 @@ public class EncryptionAlgorithms {
         rsaOidsByDigest.put("SHA256", "1.2.840.113549.1.1.11");
         rsaOidsByDigest.put("SHA384", "1.2.840.113549.1.1.12");
         rsaOidsByDigest.put("SHA512", "1.2.840.113549.1.1.13");
+        rsaOidsByDigest.put("SHA-224", "1.2.840.113549.1.1.14");
+        rsaOidsByDigest.put("SHA-256", "1.2.840.113549.1.1.11");
+        rsaOidsByDigest.put("SHA-384", "1.2.840.113549.1.1.12");
+        rsaOidsByDigest.put("SHA-512", "1.2.840.113549.1.1.13");
         rsaOidsByDigest.put("SHA3-224", "2.16.840.1.101.3.4.3.13");
         rsaOidsByDigest.put("SHA3-256", "2.16.840.1.101.3.4.3.14");
         rsaOidsByDigest.put("SHA3-384", "2.16.840.1.101.3.4.3.15");
@@ -149,10 +153,8 @@ public class EncryptionAlgorithms {
     public static String getSignatureMechanismOid(String signatureAlgorithmName, String digestAlgorithmName) {
         switch (signatureAlgorithmName) {
             case "RSA":
-                // always return the generic RSASSA-with-PKCS #1 v1.5 padding OID
-                // since there are comparison tests that depend on the generic OID being present
-                // TODO fix those tests, and replace with rsaOidsByDigest.get(digestAlgorithmName, SecurityIDs.ID_RSA)
-                return SecurityIDs.ID_RSA;
+                final String oId = rsaOidsByDigest.get(digestAlgorithmName);
+                return oId == null ? SecurityIDs.ID_RSA : oId;
             case "DSA":
                 return dsaOidsByDigest.get(digestAlgorithmName);
             case "ECDSA":

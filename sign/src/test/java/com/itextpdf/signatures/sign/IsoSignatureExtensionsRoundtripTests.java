@@ -130,7 +130,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     public void testRsaWithSha3_512() throws Exception {
         // For now we use a generic OID, but NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512 would
         // be more appropriate
-        doRoundTrip("rsa", DigestAlgorithms.SHA3_512, new ASN1ObjectIdentifier(SecurityIDs.ID_RSA));
+        doRoundTrip("rsa", DigestAlgorithms.SHA3_512, new ASN1ObjectIdentifier(SecurityIDs.ID_RSA_WITH_SHA3_512));
     }
 
     @Test

@@ -103,7 +103,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         Assert.assertEquals(expectedOid, pkcs7.getDigestAlgorithmOid());
         Assert.assertEquals(chain[0], pkcs7.getSigningCertificate());
         Assert.assertArrayEquals(chain, pkcs7.getCertificates());
-        Assert.assertEquals(SecurityIDs.ID_RSA, pkcs7.getDigestEncryptionAlgorithmOid());
+        Assert.assertEquals(SecurityIDs.ID_RSA_WITH_SHA256, pkcs7.getDigestEncryptionAlgorithmOid());
     }
 
     @Test
