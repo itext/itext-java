@@ -43,6 +43,8 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -70,11 +72,19 @@ public class AESCipher {
 
     private static final String CIPHER_WITH_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
 
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private static Cipher cipher;
     
     static {
         try {
-            cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING);
+            if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+                // Do not pass bc provider and use default one here not to require bc provider for this functionality
+                // Do not use bc provider in kernel
+                cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING);
+            } else {
+                cipher = Cipher.getInstance(CIPHER_WITH_PKCS5_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
+            }
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }

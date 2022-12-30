@@ -182,11 +182,27 @@ final class EncryptionUtils {
         try (IASN1InputStream asn1inputstream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(bytearrayinputstream)) {
             derobject = asn1inputstream.readObject();
         }
-        KeyGenerator keygenerator = KeyGenerator.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_OID,
-                BOUNCY_CASTLE_FACTORY.getProvider());
+
+        KeyGenerator keygenerator;
+        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            // Do not pass bc provider and use default one here not to require bc provider for this functionality
+            // Do not use bc provider in kernel
+            keygenerator = KeyGenerator.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_OID);
+        } else {
+            keygenerator = KeyGenerator.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_OID,
+                    BOUNCY_CASTLE_FACTORY.getProvider());
+        }
         keygenerator.init(ENVELOPE_ENCRYPTION_KEY_LENGTH, BOUNCY_CASTLE_FACTORY.getSecureRandom());
         SecretKey secretkey = keygenerator.generateKey();
-        Cipher cipher = Cipher.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_JCA_NAME, BOUNCY_CASTLE_FACTORY.getProvider());
+
+        Cipher cipher;
+        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            // Do not pass bc provider and use default one here not to require bc provider for this functionality
+            // Do not use bc provider in kernel
+            cipher = Cipher.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_JCA_NAME);
+        } else {
+            cipher = Cipher.getInstance(ENVELOPE_ENCRYPTION_ALGORITHM_JCA_NAME, BOUNCY_CASTLE_FACTORY.getProvider());
+        }
         cipher.init(Cipher.ENCRYPT_MODE, secretkey, algorithmparameters);
 
         parameters.abyte0 = secretkey.getEncoded();

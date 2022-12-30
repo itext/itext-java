@@ -71,7 +71,13 @@ public class AESCipherCBCnoPad {
     
     static {
         try {
-            cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
+            if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+                // Do not pass bc provider and use default one here not to require bc provider for this functionality
+                // Do not use bc provider in kernel
+                cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING);
+            } else {
+                cipher = Cipher.getInstance(CIPHER_WITHOUT_PADDING, BOUNCY_CASTLE_FACTORY.getProvider());
+            }
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_INITIALIZING_AES_CIPHER, e);
         }
