@@ -107,6 +107,14 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
     }
 
     @Test
+    public void notAvailableSignatureTest() {
+        String hashAlgorithm = "GOST3411";
+        // Throws different exceptions on .net and java, bc/bcfips
+        Assert.assertThrows(Exception.class,
+                () -> new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), false));
+    }
+
+    @Test
     public void reasonSetGetTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();
