@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,9 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -70,10 +73,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
-
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +104,8 @@ public class PdfReader implements Closeable {
 
     //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
     private PdfIndirectReference currentIndirectReference;
+
+    private XMPMeta xmpMeta;
 
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
@@ -641,14 +642,18 @@ public class PdfReader implements Closeable {
             if (pdfDocument == null || !pdfDocument.getXref().isReadingCompleted()) {
                 throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
             }
-            if (pdfDocument.getXmpMetadata() != null) {
-                try {
-                    pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(
-                            XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata()));
-                } catch (XMPException ignored) {
+
+            try {
+                if (xmpMeta == null && pdfDocument.getXmpMetadata() != null) {
+                    xmpMeta = XMPMetaFactory.parseFromBuffer(pdfDocument.getXmpMetadata());
                 }
+                if (xmpMeta != null) {
+                    pdfAConformanceLevel = PdfAConformanceLevel.getConformanceLevel(xmpMeta);
+                }
+            } catch (XMPException ignored) {
             }
         }
+
         return pdfAConformanceLevel;
     }
 
@@ -1302,6 +1307,7 @@ public class PdfReader implements Closeable {
         }
     }
 
+
     protected void rebuildXref() throws IOException {
         xrefStm = false;
         hybridXref = false;
@@ -1311,40 +1317,70 @@ public class PdfReader implements Closeable {
         tokens.seek(0);
         trailer = null;
         ByteBuffer buffer = new ByteBuffer(24);
-        PdfTokenizer lineTokenizer =
-                new PdfTokenizer(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
-        for (; ; ) {
-            long pos = tokens.getPosition();
-            buffer.reset();
+        try (PdfTokenizer lineTokenizer = new PdfTokenizer(
+                new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)))) {
+            Long trailerIndex = null;
 
-            // added boolean because of mailing list issue (17 Feb. 2014)
-            if (!tokens.readLineSegment(buffer, true))
-                break;
-            if (buffer.get(0) == 't') {
-                if (!PdfTokenizer.checkTrailer(buffer))
-                    continue;
-                tokens.seek(pos);
-                tokens.nextToken();
-                pos = tokens.getPosition();
-                try {
-                    PdfDictionary dic = (PdfDictionary) readObject(false);
-                    if (dic.get(PdfName.Root, false) != null)
-                        trailer = dic;
-                    else
-                        tokens.seek(pos);
-                } catch (Exception e) {
-                    tokens.seek(pos);
+            for (; ; ) {
+                long pos = tokens.getPosition();
+                buffer.reset();
+
+                // added boolean because of mailing list issue (17 Feb. 2014)
+                if (!tokens.readLineSegment(buffer, true)) {
+                    break;
                 }
-            } else if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
-                int[] obj = PdfTokenizer.checkObjectStart(lineTokenizer);
-                if (obj == null)
-                    continue;
-                int num = obj[0];
-                int gen = obj[1];
-                if (xref.get(num) == null || xref.get(num).getGenNumber() <= gen) {
-                    xref.add(new PdfIndirectReference(pdfDocument, num, gen, pos));
+                if (buffer.get(0) == 't') {
+                    if (!PdfTokenizer.checkTrailer(buffer)) {
+                        continue;
+                    }
+                    tokens.seek(pos);
+                    tokens.nextToken();
+                    pos = tokens.getPosition();
+                    if (isCurrentObjectATrailer()) {
+                        // if the pdf is linearized it is possible that the trailer has been read
+                        // before the actual objects it refers to this causes the trailer to have
+                        // objects in READING state that's why we keep track of the position  of the
+                        // trailer and then asign it when the whole pdf has been loaded
+                        trailerIndex = pos;
+                    } else {
+                        tokens.seek(pos);
+                    }
+                } else if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
+                    int[] obj = PdfTokenizer.checkObjectStart(lineTokenizer);
+                    if (obj == null) {
+                        continue;
+                    }
+                    int num = obj[0];
+                    int gen = obj[1];
+                    if (xref.get(num) == null || xref.get(num).getGenNumber() <= gen) {
+                        xref.add(new PdfIndirectReference(pdfDocument, num, gen, pos));
+                    }
                 }
             }
+            // now that the document has been read fully the underlying trailer references won't be
+            // in READING state when the pdf has been linearised now we can assign the trailer
+            // and it will have the right references
+            setTrailerFromTrailerIndex(trailerIndex);
+        }
+    }
+
+    private boolean isCurrentObjectATrailer() {
+        try {
+            final PdfDictionary dic = (PdfDictionary) readObject(false);
+            return dic.get(PdfName.Root, false) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void setTrailerFromTrailerIndex(Long trailerIndex) throws IOException {
+        if (trailerIndex == null) {
+            throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
+        }
+        tokens.seek((long)trailerIndex);
+        final PdfDictionary dic = (PdfDictionary) readObject(false);
+        if (dic.get(PdfName.Root, false) != null) {
+            trailer = dic;
         }
         if (trailer == null) {
             throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);

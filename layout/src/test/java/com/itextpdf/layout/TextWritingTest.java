@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,7 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
@@ -59,6 +60,7 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -400,6 +402,43 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.add(p);
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void textWrappingEpsilonTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "textWrappingEpsilon.pdf";
+        String cmpFileName = sourceFolder + "cmp_textWrappingEpsilon.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document document = new Document(pdfDoc);
+
+        // Play with margins to make AbstractRenderer.EPS important for wrapping behavior
+        document.setLeftMargin(250.0F);
+        document.setRightMargin(238.727F);
+        pdfDoc.setDefaultPageSize(PageSize.LETTER);
+        PdfFont font = PdfFontFactory.createFont(sourceFolder + "../fonts/Open_Sans/OpenSans-Regular.ttf");
+
+        String text1 = "First line of some text ";
+        String text2 = "Second line of some text";
+
+        Text text = new Text(text1);
+        text.setFont(font);
+        text.setFontSize(9);
+        Paragraph paragraph = new Paragraph();
+        paragraph.add(text);
+
+        text = new Text(text2);
+        text.setFont(font);
+        text.setFontSize(9);
+        paragraph.add(text);
+
+        paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+        document.add(paragraph);
+        document.close();
+        writer.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }

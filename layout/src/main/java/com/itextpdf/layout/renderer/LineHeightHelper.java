@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,29 +29,51 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 
 class LineHeightHelper {
-    private static float DEFAULT_LINE_HEIGHT_COEFF = 1.15f;
+    public static final int ASCENDER_INDEX = 0;
+    public static final int DESCENDER_INDEX = 1;
+    public static final int XHEIGHT_INDEX = 2;
+    public static final int LEADING_INDEX = 3;
+    private static final float DEFAULT_LINE_HEIGHT_COEFF = 1.15f;
 
     private LineHeightHelper() {
     }
 
+    /**
+     * Get actual ascender, descender.
+     * @param renderer the renderer to retrieve the ascender and descender from
+     * @return an array containing in this order actual ascender
+     */
     static float[] getActualAscenderDescender(AbstractRenderer renderer) {
+        float[] result = getActualFontInfo(renderer);
+        return new float[] {result[0], result[1]};
+    }
+
+    /**
+     * Get actual ascender, descender, xHeight and leading.
+     * @param renderer the renderer to retrieve the font info from
+     * @return an array containing in this order actual ascender, descender, xHeight and leading
+     */
+    static float[] getActualFontInfo(AbstractRenderer renderer) {
         float ascender;
         float descender;
         float lineHeight = LineHeightHelper.calculateLineHeight(renderer);
         float[] fontAscenderDescender = LineHeightHelper.getFontAscenderDescenderNormalized(renderer);
         float leading = lineHeight - (fontAscenderDescender[0] - fontAscenderDescender[1]);
-        ascender = fontAscenderDescender[0] + leading / 2f;
-        descender = fontAscenderDescender[1] - leading / 2f;
-        return new float[] {ascender, descender};
+        ascender = fontAscenderDescender[0] + leading / 2F;
+        descender = fontAscenderDescender[1] - leading / 2F;
+        return new float[] {ascender, descender, fontAscenderDescender[2], leading};
     }
 
     static float[] getFontAscenderDescenderNormalized(AbstractRenderer renderer) {
         PdfFont font = renderer.resolveFirstPdfFont();
         float fontSize = renderer.getPropertyAsUnitValue(Property.FONT_SIZE).getValue();
-        float[] fontAscenderDescenderFromMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
+        float[] fontAscenderDescenderFromMetrics = TextRenderer.calculateAscenderDescender(font,
+                RenderingMode.HTML_MODE);
         float fontAscender = fontAscenderDescenderFromMetrics[0] / FontProgram.UNITS_NORMALIZATION * fontSize;
         float fontDescender = fontAscenderDescenderFromMetrics[1] / FontProgram.UNITS_NORMALIZATION * fontSize;
-        return new float[] {fontAscender, fontDescender};
+        float xHeight = ((float) font.getFontProgram().getFontMetrics().getXHeight())/
+                FontProgram.UNITS_NORMALIZATION * fontSize;
+        return new float[] {fontAscender, fontDescender, xHeight};
     }
 
     static float calculateLineHeight(AbstractRenderer renderer) {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,12 +39,30 @@ public class Base64Test extends ExtendedITextTest {
 
     @Test
     public void testDecodeForSourceIsEmptyArray() {
-        Assert.assertEquals("", Base64.encodeBytes(new byte[]{}));
+        Assert.assertEquals("", Base64.encodeBytes(new byte[] {}));
     }
 
     @Test
     public void testDecodeForSourceIsEmptyArrayGzip() {
-        Assert.assertEquals("H4sIAAAAAAAAAAMAAAAAAAAAAAA=", Base64.encodeBytes(new byte[]{}, Base64.GZIP));
+        //HEADER        FOOTER          example of signatures that can be generated
+        //H4sIAAAAAAAAAAMAAAAAAAAAAAA=	1f 8b 08 00 00 00 00 00 00 00 03 00 00 00 00 00 00 00 00 00 // windows
+        //H4sIAAAAAAAA/wMAAAAAAAAAAAA=  1f 8b 08 00 00 00 00 00 00 ff 03 00 00 00 00 00 00 00 00 00 // unknown
+        //H4sIAAAAAAAAAwMAAAAAAAAAAAA=	1f 8b 08 00 00 00 00 00 00 03 03 00 00 00 00 00 00 00 00 00 // linux
+        //H4sIAAAAAAAAAgMAAAAAAAAAAAA=	1f 8b 08 00 00 00 00 00 00 02 03 00 00 00 00 00 00 00 00 00 // vms
+        final String expectedHeaderWithoutOsFlag = "H4sIAAAAAAAA";
+        final String expectedFooter = "MAAAAAAAAAAAA=";
+        final int startIndexHeader = 0;
+        final int endIndexHeaderWithoutOsFlag = 12;
+        final int startIndexFooter = 14;
+        final int endIndexFooter = 28;
+
+        String generatedBase64 = Base64.encodeBytes(new byte[] {}, Base64.GZIP);
+
+        String generatedHeader = generatedBase64.substring(startIndexHeader, endIndexHeaderWithoutOsFlag);
+        String generatedFooter = generatedBase64.substring(startIndexFooter, endIndexFooter);
+
+        Assert.assertEquals(expectedHeaderWithoutOsFlag, generatedHeader);
+        Assert.assertEquals(expectedFooter, generatedFooter);
     }
 
 }

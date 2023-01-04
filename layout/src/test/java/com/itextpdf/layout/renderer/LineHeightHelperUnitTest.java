@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -237,4 +237,5 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
         Assert.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assert.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
+
 }

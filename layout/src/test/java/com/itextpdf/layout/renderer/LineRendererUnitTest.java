@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -42,9 +42,9 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -68,7 +68,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.util.Arrays;
-
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -151,13 +150,15 @@ public class LineRendererUnitTest extends RendererUnitTest {
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
+        lineRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
         lineRenderer.occupiedArea = new LayoutArea(1, new Rectangle(100, 100, 200, 200));
-        lineRenderer.maxAscent = 100;
+        lineRenderer.maxAscent = 150;
+        lineRenderer.maxDescent = -50;
 
         TextRenderer childTextRenderer = new TextRenderer(new Text("Hello"));
         childTextRenderer.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
         childTextRenderer.occupiedArea = new LayoutArea(1, new Rectangle(100, 50, 200, 200));
-        childTextRenderer.yLineOffset = 100;
+        childTextRenderer.yLineOffset = 150;
         childTextRenderer.setProperty(Property.TEXT_RISE, 0f);
 
         lineRenderer.addChild(childTextRenderer);
@@ -174,7 +175,8 @@ public class LineRendererUnitTest extends RendererUnitTest {
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
         lineRenderer.occupiedArea = new LayoutArea(1, new Rectangle(50, 50, 200, 200));
-        lineRenderer.maxAscent = 100;
+        lineRenderer.maxAscent = 150;
+        lineRenderer.maxDescent = -50;
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(200, 200));
         Image img = new Image(xObject);
@@ -187,7 +189,8 @@ public class LineRendererUnitTest extends RendererUnitTest {
         lineRenderer.adjustChildrenYLine();
 
         Assert.assertEquals(50f, lineRenderer.getOccupiedAreaBBox().getBottom(), EPS);
-        Assert.assertEquals(150.0, childImageRenderer.getOccupiedAreaBBox().getBottom(), EPS);
+        //image should be on the baseline top 250 - maxAscent 150 = 100
+        Assert.assertEquals(100.0, childImageRenderer.getOccupiedAreaBBox().getBottom(), EPS);
     }
 
     @Test

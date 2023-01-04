@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -86,9 +86,10 @@ class PdfPagesTree {
         this.pages = new ArrayList<>();
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
-            if (pages == null)
+            if (pages == null) {
                 throw new PdfException(
                         KernelExceptionMessageConstant.INVALID_PAGE_STRUCTURE_PAGES_MUST_BE_PDF_DICTIONARY);
+            }
             this.root = new PdfPages(0, Integer.MAX_VALUE, pages, null);
             parents.add(this.root);
             for (int i = 0; i < this.root.getCount(); i++) {
@@ -107,6 +108,7 @@ class PdfPagesTree {
      * Returns the {@link PdfPage} at the specified position in this list.
      *
      * @param pageNum one-based index of the element to return
+     *
      * @return the {@link PdfPage} at the specified position in this list
      */
     public PdfPage getPage(int pageNum) {
@@ -135,6 +137,11 @@ class PdfPagesTree {
             }
             pages.set(pageNum, pdfPage);
         }
+        if (pdfPage == null) {
+            throw new PdfException(
+                    MessageFormatUtil.format(IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE,
+                            pageNum + 1));
+        }
         return pdfPage;
     }
 
@@ -142,6 +149,7 @@ class PdfPagesTree {
      * Returns the {@link PdfPage} by page's PdfDictionary.
      *
      * @param pageDictionary page's PdfDictionary
+     *
      * @return the {@code PdfPage} object, that wraps {@code pageDictionary}.
      */
     public PdfPage getPage(PdfDictionary pageDictionary) {
@@ -215,7 +223,6 @@ class PdfPagesTree {
             }
         }
 
-
         pdfPage.makeIndirect(document);
         pdfPages.addPage(pdfPage.getPdfObject());
         pdfPage.parentPages = pdfPages;
@@ -231,8 +238,9 @@ class PdfPagesTree {
      */
     public void addPage(int index, PdfPage pdfPage) {
         --index;
-        if (index > pageRefs.size())
+        if (index > pageRefs.size()) {
             throw new IndexOutOfBoundsException("index");
+        }
         if (index == pageRefs.size()) {
             addPage(pdfPage);
             return;
@@ -254,6 +262,7 @@ class PdfPagesTree {
      * indices).
      *
      * @param pageNum the one-based index of the PdfPage to be removed
+     *
      * @return the page that was removed from the list
      */
     public PdfPage removePage(int pageNum) {
@@ -281,6 +290,7 @@ class PdfPagesTree {
      * Generate PdfPages tree.
      *
      * @return root {@link PdfPages}
+     *
      * @throws PdfException in case empty document
      */
     protected PdfObject generateTree() {
@@ -346,14 +356,15 @@ class PdfPagesTree {
     /**
      * Load page from pages tree node structure
      *
-     * @param pageNum page number to load
+     * @param pageNum          page number to load
      * @param processedParents set with already processed parents object reference numbers
-     * if this method was called recursively to avoid infinite recursion.
+     *                         if this method was called recursively to avoid infinite recursion.
      */
     private void loadPage(int pageNum, Set<PdfIndirectReference> processedParents) {
         PdfIndirectReference targetPage = pageRefs.get(pageNum);
-        if (targetPage != null)
+        if (targetPage != null) {
             return;
+        }
 
         //if we go here, we have to split PdfPages that contains pageNum
         int parentIndex = findPageParent(pageNum);
@@ -408,12 +419,16 @@ class PdfPagesTree {
             PdfPages lastPdfPages = null;
             for (int i = 0; i < kids.size() && kidsCount > 0; i++) {
                 /*
-                 * We don't release pdfPagesObject in the end of each loop because we enter this for-cycle only when parent has PdfPages kids.
-                 * If all of the kids are PdfPages, then there's nothing to release, because we don't release PdfPages at this point.
+                 * We don't release pdfPagesObject in the end of each loop because we enter this for-cycle only when
+                 * parent has PdfPages kids.
+                 * If all of the kids are PdfPages, then there's nothing to release, because we don't release
+                 * PdfPages at this point.
                  * If there are kids that are instances of PdfPage, then there's no sense in releasing them:
-                 * in this case ParentTreeStructure is being rebuilt by inserting an intermediate PdfPages between the parent and a PdfPage,
-                 * thus modifying the page object by resetting its parent, thus making it impossible to release the object.
-                */
+                 * in this case ParentTreeStructure is being rebuilt by inserting an intermediate PdfPages between
+                 * the parent and a PdfPage,
+                 * thus modifying the page object by resetting its parent, thus making it impossible to release the
+                 * object.
+                 */
                 PdfDictionary pdfPagesObject = kids.getAsDictionary(i);
                 if (pdfPagesObject.getAsArray(PdfName.Kids) == null) {
                     // pdfPagesObject is PdfPage

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -1345,52 +1345,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "gifImageTest05.pdf", SOURCE_FOLDER + "cmp_gifImageTest05.pdf",
                 DESTINATION_FOLDER, "diff_"));
     }
-
-//    @Test
-//    public void kernedTextTest01() throws IOException, InterruptedException {
-//        FileOutputStream fos = new FileOutputStream(destinationFolder + "kernedTextTest01.pdf");
-//        PdfWriter writer = new PdfWriter(fos);
-//        PdfDocument document = new PdfDocument(writer);
-//        PdfPage page = document.addNewPage();
-//
-//        PdfCanvas canvas = new PdfCanvas(page);
-//        String kernableText = "AVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAVAV";
-//        PdfFont font = PdfFont.createFont(document, StandardFonts.HELVETICA);
-//        canvas.beginText().moveText(50, 600).setFontAndSize(font, 12).showText("Kerning:-" + kernableText).endText();
-//        canvas.beginText().moveText(50, 650).setFontAndSize(font, 12).showTextKerned("Kerning:+" + kernableText).endText();
-//
-//        document.close();
-//
-//        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "kernedTextTest01.pdf", sourceFolder + "cmp_kernedTextTest01.pdf", destinationFolder, "diff_"));
-//    }
-
-    /*@Test
-    public void ccittImageTest01() throws IOException, InterruptedException {
-        String filename = "ccittImage01.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
-        PdfDocument document = new PdfDocument(writer);
-
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        String text = "Call me Ishmael. Some years ago--never mind how long "
-                + "precisely --having little or no money in my purse, and nothing "
-                + "particular to interest me on shore, I thought I would sail about "
-                + "a little and see the watery part of the world.";
-
-        BarcodePDF417 barcode = new BarcodePDF417();
-        barcode.setText(text);
-        barcode.paintCode();
-
-        byte g4[] = CCITTG4Encoder.compress(barcode.getOutBits(), barcode.getBitColumns(), barcode.getCodeRows());
-        RawImage img = (RawImage) ImageDataFactory.create(barcode.getBitColumns(), barcode.getCodeRows(), false, RawImage.CCITTG4, 0, g4, null);
-        img.setTypeCcitt(RawImage.CCITTG4);
-        canvas.addImage(img, 100, 100, false);
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
-    }*/
 
     @Test
     public void awtImagesTest01() throws IOException, InterruptedException {

@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,18 +43,18 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.EnumUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.font.PdfType1Font;
@@ -378,10 +378,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
                 }
 
-                float potentialWidth =
+                final float potentialWidth =
                         nonBreakablePartFullWidth + glyphWidth + xAdvance + italicSkewAddition + boldSimulationAddition;
-                if (!noSoftWrap && (potentialWidth > layoutBox.getWidth() - currentLineWidth + EPS)
-                        && firstCharacterWhichExceedsAllowedWidth == -1
+                final boolean symbolNotFitOnLine = potentialWidth > layoutBox.getWidth() - currentLineWidth + EPS;
+                if ((!noSoftWrap && symbolNotFitOnLine && firstCharacterWhichExceedsAllowedWidth == -1)
                         || ind == specialScriptFirstNotFittingIndex) {
                     firstCharacterWhichExceedsAllowedWidth = ind;
                     boolean spaceOrWhitespace = TextUtil.isSpaceOrWhitespace(text.get(ind));
@@ -423,8 +423,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 previousCharPos = ind;
 
-                if (!noSoftWrap
-                        && nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
+                if (!noSoftWrap && symbolNotFitOnLine
                         && (0 == nonBreakingHyphenRelatedChunkWidth || ind + 1 == text.end || !glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind + 1))) {
                     if (isOverflowFit(overflowX)) {
                         // we have extracted all the information we wanted and we do not want to continue.

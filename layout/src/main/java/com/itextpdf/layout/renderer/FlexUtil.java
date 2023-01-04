@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -90,6 +90,8 @@ final class FlexUtil {
             FlexContainerRenderer flexContainerRenderer) {
         Rectangle layoutBox = flexContainerBBox.clone();
         flexContainerRenderer.applyMarginsBordersPaddings(layoutBox, false);
+        // Currently only width is used in this method
+        final float layoutBoxWidth = layoutBox.getWidth();
 
         // 9.2. Line Length Determination
 
@@ -99,9 +101,9 @@ final class FlexUtil {
         // if that dimension of the flex container is being sized under a min or max-content constraint,
         // the available space in that dimension is that constraint;
 
-        Float mainSize = flexContainerRenderer.retrieveWidth(layoutBox.getWidth());
+        Float mainSize = flexContainerRenderer.retrieveWidth(layoutBoxWidth);
         if (mainSize == null) {
-            mainSize = layoutBox.getWidth();
+            mainSize = layoutBoxWidth;
         }
         // We need to have crossSize only if its value is definite.
         Float crossSize = flexContainerRenderer.retrieveHeight();
@@ -408,20 +410,36 @@ final class FlexUtil {
     static void determineHypotheticalCrossSizeForFlexItems(List<List<FlexItemCalculationInfo>> lines) {
         for (List<FlexItemCalculationInfo> line : lines) {
             for (FlexItemCalculationInfo info : line) {
-                UnitValue prevWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.WIDTH,
-                        UnitValue.createPointValue(info.mainSize));
-                UnitValue prevMinWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.MIN_WIDTH, null);
-                LayoutResult result = info.renderer.layout(new LayoutContext(
-                        new LayoutArea(0, new Rectangle(AbstractRenderer.INF, AbstractRenderer.INF))));
-                info.renderer.returnBackOwnProperty(Property.MIN_WIDTH, prevMinWidth);
-                info.renderer.returnBackOwnProperty(Property.WIDTH, prevWidth);
-                // Since main size is clamped with min-width, we do expect the result to be full
-                if (result.getStatus() == LayoutResult.FULL) {
-                    info.hypotheticalCrossSize = info.getInnerCrossSize(result.getOccupiedArea().getBBox().getHeight());
-                } else {
-                    logger.error(IoLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
-                    info.hypotheticalCrossSize = 0;
+                determineHypotheticalCrossSizeForFlexItem(info);
+            }
+        }
+    }
+
+    private static void determineHypotheticalCrossSizeForFlexItem(FlexItemCalculationInfo info) {
+        if (info.renderer instanceof FlexContainerRenderer &&
+                ((FlexContainerRenderer) info.renderer).getHypotheticalCrossSize(info.mainSize) != null) {
+            // Take from cache
+            info.hypotheticalCrossSize = ((FlexContainerRenderer) info.renderer)
+                    .getHypotheticalCrossSize(info.mainSize).floatValue();
+        } else {
+            UnitValue prevWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.WIDTH,
+                    UnitValue.createPointValue(info.mainSize));
+            UnitValue prevMinWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.MIN_WIDTH, null);
+            LayoutResult result = info.renderer.layout(new LayoutContext(
+                    new LayoutArea(0, new Rectangle(AbstractRenderer.INF, AbstractRenderer.INF))));
+            info.renderer.returnBackOwnProperty(Property.MIN_WIDTH, prevMinWidth);
+            info.renderer.returnBackOwnProperty(Property.WIDTH, prevWidth);
+            // Since main size is clamped with min-width, we do expect the result to be full
+            if (result.getStatus() == LayoutResult.FULL) {
+                info.hypotheticalCrossSize = info.getInnerCrossSize(result.getOccupiedArea().getBBox().getHeight());
+                // Cache hypotheticalCrossSize for FlexContainerRenderer
+                if (info.renderer instanceof FlexContainerRenderer) {
+                    ((FlexContainerRenderer) info.renderer).setHypotheticalCrossSize(info.mainSize,
+                            info.hypotheticalCrossSize);
                 }
+            } else {
+                logger.error(IoLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
+                info.hypotheticalCrossSize = 0;
             }
         }
     }

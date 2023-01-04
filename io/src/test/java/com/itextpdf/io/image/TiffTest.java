@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -131,24 +131,44 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for T4 compression tiff image will be realized)
-    public void group3CompressionCreateTiffImageTest() {
+    public void group3CompressionCreateTiffImageTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImage.tif";
+        createTiff(sourceFile, 1, 1024D, 768D);
+    }
+
+    @Test
+    public void group3CompressionBECreateTiffImageTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImageBE.tif";
+        createTiff(sourceFile, 1, 1024D, 768D);
+    }
+
+
+    @Test
+    public void group3Compression2DCreateTiffImageTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImage2d.tif";
+        createTiff(sourceFile, 1, 1024D, 768D);
+    }
+
+
+    @Test
+    public void group3CompressionEolErrorCreateTiffImageTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImageWithEolError.tif";
+
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () -> ImageDataFactory.createTiff(UrlUtil.toURL(SOURCE_FOLDER + "group3CompressionImage.tif"),
-                        false, 1, false));
+                () -> createTiff(sourceFile, 1, 1024D, 768D));
 
         Assert.assertEquals(MessageFormatUtil.format(
                 com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
     }
 
-    @Test
-    // TODO: DEVSIX-5565 (update test when support for T4 compression tiff image will be realized)
-    public void group3CompressionCreateImageDataTest() {
-        Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () -> ImageDataFactory.create(UrlUtil.toURL(SOURCE_FOLDER + "group3CompressionImage.tif")));
 
-        Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+    @Test
+    public void group3CompressionCreateImageDataTest() throws MalformedURLException {
+        String sourceFile = SOURCE_FOLDER + "group3CompressionImage.tif";
+        ImageData img = ImageDataFactory.create(UrlUtil.toURL(SOURCE_FOLDER + "group3CompressionImage.tif"));
+        Assert.assertEquals(1024, img.getWidth(), 0);
+        Assert.assertEquals(768, img.getHeight(), 0);
+        Assert.assertEquals(1, img.getBpc());
     }
 
     @Test
@@ -194,7 +214,7 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsBlackCreateTiffTest() {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.createTiff(UrlUtil.toURL(
@@ -206,7 +226,7 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsBlackCreateImageTest() {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.create(UrlUtil.toURL(
@@ -217,7 +237,7 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsWhiteCreateTiffTest() {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.createTiff(UrlUtil.toURL(
@@ -229,7 +249,7 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateComp16BitMinIsWhiteCreateImageTest() {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.create(UrlUtil.toURL(
@@ -240,7 +260,7 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateCompression16BitRgbCreateTiffTest() {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.createTiff(UrlUtil.toURL(
@@ -252,7 +272,7 @@ public class TiffTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5565 (update test when support for adobeDeflate compression tiff image will be realized)
+    // TODO: DEVSIX-5791 (update test when support for adobeDeflate compression tiff image will be realized)
     public void adobeDeflateCompression16BitRgbCreateImageTest() {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> ImageDataFactory.create(UrlUtil.toURL(

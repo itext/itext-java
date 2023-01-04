@@ -1,7 +1,7 @@
 /*
  *
  * This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
  * Authors: Bruno Lowagie, Paulo Soares, et al.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -149,7 +149,6 @@ public abstract class OpenTypeFontTableReader {
     }
 
     public List<OpenTableLookup> getLookups(FeatureRecord feature) {
-        //TODO see getLookups(FeatureRecord[]) method. Is it realy make sense to order features?
         List<OpenTableLookup> ret = new ArrayList<>(feature.lookups.length);
         for (int idx : feature.lookups) {
             ret.add(lookupList.get(idx));

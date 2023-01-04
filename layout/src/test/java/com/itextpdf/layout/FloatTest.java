@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -1267,7 +1267,6 @@ public class FloatTest extends ExtendedITextTest {
         div.add(img);
         div.add(new Paragraph("some small text"));
 
-        // TODO DEVSIX-1655: blocks don't extend their height to MIN_HEIGHT if forced placement is applied, why?
         document.add(div);
 
         document.close();
@@ -1333,7 +1332,7 @@ public class FloatTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2))
     public void floatsOnPageSplit08_02() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_02.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit08_02.pdf";
@@ -1358,10 +1357,6 @@ public class FloatTest extends ExtendedITextTest {
         document.add(containerDiv);
         document.close();
 
-        // TODO DEVSIX-1655: currently forced placement is applied on containerDiv, which results in all it's content
-        // being forced placed at once, rather than content being split more gracefully (it makes sense to put the second
-        // image on the next empty area, not on current area).
-
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_02_"));
     }
 
@@ -1382,13 +1377,11 @@ public class FloatTest extends ExtendedITextTest {
 
         // Adding normal image that will not fit on the first page and requires forced placement.
         containerDiv.add(img);
-// Adding more text that is naturally expected to be correctly shown.
+        // Adding more text that is naturally expected to be correctly shown.
         containerDiv.add(new Paragraph(text));
 
         document.add(containerDiv);
         document.close();
-
-        // TODO DEVSIX-1655: text in the container div gets lost. And floating property doesn't actually affect this.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff28_03_"));
     }
@@ -1475,8 +1468,6 @@ public class FloatTest extends ExtendedITextTest {
 
         document.add(containerDiv);
         document.close();
-
-        // TODO DEVSIX-1655: Forced placement is applied to the parent element, forcing it to return FULL even though part of the child element overflowed.
 
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder, "diff31_"));
     }
