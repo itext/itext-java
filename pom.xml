@@ -706,6 +706,27 @@
               </includes>
               <groups>${bouncycastleintegrationtests}</groups>
             </configuration>
+            <executions>
+              <execution>
+                <id>general-mode</id>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            <execution>
+              <id>approved-mode</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+              <configuration>
+                <systemPropertyVariables>
+                  <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
+                </systemPropertyVariables>
+              </configuration>
+            </execution>
+          </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -713,6 +734,25 @@
             <configuration>
               <groups>${bouncycastleunittests}</groups>
             </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <id>general-mode</id>
+              </execution>
+              <execution>
+                <id>approved-mode</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

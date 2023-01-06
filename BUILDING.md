@@ -32,6 +32,16 @@ $ mvn clean install \
     > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
 ```
 
+By default tests are run with the non FIPS mode version of Bouncy Castle. To run the tests in FIPS mode the profile bouncy-castle-test must be deactivated and the profile bouncy-castle-fips-test must be activated:
+```bash
+$ mvn clean install \
+	-P test,bouncy-castle-fips-test,!bouncy-castle-test \
+    -Dmaven.test.failure.ignore=false \
+    -DITEXT_GS_EXEC="gs command" \
+    -DITEXT_MAGICK_COMPARE_EXEC="magick compare command" \
+    > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
+```
+
 You can use the supplied `Vagrantfile` to get a [Vagrant][4] VM ([Ubuntu][5] 14.04 LTS - Trusty Tahr, with [VirtualBox][6]) with all the required software installed.
 ```bash
 $ vagrant box add ubuntu/trusty64
