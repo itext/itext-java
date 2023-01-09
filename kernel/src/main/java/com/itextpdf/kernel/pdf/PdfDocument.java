@@ -108,7 +108,16 @@ import org.slf4j.LoggerFactory;
  * Main enter point to work with PDF document.
  */
 public class PdfDocument implements IEventDispatcher, Closeable {
-
+    //
+    private static final PdfName[] PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER = new PdfName[] {
+        PdfName.Encrypt,
+        PdfName.Size,
+        PdfName.Prev,
+        PdfName.Root,
+        PdfName.Info,
+        PdfName.ID,
+        PdfName.XRefStm,
+    };
 
     private static final IPdfPageFactory pdfPageFactory = new PdfPageFactory();
     protected final StampingProperties properties;
@@ -2065,8 +2074,12 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     trailer = new PdfDictionary();
                 }
                 // We keep the original trailer of the document to preserve the original document keys,
-                // but we have to remove the Encrypt key because it will be recalculated later if needed
-                trailer.remove(PdfName.Encrypt);
+                // but we have to remove all standard keys that can occur in the trailer to avoid invalid pdfs
+                if (trailer.size() > 0) {
+                    for (final PdfName key : PdfDocument.PDF_NAMES_TO_REMOVE_FROM_ORIGINAL_TRAILER) {
+                        trailer.remove(key);
+                    }
+                }
 
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
                 trailer.put(PdfName.Info, getDocumentInfo().getPdfObject().getIndirectReference());

@@ -416,8 +416,6 @@ public class PdfXrefTable {
             if (document.properties.appendMode) {
                 PdfNumber lastXref = new PdfNumber(document.reader.getLastXref());
                 trailer.put(PdfName.Prev, lastXref);
-            } else {
-                trailer.remove(PdfName.Prev);
             }
             writer.write(document.getTrailer());
             writer.write('\n');

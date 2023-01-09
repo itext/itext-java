@@ -57,6 +57,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -156,6 +158,39 @@ public class TrailerTest extends ExtendedITextTest {
 
             Assert.assertTrue(keyPresent);
             Assert.assertEquals(expectedValue, actualValue);
+        }
+    }
+
+    @Test
+    public void existingTrailerValuesWithStandardizedNameTest() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        HashMap<PdfName, PdfName> standardizedNames = new HashMap<>();
+        //some standardized names to put in the trailer, but they may not be removed
+        standardizedNames.put(PdfName.Color, new PdfName("brown"));
+        standardizedNames.put(PdfName.BaseFont, new PdfName("CustomFont"));
+        standardizedNames.put(PdfName.Pdf_Version_1_6, new PdfName("1.6"));
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));) {
+            for (Entry<PdfName, PdfName> entry : standardizedNames.entrySet()) {
+                PdfName pdfName = entry.getKey();
+                PdfName s = entry.getValue();
+                pdfDocument.getTrailer().put(pdfName, s);
+            }
+        }
+        try (PdfDocument stampingDocument = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baos.toByteArray())),
+                new PdfWriter(new ByteArrayOutputStream()));
+        ) {
+            PdfDictionary trailer = stampingDocument.getTrailer();
+            for (Entry<PdfName, PdfName> entry : standardizedNames.entrySet()) {
+                PdfName pdfName = entry.getKey();
+                PdfName pdfName2 = entry.getValue();
+                boolean keyPresent = trailer.containsKey(pdfName);
+                PdfName actualValue = trailer.getAsName(pdfName);
+                Assert.assertTrue(keyPresent);
+                Assert.assertEquals(pdfName2, actualValue);
+            }
+            stampingDocument.close();
         }
     }
 
