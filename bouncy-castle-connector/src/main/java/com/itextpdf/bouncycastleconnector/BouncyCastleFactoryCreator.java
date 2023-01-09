@@ -67,6 +67,7 @@ public final class BouncyCastleFactoryCreator {
         
         if (factory == null) {
             LOGGER.error(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+            factory = new BouncyCastleDefaultFactory();
         }
     }
 
