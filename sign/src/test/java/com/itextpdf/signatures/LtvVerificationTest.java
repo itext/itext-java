@@ -379,7 +379,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -391,7 +390,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -401,7 +399,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -413,7 +410,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -425,7 +421,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 Level.OCSP_OPTIONAL_CRL, CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -437,7 +432,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -447,7 +441,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -459,7 +452,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -471,7 +463,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 Level.OCSP_OPTIONAL_CRL, CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -485,7 +476,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -499,7 +489,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -509,7 +498,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -523,7 +511,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -537,7 +524,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -551,7 +537,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -561,7 +546,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
