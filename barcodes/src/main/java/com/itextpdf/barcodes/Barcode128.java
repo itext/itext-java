@@ -718,56 +718,6 @@ public class Barcode128 extends Barcode1D {
         }
     }
 
-    // Android-Excise-Start
-   /**
-     * Creates a <CODE>java.awt.Image</CODE>. This image only
-     * contains the bars without any text.
-     *
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */
-    @Override
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
-        int g = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-        String bCode;
-        if (codeType == CODE128_RAW) {
-            int idx = code.indexOf('\uffff');
-            if (idx >= 0) {
-                bCode = code.substring(0, idx);
-            } else {
-                bCode = code;
-            }
-        } else {
-            bCode = getRawText(code, codeType == CODE128_UCC);
-        }
-        int len = bCode.length();
-        int fullWidth = (len + 2) * 11 + 2;
-        byte[] bars = getBarsCode128Raw(bCode);
-
-        boolean print = true;
-        int ptr = 0;
-        int height = (int) barHeight;
-        int[] pix = new int[fullWidth * height];
-        for (int k = 0; k < bars.length; ++k) {
-            int w = bars[k];
-            int c = g;
-            if (print) {
-                c = f;
-            }
-            print = !print;
-            for (int j = 0; j < w; ++j) {
-                pix[ptr++] = c;
-            }
-        }
-        for (int k = fullWidth; k < pix.length; k += fullWidth) {
-            System.arraycopy(pix, 0, pix, k, fullWidth);
-        }
-        return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-    }
-    // Android-Excise-End
 
     private static char getStartSymbol(Barcode128CodeSet codeSet) {
         switch (codeSet) {

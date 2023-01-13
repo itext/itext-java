@@ -53,11 +53,6 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     private static boolean isRunOnJava = false;
 
-    // Android-Excise-Start
-    static {
-        isRunOnJava = true;
-    }
-    // Android-Excise-End
 
     @Test
     public void utf8CharsetStringTest() {

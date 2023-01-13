@@ -295,40 +295,6 @@ public class BarcodeMSI extends Barcode1D {
         return this.getBarcodeSize();
     }
 
-    // Android-Excise-Start
-    /**
-     * Creates a <CODE>java.awt.Image</CODE>. This image only
-     * contains the bars without any text.
-     *
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */
-    @Override
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int foregroundColor = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
-        int backgroundColor = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-        String bCode = this.code;
-        if (this.generateChecksum) {
-            bCode = bCode + Integer.toString(getChecksum(this.code));
-        }
-
-        byte[] bars = getBarsMSI(bCode);
-        int fullWidth = bars.length;
-        int fullHeight = (int) this.barHeight;
-        int[] pix = new int[fullWidth * fullHeight];
-
-        for (int x = 0; x < bars.length; x++) {
-            int color = (bars[x] == 1 ? foregroundColor : backgroundColor);
-            for (int y = 0; y < fullHeight; y++) {
-                int currentPixel = x + (y * fullWidth);
-                pix[currentPixel] = color;
-            }
-        }
-        return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, fullHeight, pix, 0, fullWidth));
-    }
-    // Android-Excise-End
 
     /**
      * Creates the bars.

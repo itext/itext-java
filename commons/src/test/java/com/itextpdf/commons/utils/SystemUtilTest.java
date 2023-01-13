@@ -144,7 +144,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore
+    @org.junit.Ignore
     public void runProcessAndWaitWithWorkingDirectoryTest() throws IOException, InterruptedException {
         String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {
@@ -167,7 +167,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6441 fix problem with System#getEnv method)
+    @org.junit.Ignore
     public void runProcessAndGetProcessInfoTest() throws IOException, InterruptedException {
         String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {

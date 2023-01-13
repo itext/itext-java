@@ -108,7 +108,7 @@ public class UriResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (Paths.get("").toAbsolutePath().getParent() is null on Android)
+    @org.junit.Ignore
     public void uriResolverTest06() throws MalformedURLException {
         UriResolver resolver = new UriResolver("../test/folder/index.html");
         String parentFolder = Paths.get("").toAbsolutePath().getParent().toUri().toURL().toExternalForm();
@@ -220,7 +220,7 @@ public class UriResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (Paths.get("").toAbsolutePath().getParent() is null on Android)
+    @org.junit.Ignore
     public void uriResolverTest13() throws MalformedURLException {
         UriResolver resolver = new UriResolver("");
         String runFolder = Paths.get("").toUri().toURL().toExternalForm();

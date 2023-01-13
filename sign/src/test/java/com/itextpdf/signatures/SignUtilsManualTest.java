@@ -36,7 +36,7 @@ import org.junit.experimental.categories.Category;
 public class SignUtilsManualTest extends ExtendedITextTest {
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.Ignore
     public void removeCertificatesIteratorTest() throws KeyStoreException {
         Iterable<X509Certificate> iterable = SignUtils.getCertificates(KeyStoreUtil.loadCacertsKeyStore());
         Iterator<X509Certificate> it = iterable.iterator();

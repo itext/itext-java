@@ -191,61 +191,6 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         Assert.assertEquals(0.5, barcode.getAspectRatio(), 0);
     }
 
-    // Android-Excise-Start
-    @Test
-    public void barcode417CreateAWTImageTest() throws IOException, InterruptedException {
-        String filename = "barcode417CreateAWTImageTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
-        PdfDocument document = new PdfDocument(writer);
-
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        String text = "Call me Ishmael. Some years ago--never mind how long "
-                + "precisely --having little or no money in my purse, and nothing "
-                + "particular to interest me on shore, I thought I would sail about "
-                + "a little and see the watery part of the world.";
-
-        BarcodePDF417 barcode = new BarcodePDF417();
-        barcode.setCode(text);
-
-        java.awt.Image image = barcode.createAwtImage(java.awt.Color.MAGENTA, java.awt.Color.ORANGE);
-        ImageData imageData = ImageDataFactory.create(image, java.awt.Color.BLACK);
-
-        canvas.addImageAt(imageData, 10, 650, false);
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
-                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
-    }
-
-    @Test
-    public void barcode417XObjectTest() throws IOException, InterruptedException {
-        String filename = "barcode417XObjectTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
-        PdfDocument document = new PdfDocument(writer);
-
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-
-        String text = "Call me Ishmael. Some years ago--never mind how long "
-                + "precisely --having little or no money in my purse, and nothing "
-                + "particular to interest me on shore, I thought I would sail about "
-                + "a little and see the watery part of the world.";
-
-        BarcodePDF417 barcode = new BarcodePDF417();
-        barcode.setCode(text);
-        PdfFormXObject xObject = barcode.createFormXObject(document);
-
-        canvas.addXObjectAt(xObject, 10, 650);
-
-        document.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
-                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
-    }
-    // Android-Excise-End
 
     @Test
     public void barcode417YHeightTest() {

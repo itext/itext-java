@@ -55,7 +55,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Skip
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -96,8 +95,6 @@ public class PdfAAppendModeTest extends ExtendedITextTest {
                 .restoreState();
         canvas.release();
         pdfADocument.close();
-        Assert.assertNull(new VeraPdfValidator().validate(inputFile)); // Android-Skip
-        Assert.assertNull(new VeraPdfValidator().validate(outputFile)); // Android-Skip
         Assert.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, destinationFolder, "diff_"));
     }
 
