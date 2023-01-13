@@ -24,10 +24,9 @@ package com.itextpdf.styledxmlparser.util;
 
 import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.resolve.CssPropertyMerger;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +67,8 @@ public final class StyleUtil {
             String styleProperty, String parentPropValue, String parentFontSizeString,
             Set<IStyleInheritance> inheritanceRules) {
         String childPropValue = styles.get(styleProperty);
-        if ((childPropValue == null && checkInheritance(styleProperty, inheritanceRules)) || CommonCssConstants.INHERIT.equals(childPropValue)) {
+        if ((childPropValue == null && checkInheritance(styleProperty, inheritanceRules))
+                || CommonCssConstants.INHERIT.equals(childPropValue)) {
             if (valueIsOfMeasurement(parentPropValue, CommonCssConstants.EM)
                     || valueIsOfMeasurement(parentPropValue, CommonCssConstants.EX)
                     || valueIsOfMeasurement(parentPropValue, CommonCssConstants.PERCENTAGE)
@@ -82,25 +82,16 @@ public final class StyleUtil {
             } else {
                 styles.put(styleProperty, parentPropValue);
             }
-        } else if (CommonCssConstants.TEXT_DECORATION_LINE.equals(styleProperty)
-                && !CommonCssConstants.INLINE_BLOCK.equals(styles.get(CommonCssConstants.DISPLAY))) {
-            // Note! This property is formally not inherited, but the browsers behave very similar to inheritance here.
-            // Text decorations on inline boxes are drawn across the entire element,
-            // going across any descendant elements without paying any attention to their presence.
-            // Also, when, for example, parent element has text-decoration:underline, and the child text-decoration:overline,
-            // then the text in the child will be both overline and underline. This is why the declarations are merged
-            // See TextDecorationTest#textDecoration01Test
-            styles.put(styleProperty, CssPropertyMerger.mergeTextDecoration(childPropValue, parentPropValue));
         }
-
         return styles;
     }
 
     /**
      * Check all inheritance rule-sets to see if the passed property is inheritable
      *
-     * @param styleProperty property identifier to check
+     * @param styleProperty    property identifier to check
      * @param inheritanceRules a set of inheritance rules
+     *
      * @return True if the property is inheritable by one of the rule-sets,
      * false if it is not marked as inheritable in all rule-sets
      */
@@ -118,6 +109,7 @@ public final class StyleUtil {
      *
      * @param value       string containing value to check
      * @param measurement measurement symbol (e.g. % for relative, px for pixels)
+     *
      * @return True if the value is numerical and ends with the measurement symbol, false otherwise
      */
     private static boolean valueIsOfMeasurement(String value, String measurement) {
