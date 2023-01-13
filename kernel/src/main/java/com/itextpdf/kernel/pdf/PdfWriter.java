@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -286,7 +286,7 @@ public class PdfWriter extends PdfOutputStream {
 
         SerializedObjectContent serializedContent = null;
         if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page) &&
-                !checkTypeOfPdfDictionary(obj, PdfName.OCG)) {
+                !checkTypeOfPdfDictionary(obj, PdfName.OCG) && !checkTypeOfPdfDictionary(obj, PdfName.OCMD)) {
             serializedContent = smartModeSerializer.serializeObject(obj);
             PdfIndirectReference objectRef = smartModeSerializer.getSavedSerializedObject(serializedContent);
             if (objectRef != null) {

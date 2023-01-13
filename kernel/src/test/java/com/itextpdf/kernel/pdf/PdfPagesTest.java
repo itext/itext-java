@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -770,8 +770,11 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
-        for (Integer e : nullPages) {
-            Assert.assertNull(pdfDocument.getPage((int) e));
+        for (Integer nullPage : nullPages) {
+            int pageNum = (int)nullPage;
+            Exception  exception = Assert.assertThrows(PdfException.class,()-> pdfDocument.getPage(pageNum));
+            Assert.assertEquals(exception.getMessage() , MessageFormatUtil.format(
+                    IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNum));
         }
     }
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -70,6 +70,11 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
         String fileNameWithoutWarnings = "cmp_pdfA2b_checkValidatorLogsTest.pdf";
         FileUtil.copy(SOURCE_FOLDER + fileNameWithWarnings, DESTINATION_FOLDER + fileNameWithWarnings);
         FileUtil.copy(SOURCE_FOLDER + fileNameWithoutWarnings, DESTINATION_FOLDER + fileNameWithoutWarnings);
+
+        String expectedWarningsForFileWithWarnings = "The following warnings and errors were logged during validation:\n"
+                + "WARNING: Invalid embedded cff font. Charset range exceeds number of glyphs\n"
+                + "WARNING: Missing OutputConditionIdentifier in an output intent dictionary\n"
+                + "WARNING: The Top DICT does not begin with ROS operator";
 
         //We check that the logs are empty after the first check
     }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: iText Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,6 +26,8 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -53,5 +55,27 @@ public class OpenTypeFontTableReaderTest extends ExtendedITextTest {
         Assert.assertNull(gsub.getLanguageRecord(null));
         Assert.assertNull(gsub.getLanguageRecord("mym3"));
         Assert.assertNull(gsub.getLanguageRecord("mym3", LanguageTags.SGAW_KAREN));
+    }
+
+
+    @Test
+    public void testGetLookupsArray() throws IOException {
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
+        GlyphSubstitutionTableReader gsub = fontProgram.getGsubTable();
+        FeatureRecord firstRecord = new FeatureRecord();
+        firstRecord.lookups = new int[]{5, 2};
+        firstRecord.tag = "1";
+        FeatureRecord secondRecord = new FeatureRecord();
+        secondRecord.lookups = new int[]{4, 10};
+        secondRecord.tag = "2";
+        FeatureRecord[] records = new FeatureRecord[]{firstRecord, secondRecord};
+
+        int[] lookupsLocations = gsub.getLookups(firstRecord).stream().mapToInt(record -> record.subTableLocations[0]).toArray();
+        int[] expected = new int[]{142610, 142436};
+        Assert.assertArrayEquals(expected, lookupsLocations);
+
+        lookupsLocations = gsub.getLookups(records).stream().mapToInt(record -> record.subTableLocations[0]).toArray();
+        expected = new int[]{142436, 142538, 142610, 143908};
+        Assert.assertArrayEquals(expected, lookupsLocations);
     }
 }

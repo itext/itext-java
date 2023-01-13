@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
+    Copyright (c) 1998-2023 iText Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -69,11 +70,10 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitApplyingResult;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitCalculator;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
@@ -196,9 +196,19 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // indicates whether the placement is forced
         boolean isPlacingForced = false;
         if (width > layoutBox.getWidth() + EPS || height > layoutBox.getHeight() + EPS) {
-            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || (width > layoutBox.getWidth() && processOverflowX) || (height > layoutBox.getHeight() && processOverflowY)) {
+            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                 isPlacingForced = true;
             } else {
+                isPlacingForced = true;
+                if (width > layoutBox.getWidth() + EPS) {
+                    isPlacingForced &= processOverflowX;
+                }
+                if (height > layoutBox.getHeight() + EPS) {
+                    isPlacingForced &= processOverflowY;
+                }
+            }
+
+            if (!isPlacingForced) {
                 applyMargins(initialOccupiedAreaBBox, true);
                 applyBorderBox(initialOccupiedAreaBBox, true);
                 occupiedArea.getBBox().setHeight(initialOccupiedAreaBBox.getHeight());
