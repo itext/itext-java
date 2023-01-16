@@ -130,7 +130,6 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
         }
         field.pdfAConformanceLevel = getConformanceLevel();
 
-        field.updateFontAndFontSize(getDocument().getDefaultFont(), PdfFormField.DEFAULT_FONT_SIZE);
         field.setFieldFlags(flags);
         field.setFieldName(getFormFieldName());
 
@@ -148,7 +147,8 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
             if (annotation != null) {
                 PdfFormXObject xObject = new PdfFormXObject(
                         new Rectangle(0, 0, getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight()));
-                field.drawChoiceAppearance(getWidgetRectangle(), field.fontSize, optionsArrayString, xObject, 0);
+                field.getFirstFormAnnotation().drawChoiceAppearance(getWidgetRectangle(), field.fontSize,
+                        optionsArrayString, xObject, 0);
                 annotation.setNormalAppearance(xObject.getPdfObject());
                 setPageToField(field);
             }

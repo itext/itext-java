@@ -125,7 +125,8 @@ public class PdfChoiceFormField extends PdfFormField {
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setIndices(PdfArray indices) {
-        return (PdfChoiceFormField) put(PdfName.I, indices);
+        put(PdfName.I, indices);
+        return this;
     }
 
     /**

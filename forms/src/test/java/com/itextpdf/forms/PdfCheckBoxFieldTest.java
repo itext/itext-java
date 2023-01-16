@@ -245,8 +245,8 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         if (fontSize >= 0) {
             checkBox.setFontSize(fontSize);
         }
-        checkBox.setBorderWidth(1);
-        checkBox.setBorderColor(ColorConstants.BLACK);
+        checkBox.getFirstFormAnnotation().setBorderWidth(1);
+        checkBox.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
 
         form.addField(checkBox, page);
 

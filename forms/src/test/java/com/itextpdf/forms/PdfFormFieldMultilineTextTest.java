@@ -67,7 +67,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
                 .setWidgetRectangle(new Rectangle(150, 600, 277, 44)).createMultilineText();
         name.setFont(null).setFontSize(0).setValue("");
         name.setScroll(false);
-        name.setBorderColor(ColorConstants.GRAY);
+        name.getFirstFormAnnotation().setBorderColor(ColorConstants.GRAY);
         String itextLicence = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                 "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -174,7 +174,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
                             .createText().setValue("SINGLE")};
             for (PdfFormField field : fields) {
                 field.setFontSize(40);
-                field.setBorderColor(ColorConstants.BLACK);
+                field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
                 form.addField(field);
             }
         }
@@ -200,16 +200,16 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
                 .setWidgetRectangle(new Rectangle(100, 500, 400, 300)).createMultilineText();
         field.setValue("Does this text overlap the border? Well it shouldn't!");
         field.setFontSize(30);
-        field.setBorderColor(ColorConstants.RED);
-        field.setBorderWidth(50);
+        field.getFirstFormAnnotation().setBorderColor(ColorConstants.RED);
+        field.getFirstFormAnnotation().setBorderWidth(50);
         form.addField(field);
 
         PdfTextFormField field2 = new TextFormFieldBuilder(pdfDoc, "multiAuto")
                 .setWidgetRectangle(new Rectangle(100, 400, 400, 50)).createMultilineText();
         field2.setValue("Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
         field2.setFontSize(0);
-        field2.setBorderColor(ColorConstants.RED);
-        field2.setBorderWidth(20);
+        field2.getFirstFormAnnotation().setBorderColor(ColorConstants.RED);
+        field2.getFirstFormAnnotation().setBorderWidth(20);
         form.addField(field2);
 
         pdfDoc.close();
@@ -236,10 +236,8 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
 
         PdfFormField form = new TextFormFieldBuilder(pdfDoc, "field")
                 .setWidgetRectangle(new Rectangle(59, 715, 127, 69)).createMultilineText().setFont(font).setFontSize(10f).setValue("");
-        form
-                .setBorderWidth(2)
-                .setBorderColor(ColorConstants.BLACK)
-                .setValue(value);
+        form.getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.BLACK);
+        form.setValue(value);
 
         acroForm.addField(form);
         pdfDoc.close();

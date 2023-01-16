@@ -89,8 +89,8 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
                 .setCheckType(PdfFormField.TYPE_CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
                 .createCheckBox().setValue("Off");
-        chk.setBorderColor(ColorConstants.BLACK);
-        chk.setBorderWidth(1);
+        chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
+        chk.getFirstFormAnnotation().setBorderWidth(1);
         form.addField(chk);
         doc.close();
 
@@ -112,8 +112,8 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
         PdfFormField chk = new CheckBoxFormFieldBuilder(doc, "name").setWidgetRectangle(new Rectangle(100, 500, 50, 50))
                 .setCheckType(PdfFormField.TYPE_CHECK).setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
                 .createCheckBox().setValue("On");
-        chk.setBorderColor(ColorConstants.BLACK);
-        chk.setBorderWidth(1);
+        chk.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
+        chk.getFirstFormAnnotation().setBorderWidth(1);
         form.addField(chk);
         doc.close();
 

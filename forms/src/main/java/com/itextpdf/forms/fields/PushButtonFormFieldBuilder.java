@@ -23,7 +23,6 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -92,22 +91,21 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
         field.setPushButton(true);
         field.setFieldName(getFormFieldName());
         field.text = caption;
-        field.updateFontAndFontSize(getDocument().getDefaultFont(), PdfFormField.DEFAULT_FONT_SIZE);
-        field.backgroundColor = ColorConstants.LIGHT_GRAY;
 
         if (annotation != null) {
-            PdfFormXObject xObject = field.drawPushButtonAppearance(
+            field.getFirstFormAnnotation().backgroundColor = ColorConstants.LIGHT_GRAY;
+            PdfFormXObject xObject = field.getFirstFormAnnotation().drawPushButtonAppearance(
                     getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight(),
                     caption, getDocument().getDefaultFont(), PdfFormField.DEFAULT_FONT_SIZE);
             annotation.setNormalAppearance(xObject.getPdfObject());
 
             PdfDictionary mk = new PdfDictionary();
             mk.put(PdfName.CA, new PdfString(caption));
-            mk.put(PdfName.BG, new PdfArray(field.backgroundColor.getColorValue()));
+            mk.put(PdfName.BG, new PdfArray(field.getFirstFormAnnotation().backgroundColor.getColorValue()));
             annotation.setAppearanceCharacteristics(mk);
 
             if (getConformanceLevel() != null) {
-                PdfFormField.createPushButtonAppearanceState(annotation.getPdfObject());
+                PdfFormAnnotation.createPushButtonAppearanceState(annotation.getPdfObject());
             }
             setPageToField(field);
         }

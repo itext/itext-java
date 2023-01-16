@@ -48,6 +48,7 @@ import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
@@ -367,13 +368,15 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         group2.setValue("1", true);
 
         new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group2, "1")
+                .getFirstFormAnnotation()
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setVisibility(PdfFormField.VISIBLE);
+                .setVisibility(PdfFormAnnotation.VISIBLE);
 
 
         new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group2, "2")
+                .getFirstFormAnnotation()
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setVisibility(PdfFormField.VISIBLE);
+                .setVisibility(PdfFormAnnotation.VISIBLE);
 
         form.addField(group2);
 
@@ -399,13 +402,15 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         group2.setValue("1", true);
 
         new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group2, "1")
+                .getFirstFormAnnotation()
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setVisibility(PdfFormField.VISIBLE);
+                .setVisibility(PdfFormAnnotation.VISIBLE);
 
 
         new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group2, "2")
+                .getFirstFormAnnotation()
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setVisibility(PdfFormField.VISIBLE);
+                .setVisibility(PdfFormAnnotation.VISIBLE);
 
         group2.regenerateField();
         form.addField(group2);
@@ -861,10 +866,10 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                     .setWidgetRectangle(new Rectangle(10, y -= 70, 200, 50)).createText();
             fields[i].setValue(names[i]);
             acroForm.addField(fields[i]);
-            fields[i].setBorderStyle(borderDict);
-            fields[i].setBorderWidth(3);
-            fields[i].setBorderColor(ColorConstants.CYAN);
-            fields[i].setBackgroundColor(ColorConstants.MAGENTA);
+            fields[i].getFirstFormAnnotation().setBorderStyle(borderDict);
+            fields[i].getFirstFormAnnotation().setBorderWidth(3);
+            fields[i].getFirstFormAnnotation().setBorderColor(ColorConstants.CYAN);
+            fields[i].getFirstFormAnnotation().setBackgroundColor(ColorConstants.MAGENTA);
         }
 
         pdfDoc.close();
@@ -962,9 +967,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
                 .setWidgetRectangle(new Rectangle(36, 500, 200, 200)).setCaption(itext).createPushButton();
         button.setFontSize(0);
-        button.setBackgroundColor(ColorConstants.GRAY);
+        button.getFirstFormAnnotation().setBackgroundColor(ColorConstants.GRAY);
         button.setValue(itext);
-        button.setVisibility(PdfFormField.VISIBLE_BUT_DOES_NOT_PRINT);
+        button.getFirstFormAnnotation().setVisibility(PdfFormAnnotation.VISIBLE_BUT_DOES_NOT_PRINT);
         form.addField(button);
 
         pdfDoc.close();
@@ -1213,7 +1218,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfTextFormField field1 = new TextFormFieldBuilder(pdfDoc, fieldName)
                 .setWidgetRectangle(new Rectangle(90, 700, 150, 22)).createText();
         field1.setValue("new field");
-        field1.setPage(pageNum);
+        field1.getFirstFormAnnotation().setPage(pageNum);
         form.addField(field1);
 
         pdfDoc.close();
@@ -1355,7 +1360,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         for (PdfFormField field : fields) {
             field.setFontSize(0);
-            field.setBorderColor(ColorConstants.BLACK);
+            field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
             form.addField(field);
         }
 
@@ -1404,16 +1409,16 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 .setWidgetRectangle(new Rectangle(50, 700, 500, 120)).createText();
         field.setValue("Does this text overlap the border?");
         field.setFontSize(20);
-        field.setBorderColor(ColorConstants.RED);
-        field.setBorderWidth(50);
+        field.getFirstFormAnnotation().setBorderColor(ColorConstants.RED);
+        field.getFirstFormAnnotation().setBorderWidth(50);
         form.addField(field);
 
         PdfTextFormField field2 = new TextFormFieldBuilder(pdfDoc, "singleAuto")
                 .setWidgetRectangle(new Rectangle(50, 600, 500, 80)).createText();
         field2.setValue("Does this autosize text overlap the border? Well it shouldn't! Does it fit accurately though?");
         field2.setFontSize(0);
-        field2.setBorderColor(ColorConstants.RED);
-        field2.setBorderWidth(20);
+        field2.getFirstFormAnnotation().setBorderColor(ColorConstants.RED);
+        field2.getFirstFormAnnotation().setBorderWidth(20);
         form.addField(field2);
 
         pdfDoc.close();

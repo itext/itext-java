@@ -43,6 +43,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -228,13 +229,19 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
                 Integer justification = field.getJustification();
                 if (null == justification || 0 == (int) justification) {
                     // reddish
-                    field.setBackgroundColor(new DeviceRgb(255, 200, 200));
+                    for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
+                        annot.setBackgroundColor(new DeviceRgb(255, 200, 200));
+                    }
                 } else if (1 == (int) justification) {
                     // greenish
-                    field.setBackgroundColor(new DeviceRgb(200, 255, 200));
+                    for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
+                        annot.setBackgroundColor(new DeviceRgb(200, 255, 200));
+                    }
                 } else if (2 == (int) justification) {
                     // blueish
-                    field.setBackgroundColor(new DeviceRgb(200, 200, 255));
+                    for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
+                        annot.setBackgroundColor(new DeviceRgb(200, 200, 255));
+                    }
                 }
                 field.setValue(newValue);
             }

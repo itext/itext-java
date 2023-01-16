@@ -23,10 +23,10 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -47,7 +47,6 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -109,7 +108,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             text.addKid(childText);
             acroForm.addField(text);
             Assert.assertEquals(1, acroForm.fields.size());
-            List<PdfFormField> fieldKids = text.getChildFields();
+            List<AbstractPdfFormField> fieldKids = text.getChildFields();
             Assert.assertEquals(2, fieldKids.size());
         }
     }

@@ -110,7 +110,7 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
 
         putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Btn);
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
-        putIfAbsent(expectedDictionary, PdfName.V, new PdfName(PdfFormField.OFF_STATE_VALUE));
+        putIfAbsent(expectedDictionary, PdfName.V, new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         checkBoxFormField.makeIndirect(DUMMY_DOCUMENT);

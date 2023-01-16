@@ -44,7 +44,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -103,14 +103,16 @@ public class PdfARadiofieldTest extends ExtendedITextTest {
 
         new RadioFormFieldBuilder(doc).setWidgetRectangle(rect1)
                 .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(group, "1")
-                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setVisibility(PdfFormField.VISIBLE);
+                .getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.RED)
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormAnnotation.VISIBLE);
 
 
         new RadioFormFieldBuilder(doc).setWidgetRectangle(rect2)
                 .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(group, "2")
-                .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setVisibility(PdfFormField.VISIBLE);
+                .getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.RED)
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setVisibility(PdfFormAnnotation.VISIBLE);
 
         form.addField(group);
 

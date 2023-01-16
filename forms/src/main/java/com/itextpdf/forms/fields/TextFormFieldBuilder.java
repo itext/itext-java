@@ -66,7 +66,6 @@ public class TextFormFieldBuilder extends TerminalFormFieldBuilder<TextFormField
         }
 
         field.pdfAConformanceLevel = getConformanceLevel();
-        field.updateFontAndFontSize(getDocument().getDefaultFont(), PdfFormField.DEFAULT_FONT_SIZE);
         field.setMultiline(multiline);
         field.setFieldName(getFormFieldName());
         field.setValue(TEXT_FORM_FIELD_DEFAULT_VALUE);

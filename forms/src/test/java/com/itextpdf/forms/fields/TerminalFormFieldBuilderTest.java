@@ -23,6 +23,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -75,13 +76,14 @@ public class TerminalFormFieldBuilderTest extends ExtendedITextTest {
         TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         builder.setPage(5);
 
-        PdfFormField formField = new PdfFormField(DUMMY_DOCUMENT) {
+        PdfFormAnnotation formFieldAnnot = new PdfFormAnnotation((PdfDictionary)new PdfDictionary().makeIndirect(DUMMY_DOCUMENT)) {
             @Override
-            public PdfFormField setPage(int pageNum) {
+            public PdfFormAnnotation setPage(int pageNum) {
                 Assert.assertEquals(5, pageNum);
                 return this;
             }
         };
+        PdfFormField formField = new PdfFormField(DUMMY_DOCUMENT).addKid(formFieldAnnot);
         builder.setPageToField(formField);
     }
 

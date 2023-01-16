@@ -85,7 +85,8 @@ public class PdfSignatureFormField extends PdfFormField {
      * @return the edited field
      */
     public PdfSignatureFormField setValue(PdfObject value) {
-        return (PdfSignatureFormField) put(PdfName.V, value);
+        put(PdfName.V, value);
+        return this;
     }
 
     /**

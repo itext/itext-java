@@ -75,25 +75,24 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
             check = new PdfButtonFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            annotation.setAppearanceState(new PdfName(PdfFormField.OFF_STATE_VALUE));
+            annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
             if (getConformanceLevel() != null) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             check = new PdfButtonFormField(annotation, getDocument());
         }
         check.pdfAConformanceLevel = getConformanceLevel();
-        check.updateFontAndFontSize(getDocument().getDefaultFont(), 0);
         check.setCheckType(checkType);
         check.setFieldName(getFormFieldName());
-        check.put(PdfName.V, new PdfName(PdfFormField.OFF_STATE_VALUE));
+        check.put(PdfName.V, new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
 
         if (getWidgetRectangle() != null) {
             if (getConformanceLevel() == null) {
-                check.drawCheckAppearance(getWidgetRectangle().getWidth(),
-                        getWidgetRectangle().getHeight(), PdfFormField.ON_STATE_VALUE);
+                check.getFirstFormAnnotation().drawCheckAppearance(getWidgetRectangle().getWidth(),
+                        getWidgetRectangle().getHeight(), PdfFormAnnotation.ON_STATE_VALUE);
             } else {
-                check.drawPdfA2CheckAppearance(getWidgetRectangle().getWidth(),
-                        getWidgetRectangle().getHeight(), PdfFormField.ON_STATE_VALUE, checkType);
+                check.getFirstFormAnnotation().drawPdfA2CheckAppearance(getWidgetRectangle().getWidth(),
+                        getWidgetRectangle().getHeight(), PdfFormAnnotation.ON_STATE_VALUE, checkType);
             }
             setPageToField(check);
         }

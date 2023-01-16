@@ -51,6 +51,7 @@ import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
@@ -189,11 +190,12 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdf, true);
             PdfFormField chk = new RadioFormFieldBuilder(pdf).setWidgetRectangle(bbox)
                     .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(_group, _value);
-            chk.setPage(pageNumber);
+            PdfFormAnnotation annotation = chk.getFirstFormAnnotation();
+            annotation.setPage(pageNumber);
 
-            chk.setVisibility(PdfFormField.VISIBLE);
-            chk.setBorderColor(ColorConstants.BLACK);
-            chk.setBackgroundColor(ColorConstants.WHITE);
+            annotation.setVisibility(PdfFormAnnotation.VISIBLE);
+            annotation.setBorderColor(ColorConstants.BLACK);
+            annotation.setBackgroundColor(ColorConstants.WHITE);
             chk.setReadOnly(true);
 
             PdfFormXObject appearance = new PdfFormXObject(bbox);
@@ -211,7 +213,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
             form.addFieldAppearanceToPage(chk, pdf.getPage(pageNumber));
             //appearance stream was set, while AS has kept as is, i.e. in Off state.
-            chk.setAppearance(PdfName.N, "v1".equals(_value) ? _value : "Off", appearance.getPdfObject());
+            annotation.setAppearance(PdfName.N, "v1".equals(_value) ? _value : "Off", appearance.getPdfObject());
         }
 
         @Override
@@ -418,10 +420,10 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         radioGroup.setValue("");
         new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(36, 496, 20, 20))
                 .setConformanceLevel(conformanceLevel).createRadioButton(radioGroup, "1")
-                .setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
+                .getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
         new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(66, 496, 20, 20))
                 .setConformanceLevel(conformanceLevel).createRadioButton(radioGroup, "2")
-                .setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
+                .getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
 
         form.addField(radioGroup);
 
@@ -505,9 +507,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             doc.add(new Paragraph(new Text("Some text").setFont(font).setFontSize(10)));
 
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            form.addField(new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(150, 100, 100, 20))
+            PdfFormField field = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(150, 100, 100, 20))
                     .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createText()
-                    .setValue("textField").setFont(font).setFontSize(10).setFieldName("text").setPage(1), pdfDoc.getPage(1));
+                    .setValue("textField").setFont(font).setFontSize(10).setFieldName("text");
+            field.getFirstFormAnnotation().setPage(1);
+            form.addField(field, pdfDoc.getPage(1));
         }
 
         Assert.assertNull(new VeraPdfValidator().validate(fileName));

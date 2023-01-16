@@ -60,7 +60,6 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
      */
     public PdfButtonFormField createRadioGroup() {
         PdfButtonFormField radio = new PdfButtonFormField(getDocument());
-        radio.updateFontAndFontSize(getDocument().getDefaultFont(), PdfFormField.DEFAULT_FONT_SIZE);
         radio.pdfAConformanceLevel = getConformanceLevel();
         radio.setFieldName(getFormFieldName());
         radio.setFieldFlags(PdfButtonFormField.FF_RADIO);
@@ -88,15 +87,14 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
             if (appearanceState.equals(radioGroupValue)) {
                 annotation.setAppearanceState(appearanceState);
             } else {
-                annotation.setAppearanceState(new PdfName(PdfFormField.OFF_STATE_VALUE));
+                annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
             }
             radio = new PdfButtonFormField(annotation, getDocument());
         }
         radio.pdfAConformanceLevel = getConformanceLevel();
 
-        radio.updateFontAndFontSize(getDocument().getDefaultFont(), PdfFormField.DEFAULT_FONT_SIZE);
         if (getWidgetRectangle() != null) {
-            radio.drawRadioAppearance(
+            radio.getFirstFormAnnotation().drawRadioAppearance(
                     getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight(), appearanceName);
             setPageToField(radio);
         }

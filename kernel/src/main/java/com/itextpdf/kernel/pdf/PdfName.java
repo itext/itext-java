@@ -802,6 +802,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Subtype = createDirectName("Subtype");
     public static final PdfName Subtype2 = createDirectName("Subtype2");
     public static final PdfName Supplement = createDirectName("Supplement");
+    public static final PdfName SV = createDirectName("SV");
     public static final PdfName Sy = createDirectName("Sy");
     public static final PdfName Symbol = createDirectName("Symbol");
     public static final PdfName Synchronous = createDirectName("Synchronous");
