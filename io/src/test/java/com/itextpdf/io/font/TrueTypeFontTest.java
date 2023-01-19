@@ -95,4 +95,26 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         Assert.assertEquals(1, actualResult.size());
         Assert.assertTrue(actualResult.contains(charGidInFont));
     }
+
+    @Test
+    public void cmapPlatform0PlatEnc3Format4Test() throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs.ttf");
+        checkCmapTableEntry(fontProgram, 'f', 2);
+        checkCmapTableEntry(fontProgram, 'i', 3);
+    }
+
+    @Test
+    public void cmapPlatform0PlatEnc3Format6Test() throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs-fmt-6.ttf");
+        checkCmapTableEntry(fontProgram, 'f', 2);
+        checkCmapTableEntry(fontProgram, 'i', 3);
+    }
+
+    private void checkCmapTableEntry(FontProgram fontProgram, char uniChar, int expectedGlyphId) {
+
+        Glyph glyph = fontProgram.getGlyph(uniChar);
+
+        Assert.assertEquals(expectedGlyphId, glyph.getCode());
+        Assert.assertArrayEquals(new char[]{uniChar}, glyph.getUnicodeChars());
+    }
 }
