@@ -24,7 +24,7 @@ package com.itextpdf.bouncycastleconnector;
 
 import com.itextpdf.bouncycastle.BouncyCastleFactory;
 import com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant;
-import com.itextpdf.bouncycastlefips.BouncyCastleFipsFactory;
+import com.itextpdf.bouncycastlefips.BouncyCastleFipsFactory; // Android-Skip
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.SystemUtil;
 
@@ -107,6 +107,6 @@ public final class BouncyCastleFactoryCreator {
 
     private static void populateFactoriesMap() {
         factories.put("bouncy-castle", () -> new BouncyCastleFactory());
-        factories.put("bouncy-castle-fips", () -> new BouncyCastleFipsFactory());
+        factories.put("bouncy-castle-fips", () -> new BouncyCastleFipsFactory()); // Android-Skip
     }
 }
