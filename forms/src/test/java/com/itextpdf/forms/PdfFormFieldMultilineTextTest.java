@@ -65,7 +65,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
 
         PdfTextFormField name = new TextFormFieldBuilder(pdfDoc, "fieldName")
                 .setWidgetRectangle(new Rectangle(150, 600, 277, 44)).createMultilineText();
-        name.setFont(null).setFontSize(0).setValue("");
+        name.setValue("").setFont(null).setFontSize(0);
         name.setScroll(false);
         name.getFirstFormAnnotation().setBorderColor(ColorConstants.GRAY);
         String itextLicence = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -235,7 +235,8 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
 
         PdfFormField form = new TextFormFieldBuilder(pdfDoc, "field")
-                .setWidgetRectangle(new Rectangle(59, 715, 127, 69)).createMultilineText().setFont(font).setFontSize(10f).setValue("");
+                .setWidgetRectangle(new Rectangle(59, 715, 127, 69)).createMultilineText().setValue("");
+        form.setFont(font).setFontSize(10f);
         form.getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.BLACK);
         form.setValue(value);
 

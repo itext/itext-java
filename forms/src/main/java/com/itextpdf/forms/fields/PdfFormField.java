@@ -46,6 +46,7 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -62,6 +63,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -81,6 +83,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +153,33 @@ public class PdfFormField extends AbstractPdfFormField {
     protected int checkType;
     protected PdfFormXObject form;
 
+    private static final Set<PdfName> formFieldKeys = new HashSet<PdfName>();
+
+    static {
+        formFieldKeys.add(PdfName.FT);
+        // It exists in form field and widget annotation
+        //formFieldKeys.add(PdfName.Parent);
+        formFieldKeys.add(PdfName.Kids);
+        formFieldKeys.add(PdfName.T);
+        formFieldKeys.add(PdfName.TU);
+        formFieldKeys.add(PdfName.TM);
+        formFieldKeys.add(PdfName.Ff);
+        formFieldKeys.add(PdfName.V);
+        formFieldKeys.add(PdfName.DV);
+        // It exists in form field and widget annotation
+        //formFieldKeys.add(PdfName.AA);
+        formFieldKeys.add(PdfName.DA);
+        formFieldKeys.add(PdfName.Q);
+        formFieldKeys.add(PdfName.DS);
+        formFieldKeys.add(PdfName.RV);
+        formFieldKeys.add(PdfName.Opt);
+        formFieldKeys.add(PdfName.MaxLen);
+        formFieldKeys.add(PdfName.TI);
+        formFieldKeys.add(PdfName.I);
+        formFieldKeys.add(PdfName.Lock);
+        formFieldKeys.add(PdfName.SV);
+    }
+
     private List<AbstractPdfFormField> childFields = new ArrayList<>();
 
     /**
@@ -169,19 +199,19 @@ public class PdfFormField extends AbstractPdfFormField {
             // Here widget annotation might be merged with form field
             final PdfName subType = pdfObject.getAsName(PdfName.Subtype);
             if (PdfName.Widget.equals(subType)) {
-                AbstractPdfFormField childField = AbstractPdfFormField.makeFormFieldAnnotation(pdfObject, getDocument());
+                AbstractPdfFormField childField = PdfFormAnnotation.makeFormAnnotation(pdfObject, getDocument());
                 if (childField != null) {
                     this.setChildField(childField);
                 }
             }
         } else {
             for (PdfObject kid : kidsArray) {
-                AbstractPdfFormField childField = AbstractPdfFormField.makeFormField(kid, getDocument());
+                AbstractPdfFormField childField = PdfFormField.makeFormFieldOrAnnotation(kid, getDocument());
                 if (childField != null) {
                     this.setChildField(childField);
                 } else {
                      Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
-                     logger.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
+                     logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
                              pdfObject.getIndirectReference() == null ? pdfObject : (PdfObject)pdfObject.getIndirectReference()));
                 }
             }
@@ -214,6 +244,68 @@ public class PdfFormField extends AbstractPdfFormField {
         put(PdfName.FT, getFormType());
     }
 
+    /**
+     * Creates a (subtype of) {@link PdfFormField} object. The type of the object
+     * depends on the <code>FT</code> entry in the <code>pdfObject</code> parameter.
+     *
+     * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
+     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}.
+     * @param document  the {@link PdfDocument} to create the field in.
+     * @return a new {@link PdfFormField}, or <code>null</code> if
+     * <code>pdfObject</code> is not a form field.
+     */
+    public static PdfFormField makeFormField(PdfObject pdfObject, PdfDocument document) {
+        if (!pdfObject.isDictionary()) {
+            return null;
+        }
+
+        PdfDictionary dictionary = (PdfDictionary) pdfObject;
+        if (!PdfFormField.isFormField(dictionary)) {
+            return null;
+        }
+
+        PdfFormField field;
+        PdfName formType = dictionary.getAsName(PdfName.FT);
+        if (PdfName.Tx.equals(formType)) {
+            field = new PdfTextFormField(dictionary);
+        } else if (PdfName.Btn.equals(formType)) {
+            field = new PdfButtonFormField(dictionary);
+        } else if (PdfName.Ch.equals(formType)) {
+            field = new PdfChoiceFormField(dictionary);
+        } else if (PdfName.Sig.equals(formType)) {
+            field = new PdfSignatureFormField(dictionary);
+        } else {
+            // No form type but still a form field
+            field = new PdfFormField(dictionary);
+        }
+        field.makeIndirect(document);
+
+        if (document != null && document.getReader() != null &&
+                document.getReader().getPdfAConformanceLevel() != null) {
+            field.pdfAConformanceLevel = document.getReader().getPdfAConformanceLevel();
+        }
+
+        return field;
+    }
+
+    /**
+     * Creates a (subtype of) {@link PdfFormField} or {@link PdfFormAnnotation} object depending on
+     * <code>pdfObject</code>.
+     *
+     * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
+     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}.
+     * @param document  the {@link PdfDocument} to create the field in.
+     * @return a new {@link AbstractPdfFormField}, or <code>null</code> if
+     * <code>pdfObject</code> is not a form field and is not a widget annotation.
+     */
+    public static AbstractPdfFormField makeFormFieldOrAnnotation(PdfObject pdfObject, PdfDocument document) {
+        AbstractPdfFormField formField = PdfFormField.makeFormField(pdfObject, document);
+        if (formField == null) {
+            formField = PdfFormAnnotation.makeFormAnnotation(pdfObject, document);
+        }
+
+        return formField;
+    }
     /**
      * Makes a field flag by bit position. Bit positions are numbered 1 to 32.
      * But position 0 corresponds to flag 1, position 3 corresponds to flag 4 etc.
@@ -263,7 +355,7 @@ public class PdfFormField extends AbstractPdfFormField {
         if (formType == null || !PdfName.Btn.equals(formType)) {
             PdfArray kids = getKids();
             if (kids != null) {
-                for (PdfObject kid: kids) {
+                for (PdfObject kid : kids) {
                     if (kid.isDictionary() && ((PdfDictionary) kid).getAsString(PdfName.T) != null) {
                         PdfFormField field = new PdfFormField((PdfDictionary) kid);
                         field.setValue(value);
@@ -295,8 +387,8 @@ public class PdfFormField extends AbstractPdfFormField {
             } else {
                 put(PdfName.V, new PdfName(value));
                 for (PdfWidgetAnnotation widget : getWidgets()) {
-                    List<String> states = Arrays.asList(AbstractPdfFormField
-                            .makeFormField(widget.getPdfObject(), getDocument()).getAppearanceStates());
+                    List<String> states = Arrays.asList(PdfFormAnnotation
+                            .makeFormAnnotation(widget.getPdfObject(), getDocument()).getAppearanceStates());
                     if (states.contains(value)) {
                         widget.setAppearanceState(new PdfName(value));
                     } else {
@@ -379,11 +471,10 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the kids of this object.
      *
-     * @return {@inheritDoc}
+     * @return contents of the dictionary's <code>Kids</code> property, as a {@link PdfArray}.
      */
-    @Override
     public PdfArray getKids() {
         return getPdfObject().getAsArray(PdfName.Kids);
     }
@@ -398,6 +489,23 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
+     * Gets all child form fields of this form field. Annotations are not returned.
+     *
+     * @return a list of {@link PdfFormField}.
+     */
+    public List<PdfFormField> getChildFormFields() {
+        List<PdfFormField> fields = new ArrayList<>();
+        for (AbstractPdfFormField child : childFields) {
+            if (child instanceof PdfFormField) {
+                fields.add((PdfFormField)child);
+            }
+        }
+
+        return fields;
+    }
+
+
+    /**
      * Gets all childFields of this object, including the children of the children
      * but not annotations.
      *
@@ -405,13 +513,25 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public List<PdfFormField> getAllChildFormFields() {
         List<PdfFormField> allKids = new ArrayList<>();
+        List<PdfFormField> kids = this.getChildFormFields();
+        for (PdfFormField formField : kids) {
+            allKids.add(formField);
+            allKids.addAll(formField.getAllChildFormFields());
+        }
+        return allKids;
+    }
+
+    /**
+     * Gets all childFields of this object, including the children of the children.
+     *
+     * @return the children of the current field and their children.
+     */
+    public List<AbstractPdfFormField> getAllChildFields() {
         List<AbstractPdfFormField> kids = this.getChildFields();
-        for (AbstractPdfFormField formField : kids) {
-            if (formField instanceof PdfFormField) {
-                allKids.add((PdfFormField)formField);
-                if ((formField).getKids() != null) {
-                    allKids.addAll(((PdfFormField)formField).getAllChildFormFields());
-                }
+        List<AbstractPdfFormField> allKids = new ArrayList<>(kids);
+        for (AbstractPdfFormField field : kids) {
+            if (field instanceof PdfFormField) {
+                allKids.addAll(((PdfFormField)field).getAllChildFields());
             }
         }
         return allKids;
@@ -424,13 +544,10 @@ public class PdfFormField extends AbstractPdfFormField {
      * @return the child of the current field as a {@link PdfFormField}.
      */
     public PdfFormField getChildField(String fieldName) {
-        for (AbstractPdfFormField field : this.getChildFields()) {
-            if (field instanceof PdfFormField) {
-                PdfFormField formField = (PdfFormField)field;
-                PdfString partialFieldName = formField.getPartialFieldName();
-                if (partialFieldName != null && partialFieldName.toUnicodeString().equals(fieldName)) {
-                    return formField;
-                }
+        for (PdfFormField formField : this.getChildFormFields()) {
+            PdfString partialFieldName = formField.getPartialFieldName();
+            if (partialFieldName != null && partialFieldName.toUnicodeString().equals(fieldName)) {
+                return formField;
             }
         }
         return null;
@@ -753,7 +870,7 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public List<PdfWidgetAnnotation> getWidgets() {
         List<PdfWidgetAnnotation> widgets = new ArrayList<>();
-        for (AbstractPdfFormField child: childFields) {
+        for (AbstractPdfFormField child : childFields) {
             PdfObject kid = child.getPdfObject();
             PdfName subType = ((PdfDictionary) kid).getAsName(PdfName.Subtype);
             if (subType != null && subType.equals(PdfName.Widget)) {
@@ -771,7 +888,7 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public List<PdfFormAnnotation> getChildFormAnnotations() {
         List<PdfFormAnnotation> annots = new ArrayList<>();
-        for (AbstractPdfFormField child: childFields) {
+        for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormAnnotation) {
                 annots.add((PdfFormAnnotation)child);
             }
@@ -786,7 +903,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * @return {@link PdfFormAnnotation} or null if there are no child annotations.
      */
     public PdfFormAnnotation getFirstFormAnnotation() {
-        for (AbstractPdfFormField child: childFields) {
+        for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormAnnotation) {
                 return (PdfFormAnnotation)child;
             }
@@ -964,10 +1081,10 @@ public class PdfFormField extends AbstractPdfFormField {
     public boolean regenerateField() {
         boolean result = true;
         updateDefaultAppearance();
-        for (AbstractPdfFormField child: childFields) {
+        for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormAnnotation) {
                 PdfFormAnnotation annotation = (PdfFormAnnotation) child;
-                result &= regenerateWidget(annotation);
+                result &= annotation.regenerateWidget();
             } else {
                 child.regenerateField();
             }
@@ -1060,7 +1177,7 @@ public class PdfFormField extends AbstractPdfFormField {
             }
         }
 
-        for (AbstractPdfFormField child: childFields) {
+        for (AbstractPdfFormField child : childFields) {
             String[] states = child.getAppearanceStates();
             Collections.addAll(names, states);
         }
@@ -1084,83 +1201,18 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
-     * Sets the text color and regenerates appearance stream.
+     * {@inheritDoc}
      *
-     * @param color the new value for the Color.
-     * @return the edited field.
+     * @param color {@inheritDoc}
+     * @return {@inheritDoc}
      */
-    public PdfFormField setColor(Color color) {
+    @Override
+    public AbstractPdfFormField setColor(Color color) {
         this.color = color;
         for (AbstractPdfFormField child : childFields) {
             child.setColorNoRegenerate(color);
         }
 
-        regenerateField();
-        return this;
-    }
-
-    /**
-     * Basic setter for the <code>font</code> property. Regenerates the field
-     * appearance after setting the new value.
-     * Note that the font will be added to the document so ensure that the font is embedded
-     * if it's a pdf/a document.
-     *
-     * @param font The new font to be set.
-     * @return The edited {@link PdfFormField}.
-     */
-    public PdfFormField setFont(PdfFont font) {
-        updateFontAndFontSize(font, this.fontSize);
-        regenerateField();
-        return this;
-    }
-
-    /**
-     * Basic setter for the <code>fontSize</code> property. Regenerates the
-     * field appearance after setting the new value.
-     *
-     * @param fontSize The new font size to be set.
-     * @return The edited {@link PdfFormField}.
-     */
-    public PdfFormField setFontSize(float fontSize) {
-        updateFontAndFontSize(this.font, fontSize);
-        regenerateField();
-        return this;
-    }
-
-    /**
-     * Basic setter for the <code>fontSize</code> property. Regenerates the
-     * field appearance after setting the new value.
-     *
-     * @param fontSize The new font size to be set.
-     * @return The edited {@link PdfFormField}.
-     */
-    public PdfFormField setFontSize(int fontSize) {
-        setFontSize((float) fontSize);
-        return this;
-    }
-
-    /**
-     * Sets zero font size which will be interpreted as auto-size according to ISO 32000-1, 12.7.3.3.
-     *
-     * @return the edited field.
-     */
-    public PdfFormField setFontSizeAutoScale() {
-        this.fontSize = 0;
-        regenerateField();
-
-        return this;
-    }
-
-    /**
-     * Combined setter for the <code>font</code> and <code>fontSize</code>
-     * properties. Regenerates the field appearance after setting the new value.
-     *
-     * @param font     The new font to be set.
-     * @param fontSize The new font size to be set.
-     * @return The edited {@link PdfFormField}.
-     */
-    public PdfFormField setFontAndSize(PdfFont font, float fontSize) {
-        updateFontAndFontSize(font, fontSize);
         regenerateField();
         return this;
     }
@@ -1206,6 +1258,16 @@ public class PdfFormField extends AbstractPdfFormField {
         return textAlignment;
     }
 
+    private static boolean isFormField(PdfDictionary dict) {
+        for (final PdfName formFieldKey: formFieldKeys) {
+            if (dict.containsKey(formFieldKey)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static PdfString generateDefaultAppearance(PdfName font, float fontSize, Color textColor) {
         assert font != null;
 
@@ -1239,7 +1301,7 @@ public class PdfFormField extends AbstractPdfFormField {
                         .writeBytes(k);
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(IoLogMessageConstant.UNSUPPORTED_COLOR_IN_DA);
+                logger.error(FormsLogMessageConstants.UNSUPPORTED_COLOR_IN_DA);
             }
         }
         return new PdfString(output.toByteArray());
@@ -1318,23 +1380,5 @@ public class PdfFormField extends AbstractPdfFormField {
             }
         }
         return formType;
-    }
-
-    private boolean regenerateWidget(PdfFormAnnotation annotation) {
-        final PdfName type = getFormType();
-
-        if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
-            return annotation.regenerateTextAndChoiceField();
-        } else if (PdfName.Btn.equals(type)) {
-            if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
-                annotation.regeneratePushButtonField();
-            } else if (getFieldFlag(PdfButtonFormField.FF_RADIO)) {
-                annotation.regenerateRadioButtonField();
-            } else {
-                annotation.regenerateCheckboxField(checkType);
-            }
-            return true;
-        }
-        return false;
     }
 }

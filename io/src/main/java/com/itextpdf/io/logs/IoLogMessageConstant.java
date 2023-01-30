@@ -94,8 +94,6 @@ public final class IoLogMessageConstant {
                     + "another parent. Consider using com.itextpdf.layout.tagging.LayoutTaggingHelper#moveHint method "
                     + "instead.";
 
-    public static final String CANNOT_CREATE_FORMFIELD = "Cannot create form field from a given PDF object: {0}";
-
     public static final String CANNOT_MOVE_FINISHED_HINT =
             "Layout tagging hints modification failed: cannot move kid hint for which both itself and it's parent are"
                     + " already marked as finished.";
@@ -258,9 +256,6 @@ public final class IoLogMessageConstant {
     public static final String FORBID_RELEASE_IS_SET =
             "ForbidRelease flag is set and release is called. Releasing will not be performed.";
 
-    public static final String FORM_FIELD_WAS_FLUSHED =
-            "A form field was flushed. There's no way to create this field in the AcroForm dictionary.";
-
     public static final String GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN = "If a renderer overflows, "
             + "iText uses this method to create another renderer for the overflow part. So if one wants "
             + "to extend the renderer, one should override this method: otherwise the default method "
@@ -305,10 +300,6 @@ public final class IoLogMessageConstant {
 
     public static final String IMAGE_SIZE_CANNOT_BE_MORE_4KB =
             "Inline image size cannot be more than 4KB. It will be added as an ImageXObject";
-
-    public static final String INCORRECT_PAGEROTATION =
-            "Encounterd a page rotation that was not a multiple of 90°/ (Pi/2) when generating default appearances "
-                    + "for form fields";
 
     public static final String INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE =
             "An attempt is made to free an indirect reference which was already used in the flushed object. Indirect "
@@ -363,9 +354,6 @@ public final class IoLogMessageConstant {
     public static final String NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT =
             "Not tagged pages are copied to the tagged document. Destination document now may contain not tagged "
                     + "content.";
-
-    public static final String NO_FIELDS_IN_ACROFORM =
-            "Required AcroForm entry /Fields does not exist in the document. Empty array /Fields will be created.";
 
     public static final String NUM_TREE_SHALL_NOT_END_WITH_KEY =
             "Number tree ends with a key which is invalid according to the PDF specification.";
@@ -565,8 +553,6 @@ public final class IoLogMessageConstant {
             "Unknown digest method. Valid values are MD5, SHA1 SHA256, SHA384, SHA512 and RIPEMD160.";
 
     public static final String UNKNOWN_ERROR_WHILE_PROCESSING_CMAP = "Unknown error while processing CMap.";
-
-    public static final String UNSUPPORTED_COLOR_IN_DA = "Unsupported color in FormField's DA";
 
     public static final String VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY =
             "\"{0}\" entry in the \"{1}\" dictionary is a {2} and higher version feature. It is meaningless for the "

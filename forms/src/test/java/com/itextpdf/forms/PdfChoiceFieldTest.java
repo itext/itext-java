@@ -78,15 +78,17 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         PdfFormField field = new ChoiceFormFieldBuilder(pdfDoc, "combo1")
                 .setWidgetRectangle(new Rectangle(36, 666, 40, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
                 .setConformanceLevel(null).createComboBox()
-                .setValue("\u89c4").setFont(font);
+                .setValue("\u89c4");
+        field.setFont(font);
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         form.addField(field);
 
         // 觉
         field = new ChoiceFormFieldBuilder(pdfDoc, "combo2")
                 .setWidgetRectangle(new Rectangle(136, 666, 40, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createComboBox()
-                .setValue("\u89c4").setFont(font).setValue("\u89c9");
+                .setConformanceLevel(null).createComboBox();
+        field.setValue("\u89c4").setFont(font);
+        field.setValue("\u89c9");
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         form.addField(field);
 
@@ -94,15 +96,17 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         field = new ChoiceFormFieldBuilder(pdfDoc, "list1")
                 .setWidgetRectangle(new Rectangle(236, 666, 50, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
                 .setConformanceLevel(null).createList()
-                .setValue("\u89c4").setFont(font);
+                .setValue("\u89c4");
+        field.setFont(font);
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         form.addField(field);
 
         // 觉
         field = new ChoiceFormFieldBuilder(pdfDoc, "list2")
                 .setWidgetRectangle(new Rectangle(336, 666, 50, 80)).setOptions(new String[]{"\u89c4", "\u89c9"})
-                .setConformanceLevel(null).createList()
-                .setValue("\u89c4").setFont(font).setValue("\u89c9");
+                .setConformanceLevel(null).createList();
+        field.setValue("\u89c4").setFont(font);
+        field.setValue("\u89c9");
         field.getFirstFormAnnotation().setBorderColor(ColorConstants.BLACK);
         form.addField(field);
 

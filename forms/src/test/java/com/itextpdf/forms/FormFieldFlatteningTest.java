@@ -42,9 +42,11 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -202,6 +204,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.ANNOTATION_IN_ACROFORM_DICTIONARY, count = 2))
     public void fieldsJustificationTest02() throws IOException, InterruptedException {
         fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest02");
     }

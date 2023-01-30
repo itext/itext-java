@@ -49,11 +49,13 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -107,7 +109,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     // The first message for the case when the FormField is null,
     // the second message when the FormField is an indirect reference to null.
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CANNOT_CREATE_FORMFIELD, count = 2)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD, count = 2)})
     public void nullFormFieldTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "nullFormField.pdf"));
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
@@ -185,7 +187,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(210, 490, 150, 22);
 
         PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "TestField").setWidgetRectangle(rect).createText();
-        field.setFont(PdfFontFactory.createFont(StandardFonts.COURIER)).setFontSize(10).setValue("some value in courier font");
+        field.setValue("some value in courier font").setFont(PdfFontFactory.createFont(StandardFonts.COURIER)).setFontSize(10);
 
         form.addField(field, page);
 
@@ -541,7 +543,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfFormField field = new TextFormFieldBuilder(pdfDoc, "name").setWidgetRectangle(new Rectangle(36, 786, 80, 20))
                 .createText().setValue("TestValueAndALittleMore");
-        form.addField(field.setFontSizeAutoScale());
+        field.setFontSizeAutoScale();
+        form.addField(field);
 
         pdfDoc.close();
 
@@ -553,7 +556,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NO_FIELDS_IN_ACROFORM)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = FormsLogMessageConstants.NO_FIELDS_IN_ACROFORM)})
     public void acroFieldDictionaryNoFields() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "acroFieldDictionaryNoFields.pdf";
         String cmpPdf = sourceFolder + "cmp_acroFieldDictionaryNoFields.pdf";
@@ -1130,7 +1133,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         form.addField(new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(66, 496, 20, 20))
                 .createRadioButton(radioGroup, "2").setFieldName("radio 2"));
         // signature
-        form.addField(new SignatureFormFieldBuilder(pdfDoc, "signature").createSignature().setValue("Signature").setFontSize(20));
+        PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").createSignature().setValue("Signature");
+        signField.setFontSize(20);
+        form.addField(signField);
         // text
         form.addField(new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 80, 20))
                 .createText().setValue("text").setValue("la la land"));
@@ -1164,7 +1169,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 "ỨừỪữỮửỬựỰụỤvVwWẃẂẁẀŵŴẅẄxXẍẌyYýÝỳỲŷŶÿŸỹỸẏẎȳȲỷỶ" +
                 "ỵỴzZźŹẑẐžŽżŻẓẒʒƷǯǮþÞŉ";
         PdfFormField textField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 500, 400, 300))
-                .createMultilineText().setFont(noto).setFontSize(12).setValue(value);
+                .createMultilineText().setValue(value);
+        textField.setFont(noto).setFontSize(12);
 
         form.addField(textField);
 
@@ -1251,8 +1257,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         for (int x = offSet; x < (offSet + 3); x++) {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
             PdfFormField field = new TextFormFieldBuilder(pdfDoc, "f-" + x).setWidgetRectangle(rect)
-                    .createText().setFont(font).setFontSize(12.0f).setValue("");
-            field.setJustification(PdfFormField.ALIGN_RIGHT);
+                    .createText();
+            field.setValue("").setJustification(PdfFormField.ALIGN_RIGHT).setFont(font).setFontSize(12.0f);
             if (text != null) {
                 field.setValue(text);
             }

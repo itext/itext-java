@@ -45,6 +45,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontProgram;
@@ -59,6 +60,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
@@ -151,17 +153,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      */
     PdfFormAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
-    }
-
-    /**
-     * {@inheritDoc}
-     * This method is here for convenience and always returns null.
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public PdfArray getKids() {
-        return null;
     }
 
     /**
@@ -293,7 +284,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      */
     @Override
     public boolean regenerateField() {
-        return parent.regenerateField();
+        parent.updateDefaultAppearance();
+        return regenerateWidget();
     }
 
     /**
@@ -438,81 +430,37 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Sets the text color and regenerates appearance stream.
+     * Creates a {@link PdfFormAnnotation} object.
      *
-     * @param color the new value for the Color.
-     * @return the edited field.
+     * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
+     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}.
+     * @param document  the {@link PdfDocument} to create the field in.
+     * @return a new {@link PdfFormAnnotation}, or <code>null</code> if
+     * <code>pdfObject</code> is not a widget annotation.
      */
-    public PdfFormAnnotation setColor(Color color) {
-        this.color = color;
-        regenerateField();
-        return this;
-    }
+    public static PdfFormAnnotation makeFormAnnotation(PdfObject pdfObject, PdfDocument document) {
+        if (!pdfObject.isDictionary()) {
+            return null;
+        }
 
-    /**
-     * Basic setter for the <code>font</code> property. Regenerates the field
-     * appearance after setting the new value.
-     * Note that the font will be added to the document so ensure that the font is embedded
-     * if it's a pdf/a document.
-     *
-     * @param font The new font to be set.
-     * @return The edited {@link PdfFormAnnotation}.
-     */
-    public PdfFormAnnotation setFont(PdfFont font) {
-        updateFontAndFontSize(font, this.fontSize);
-        regenerateField();
-        return this;
-    }
+        PdfFormAnnotation field;
+        PdfDictionary dictionary = (PdfDictionary) pdfObject;
+        final PdfName subType = dictionary.getAsName(PdfName.Subtype);
+        // If widget annotation
+        if (PdfName.Widget.equals(subType)) {
+            field = new PdfFormAnnotation((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(dictionary),
+                    document);
+        } else {
+            return null;
+        }
+        field.makeIndirect(document);
 
-    /**
-     * Basic setter for the <code>fontSize</code> property. Regenerates the
-     * field appearance after setting the new value.
-     *
-     * @param fontSize The new font size to be set.
-     * @return The edited {@link PdfFormAnnotation}.
-     */
-    public PdfFormAnnotation setFontSize(float fontSize) {
-        updateFontAndFontSize(this.font, fontSize);
-        regenerateField();
-        return this;
-    }
+        if (document != null && document.getReader() != null
+                && document.getReader().getPdfAConformanceLevel() != null) {
+            field.pdfAConformanceLevel = document.getReader().getPdfAConformanceLevel();
+        }
 
-    /**
-     * Basic setter for the <code>fontSize</code> property. Regenerates the
-     * field appearance after setting the new value.
-     *
-     * @param fontSize The new font size to be set.
-     * @return The edited {@link PdfFormAnnotation}.
-     */
-    public PdfFormAnnotation setFontSize(int fontSize) {
-        setFontSize((float) fontSize);
-        return this;
-    }
-
-    /**
-     * Sets zero font size which will be interpreted as auto-size according to ISO 32000-1, 12.7.3.3.
-     *
-     * @return the edited field.
-     */
-    public PdfFormAnnotation setFontSizeAutoScale() {
-        this.fontSize = 0;
-        regenerateField();
-
-        return this;
-    }
-
-    /**
-     * Combined setter for the <code>font</code> and <code>fontSize</code>
-     * properties. Regenerates the field appearance after setting the new value.
-     *
-     * @param font     The new font to be set.
-     * @param fontSize The new font size to be set.
-     * @return The edited {@link PdfFormAnnotation}.
-     */
-    public PdfFormAnnotation setFontAndSize(PdfFont font, float fontSize) {
-        updateFontAndFontSize(font, fontSize);
-        regenerateField();
-        return this;
+        return field;
     }
 
     /**
@@ -1211,7 +1159,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         } else {
             //Avoid NPE when handling corrupt pdfs
             Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
-            logger.error(IoLogMessageConstant.INCORRECT_PAGEROTATION);
+            logger.error(FormsLogMessageConstants.INCORRECT_PAGEROTATION);
             matrix = new PdfArray(new double[]{1, 0, 0, 1, 0, 0});
         }
         //Apply field rotation
@@ -1300,6 +1248,24 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         put(PdfName.AP, ap);
 
         return true;
+    }
+
+    boolean regenerateWidget() {
+        final PdfName type = parent.getFormType();
+
+        if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
+            return regenerateTextAndChoiceField();
+        } else if (PdfName.Btn.equals(type)) {
+            if (parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
+                regeneratePushButtonField();
+            } else if (parent.getFieldFlag(PdfButtonFormField.FF_RADIO)) {
+                regenerateRadioButtonField();
+            } else {
+                regenerateCheckboxField(parent.checkType);
+            }
+            return true;
+        }
+        return false;
     }
 
     private static double degreeToRadians(double angle) {

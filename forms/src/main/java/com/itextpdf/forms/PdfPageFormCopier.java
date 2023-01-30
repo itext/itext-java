@@ -46,6 +46,7 @@ package com.itextpdf.forms;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.IPdfPageExtraCopier;
@@ -123,9 +124,9 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
     }
 
     private AbstractPdfFormField makeFormField(PdfObject fieldDict) {
-        AbstractPdfFormField field = AbstractPdfFormField.makeFormField(fieldDict, documentTo);
+        AbstractPdfFormField field = PdfFormField.makeFormFieldOrAnnotation(fieldDict, documentTo);
         if (field == null) {
-            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.CANNOT_CREATE_FORMFIELD,
+            logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
                     fieldDict.getIndirectReference()));
         }
         return field;
@@ -287,7 +288,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
             return getParentField(parentOfParent, pdfDoc);
         }
 
-        return (PdfFormField) AbstractPdfFormField.makeFormField(parent, pdfDoc);
+        return PdfFormField.makeFormField(parent, pdfDoc);
     }
 
     private PdfFormField createParentFieldCopy(PdfDictionary fieldDic, PdfDocument pdfDoc) {
@@ -304,7 +305,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 field.setChildField(makeFormField(fieldDic));
             }
         } else {
-            field = (PdfFormField) AbstractPdfFormField.makeFormField(fieldDic, pdfDoc);
+            field = PdfFormField.makeFormField(fieldDic, pdfDoc);
         }
 
         return field;

@@ -101,7 +101,8 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
                 .setCaption("push").setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
-                .createPushButton().setFont(font).setFontSize(12);
+                .createPushButton();
+        button.setFont(font).setFontSize(12);
         form.addField(button);
 
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
@@ -133,7 +134,8 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
                 .setCaption("push").setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
-                .createPushButton().setFont(font).setFontSize(12);
+                .createPushButton();
+        button.setFont(font).setFontSize(12);
         button.regenerateField();
         form.addField(button);
 
@@ -166,7 +168,8 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
                 .setCaption("push").setConformanceLevel(PdfAConformanceLevel.PDF_A_1B)
-                .createPushButton().setFont(font).setFontSize(12);
+                .createPushButton();
+        button.setFont(font).setFontSize(12);
         button.setValue("button");
         form.addField(button);
 

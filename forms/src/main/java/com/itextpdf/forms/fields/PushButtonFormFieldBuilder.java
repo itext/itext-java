@@ -96,7 +96,7 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
             field.getFirstFormAnnotation().backgroundColor = ColorConstants.LIGHT_GRAY;
             PdfFormXObject xObject = field.getFirstFormAnnotation().drawPushButtonAppearance(
                     getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight(),
-                    caption, getDocument().getDefaultFont(), PdfFormField.DEFAULT_FONT_SIZE);
+                    caption, getDocument().getDefaultFont(), AbstractPdfFormField.DEFAULT_FONT_SIZE);
             annotation.setNormalAppearance(xObject.getPdfObject());
 
             PdfDictionary mk = new PdfDictionary();

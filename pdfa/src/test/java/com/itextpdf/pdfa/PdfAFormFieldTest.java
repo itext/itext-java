@@ -294,9 +294,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfArray options = new PdfArray();
         options.add(new PdfString("Name"));
         options.add(new PdfString("Surname"));
-        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "choice").setWidgetRectangle(new Rectangle(36, 696, 100, 70))
+        PdfFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "choice").setWidgetRectangle(new Rectangle(36, 696, 100, 70))
                 .setOptions(options).setConformanceLevel(conformanceLevel)
-                .createList().setValue("1", true).setFont(fontFreeSans));
+                .createList().setValue("1", true);
+        choiceFormField.setFont(fontFreeSans);
+        form.addField(choiceFormField);
 
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
@@ -323,10 +325,12 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(new ChoiceFormFieldBuilder(pdfDoc, "combo")
+        PdfFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "combo")
                 .setWidgetRectangle(new Rectangle(156, 616, 70, 70)).setOptions(new String[]{"用", "规", "表"})
                 .setConformanceLevel(conformanceLevel).createComboBox()
-                .setValue("用").setFont(fontCJK));
+                .setValue("用");
+        choiceFormField.setFont(fontCJK);
+        form.addField(choiceFormField);
 
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
@@ -389,9 +393,11 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(new PushButtonFormFieldBuilder(pdfDoc, "push button").setWidgetRectangle(new Rectangle(36, 526, 100, 20))
+        PdfFormField pushButtonFormField = new PushButtonFormFieldBuilder(pdfDoc, "push button").setWidgetRectangle(new Rectangle(36, 526, 100, 20))
                 .setCaption("Push").setConformanceLevel(conformanceLevel)
-                .createPushButton().setFont(fontFreeSans).setFontSize(12));
+                .createPushButton();
+        pushButtonFormField.setFont(fontFreeSans).setFontSize(12);
+        form.addField(pushButtonFormField);
 
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
@@ -452,8 +458,10 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 90, 20))
-                .setConformanceLevel(conformanceLevel).createText().setFont(fontFreeSans).setFontSize(12).setValue("textField").setValue("iText"));
+        PdfFormField textFormField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 90, 20))
+                .setConformanceLevel(conformanceLevel).createText().setValue("textField").setValue("iText");
+        textFormField.setFont(fontFreeSans).setFontSize(12);
+        form.addField(textFormField);
 
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
@@ -480,9 +488,10 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-        form.addField(new SignatureFormFieldBuilder(pdfDoc, "signature")
-                .setConformanceLevel(conformanceLevel).createSignature()
-                .setFont(fontFreeSans).setFontSize(20));
+        PdfFormField signFormField = new SignatureFormFieldBuilder(pdfDoc, "signature")
+                .setConformanceLevel(conformanceLevel).createSignature();
+        signFormField.setFont(fontFreeSans).setFontSize(20);
+        form.addField(signFormField);
 
         pdfDoc.close();
 
@@ -509,7 +518,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfFormField field = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(150, 100, 100, 20))
                     .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createText()
-                    .setValue("textField").setFont(font).setFontSize(10).setFieldName("text");
+                    .setValue("textField").setFieldName("text");
+            field.setFont(font).setFontSize(10);
             field.getFirstFormAnnotation().setPage(1);
             form.addField(field, pdfDoc.getPage(1));
         }

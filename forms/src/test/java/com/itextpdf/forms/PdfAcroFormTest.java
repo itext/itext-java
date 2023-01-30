@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
@@ -241,6 +242,31 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             Assert.assertEquals(2, root.getKids().size());
         }
     }
+
+    @Test
+    public void checkFormFieldsSizeTest() throws FileNotFoundException {
+        try(PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            Assert.assertEquals(0, acroForm.getAllFormFields().size());
+            Assert.assertEquals(0, acroForm.getAllFormFieldsAndAnnotations().size());
+
+            PdfDictionary fieldDict = new PdfDictionary();
+            fieldDict.put(PdfName.FT, PdfName.Tx);
+            PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
+            field.setFieldName("Field1");
+            acroForm.addField(field);
+            Assert.assertEquals(1, acroForm.getAllFormFields().size());
+            Assert.assertEquals(1, acroForm.getAllFormFieldsAndAnnotations().size());
+
+            PdfDictionary annotDict = new PdfDictionary();
+            annotDict.put(PdfName.Subtype, PdfName.Widget);
+            field.addKid(PdfFormAnnotation.makeFormAnnotation(annotDict, outputDoc));
+            Assert.assertEquals(1, acroForm.getAllFormFields().size());
+            Assert.assertEquals(2, acroForm.getAllFormFieldsAndAnnotations().size());
+        }
+    }
+
 
     @Test
     public void setCalculationOrderTest() {
