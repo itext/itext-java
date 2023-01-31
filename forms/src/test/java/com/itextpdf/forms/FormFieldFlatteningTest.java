@@ -50,8 +50,10 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -204,7 +206,9 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.ANNOTATION_IN_ACROFORM_DICTIONARY, count = 2))
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = FormsLogMessageConstants.ANNOTATION_IN_ACROFORM_DICTIONARY, count = 2)
+    })
     public void fieldsJustificationTest02() throws IOException, InterruptedException {
         fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest02");
     }
@@ -258,7 +262,6 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 5)})
     //Logging is expected since there are duplicate field names
-    //isReadOnly should be true after DEVSIX-2156
     public void flattenReadOnly() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -276,7 +279,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
             isReadOnly = (isReadOnly && field.isReadOnly());
         }
         pdfDoc.close();
-        Assert.assertFalse(isReadOnly);
+        Assert.assertTrue(isReadOnly);
     }
 
     @Test

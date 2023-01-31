@@ -22,13 +22,15 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -45,17 +47,15 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
-import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
-
-import java.io.FileNotFoundException;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.util.List;
 
 @Category(UnitTest.class)
 public class PdfAcroFormTest extends ExtendedITextTest {
@@ -180,7 +180,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     }
 
     @Test
-    public void removeChildFromFormFieldTest() throws FileNotFoundException {
+    public void removeChildFromFormFieldTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
@@ -207,7 +207,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getChildFromFormFieldWithDifferentAmountOfChildrenTest() throws FileNotFoundException {
+    public void getChildFromFormFieldWithDifferentAmountOfChildrenTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
@@ -239,13 +239,13 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfFormField childField = acroForm.getField("root.child.aaaaa.child2");
             Assert.assertEquals("root.child.aaaaa.child2", childField.getFieldName().toString());
 
-            Assert.assertEquals(2, acroForm.fields.size());
+            Assert.assertEquals(2, acroForm.getFields().size());
             Assert.assertEquals(2, root.getKids().size());
         }
     }
 
     @Test
-    public void checkFormFieldsSizeTest() throws FileNotFoundException {
+    public void checkFormFieldsSizeTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
@@ -269,6 +269,41 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     }
 
     @Test
+    public void fieldKidsWithTheSameNamesTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root").createText().setValue("root");
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child").createText()
+                    .setValue("child");
+            PdfFormField sameChild = new TextFormFieldBuilder(outputDoc, "child").createText()
+                    .setValue("child");
+            PdfFormField child1 = new TextFormFieldBuilder(outputDoc, "aaaaa")
+                    .setWidgetRectangle(new Rectangle(100, 400, 200, 20)).createText()
+                    .setValue("aaaaa");
+            PdfFormField child2 = new TextFormFieldBuilder(outputDoc, "bbbbb")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText()
+                    .setValue("bbbbb");
+            PdfFormField child3 = new TextFormFieldBuilder(outputDoc, "aaaaa")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText()
+                    .setValue("aaaaa");
+
+            child.addKid(child1);
+            child.addKid(child2);
+            sameChild.addKid(child2);
+            sameChild.addKid(child3);
+            root.addKid(child);
+            root.addKid(sameChild);
+            acroForm.addField(root);
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+            Assert.assertEquals(1, root.getKids().size());
+            Assert.assertEquals(2, child.getKids().size());
+        }
+    }
+
+    @Test
     public void namelessFieldTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
@@ -285,6 +320,188 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             Assert.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
 
             Assert.assertEquals(0, acroForm.getDirectFormFields().size());
+        }
+    }
+
+    @Test
+    public void addRootFieldsWithTheSameNamesTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root").createText().setValue("root");
+            PdfFormField sameRoot = new TextFormFieldBuilder(outputDoc, "root").createText().setValue("root");
+
+            PdfFormField child1 = new TextFormFieldBuilder(outputDoc, "aaaaa")
+                    .setWidgetRectangle(new Rectangle(100, 400, 200, 20)).createText()
+                    .setValue("aaaaa");
+            PdfFormField child2 = new TextFormFieldBuilder(outputDoc, "bbbbb")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText()
+                    .setValue("bbbbb");
+
+            root.addKid(child1);
+            sameRoot.addKid(child2);
+            acroForm.addField(root);
+            acroForm.addField(sameRoot);
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+            Assert.assertEquals(2, root.getKids().size());
+        }
+    }
+
+    @Test
+    public void addMergedRootFieldsWithTheSameNamesTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 400, 200, 20))
+                    .createText().setValue("root");
+            PdfFormField secondField = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 30))
+                    .createText().setValue("root");
+
+            acroForm.addField(firstField);
+            acroForm.addField(secondField);
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+            Assert.assertEquals(2, acroForm.getField("root").getKids().size());
+            Assert.assertEquals(2, acroForm.getField("root").getChildFields().size());
+        }
+    }
+
+    @Test
+    public void addFieldsWithTheSameNamesButDifferentValuesTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
+                    .createText().setValue("first");
+            PdfFormField secondField = new TextFormFieldBuilder(outputDoc, "root")
+                    .createText().setValue("second");
+
+            acroForm.addField(firstField);
+
+            Exception e = Assert.assertThrows(PdfException.class, () -> acroForm.addField(secondField));
+            Assert.assertEquals(MessageFormatUtil.format(FormsExceptionMessageConstant.CANNOT_MERGE_FORMFIELDS, "root"),
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void addRootFieldWithMergedFieldKidTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
+                    .createText().setValue("root");
+            PdfFormField mergedField = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 30))
+                    .createText();
+
+            firstField.addKid(mergedField);
+            acroForm.addField(firstField);
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+            Assert.assertEquals(1, acroForm.getField("root").getKids().size());
+
+            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField(
+                    (PdfDictionary) acroForm.getField("root").getKids().get(0)));
+            Assert.assertFalse(PdfFormAnnotationUtil.isPureWidget(
+                    (PdfDictionary) acroForm.getField("root").getKids().get(0)));
+        }
+    }
+
+    @Test
+    public void addRootFieldWithDirtyAnnotationsTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField rootField = new TextFormFieldBuilder(outputDoc, "root")
+                    .createText().setValue("root");
+            PdfFormField firstDirtyAnnot = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 30))
+                    .createText();
+            firstDirtyAnnot.getPdfObject().remove(PdfName.V);
+            PdfFormField secondDirtyAnnot = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(200, 600, 300, 40))
+                    .createText();
+            secondDirtyAnnot.getPdfObject().remove(PdfName.V);
+
+            rootField.addKid(firstDirtyAnnot);
+            rootField.addKid(secondDirtyAnnot);
+
+            Assert.assertEquals(1, rootField.getKids().size());
+            Assert.assertEquals(2, firstDirtyAnnot.getKids().size());
+
+            acroForm.addField(rootField);
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+
+            PdfArray fieldKids = acroForm.getField("root").getKids();
+            Assert.assertEquals(2, fieldKids.size());
+
+            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(0)));
+            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(1)));
+        }
+    }
+
+    @Test
+    public void mergeFieldsWhenKidsWasFlushedTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 400, 200, 20)).setPage(1)
+                    .createText().setValue("root");
+            PdfFormField secondField = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 30)).setPage(2)
+                    .createText().setValue("root");
+            PdfFormField thirdField = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 40)).setPage(2)
+                    .createText().setValue("root");
+
+            acroForm.addField(firstField);
+            acroForm.addField(secondField);
+
+            // flush first page, also first widget will be flushed
+            outputDoc.getPage(1).flush();
+
+            // recreate acroform and add field
+            acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            acroForm.addField(thirdField);
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+            Assert.assertEquals(3, acroForm.getField("root").getKids().size());
+            Assert.assertEquals(2, acroForm.getField("root").getChildFields().size());
+        }
+    }
+
+    @Test
+    public void addMergedRootFieldTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            PdfPage page = outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField mergedField = new TextFormFieldBuilder(outputDoc, "root").setPage(page)
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 30))
+                    .createText().setValue("root");
+
+            Assert.assertEquals(0, page.getAnnotsSize());
+            acroForm.addField(mergedField);
+            Assert.assertEquals(1, page.getAnnotsSize());
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+            PdfFormField root = acroForm.getField("root");
+            Assert.assertNull(root.getKids());
+            Assert.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField(root.getPdfObject()));
+            Assert.assertFalse(PdfFormAnnotationUtil.isPureWidget(root.getPdfObject()));
         }
     }
 
@@ -491,9 +708,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = FormsLogMessageConstants.PROVIDE_FORMFIELD_NAME, count = 1),
-    })
+    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.PROVIDE_FORMFIELD_NAME))
     public void replaceWithNullNameLogsErrorTest(){
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();

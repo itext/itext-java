@@ -33,6 +33,9 @@ public final class FormsLogMessageConstants {
 
     public static final String PROVIDE_FORMFIELD_NAME = "No form field name provided. Process will not be continued.";
 
+    public static final String CANNOT_MERGE_FORMFIELDS = "Cannot merge form fields with the same fully qualified "
+            + "names. Partial name is {0}. Field type (FT), value (V), and default value (DV) should be the same";
+
     public static final String FORM_FIELD_WAS_FLUSHED =
             "A form field was flushed. There's no way to create this field in the AcroForm dictionary.";
 

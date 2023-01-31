@@ -43,6 +43,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -654,7 +655,8 @@ public class PdfA1Checker extends PdfAChecker {
             if (ap.containsKey(PdfName.D) || ap.containsKey(PdfName.R)) {
                 throw new PdfAConformanceException(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
             }
-            if (PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && PdfName.Btn.equals(annotDic.getAsName(PdfName.FT))) {
+            if (PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) &&
+                    (PdfName.Btn.equals(PdfFormField.getFormType(annotDic)))) {
                 if (ap.getAsDictionary(PdfName.N) == null) {
                     throw new PdfAConformanceException(PdfAConformanceException.N_KEY_SHALL_BE_APPEARANCE_SUBDICTIONARY);
                 }

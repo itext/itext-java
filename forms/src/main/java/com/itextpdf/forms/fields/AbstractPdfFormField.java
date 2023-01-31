@@ -53,7 +53,6 @@ import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -305,8 +304,19 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * This method should be called instead of direct call to {@link PdfObject#release()} if the wrapper is used.
      */
     public void release() {
-        unsetForbidRelease();
+        if (!getPdfObject().isModified()) {
+            unsetForbidRelease();
+        }
         getPdfObject().release();
+    }
+
+    /**
+     * Gets the {@link PdfDocument} that owns that form field.
+     *
+     * @return the {@link PdfDocument} that owns that form field.
+     */
+    public PdfDocument getDocument() {
+        return getPdfObject().getIndirectReference().getDocument();
     }
 
     /**
@@ -318,16 +328,6 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
     }
-
-    /**
-     * Gets the {@link PdfDocument} that owns that form field.
-     *
-     * @return the {@link PdfDocument} that owns that form field.
-     */
-    protected PdfDocument getDocument() {
-        return getPdfObject().getIndirectReference().getDocument();
-    }
-
 
     /**
      * Sets the text color and regenerates appearance stream.

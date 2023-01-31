@@ -42,6 +42,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -56,7 +57,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -378,11 +378,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 64)
-    })
-    //TODO DEVSIX-6345 Equal form fields full names
-    @Ignore("DEVSIX-6345")
     public void copyFieldsTest09() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";
         String destFilename = destinationFolder + "copyFields09.pdf";
@@ -463,9 +458,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 1)
-    })
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD))
     public void copyFieldsTest13() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "copyFields13.pdf";
         String destFilename = destinationFolder + "copyFields13.pdf";
@@ -613,7 +606,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfWriter writer = new PdfWriter(destFilename);
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader1 = new PdfReader(srcFileName1);
-                PdfDocument sourceDoc1 = new PdfDocument(reader1);) {
+                PdfDocument sourceDoc1 = new PdfDocument(reader1)) {
             PdfAcroForm.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 
@@ -640,7 +633,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfReader reader1 = new PdfReader(srcFileName1);
                 PdfDocument sourceDoc1 = new PdfDocument(reader1);
                 PdfReader reader2 = new PdfReader(srcFileName2);
-                PdfDocument sourceDoc2 = new PdfDocument(reader2);) {
+                PdfDocument sourceDoc2 = new PdfDocument(reader2)) {
             PdfAcroForm.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 
@@ -667,7 +660,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfReader reader1 = new PdfReader(srcFileName1);
                 PdfDocument sourceDoc1 = new PdfDocument(reader1);
                 PdfReader reader2 = new PdfReader(srcFileName2);
-                PdfDocument sourceDoc2 = new PdfDocument(reader2);) {
+                PdfDocument sourceDoc2 = new PdfDocument(reader2)) {
             PdfAcroForm.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 
@@ -688,7 +681,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfWriter writer = new PdfWriter(destFilename);
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader2 = new PdfReader(srcFileName2);
-                PdfDocument sourceDoc2 = new PdfDocument(reader2);) {
+                PdfDocument sourceDoc2 = new PdfDocument(reader2)) {
             PdfAcroForm.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 

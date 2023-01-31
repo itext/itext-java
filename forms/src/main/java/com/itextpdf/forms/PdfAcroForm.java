@@ -45,10 +45,12 @@ package com.itextpdf.forms;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
-import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.forms.fields.PdfFormFieldMergeUtil;
+import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -69,7 +71,6 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -229,34 +230,51 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param field the {@link PdfFormField} to be added to the form
      * @param page  the {@link PdfPage} on which to add the field
+     * @param replaceExisted if true then the existed form field will be replaced by a new one
+     *                       in case they have the same names
      */
-    public void addField(PdfFormField field, PdfPage page) {
+    public void addField(PdfFormField field, PdfPage page, boolean replaceExisted) {
         if (field.getFieldName() == null) {
             throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
         }
+        
+        if (!replaceExisted) {
+            PdfFormFieldMergeUtil.mergeKidsWithSameNames(field, true);
+        }
 
-        processKids(field, page);
-        PdfDictionary fieldDic = field.getPdfObject();
+        PdfDictionary fieldDict = field.getPdfObject();
+        // PdfPageFormCopier expects that we replace existed field by a new one in case they have the same names.
+        String fieldName = field.getFieldName().toUnicodeString();
+        if (replaceExisted || !fields.containsKey(fieldName) ||
+                !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(fieldName), field, true)) {
+            PdfArray fieldsArray = getFields();
+            fieldsArray.add(fieldDict);
+            fieldsArray.setModified();
+            fields.put(fieldName, field);
+        }
+        processKids(fields.get(fieldName), page);
 
-
-        PdfArray fieldsArray = getFields();
-        fieldsArray.add(fieldDic);
-        fieldsArray.setModified();
-
-        fields.put(field.getFieldName().toUnicodeString(), field);
-
-        if (fieldDic.containsKey(PdfName.Subtype) && page != null) {
-            PdfAnnotation annot = PdfAnnotation.makeAnnotation(fieldDic);
-            addWidgetAnnotationToPage(page, annot);
+        if (fieldDict.containsKey(PdfName.Subtype) && page != null) {
+            defineWidgetPageAndAddToIt(page, fieldDict, false);
         }
 
         setModified();
     }
 
     /**
-     * This method merges field with its annotation and place it on the given
-     * page. This method won't work if the field has no or more than one widget
-     * annotations.
+     * This method adds the field to a specific page.
+     *
+     * @param field the {@link PdfFormField} to be added to the form
+     * @param page  the {@link PdfPage} on which to add the field
+     */
+    public void addField(PdfFormField field, PdfPage page) {
+        addField(field, page, false);
+    }
+
+    /**
+     * This method merges field with its annotation and places it on the given
+     * page. This method also work if the field has more than one widget
+     * annotation, but doesn't work with no annotations.
      *
      * @param field the {@link PdfFormField} to be added to the form
      * @param page  the {@link PdfPage} on which to add the field
@@ -264,19 +282,26 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public void addFieldAppearanceToPage(PdfFormField field, PdfPage page) {
         PdfDictionary fieldDict = field.getPdfObject();
         PdfArray kids = field.getKids();
-        if (kids == null || kids.size() > 1) {
+        if (kids == null) {
             return;
         }
 
-        PdfDictionary kidDict = (PdfDictionary) kids.get(0);
-        PdfName type = kidDict.getAsName(PdfName.Subtype);
-        if (type != null && type.equals(PdfName.Widget)) {
-            if (!kidDict.containsKey(PdfName.FT)) {
-                // kid is not a merged field with widget
-
-                mergeWidgetWithParentField(field, kidDict);
+        if (kids.size() == 1) {
+            PdfDictionary kidDict = (PdfDictionary) kids.get(0);
+            if (PdfFormAnnotationUtil.isPureWidget(kidDict)) {
+                // kid is pure widget, merge it with parent field
+                PdfFormAnnotationUtil.mergeWidgetWithParentField(field);
+                defineWidgetPageAndAddToIt(page, fieldDict, false);
+                return;
             }
-            defineWidgetPageAndAddToIt(page, fieldDict, false);
+        }
+
+        for (int i = 0; i < kids.size(); ++i) {
+            PdfDictionary kidDict = (PdfDictionary) kids.get(i);
+            if (PdfFormAnnotationUtil.isPureWidgetOrMergedField(kidDict)) {
+                // kid is either a pure widget or a merged field
+                defineWidgetPageAndAddToIt(page, kidDict, false);
+            }
         }
     }
 
@@ -307,7 +332,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         for (Entry<String, PdfFormField> field : fields.entrySet()) {
             List<PdfFormField> kids = field.getValue().getAllChildFormFields();
             for (PdfFormField kid : kids) {
-                //TODO DEVSIX-6346 Handle form fields without names more carefully
+                //TODO DEVSIX-7308 Handle form fields without names more carefully
                 if (kid.getFieldName() != null) {
                     allFields.put(kid.getFieldName().toUnicodeString(), kid);
                 }
@@ -628,6 +653,9 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         PdfFormField parentFormField = fields.get(splitFields[0]);
         PdfFormField kidField = parentFormField;
         for (int i = 1; i < splitFields.length; i++) {
+            if (parentFormField.isFlushed()) {
+                return null;
+            }
             kidField = parentFormField.getChildField(splitFields[i]);
             parentFormField = kidField;
         }
@@ -684,7 +712,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (fieldsForFlattening.isEmpty()) {
             this.fields.clear();
             //This alternate addition of fields is used due to incorrect handling of fields without names.
-            //Must be replaced with getAllFormFields() after DEVSIX-6346
+            //Must be replaced with getAllFormFields() after DEVSIX-7308
             fields = getAllFormFieldsWithoutNames();
         } else {
             fields = new LinkedHashSet<>();
@@ -787,23 +815,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 }
 
                 PdfArray fFields = getFields();
-                fFields.remove(fieldObject);
                 if (annotation != null) {
                     page.removeAnnotation(annotation);
                 }
-                PdfDictionary parent = fieldObject.getAsDictionary(PdfName.Parent);
-                if (parent != null) {
-                    PdfArray kids = parent.getAsArray(PdfName.Kids);
-                    if (kids != null) {
-                        kids.remove(fieldObject);
-                        // TODO DEVSIX-2715 if parent was in it's turn the only child of it's parent, we should remove them recursively
-                        if (kids.isEmpty()) {
-                            fFields.remove(parent);
-                        }
-                    } else {
-                        fFields.remove(parent);
-                    }
-                }
+                removeFieldFromParentAndAcroForm(fFields, fieldObject);
             }
         }
 
@@ -955,6 +970,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         final PdfArray rawFields = getFields();
         Map<String, PdfFormField> fields = new LinkedHashMap<>();
         int index = 1;
+        final PdfArray shouldBeRemoved = new PdfArray();
         for (PdfObject field : rawFields) {
             if (field.isFlushed()) {
                 LOGGER.info(FormsLogMessageConstants.FORM_FIELD_WAS_FLUSHED);
@@ -968,6 +984,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 LOGGER.warn(FormsLogMessageConstants.ANNOTATION_IN_ACROFORM_DICTIONARY);
                 continue;
             }
+            PdfFormFieldMergeUtil.mergeKidsWithSameNames(formField, false);
 
             PdfString fieldName = formField.getFieldName();
             String name;
@@ -991,10 +1008,34 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                 name = fieldName.toUnicodeString();
             }
 
-            fields.put(name, formField);
+            if (formField.isInReadingMode() || !fields.containsKey(name) ||
+                    !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(name), formField, true)) {
+                fields.put(name, formField);
+            } else {
+                shouldBeRemoved.add(field);
+            }
+        }
+        for (PdfObject field : shouldBeRemoved) {
+            rawFields.remove(field);
         }
 
         return fields;
+    }
+
+    private void removeFieldFromParentAndAcroForm(PdfArray formFields, PdfDictionary fieldObject) {
+        formFields.remove(fieldObject);
+        PdfDictionary parent = fieldObject.getAsDictionary(PdfName.Parent);
+        if (parent != null) {
+            PdfArray kids = parent.getAsArray(PdfName.Kids);
+            if (kids == null) {
+                formFields.remove(parent);
+            } else {
+                kids.remove(fieldObject);
+                if (kids.isEmpty()) {
+                    removeFieldFromParentAndAcroForm(formFields, parent);
+                }
+            }
+        }
     }
 
     private void processKids(PdfFormField field, PdfPage page) {
@@ -1007,60 +1048,43 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary kidDict = (PdfDictionary) kids.get(0);
             PdfName type = kidDict.getAsName(PdfName.Subtype);
             if (PdfName.Widget.equals(type)) {
-                if (!kidDict.containsKey(PdfName.FT)) {
+                if (PdfFormAnnotationUtil.isPureWidget(kidDict)) {
                     // kid is not merged field with widget
-                    mergeWidgetWithParentField(field, kidDict);
+                    PdfFormAnnotationUtil.mergeWidgetWithParentField(field);
                     defineWidgetPageAndAddToIt(page, field.getPdfObject(), true);
                 } else {
                     defineWidgetPageAndAddToIt(page, kidDict, true);
                 }
+                return;
             }
         }
-        for (PdfFormField child : field.getChildFormFields()) {
-            processKids(child, page);
+        for (AbstractPdfFormField child : field.getChildFields()) {
+            if (PdfFormAnnotationUtil.isPureWidgetOrMergedField(child.getPdfObject())) {
+                defineWidgetPageAndAddToIt(page, child.getPdfObject(), true);
+            } else if (child instanceof PdfFormField) {
+                processKids((PdfFormField)child, page);
+            }
         }
-    }
-
-    private void mergeWidgetWithParentField(PdfFormField field, PdfDictionary widgetDict) {
-        field.removeChildren();
-        widgetDict.remove(PdfName.Parent);
-        field.getPdfObject().mergeDifferent(widgetDict);
-        field.setChildField(PdfFormAnnotation.makeFormAnnotation(field.getPdfObject(), document));
     }
 
     private void defineWidgetPageAndAddToIt(PdfPage currentPage, PdfDictionary mergedFieldAndWidget, boolean warnIfPageFlushed) {
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(mergedFieldAndWidget);
+        PdfPage page = getFieldPage(mergedFieldAndWidget);
+        if (page != null) {
+            PdfFormAnnotationUtil.addWidgetAnnotationToPage(page, annot);
+            return;
+        }
         PdfDictionary pageDic = annot.getPageObject();
-        if (pageDic != null) {
+        if (pageDic == null) {
+            PdfFormAnnotationUtil.addWidgetAnnotationToPage(currentPage, annot);
+        } else {
             if (warnIfPageFlushed && pageDic.isFlushed()) {
                 throw new PdfException(
                         FormsExceptionMessageConstant.PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING);
             }
             PdfDocument doc = pageDic.getIndirectReference().getDocument();
             PdfPage widgetPage = doc.getPage(pageDic);
-            addWidgetAnnotationToPage(widgetPage, annot);
-        } else {
-            addWidgetAnnotationToPage(currentPage, annot);
-        }
-    }
-
-    private void addWidgetAnnotationToPage(PdfPage page, PdfAnnotation annot) {
-        if (page.containsAnnotation(annot)) {
-            return;
-        }
-
-        TagTreePointer tagPointer = null;
-        boolean tagged = page.getDocument().isTagged();
-        if (tagged) {
-            tagPointer = page.getDocument().getTagStructureContext().getAutoTaggingPointer();
-            //TODO DEVSIX-4117 PrintField attributes
-            tagPointer.addTag(StandardRoles.FORM);
-        }
-
-        page.addAnnotation(annot);
-
-        if (tagged) {
-            tagPointer.moveToParent();
+            PdfFormAnnotationUtil.addWidgetAnnotationToPage(widgetPage == null ? currentPage : widgetPage, annot);
         }
     }
 

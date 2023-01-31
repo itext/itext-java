@@ -43,6 +43,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.PdfEncodings;
@@ -441,7 +442,7 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
             }
             PdfObject n = ap.get(PdfName.N);
-            if (PdfName.Widget.equals(subtype) && PdfName.Btn.equals(annotDic.getAsName(PdfName.FT))) {
+            if (PdfName.Widget.equals(subtype) && PdfName.Btn.equals(PdfFormField.getFormType(annotDic))) {
                 if (n == null || !n.isDictionary())
                     throw new PdfAConformanceException(PdfAConformanceException.APPEARANCE_DICTIONARY_OF_WIDGET_SUBTYPE_AND_BTN_FIELD_TYPE_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_DICTIONARY_VALUE);
             } else {

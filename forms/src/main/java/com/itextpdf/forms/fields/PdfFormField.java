@@ -47,17 +47,16 @@ import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.OutputStream;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -77,20 +76,21 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.properties.TextAlignment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -146,38 +146,43 @@ public class PdfFormField extends AbstractPdfFormField {
     public static final int FF_REQUIRED = makeFieldFlag(2);
     public static final int FF_NO_EXPORT = makeFieldFlag(3);
 
+    /**
+     * List of all allowable keys in form fields.
+     */
+    private static final Set<PdfName> FORM_FIELD_KEYS = new HashSet<>();
+
     private static final String[] CHECKBOX_TYPE_ZAPFDINGBATS_CODE = {"4", "l", "8", "u", "n", "H"};
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormField.class);
 
     protected String text;
     protected ImageData img;
     protected int checkType;
     protected PdfFormXObject form;
 
-    private static final Set<PdfName> formFieldKeys = new HashSet<PdfName>();
-
     static {
-        formFieldKeys.add(PdfName.FT);
+        FORM_FIELD_KEYS.add(PdfName.FT);
         // It exists in form field and widget annotation
         //formFieldKeys.add(PdfName.Parent);
-        formFieldKeys.add(PdfName.Kids);
-        formFieldKeys.add(PdfName.T);
-        formFieldKeys.add(PdfName.TU);
-        formFieldKeys.add(PdfName.TM);
-        formFieldKeys.add(PdfName.Ff);
-        formFieldKeys.add(PdfName.V);
-        formFieldKeys.add(PdfName.DV);
+        FORM_FIELD_KEYS.add(PdfName.Kids);
+        FORM_FIELD_KEYS.add(PdfName.T);
+        FORM_FIELD_KEYS.add(PdfName.TU);
+        FORM_FIELD_KEYS.add(PdfName.TM);
+        FORM_FIELD_KEYS.add(PdfName.Ff);
+        FORM_FIELD_KEYS.add(PdfName.V);
+        FORM_FIELD_KEYS.add(PdfName.DV);
         // It exists in form field and widget annotation
         //formFieldKeys.add(PdfName.AA);
-        formFieldKeys.add(PdfName.DA);
-        formFieldKeys.add(PdfName.Q);
-        formFieldKeys.add(PdfName.DS);
-        formFieldKeys.add(PdfName.RV);
-        formFieldKeys.add(PdfName.Opt);
-        formFieldKeys.add(PdfName.MaxLen);
-        formFieldKeys.add(PdfName.TI);
-        formFieldKeys.add(PdfName.I);
-        formFieldKeys.add(PdfName.Lock);
-        formFieldKeys.add(PdfName.SV);
+        FORM_FIELD_KEYS.add(PdfName.DA);
+        FORM_FIELD_KEYS.add(PdfName.Q);
+        FORM_FIELD_KEYS.add(PdfName.DS);
+        FORM_FIELD_KEYS.add(PdfName.RV);
+        FORM_FIELD_KEYS.add(PdfName.Opt);
+        FORM_FIELD_KEYS.add(PdfName.MaxLen);
+        FORM_FIELD_KEYS.add(PdfName.TI);
+        FORM_FIELD_KEYS.add(PdfName.I);
+        FORM_FIELD_KEYS.add(PdfName.Lock);
+        FORM_FIELD_KEYS.add(PdfName.SV);
     }
 
     private List<AbstractPdfFormField> childFields = new ArrayList<>();
@@ -206,13 +211,17 @@ public class PdfFormField extends AbstractPdfFormField {
             }
         } else {
             for (PdfObject kid : kidsArray) {
+                if (kid.isFlushed()) {
+                    LOGGER.info(FormsLogMessageConstants.FORM_FIELD_WAS_FLUSHED);
+                    continue;
+                }
                 AbstractPdfFormField childField = PdfFormField.makeFormFieldOrAnnotation(kid, getDocument());
                 if (childField != null) {
                     this.setChildField(childField);
                 } else {
-                     Logger logger = LoggerFactory.getLogger(PdfAcroForm.class);
-                     logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
-                             pdfObject.getIndirectReference() == null ? pdfObject : (PdfObject)pdfObject.getIndirectReference()));
+                    LOGGER.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
+                            pdfObject.getIndirectReference() == null ? pdfObject :
+                                    (PdfObject) pdfObject.getIndirectReference()));
                 }
             }
         }
@@ -318,17 +327,55 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
+     * Checks if dictionary contains any of the form field keys.
+     *
+     * @param dict field dictionary to check.
+     *
+     * @return true if it is a form field dictionary, false otherwise.
+     */
+    public static boolean isFormField(PdfDictionary dict) {
+        for (final PdfName formFieldKey : getFormFieldKeys()) {
+            if (dict.containsKey(formFieldKey)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets a set of all possible form field keys except {@code PdfName.Parent}.
+     *
+     * @return a set of form field keys.
+     */
+    public static Collection<PdfName> getFormFieldKeys() {
+        return Collections.unmodifiableCollection(FORM_FIELD_KEYS);
+    }
+
+    /**
+     * Returns the type of the form field dictionary, or of the parent
+     * &lt;PdfDictionary&gt; object.
+     *
+     * @param fieldDict field dictionary to get its type.
+     *
+     * @return the form type, as a {@link PdfName}.
+     */
+    public static PdfName getFormType(PdfDictionary fieldDict) {
+        PdfName formType = fieldDict.getAsName(PdfName.FT);
+        if (formType == null) {
+            return getTypeFromParent(fieldDict);
+        }
+        return formType;
+    }
+
+    /**
      * Returns the type of the parent form field, or of the wrapped
      * &lt;PdfDictionary&gt; object.
      *
      * @return the form type, as a {@link PdfName}.
      */
     public PdfName getFormType() {
-        PdfName formType = getPdfObject().getAsName(PdfName.FT);
-        if (formType == null) {
-            return getTypeFromParent(getPdfObject());
-        }
-        return formType;
+        return getFormType(getPdfObject());
     }
 
     /**
@@ -344,65 +391,27 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
-     * Sets a value to the field and generates field appearance if needed.
+     * Sets a value to the field (and fields with the same names) and generates field appearance if needed.
      *
      * @param value of the field.
      * @param generateAppearance if false, appearance won't be regenerated.
      * @return the field.
      */
     public PdfFormField setValue(String value, boolean generateAppearance) {
-        PdfName formType = getFormType();
-        if (formType == null || !PdfName.Btn.equals(formType)) {
-            PdfArray kids = getKids();
-            if (kids != null) {
-                for (PdfObject kid : kids) {
-                    if (kid.isDictionary() && ((PdfDictionary) kid).getAsString(PdfName.T) != null) {
-                        PdfFormField field = new PdfFormField((PdfDictionary) kid);
-                        field.setValue(value);
-                        if (field.getDefaultAppearance() == null) {
-                            field.font = this.font;
-                            field.fontSize = this.fontSize;
-                            field.color = this.color;
-                        }
-                    }
-                }
-            }
-            if (PdfName.Ch.equals(formType)) {
-                if (this instanceof PdfChoiceFormField) {
-                    ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
-                } else {
-                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
-                    choice.setListSelected(new String[] {value}, false);
-                }
-            } else {
-                put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
-            }
-        } else if (PdfName.Btn.equals(formType)) {
-            if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
-                try {
-                    img = ImageDataFactory.create(Base64.decode(value));
-                } catch (Exception e) {
-                    text = value;
-                }
-            } else {
-                put(PdfName.V, new PdfName(value));
-                for (PdfWidgetAnnotation widget : getWidgets()) {
-                    List<String> states = Arrays.asList(PdfFormAnnotation
-                            .makeFormAnnotation(widget.getPdfObject(), getDocument()).getAppearanceStates());
-                    if (states.contains(value)) {
-                        widget.setAppearanceState(new PdfName(value));
-                    } else {
-                        widget.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
-                    }
+        if (parent == null) {
+            setFieldValue(value, generateAppearance);
+        } else {
+            PdfString partialFieldName = getPartialFieldName();
+            //TODO Remove this check after DEVSIX-7308 ticket will be closed.
+            String fieldName = partialFieldName == null ? "" : partialFieldName.toUnicodeString();
+
+            for (PdfFormField field : parent.getChildFormFields()) {
+                if (fieldName.equals(field.getPartialFieldName().toUnicodeString())) {
+                    field.setFieldValue(value, generateAppearance);
                 }
             }
         }
 
-        if (generateAppearance) {
-            regenerateField();
-        }
-
-        this.setModified();
         return this;
     }
 
@@ -463,7 +472,7 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
-     * Removes all chilren from the current field.
+     * Removes all children from the current field.
      */
     public void removeChildren() {
         childFields.clear();
@@ -558,31 +567,38 @@ public class PdfFormField extends AbstractPdfFormField {
      * {@link AbstractPdfFormField}. Also sets the kid's <code>Parent</code> property to this object.
      *
      * @param kid a new {@link AbstractPdfFormField} entry for the field's <code>Kids</code> array property.
+     *
      * @return the edited {@link PdfFormField}.
      */
     public PdfFormField addKid(AbstractPdfFormField kid) {
+        return addKid(kid, true);
+    }
+
+    /**
+     * Adds a new kid to the <code>Kids</code> array property from a
+     * {@link AbstractPdfFormField}. Also sets the kid's <code>Parent</code> property to this object.
+     *
+     * @param kid a new {@link AbstractPdfFormField} entry for the field's <code>Kids</code> array property.
+     * @param throwExceptionOnError define whether exception (true) or log (false) is expected in case kid with
+     *                              the same name exists and merge of two kids failed.
+     *
+     * @return the edited {@link PdfFormField}.
+     */
+    public PdfFormField addKid(AbstractPdfFormField kid, boolean throwExceptionOnError) {
+        PdfFormAnnotationUtil.separateWidgetAndField(this);
+
         kid.setParent(this);
         PdfArray kids = getKids();
         if (kids == null) {
             kids = new PdfArray();
         }
-        kids.add(kid.getPdfObject());
-        this.childFields.add(kid);
+        if (!mergeKidsIfKidWithSuchNameExists(kid, throwExceptionOnError)) {
+            kids.add(kid.getPdfObject());
+            this.childFields.add(kid);
+        }
 
         put(PdfName.Kids, kids);
         return this;
-    }
-
-    /**
-     * Adds a field to the children of the current field.
-     *
-     * @param kid the field, which should become a child.
-     * @return the kid itself.
-     */
-    public AbstractPdfFormField setChildField(AbstractPdfFormField kid) {
-        kid.setParent(this);
-        this.childFields.add(kid);
-        return kid;
     }
 
     /**
@@ -608,6 +624,10 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public PdfFormField setFieldName(String name) {
         put(PdfName.T, new PdfString(name));
+        PdfFormField parent = getParentField();
+        if (parent != null) {
+            parent.mergeKidsIfKidWithSuchNameExists(this, true);
+        }
         return this;
     }
 
@@ -617,6 +637,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * @return the current field partial name, as a {@link PdfString}.
      */
     public PdfString getPartialFieldName() {
+        //TODO DEVSIX-7308 Handle form fields without names more carefully
         return getPdfObject().getAsString(PdfName.T);
     }
 
@@ -759,9 +780,9 @@ public class PdfFormField extends AbstractPdfFormField {
         if (f != null) {
             return f.intValue();
         } else {
-            PdfDictionary parent = getParent();
+            PdfFormField parent = getParentField();
             if (parent != null) {
-                return new PdfFormField(parent).getFieldFlags();
+                return parent.getFieldFlags();
             } else {
                 return 0;
             }
@@ -774,10 +795,11 @@ public class PdfFormField extends AbstractPdfFormField {
      * @return the current value, as a {@link PdfObject}.
      */
     public PdfObject getValue() {
-        if(getPdfObject().get(PdfName.T) == null && getParent() != null) {
-            return getParent().get(PdfName.V);
+        PdfObject value = getPdfObject().get(PdfName.V);
+        if (value == null && getParentField() != null) {
+            return getParentField().getValue();
         }
-        return getPdfObject().get(PdfName.V);
+        return value;
     }
 
     /**
@@ -871,8 +893,8 @@ public class PdfFormField extends AbstractPdfFormField {
     public List<PdfWidgetAnnotation> getWidgets() {
         List<PdfWidgetAnnotation> widgets = new ArrayList<>();
         for (AbstractPdfFormField child : childFields) {
-            PdfObject kid = child.getPdfObject();
-            PdfName subType = ((PdfDictionary) kid).getAsName(PdfName.Subtype);
+            PdfDictionary kid = child.getPdfObject();
+            PdfName subType = kid.getAsName(PdfName.Subtype);
             if (subType != null && subType.equals(PdfName.Widget)) {
                 widgets.add((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(kid));
             }
@@ -1150,6 +1172,15 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
+     * Checks if the document that contains the field is created in reading mode.
+     *
+     * @return true if reading mode is used, false otherwise.
+     */
+    public boolean isInReadingMode() {
+        return getDocument().getWriter() == null;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @return {@inheritDoc}
@@ -1258,14 +1289,45 @@ public class PdfFormField extends AbstractPdfFormField {
         return textAlignment;
     }
 
-    private static boolean isFormField(PdfDictionary dict) {
-        for (final PdfName formFieldKey: formFieldKeys) {
-            if (dict.containsKey(formFieldKey)) {
-                return true;
+    /**
+     * Adds a field to the children of the current field.
+     *
+     * @param kid the field, which should become a child.
+     * @return the kid itself.
+     */
+    AbstractPdfFormField setChildField(AbstractPdfFormField kid) {
+        kid.setParent(this);
+        this.childFields.add(kid);
+        return kid;
+    }
+
+    /**
+     * Replaces /Kids value with passed kids dictionaries, and keeps old flashed fields there.
+     * Also updates childFields array for {@link PdfFormField}.
+     *
+     * @param kids collection of new kids.
+     */
+    void replaceKids(Collection<AbstractPdfFormField> kids) {
+        PdfArray kidsValues = new PdfArray();
+
+        // Field may already have flushed widgets in /Kids, so we need to keep them.
+        PdfArray oldKids = getKids();
+        if (oldKids != null) {
+            for (PdfObject kid : oldKids) {
+                if (kid.isFlushed()) {
+                    kidsValues.add(kid);
+                }
             }
         }
 
-        return false;
+        // Update childFields and /Kids.
+        this.childFields.clear();
+        for (AbstractPdfFormField kid : kids) {
+            kid.setParent(this);
+            kidsValues.add(kid.getPdfObject());
+            this.childFields.add(kid);
+        }
+        put(PdfName.Kids, kidsValues);
     }
 
     private static PdfString generateDefaultAppearance(PdfName font, float fontSize, Color textColor) {
@@ -1300,11 +1362,100 @@ public class PdfFormField extends AbstractPdfFormField {
                         .writeSpace()
                         .writeBytes(k);
             } else {
-                Logger logger = LoggerFactory.getLogger(PdfFormField.class);
-                logger.error(FormsLogMessageConstants.UNSUPPORTED_COLOR_IN_DA);
+                LOGGER.error(FormsLogMessageConstants.UNSUPPORTED_COLOR_IN_DA);
             }
         }
         return new PdfString(output.toByteArray());
+    }
+
+    private static PdfName getTypeFromParent(PdfDictionary field) {
+        PdfDictionary parent = field.getAsDictionary(PdfName.Parent);
+        PdfName formType = field.getAsName(PdfName.FT);
+        if (parent != null) {
+            formType = parent.getAsName(PdfName.FT);
+            if (formType == null) {
+                formType = getTypeFromParent(parent);
+            }
+        }
+        return formType;
+    }
+
+    private PdfFormField setFieldValue(String value, boolean generateAppearance) {
+        PdfName formType = getFormType();
+        if (!PdfName.Btn.equals(formType)) {
+            PdfArray kids = getKids();
+            if (kids != null) {
+                for (PdfObject kid : kids) {
+                    if (kid.isDictionary() && ((PdfDictionary) kid).getAsString(PdfName.T) != null) {
+                        PdfFormField field = new PdfFormField((PdfDictionary) kid);
+                        field.setValue(value);
+                        if (field.getDefaultAppearance() == null) {
+                            field.font = this.font;
+                            field.fontSize = this.fontSize;
+                            field.color = this.color;
+                        }
+                    }
+                }
+            }
+            if (PdfName.Ch.equals(formType)) {
+                if (this instanceof PdfChoiceFormField) {
+                    ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
+                } else {
+                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
+                    choice.setListSelected(new String[] {value}, false);
+                }
+            } else {
+                put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
+            }
+        } else if (PdfName.Btn.equals(formType)) {
+            if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
+                try {
+                    img = ImageDataFactory.create(Base64.decode(value));
+                } catch (Exception e) {
+                    text = value;
+                }
+            } else {
+                // We expect that radio buttons should have only widget children,
+                // so we need to get rid of the form fields kids
+                PdfFormFieldMergeUtil.processDirtyAnnotations(this, true);
+                put(PdfName.V, new PdfName(value));
+                for (PdfWidgetAnnotation widget : getWidgets()) {
+                    List<String> states = Arrays.asList(PdfFormAnnotation
+                            .makeFormAnnotation(widget.getPdfObject(), getDocument()).getAppearanceStates());
+                    if (states.contains(value)) {
+                        widget.setAppearanceState(new PdfName(value));
+                    } else {
+                        widget.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
+                    }
+                }
+            }
+        }
+
+        if (generateAppearance) {
+            regenerateField();
+        }
+
+        this.setModified();
+        return this;
+    }
+
+    private boolean mergeKidsIfKidWithSuchNameExists(AbstractPdfFormField newKid, boolean throwExceptionOnError) {
+        if (childFields.contains(newKid)) {
+            return true;
+        }
+        if (isInReadingMode() || PdfFormAnnotationUtil.isPureWidget(newKid.getPdfObject())) {
+            return false;
+        }
+        String newKidPartialName = PdfFormFieldMergeUtil.getPartialName(newKid.getPdfObject());
+        for (AbstractPdfFormField kid : childFields) {
+            String kidPartialName = PdfFormFieldMergeUtil.getPartialName(kid.getPdfObject());
+            if (kidPartialName != null && kidPartialName.equals(newKidPartialName)) {
+                // Merge kid with the first found field with the same name.
+                return PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames((PdfFormField) kid, (PdfFormField) newKid,
+                        throwExceptionOnError);
+            }
+        }
+        return false;
     }
 
     private boolean hasDefaultAppearance() {
@@ -1368,17 +1519,5 @@ public class PdfFormField extends AbstractPdfFormField {
             }
         }
         return (acroFormKey != null && acroFormKey.getType() == type) ? acroFormKey : null;
-    }
-
-    private PdfName getTypeFromParent(PdfDictionary field) {
-        PdfDictionary parent = field.getAsDictionary(PdfName.Parent);
-        PdfName formType = field.getAsName(PdfName.FT);
-        if (parent != null) {
-            formType = parent.getAsName(PdfName.FT);
-            if (formType == null) {
-                formType = getTypeFromParent(parent);
-            }
-        }
-        return formType;
     }
 }

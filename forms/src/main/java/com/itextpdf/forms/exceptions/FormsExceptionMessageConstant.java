@@ -26,6 +26,9 @@ package com.itextpdf.forms.exceptions;
  * Class that bundles all the error message templates as constants.
  */
 public final class FormsExceptionMessageConstant {
+    public static final String CANNOT_MERGE_FORMFIELDS = "Cannot merge form fields with the same names. Partial name " +
+            "is {0}. Field dictionaries with the same fully qualified field name shall have the same field type (FT), "
+            + "value (V), and default value (DV).";
     public static final String FIELD_FLATTENING_IS_NOT_SUPPORTED_IN_APPEND_MODE = "Field flattening is not supported "
             + "in append mode.";
     public static final String INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS = "Inner arrays shall have exactly two elements";

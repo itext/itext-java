@@ -399,22 +399,38 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        final ICopyFilter copyFilter = new DestinationResolverCopyFilter(this.getDocument(), toDocument);
-        final PdfDictionary dictionary = getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true, copyFilter);
-        PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
-        copyInheritedProperties(page, toDocument, NullCopyFilter.getInstance());
-        copyAnnotations(toDocument, page, copyFilter);
+        return copyTo(toDocument, copier, false, -1);
+    }
 
-        if (copier != null) {
-            copier.copy(this, page);
-        } else {
-            if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
-                Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
-                toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
+    /**
+     * Copies page and adds it to the specified document to the end or by index if the corresponding parameter is true.
+     * <br><br>
+     * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
+     *
+     * @param toDocument a document to copy page to.
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
+     * @param addPageToDocument true if page should be added to document.
+     * @param pageInsertIndex position to add the page to, if -1 page will be added to the end of the document,
+     *                        will be ignored if addPageToDocument is false.
+     *
+     * @return copied {@link PdfPage}.
+     */
+    public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier,
+                          boolean addPageToDocument, int pageInsertIndex) {
+        final ICopyFilter copyFilter = new DestinationResolverCopyFilter(this.getDocument(), toDocument);
+        final PdfDictionary dictionary =
+                getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true, copyFilter);
+        PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
+        if (addPageToDocument) {
+            if (pageInsertIndex == -1) {
+                toDocument.addPage(page);
+            } else {
+                toDocument.addPage(pageInsertIndex, page);
             }
         }
-        return page;
+        return copyTo(page, toDocument, copier);
     }
 
     /**
@@ -906,6 +922,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage removeAnnotation(PdfAnnotation annotation) {
+        return removeAnnotation(annotation, false);
+    }
+
+    /**
+     * Removes an annotation from the page.
+     * <br><br>
+     * NOTE: If document is tagged, PdfDocument's PdfTagStructure instance will point at annotation tag parent after method call.
+     *
+     * @param annotation         an annotation to be removed.
+     * @param rememberTagPointer true if {@link TagTreePointer} for removed annotation parent struct elem should be set
+     *                           to autoTaggingPointer of the current document. Used in case annotation will be
+     *                           replaced by another one later (e.g. when merged field is separated to field and
+     *                           pure widget, so merged field should be replaced by widget in page annotations
+     *                           and tag structure).
+     *
+     * @return this {@link PdfPage} instance.
+     */
+    public PdfPage removeAnnotation(PdfAnnotation annotation, boolean rememberTagPointer) {
         PdfArray annots = getAnnots(false);
         if (annots != null) {
             annots.remove(annotation.getPdfObject());
@@ -919,7 +953,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
 
         if (getDocument().isTagged()) {
-            TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
+            TagTreePointer tagPointer = getDocument().getTagStructureContext()
+                    .removeAnnotationTag(annotation, rememberTagPointer);
             if (tagPointer != null) {
                 boolean standardAnnotTagRole = StandardRoles.ANNOT.equals(tagPointer.getRole())
                         || StandardRoles.FORM.equals(tagPointer.getRole());
@@ -1224,6 +1259,23 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
+    }
+
+    private PdfPage copyTo(PdfPage page, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        final ICopyFilter copyFilter = new DestinationResolverCopyFilter(this.getDocument(), toDocument);
+        copyInheritedProperties(page, toDocument, NullCopyFilter.getInstance());
+        copyAnnotations(toDocument, page, copyFilter);
+
+        if (copier != null) {
+            copier.copy(this, page);
+        } else {
+            if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
+                Logger logger = LoggerFactory.getLogger(PdfPage.class);
+                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
+                toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
+            }
+        }
+        return page;
     }
 
     private PdfArray getAnnots(boolean create) {

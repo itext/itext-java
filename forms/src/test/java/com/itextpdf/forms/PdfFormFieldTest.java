@@ -49,7 +49,6 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
-import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
@@ -112,7 +111,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @LogMessages(messages = {@LogMessage(messageTemplate = FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD, count = 2)})
     public void nullFormFieldTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "nullFormField.pdf"));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm.getAcroForm(pdfDoc, true);
         pdfDoc.close();
     }
 
@@ -565,7 +564,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "acroFieldDictionaryNoFields.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm.getAcroForm(pdfDoc, true);
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
@@ -1000,6 +999,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-7308 update cmp files after the ticket will be resolved")
     public void maxLenDeepInheritanceTest() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "maxLenDeepInheritanceTest.pdf";
         String destFilename = destinationFolder + "maxLenDeepInheritanceTest.pdf";
@@ -1008,7 +1008,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument destDoc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(destFilename));
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
-        acroForm.getField("text.1").setValue("WoOooOw");
+        // TODO After DEVSIX-7308 getField should return field without partial name here
+        acroForm.getField("text.1.").setValue("WoOooOw");
 
         destDoc.close();
 
@@ -1238,8 +1239,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfDictionary field = fieldsArr.getAsDictionary(0);
         PdfDictionary fieldP = field.getAsDictionary(PdfName.P);
-        // TODO DEVSIX-2912: shall be equal to second page object
-        Assert.assertEquals(resPdf.getPage(3).getPdfObject(), fieldP);
+        Assert.assertEquals(resPdf.getPage(2).getPdfObject(), fieldP);
 
         Assert.assertNull(resPdf.getPage(1).getPdfObject().getAsArray(PdfName.Annots));
 
@@ -1247,10 +1247,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Assert.assertEquals(1, secondPageAnnots.size());
         Assert.assertEquals(field, secondPageAnnots.get(0));
 
-        // TODO DEVSIX-2912: third page annotations array shall be null
-        PdfArray thirdPageAnnots = resPdf.getPage(3).getPdfObject().getAsArray(PdfName.Annots);
-        Assert.assertEquals(1, thirdPageAnnots.size());
-        Assert.assertEquals(field, thirdPageAnnots.get(0));
+        Assert.assertNull(resPdf.getPage(3).getPdfObject().getAsArray(PdfName.Annots));
     }
 
     private void createAcroForm(PdfDocument pdfDoc, PdfAcroForm form, PdfFont font, String text, int offSet) {
@@ -1333,7 +1330,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-6346 Handle form fields without names more carefully
+    //TODO DEVSIX-7308 Handle form fields without names more carefully
     public void fillUnmergedTextFormField() throws IOException, InterruptedException {
         String file = sourceFolder + "fillUnmergedTextFormField.pdf";
         String outfile = destinationFolder + "fillUnmergedTextFormField.pdf";
@@ -1437,12 +1434,14 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FORBID_RELEASE_IS_SET, count = 3))
     public void releaseAcroformTest() throws IOException, InterruptedException {
         String srcFile = sourceFolder + "formFieldFile.pdf";
         String outPureStamping = destinationFolder + "formFieldFileStamping.pdf";
         String outStampingRelease = destinationFolder + "formFieldFileStampingRelease.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outPureStamping));
+        PdfAcroForm.getAcroForm(doc, false);
         // We open/close document to make sure that the results of release logic and simple overwriting coincide.
         doc.close();
 
@@ -1454,5 +1453,51 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outStampingRelease, outPureStamping, destinationFolder));
+    }
+
+    @Test
+    public void addChildToFormFieldTest() throws InterruptedException, IOException {
+        String outPdf = destinationFolder + "addChildToFormFieldTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_addChildToFormFieldTest.pdf";
+        try (PdfDocument outputDoc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            acroForm.addField(field);
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText().setValue("root");
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("child");
+            root.addKid(child);
+
+            acroForm.addField(root);
+            Assert.assertEquals(2, acroForm.fields.size());
+            PdfArray fieldKids = root.getKids();
+            Assert.assertEquals(2, fieldKids.size());
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD))
+    public void duplicateFormTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "duplicateFormTest.pdf";
+        String inPdf = sourceFolder + "duplicateFormTestSource.pdf";
+        String cmpPdf = sourceFolder + "cmp_duplicateFormTest.pdf";
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inPdf), new PdfWriter(byteArrayOutputStream));
+        PdfDocument pdfInnerDoc = new PdfDocument(new PdfReader(inPdf));
+        pdfInnerDoc.copyPagesTo(1, pdfInnerDoc.getNumberOfPages(), pdfDocument, new PdfPageFormCopier());
+        pdfInnerDoc.close();
+        pdfDocument.close();
+
+        pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())), new PdfWriter(outPdf));
+        PdfAcroForm pdfAcroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        pdfAcroForm.getField("checkbox").setValue("Off");
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 }

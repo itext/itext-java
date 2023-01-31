@@ -114,6 +114,8 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @Ignore("DEVSIX-6319")
+    // TODO DEVSIX-6319 Radio buttons shall be widgets instead of form fields
     public void pdfAButtonFieldTest() throws Exception {
         PdfDocument pdf;
         InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");

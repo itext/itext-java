@@ -226,7 +226,7 @@ public class TagStructureContext {
      * See {@link #getDocumentDefaultNamespace()} for more info.
      *
      * <p>
-     * Be careful when changing this property value. It is most recommended to do it right after the {@link PdfDocument} was
+     * Be careful when changing this property value. It is most recommended doing it right after the {@link PdfDocument} was
      * created, before any content was added. Changing this value after any content was added might result in the mingled
      * tag structure from the namespaces point of view. So in order to maintain the document consistent but in the namespace
      * different from default, set this value before any modifications to the document were made and before
@@ -356,6 +356,20 @@ public class TagStructureContext {
      * otherwise returns null
      */
     public TagTreePointer removeAnnotationTag(PdfAnnotation annotation) {
+        return removeAnnotationTag(annotation, false);
+    }
+
+    /**
+     * Removes annotation content item from the tag structure and sets autoTaggingPointer if true is passed.
+     * If annotation is not added to the document or is not tagged, nothing will happen.
+     *
+     * @param annotation            the {@link PdfAnnotation} that will be removed from the tag structure
+     * @param setAutoTaggingPointer true if {@link TagTreePointer} should be set to autoTaggingPointer
+     *
+     * @return {@link TagTreePointer} instance which points at annotation tag parent if annotation was removed,
+     * otherwise returns null
+     */
+    public TagTreePointer removeAnnotationTag(PdfAnnotation annotation, boolean setAutoTaggingPointer) {
         PdfStructElem structElem = null;
         PdfDictionary annotDic = annotation.getPdfObject();
 
@@ -373,7 +387,11 @@ public class TagStructureContext {
         annotDic.setModified();
 
         if (structElem != null) {
-            return new TagTreePointer(document).setCurrentStructElem(structElem);
+            TagTreePointer pointer = new TagTreePointer(document).setCurrentStructElem(structElem);
+            if (setAutoTaggingPointer) {
+                autoTaggingPointer = pointer;
+            }
+            return pointer;
         }
         return null;
     }

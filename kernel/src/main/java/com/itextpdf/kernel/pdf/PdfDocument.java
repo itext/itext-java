@@ -1284,7 +1284,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
         for (Integer pageNum : pagesToCopy) {
             PdfPage page = getPage((int) pageNum);
-            PdfPage newPage = page.copyTo(toDocument, copier);
+            PdfPage newPage = page.copyTo(toDocument, copier, true,
+                    insertInBetween ? pageInsertIndex : -1);
             copiedPages.add(newPage);
             page2page.put(page, newPage);
 
@@ -1294,11 +1295,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             int lastRangeInd = rangesOfPagesWithIncreasingNumbers.size() - 1;
             rangesOfPagesWithIncreasingNumbers.get(lastRangeInd).put(page, newPage);
 
-            if (insertInBetween) {
-                toDocument.addPage(pageInsertIndex, newPage);
-            } else {
-                toDocument.addPage(newPage);
-            }
             pageInsertIndex++;
             if (toDocument.hasOutlines()) {
                 List<PdfOutline> pageOutlines = page.getOutlines(false);
