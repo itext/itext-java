@@ -43,6 +43,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
@@ -948,25 +949,25 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfString fieldName = formField.getFieldName();
             String name;
             if (fieldName == null) {
-                PdfFormField parentField = formField.getParentField();
-                if (parentField == null) {
-                    parentField = PdfFormField.makeFormField(formField.getParent(), document);
-                }
                 while (fieldName == null) {
-                    fieldName = parentField.getFieldName();
-                    if (fieldName == null) {
-                        parentField = formField.getParentField();
-                        if (parentField == null) {
-                            parentField = PdfFormField.makeFormField(formField.getParent(),
-                                    document);
-                        }
+                    if (formField.getParent() == null) {
+                        LOGGER.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
+                                field.getIndirectReference()));
+                        break;
                     }
+
+                    PdfFormField parentField = PdfFormField.makeFormField(formField.getParent(), document);
+                    fieldName = parentField.getFieldName();
+                }
+                if (fieldName == null) {
+                    continue;
                 }
                 name = fieldName.toUnicodeString() + "." + index;
                 index++;
             } else {
                 name = fieldName.toUnicodeString();
             }
+
             fields.put(name, formField);
         }
 

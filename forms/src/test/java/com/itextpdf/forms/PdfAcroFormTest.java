@@ -55,10 +55,6 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class PdfAcroFormTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfAcroFormTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfAcroFormTest/";
-
-
     @Test
     public void setSignatureFlagsTest() {
         try(PdfDocument outputDoc = createDocument()) {
