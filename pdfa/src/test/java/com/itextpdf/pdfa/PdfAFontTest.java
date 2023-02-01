@@ -60,8 +60,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -368,7 +366,7 @@ public class PdfAFontTest extends ExtendedITextTest {
 
     private void generateAndValidatePdfA2WithCidFont(String fontFile, String outPdf, String expectedVeraPdfWarning) throws IOException {
         try (PdfWriter writer = new PdfWriter(outPdf);
-                InputStream is = Files.newInputStream(Paths.get(sourceFolder + "sRGB Color Space Profile.icm"));
+                InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
                 PdfDocument doc = new PdfADocument(
                         writer,
                         PdfAConformanceLevel.PDF_A_2B,
