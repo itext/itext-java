@@ -43,6 +43,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -84,7 +85,7 @@ public class FlatteningTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = FormsExceptionMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY))
+    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY))
     public void formFlatteningTestWithoutNEntry() throws IOException, InterruptedException {
         String filename = "formFlatteningTestWithoutNEntry";
         String src = sourceFolder + filename + ".pdf";

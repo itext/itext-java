@@ -212,6 +212,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param field the {@link PdfFormField} to be added to the form
      */
     public void addField(PdfFormField field) {
+        if (field.getFieldName() == null) {
+            throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
+        }
+
         PdfPage page;
         if (document.getNumberOfPages() == 0) {
             document.addNewPage();
@@ -227,6 +231,10 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param page  the {@link PdfPage} on which to add the field
      */
     public void addField(PdfFormField field, PdfPage page) {
+        if (field.getFieldName() == null) {
+            throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
+        }
+
         processKids(field, page);
         PdfDictionary fieldDic = field.getPdfObject();
 
@@ -775,7 +783,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         }
                     }
                 } else {
-                    LOGGER.warn(FormsExceptionMessageConstant.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
+                    LOGGER.warn(FormsLogMessageConstants.N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY);
                 }
 
                 PdfArray fFields = getFields();

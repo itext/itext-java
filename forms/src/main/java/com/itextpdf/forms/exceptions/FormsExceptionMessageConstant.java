@@ -32,11 +32,8 @@ public final class FormsExceptionMessageConstant {
     public static final String PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING = ""
             + "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page "
             + "flushing.";
-    public static final String WRONG_FORM_FIELD_ADD_ANNOTATION_TO_THE_FIELD = "Wrong form field. Add annotation to the "
-            + "field.";
-
-    public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY =
-            "\\N entry is required to be present in an appearance dictionary.";
+    public static final String FORM_FIELD_MUST_HAVE_A_NAME = "Form field must have a name."
+            + " Set it using PdfFormField#setFieldName call.";
 
     private FormsExceptionMessageConstant(){}
 }

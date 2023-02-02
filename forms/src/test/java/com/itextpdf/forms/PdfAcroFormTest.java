@@ -22,12 +22,14 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -36,6 +38,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
@@ -263,6 +266,25 @@ public class PdfAcroFormTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void namelessFieldTest() {
+        try(PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfDictionary fieldDict = new PdfDictionary();
+            fieldDict.put(PdfName.FT, PdfName.Tx);
+            PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
+            Exception e = Assert.assertThrows(PdfException.class, () -> acroForm.addField(field));
+            Assert.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
+
+            outputDoc.addNewPage();
+            PdfPage page = outputDoc.getLastPage();
+            e = Assert.assertThrows(PdfException.class, () -> acroForm.addField(field, page));
+            Assert.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
+
+            Assert.assertEquals(0, acroForm.getDirectFormFields().size());
+        }
+    }
 
     @Test
     public void setCalculationOrderTest() {

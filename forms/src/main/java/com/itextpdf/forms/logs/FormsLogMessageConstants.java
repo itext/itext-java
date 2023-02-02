@@ -43,6 +43,9 @@ public final class FormsLogMessageConstants {
 
     public static final String UNSUPPORTED_COLOR_IN_DA = "Unsupported color in FormField's DA";
 
+    public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY =
+            "\\N entry is required to be present in an appearance dictionary.";
+
     private FormsLogMessageConstants() {
     }
 }
