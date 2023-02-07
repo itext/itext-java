@@ -31,6 +31,8 @@ public final class FormsLogMessageConstants {
 
     public static final String CANNOT_CREATE_FORMFIELD = "Cannot create form field from a given PDF object: {0}";
 
+    public static final String PROVIDE_FORMFIELD_NAME = "No form field name provided. Process will not be continued.";
+
     public static final String FORM_FIELD_WAS_FLUSHED =
             "A form field was flushed. There's no way to create this field in the AcroForm dictionary.";
 

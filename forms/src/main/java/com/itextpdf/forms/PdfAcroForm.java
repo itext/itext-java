@@ -912,8 +912,23 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param field the new {@link PdfFormField}
      */
     public void replaceField(String name, PdfFormField field) {
+        if (name == null) {
+            LOGGER.warn(FormsLogMessageConstants.PROVIDE_FORMFIELD_NAME);
+            return;
+        }
         removeField(name);
-        addField(field);
+        final int lastDotIndex = name.lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            addField(field);
+            return;
+        }
+        final String parentName = name.substring(0, lastDotIndex);
+        final PdfFormField parent = getField(parentName);
+        if (parent == null) {
+            addField(field);
+        } else {
+            parent.addKid(field);
+        }
     }
 
     /**

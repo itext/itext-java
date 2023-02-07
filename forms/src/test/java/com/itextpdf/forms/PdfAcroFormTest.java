@@ -28,6 +28,7 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -44,6 +45,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -460,6 +462,98 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             Assert.assertTrue(isReleaseForbidden);
         }
     }
+
+    @Test
+    public  void replaceFormFieldRootLevelReplacesExistingFieldTest() {
+        try(PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfDictionary fieldDict = new PdfDictionary();
+            fieldDict.put(PdfName.FT, PdfName.Tx);
+            fieldDict.put(PdfName.T, new PdfString("field1"));
+            PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
+
+            assert field != null;
+            acroForm.addField(field);
+            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+
+
+            PdfDictionary fieldDictReplace = new PdfDictionary();
+            fieldDictReplace.put(PdfName.FT, PdfName.Tx);
+            fieldDictReplace.put(PdfName.T, new PdfString("field2"));
+            PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
+
+            acroForm.replaceField("field1", fieldReplace);
+            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals("field2", acroForm.getField("field2").getFieldName().toUnicodeString());
+
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = FormsLogMessageConstants.PROVIDE_FORMFIELD_NAME, count = 1),
+    })
+    public void replaceWithNullNameLogsErrorTest(){
+        try(PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfDictionary fieldDict = new PdfDictionary();
+            fieldDict.put(PdfName.FT, PdfName.Tx);
+            fieldDict.put(PdfName.T, new PdfString("field1"));
+            PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
+
+            assert field != null;
+            acroForm.addField(field);
+            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+
+
+            PdfDictionary fieldDictReplace = new PdfDictionary();
+            fieldDictReplace.put(PdfName.FT, PdfName.Tx);
+            fieldDictReplace.put(PdfName.T, new PdfString("field2"));
+            PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
+
+            acroForm.replaceField(null, fieldReplace);
+            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+        }
+
+    }
+
+    @Test
+    public  void replaceFormFieldOneDeepReplacesExistingFieldTest() {
+        try(PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfDictionary fieldDict = new PdfDictionary();
+            fieldDict.put(PdfName.FT, PdfName.Tx);
+            fieldDict.put(PdfName.T, new PdfString("field1"));
+            PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
+
+            PdfDictionary fieldDictChild = new PdfDictionary();
+            fieldDictChild.put(PdfName.FT, PdfName.Tx);
+            fieldDictChild.put(PdfName.T, new PdfString("child1"));
+            PdfFormField fieldChild = PdfFormField.makeFormField(fieldDictChild.makeIndirect(outputDoc), outputDoc);
+            assert field != null;
+            assert fieldChild != null;
+
+            field.addKid(fieldChild);
+
+            acroForm.addField(field);
+            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+
+
+            PdfDictionary fieldDictReplace = new PdfDictionary();
+            fieldDictReplace.put(PdfName.FT, PdfName.Tx);
+            fieldDictReplace.put(PdfName.T, new PdfString("field2"));
+            PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
+
+            acroForm.replaceField("field1.child1", fieldReplace);
+            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals("field1.field2", acroForm.getField("field1.field2").getFieldName().toUnicodeString());
+
+        }
+    }
+
 
     private static PdfDocument createDocument() {
         PdfDocument outputDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
