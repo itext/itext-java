@@ -59,6 +59,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
+// Android-Conversion-Skip-File (imagemagick isn't available on Android)
 public class ImageMagickHelperTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/ImageMagickHelperTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/ImageMagickHelperTest/";

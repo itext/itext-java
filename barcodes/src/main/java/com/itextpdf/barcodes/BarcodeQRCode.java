@@ -223,7 +223,7 @@ public class BarcodeQRCode extends Barcode2D {
         return xObject;
     }
 
-    // AWT related method (remove this if you port to Android / GAE)
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Creates a <CODE>java.awt.Image</CODE>.
      *
@@ -250,6 +250,7 @@ public class BarcodeQRCode extends Barcode2D {
         java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
         return img;
     }
+    // Android-Conversion-Skip-Block-End
 
     private byte[] getBitMatrix() {
         int width = bm.getWidth();

@@ -140,7 +140,7 @@ public class BarcodePostnet extends Barcode1D {
         return getBarcodeSize();
     }
 
-    // AWT related methods (remove this if you port to Android / GAE)
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     @Override
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
@@ -191,4 +191,5 @@ public class BarcodePostnet extends Barcode1D {
 
         return img;
     }
+    // Android-Conversion-Skip-Block-End
 }

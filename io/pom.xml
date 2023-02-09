@@ -21,20 +21,6 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.12.2</version>
-    </dependency>
-    <!-- Android as an implementation of HTTP URL connection uses OkHttp library which requires some
-    Cryptographic Service Provider (CSP). So add dependency to BouncyCastle provider. -->
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
-      <optional>true</optional>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
     <resources>

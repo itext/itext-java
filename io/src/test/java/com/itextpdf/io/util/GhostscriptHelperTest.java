@@ -58,6 +58,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
+// Android-Conversion-Skip-File (ghostscript isn't available on Android)
 public class GhostscriptHelperTest extends ExtendedITextTest {
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/GhostscriptHelperTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/GhostscriptHelperTest/";

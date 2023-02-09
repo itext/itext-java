@@ -464,7 +464,7 @@ public class MatcherTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6442 fix different Matcher#matches behavior)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6442 fix different Matcher#matches behavior)
     public void matchesFailAfterFindFinish() {
         Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
         Assert.assertTrue(matcher.find());
@@ -479,7 +479,7 @@ public class MatcherTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6442 fix different Matcher#matches behavior)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6442 fix different Matcher#matches behavior)
     public void findAfterMatchesFail() {
         Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
         Assert.assertFalse(matcher.matches());
@@ -489,7 +489,7 @@ public class MatcherTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6442 fix different Matcher#matches behavior)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6442 fix different Matcher#matches behavior)
     public void matchesFailAfterSeveralFind() {
         Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
         Assert.assertTrue(matcher.find());

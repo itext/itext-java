@@ -68,6 +68,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumSet;
 
+// Android-Conversion-Skip-File (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 public class VeraPdfValidator {
 
     public String validate(String filePath) {

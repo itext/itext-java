@@ -115,7 +115,7 @@ public class DeviceRgb extends Color {
         }
     }
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Create DeviceRGB color from R, G, B values of java.awt.Color
      * <p>
@@ -131,7 +131,7 @@ public class DeviceRgb extends Color {
             LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.getAlpha()));
         }
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     /**
      * Creates DeviceRgb color with all colorants intensities initialised as zeroes.

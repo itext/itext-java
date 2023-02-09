@@ -106,7 +106,9 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
     /**
      * Disable external DTDs.
      */
+    // Android-Conversion-Skip-Block-Start (standard library XML lib doesn't have this feature on Android)
     private final static String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+    // Android-Conversion-Skip-Block-End
 
     /**
      * Creates instance of {@link DefaultSafeXmlParserFactory}.
@@ -188,7 +190,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
-        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false);
+        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
         // recommendations from Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
         factory.setXIncludeAware(false);
         factory.setExpandEntityReferences(false);
@@ -203,7 +205,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
-        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false);
+        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
         // recommendations from Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
         factory.setXIncludeAware(false);
     }
@@ -214,8 +216,8 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
      * @param factory {@link TransformerFactory} instance to be configured
      */
     protected void configureSafeTransformerFactory(TransformerFactory factory) {
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
     }
 
     private void tryToSetFeature(DocumentBuilderFactory factory, String feature, boolean value) {

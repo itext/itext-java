@@ -54,6 +54,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
+// Android-Conversion-Skip-File (TODO DEVSIX-7376 investigate why FontCacheNoFontAsianTest is skipped on Android)
 public class FontCacheNoFontAsianTest extends ExtendedITextTest {
 
     @Before

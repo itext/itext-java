@@ -1058,7 +1058,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff_"));
     }
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     @Test
     public void awtImagesTest01() throws IOException, InterruptedException {
         String filename = "awtImagesTest01.pdf";
@@ -1082,7 +1082,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     @Test
     public void canvasInitializationPageNoContentsKey() throws IOException, InterruptedException {

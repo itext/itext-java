@@ -73,6 +73,7 @@ import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
 
 @Category(IntegrationTest.class)
+// Android-Conversion-Skip-File (during Android conversion the class will be replaced by DeferredCompareTool)
 public class CompareToolTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/CompareToolTest/";

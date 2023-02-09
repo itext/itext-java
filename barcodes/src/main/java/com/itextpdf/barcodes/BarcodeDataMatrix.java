@@ -259,7 +259,7 @@ public class BarcodeDataMatrix extends Barcode2D {
         return getBarcodeSize();
     }
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Creates a <CODE>java.awt.Image</CODE>. A successful call to the method <CODE>generate()</CODE>
      * before calling this method is required.
@@ -291,7 +291,7 @@ public class BarcodeDataMatrix extends Barcode2D {
         java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(w, h, pix, 0, w));
         return img;
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 	
     /**
      * Gets the barcode size

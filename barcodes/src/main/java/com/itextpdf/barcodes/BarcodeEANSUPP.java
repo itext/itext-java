@@ -146,8 +146,7 @@ public class BarcodeEANSUPP extends Barcode1D {
         return getBarcodeSize();
     }
 
-    // AWT related methods (remove this if you port to Android / GAE)
-
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
@@ -160,4 +159,5 @@ public class BarcodeEANSUPP extends Barcode1D {
     public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         throw new UnsupportedOperationException(BarcodeExceptionMessageConstant.TWO_BARCODE_MUST_BE_EXTERNALLY);
     }
+    // Android-Conversion-Skip-Block-End
 }

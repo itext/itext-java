@@ -80,7 +80,7 @@ public class DeviceRgbTest extends ExtendedITextTest {
         Assert.assertEquals(multiplier * (150f / 255), darkerRgbColor.getColorValue()[2], 0.0001);
     }
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     @Test
     public void colorByAWTColorConstantTest() {
         // RED
@@ -117,7 +117,7 @@ public class DeviceRgbTest extends ExtendedITextTest {
         Assert.assertEquals(100f / 255, rgbColorValue[1], 0.0001);
         Assert.assertEquals(150f / 255, rgbColorValue[2], 0.0001);
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     @Test
     @LogMessages(messages = {

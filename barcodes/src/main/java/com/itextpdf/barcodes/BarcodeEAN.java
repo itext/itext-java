@@ -815,8 +815,7 @@ public class BarcodeEAN extends Barcode1D {
         return rect;
     }
 
-    // AWT related method (remove this if you port to Android / GAE)
-
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
@@ -882,4 +881,5 @@ public class BarcodeEAN extends Barcode1D {
         }
         return canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
     }
+    // Android-Conversion-Skip-Block-End
 }

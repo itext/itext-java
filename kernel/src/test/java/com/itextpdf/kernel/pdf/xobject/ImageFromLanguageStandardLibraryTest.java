@@ -57,18 +57,13 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
+// Android-Conversion-Skip-File (java.awt library isn't available on Android)
 public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/xobject/ImageFromLanguageStandardLibraryTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/ImageFromLanguageStandardLibraryTest/";
@@ -136,7 +131,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
                 .showText("Invisible image (both opaque and non opaque pixels have different colors)")
                 .endText();
         canvas.addXObjectAt(new PdfImageXObject(
-                ImageDataFactory.create(createBinaryTransparentAWTImage(Color.red), null)), 36, 580);
+                ImageDataFactory.create(createBinaryTransparentAWTImage(java.awt.Color.red), null)), 36, 580);
 
         PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFile));
 
@@ -154,24 +149,24 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
 
     // Create an ARGB AWT Image that has only 100% transparent and 0% transparent pixels.
     // All transparent pixels have the Color "backgroundColor"
-    private static BufferedImage createBinaryTransparentAWTImage(Color backgroundColor) {
-        Dimension size = new Dimension(200, 200);
-        BufferedImage awtImg = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = awtImg.createGraphics();
+    private static java.awt.image.BufferedImage createBinaryTransparentAWTImage(java.awt.Color backgroundColor) {
+        java.awt.Dimension size = new java.awt.Dimension(200, 200);
+        java.awt.image.BufferedImage awtImg = new java.awt.image.BufferedImage(size.width, size.height, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g2d = awtImg.createGraphics();
 
         if (backgroundColor != null) {
 
             //Usually it doesn't make much sense to set the color of transparent pixels...
             //but in this case it changes the behavior of com.itextpdf.text.Image.getInstance fundamentally!
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, 0f));
+            g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC, 0f));
             g2d.setColor(backgroundColor);
             g2d.fillRect(0, 0, size.width, size.height);
         }
 
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-        g2d.setColor(Color.black);
+        g2d.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, 1f));
+        g2d.setColor(java.awt.Color.black);
 
-        BasicStroke bs = new BasicStroke(2);
+        java.awt.BasicStroke bs = new java.awt.BasicStroke(2);
         g2d.setStroke(bs);
 
         for (int i = 0; i < 5; i++) {

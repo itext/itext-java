@@ -58,7 +58,7 @@ public abstract class Barcode1D {
     public static final int ALIGN_RIGHT = 2;
     public static final int ALIGN_CENTER = 3;
 
-    // Android-Excise-Start    
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * The default color to draw if a bar is present.
      */
@@ -67,7 +67,7 @@ public abstract class Barcode1D {
      * The default color to draw if a bar is not present.
      */
     protected final java.awt.Color DEFAULT_BAR_BACKGROUND_COLOR = java.awt.Color.WHITE;
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 	
     protected PdfDocument document;
 
@@ -500,7 +500,7 @@ public abstract class Barcode1D {
         this.altText = altText;
     }
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
@@ -510,7 +510,7 @@ public abstract class Barcode1D {
      * @return the image
      */
     public abstract java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background);
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     /**
      * Creates a PdfFormXObject with the barcode. Default bar color and text color will be used.

@@ -718,8 +718,8 @@ public class Barcode128 extends Barcode1D {
         }
     }
 
-    // Android-Excise-Start
-   /**
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
+    /**
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
      *
@@ -767,7 +767,7 @@ public class Barcode128 extends Barcode1D {
         }
         return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     private static char getStartSymbol(Barcode128CodeSet codeSet) {
         switch (codeSet) {

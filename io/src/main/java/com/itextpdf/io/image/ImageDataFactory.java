@@ -181,7 +181,7 @@ public final class ImageDataFactory {
         return image;
     }
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Gets an instance of an Image from a java.awt.Image
      *
@@ -206,7 +206,7 @@ public final class ImageDataFactory {
     public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         return AwtImageDataFactory.create(image, color, forceBW);
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     /**
      * Get a bitmap ImageData instance from the specified url.

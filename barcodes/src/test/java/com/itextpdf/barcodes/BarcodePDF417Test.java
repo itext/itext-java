@@ -191,7 +191,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         Assert.assertEquals(0.5, barcode.getAspectRatio(), 0);
     }
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     @Test
     public void barcode417CreateAWTImageTest() throws IOException, InterruptedException {
         String filename = "barcode417CreateAWTImageTest.pdf";
@@ -245,7 +245,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
                 SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     @Test
     public void barcode417YHeightTest() {

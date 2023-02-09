@@ -53,11 +53,11 @@ public class JsonUtilTest extends ExtendedITextTest {
 
     private static boolean isRunOnJava = false;
 
-    // Android-Excise-Start
+    // Android-Conversion-Skip-Block-Start (cutting area is used to understand whether code is running on Android or not)
     static {
         isRunOnJava = true;
     }
-    // Android-Excise-End
+    // Android-Conversion-Skip-Block-End
 
     @Test
     public void utf8CharsetStringTest() {
@@ -84,6 +84,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void serializeInstanceWithEnumStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {
@@ -115,6 +116,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void serializeToMinimalInstanceWithEnumStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {
@@ -194,6 +196,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void serializeComplexStructureStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {
@@ -225,6 +228,7 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void serializeToMinimalComplexStructureStreamTest() throws IOException {
         String cmp;
         if (isRunOnJava) {

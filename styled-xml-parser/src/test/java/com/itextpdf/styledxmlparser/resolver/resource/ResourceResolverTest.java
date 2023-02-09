@@ -165,7 +165,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Ignore (TODO DEVSIX-6612 Unignore tests related to "#" symbol in URL path)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6612 Unignore tests related to "#" symbol in URL path)
     public void malformedResourceNameTest07() throws IOException {
         String fileName = "%23%5B%5D@!$&'()+,;=._~-/styles09.css";
 
