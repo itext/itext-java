@@ -329,7 +329,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 32)
+            @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 13)
     })
     public void copyFieldsTest07() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "datasheet.pdf";

@@ -305,7 +305,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
     @Test
     public void namelessFieldTest() {
-        try(PdfDocument outputDoc = createDocument()) {
+        try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
             PdfDictionary fieldDict = new PdfDictionary();
@@ -416,7 +416,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     }
 
     @Test
-    public void addRootFieldWithDirtyAnnotationsTest() {
+    public void addRootFieldWithDirtyNamedAnnotationsTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
@@ -431,6 +431,45 @@ public class PdfAcroFormTest extends ExtendedITextTest {
                     .setWidgetRectangle(new Rectangle(200, 600, 300, 40))
                     .createText();
             secondDirtyAnnot.getPdfObject().remove(PdfName.V);
+
+            rootField.addKid(firstDirtyAnnot);
+            rootField.addKid(secondDirtyAnnot);
+
+            Assert.assertEquals(1, rootField.getKids().size());
+            Assert.assertEquals(2, firstDirtyAnnot.getKids().size());
+
+            acroForm.addField(rootField);
+
+            Assert.assertEquals(1, acroForm.getFields().size());
+
+            PdfArray fieldKids = acroForm.getField("root").getKids();
+            Assert.assertEquals(1, fieldKids.size());
+
+            Assert.assertFalse(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) fieldKids.get(0)));
+        }
+    }
+
+    @Test
+    public void addRootFieldWithDirtyUnnamedAnnotationsTest() {
+        try (PdfDocument outputDoc = createDocument()) {
+            outputDoc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+
+            PdfFormField rootField = new TextFormFieldBuilder(outputDoc, "root")
+                    .createText().setValue("root");
+            PdfFormField firstDirtyAnnot = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 30))
+                    .createText();
+            firstDirtyAnnot.getPdfObject().remove(PdfName.V);
+            // Remove name in order to make dirty annotation being merged
+            firstDirtyAnnot.getPdfObject().remove(PdfName.T);
+            
+            PdfFormField secondDirtyAnnot = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(200, 600, 300, 40))
+                    .createText();
+            secondDirtyAnnot.getPdfObject().remove(PdfName.V);
+            // Remove name in order to make dirty annotation being merged
+            secondDirtyAnnot.getPdfObject().remove(PdfName.T);
 
             rootField.addKid(firstDirtyAnnot);
             rootField.addKid(secondDirtyAnnot);

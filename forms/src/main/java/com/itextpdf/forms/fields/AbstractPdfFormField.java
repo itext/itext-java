@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,6 +76,7 @@ import java.util.Set;
  */
 public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final PdfName[] TERMINAL_FIELDS = new PdfName[]{PdfName.Btn, PdfName.Tx, PdfName.Ch, PdfName.Sig};
     /**
      * Size of text in form fields when font size is not explicitly set.
      */
@@ -189,9 +191,12 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
         }
         PdfString name = getPdfObject().getAsString(PdfName.T);
         if (name != null) {
-            name = new PdfString(parentName + name.toUnicodeString(), PdfEncodings.UNICODE_BIG);
+            return new PdfString(parentName + name.toUnicodeString(), PdfEncodings.UNICODE_BIG);
         }
-        return name;
+        if (isTerminalFormField()) {
+            return new PdfString(parentName, PdfEncodings.UNICODE_BIG);
+        }
+        return null;
     }
 
     /**
@@ -259,6 +264,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * Sets the text color and does not regenerate appearance stream.
      *
      * @param color the new value for the Color.
+     *
      * @return the edited field.
      */
     void setColorNoRegenerate(Color color) {
@@ -277,8 +283,9 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * If the key is already present in this field dictionary,
      * this method will override the old value with the specified one.
      *
-     * @param key  key to insert or to override.
+     * @param key   key to insert or to override.
      * @param value the value to associate with the specified key.
+     *
      * @return the edited field.
      */
     public AbstractPdfFormField put(PdfName key, PdfObject value) {
@@ -291,6 +298,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * Removes the specified key from the {@link PdfDictionary} of this field.
      *
      * @param key key to be removed.
+     *
      * @return the edited field.
      */
     public AbstractPdfFormField remove(PdfName key) {
@@ -333,6 +341,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * Sets the text color and regenerates appearance stream.
      *
      * @param color the new value for the Color.
+     *
      * @return the edited {@link AbstractPdfFormField}.
      */
     public AbstractPdfFormField setColor(Color color) {
@@ -348,6 +357,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * if it's a pdf/a document.
      *
      * @param font The new font to be set.
+     *
      * @return The edited {@link AbstractPdfFormField}.
      */
     public AbstractPdfFormField setFont(PdfFont font) {
@@ -361,6 +371,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * field appearance after setting the new value.
      *
      * @param fontSize The new font size to be set.
+     *
      * @return The edited {@link AbstractPdfFormField}.
      */
     public AbstractPdfFormField setFontSize(float fontSize) {
@@ -374,6 +385,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * field appearance after setting the new value.
      *
      * @param fontSize The new font size to be set.
+     *
      * @return The edited {@link AbstractPdfFormField}.
      */
     public AbstractPdfFormField setFontSize(int fontSize) {
@@ -399,12 +411,25 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      *
      * @param font     The new font to be set.
      * @param fontSize The new font size to be set.
+     *
      * @return The edited {@link AbstractPdfFormField}.
      */
     public AbstractPdfFormField setFontAndSize(PdfFont font, float fontSize) {
         updateFontAndFontSize(font, fontSize);
         regenerateField();
         return this;
+    }
+
+    public boolean isTerminalFormField() {
+        if (getPdfObject() == null || getPdfObject().get(PdfName.FT) == null) {
+            return false;
+        }
+        for (PdfName terminalField : TERMINAL_FIELDS) {
+            if (terminalField.equals(getPdfObject().get(PdfName.FT))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void updateFontAndFontSize(PdfFont font, float fontSize) {

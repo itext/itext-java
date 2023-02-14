@@ -54,12 +54,10 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD)})
     public void orphanedNamelessFormFieldTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "orphanedFormField.pdf"))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            // 2 out of 3 have been gathered
-            Assert.assertEquals(2, form.getDirectFormFields().size());
+            Assert.assertEquals(3, form.getDirectFormFields().size());
         }
     }
 

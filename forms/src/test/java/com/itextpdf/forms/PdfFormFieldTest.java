@@ -999,7 +999,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-7308 update cmp files after the ticket will be resolved")
     public void maxLenDeepInheritanceTest() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "maxLenDeepInheritanceTest.pdf";
         String destFilename = destinationFolder + "maxLenDeepInheritanceTest.pdf";
@@ -1008,8 +1007,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument destDoc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(destFilename));
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
-        // TODO After DEVSIX-7308 getField should return field without partial name here
-        acroForm.getField("text.1.").setValue("WoOooOw");
+        acroForm.getField("text.1.").setColor(ColorConstants.RED);
 
         destDoc.close();
 
@@ -1330,7 +1328,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-7308 Handle form fields without names more carefully
     public void fillUnmergedTextFormField() throws IOException, InterruptedException {
         String file = sourceFolder + "fillUnmergedTextFormField.pdf";
         String outfile = destinationFolder + "fillUnmergedTextFormField.pdf";
@@ -1338,7 +1335,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(file), new PdfWriter(outfile));
         fillAcroForm(pdfDocument, text);
-
         pdfDocument.close();
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "fillUnmergedTextFormField.pdf",
@@ -1493,7 +1489,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfInnerDoc.close();
         pdfDocument.close();
 
-        pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())), new PdfWriter(outPdf));
+        pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())),
+                new PdfWriter(outPdf));
         PdfAcroForm pdfAcroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
         pdfAcroForm.getField("checkbox").setValue("Off");
         pdfDocument.close();
@@ -1509,7 +1506,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, false);
             for (AbstractPdfFormField field : acroForm.getAllFormFieldsAndAnnotations()) {
-                if (field instanceof PdfFormField && field.getPdfObject().get(PdfName.V).toString() == "child") {
+                if (field instanceof PdfFormField && "child".equals(field.getPdfObject().get(PdfName.V).toString())) {
                     // Child has value "root" still because it doesn't contain T entry
                     Assert.assertEquals("root", ((PdfFormField) field).getValue().toString());
                 }
@@ -1518,5 +1515,14 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+    
+    @Test
+    public void getSigFlagsTest() {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            form.setSignatureFlag(1);
+            Assert.assertEquals(1, form.getSignatureFlags());
+        }
     }
 }

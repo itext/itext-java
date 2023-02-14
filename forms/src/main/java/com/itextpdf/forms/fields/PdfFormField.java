@@ -401,9 +401,7 @@ public class PdfFormField extends AbstractPdfFormField {
         if (parent == null) {
             setFieldValue(value, generateAppearance);
         } else {
-            PdfString partialFieldName = getPartialFieldName();
-            //TODO Remove this check after DEVSIX-7308 ticket will be closed.
-            String fieldName = partialFieldName == null ? "" : partialFieldName.toUnicodeString();
+            String fieldName = getPartialFieldName().toUnicodeString();
 
             for (PdfFormField field : parent.getChildFormFields()) {
                 if (fieldName.equals(field.getPartialFieldName().toUnicodeString())) {
@@ -634,11 +632,12 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the current field partial name.
      *
-     * @return the current field partial name, as a {@link PdfString}.
+     * @return the current field partial name, as a {@link PdfString}. If the field has no partial name,
+     * an empty {@link PdfString} is returned.
      */
     public PdfString getPartialFieldName() {
-        //TODO DEVSIX-7308 Handle form fields without names more carefully
-        return getPdfObject().getAsString(PdfName.T);
+        PdfString partialName = getPdfObject().getAsString(PdfName.T);
+        return partialName == null ? new PdfString("") : partialName;
     }
 
     /**
@@ -1433,9 +1432,9 @@ public class PdfFormField extends AbstractPdfFormField {
         if (isInReadingMode() || PdfFormAnnotationUtil.isPureWidget(newKid.getPdfObject())) {
             return false;
         }
-        String newKidPartialName = PdfFormFieldMergeUtil.getPartialName(newKid.getPdfObject());
+        String newKidPartialName = PdfFormFieldMergeUtil.getPartialName(newKid);
         for (AbstractPdfFormField kid : childFields) {
-            String kidPartialName = PdfFormFieldMergeUtil.getPartialName(kid.getPdfObject());
+            String kidPartialName = PdfFormFieldMergeUtil.getPartialName(kid);
             if (kidPartialName != null && kidPartialName.equals(newKidPartialName)) {
                 // Merge kid with the first found field with the same name.
                 return PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames((PdfFormField) kid, (PdfFormField) newKid,

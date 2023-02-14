@@ -51,6 +51,9 @@ public final class FormsLogMessageConstants {
     public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY =
             "\\N entry is required to be present in an appearance dictionary.";
 
+    public static final String FIELDNAME_NOT_FOUND_OPERATION_CAN_NOT_BE_COMPLETED =
+            "Fieldname: <{0}> not found. Operation can not be completed.";
+
     private FormsLogMessageConstants() {
     }
 }

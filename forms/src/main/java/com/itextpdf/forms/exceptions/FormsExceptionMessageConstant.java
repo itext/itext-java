@@ -29,12 +29,16 @@ public final class FormsExceptionMessageConstant {
     public static final String CANNOT_MERGE_FORMFIELDS = "Cannot merge form fields with the same names. Partial name " +
             "is {0}. Field dictionaries with the same fully qualified field name shall have the same field type (FT), "
             + "value (V), and default value (DV).";
+
     public static final String FIELD_FLATTENING_IS_NOT_SUPPORTED_IN_APPEND_MODE = "Field flattening is not supported "
             + "in append mode.";
+    
     public static final String INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS = "Inner arrays shall have exactly two elements";
+    
     public static final String PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING = ""
             + "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page "
             + "flushing.";
+    
     public static final String FORM_FIELD_MUST_HAVE_A_NAME = "Form field must have a name."
             + " Set it using PdfFormField#setFieldName call.";
 

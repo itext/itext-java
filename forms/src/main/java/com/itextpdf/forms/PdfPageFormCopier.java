@@ -58,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -224,14 +225,19 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
 
     private PdfFormField mergeFieldsWithTheSameName(AbstractPdfFormField newField) {
         PdfString fieldName = newField.getPdfObject().getAsString(PdfName.T);
+        
         PdfDictionary parent = newField.getParent();
         if (parent != null) {
             newField.setParent(PdfFormField.makeFormField(parent, newField.getDocument()));
-            if (null == fieldName) {
-                fieldName = parent.getAsString(PdfName.T);
+            if (fieldName == null) {
+                if (newField.isTerminalFormField()) {
+                    fieldName = new PdfString(parent.getAsString(PdfName.T).toUnicodeString() + ".");
+                } else {
+                    fieldName = parent.getAsString(PdfName.T);
+                }
             }
         }
-
+        
         String fullFieldName = fieldName.toUnicodeString();
         if (null != newField.getFieldName()) {
             fullFieldName = newField.getFieldName().toUnicodeString();

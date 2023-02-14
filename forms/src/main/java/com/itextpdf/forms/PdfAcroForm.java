@@ -44,6 +44,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringSplitUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
@@ -77,7 +78,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -213,7 +213,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param field the {@link PdfFormField} to be added to the form
      */
     public void addField(PdfFormField field) {
-        if (field.getFieldName() == null) {
+        if (!field.getPdfObject().containsKey(PdfName.T)) {
             throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
         }
 
@@ -234,7 +234,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *                       in case they have the same names
      */
     public void addField(PdfFormField field, PdfPage page, boolean replaceExisted) {
-        if (field.getFieldName() == null) {
+        if (!field.getPdfObject().containsKey(PdfName.T)) {
             throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
         }
         
@@ -327,14 +327,13 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (fields.size() == 0) {
             fields = populateFormFieldsMap();
         }
-        Map<String, PdfFormField> allFields = new HashMap<>();
-        allFields.putAll(fields);
+        final Map<String, PdfFormField> allFields = new LinkedHashMap<>(fields);
         for (Entry<String, PdfFormField> field : fields.entrySet()) {
-            List<PdfFormField> kids = field.getValue().getAllChildFormFields();
+            final List<PdfFormField> kids = field.getValue().getAllChildFormFields();
             for (PdfFormField kid : kids) {
-                //TODO DEVSIX-7308 Handle form fields without names more carefully
-                if (kid.getFieldName() != null) {
-                    allFields.put(kid.getFieldName().toUnicodeString(), kid);
+                final PdfString kidFieldName = kid.getFieldName();
+                if (kidFieldName != null) {
+                    allFields.put(kidFieldName.toUnicodeString(), kid);
                 }
             }
         }
@@ -470,10 +469,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getSignatureFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.SigFlags);
-        if (f != null)
-            return f.intValue();
-        else
+        if (f == null) {
             return 0;
+        } else {
+            return f.intValue();
+        }
     }
 
     /**
@@ -649,14 +649,17 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (fields.get(fieldName) != null) {
             return fields.get(fieldName);
         }
-        String[] splitFields = fieldName.split("\\.");
-        PdfFormField parentFormField = fields.get(splitFields[0]);
+        final String[] splitFieldsArray = StringSplitUtil.splitKeepTrailingWhiteSpace(fieldName, '.');
+        if (splitFieldsArray.length == 0) {
+            return null;
+        }
+        PdfFormField parentFormField = fields.get(splitFieldsArray[0]);
         PdfFormField kidField = parentFormField;
-        for (int i = 1; i < splitFields.length; i++) {
-            if (parentFormField.isFlushed()) {
+        for (int i = 1; i < splitFieldsArray.length; i++) {
+            if (parentFormField == null || parentFormField.isFlushed()) {
                 return null;
             }
-            kidField = parentFormField.getChildField(splitFields[i]);
+            kidField = parentFormField.getChildField(splitFieldsArray[i]);
             parentFormField = kidField;
         }
         return kidField;
@@ -697,7 +700,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
         this.generateAppearance = generateAppearance;
     }
-
     /**
      * Flattens interactive {@link PdfFormField form field}s in the document. If
      * no fields have been explicitly included via {@link #partialFormFlattening},
@@ -711,8 +713,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         Set<PdfFormField> fields;
         if (fieldsForFlattening.isEmpty()) {
             this.fields.clear();
-            //This alternate addition of fields is used due to incorrect handling of fields without names.
-            //Must be replaced with getAllFormFields() after DEVSIX-7308
             fields = getAllFormFieldsWithoutNames();
         } else {
             fields = new LinkedHashSet<>();
@@ -896,6 +896,12 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * @param newName the new name of the field. Must not be used currently.
      */
     public void renameField(String oldName, String newName) {
+        final PdfFormField oldField = getField(oldName);
+        if (oldField == null) {
+            LOGGER.warn(MessageFormatUtil.format(
+                    FormsLogMessageConstants.FIELDNAME_NOT_FOUND_OPERATION_CAN_NOT_BE_COMPLETED, oldName));
+            return;
+        }
         getField(oldName).setFieldName(newName);
         PdfFormField field = fields.get(oldName);
         if (field != null) {
@@ -969,7 +975,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     private Map<String, PdfFormField> populateFormFieldsMap() {
         final PdfArray rawFields = getFields();
         Map<String, PdfFormField> fields = new LinkedHashMap<>();
-        int index = 1;
         final PdfArray shouldBeRemoved = new PdfArray();
         for (PdfObject field : rawFields) {
             if (field.isFlushed()) {
@@ -987,32 +992,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             PdfFormFieldMergeUtil.mergeKidsWithSameNames(formField, false);
 
             PdfString fieldName = formField.getFieldName();
-            String name;
-            if (fieldName == null) {
-                while (fieldName == null) {
-                    if (formField.getParent() == null) {
-                        LOGGER.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
-                                field.getIndirectReference()));
-                        break;
-                    }
+            if (fieldName != null) {
+                String name = formField.getFieldName().toUnicodeString();
 
-                    PdfFormField parentField = PdfFormField.makeFormField(formField.getParent(), document);
-                    fieldName = parentField.getFieldName();
+                if (formField.isInReadingMode() || !fields.containsKey(name) ||
+                        !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(name), formField, true)) {
+                    fields.put(name, formField);
+                } else {
+                    shouldBeRemoved.add(field);
                 }
-                if (fieldName == null) {
-                    continue;
-                }
-                name = fieldName.toUnicodeString() + "." + index;
-                index++;
-            } else {
-                name = fieldName.toUnicodeString();
-            }
-
-            if (formField.isInReadingMode() || !fields.containsKey(name) ||
-                    !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(name), formField, true)) {
-                fields.put(name, formField);
-            } else {
-                shouldBeRemoved.add(field);
             }
         }
         for (PdfObject field : shouldBeRemoved) {

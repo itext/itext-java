@@ -56,11 +56,14 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class StringUtilTest extends ExtendedITextTest {
 
+    private static final char SPLIT_PERIOD = '.';
+
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6457 fix different behavior of Pattern.split method)
     public void patternSplitTest01() {
         // Pattern.split in Java works differently compared to Regex.Split in C#
-        // In C#, empty strings are possible at the beginning of the resultant array for non-capturing groups in split regex
+        // In C#, empty strings are possible at the beginning of the resultant array for non-capturing groups in
+        // split regex
         // Thus, in C# we use a separate utility for splitting to align the implementation with Java
         // This test verifies that the resultant behavior is the same
         Pattern pattern = Pattern.compile("(?=[ab])");
@@ -93,6 +96,73 @@ public class StringUtilTest extends ExtendedITextTest {
         String source = "";
         String[] expected = new String[] {""};
         String[] result = source.split("(?=[ab])");
+        Assert.assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void splitKeepEmptyParts01() {
+        String source = "";
+        String[] expected = new String[]{
+                ""
+        };
+        String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
+        Assert.assertArrayEquals(source.split(String.valueOf(SPLIT_PERIOD)), result);
+        Assert.assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void splitKeepEmptyParts02() {
+        String source = null;
+        Assert.assertThrows(Exception.class,
+                () -> StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD));
+    }
+
+    @Test
+    public void splitKeepEmptyParts03() {
+        String source = "test.test1";
+        String[] expected = new String[] {"test", "test1"};
+        String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
+        Assert.assertArrayEquals(expected, result);
+    }
+
+
+    @Test
+    public void splitKeepEmptyParts04() {
+        String source = "test..test1";
+        String[] expected = new String[] {"test", "", "test1"};
+        String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
+        Assert.assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void splitKeepEmptyParts05() {
+        String source = "test...test1";
+        String[] expected = new String[] {"test", "", "", "test1"};
+        String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
+        Assert.assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void splitKeepEmptyParts06() {
+        String source = ".test1";
+        String[] expected = new String[] {"", "test1"};
+        String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
+        Assert.assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void splitKeepEmptyPartsDifferentBehaviour01() {
+        String source = "test.";
+        String[] expected = new String[] {"test", ""};
+        String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
+        Assert.assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void splitKeepEmptyPartsDifferentBehaviour02() {
+        String source = "test..";
+        String[] expected = new String[] {"test", "", ""};
+        String[] result = StringSplitUtil.splitKeepTrailingWhiteSpace(source, SPLIT_PERIOD);
         Assert.assertArrayEquals(expected, result);
     }
 

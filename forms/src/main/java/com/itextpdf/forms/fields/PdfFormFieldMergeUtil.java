@@ -51,7 +51,6 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfString;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +92,7 @@ public final class PdfFormFieldMergeUtil {
                 // Try to merge for the kid
                 mergeKidsWithSameNames((PdfFormField) kid, throwExceptionOnError);
 
-                String kidName = getPartialName(kid.getPdfObject());
+                String kidName = getPartialName(kid);
                 if (!addedKids.containsKey(kidName) || !mergeTwoFieldsWithTheSameNames(
                         (PdfFormField) addedKids.get(kidName), (PdfFormField) kid, throwExceptionOnError)) {
                     addedKids.put(kidName, kid);
@@ -146,18 +145,19 @@ public final class PdfFormFieldMergeUtil {
     /**
      * Gets partial name for the field dictionary.
      *
-     * @param fieldDict field dictionary to get name.
+     * @param field field to get name from.
      *
      * @return field partial name. Also, null if passed dictionary is a pure widget,
      * empty string in case it is a field with no /T entry.
      */
-    // TODO This method usages should be replaced by PdfFormField#getPartialFieldName after DEVSIX-7308 is closed.
-    public static String getPartialName(PdfDictionary fieldDict) {
-        if (PdfFormAnnotationUtil.isPureWidget(fieldDict)) {
+    public static String getPartialName(AbstractPdfFormField field) {
+        if (PdfFormAnnotationUtil.isPureWidget(field.getPdfObject())) {
             return null;
         }
-        PdfString partialName = fieldDict.getAsString(PdfName.T);
-        return partialName == null ? "" : partialName.toUnicodeString();
+        if (field instanceof PdfFormField) {
+            return ((PdfFormField) field).getPartialFieldName().toUnicodeString();
+        }
+        return "";
     }
 
     /**
@@ -186,6 +186,10 @@ public final class PdfFormFieldMergeUtil {
                 // If not - go over all fields to compare with parent's fields
                 if (!(PdfName.Btn.equals(parentField.getFormType()) &&
                         parentField.getFieldFlag(PdfButtonFormField.FF_RADIO))) {
+                    if (formDict.containsKey(PdfName.T)) {
+                        // We only want to perform the merge if field doesn't contain any name (even empty one)
+                        continue;
+                    }
                     for (final PdfName key : formDict.keySet()) {
                         // Everything except Parent and Kids must be identical to allow the merge
                         if (!PdfName.Parent.equals(key) && !PdfName.Kids.equals(key) &&
