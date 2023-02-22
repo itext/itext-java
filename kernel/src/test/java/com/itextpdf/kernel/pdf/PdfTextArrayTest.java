@@ -131,4 +131,37 @@ public class PdfTextArrayTest extends ExtendedITextTest {
         textArray.addAll(collection);
         Assert.assertEquals(collection.list, textArray.list);
     }
+
+    @Test
+    public void addZeroSumTest() {
+        PdfTextArray textArray = new PdfTextArray();
+        textArray.add(new PdfString("test"));
+        textArray.add(new PdfNumber(11));
+        textArray.add(new PdfNumber(12));
+        textArray.add(new PdfNumber(-13));
+        textArray.add(new PdfNumber(8));
+        textArray.add(new PdfNumber(-18));
+        textArray.add(new PdfString("test"));
+
+        PdfArray expected = new PdfArray();
+        expected.add(new PdfString("test"));
+        expected.add(new PdfString("test"));
+        Assert.assertEquals(expected.list, textArray.list);
+    }
+
+    @Test
+    public void addZeroSumAtTheBeginningTest() {
+        PdfTextArray textArray = new PdfTextArray();
+        textArray.add(new PdfNumber(11));
+        textArray.add(new PdfNumber(-11));
+        textArray.add(new PdfNumber(13));
+        textArray.add(new PdfString("test"));
+
+        PdfArray expected = new PdfArray();
+        expected.add(new PdfNumber(13));
+        expected.add(new PdfString("test"));
+        Assert.assertEquals(expected.list, textArray.list);
+    }
+
+
 }

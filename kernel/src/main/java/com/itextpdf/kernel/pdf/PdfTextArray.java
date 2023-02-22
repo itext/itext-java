@@ -107,6 +107,7 @@ public class PdfTextArray extends PdfArray {
                     set(size() - 1, new PdfNumber(lastNumber));
                 } else {
                     remove(size() - 1);
+                    lastNumber = Float.NaN;
                 }
             } else {
                 lastNumber = number;
