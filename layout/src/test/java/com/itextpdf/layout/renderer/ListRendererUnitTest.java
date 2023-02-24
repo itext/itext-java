@@ -30,6 +30,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
@@ -40,6 +41,10 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Category(UnitTest.class)
 public class ListRendererUnitTest extends RendererUnitTest {
@@ -87,6 +92,35 @@ public class ListRendererUnitTest extends RendererUnitTest {
 
         // only split part is drawn, list symbol is expected to be drawn only once.
         Assert.assertEquals(1, invocationsCounter.getInvocationsCount());
+    }
+
+    @Test
+    // TODO: DEVSIX-6982 update this test after the ticket will be resolved
+    public void symbolPositioningInsideAfterPagebreakTest() {
+        List modelElement = new List();
+        modelElement.setNextRenderer(new ListRenderer(modelElement));
+
+        for (int i = 0; i <25 ; i++) {
+            String s = "listitem " + i;
+            ListItem listItem = (ListItem) new ListItem().add(new Paragraph(s));
+            modelElement.add(listItem);
+        }
+
+        modelElement.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.INSIDE);
+        modelElement.setFontSize(30);
+
+        IRenderer listRenderer = modelElement.createRendererSubTree();
+
+        Document document = createDummyDocument();
+        listRenderer.setParent(document.getRenderer());
+
+        LayoutContext layoutContext = createLayoutContext(595, 842);
+        LayoutResult result = listRenderer.layout(layoutContext);
+        result.getOverflowRenderer().layout(layoutContext);
+
+        Pattern regex = Pattern.compile("^.-.*?-.*$");
+        java.util.List<IRenderer> childRenderers = listRenderer.getChildRenderers();
+        Assert.assertNotEquals(childRenderers.stream().filter(listitem -> regex.matcher(listitem.toString()).matches()).collect(Collectors.toList()).size(), 0);
     }
 
     private static class ListRendererCreatingNotifyingListSymbols extends ListRenderer {
