@@ -42,6 +42,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
@@ -576,7 +577,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     @Ignore("DEVSIX-7264: Investigate 3 failed forms tests from 7.3/develop on .NET")
-    //TODO DEVSIX-6467 The parent's formField value is set to children
     public void regenerateAppearance() throws IOException, InterruptedException {
         String input = "regenerateAppearance.pdf";
         String output = "regenerateAppearance.pdf";
@@ -1497,6 +1497,25 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm pdfAcroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
         pdfAcroForm.getField("checkbox").setValue("Off");
         pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void getValueTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "getValueTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_getValueTest.pdf";
+        String srcPdf = sourceFolder + "getValueTest.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, false);
+            for (AbstractPdfFormField field : acroForm.getAllFormFieldsAndAnnotations()) {
+                if (field instanceof PdfFormField && field.getPdfObject().get(PdfName.V).toString() == "child") {
+                    // Child has value "root" still because it doesn't contain T entry
+                    Assert.assertEquals("root", ((PdfFormField) field).getValue().toString());
+                }
+                field.regenerateField();
+            }
+        }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }

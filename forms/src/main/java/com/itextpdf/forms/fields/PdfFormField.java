@@ -796,7 +796,8 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public PdfObject getValue() {
         PdfObject value = getPdfObject().get(PdfName.V);
-        if (value == null && getParentField() != null) {
+        // V is not taken into account if T is missing. This is the way Acrobat behaves.
+        if ((getPdfObject().get(PdfName.T) == null || value == null) && getParentField() != null) {
             return getParentField().getValue();
         }
         return value;
@@ -1382,32 +1383,7 @@ public class PdfFormField extends AbstractPdfFormField {
 
     private PdfFormField setFieldValue(String value, boolean generateAppearance) {
         PdfName formType = getFormType();
-        if (!PdfName.Btn.equals(formType)) {
-            PdfArray kids = getKids();
-            if (kids != null) {
-                for (PdfObject kid : kids) {
-                    if (kid.isDictionary() && ((PdfDictionary) kid).getAsString(PdfName.T) != null) {
-                        PdfFormField field = new PdfFormField((PdfDictionary) kid);
-                        field.setValue(value);
-                        if (field.getDefaultAppearance() == null) {
-                            field.font = this.font;
-                            field.fontSize = this.fontSize;
-                            field.color = this.color;
-                        }
-                    }
-                }
-            }
-            if (PdfName.Ch.equals(formType)) {
-                if (this instanceof PdfChoiceFormField) {
-                    ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
-                } else {
-                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
-                    choice.setListSelected(new String[] {value}, false);
-                }
-            } else {
-                put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
-            }
-        } else if (PdfName.Btn.equals(formType)) {
+        if (PdfName.Btn.equals(formType)) {
             if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 try {
                     img = ImageDataFactory.create(Base64.decode(value));
@@ -1428,6 +1404,17 @@ public class PdfFormField extends AbstractPdfFormField {
                         widget.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
                     }
                 }
+            }
+        } else {
+            if (PdfName.Ch.equals(formType)) {
+                if (this instanceof PdfChoiceFormField) {
+                    ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
+                } else {
+                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
+                    choice.setListSelected(new String[] {value}, false);
+                }
+            } else {
+                put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
             }
         }
 
