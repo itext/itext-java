@@ -109,11 +109,32 @@ public class PdfType3Function extends AbstractPdfFunction<PdfDictionary> {
         functionFactory = DEFAULT_FUNCTION_FACTORY;
         final PdfArray funcs = new PdfArray();
         for (final AbstractPdfFunction<? extends PdfDictionary> func : functions) {
-            funcs.add(func.getPdfObject().getIndirectReference());
+            funcs.add(func.getPdfObject());
         }
         super.getPdfObject().put(PdfName.Functions, funcs);
         super.getPdfObject().put(PdfName.Bounds, new PdfArray(bounds));
         super.getPdfObject().put(PdfName.Encode, new PdfArray(encode));
+    }
+
+    /**
+     * (see ISO-320001 Table 41).
+     *
+     * @param domain    the valid input domain, input will be clipped to this domain
+     *                  contains a min max pair per input component
+     * @param range     the valid output range, oputput will be clipped to this range
+     *                  contains a min max pair per output component
+     * @param functions The list of functions to stitch*
+     * @param bounds    (Required) An array of k − 1 numbers that, in combination with Domain, shall define
+     *                  the intervals to which each function from the Functions array shall apply.
+     *                  Bounds elements shall be in order of increasing value, and each value shall be within
+     *                  the domain defined by Domain.
+     * @param encode    (Required) An array of 2 × k numbers that, taken in pairs, shall map each subset of the domain
+     *                  defined by Domain and the Bounds array to the domain of the corresponding function.
+     */
+    public PdfType3Function(float[] domain, float[] range,
+            List<AbstractPdfFunction<? extends PdfDictionary>> functions, float[] bounds, float[] encode) {
+        this(convertFloatArrayToDoubleArray(domain), convertFloatArrayToDoubleArray(range),
+                functions, convertFloatArrayToDoubleArray(bounds), convertFloatArrayToDoubleArray(encode));
     }
 
 
@@ -256,11 +277,6 @@ public class PdfType3Function extends AbstractPdfFunction<PdfDictionary> {
 
         final double[] output = functions.get(subdomain).calculate(new double[] {x});
         return clipOutput(output);
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return false;
     }
 
     private int calculateSubdomain(double inputValue) {

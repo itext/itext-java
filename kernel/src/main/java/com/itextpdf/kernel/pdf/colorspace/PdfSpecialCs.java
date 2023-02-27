@@ -53,7 +53,6 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfFunctionFactory;
 
 import java.util.Arrays;
@@ -132,25 +131,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
          * @param alternateSpace The alternate colorspace
          * @param tintTransform The function how the transform colors in the separation color space
          *                      to the alternate color space
-         * @deprecated This constructor has been replaced
-         *             by {@link #Separation(String, PdfColorSpace, IPdfFunction)}
-         */
-        @Deprecated
-        public Separation(String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
-            this(new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
-                throw new PdfException(
-                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
-            }
-        }
-
-        /**
-         * Creates a new separation color space.
-         *
-         * @param name The name for the separation color
-         * @param alternateSpace The alternate colorspace
-         * @param tintTransform The function how the transform colors in the separation color space
-         *                      to the alternate color space
          */
         public Separation(String name, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
             this(new PdfName(name), alternateSpace.getPdfObject(),
@@ -209,26 +189,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         }
 
         /**
-         * Creates a new DeviceN colorspace.
-         *
-         * @param names the names of the components
-         * @param alternateSpace the alternate colorspace
-         * @param tintTransform the function to transform colors to the alternate colorspace
-         *
-         * @deprecated Use constructor {@link #DeviceN(List, PdfColorSpace, IPdfFunction)} instead.
-         */
-
-        @Deprecated
-        public DeviceN(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
-            this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (tintTransform.getInputSize() != numOfComponents ||
-                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
-                throw new PdfException(
-                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
-            }
-        }
-
-        /**
          * Creates a new DiviceN colorspace.
          *
          * @param names the names of the components
@@ -278,27 +238,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
         public NChannel(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform, PdfDictionary attributes) {
             this(getNChannelCsArray(names, alternateSpace, tintTransform, attributes));
-        }
-
-        /**
-         * Creates a new NChannel colorspace.
-         *
-         * @param names the names for the components
-         * @param alternateSpace the alternative colorspace
-         * @param tintTransform the function to transform colors to the alternate color space
-         * @param attributes NChannel specific attributes
-         * @deprecated Use constructor {@link #NChannel(PdfArray, PdfObject, PdfObject, PdfDictionary) NChannel} instead
-         */
-
-        @Deprecated
-        public NChannel(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform,
-                PdfDictionary attributes) {
-            this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject(), attributes);
-            if (tintTransform.getInputSize() != 1 ||
-                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
-                throw new PdfException(
-                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
-            }
         }
 
         /**

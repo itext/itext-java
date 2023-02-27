@@ -26,7 +26,6 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
@@ -38,9 +37,9 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Gray;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.Axial;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.Radial;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.ShadingType;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
-import com.itextpdf.kernel.pdf.function.PdfFunction.Type2;
-import com.itextpdf.kernel.pdf.function.PdfFunction.Type3;
+import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfType2Function;
+import com.itextpdf.kernel.pdf.function.PdfType3Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
@@ -79,7 +78,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         int y1 = 400;
         PdfArray shadingVector = new PdfArray(new int[] {x0, y0, x1, y1});
 
-        Type3 stitchingFunction = createStitchingCmykShadingFunction();
+        PdfType3Function stitchingFunction = createStitchingCmykShadingFunction();
 
         Axial axialShading = new Axial(new Cmyk(), shadingVector, stitchingFunction);
 
@@ -163,7 +162,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         int r1 = 50;
         PdfArray shadingVector = new PdfArray(new int[] {x0, y0, r0, x1, y1, r1});
 
-        Type3 stitchingFunction = createStitchingCmykShadingFunction();
+        PdfType3Function stitchingFunction = createStitchingCmykShadingFunction();
 
         Radial radialShading = new Radial(new Cmyk(), shadingVector, stitchingFunction);
 
@@ -201,20 +200,20 @@ public class CreateShadingTest extends ExtendedITextTest {
         assertShadingDictionaryResult(outName, cmpName, "Sh1");
     }
 
-    private static Type3 createStitchingCmykShadingFunction() {
-        PdfArray domain0to1 = new PdfArray(new float[] {0, 1});
-        PdfArray range0to1For4n = new PdfArray(new float[] {0, 1, 0, 1, 0, 1, 0, 1});
+    private static PdfType3Function createStitchingCmykShadingFunction() {
+        float[] domain0to1 = new float[] {0, 1};
+        float[] range0to1For4n = new float[] {0, 1, 0, 1, 0, 1, 0, 1};
 
         float[] cmykColor0 = {0.2f, 0.4f, 0f, 0f};
         float[] cmykColor1 = {0.2f, 1f, 0f, 0f};
-        Type2 function0 = new Type2(domain0to1, null, new PdfArray(cmykColor0), new PdfArray(cmykColor1), new PdfNumber(1));
-        Type2 function1 = new Type2(domain0to1, null, new PdfArray(cmykColor1), new PdfArray(cmykColor0), new PdfNumber(1));
+        PdfType2Function function0 = new PdfType2Function(domain0to1, null, cmykColor0, cmykColor1, 1);
+        PdfType2Function function1 = new PdfType2Function(domain0to1, null, cmykColor1, cmykColor0, 1);
 
-        PdfArray boundForTwoFunctionsSubdomains = new PdfArray(new float[] {0.5f});
-        PdfArray encodeStitchingSubdomainToNthFunctionDomain = new PdfArray(new float[] {0, 1, 0, 1});
+        float[] boundForTwoFunctionsSubdomains = new float[] {0.5f};
+        float[] encodeStitchingSubdomainToNthFunctionDomain = new float[] {0, 1, 0, 1};
 
-        return new Type3(domain0to1, range0to1For4n,
-                new ArrayList<PdfFunction>(Arrays.asList(function0, function1)),
+        return new PdfType3Function(domain0to1, range0to1For4n,
+                new ArrayList<AbstractPdfFunction<? extends PdfDictionary>>(Arrays.asList(function0, function1)),
                 boundForTwoFunctionsSubdomains, encodeStitchingSubdomainToNthFunctionDomain);
     }
 

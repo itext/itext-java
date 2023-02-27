@@ -117,6 +117,11 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
         this(domain, size, range, order, null, null, bitsPerSample, samples);
     }
 
+    public PdfType0Function(float[] domain, int[] size, float[] range, int order, int bitsPerSample, byte[] samples) {
+        this(convertFloatArrayToDoubleArray(domain), size, convertFloatArrayToDoubleArray(range), order,
+                bitsPerSample, samples);
+    }
+
     public PdfType0Function(double[] domain, int[] size, double[] range, int order,
             int[] encode, double[] decode, int bitsPerSample, byte[] samples) {
         super(new PdfStream(samples), PdfFunctionFactory.FUNCTION_TYPE_0, domain, range);
@@ -236,11 +241,6 @@ public class PdfType0Function extends AbstractPdfFunction<PdfStream> {
         }
 
         return clip(result, getRange());
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return false;
     }
 
     /**

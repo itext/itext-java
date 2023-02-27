@@ -46,7 +46,6 @@ package com.itextpdf.kernel.colors;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,21 +59,6 @@ public class DeviceN extends Color {
 
     public DeviceN(PdfSpecialCs.DeviceN cs, float[] value) {
         super(cs, value);
-    }
-
-    /**
-     * Creates a color in new DeviceN color space.
-     *
-     * @param names the names oif the components
-     * @param alternateCs the alternate color space
-     * @param tintTransform the function to transform color to the alternate color space
-     * @param value the values for the components of this color
-     *
-     * @deprecated Use constructor {@link #DeviceN(List, PdfColorSpace, IPdfFunction, float[])} DeviceN} instead.
-     */
-    @Deprecated
-    public DeviceN(List<String> names, PdfColorSpace alternateCs, PdfFunction tintTransform, float[] value) {
-        this(new PdfSpecialCs.DeviceN(names, alternateCs, tintTransform), value);
     }
 
     /**

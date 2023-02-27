@@ -58,7 +58,6 @@ import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.CompressionConstants;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -281,7 +280,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0 0}".getBytes(StandardCharsets.ISO_8859_1));
+        PdfType4Function function = new PdfType4Function(new float[]{0, 1}, new float[]{0, 1, 0, 1, 0, 1},
+                "{0 0}".getBytes(StandardCharsets.ISO_8859_1));
         PdfSpecialCs.Separation separation = new PdfSpecialCs.Separation("MyRed", new PdfDeviceCs.Rgb(), function);
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -324,7 +324,8 @@ public class PdfCanvasColorTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
 
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4(new PdfArray(new float[]{0, 1, 0, 1}), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
+        PdfType4Function function = new PdfType4Function(new float[]{0, 1, 0, 1}, new float[]{0, 1, 0, 1, 0, 1},
+                "{0}".getBytes(StandardCharsets.ISO_8859_1));
 
         ArrayList<String> tmpArray = new ArrayList<String>(2);
         tmpArray.add("MyRed");

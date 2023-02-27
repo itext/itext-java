@@ -43,8 +43,8 @@
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -53,14 +53,14 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
+import com.itextpdf.kernel.pdf.function.IPdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfType2Function;
 
 /**
  * The abstract PdfShading class that represents the Shading Dictionary PDF object.
  */
 public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
-
-
+    
     /**
      * constants of shading type (see ISO-320001 Table 78)
      */
@@ -196,10 +196,10 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      * Sets the function that represents color transitions
      * across the shading geometry as one object.
      *
-     * @param function The {@link PdfFunction} to set.
+     * @param function The {@link IPdfFunction} to set.
      */
-    public void setFunction(PdfFunction function) {
-        getPdfObject().put(PdfName.Function, function.getPdfObject());
+    public void setFunction(IPdfFunction function) {
+        getPdfObject().put(PdfName.Function, function.getAsPdfObject());
         setModified();
     }
 
@@ -207,12 +207,12 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      * Sets the function object that represents color transitions
      * across the shading geometry as an array of functions.
      *
-     * @param functions The array of {@link PdfFunction} to be set.
+     * @param functions The array of {@link IPdfFunction} to be set.
      */
-    public void setFunction(PdfFunction[] functions) {
+    public void setFunction(IPdfFunction[] functions) {
         PdfArray arr = new PdfArray();
-        for (PdfFunction func : functions) {
-            arr.add(func.getPdfObject());
+        for (IPdfFunction func : functions) {
+            arr.add(func.getAsPdfObject());
         }
         getPdfObject().put(PdfName.Function, arr);
         setModified();
@@ -258,9 +258,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * Creates the new instance of the class.
          *
          * @param colorSpace the {@link PdfColorSpace} object in which colour values shall be expressed.
-         * @param function the {@link PdfFunction}, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction}, that is used to calculate color transitions.
          */
-        public FunctionBased(PdfColorSpace colorSpace, PdfFunction function) {
+        public FunctionBased(PdfColorSpace colorSpace, IPdfFunction function) {
             this(colorSpace.getPdfObject(), function);
         }
 
@@ -268,9 +268,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * Creates the new instance of the class.
          *
          * @param colorSpace the {@link PdfObject}, that represents color space in which colour values shall be expressed.
-         * @param function the {@link PdfFunction}, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction}, that is used to calculate color transitions.
          */
-        public FunctionBased(PdfObject colorSpace, PdfFunction function) {
+        public FunctionBased(PdfObject colorSpace, IPdfFunction function) {
             super(new PdfDictionary(), ShadingType.FUNCTION_BASED, PdfColorSpace.makeColorSpace(colorSpace));
 
             setFunction(function);
@@ -380,8 +380,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             super(new PdfDictionary(), ShadingType.AXIAL, cs);
 
             setCoords(x0, y0, x1, y1);
-            PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] {0, 1}), null,
-                    new PdfArray(color0), new PdfArray(color1), new PdfNumber(1));
+            IPdfFunction func = new PdfType2Function(new float[] {0, 1}, null, color0, color1, 1);
             setFunction(func);
         }
 
@@ -415,9 +414,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *           The special Pattern space isn't excepted.
          * @param coords the {@link PdfArray} of four numbers [x0 y0 x1 y1] that specified the starting
          *               and the endings coordinates of thew axis, expressed in the shading's target coordinate space.
-         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction} object, that is used to calculate color transitions.
          */
-        public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
+        public Axial(PdfColorSpace cs, PdfArray coords, IPdfFunction function) {
             this(cs, coords, null, function);
         }
 
@@ -432,9 +431,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param domain   the {@link PdfArray} of two numbers [t0 t1] specifying the limiting values
          *                 of a parametric variable t which is considered to vary linearly between
          *                 these two values and becomes the input argument to the colour function.
-         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction} object, that is used to calculate color transitions.
          */
-        public Axial(PdfColorSpace cs, PdfArray coords, PdfArray domain, PdfFunction function) {
+        public Axial(PdfColorSpace cs, PdfArray coords, PdfArray domain, IPdfFunction function) {
             super(new PdfDictionary(), ShadingType.AXIAL, cs);
             setCoords(coords);
             if (domain != null) {
@@ -592,8 +591,8 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             super(new PdfDictionary(), ShadingType.RADIAL, cs);
 
             setCoords(x0, y0, r0, x1, y1, r1);
-            PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] {0, 1}), null,
-                    new PdfArray(color0), new PdfArray(color1), new PdfNumber(1));
+            IPdfFunction func = new PdfType2Function(new float[] {0, 1}, null,
+                    color0, color1, 1);
             setFunction(func);
         }
 
@@ -637,9 +636,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *               The radii r0 and r1 shall both be greater than or equal to 0.
          *               If one radius is 0, the corresponding circle shall be treated as a point;
          *               if both are 0, nothing shall be painted.
-         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction} object, that is used to calculate color transitions.
          */
-        public Radial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
+        public Radial(PdfColorSpace cs, PdfArray coords, IPdfFunction function) {
             super(new PdfDictionary(), ShadingType.RADIAL, cs);
             setCoords(coords);
             setFunction(function);

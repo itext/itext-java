@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Rgb;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.Axial;
@@ -40,8 +41,8 @@ import com.itextpdf.kernel.pdf.colorspace.PdfShading.Radial;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.ShadingType;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading.TensorProductPatchMesh;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Pattern;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
-import com.itextpdf.kernel.pdf.function.PdfFunction.Type4;
+import com.itextpdf.kernel.pdf.function.IPdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -112,6 +113,29 @@ public class PdfShadingTest extends ExtendedITextTest {
         Assert.assertArrayEquals(extendArray, axial.getExtend().toBooleanArray());
         Assert.assertEquals(ShadingType.AXIAL, axial.getShadingType());
         Assert.assertEquals(PdfName.DeviceRGB, axial.getColorSpace());
+    }
+
+    @Test
+    public void setFunctionsTest() {
+        float[] coordsArray = {0f, 0f, 0.5f, 0.5f};
+        float[] domainArray = {0f, 0.8f};
+        boolean[] extendArray = {true, false};
+
+        PdfDictionary axialShadingDictionary = initShadingDictionary(coordsArray, domainArray, extendArray, ShadingType.AXIAL);
+
+        Axial axial = new Axial(axialShadingDictionary);
+        Assert.assertTrue(axial.getFunction() instanceof PdfDictionary);
+
+        byte[] ps = "{2 copy sin abs sin abs 3 index 10 mul sin  1 sub abs}".getBytes(StandardCharsets.ISO_8859_1);
+        float[] domain = new float[] {0, 1000, 0, 1000};
+        float[] range = new float[] {0, 1, 0, 1, 0, 1};
+        IPdfFunction[] functions = new IPdfFunction[] {new PdfType4Function(domain, range, ps)};
+
+        axial.setFunction(functions);
+        final PdfObject funcObj = axial.getFunction();
+        Assert.assertTrue(funcObj instanceof PdfArray);
+        Assert.assertEquals(1, ((PdfArray) funcObj).size());
+        Assert.assertEquals(functions[0].getAsPdfObject(), ((PdfArray) funcObj).get(0));
     }
 
     @Test
@@ -212,8 +236,8 @@ public class PdfShadingTest extends ExtendedITextTest {
     @Test
     public void usingPatternColorSpaceThrowsException() {
         byte[] ps = "{2 copy sin abs sin abs 3 index 10 mul sin  1 sub abs}".getBytes(StandardCharsets.ISO_8859_1);
-        PdfFunction function = new Type4(new PdfArray(new float[] {0, 1000, 0, 1000}),
-                new PdfArray(new float[] {0, 1, 0, 1, 0, 1}), ps);
+        IPdfFunction function = new PdfType4Function(new float[] {0, 1000, 0, 1000},
+                new float[] {0, 1, 0, 1, 0, 1}, ps);
 
         Pattern colorSpace = new Pattern();
         Exception ex = Assert.assertThrows(IllegalArgumentException.class,
@@ -225,9 +249,9 @@ public class PdfShadingTest extends ExtendedITextTest {
     @Test
     public void makeShadingFunctionBased1Test() {
         byte[] ps = "{2 copy sin abs sin abs 3 index 10 mul sin  1 sub abs}".getBytes(StandardCharsets.ISO_8859_1);
-        PdfArray domain = new PdfArray(new float[] {0, 1000, 0, 1000});
-        PdfArray range = new PdfArray(new float[] {0, 1, 0, 1, 0, 1});
-        PdfFunction function = new Type4(domain,
+        float[] domain = new float[] {0, 1000, 0, 1000};
+        float[] range = new float[] {0, 1, 0, 1, 0, 1};
+        IPdfFunction function = new PdfType4Function(domain,
                 range, ps);
 
         FunctionBased shade = new FunctionBased(new PdfDeviceCs.Rgb(), function);
@@ -238,10 +262,10 @@ public class PdfShadingTest extends ExtendedITextTest {
         PdfStream functionStream = object.getAsStream(PdfName.Function);
 
         PdfArray functionDomain = functionStream.getAsArray(PdfName.Domain);
-        Assert.assertArrayEquals(domain.toDoubleArray(), functionDomain.toDoubleArray(), 0.0);
+        Assert.assertArrayEquals(domain, functionDomain.toFloatArray(), 0.0f);
 
         PdfArray functionRange = functionStream.getAsArray(PdfName.Range);
-        Assert.assertArrayEquals(range.toDoubleArray(), functionRange.toDoubleArray(), 0.0);
+        Assert.assertArrayEquals(range, functionRange.toFloatArray(), 0.0f);
         Assert.assertEquals(4, functionStream.getAsInt(PdfName.FunctionType).intValue());
     }
 

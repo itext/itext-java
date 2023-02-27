@@ -325,6 +325,11 @@ public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfOb
         return super.getPdfObject();
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
     protected static double[] clip(double[] values, double[] limits) {
         assert (values.length * 2 == limits.length);
 
@@ -353,4 +358,14 @@ public abstract class AbstractPdfFunction<T extends PdfDictionary> extends PdfOb
         return normal;
     }
 
+    protected static double[] convertFloatArrayToDoubleArray(float[] array) {
+        if (array == null) {
+            return null;
+        }
+        double[] arrayDouble = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            arrayDouble[i] = array[i];
+        }
+        return arrayDouble;
+    }
 }

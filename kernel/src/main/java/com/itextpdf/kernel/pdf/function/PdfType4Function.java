@@ -56,6 +56,10 @@ public class PdfType4Function extends AbstractPdfFunction<PdfStream> {
         super(new PdfStream(code), PdfFunctionFactory.FUNCTION_TYPE_4, domain, range);
     }
 
+    public PdfType4Function(float[] domain, float[] range, byte[] code) {
+        this(convertFloatArrayToDoubleArray(domain), convertFloatArrayToDoubleArray(range), code);
+    }
+
     @Override
     public boolean checkCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
         return getInputSize() == 1 && getOutputSize() == alternateSpace.getNumberOfComponents();
@@ -64,10 +68,5 @@ public class PdfType4Function extends AbstractPdfFunction<PdfStream> {
     @Override
     public double[] calculate(double[] input) {
         throw new UnsupportedOperationException(KernelExceptionMessageConstant.TYPE4_EXECUTION_NOT_SUPPORTED);
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return false;
     }
 }

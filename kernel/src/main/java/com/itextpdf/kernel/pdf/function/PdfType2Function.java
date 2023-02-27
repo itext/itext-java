@@ -100,11 +100,16 @@ public class PdfType2Function extends AbstractPdfFunction<PdfDictionary> {
         }
     }
 
-    public PdfType2Function(double[] domain, double[] range, double[] c0, double[] c1, int n) {
+    public PdfType2Function(double[] domain, double[] range, double[] c0, double[] c1, double n) {
         super(new PdfDictionary(), PdfFunctionFactory.FUNCTION_TYPE_2, domain, range);
         setC0(c0);
         setC1(c1);
         setN(n);
+    }
+
+    public PdfType2Function(float[] domain, float[] range, float[] c0, float[] c1, double n) {
+        this(convertFloatArrayToDoubleArray(domain), convertFloatArrayToDoubleArray(range),
+                convertFloatArrayToDoubleArray(c0), convertFloatArrayToDoubleArray(c1), n);
     }
 
     @Override
@@ -188,14 +193,9 @@ public class PdfType2Function extends AbstractPdfFunction<PdfDictionary> {
      *
      * @param value the value of N field
      */
-    public final void setN(int value) {
+    public final void setN(double value) {
         getPdfObject().put(PdfName.N, new PdfNumber(value));
         n = value;
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return false;
     }
 
     private static double[] initializeCArray(PdfArray c, PdfArray otherC, PdfArray range, double defaultValue) {

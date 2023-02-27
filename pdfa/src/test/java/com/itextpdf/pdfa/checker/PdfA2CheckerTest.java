@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -354,8 +355,8 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
             transformArray[i * 2] = 0;
             transformArray[i * 2 + 1]  = 1;
         }
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4
-                (new PdfArray(transformArray), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
+        PdfType4Function function = new PdfType4Function(transformArray, new float[]{0, 1, 0, 1, 0, 1},
+                "{0}".getBytes(StandardCharsets.ISO_8859_1));
 
         PdfDictionary currentColorSpaces = new PdfDictionary();
 

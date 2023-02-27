@@ -42,8 +42,8 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
@@ -53,7 +53,6 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -69,16 +68,12 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfType0Function;
+import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -87,7 +82,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Collections;
-
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
@@ -579,13 +577,14 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
         //Tint transformation function is a stream
         byte[] samples = {0x00,0x00,0x00,0x01,0x01,0x01};
-        PdfArray domain = new PdfArray(new float[]{0,1});
-        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
-        PdfArray size = new PdfArray(new float[]{2});
-        PdfNumber bitsPerSample = new PdfNumber(8);
+        float[] domain = new float[]{0,1};
+        float[] range  = new float[]{0,1,0,1,0,1};
+        int[] size = new int[]{2};
+        int bitsPerSample = 8;
 
-        PdfFunction.Type0 type0 = new PdfFunction.Type0(domain,range,size,bitsPerSample,samples);
-        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction0",alternateSpace,type0);
+        PdfType0Function type0 = new PdfType0Function(domain, size, range, 1, bitsPerSample, samples);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction0",
+                alternateSpace, type0);
         //Add to document
         page.getResources().addColorSpace(separationColourSpace);
 
@@ -601,14 +600,15 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
         //Tint transformation function is a dictionary
-        PdfArray domain = new PdfArray(new float[]{0,1});
-        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
-        PdfArray C0 = new PdfArray(new float[]{0,0,0});
-        PdfArray C1 = new PdfArray(new float[]{1,1,1});
-        PdfNumber n = new PdfNumber(1);
+        float[] domain = new float[]{0,1};
+        float[] range = new float[]{0,1,0,1,0,1};
+        float[] C0 = new float[]{0,0,0};
+        float[] C1 = new float[]{1,1,1};
+        int n = 1;
 
-        PdfFunction.Type2 type2 = new PdfFunction.Type2(domain,range,C0,C1,n);
-        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction2",alternateSpace,type2);
+        PdfType2Function type2 = new PdfType2Function(domain, range, C0, C1, n);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction2",
+                alternateSpace, type2);
         //Add to document
         page.getResources().addColorSpace(separationColourSpace);
         doc.close();
@@ -623,13 +623,13 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
         //Tint transformation function is a dictionary
-        PdfArray domain = new PdfArray(new float[]{0,1});
-        PdfArray range  =new PdfArray(new float[]{0,1,0,1,0,1});
-        PdfArray C0 = new PdfArray(new float[]{0,0,0});
-        PdfArray C1 = new PdfArray(new float[]{1,1,1});
-        PdfNumber n = new PdfNumber(1);
+        float[] domain = new float[]{0,1};
+        float[] range  = new float[]{0,1,0,1,0,1};
+        float[] C0 = new float[]{0,0,0};
+        float[] C1 = new float[]{1,1,1};
+        int n = 1;
 
-        PdfFunction.Type2 type2 = new PdfFunction.Type2(domain,range,C0,C1,n);
+        PdfType2Function type2 = new PdfType2Function(domain, range, C0, C1, n);
 
         PdfCanvas canvas = new PdfCanvas(page);
         String separationName = "separationTest";

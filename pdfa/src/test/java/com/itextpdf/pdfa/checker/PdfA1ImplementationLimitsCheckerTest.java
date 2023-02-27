@@ -60,6 +60,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Shading;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern.Tiling;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
@@ -682,8 +683,8 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
             transformArray[i * 2] = 0;
             transformArray[i * 2 + 1]  = 1;
         }
-        com.itextpdf.kernel.pdf.function.PdfFunction.Type4 function = new com.itextpdf.kernel.pdf.function.PdfFunction.Type4
-                (new PdfArray(transformArray), new PdfArray(new float[]{0, 1, 0, 1, 0, 1}), "{0}".getBytes(StandardCharsets.ISO_8859_1));
+        PdfType4Function function = new PdfType4Function(transformArray, new float[]{0, 1, 0, 1, 0, 1},
+                "{0}".getBytes(StandardCharsets.ISO_8859_1));
 
         return new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function);
     }
