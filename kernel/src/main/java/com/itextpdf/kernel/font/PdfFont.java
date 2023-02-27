@@ -47,8 +47,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -281,7 +281,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return the descent in points
      */
-    public int getDescent(String text, float fontSize) {
+    public float getDescent(String text, float fontSize) {
         int min = 0;
         for (int k = 0; k < text.length(); ++k) {
             int ch;
@@ -301,7 +301,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-        return (int) FontProgram.convertTextSpaceToGlyphSpace(min * fontSize);
+        return FontProgram.convertTextSpaceToGlyphSpace(min * fontSize);
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return the descent in points
      */
-    public int getDescent(int unicode, float fontSize) {
+    public float getDescent(int unicode, float fontSize) {
         int min = 0;
         Glyph glyph = getGlyph(unicode);
         if (glyph == null) {
@@ -326,7 +326,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             min = getFontProgram().getFontMetrics().getTypoDescender();
         }
 
-        return (int) FontProgram.convertTextSpaceToGlyphSpace(min * fontSize);
+        return FontProgram.convertTextSpaceToGlyphSpace(min * fontSize);
     }
 
     /**
@@ -338,7 +338,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return the ascent in points
      */
-    public int getAscent(String text, float fontSize) {
+    public float getAscent(String text, float fontSize) {
         int max = 0;
         for (int k = 0; k < text.length(); ++k) {
             int ch;
@@ -359,7 +359,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
-        return (int) FontProgram.convertTextSpaceToGlyphSpace(max * fontSize);
+        return FontProgram.convertTextSpaceToGlyphSpace(max * fontSize);
     }
 
     /**
@@ -371,7 +371,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @return the ascent in points
      */
-    public int getAscent(int unicode, float fontSize) {
+    public float getAscent(int unicode, float fontSize) {
         int max = 0;
         Glyph glyph = getGlyph(unicode);
         if (glyph == null) {
@@ -384,7 +384,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             max = getFontProgram().getFontMetrics().getTypoAscender();
         }
 
-        return (int) FontProgram.convertTextSpaceToGlyphSpace(max * fontSize);
+        return FontProgram.convertTextSpaceToGlyphSpace(max * fontSize);
     }
 
     public FontProgram getFontProgram() {

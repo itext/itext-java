@@ -284,22 +284,22 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         TestFont font = new TestFont();
 
         int expectedDescent = font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[1];
-        int expectedValue = (int) (expectedDescent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH, FONT_SIZE));
+        float expectedValue = (float) (expectedDescent * FONT_SIZE / (float) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
     }
 
     @Test
     public void descentCannotBePositiveTest() {
         TestFont font = new TestFont();
 
-        Assert.assertEquals(0, font.getDescent(TestFont.SIMPLE_GLYPH_WITH_POSITIVE_DESCENT, 50));
+        Assert.assertEquals(0, font.getDescent(TestFont.SIMPLE_GLYPH_WITH_POSITIVE_DESCENT, 50), 0.1);
     }
 
     @Test
     public void getDescentOfUnknownGlyphTest() {
         TestFont font = new TestFont();
 
-        Assert.assertEquals(0, font.getDescent(111, 50));
+        Assert.assertEquals(0, font.getDescent(111, 50), 0.1);
     }
 
     @Test
@@ -307,8 +307,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         TestFont font = new TestFont();
         font.setFontProgram(new TestFontProgram());
 
-        int expectedValue = (int) (FONT_METRICS_DESCENT * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE));
+        float expectedValue = (float) (FONT_METRICS_DESCENT * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getDescent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -322,8 +322,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String textAsString = new String(text);
         int expectedMinDescent = Math.min(font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[1],
                 font.getGlyph(TestFont.COMPLEX_GLYPH).getBbox()[1]);
-        int expectedValue = (int) (expectedMinDescent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE));
+        float expectedValue = (float) (expectedMinDescent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -337,8 +337,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         String textAsString = new String(text);
         int expectedMinDescent = Math.min(font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[1],
                 FONT_METRICS_DESCENT);
-        int expectedValue = (int) (expectedMinDescent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE));
+        float expectedValue = (float) (expectedMinDescent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getDescent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -346,8 +346,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         TestFont font = new TestFont();
 
         int expectedAscent = font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[3];
-        int expectedValue = (int) (expectedAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH, FONT_SIZE));
+        float expectedValue = (float) (expectedAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -355,8 +355,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         TestFont font = new TestFont();
         font.setFontProgram(new TestFontProgram());
 
-        int expectedValue = (int) (FONT_METRICS_ASCENT * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE));
+        float expectedValue = (float) (FONT_METRICS_ASCENT * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getAscent(TestFont.SIMPLE_GLYPH_WITHOUT_BBOX, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -371,8 +371,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         int expectedMaxAscent = Math.max(
                 font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[3],
                 font.getGlyph(TestFont.COMPLEX_GLYPH).getBbox()[3]);
-        int expectedValue = (int) (expectedMaxAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE));
+        float expectedValue = (float) (expectedMaxAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
@@ -387,8 +387,8 @@ public class PdfFontUnitTest extends ExtendedITextTest {
         int expectedMaxAscent = Math.max(
                 font.getGlyph(TestFont.SIMPLE_GLYPH).getBbox()[3],
                 FONT_METRICS_ASCENT);
-        int expectedValue = (int) (expectedMaxAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
-        Assert.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE));
+        float expectedValue = (float) (expectedMaxAscent * FONT_SIZE / (double) FontProgram.UNITS_NORMALIZATION);
+        Assert.assertEquals(expectedValue, font.getAscent(textAsString, FONT_SIZE), 0.1);
     }
 
     @Test
