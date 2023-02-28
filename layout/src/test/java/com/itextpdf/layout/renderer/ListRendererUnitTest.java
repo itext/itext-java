@@ -120,6 +120,8 @@ public class ListRendererUnitTest extends RendererUnitTest {
 
         Pattern regex = Pattern.compile("^.-.*?-.*$");
         java.util.List<IRenderer> childRenderers = listRenderer.getChildRenderers();
+
+        // Assertion needs to be changed to assertEquals after fix.
         Assert.assertNotEquals(childRenderers.stream().filter(listitem -> regex.matcher(listitem.toString()).matches()).collect(Collectors.toList()).size(), 0);
     }
 
