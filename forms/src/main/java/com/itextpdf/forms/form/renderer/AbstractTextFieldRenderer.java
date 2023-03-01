@@ -93,33 +93,6 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
     }
 
     /**
-     * Adjust number of content lines.
-     *
-     * @param lines the lines that need to be rendered
-     * @param bBox  the bounding box
-     * @param rows  the desired number of lines
-     */
-    void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, int rows) {
-        if (lines.size() != rows) {
-            float rowsHeight = getHeightRowsBased(lines, bBox, rows);
-            adjustNumberOfContentLines(lines, bBox, rows, rowsHeight);
-        }
-    }
-
-    /**
-     * Adjust number of content lines.
-     *
-     * @param lines  the lines that need to be rendered
-     * @param bBox   the bounding box
-     * @param height the desired height of content
-     */
-    void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, float height) {
-        float averageLineHeight = bBox.getHeight() / lines.size();
-        int visibleLinesNumber = (int) Math.ceil(height / averageLineHeight);
-        adjustNumberOfContentLines(lines, bBox, visibleLinesNumber, height);
-    }
-
-    /**
      * Applies the default field properties.
      *
      * @param inputField the input field
@@ -167,7 +140,7 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
 
     //The width based on cols of textarea and size of input doesn't affected by box sizing, so we emulate it here
     float updateHtmlColsSizeBasedWidth(float width) {
-        if (BoxSizingPropertyValue.BORDER_BOX.equals(this.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING))) {
+        if (BoxSizingPropertyValue.BORDER_BOX == this.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING)) {
             Rectangle dummy = new Rectangle(width, 0);
             applyBorderBox(dummy, true);
             applyPaddings(dummy, true);
@@ -176,7 +149,35 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
         return width;
     }
 
-    private static void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, int linesNumber, float height) {
+    /**
+     * Adjust number of content lines.
+     *
+     * @param lines the lines that need to be rendered
+     * @param bBox  the bounding box
+     * @param rows  the desired number of lines
+     */
+    void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, int rows) {
+        if (lines.size() != rows) {
+            float rowsHeight = getHeightRowsBased(lines, bBox, rows);
+            adjustNumberOfContentLines(lines, bBox, rows, rowsHeight);
+        }
+    }
+
+    /**
+     * Adjust number of content lines.
+     *
+     * @param lines  the lines that need to be rendered
+     * @param bBox   the bounding box
+     * @param height the desired height of content
+     */
+    void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, float height) {
+        float averageLineHeight = bBox.getHeight() / lines.size();
+        int visibleLinesNumber = (int) Math.ceil(height / averageLineHeight);
+        adjustNumberOfContentLines(lines, bBox, visibleLinesNumber, height);
+    }
+
+    private static void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox,
+            int linesNumber, float height) {
         bBox.moveUp(bBox.getHeight() - height);
         bBox.setHeight(height);
         if (lines.size() > linesNumber) {

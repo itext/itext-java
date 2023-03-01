@@ -62,9 +62,9 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 /**
@@ -96,7 +96,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
      */
     public int getSize() {
         Integer size = this.getPropertyAsInteger(FormProperty.FORM_FIELD_SIZE);
-        return size != null ? (int) size : (int) modelElement.<Integer>getDefaultProperty(FormProperty.FORM_FIELD_SIZE);
+        return size == null ? (int) modelElement.<Integer>getDefaultProperty(FormProperty.FORM_FIELD_SIZE) : (int) size;
     }
 
     /**
@@ -106,15 +106,15 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
      */
     public boolean isPassword() {
         Boolean password = getPropertyAsBoolean(FormProperty.FORM_FIELD_PASSWORD_FLAG);
-        return password != null ? (boolean) password : (boolean) modelElement.<Boolean>getDefaultProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG);
+        return password == null ? (boolean) modelElement.
+                <Boolean>getDefaultProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG) : (boolean) password;
     }
 
     @Override
     IRenderer createParagraphRenderer(String defaultValue) {
-        if (defaultValue.isEmpty()) {
-            if (null != ((InputField) modelElement).getPlaceholder() && !((InputField) modelElement).getPlaceholder().isEmpty()) {
-                return ((InputField) modelElement).getPlaceholder().createRendererSubTree();
-            }
+        if (defaultValue.isEmpty() && null != ((InputField) modelElement).getPlaceholder()
+                && !((InputField) modelElement).getPlaceholder().isEmpty()) {
+            return ((InputField) modelElement).getPlaceholder().createRendererSubTree();
         }
         return super.createParagraphRenderer(defaultValue);
     }
@@ -127,15 +127,15 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         List<LineRenderer> flatLines = ((ParagraphRenderer) flatRenderer).getLines();
         Rectangle flatBBox = flatRenderer.getOccupiedArea().getBBox();
         updatePdfFont((ParagraphRenderer) flatRenderer);
-        if (!flatLines.isEmpty() && font != null) {
-            cropContentLines(flatLines, flatBBox);
-        } else {
+        if (flatLines.isEmpty() || font == null) {
             LoggerFactory.getLogger(getClass()).error(
                     MessageFormatUtil.format(
                             FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD_WITH_TYPE,
                             "text input"));
             setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flatBBox.setY(flatBBox.getTop()).setHeight(0);
+        } else {
+            cropContentLines(flatLines, flatBBox);
         }
         flatBBox.setWidth((float) retrieveWidth(layoutContext.getArea().getBBox().getWidth()));
     }
@@ -200,7 +200,8 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
                             Property.FONT_SIZE));
                 }
                 int size = getSize();
-                return (T1) (Object) UnitValue.createPointValue(updateHtmlColsSizeBasedWidth(fontSize.getValue() * (size * 0.5f + 2) + 2));
+                return (T1) (Object) UnitValue.createPointValue(
+                        updateHtmlColsSizeBasedWidth(fontSize.getValue() * (size * 0.5f + 2) + 2));
             }
             return width;
         }

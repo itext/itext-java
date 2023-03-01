@@ -85,6 +85,7 @@ public class TextArea extends FormField<TextArea> implements IPlaceholderable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Paragraph getPlaceholder() {
         return placeholder;
     }
@@ -92,6 +93,7 @@ public class TextArea extends FormField<TextArea> implements IPlaceholderable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setPlaceholder(Paragraph placeholder) {
         this.placeholder = placeholder;
     }

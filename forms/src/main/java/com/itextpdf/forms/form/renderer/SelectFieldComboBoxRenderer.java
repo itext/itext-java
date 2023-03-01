@@ -64,7 +64,7 @@ import java.util.List;
  * The {@link SelectFieldComboBoxRenderer} implementation for select field renderer.
  */
 public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
-    private IRenderer minMaxWidthRenderer;
+    private final IRenderer minMaxWidthRenderer;
 
     /**
      * Creates a new {@link SelectFieldComboBoxRenderer} instance.
@@ -100,13 +100,13 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
     }
 
     @Override
-    protected IRenderer createFlatRenderer() {
-        return createFlatRenderer(false);
+    protected void applyAcroField(DrawContext drawContext) {
+        // TODO DEVSIX-1901
     }
 
     @Override
-    protected void applyAcroField(DrawContext drawContext) {
-        // TODO DEVSIX-1901
+    protected IRenderer createFlatRenderer() {
+        return createFlatRenderer(false);
     }
 
     private IRenderer createFlatRenderer(boolean addAllOptionsToChildren) {

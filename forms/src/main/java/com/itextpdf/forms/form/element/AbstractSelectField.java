@@ -43,6 +43,7 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.layout.element.IBlockElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ import java.util.List;
  */
 public abstract class AbstractSelectField extends FormField<AbstractSelectField> {
 
-    private List<IBlockElement> options = new ArrayList<>();
+    private final List<IBlockElement> options = new ArrayList<>();
 
     protected AbstractSelectField(String id) {
         super(id);

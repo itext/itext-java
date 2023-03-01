@@ -54,8 +54,10 @@ public class ListBoxField extends AbstractSelectField {
     /**
      * Creates a new list box field.
      *
-     * @param size the size of the list box, which will define the height of visible properties, shall be greater than zero
-     * @param allowMultipleSelection a boolean flag that defines whether multiple options are allowed to be selected at once
+     * @param size the size of the list box, which will define the height of visible properties,
+     *             shall be greater than zero
+     * @param allowMultipleSelection a boolean flag that defines whether multiple options are allowed
+     *                              to be selected at once
      * @param id the id
      */
     public ListBoxField(String id, int size, boolean allowMultipleSelection) {

@@ -62,9 +62,9 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 /**
@@ -131,13 +131,13 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         List<LineRenderer> flatLines = ((ParagraphRenderer) flatRenderer).getLines();
         updatePdfFont((ParagraphRenderer) flatRenderer);
         Rectangle flatBBox = flatRenderer.getOccupiedArea().getBBox();
-        if (!flatLines.isEmpty() && font != null) {
-            cropContentLines(flatLines, flatBBox);
-        } else {
+        if (flatLines.isEmpty() || font == null) {
             LoggerFactory.getLogger(getClass()).error(MessageFormatUtil.format(
                     FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD_WITH_TYPE, "text area"));
             setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flatBBox.setHeight(0);
+        } else {
+            cropContentLines(flatLines, flatBBox);
         }
         flatBBox.setWidth((float) retrieveWidth(layoutContext.getArea().getBBox().getWidth()));
     }
@@ -152,10 +152,9 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
 
     @Override
     IRenderer createParagraphRenderer(String defaultValue) {
-        if (defaultValue.isEmpty()) {
-            if (null != ((TextArea) modelElement).getPlaceholder() && !((TextArea) modelElement).getPlaceholder().isEmpty()) {
-                return ((TextArea) modelElement).getPlaceholder().createRendererSubTree();
-            }
+        if (defaultValue.isEmpty() && null != ((TextArea) modelElement).getPlaceholder() && !((TextArea) modelElement)
+                .getPlaceholder().isEmpty()) {
+            return ((TextArea) modelElement).getPlaceholder().createRendererSubTree();
         }
         return super.createParagraphRenderer(defaultValue);
     }
@@ -203,7 +202,8 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
                             Property.FONT_SIZE));
                 }
                 int cols = getCols();
-                return (T1) (Object) UnitValue.createPointValue(updateHtmlColsSizeBasedWidth(fontSize.getValue() * (cols * 0.5f + 2) + 2));
+                return (T1) (Object) UnitValue.createPointValue(
+                        updateHtmlColsSizeBasedWidth(fontSize.getValue() * (cols * 0.5f + 2) + 2));
             }
             return width;
         }

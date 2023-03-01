@@ -50,7 +50,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 
 /**
- * Extension of the {@link FormField} class representing a button in html
+ * Extension of the {@link FormField} class representing a button in html.
  */
 public class Button extends FormField<Button> {
 

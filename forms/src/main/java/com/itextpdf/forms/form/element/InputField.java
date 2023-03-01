@@ -70,6 +70,7 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
     /**
      * {@inheritDoc}
      */
+    @Override
     public Paragraph getPlaceholder() {
         return placeholder;
     }
@@ -77,6 +78,7 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setPlaceholder(Paragraph placeholder) {
         this.placeholder = placeholder;
     }

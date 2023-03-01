@@ -61,6 +61,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,14 +90,16 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         // options container is the only kid of the select field renderer by design
         IRenderer optionsContainer = childRenderers.size() == 1 ? childRenderers.get(0) : null;
 
-        if (!isFlatten() || layoutResult.getStatus() != LayoutResult.FULL || optionsContainer == null || optionsContainer.getOccupiedArea() == null) {
+        if (!isFlatten() || layoutResult.getStatus() != LayoutResult.FULL ||
+                optionsContainer == null || optionsContainer.getOccupiedArea() == null) {
             return layoutResult;
         }
 
         if (isOverflowProperty(OverflowPropertyValue.HIDDEN, this, Property.OVERFLOW_Y)) {
             List<IRenderer> selectedOptions = getSelectedOptions(this);
             IRenderer firstSelectedOption;
-            if (!selectedOptions.isEmpty() && (firstSelectedOption = selectedOptions.get(0)).getOccupiedArea() != null) {
+            if (!selectedOptions.isEmpty() &&
+                    (firstSelectedOption = selectedOptions.get(0)).getOccupiedArea() != null) {
                 Rectangle borderAreaBBox = getBorderAreaBBox();
                 Rectangle optionBBox = firstSelectedOption.getOccupiedArea().getBBox().clone();
                 if (firstSelectedOption instanceof AbstractRenderer) {
@@ -144,7 +147,8 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
             Paragraph pStub = new Paragraph("\u00A0").setMargin(0);
             pStub.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
             pStub.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
-            pStub.setProperty(FormProperty.FORM_FIELD_SELECTED, false); // applying this property for the sake of finding this element as option
+            // applying this property for the sake of finding this element as option
+            pStub.setProperty(FormProperty.FORM_FIELD_SELECTED, false);
             optionsContainer.add(pStub);
             rendererSubTree = optionsContainer.createRendererSubTree();
         } else {
@@ -198,7 +202,8 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         if (maxOptionActualHeight == Float.MIN_VALUE) {
             UnitValue fontSize = flatRenderer.<UnitValue>getProperty(Property.FONT_SIZE);
             if (fontSize != null && fontSize.isPointValue()) {
-                maxOptionActualHeight = fontSize.getValue() * 1.2f; // according to default styles for options (min-height: 1.2em)
+                // according to default styles for options (min-height: 1.2em)
+                maxOptionActualHeight = fontSize.getValue() * 1.2f;
             } else {
                 maxOptionActualHeight = 0;
             }
@@ -255,7 +260,8 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
     }
 
     /**
-     * The `select` tag has default color css property, therefore it makes sense to explicitly override this property to all children,
+     * The `select` tag has default color css property,
+     * therefore it makes sense to explicitly override this property to all children,
      * otherwise it will be not applied due to the css resolving mechanism.
      */
     private void setFontColorRecursively(IRenderer selectedOption) {

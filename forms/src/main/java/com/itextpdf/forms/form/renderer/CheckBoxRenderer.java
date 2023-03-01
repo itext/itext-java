@@ -149,7 +149,8 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
                 Rectangle rectangle = getInnerAreaBBox();
                 canvas.saveState();
                 canvas.setFillColor(ColorConstants.BLACK);
-                DrawingUtil.drawPdfACheck(canvas, rectangle.getWidth(), rectangle.getHeight(), rectangle.getLeft(), rectangle.getBottom());
+                DrawingUtil.drawPdfACheck(canvas, rectangle.getWidth(), rectangle.getHeight(),
+                        rectangle.getLeft(), rectangle.getBottom());
                 canvas.restoreState();
             }
         }

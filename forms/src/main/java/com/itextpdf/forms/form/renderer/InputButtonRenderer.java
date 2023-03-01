@@ -62,9 +62,9 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 /**
@@ -100,7 +100,14 @@ public class InputButtonRenderer extends AbstractOneLineTextFieldRenderer {
         List<LineRenderer> flatLines = ((ParagraphRenderer) flatRenderer).getLines();
         Rectangle flatBBox = flatRenderer.getOccupiedArea().getBBox();
         updatePdfFont((ParagraphRenderer) flatRenderer);
-        if (!flatLines.isEmpty() && font != null) {
+        if (flatLines.isEmpty() || font == null) {
+            LoggerFactory.getLogger(getClass()).error(
+                    MessageFormatUtil.format(
+                            FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD_WITH_TYPE,
+                            "button"));
+            setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flatBBox.setY(flatBBox.getTop()).setHeight(0);
+        } else {
             if (flatLines.size() != 1) {
                 isSplit = true;
             }
@@ -111,13 +118,6 @@ public class InputButtonRenderer extends AbstractOneLineTextFieldRenderer {
                 drawnLine.move(flatBBox.getX() - drawnLine.getOccupiedArea().getBBox().getX(), 0);
                 flatBBox.setWidth(drawnLine.getOccupiedArea().getBBox().getWidth());
             }
-        } else {
-            LoggerFactory.getLogger(getClass()).error(
-                    MessageFormatUtil.format(
-                            FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD_WITH_TYPE,
-                            "button"));
-            setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flatBBox.setY(flatBBox.getTop()).setHeight(0);
         }
     }
 

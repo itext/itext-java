@@ -45,7 +45,7 @@ package com.itextpdf.forms.form.element;
 import com.itextpdf.layout.element.IBlockElement;
 
 /**
- * Common interface for HTML form elements
+ * Common interface for HTML form elements.
  */
 public interface IFormField extends IBlockElement {
 

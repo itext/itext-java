@@ -53,7 +53,7 @@ import com.itextpdf.layout.element.AbstractElement;
 public abstract class FormField<T extends IFormField> extends AbstractElement<T> implements IFormField {
 
     /** The id. */
-    private String id;
+    private final String id;
 
     /**
      * Instantiates a new {@link FormField} instance.

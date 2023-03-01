@@ -149,7 +149,8 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
             radioGroup.setValue(getModelId());
         }
 
-        PdfFormField radio = new RadioFormFieldBuilder(doc).setWidgetRectangle(area).createRadioButton(radioGroup, getModelId());
+        PdfFormField radio =
+                new RadioFormFieldBuilder(doc).setWidgetRectangle(area).createRadioButton(radioGroup, getModelId());
         radio.setCheckType(PdfFormField.TYPE_CIRCLE);
 
         if (addNew) {
@@ -182,7 +183,8 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
             DrawingUtil.drawCircle(canvas, rectangle.getLeft() + radius, rectangle.getBottom() + radius, radius);
             if (isBoxChecked()) {
                 canvas.setFillColor(DEFAULT_CHECKED_COLOR);
-                DrawingUtil.drawCircle(canvas, rectangle.getLeft() + radius, rectangle.getBottom() + radius, radius / 2);
+                DrawingUtil.drawCircle(
+                        canvas, rectangle.getLeft() + radius, rectangle.getBottom() + radius, radius / 2);
             }
             canvas.restoreState();
         }

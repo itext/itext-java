@@ -46,7 +46,7 @@ import com.itextpdf.forms.form.renderer.InputButtonRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
 /**
- * Extension of the {@link FormField} class representing a input with type button or submit in html
+ * Extension of the {@link FormField} class representing a input with type button or submit in html.
  */
 public class InputButton extends FormField<InputButton> {
 

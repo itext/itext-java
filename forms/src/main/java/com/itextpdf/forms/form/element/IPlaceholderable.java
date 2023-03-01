@@ -45,7 +45,7 @@ package com.itextpdf.forms.form.element;
 import com.itextpdf.layout.element.Paragraph;
 
 /**
- * A marker interface that specifies that the layout object has placeholder
+ * A marker interface that specifies that the layout object has placeholder.
  */
 public interface IPlaceholderable {
 

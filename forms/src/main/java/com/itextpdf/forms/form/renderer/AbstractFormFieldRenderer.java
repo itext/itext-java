@@ -92,7 +92,8 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      */
     public boolean isFlatten() {
         Boolean flatten = getPropertyAsBoolean(FormProperty.FORM_FIELD_FLATTEN);
-        return flatten != null ? (boolean) flatten : (boolean) modelElement.<Boolean>getDefaultProperty(FormProperty.FORM_FIELD_FLATTEN);
+        return flatten == null ?
+                (boolean) modelElement.<Boolean>getDefaultProperty(FormProperty.FORM_FIELD_FLATTEN) : (boolean) flatten;
     }
 
     /**
@@ -102,7 +103,8 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      */
     public String getDefaultValue() {
         String defaultValue = this.<String>getProperty(FormProperty.FORM_FIELD_VALUE);
-        return defaultValue != null ? defaultValue : modelElement.<String>getDefaultProperty(FormProperty.FORM_FIELD_VALUE);
+        return defaultValue == null ?
+                modelElement.<String>getDefaultProperty(FormProperty.FORM_FIELD_VALUE) : defaultValue;
     }
 
     /* (non-Javadoc)
@@ -125,7 +127,10 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         layoutContext.getArea().setBBox(bBox);
         LayoutResult result = super.layout(layoutContext);
 
-        if (!childRenderers.isEmpty()) {
+        if (childRenderers.isEmpty()) {
+            LoggerFactory.getLogger(getClass()).error(FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD);
+            occupiedArea.getBBox().setWidth(0).setHeight(0);
+        } else {
             flatRenderer = childRenderers.get(0);
             processLangAttribute();
             childRenderers.clear();
@@ -139,9 +144,6 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
             }
-        } else {
-            LoggerFactory.getLogger(getClass()).error(FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD);
-            occupiedArea.getBBox().setWidth(0).setHeight(0);
         }
         if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && !isRendererFit(parentWidth,
                 parentHeight)) {
@@ -238,7 +240,8 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         }
         return availableHeight >= occupiedArea.getBBox().getHeight() &&
                 ((availableWidth >= occupiedArea.getBBox().getWidth()) ||
-                        (this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X) == OverflowPropertyValue.VISIBLE));
+                        (this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X)
+                                == OverflowPropertyValue.VISIBLE));
     }
 
     /**

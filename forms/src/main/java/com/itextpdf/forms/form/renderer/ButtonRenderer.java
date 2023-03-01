@@ -156,7 +156,8 @@ public class ButtonRenderer extends BlockRenderer {
      */
     public boolean isFlatten() {
         Boolean flatten = getPropertyAsBoolean(FormProperty.FORM_FIELD_FLATTEN);
-        return flatten != null ? (boolean) flatten : (boolean) modelElement.<Boolean>getDefaultProperty(FormProperty.FORM_FIELD_FLATTEN);
+        return flatten == null ?
+                (boolean) modelElement.<Boolean>getDefaultProperty(FormProperty.FORM_FIELD_FLATTEN) : (boolean) flatten;
     }
 
     /**
@@ -166,6 +167,7 @@ public class ButtonRenderer extends BlockRenderer {
      */
     public String getDefaultValue() {
         String defaultValue = this.<String>getProperty(FormProperty.FORM_FIELD_VALUE);
-        return defaultValue != null ? defaultValue : modelElement.<String>getDefaultProperty(FormProperty.FORM_FIELD_VALUE);
+        return defaultValue == null ?
+                modelElement.<String>getDefaultProperty(FormProperty.FORM_FIELD_VALUE) : defaultValue;
     }
 }
