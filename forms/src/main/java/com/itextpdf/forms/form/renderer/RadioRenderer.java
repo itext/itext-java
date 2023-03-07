@@ -44,6 +44,7 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.util.DrawingUtil;
@@ -149,9 +150,10 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
             radioGroup.setValue(getModelId());
         }
 
-        PdfFormField radio =
-                new RadioFormFieldBuilder(doc).setWidgetRectangle(area).createRadioButton(radioGroup, getModelId());
-        radio.setCheckType(PdfFormField.TYPE_CIRCLE);
+        PdfFormAnnotation radio =
+                new RadioFormFieldBuilder(doc, null).createRadioButton( getModelId(), area);
+        radioGroup.addKid(radio);
+        radioGroup.setCheckType(PdfFormField.TYPE_CIRCLE);
 
         if (addNew) {
             form.addField(radioGroup, page);

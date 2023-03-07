@@ -284,7 +284,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      */
     @Override
     public boolean regenerateField() {
-        parent.updateDefaultAppearance();
+        if (parent != null){
+            parent.updateDefaultAppearance();
+        }
         return regenerateWidget();
     }
 
@@ -697,7 +699,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (value != null) {
             PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
             PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-
             drawRadioBorder(canvasOn, xObjectOn, width, height);
             drawRadioField(canvasOn, width, height, true);
 
@@ -1251,6 +1252,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     boolean regenerateWidget() {
+        if (parent == null) {
+            return true;
+        }
         final PdfName type = parent.getFormType();
 
         if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {

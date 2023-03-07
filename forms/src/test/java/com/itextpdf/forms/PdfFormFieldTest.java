@@ -300,12 +300,17 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "TestGroup")
-                .createRadioGroup();
+
+        String formFieldName = "TestGroup";
+        RadioFormFieldBuilder builder =    new RadioFormFieldBuilder(pdfDoc, formFieldName);
+        PdfButtonFormField group = builder.createRadioGroup();
         group.setValue("1", true);
 
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect).createRadioButton(group, "1");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group, "2");
+        PdfFormAnnotation radio1 = builder.createRadioButton("1", rect);
+        PdfFormAnnotation radio2 = builder.createRadioButton("2", rect1);
+
+        group.addKid(radio1);
+        group.addKid(radio2);
 
         form.addField(group);
 
@@ -339,12 +344,13 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "TestGroup")
-                .createRadioGroup();
+        String formFieldName = "TestGroup";
+        RadioFormFieldBuilder builder =new RadioFormFieldBuilder(pdfDoc, formFieldName);
+        PdfButtonFormField group = builder.createRadioGroup();
         group.setValue("1", true);
 
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group, "1");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group, "2");
+        group.addKid(builder.createRadioButton("1",rect1));
+        group.addKid(builder.createRadioButton("2", rect2));
 
         form.addField(group);
 
@@ -365,20 +371,22 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group2 = new RadioFormFieldBuilder(pdfDoc, "TestGroup2")
-                .createRadioGroup();
+        String formFieldName2 = "TestGroup2";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, formFieldName2);
+        PdfButtonFormField group2 =builder.createRadioGroup();
         group2.setValue("1", true);
 
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group2, "1")
-                .getFirstFormAnnotation()
+        PdfFormAnnotation radio1 =builder
+                .createRadioButton("1", rect1)
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormAnnotation.VISIBLE);
+        group2.addKid(radio1);
 
-
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group2, "2")
-                .getFirstFormAnnotation()
+        PdfFormAnnotation radio2 = new RadioFormFieldBuilder(pdfDoc, formFieldName2)
+                .createRadioButton("2",rect2)
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormAnnotation.VISIBLE);
+        group2.addKid(radio2);
 
         form.addField(group2);
 
@@ -399,20 +407,23 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group2 = new RadioFormFieldBuilder(pdfDoc, "TestGroup2")
-                .createRadioGroup();
+        String formFieldName2 = "TestGroup2";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, formFieldName2);
+        PdfButtonFormField group2 = builder.createRadioGroup();
         group2.setValue("1", true);
 
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group2, "1")
-                .getFirstFormAnnotation()
+        PdfFormAnnotation radio1 = builder
+                .createRadioButton("1", rect1)
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormAnnotation.VISIBLE);
 
-
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect2).createRadioButton(group2, "2")
-                .getFirstFormAnnotation()
+        PdfFormAnnotation radio2 = builder
+                .createRadioButton("2",rect2)
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormAnnotation.VISIBLE);
+
+        group2.addKid(radio1);
+        group2.addKid(radio2);
 
         group2.regenerateField();
         form.addField(group2);
@@ -1123,14 +1134,21 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         // push button
         form.addField(new PushButtonFormFieldBuilder(pdfDoc, "push button")
                 .setWidgetRectangle(new Rectangle(36, 526, 80, 20)).setCaption("push").createPushButton());
+
         // radio button
-        PdfButtonFormField radioGroup = new RadioFormFieldBuilder(pdfDoc, "radio group")
-                .createRadioGroup();
+        String formFieldName = "radio group";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, formFieldName);
+        PdfButtonFormField radioGroup = builder.createRadioGroup();
         radioGroup.setValue("1", true);
-        form.addField(new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(36, 496, 20, 20))
-                .createRadioButton(radioGroup, "1").setFieldName("radio 1"));
-        form.addField(new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(66, 496, 20, 20))
-                .createRadioButton(radioGroup, "2").setFieldName("radio 2"));
+
+        PdfFormAnnotation radio1 = builder
+                .createRadioButton("1", new Rectangle(36, 496, 20, 20));
+        radioGroup.addKid(radio1);
+
+        PdfFormAnnotation radio2 =builder
+                .createRadioButton( "2", new Rectangle(66, 496, 20, 20));
+        radioGroup.addKid(radio2);
+        form.addField(radioGroup);
         // signature
         PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").createSignature().setValue("Signature");
         signField.setFontSize(20);

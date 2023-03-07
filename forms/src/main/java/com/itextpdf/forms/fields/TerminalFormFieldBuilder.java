@@ -107,4 +107,9 @@ public abstract class TerminalFormFieldBuilder<T extends TerminalFormFieldBuilde
             field.getFirstFormAnnotation().setPage(page);
         }
     }
+    void setPageToField(PdfFormAnnotation field) {
+        if (page != 0) {
+            field.setPage(page);
+        }
+    }
 }

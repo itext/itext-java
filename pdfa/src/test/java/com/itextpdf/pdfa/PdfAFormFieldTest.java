@@ -190,15 +190,15 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             Rectangle bbox = getInnerAreaBBox();
             PdfDocument pdf = context.getDocument();
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdf, true);
-            PdfFormField chk = new RadioFormFieldBuilder(pdf).setWidgetRectangle(bbox)
-                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton(_group, _value);
-            PdfFormAnnotation annotation = chk.getFirstFormAnnotation();
-            annotation.setPage(pageNumber);
+            PdfFormAnnotation chk = new RadioFormFieldBuilder(pdf, "")
+                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton( _value, bbox);
+            _group.addKid(chk);
+            chk.setPage(pageNumber);
 
-            annotation.setVisibility(PdfFormAnnotation.VISIBLE);
-            annotation.setBorderColor(ColorConstants.BLACK);
-            annotation.setBackgroundColor(ColorConstants.WHITE);
-            chk.setReadOnly(true);
+            chk.setVisibility(PdfFormAnnotation.VISIBLE);
+            chk.setBorderColor(ColorConstants.BLACK);
+            chk.setBackgroundColor(ColorConstants.WHITE);
+            _group.setReadOnly(true);
 
             PdfFormXObject appearance = new PdfFormXObject(bbox);
             PdfCanvas canvas = new PdfCanvas(appearance, pdf);
@@ -213,9 +213,9 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                     .stroke()
                     .restoreState();
 
-            form.addFieldAppearanceToPage(chk, pdf.getPage(pageNumber));
+            //form.addFieldAppearanceToPage(chk, pdf.getPage(pageNumber));
             //appearance stream was set, while AS has kept as is, i.e. in Off state.
-            annotation.setAppearance(PdfName.N, "v1".equals(_value) ? _value : "Off", appearance.getPdfObject());
+            chk.setAppearance(PdfName.N, "v1".equals(_value) ? _value : "Off", appearance.getPdfObject());
         }
 
         @Override
@@ -423,15 +423,20 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfButtonFormField radioGroup = new RadioFormFieldBuilder(pdfDoc, "radio group").setConformanceLevel(conformanceLevel)
+        String pdfFormFieldName = "radio group";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, pdfFormFieldName).setConformanceLevel(conformanceLevel);
+        PdfButtonFormField radioGroup = builder.setConformanceLevel(conformanceLevel)
                 .createRadioGroup();
         radioGroup.setValue("");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(36, 496, 20, 20))
-                .setConformanceLevel(conformanceLevel).createRadioButton(radioGroup, "1")
-                .getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(66, 496, 20, 20))
-                .setConformanceLevel(conformanceLevel).createRadioButton(radioGroup, "2")
-                .getFirstFormAnnotation().setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
+        PdfFormAnnotation radio1 = builder
+                .createRadioButton("1",new Rectangle(36, 496, 20, 20))
+                .setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
+        PdfFormAnnotation radio2 = builder
+                .createRadioButton("2",new Rectangle(66, 496, 20, 20))
+                .setBorderWidth(2).setBorderColor(ColorConstants.ORANGE);
+
+        radioGroup.addKid(radio1);
+        radioGroup.addKid(radio2);
 
         form.addField(radioGroup);
 

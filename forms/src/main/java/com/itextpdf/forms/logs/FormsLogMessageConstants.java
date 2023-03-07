@@ -56,6 +56,8 @@ public final class FormsLogMessageConstants {
 
     public static final String N_ENTRY_IS_REQUIRED_FOR_APPEARANCE_DICTIONARY =
             "\\N entry is required to be present in an appearance dictionary.";
+    public static final String RADIO_HAS_NO_RECTANGLE = "Radiobutton was added without defining rectangle, it will "
+            + "not be displayed";
 
     public static final String NO_FIELDS_IN_ACROFORM =
             "Required AcroForm entry /Fields does not exist in the document. Empty array /Fields will be created.";

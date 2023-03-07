@@ -250,7 +250,9 @@ public class PdfFormField extends AbstractPdfFormField {
         this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
         widget.makeIndirect(pdfDocument);
         addKid(widget);
-        put(PdfName.FT, getFormType());
+        if (getFormType() != null) {
+            put(PdfName.FT, getFormType());
+        }
     }
 
     /**

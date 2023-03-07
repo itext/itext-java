@@ -43,7 +43,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
@@ -129,11 +129,17 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         textField2.setValue("Enter your surname");
         form.addField(textField2);
 
-        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "Sex")
-                .createRadioGroup();
+        String sexFormFieldName = "Sex";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, sexFormFieldName);
+        PdfButtonFormField group = builder.createRadioGroup();
         group.setValue("Male");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(100, 530, 10, 10)).createRadioButton(group, "Male");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(120, 530, 10, 10)).createRadioButton(group, "Female");
+        PdfFormAnnotation radio1 = builder
+                .createRadioButton( "Male",new Rectangle(100, 530, 10, 10));
+        PdfFormAnnotation radio2 = builder
+                .createRadioButton( "Female",  new Rectangle(120, 530, 10, 10));
+        group.addKid(radio1);
+        group.addKid(radio2);
+
         form.addField(group);
 
         pdfDoc.close();
@@ -169,11 +175,18 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         textField2.setValue("Enter your surname");
         form.addField(textField2);
 
-        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "Sex")
-                .createRadioGroup();
+        String sexFormFieldName = "Sex";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, sexFormFieldName);
+        PdfButtonFormField group = builder.createRadioGroup();
         group.setValue("Male");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(100, 530, 10, 10)).createRadioButton(group, "Male");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(new Rectangle(120, 530, 10, 10)).createRadioButton(group, "Female");
+        PdfFormAnnotation radio1 = new RadioFormFieldBuilder(pdfDoc, sexFormFieldName)
+                .createRadioButton("Male",new Rectangle(100, 530, 10, 10));
+        PdfFormAnnotation radio2 = new RadioFormFieldBuilder(pdfDoc, sexFormFieldName)
+                .createRadioButton( "Female",new Rectangle(120, 530, 10, 10));
+
+        group.addKid(radio1);
+        group.addKid(radio2);
+
         form.addField(group);
 
         pdfDoc.close();

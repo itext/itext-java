@@ -22,9 +22,11 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
@@ -36,22 +38,13 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
     /**
      * Creates builder for radio form field creation.
      *
-     * @param document document to be used for form field creation
-     * @param formFieldName name of the form field
+     * @param document      document to be used for form field creation
+     * @param radioGroupFormFieldName name of the form field
      */
-    public RadioFormFieldBuilder(PdfDocument document, String formFieldName) {
-        super(document, formFieldName);
+    public RadioFormFieldBuilder(PdfDocument document, String radioGroupFormFieldName) {
+        super(document, radioGroupFormFieldName);
     }
 
-    // TODO DEVSIX-6319 Remove this constructor when radio buttons will become widgets instead of form fields.
-    /**
-     * Creates builder for radio button creation.
-     *
-     * @param document document to be used for form field creation
-     */
-    public RadioFormFieldBuilder(PdfDocument document) {
-        super(document, null);
-    }
 
     /**
      * Creates radio group form field instance based on provided parameters.
@@ -59,47 +52,42 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
      * @return new {@link PdfButtonFormField} instance
      */
     public PdfButtonFormField createRadioGroup() {
-        PdfButtonFormField radio = new PdfButtonFormField(getDocument());
-        radio.pdfAConformanceLevel = getConformanceLevel();
-        radio.setFieldName(getFormFieldName());
-        radio.setFieldFlags(PdfButtonFormField.FF_RADIO);
-        return radio;
+        PdfButtonFormField radioGroup = new PdfButtonFormField(getDocument());
+        radioGroup.pdfAConformanceLevel = getConformanceLevel();
+        radioGroup.setFieldName(getFormFieldName());
+        radioGroup.setFieldFlags(PdfButtonFormField.FF_RADIO);
+        return radioGroup;
     }
 
     /**
      * Creates radio button form field instance based on provided parameters.
      *
-     * @param radioGroup radio group to which new radio button will be added
      * @param appearanceName name of the "on" appearance state.
+     * @param rectangle the place where the widget should be placed.
+     *
      * @return new radio button instance
      */
-    public PdfFormField createRadioButton(PdfButtonFormField radioGroup, String appearanceName) {
-        PdfFormField radio;
-        if (getWidgetRectangle() == null) {
-            radio = new PdfButtonFormField(getDocument());
-        } else {
-            PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            if (null != getConformanceLevel()) {
-                annotation.setFlag(PdfAnnotation.PRINT);
-            }
-            PdfObject radioGroupValue = radioGroup.getValue();
-            PdfName appearanceState = new PdfName(appearanceName);
-            if (appearanceState.equals(radioGroupValue)) {
-                annotation.setAppearanceState(appearanceState);
-            } else {
-                annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
-            }
-            radio = new PdfButtonFormField(annotation, getDocument());
+    public PdfFormAnnotation createRadioButton(String appearanceName, Rectangle rectangle) {
+        if (appearanceName == null) {
+            throw new PdfException(FormsExceptionMessageConstant.APEARANCE_NAME_MUST_BE_PROVIDED);
         }
+        Rectangle widgetRectangle = getWidgetRectangle();
+        if (rectangle != null) {
+            widgetRectangle = rectangle;
+        }
+        if (widgetRectangle == null) {
+            throw new PdfException(FormsExceptionMessageConstant.WIDGET_RECTANGLE_MUST_BE_PROVIDED);
+        }
+
+        final PdfName appearancePdfName = new PdfName(appearanceName);
+        final PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(widgetRectangle);
+        annotation.setAppearanceState(appearancePdfName);
+        if (getConformanceLevel() != null) {
+            annotation.setFlag(PdfAnnotation.PRINT);
+        }
+        PdfFormAnnotation radio = new PdfFormAnnotation(annotation, getDocument());
+        setPageToField(radio);
         radio.pdfAConformanceLevel = getConformanceLevel();
-
-        if (getWidgetRectangle() != null) {
-            radio.getFirstFormAnnotation().drawRadioAppearance(
-                    getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight(), appearanceName);
-            setPageToField(radio);
-        }
-
-        radioGroup.addKid(radio);
         return radio;
     }
 

@@ -44,7 +44,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -236,12 +236,14 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = new RadioFormFieldBuilder(pdfDoc, "TestGroup")
-                .createRadioGroup();
+        String formFieldName = "TestGroup";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, formFieldName);
+        PdfButtonFormField group = builder.createRadioGroup();
         group.setValue("1", true);
 
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect).createRadioButton(group, "1");
-        new RadioFormFieldBuilder(pdfDoc).setWidgetRectangle(rect1).createRadioButton(group, "2");
+        group.addKid(builder.createRadioButton("1", rect));
+        group.addKid(builder.createRadioButton("2", rect1));
+
 
         acroForm.addField(group);
 

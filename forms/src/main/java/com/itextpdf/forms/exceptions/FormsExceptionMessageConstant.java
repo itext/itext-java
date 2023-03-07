@@ -41,6 +41,8 @@ public final class FormsExceptionMessageConstant {
     
     public static final String FORM_FIELD_MUST_HAVE_A_NAME = "Form field must have a name."
             + " Set it using PdfFormField#setFieldName call.";
+    public static final String APEARANCE_NAME_MUST_BE_PROVIDED = "Appearance name must be provided";
+    public static final String WIDGET_RECTANGLE_MUST_BE_PROVIDED = "Widget rectangle must be provided";
 
     private FormsExceptionMessageConstant(){}
 }

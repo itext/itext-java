@@ -44,7 +44,9 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -54,12 +56,15 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An interactive control on the screen that raises events and/or can retain data.
  */
 public class PdfButtonFormField extends PdfFormField {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfButtonFormField.class);
     /**
      * Button field flags
      */
@@ -82,7 +87,7 @@ public class PdfButtonFormField extends PdfFormField {
 
     /**
      * Returns <code>Btn</code>, the form type for choice form fields.
-     * 
+     *
      * @return the form type, as a {@link PdfName}
      */
     @Override
@@ -93,6 +98,7 @@ public class PdfButtonFormField extends PdfFormField {
     /**
      * If true, the field is a set of radio buttons; if false, the field is a
      * check box. This flag only works if the Pushbutton flag is set to false.
+     *
      * @return whether the field is currently radio buttons or a checkbox
      */
     public boolean isRadio() {
@@ -102,7 +108,9 @@ public class PdfButtonFormField extends PdfFormField {
     /**
      * If true, the field is a set of radio buttons; if false, the field is a
      * check box. This flag should be set only if the Pushbutton flag is set to false.
+     *
      * @param radio whether the field should be radio buttons or a checkbox
+     *
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setRadio(boolean radio) {
@@ -113,6 +121,7 @@ public class PdfButtonFormField extends PdfFormField {
      * If true, clicking the selected button deselects it, leaving no button
      * selected. If false, exactly one radio button shall be selected at all
      * times. Only valid for radio buttons.
+     *
      * @return whether a radio button currently allows to choose no options
      */
     public boolean isToggleOff() {
@@ -122,7 +131,9 @@ public class PdfButtonFormField extends PdfFormField {
     /**
      * If true, clicking the selected button deselects it, leaving no button selected.
      * If false, exactly one radio button shall be selected at all times.
+     *
      * @param toggleOff whether a radio button may allow to choose no options
+     *
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setToggleOff(boolean toggleOff) {
@@ -131,6 +142,7 @@ public class PdfButtonFormField extends PdfFormField {
 
     /**
      * If true, the field is a pushbutton that does not retain a permanent value.
+     *
      * @return whether or not the field is currently a pushbutton
      */
     public boolean isPushButton() {
@@ -139,7 +151,9 @@ public class PdfButtonFormField extends PdfFormField {
 
     /**
      * If true, the field is a pushbutton that does not retain a permanent value.
+     *
      * @param pushButton whether or not to set the field to a pushbutton
+     *
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setPushButton(boolean pushButton) {
@@ -151,6 +165,7 @@ public class PdfButtonFormField extends PdfFormField {
      * the same value for the on state will turn on and off in unison;
      * that is if one is checked, they are all checked.
      * If false, the buttons are mutually exclusive
+     *
      * @return whether or not buttons are turned off in unison
      */
     public boolean isRadiosInUnison() {
@@ -162,7 +177,9 @@ public class PdfButtonFormField extends PdfFormField {
      * the same value for the on state will turn on and off in unison; that is
      * if one is checked, they are all checked.
      * If false, the buttons are mutually exclusive
+     *
      * @param radiosInUnison whether or not buttons should turn off in unison
+     *
      * @return current {@link PdfButtonFormField}
      */
     public PdfButtonFormField setRadiosInUnison(boolean radiosInUnison) {
@@ -179,5 +196,26 @@ public class PdfButtonFormField extends PdfFormField {
         this.form = form;
         regenerateField();
         return this;
+    }
+
+
+    @Override
+    public PdfFormField addKid(AbstractPdfFormField kid) {
+        if (isRadio() && kid instanceof PdfFormAnnotation) {
+            final PdfFormAnnotation kidAsFormAnnotation = (PdfFormAnnotation) kid;
+            // annotation will always be an object because of the assert in getWidget
+            final PdfWidgetAnnotation annotation = kidAsFormAnnotation.getWidget();
+            final PdfName appearanceState = annotation.getPdfObject().getAsName(PdfName.AS);
+            if (!appearanceState.equals(getValue())) {
+                annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
+            }
+            if (annotation.getRectangle() == null) {
+                LOGGER.warn(FormsLogMessageConstants.RADIO_HAS_NO_RECTANGLE);
+                return super.addKid(kid);
+            }
+            final Rectangle r = annotation.getRectangle().toRectangle();
+            kidAsFormAnnotation.drawRadioAppearance(r.getWidth(), r.getHeight(), appearanceState.getValue());
+        }
+        return super.addKid(kid);
     }
 }
