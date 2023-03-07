@@ -102,8 +102,6 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      */
     private static final int DA_COLOR = 2;
 
-    private static final Set<PdfName> formFieldKeys = new HashSet<PdfName>();
-
     protected PdfFont font;
     protected float fontSize = -1;
     protected Color color;

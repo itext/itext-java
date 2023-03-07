@@ -46,6 +46,7 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -74,6 +75,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 
 import org.slf4j.Logger;
@@ -113,37 +115,19 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public static final int FF_PASSWORD = makeFieldFlag(14);
 
-    public static final int ALIGN_LEFT = 0;
-    public static final int ALIGN_CENTER = 1;
-    public static final int ALIGN_RIGHT = 2;
-
     /**
-     * A field with the symbol check
+     * The ReadOnly flag, which specifies whether or not the field can be changed.
      */
-    public static final int TYPE_CHECK = 1;
-    /**
-     * A field with the symbol circle
-     */
-    public static final int TYPE_CIRCLE = 2;
-    /**
-     * A field with the symbol cross
-     */
-    public static final int TYPE_CROSS = 3;
-    /**
-     * A field with the symbol diamond
-     */
-    public static final int TYPE_DIAMOND = 4;
-    /**
-     * A field with the symbol square
-     */
-    public static final int TYPE_SQUARE = 5;
-    /**
-     * A field with the symbol star
-     */
-    public static final int TYPE_STAR = 6;
-
     public static final int FF_READ_ONLY = makeFieldFlag(1);
+
+    /**
+     * The Required flag, which specifies whether or not the field must be filled in.
+     */
     public static final int FF_REQUIRED = makeFieldFlag(2);
+
+    /**
+     * The NoExport flag, which specifies whether or not exporting is forbidden.
+     */
     public static final int FF_NO_EXPORT = makeFieldFlag(3);
 
     /**
@@ -157,8 +141,11 @@ public class PdfFormField extends AbstractPdfFormField {
 
     protected String text;
     protected ImageData img;
-    protected int checkType;
     protected PdfFormXObject form;
+
+    protected CheckBoxType checkType = CheckBoxType.CROSS;
+
+    private List<AbstractPdfFormField> childFields = new ArrayList<>();
 
     static {
         FORM_FIELD_KEYS.add(PdfName.FT);
@@ -184,8 +171,6 @@ public class PdfFormField extends AbstractPdfFormField {
         FORM_FIELD_KEYS.add(PdfName.Lock);
         FORM_FIELD_KEYS.add(PdfName.SV);
     }
-
-    private List<AbstractPdfFormField> childFields = new ArrayList<>();
 
     /**
      * Creates a form field as a wrapper object around a {@link PdfDictionary}.
@@ -1006,12 +991,12 @@ public class PdfFormField extends AbstractPdfFormField {
      *
      * @return the current justification attribute.
      */
-    public Integer getJustification() {
+    public HorizontalAlignment getJustification() {
         Integer justification = getPdfObject().getAsInt(PdfName.Q);
         if (justification == null && getParent() != null) {
             justification = getParent().getAsInt(PdfName.Q);
         }
-        return justification;
+        return justification == null ? null : numberToHorizontalAlignment((int) justification);
     }
 
     /**
@@ -1023,8 +1008,8 @@ public class PdfFormField extends AbstractPdfFormField {
      * @param justification the value to set the justification attribute to.
      * @return the edited {@link PdfFormField}.
      */
-    public PdfFormField setJustification(int justification) {
-        put(PdfName.Q, new PdfNumber(justification));
+    public PdfFormField setJustification(HorizontalAlignment justification) {
+        put(PdfName.Q, new PdfNumber(justification.ordinal()));
         regenerateField();
         return this;
     }
@@ -1079,12 +1064,12 @@ public class PdfFormField extends AbstractPdfFormField {
      * @param checkType the new checkbox marker.
      * @return the edited {@link PdfFormField}.
      */
-    public PdfFormField setCheckType(int checkType) {
-        if (checkType < TYPE_CHECK || checkType > TYPE_STAR) {
-            checkType = TYPE_CROSS;
+    public PdfFormField setCheckType(CheckBoxType checkType) {
+        if (checkType == null) {
+            checkType = CheckBoxType.CROSS;
         }
         this.checkType = checkType;
-        text = CHECKBOX_TYPE_ZAPFDINGBATS_CODE[checkType - 1];
+        text = CHECKBOX_TYPE_ZAPFDINGBATS_CODE[checkType.ordinal()];
         if (getPdfAConformanceLevel() != null) {
             return this;
         }
@@ -1278,15 +1263,15 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     TextAlignment convertJustificationToTextAlignment() {
-        Integer justification = getJustification();
-        if (justification == null) {
-            justification = 0;
-        }
-        TextAlignment textAlignment = TextAlignment.LEFT;
-        if (justification == ALIGN_RIGHT) {
+        HorizontalAlignment justification = getJustification();
+        
+        TextAlignment textAlignment;
+        if (justification == HorizontalAlignment.RIGHT) {
             textAlignment = TextAlignment.RIGHT;
-        } else if (justification == ALIGN_CENTER) {
+        } else if (justification == HorizontalAlignment.CENTER) {
             textAlignment = TextAlignment.CENTER;
+        } else {
+            textAlignment = TextAlignment.LEFT;
         }
         return textAlignment;
     }
@@ -1380,6 +1365,17 @@ public class PdfFormField extends AbstractPdfFormField {
             }
         }
         return formType;
+    }
+
+    private static HorizontalAlignment numberToHorizontalAlignment(int alignment) {
+        switch (alignment) {
+            case 1:
+                return HorizontalAlignment.CENTER;
+            case 2:
+                return HorizontalAlignment.RIGHT;
+            default:
+                return HorizontalAlignment.LEFT;
+        }
     }
 
     private PdfFormField setFieldValue(String value, boolean generateAppearance) {

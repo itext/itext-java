@@ -47,6 +47,7 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Radio;
@@ -153,7 +154,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfFormAnnotation radio =
                 new RadioFormFieldBuilder(doc, null).createRadioButton( getModelId(), area);
         radioGroup.addKid(radio);
-        radioGroup.setCheckType(PdfFormField.TYPE_CIRCLE);
+        radioGroup.setCheckType(CheckBoxType.CIRCLE);
 
         if (addNew) {
             form.addField(radioGroup, page);

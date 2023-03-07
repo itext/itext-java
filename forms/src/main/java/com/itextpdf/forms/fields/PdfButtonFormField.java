@@ -66,11 +66,29 @@ public class PdfButtonFormField extends PdfFormField {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfButtonFormField.class);
     /**
-     * Button field flags
+     * If true, clicking the selected button deselects it, leaving no button selected.
+     * If false, exactly one radio button shall be selected at all times.
      */
     public static final int FF_NO_TOGGLE_TO_OFF = makeFieldFlag(15);
+
+    /**
+     * If true, the field is a set of radio buttons.
+     * If false, the field is a check box.
+     * This flag should be set only if the {@link PdfButtonFormField#FF_PUSH_BUTTON} flag is set to false.
+     */
     public static final int FF_RADIO = makeFieldFlag(16);
+
+    /**
+     * If true, the field is a push button that does not retain a permanent value.
+     */
     public static final int FF_PUSH_BUTTON = makeFieldFlag(17);
+
+    /**
+     * If true, a group of radio buttons within a radio button field,
+     * that use the same value for the on state will turn on and off in unison.
+     * That is if one is checked, they are all checked.
+     * If false, the buttons are mutually exclusive.
+     */
     public static final int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
 
     protected PdfButtonFormField(PdfDocument pdfDocument) {
@@ -186,12 +204,28 @@ public class PdfButtonFormField extends PdfFormField {
         return (PdfButtonFormField) setFieldFlag(FF_RADIOS_IN_UNISON, radiosInUnison);
     }
 
+    /**
+     * Set image to be used as a background content in a push button.
+     *
+     * @param image path to the image to be used.
+     *
+     * @return this {@link PdfButtonFormField}
+     *
+     * @throws IOException if provided path to the image is not correct
+     */
     public PdfButtonFormField setImage(String image) throws IOException {
         InputStream is = new FileInputStream(image);
         String str = Base64.encodeBytes(StreamUtil.inputStreamToArray(is));
         return (PdfButtonFormField) setValue(str);
     }
 
+    /**
+     * Set image to be used as a background content in a push button as {@link PdfFormXObject}.
+     * 
+     * @param form {@link PdfFormXObject} to be used as an image
+     *
+     * @return this {@link PdfButtonFormField}
+     */
     public PdfButtonFormField setImageAsForm(PdfFormXObject form) {
         this.form = form;
         regenerateField();

@@ -67,13 +67,38 @@ import org.slf4j.Logger;
 public class PdfChoiceFormField extends PdfFormField {
 
     /**
-     * Choice field flags
+     * If true, the field is a combo box.
+     * If false, the field is a list box.
      */
     public static final int FF_COMBO = makeFieldFlag(18);
+
+    /**
+     * If true, the combo box shall include an editable text box as well as a drop-down list.
+     * If false, it shall include only a drop-down list.
+     * This flag shall be used only if the Combo flag is true.
+     */
     public static final int FF_EDIT = makeFieldFlag(19);
+
+    /**
+     * If true, the field's option items shall be sorted alphabetically.
+     * This flag is intended for use by writers, not by readers.
+     */
     public static final int FF_SORT = makeFieldFlag(20);
+
+    /**
+     * If true, more than one of the field's option items may be selected simultaneously.
+     * If false, at most one item shall be selected.
+     */
     public static final int FF_MULTI_SELECT = makeFieldFlag(22);
+
+    /**
+     * If true, text entered in the field shall be spell-checked.
+     */
     public static final int FF_DO_NOT_SPELL_CHECK = makeFieldFlag(23);
+
+    /**
+     * If true, the new value shall be committed as soon as a selection is made (commonly with the pointing device).
+     */
     public static final int FF_COMMIT_ON_SEL_CHANGE = makeFieldFlag(27);
 
     protected PdfChoiceFormField(PdfDocument pdfDocument) {
@@ -102,6 +127,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * Sets the index of the first visible option in a scrollable list.
      *
      * @param index the index of the first option
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setTopIndex(int index) {
@@ -112,6 +138,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * Gets the current index of the first option in a scrollable list.
+     *
      * @return the index of the first option, as a {@link PdfNumber}
      */
     public PdfNumber getTopIndex() {
@@ -122,6 +149,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * Sets the selected items in the field.
      *
      * @param indices a sorted array of indices representing selected items in the field
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setIndices(PdfArray indices) {
@@ -132,7 +160,9 @@ public class PdfChoiceFormField extends PdfFormField {
     /**
      * Highlights the options. If this method is used for Combo box, the first value in input array
      * will be the field value
+     *
      * @param optionValues Array of options to be highlighted
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(String[] optionValues) {
@@ -140,10 +170,12 @@ public class PdfChoiceFormField extends PdfFormField {
     }
 
     /**
-     * Highlights the options and generates field appearance if needed.. If this method is used for Combo box, the first value in input array
-     * will be the field value
-     * @param optionValues Array of options to be highlighted
+     * Highlights the options and generates field appearance if needed. If this method is used for Combo box,
+     * the first value in input array will be the field value
+     *
+     * @param optionValues       Array of options to be highlighted
      * @param generateAppearance if false, appearance won't be regenerated
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(String[] optionValues, boolean generateAppearance) {
@@ -194,8 +226,10 @@ public class PdfChoiceFormField extends PdfFormField {
     /**
      * Highlights the options. If this method is used for Combo box, the first value in input array
      * will be the field value
+     *
      * @param optionNumbers The option numbers
-     * @return              The edited {@link PdfChoiceFormField}
+     *
+     * @return The edited {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setListSelected(int[] optionNumbers) {
         if (optionNumbers.length > 1 && !isMultiSelect()) {
@@ -212,7 +246,7 @@ public class PdfChoiceFormField extends PdfFormField {
                 if (option.isString()) {
                     values.add(option);
                 } else if (option.isArray()) {
-                    values.add(((PdfArray)option).get(0));
+                    values.add(((PdfArray) option).get(0));
                 }
             }
         }
@@ -242,7 +276,9 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * If true, the field is a combo box; if false, the field is a list box.
+     *
      * @param combo whether or not the field should be a combo box
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setCombo(boolean combo) {
@@ -262,7 +298,9 @@ public class PdfChoiceFormField extends PdfFormField {
      * If true, the combo box shall include an editable text box as well as a
      * drop-down list; if false, it shall include only a drop-down list.
      * This flag shall be used only if the Combo flag is true.
+     *
      * @param edit whether or not to add an editable text box
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setEdit(boolean edit) {
@@ -273,6 +311,7 @@ public class PdfChoiceFormField extends PdfFormField {
      * If true, the combo box shall include an editable text box as well as a
      * drop-down list; if false, it shall include only a drop-down list.
      * This flag shall be used only if the Combo flag is true.
+     *
      * @return whether or not there is currently an editable text box
      */
     public boolean isEdit() {
@@ -282,7 +321,9 @@ public class PdfChoiceFormField extends PdfFormField {
     /**
      * If true, the field's option items shall be sorted alphabetically.
      * This flag is intended for use by writers, not by readers.
+     *
      * @param sort whether or not to sort the items
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setSort(boolean sort) {
@@ -292,6 +333,7 @@ public class PdfChoiceFormField extends PdfFormField {
     /**
      * If true, the field's option items shall be sorted alphabetically.
      * This flag is intended for use by writers, not by readers.
+     *
      * @return whether or not the items are currently sorted
      */
     public boolean isSort() {
@@ -301,7 +343,9 @@ public class PdfChoiceFormField extends PdfFormField {
     /**
      * If true, more than one of the field's option items may be selected
      * simultaneously; if false, at most one item shall be selected.
+     *
      * @param multiSelect whether or not to allow multiple selection
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setMultiSelect(boolean multiSelect) {
@@ -309,7 +353,9 @@ public class PdfChoiceFormField extends PdfFormField {
     }
 
     /**
-     * If true, more than one of the field's option items may be selected simultaneously; if false, at most one item shall be selected.
+     * If true, more than one of the field's option items may be selected simultaneously; if false, at most one item
+     * shall be selected.
+     *
      * @return whether or not multiple selection is currently allowed
      */
     public boolean isMultiSelect() {
@@ -317,8 +363,10 @@ public class PdfChoiceFormField extends PdfFormField {
     }
 
     /**
-     * If true, text entered in the field shall be spell-checked..
+     * If true, text entered in the field shall be spell-checked.
+     *
      * @param spellCheck whether or not to require the PDF viewer to perform a spell check
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setSpellCheck(boolean spellCheck) {
@@ -327,6 +375,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * If true, text entered in the field shall be spell-checked..
+     *
      * @return whether or not PDF viewer must perform a spell check
      */
     public boolean isSpellCheck() {
@@ -335,7 +384,9 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * If true, the new value shall be committed as soon as a selection is made (commonly with the pointing device).
+     *
      * @param commitOnSelChange whether or not to save changes immediately
+     *
      * @return current {@link PdfChoiceFormField}
      */
     public PdfChoiceFormField setCommitOnSelChange(boolean commitOnSelChange) {
@@ -344,6 +395,7 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * If true, the new value shall be committed as soon as a selection is made (commonly with the pointing device).
+     *
      * @return whether or not to save changes immediately
      */
     public boolean isCommitOnSelChange() {

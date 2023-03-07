@@ -26,6 +26,7 @@ import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -64,7 +65,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
                 new StampingProperties().useAppendMode());
         PdfFormField field = new CheckBoxFormFieldBuilder(outputDoc, "checkboxname")
                 .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
-                .setCheckType(PdfFormField.TYPE_CHECK).setValue("On");
+                .setCheckType(CheckBoxType.CHECK).setValue("On");
         PdfAcroForm.getAcroForm(outputDoc, true).addField(field);
         outputDoc.close();
         compareWithCmp(outputFile);
@@ -127,7 +128,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
 
         PdfFormField field = new CheckBoxFormFieldBuilder(document, "checkboxname")
                 .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
-                .setCheckType(PdfFormField.TYPE_CHECK).setValue("On");
+                .setCheckType(CheckBoxType.CHECK).setValue("On");
 
         // Get an existing acroform and add new field to it
         PdfAcroForm.getAcroForm(document, false).addField(field);
@@ -185,7 +186,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
                 new StampingProperties().useAppendMode());
         PdfFormField field = new CheckBoxFormFieldBuilder(outputDoc, "checkboxname")
                 .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
-                .setCheckType(PdfFormField.TYPE_CHECK).setValue("On");
+                .setCheckType(CheckBoxType.CHECK).setValue("On");
         PdfAcroForm.getAcroForm(outputDoc, true).addField(field);
         outputDoc.close();
         compareWithCmp(outputFile);

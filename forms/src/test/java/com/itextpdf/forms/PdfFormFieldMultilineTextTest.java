@@ -35,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -99,7 +100,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "fieldName")
                 .setWidgetRectangle(rect).createMultilineText();
         field.setValue("some value\nsecond line\nthird");
-        field.setJustification(PdfTextFormField.ALIGN_RIGHT);
+        field.setJustification(HorizontalAlignment.RIGHT);
         form.addField(field);
 
         pdfDoc.close();

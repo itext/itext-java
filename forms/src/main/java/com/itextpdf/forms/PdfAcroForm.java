@@ -581,7 +581,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param justification an integer representing a justification value
      * @return current AcroForm
-     * @see PdfFormField#setJustification(int)
+     * @see PdfFormField#setJustification(com.itextpdf.layout.properties.HorizontalAlignment)
      */
     public PdfAcroForm setDefaultJustification(int justification) {
         return put(PdfName.Q, new PdfNumber(justification));

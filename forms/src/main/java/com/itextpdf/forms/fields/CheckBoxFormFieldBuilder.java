@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -32,7 +33,7 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
  */
 public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxFormFieldBuilder> {
 
-    private int checkType = PdfFormField.TYPE_CROSS;
+    private CheckBoxType checkType = CheckBoxType.CROSS;
 
     /**
      * Creates builder for {@link PdfButtonFormField} creation.
@@ -49,17 +50,17 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
      *
      * @return check type to be set for checkbox form field
      */
-    public int getCheckType() {
+    public CheckBoxType getCheckType() {
         return checkType;
     }
 
     /**
-     * Sets check type for checkbox form field. Default value is {@link PdfFormField#TYPE_CROSS}.
+     * Sets check type for checkbox form field. Default value is {@link CheckBoxType#CROSS}.
      *
      * @param checkType check type to be set for checkbox form field
      * @return this builder
      */
-    public CheckBoxFormFieldBuilder setCheckType(int checkType) {
+    public CheckBoxFormFieldBuilder setCheckType(CheckBoxType checkType) {
         this.checkType = checkType;
         return this;
     }

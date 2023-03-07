@@ -56,6 +56,7 @@ import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -269,7 +270,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.addField(new CheckBoxFormFieldBuilder(pdfDoc, "checkBox").setWidgetRectangle(new Rectangle(36, 726, 20, 20))
-                .setCheckType(PdfFormField.TYPE_STAR).setConformanceLevel(conformanceLevel)
+                .setCheckType(CheckBoxType.STAR).setConformanceLevel(conformanceLevel)
                 .createCheckBox().setValue("1"));
         pdfDoc.close();
 

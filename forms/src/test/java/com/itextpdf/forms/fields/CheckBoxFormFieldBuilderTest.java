@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -59,9 +60,9 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void setGetCheckType() {
         CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        builder.setCheckType(55);
+        builder.setCheckType(CheckBoxType.DIAMOND);
 
-        Assert.assertEquals(55, builder.getCheckType());
+        Assert.assertEquals(CheckBoxType.DIAMOND, builder.getCheckType());
     }
 
     @Test

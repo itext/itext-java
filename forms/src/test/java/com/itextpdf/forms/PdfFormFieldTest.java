@@ -80,6 +80,7 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -935,8 +936,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
         form.getField("text1").setValue("123");
-        form.getField("text2").setJustification(1).setValue("123");
-        form.getField("text3").setJustification(2).setValue("123");
+        form.getField("text2").setJustification(HorizontalAlignment.CENTER).setValue("123");
+        form.getField("text3").setJustification(HorizontalAlignment.RIGHT).setValue("123");
         form.getField("text4").setValue("12345678");
         form.getField("text5").setValue("123456789101112131415161718");
 
@@ -1271,7 +1272,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
             PdfFormField field = new TextFormFieldBuilder(pdfDoc, "f-" + x).setWidgetRectangle(rect)
                     .createText();
-            field.setValue("").setJustification(PdfFormField.ALIGN_RIGHT).setFont(font).setFontSize(12.0f);
+            field.setValue("").setJustification(HorizontalAlignment.RIGHT).setFont(font).setFontSize(12.0f);
             if (text != null) {
                 field.setValue(text);
             }

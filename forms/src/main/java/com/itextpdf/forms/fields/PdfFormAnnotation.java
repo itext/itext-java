@@ -45,6 +45,7 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -786,12 +787,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * @param width       width of the checkbox
      * @param height      height of the checkbox
      * @param onStateName name that corresponds to the "On" state of the checkbox
-     * @param checkType   the type that determines how the checkbox will look like. Allowed values are
-     *                    {@link PdfFormField#TYPE_CHECK}, {@link PdfFormField#TYPE_CIRCLE},
-     *                    {@link PdfFormField#TYPE_CROSS}, {@link PdfFormField#TYPE_DIAMOND},
-     *                    {@link PdfFormField#TYPE_SQUARE}, {@link PdfFormField#TYPE_STAR}
+     * @param checkType   the type that determines how the checkbox will look like. Instance of {@link CheckBoxType}
      */
-    protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, int checkType) {
+    protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, CheckBoxType checkType) {
         parent.checkType = checkType;
         Rectangle rect = new Rectangle(0, 0, width, height);
 
@@ -902,7 +900,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * @param fontSize the size of the font
      */
     protected void drawCheckBox(PdfCanvas canvas, float width, float height, float fontSize) {
-        if (parent.checkType == PdfFormField.TYPE_CROSS) {
+        if (parent.checkType == CheckBoxType.CROSS) {
             DrawingUtil.drawCross(canvas, width, height, borderWidth);
             return;
         }
@@ -927,22 +925,22 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
         switch (parent.checkType) {
-            case PdfFormField.TYPE_CHECK:
+            case CHECK:
                 DrawingUtil.drawPdfACheck(canvas, width, height);
                 break;
-            case PdfFormField.TYPE_CIRCLE:
+            case CIRCLE:
                 DrawingUtil.drawPdfACircle(canvas, width, height);
                 break;
-            case PdfFormField.TYPE_CROSS:
+            case CROSS:
                 DrawingUtil.drawPdfACross(canvas, width, height);
                 break;
-            case PdfFormField.TYPE_DIAMOND:
+            case DIAMOND:
                 DrawingUtil.drawPdfADiamond(canvas, width, height);
                 break;
-            case PdfFormField.TYPE_SQUARE:
+            case SQUARE:
                 DrawingUtil.drawPdfASquare(canvas, width, height);
                 break;
-            case PdfFormField.TYPE_STAR:
+            case STAR:
                 DrawingUtil.drawPdfAStar(canvas, width, height);
                 break;
         }
@@ -1086,7 +1084,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
     }
 
-    void regenerateCheckboxField(int checkType) {
+    void regenerateCheckboxField(CheckBoxType checkType) {
         parent.setCheckType(checkType);
         final String value = parent.getValueAsString();
         Rectangle rect = getRect(getPdfObject());

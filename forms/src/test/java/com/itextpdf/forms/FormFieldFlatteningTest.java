@@ -42,7 +42,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
@@ -50,11 +49,10 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -233,18 +231,18 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
                     newValue = "HELLO!";
                 }
 
-                Integer justification = field.getJustification();
-                if (null == justification || 0 == (int) justification) {
+                HorizontalAlignment justification = field.getJustification();
+                if (null == justification || justification == HorizontalAlignment.LEFT) {
                     // reddish
                     for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
                         annot.setBackgroundColor(new DeviceRgb(255, 200, 200));
                     }
-                } else if (1 == (int) justification) {
+                } else if (justification == HorizontalAlignment.CENTER) {
                     // greenish
                     for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
                         annot.setBackgroundColor(new DeviceRgb(200, 255, 200));
                     }
-                } else if (2 == (int) justification) {
+                } else if (justification == HorizontalAlignment.RIGHT) {
                     // blueish
                     for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
                         annot.setBackgroundColor(new DeviceRgb(200, 200, 255));
