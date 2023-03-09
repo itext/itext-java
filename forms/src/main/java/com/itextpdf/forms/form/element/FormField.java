@@ -89,4 +89,16 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
                 return super.<T1>getDefaultProperty(property);
         }
     }
+
+    /**
+     * Set the form field to be interactive and added into Acroform instead of drawing it on a page.
+     *
+     * @param interactive {@code true} if the form field element shall be added into Acroform, {@code false} otherwise.
+     *                By default, the form field element is not interactive and drawn on a page.
+     * @return this same {@link FormField} instance.
+     */
+    public FormField<T> setInteractive(boolean interactive) {
+        setProperty(FormProperty.FORM_FIELD_FLATTEN, !interactive);
+        return this;
+    }
 }

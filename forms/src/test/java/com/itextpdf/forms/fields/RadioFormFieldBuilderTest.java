@@ -91,11 +91,15 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createRadioButtonWithAppearanceNameNullThrowsExceptionTest() {
+    public void createRadioButtonWithEmptyAppearanceNameThrowsExceptionTest() {
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
         Assert.assertThrows(PdfException.class, () -> {
             builder.createRadioButton(null, DUMMY_RECTANGLE);
         });
+        Assert.assertThrows(PdfException.class, () -> {
+            builder.createRadioButton("", DUMMY_RECTANGLE);
+        });
+
     }
 
     @Test

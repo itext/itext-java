@@ -68,7 +68,7 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
      * @return new radio button instance
      */
     public PdfFormAnnotation createRadioButton(String appearanceName, Rectangle rectangle) {
-        if (appearanceName == null) {
+        if (appearanceName == null || appearanceName.isEmpty()) {
             throw new PdfException(FormsExceptionMessageConstant.APEARANCE_NAME_MUST_BE_PROVIDED);
         }
         Rectangle widgetRectangle = getWidgetRectangle();

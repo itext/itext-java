@@ -43,6 +43,7 @@ public final class FormsExceptionMessageConstant {
             + " Set it using PdfFormField#setFieldName call.";
     public static final String APEARANCE_NAME_MUST_BE_PROVIDED = "Appearance name must be provided";
     public static final String WIDGET_RECTANGLE_MUST_BE_PROVIDED = "Widget rectangle must be provided";
+    public static final String EMPTY_RADIO_GROUP_NAME = "Radio group name cannot be empty.";
 
     private FormsExceptionMessageConstant(){}
 }

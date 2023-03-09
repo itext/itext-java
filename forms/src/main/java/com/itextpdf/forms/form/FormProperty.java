@@ -77,11 +77,17 @@ public final class FormProperty {
     /** The Constant FORM_FIELD_SELECTED. */
     public static final int FORM_FIELD_SELECTED = PROPERTY_START + 9;
 
-    /** The Constant FORM_FIELD_SELECTED. */
+    /** The Constant FORM_FIELD_LABEL. */
     public static final int FORM_FIELD_LABEL = PROPERTY_START + 10;
 
     /** The Constant FORM_ACCESSIBILITY_LANGUAGE. */
     public static final int FORM_ACCESSIBILITY_LANGUAGE = PROPERTY_START + 11;
+
+    /** The Constant FORM_FIELD_RADIO_GROUP_NAME. */
+    public static final int FORM_FIELD_RADIO_GROUP_NAME = PROPERTY_START + 12;
+
+    /** The Constant FORM_FIELD_RADIO_BORDER_CIRCLE. */
+    public static final int FORM_FIELD_RADIO_BORDER_CIRCLE = PROPERTY_START + 13;
 
     private FormProperty() {
         // Empty constructor.

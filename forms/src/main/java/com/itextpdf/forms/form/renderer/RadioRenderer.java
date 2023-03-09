@@ -43,22 +43,26 @@
 package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
-import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
-import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.BorderRadius;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -67,14 +71,12 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
-
 /**
  * The {@link AbstractOneLineTextFieldRenderer} implementation for radio buttons.
  */
 public class RadioRenderer extends AbstractFormFieldRenderer {
 
     private static final Color DEFAULT_CHECKED_COLOR = ColorConstants.BLACK;
-    private static final Color DEFAULT_COLOR = ColorConstants.LIGHT_GRAY;
     private static final float DEFAULT_SIZE = 8.25f; // 11px
     private static final HorizontalAlignment DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER;
     private static final VerticalAlignment DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.MIDDLE;
@@ -97,18 +99,63 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         return new RadioRenderer((Radio) modelElement);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param drawContext {@inheritDoc}
+     */
+    @Override
+    public void drawBorder(DrawContext drawContext) {
+        // Do not draw borders here, they will be drawn in flat renderer
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param drawContext {@inheritDoc}
+     */
+    @Override
+    public void drawBackground(DrawContext drawContext) {
+        // Do not draw a background here, it will be drawn in flat renderer
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param rect {@inheritDoc}
+     * @param borders {@inheritDoc}
+     * @param reverse {@inheritDoc}
+     * @return {@inheritDoc}
+     */
+    @Override
+    protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
+        // Do not apply borders here, they will be applied in flat renderer
+        return rect;
+    }
+
     @Override
     protected IRenderer createFlatRenderer() {
         UnitValue heightUV = getPropertyAsUnitValue(Property.HEIGHT);
         UnitValue widthUV = getPropertyAsUnitValue(Property.WIDTH);
-        float height = null == heightUV ? DEFAULT_SIZE : heightUV.getValue();
-        float width = null == widthUV ? DEFAULT_SIZE : widthUV.getValue();
-        float size = Math.min(height, width);
+        final float height = null == heightUV ? DEFAULT_SIZE : heightUV.getValue();
+        final float width = null == widthUV ? DEFAULT_SIZE : widthUV.getValue();
+        final float size = Math.min(height, width);
+
+        // Set size to current renderer
+        setProperty(Property.HEIGHT, UnitValue.createPointValue(height));
+        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
+
         Paragraph paragraph = new Paragraph()
                 .setWidth(size)
                 .setHeight(size)
                 .setHorizontalAlignment(DEFAULT_HORIZONTAL_ALIGNMENT)
-                .setVerticalAlignment(DEFAULT_VERTICAL_ALIGNMENT);
+                .setVerticalAlignment(DEFAULT_VERTICAL_ALIGNMENT)
+                .setMargin(0);
+        paragraph.setProperty(Property.BOX_SIZING, this.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING));
+        paragraph.setBorder(this.<Border>getProperty(Property.BORDER));
+        paragraph.setProperty(Property.BACKGROUND, this.<Background>getProperty(Property.BACKGROUND));
+        paragraph.setBorderRadius(new BorderRadius(UnitValue.createPercentValue(50)));
+
         return new FlatParagraphRenderer(paragraph);
     }
 
@@ -117,7 +164,6 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
      */
     @Override
     protected void adjustFieldLayout(LayoutContext layoutContext) {
-        this.setProperty(Property.BACKGROUND, null);
     }
 
     /**
@@ -126,7 +172,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
      * @return the default value of the radio field
      */
     public boolean isBoxChecked() {
-        return null != this.<Object>getProperty(FormProperty.FORM_FIELD_CHECKED);
+        return Boolean.TRUE.equals(this.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
     }
 
     /* (non-Javadoc)
@@ -137,14 +183,18 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
         Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
+
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
-        String groupName = this.<String>getProperty(FormProperty.FORM_FIELD_VALUE);
+        String groupName = this.<String>getProperty(FormProperty.FORM_FIELD_RADIO_GROUP_NAME);
+        if (groupName == null || groupName.isEmpty()) {
+            throw new PdfException(FormsExceptionMessageConstant.EMPTY_RADIO_GROUP_NAME);
+        }
 
         PdfButtonFormField radioGroup = (PdfButtonFormField) form.getField(groupName);
         boolean addNew = false;
         if (null == radioGroup) {
             radioGroup = new RadioFormFieldBuilder(doc, groupName).createRadioGroup();
-            radioGroup.setValue("on");
+            radioGroup.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
             addNew = true;
         }
         if (isBoxChecked()) {
@@ -152,14 +202,26 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         }
 
         PdfFormAnnotation radio =
-                new RadioFormFieldBuilder(doc, null).createRadioButton( getModelId(), area);
+                new RadioFormFieldBuilder(doc, null).createRadioButton(getModelId(), area);
+        // Set background color
+        Background background = this.<Background>getProperty(Property.BACKGROUND);
+        if (background != null) {
+            radio.setBackgroundColor(background.getColor());
+        }
+
+        // Set border color and border width
+        Border border = this.<Border>getProperty(Property.BORDER);
+        if (border != null) {
+            radio.setBorderColor(border.getColor());
+            radio.setBorderWidth(border.getWidth());
+        }
+
         radioGroup.addKid(radio);
-        radioGroup.setCheckType(CheckBoxType.CIRCLE);
 
         if (addNew) {
             form.addField(radioGroup, page);
         } else {
-            form.replaceField(getModelId(), radioGroup);
+            form.replaceField(groupName, radioGroup);
         }
 
         writeAcroFormFieldLangAttribute(doc);
@@ -170,6 +232,10 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         return false;
     }
 
+    private boolean isDrawCircledBorder() {
+        return Boolean.TRUE.equals(this.<Boolean>getProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE));
+    }
+
     private class FlatParagraphRenderer extends ParagraphRenderer {
 
         public FlatParagraphRenderer(Paragraph modelElement) {
@@ -178,18 +244,90 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
 
         @Override
         public void drawChildren(DrawContext drawContext) {
-            PdfCanvas canvas = drawContext.getCanvas();
-            Rectangle rectangle = flatRenderer.getOccupiedArea().getBBox();
-            float radius = (float) Math.min(rectangle.getWidth(), rectangle.getHeight()) / 2;
-            canvas.saveState();
-            canvas.setFillColor(DEFAULT_COLOR);
-            DrawingUtil.drawCircle(canvas, rectangle.getLeft() + radius, rectangle.getBottom() + radius, radius);
-            if (isBoxChecked()) {
-                canvas.setFillColor(DEFAULT_CHECKED_COLOR);
-                DrawingUtil.drawCircle(
-                        canvas, rectangle.getLeft() + radius, rectangle.getBottom() + radius, radius / 2);
+            if (!isBoxChecked()) {
+                // Nothing to draw
+                return;
             }
+
+            PdfCanvas canvas = drawContext.getCanvas();
+            Rectangle rectangle = getOccupiedArea().getBBox().clone();
+            Border border = this.<Border>getProperty(Property.BORDER);
+            if (border != null) {
+                rectangle.applyMargins(border.getWidth(), border.getWidth(), border.getWidth(), border.getWidth(),
+                        false);
+            }
+            final float radius = Math.min(rectangle.getWidth(), rectangle.getHeight()) / 2;
+            canvas.saveState();
+            canvas.setFillColor(DEFAULT_CHECKED_COLOR);
+            DrawingUtil.drawCircle(
+                    canvas, rectangle.getLeft() + radius, rectangle.getBottom() + radius, radius / 2);
             canvas.restoreState();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @param drawContext {@inheritDoc}
+         */
+        @Override
+        public void drawBorder(DrawContext drawContext) {
+            Border border = getBorders()[0];
+            if (border == null || !isDrawCircledBorder()) {
+                super.drawBorder(drawContext);
+                return;
+            }
+
+            // TODO: DEVSIX-7425 - Remove the following workaround once the ticket is fixed.
+            // The rounded border/background is drawn lousy. It's not an exact circle for border radius 50%.
+            // That is why we draw a real circle here by default
+            final float borderWidth = border.getWidth();
+            if (borderWidth > 0 && border.getColor() != null) {
+                Rectangle rectangle = getOccupiedArea().getBBox().clone();
+                rectangle.applyMargins(borderWidth, borderWidth, borderWidth, borderWidth, false);
+
+                final float cx = rectangle.getX() + rectangle.getWidth() / 2;
+                final float cy = rectangle.getY() + rectangle.getHeight() / 2;
+                final float r = (Math.min(rectangle.getWidth(), rectangle.getHeight()) + borderWidth) / 2;
+                drawContext.getCanvas()
+                        .setStrokeColor(border.getColor())
+                        .setLineWidth(borderWidth)
+                        .circle(cx, cy, r)
+                        .stroke();
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @param drawContext {@inheritDoc}
+         */
+        @Override
+        public void drawBackground(DrawContext drawContext) {
+            Border border = getBorders()[0];
+            if (border == null || !isDrawCircledBorder()) {
+                super.drawBackground(drawContext);
+                return;
+            }
+
+            // TODO: DEVSIX-7425 - Remove the following workaround once the ticket is fixed.
+            // The rounded border/background is drawn lousy. It's not an exact circle for border radius 50%.
+            // That is why we draw a real circle here by default
+            // Draw a circle
+            final float borderWidth = border.getWidth();
+            Background background = this.<Background>getProperty(Property.BACKGROUND);
+            final Color backgroundColor = background == null ? null : background.getColor();
+            if (backgroundColor != null) {
+                Rectangle rectangle = getOccupiedArea().getBBox().clone();
+                rectangle.applyMargins(borderWidth, borderWidth, borderWidth, borderWidth, false);
+
+                final float cx = rectangle.getX() + rectangle.getWidth() / 2;
+                final float cy = rectangle.getY() + rectangle.getHeight() / 2;
+                final float r = (Math.min(rectangle.getWidth(), rectangle.getHeight()) + borderWidth) / 2;
+                drawContext.getCanvas()
+                        .setFillColor(backgroundColor)
+                        .circle(cx, cy, r)
+                        .fill();
+            }
         }
     }
 }

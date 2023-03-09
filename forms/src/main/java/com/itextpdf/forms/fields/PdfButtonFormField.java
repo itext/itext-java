@@ -46,7 +46,6 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -232,7 +231,13 @@ public class PdfButtonFormField extends PdfFormField {
         return this;
     }
 
-
+    /**
+     * {@inheritDoc}
+     *
+     * @param kid {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public PdfFormField addKid(AbstractPdfFormField kid) {
         if (isRadio() && kid instanceof PdfFormAnnotation) {
@@ -247,8 +252,7 @@ public class PdfButtonFormField extends PdfFormField {
                 LOGGER.warn(FormsLogMessageConstants.RADIO_HAS_NO_RECTANGLE);
                 return super.addKid(kid);
             }
-            final Rectangle r = annotation.getRectangle().toRectangle();
-            kidAsFormAnnotation.drawRadioAppearance(r.getWidth(), r.getHeight(), appearanceState.getValue());
+            kidAsFormAnnotation.drawRadioButtonAndSaveAppearance(appearanceState.getValue());
         }
         return super.addKid(kid);
     }

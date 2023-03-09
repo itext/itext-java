@@ -115,7 +115,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
      * @return the default value of the checkbox field
      */
     public boolean isBoxChecked() {
-        return null != this.<Object>getProperty(FormProperty.FORM_FIELD_CHECKED);
+        return Boolean.TRUE.equals(this.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
     }
 
     @Override

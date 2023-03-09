@@ -51,6 +51,7 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
@@ -125,6 +126,9 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
 
         Rectangle bBox = layoutContext.getArea().getBBox().clone().moveDown(INF - parentHeight).setHeight(INF);
         layoutContext.getArea().setBBox(bBox);
+        // A workaround for the issue that super.layout clears Property.FORCED_PLACEMENT,
+        // but we need it later in this function
+        final boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         LayoutResult result = super.layout(layoutContext);
 
         if (childRenderers.isEmpty()) {
@@ -143,10 +147,16 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
                 applyPaddings(occupiedArea.getBBox(), true);
                 applyBorderBox(occupiedArea.getBBox(), true);
                 applyMargins(occupiedArea.getBBox(), true);
+            } else if (isForcedPlacement) {
+                // This block of code appeared here because of
+                // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
+                // Height is wrong for the flat renderer and we adjust it here
+                Rectangle fBox = getOccupiedArea().getBBox();
+                LayoutArea childOccupiedArea = flatRenderer.getOccupiedArea();
+                childOccupiedArea.getBBox().setY(fBox.getY()).setHeight(fBox.getHeight());
             }
         }
-        if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && !isRendererFit(parentWidth,
-                parentHeight)) {
+        if (!isForcedPlacement && !isRendererFit(parentWidth, parentHeight)) {
             occupiedArea.getBBox().setWidth(0).setHeight(0);
             return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, occupiedArea, null, this, this)
                     .setMinMaxWidth(new MinMaxWidth());

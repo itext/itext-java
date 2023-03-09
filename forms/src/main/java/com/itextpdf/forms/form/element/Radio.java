@@ -42,22 +42,70 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.RadioRenderer;
+import com.itextpdf.layout.properties.BorderRadius;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 
 /**
  * Extension of the {@link FormField} class representing a radio button so that
  * a {@link RadioRenderer} is used instead of the default renderer for fields.
  */
-public class Radio extends FormField<TextArea> {
+public class Radio extends FormField<Radio> {
 
     /**
      * Creates a new {@link Radio} instance.
      *
-     * @param id the id
+     * @param id the id.
      */
     public Radio(String id) {
         super(id);
+        // Draw the borders inside the element by default
+        setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        // Rounded border
+        setBorderRadius(new BorderRadius(UnitValue.createPercentValue(50)));
+        // Draw border as a circle by default
+        setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, true);
+    }
+
+    /**
+     * Creates a new {@link Radio} instance.
+     *
+     * @param id the id.
+     * @param radioGroupName the name of the radio group the radio button belongs to. It has sense only in case
+     *                       this Radio element will not be rendered but Acroform field will be created instead.
+     */
+    public Radio(String id, String radioGroupName) {
+        this(id);
+        setProperty(FormProperty.FORM_FIELD_RADIO_GROUP_NAME, radioGroupName);
+    }
+
+    /**
+     * Sets the state of the radio button.
+     *
+     * @param checked {@code true} if the radio button shall be checked, {@code false} otherwise.
+     *                By default, the radio button is unchecked.
+     * @return this same {@link Radio} button.
+     */
+    public Radio setChecked(boolean checked) {
+        setProperty(FormProperty.FORM_FIELD_CHECKED, checked);
+        return this;
+    }
+
+    /**
+     * Sets the radio button width and height.
+     *
+     * @param size radio button width and height.
+     * @return this same {@link Radio} button.
+     */
+    public Radio setSize(float size) {
+        setProperty(Property.WIDTH, UnitValue.createPointValue(size));
+        setProperty(Property.HEIGHT, UnitValue.createPointValue(size));
+
+        return this;
     }
 
     /* (non-Javadoc)
@@ -68,4 +116,3 @@ public class Radio extends FormField<TextArea> {
         return new RadioRenderer(this);
     }
 }
-

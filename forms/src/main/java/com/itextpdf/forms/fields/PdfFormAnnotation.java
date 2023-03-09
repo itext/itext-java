@@ -46,6 +46,8 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
+import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -79,6 +81,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -91,6 +94,7 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.MetaInfoContainer;
@@ -652,96 +656,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         canvas.restoreState();
     }
 
-    protected void drawRadioBorder(PdfCanvas canvas, PdfFormXObject xObject, float width, float height) {
-        canvas.saveState();
-        float borderWidth = getBorderWidth();
-        float cx = width / 2;
-        float cy = height / 2;
-        if (borderWidth < 0) {
-            borderWidth = 0;
-        }
-
-        float r = (Math.min(width, height) - borderWidth) / 2;
-
-        if (backgroundColor != null) {
-            canvas.
-                    setFillColor(backgroundColor).
-                    circle(cx, cy, r + borderWidth / 2).
-                    fill();
-        }
-
-        if (borderWidth > 0 && borderColor != null) {
-            borderWidth = Math.max(1, borderWidth);
-            canvas.
-                    setStrokeColor(borderColor).
-                    setLineWidth(borderWidth).
-                    circle(cx, cy, r).
-                    stroke();
-        }
-
-        applyRotation(xObject, height, width);
-        canvas.restoreState();
-    }
-
-    /**
-     * Draws the appearance of a radio button with a specified value.
-     *
-     * @param width  the width of the radio button to draw
-     * @param height the height of the radio button to draw
-     * @param value  the value of the button
-     */
-    protected void drawRadioAppearance(float width, float height, String value) {
-        Rectangle rect = new Rectangle(0, 0, width, height);
-        PdfWidgetAnnotation widget = getWidget();
-        widget.setNormalAppearance(new PdfDictionary());
-
-        //On state
-        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        if (value != null) {
-            PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
-            PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-            drawRadioBorder(canvasOn, xObjectOn, width, height);
-            drawRadioField(canvasOn, width, height, true);
-
-            xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-            widget.getNormalAppearanceObject().put(new PdfName(value), xObjectOn.getPdfObject());
-        }
-
-        //Off state
-        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
-
-        drawRadioBorder(canvasOff, xObjectOff, width, height);
-
-        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
-        widget.getNormalAppearanceObject().put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
-
-        if (getPdfAConformanceLevel() != null
-                && ("2".equals(getPdfAConformanceLevel().getPart()) ||
-                    "3".equals(getPdfAConformanceLevel().getPart()))) {
-            xObjectOn.getResources();
-            xObjectOff.getResources();
-        }
-    }
-
-    /**
-     * Draws a radio button.
-     *
-     * @param canvas the {@link PdfCanvas} on which to draw
-     * @param width  the width of the radio button to draw
-     * @param height the height of the radio button to draw
-     * @param on     required to be <code>true</code> for fulfilling the drawing operation
-     */
-    protected void drawRadioField(PdfCanvas canvas, float width, float height, boolean on) {
-        canvas.saveState();
-        if (on) {
-            canvas.resetFillColorRgb();
-            DrawingUtil.drawCircle(canvas, width / 2, height / 2, Math.min(width, height) / 4);
-        }
-        canvas.restoreState();
-    }
-
     /**
      * Draws the appearance of a checkbox with a specified state value.
      *
@@ -946,6 +860,40 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
     }
 
+    /**
+     * Draws the appearance of a radio button with a specified value and saves it into an appearance stream.
+     *
+     * @param value the value of the radio button.
+     */
+    protected void drawRadioButtonAndSaveAppearance(String value) {
+        Rectangle rectangle = getRect(this.getPdfObject());
+        if (rectangle == null) {
+            return;
+        }
+
+        Radio formField = createRadio();
+        // First draw off appearance
+        formField.setChecked(false);
+        PdfFormXObject xObjectOff = new PdfFormXObject(
+                new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
+        Canvas canvasOff = new Canvas(xObjectOff, this.getDocument());
+        canvasOff.add(formField);
+        PdfDictionary normalAppearance = new PdfDictionary();
+        normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
+
+        // Draw on appearance
+        if (value != null && !value.isEmpty() && !PdfFormAnnotation.OFF_STATE_VALUE.equals(value)) {
+            formField.setChecked(true);
+            PdfFormXObject xObject = new PdfFormXObject(
+                    new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
+            Canvas canvas = new Canvas(xObject, this.getDocument());
+            canvas.add(formField);
+            normalAppearance.put(new PdfName(value), xObject.getPdfObject());
+        }
+
+        getWidget().setNormalAppearance(normalAppearance);
+    }
+
     @Override
     void retrieveStyles() {
         super.retrieveStyles();
@@ -1073,14 +1021,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         if (getPdfAConformanceLevel() != null) {
             createPushButtonAppearanceState(widget);
-        }
-    }
-
-    void regenerateRadioButtonField() {
-        Rectangle rect = getRect(getPdfObject());
-        String value = getRadioButtonValue();
-        if (rect != null && !"".equals(value)) {
-            drawRadioAppearance(rect.getWidth(), rect.getHeight(), value);
         }
     }
 
@@ -1261,13 +1201,43 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             if (parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 regeneratePushButtonField();
             } else if (parent.getFieldFlag(PdfButtonFormField.FF_RADIO)) {
-                regenerateRadioButtonField();
+                drawRadioButtonAndSaveAppearance(getRadioButtonValue());
             } else {
                 regenerateCheckboxField(parent.checkType);
             }
             return true;
         }
         return false;
+    }
+
+    Radio createRadio() {
+        final Rectangle rect = getRect(getPdfObject());
+        if (rect == null) {
+            return null;
+        }
+
+        // id doesn't matter here
+        Radio radio = new Radio("");
+
+        // Border
+        if (getBorderWidth() > 0 && borderColor != null) {
+            Border border = new SolidBorder(Math.max(1, getBorderWidth()));
+            border.setColor(borderColor);
+            radio.setBorder(border);
+        }
+
+        if (backgroundColor != null) {
+            radio.setBackgroundColor(backgroundColor);
+        }
+
+        // Set fixed size
+        radio.setProperty(Property.WIDTH, UnitValue.createPointValue(rect.getWidth()));
+        radio.setProperty(Property.HEIGHT, UnitValue.createPointValue(rect.getHeight()));
+
+        // Always flatten
+        radio.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+
+        return radio;
     }
 
     private static double degreeToRadians(double angle) {

@@ -419,7 +419,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 .setVisibility(PdfFormAnnotation.VISIBLE);
 
         PdfFormAnnotation radio2 = builder
-                .createRadioButton("2",rect2)
+                .createRadioButton("2", rect2)
                 .setBorderWidth(2).setBorderColor(ColorConstants.RED).setBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .setVisibility(PdfFormAnnotation.VISIBLE);
 
@@ -433,7 +433,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
     }
-
 
     @Test
     public void buttonFieldTest02() throws IOException, InterruptedException {
