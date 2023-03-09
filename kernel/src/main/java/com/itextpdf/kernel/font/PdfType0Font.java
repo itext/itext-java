@@ -258,33 +258,6 @@ public class PdfType0Font extends PdfFont {
         return result + 'V';
     }
 
-    /**
-     * Get Unicode mapping name from ordering.
-     * @param ordering the text ordering to base to unicode mapping on
-     *
-     * @return Unicode mapping name
-     *
-     * @deprecated Replaced by {@link #getUniMapFromOrdering(String, boolean)}
-     * for proper handling of IDENTITY_V encoding.
-     */
-    @Deprecated
-    public static String getUniMapFromOrdering(String ordering) {
-        switch (ordering) {
-            case "CNS1":
-                return "UniCNS-UTF16-H";
-            case "Japan1":
-                return "UniJIS-UTF16-H";
-            case "Korea1":
-                return "UniKS-UTF16-H";
-            case "GB1":
-                return "UniGB-UTF16-H";
-            case "Identity":
-                return "Identity-H";
-            default:
-                return null;
-        }
-    }
-
     @Override
     public Glyph getGlyph(int unicode) {
         // TODO handle unicode value with cmap and use only glyphByCode

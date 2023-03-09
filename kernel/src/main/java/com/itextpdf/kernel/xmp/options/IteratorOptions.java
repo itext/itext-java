@@ -46,7 +46,7 @@ public final class IteratorOptions extends Options
 	public static final int JUST_LEAFNODES = 0x0200;
 	/** Return just the leaf part of the path, default is the full path. */
 	public static final int JUST_LEAFNAME = 0x0400;
-//	/** Include aliases, default is just actual properties. <em>Note:</em> Not supported. 
+//	/** Include aliases, default is just actual properties. <em>Note:</em> Not supported.
 //	 *  @deprecated it is commonly preferred to work with the base properties */
 //	public static final int INCLUDE_ALIASES = 0x0800;
 	/** Omit all qualifiers. */

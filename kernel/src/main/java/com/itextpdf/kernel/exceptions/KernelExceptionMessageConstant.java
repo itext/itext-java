@@ -353,12 +353,8 @@ public final class KernelExceptionMessageConstant {
     public static final String UNBALANCED_SAVE_RESTORE_STATE_OPERATORS = "Unbalanced save restore state operators.";
     public static final String UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE = "Unexpected character {0} "
             + "found after ID in inline image.";
-    @Deprecated
-    public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_COLOR_SPACE = "Unexpected ColorSpace: {0}.";
     public static final String UNEXPECTED_END_OF_FILE = "Unexpected end of file.";
-    @Deprecated
-    public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNEXPECTED_TOKEN = "unexpected {0} was encountered.";
     public static final String UNEXPECTED_SHADING_TYPE = "Unexpected shading type.";
     public static final String UNKNOWN_ENCRYPTION_TYPE_R = "Unknown encryption type R == {0}.";

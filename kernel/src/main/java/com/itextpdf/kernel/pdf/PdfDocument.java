@@ -1936,21 +1936,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         tagStructureContext = new TagStructureContext(this);
     }
 
-
-    /**
-     * Save the link annotation in a temporary storage for further copying.
-     * Save destinations in a temporary storage for further copying.
-     *
-     * @param page       just copied {@link PdfPage} link annotation belongs to.
-     * @param annotation {@link PdfLinkAnnotation} itself.
-     *
-     * @deprecated will be removed in next major version, it is being replaced with
-     * storeDestinationToReaddress
-     */
-    @Deprecated
-    protected void storeLinkAnnotation(PdfPage page, PdfLinkAnnotation annotation) {
-    }
-
     /**
      * Save destinations in a temporary storage for further copying.
      *

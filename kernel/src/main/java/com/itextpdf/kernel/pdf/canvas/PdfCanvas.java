@@ -2039,28 +2039,6 @@ public class PdfCanvas {
     }
 
     /**
-     * Adds {@link PdfXObject} to the specified position in the case of {@link PdfImageXObject}
-     * or moves to the specified offset in the case of {@link PdfFormXObject}.
-     *
-     * @param xObject the xObject to add
-     * @param x the horizontal offset of the formXObject position or the horizontal position of the imageXObject
-     * @param y the vertical offset of the formXObject position or the vertical position of the imageXObject
-     * @return the current canvas
-     * @deprecated will be removed in 7.2, use {@link #addXObjectAt(PdfXObject, float, float)} instead
-     */
-    @Deprecated
-    //TODO DEVSIX-5729 Remove deprecated api in PdfCanvas
-    public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
-        if (xObject instanceof PdfFormXObject) {
-            return addForm((PdfFormXObject) xObject, x, y);
-        } else if (xObject instanceof PdfImageXObject) {
-            return addImageAt((PdfImageXObject) xObject, x, y);
-        } else {
-            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
-        }
-    }
-
-    /**
      * Adds {@link PdfXObject} fitted into specific rectangle on canvas.
      *
      * @param xObject the xObject to add
@@ -2330,21 +2308,6 @@ public class PdfCanvas {
 
         float[] result = PdfCanvas.calculateTransformationMatrix(rectMin, rectMax, bBoxMin, bBoxMax);
         return addFormWithTransformationMatrix(form, result[0], result[1], result[2], result[3], result[4], result[5], false);
-    }
-
-    /**
-     * Adds {@link PdfFormXObject} to the canvas and moves to the specified offset.
-     *
-     * @param form the formXObject to add
-     * @param x the horizontal offset of the formXObject position
-     * @param y the vertical offset of the formXObject position
-     * @return the current canvas
-     * @deprecated will be removed in 7.2, use {@link #addFormAt(PdfFormXObject, float, float)} instead
-     */
-    @Deprecated
-    //TODO DEVSIX-5729 Remove deprecated api in PdfCanvas
-    private PdfCanvas addForm(PdfFormXObject form, float x, float y) {
-        return addFormWithTransformationMatrix(form, 1, 0, 0, 1, x, y, true);
     }
 
     /**
