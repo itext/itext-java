@@ -46,6 +46,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -53,6 +54,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -61,18 +63,24 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+
 import java.util.Set;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class PdfACheckerTest extends ExtendedITextTest {
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/pdfs/";
 
     private PdfAChecker pdfAChecker;
 
@@ -102,6 +110,16 @@ public class PdfACheckerTest extends ExtendedITextTest {
             // no assertions as we want to check that no exceptions would be thrown
             pdfAChecker.checkResourcesOfAppearanceStreams(annotation.getAppearanceDictionary());
         }
+    }
+
+    @Test()
+    //TODO adapt after DEVSIX-5759 is fixed
+    public void checkContentStreamPdfAText() throws IOException {
+        PdfA1Checker testChecker = new PdfA1Checker(PdfAConformanceLevel.PDF_A_1B);
+        PdfADocument pdfa = new PdfADocument(new PdfReader(new File(SOURCE_FOLDER + "InlineImagesPdfA.pdf")), new PdfWriter(new ByteArrayOutputStream()).setSmartMode(true));
+        PdfStream firstContentStream = pdfa.getPage(1).getFirstContentStream();
+        testChecker.setFullCheckMode(true);
+        Assert.assertThrows("NullPointer was not thrown on inline image.", NullPointerException.class, ()-> testChecker.checkContentStream(firstContentStream));
     }
 
     private static class EmptyPdfAChecker extends PdfAChecker {
