@@ -81,15 +81,10 @@ public final class SvgExceptionMessageConstant {
     public static final String NAMED_OBJECT_NULL = "A named object can't be null.";
     public static final String NO_ROOT = "No root found";
     public static final String PARAMETER_CANNOT_BE_NULL = "Parameters cannot be null.";
-    @Deprecated
-    public static final String PATH_OBJECT_MUST_HAVE_D_ATTRIBUTE =
-            "A Path object must have an attribute with the name 'd'.";
     public static final String POINTS_ATTRIBUTE_INVALID_LIST =
             "Points attribute {0} on polyline tag does not contain a valid set of points";
     public static final String QUADRATIC_CURVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 =
             "(x1 y1 x y)+ parameters are expected for quadratic curves. Got: {0}";
-    @Deprecated
-    public static final String RENDERER_WITHOUT_OBJECT_BOUNDING_BOX = "The renderer has no object bounding box.";
     public static final String ROOT_SVG_NO_BBOX = "The root svg tag needs to have a bounding box defined.";
     public static final String TAG_PARAMETER_NULL = "Tag parameter must not be null";
     public static final String TRANSFORM_EMPTY = "The transformation value is empty.";

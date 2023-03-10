@@ -213,19 +213,6 @@ public final class DateTimeUtil {
     }
 
     /**
-     * Gets the offset of time zone from UTC
-     *
-     * @return the offset of time zone from UTC
-     *
-     * @deprecated Unused and will be removed in the next major release.
-     * Use {@link DateTimeUtil#getCurrentTimeZoneOffset(Date)} instead.
-     */
-    @Deprecated
-    public static long getCurrentTimeZoneOffset() {
-        return getCurrentTimeZoneOffset(getCurrentTimeDate());
-    }
-
-    /**
      * Gets the offset of time zone from UTC at the specified date.
      *
      * @param date the date represented in milliseconds since January 1, 1970 00:00:00 GMT

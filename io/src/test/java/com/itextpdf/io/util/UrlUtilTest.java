@@ -74,18 +74,6 @@ public class UrlUtilTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
-
-    // Tests that after invocation of the getFinalURL method for local files, no handles are left open and the file
-    // is free to be removed.
-    @Test
-    public void getFinalURLDoesNotLockFileTest() throws IOException {
-        File tempFile = FileUtil.createTempFile(destinationFolder);
-
-        UrlUtil.getFinalURL(UrlUtil.toURL(tempFile.getAbsolutePath()));
-
-        Assert.assertTrue(FileUtil.deleteFile(tempFile));
-    }
-
     // Tests, that getFinalConnection will be redirected some times for other urls, and initialUrl will be different
     // from final url.
     @Test

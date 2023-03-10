@@ -79,10 +79,4 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         Assert.assertEquals(1588636800000d - offset, relativeTime, ZERO_DELTA);
     }
-
-    @Test
-    public void getCurrentTimeZoneOffsetTest() {
-        Assert.assertEquals(DateTimeUtil.getCurrentTimeZoneOffset(DateTimeUtil.getCurrentTimeDate()),
-                DateTimeUtil.getCurrentTimeZoneOffset());
-    }
 }

@@ -102,26 +102,6 @@ public final class UrlUtil {
     }
 
     /**
-     * This method gets the last redirected url.
-     *
-     * @param initialUrl an initial URL.
-     *
-     * @return the last redirected url.
-     *
-     * @throws IOException signals that an I/O exception has occurred.
-     *
-     * @deprecated {@link UrlUtil#getInputStreamOfFinalConnection(URL)} can be used to get input stream from final
-     * connection.
-     */
-    @Deprecated
-    public static URL getFinalURL(URL initialUrl) throws IOException {
-        final URLConnection finalConnection = getFinalConnection(initialUrl);
-        final URL finalUrl = finalConnection.getURL();
-        finalConnection.getInputStream().close();
-        return finalUrl;
-    }
-
-    /**
      * This method gets uri string from a file.
      * @param filename a given filename
      * @return a uri string
