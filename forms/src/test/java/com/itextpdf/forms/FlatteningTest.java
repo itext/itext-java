@@ -42,12 +42,13 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -99,4 +100,18 @@ public class FlatteningTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
     }
 
+    @Test
+    //TODO: Adapt assertion after DEVSIX-3079 is fixed
+    public void hiddenFieldsFlatten() throws IOException {
+        String filename = "hiddenField";
+        String src = sourceFolder + filename + ".pdf";
+        String dest = destinationFolder + filename + "_flattened.pdf";
+        final PdfDocument document = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
+        acroForm.getField("hiddenField").getPdfObject().put(PdfName.F, new PdfNumber(2));
+        acroForm.flattenFields();
+        String textAfterFlatten = PdfTextExtractor.getTextFromPage(document.getPage(1));
+        document.close();
+        Assert.assertTrue("Pdf does not contain the expected text", textAfterFlatten.contains("hiddenFieldValue"));
+    }
 }
