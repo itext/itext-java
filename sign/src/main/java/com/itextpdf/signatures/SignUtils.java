@@ -324,7 +324,7 @@ final class SignUtils {
      * During major release I'd suggest changing java unsupported extensions check logic to the same as in .NET,
      * but only if it is possible to customize this logic.
      */
-    // TODO DEVSIX-2534
+    // TODO DEVSIX-2634
     @Deprecated
     static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
         if (cert == null) {
