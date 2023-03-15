@@ -1534,7 +1534,84 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
-    
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY))
+    public void setValueWithDisplayTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "setValueWithDisplayTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_setValueWithDisplayTest.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            PdfFormField textField = new TextFormFieldBuilder(doc, "text")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            textField.setValue("some text", "*****");
+            textField.setColor(ColorConstants.BLUE);
+            acroForm.addField(textField);
+
+            PdfFormField textField2 = new TextFormFieldBuilder(doc, "text2")
+                    .setWidgetRectangle(new Rectangle(100, 650, 100, 20)).createText();
+            textField2.setValue("some text", "*****");
+            textField2.setColor(ColorConstants.BLUE);
+            textField2.setValue("new value");
+            acroForm.addField(textField2);
+
+            PdfFormField textField3 = new TextFormFieldBuilder(doc, "text3")
+                    .setWidgetRectangle(new Rectangle(250, 650, 100, 20)).createText();
+            textField3.setValue("some text", null);
+            acroForm.addField(textField3);
+
+            PdfFormField textField4 = new TextFormFieldBuilder(doc, "text4")
+                    .setWidgetRectangle(new Rectangle(400, 650, 100, 20)).createText();
+            textField4.setValue("some other text", "");
+            textField4.getFirstFormAnnotation().setBorderColor(ColorConstants.LIGHT_GRAY);
+            acroForm.addField(textField4);
+
+            PdfButtonFormField pushButtonField = new PushButtonFormFieldBuilder(doc, "button")
+                    .setWidgetRectangle(new Rectangle(36, 600, 200, 20)).setCaption("Click").createPushButton();
+            pushButtonField.setValue("Some button text", "*****");
+            pushButtonField.setColor(ColorConstants.BLUE);
+            acroForm.addField(pushButtonField);
+
+            String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
+            PdfChoiceFormField choiceField = new ChoiceFormFieldBuilder(doc, "choice")
+                    .setWidgetRectangle(new Rectangle(36, 550, 200, 20)).setOptions(options).createComboBox();
+            choiceField.setValue("First Item", "display value");
+            choiceField.setColor(ColorConstants.BLUE);
+            acroForm.addField(choiceField);
+
+            RadioFormFieldBuilder builder = new RadioFormFieldBuilder(doc, "group");
+            PdfButtonFormField radioGroupField = builder.createRadioGroup();
+            PdfFormAnnotation radio = builder.createRadioButton("1", new Rectangle(36, 500, 20, 20));
+            radioGroupField.addKid(radio);
+            radioGroupField.setValue("1", "display value");
+            acroForm.addField(radioGroupField);
+
+            PdfButtonFormField checkBoxField = new CheckBoxFormFieldBuilder(doc, "check")
+                    .setWidgetRectangle(new Rectangle(36, 450, 20, 20)).createCheckBox();
+            checkBoxField.setValue("1", "display value");
+            acroForm.addField(checkBoxField);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.FIELD_VALUE_CANNOT_BE_NULL, count = 2))
+    public void setNullValueTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "setNullValueTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_setNullValueTest.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            PdfFormField textField = new TextFormFieldBuilder(doc, "text")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            textField.setValue(null);
+            textField.setValue(null, "*****");
+            acroForm.addField(textField);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
     @Test
     public void getSigFlagsTest() {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {

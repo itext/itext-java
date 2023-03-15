@@ -1014,8 +1014,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (apDic == null) {
             put(PdfName.AP, apDic = new PdfDictionary());
         }
-        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), parent.text,
-                getFont(), getFontSize(widget.getAsArray(PdfName.Rect), parent.text));
+        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), parent.getDisplayValue(),
+                getFont(), getFontSize(widget.getAsArray(PdfName.Rect), parent.getDisplayValue()));
 
         apDic.put(PdfName.N, appearance.getPdfObject());
 
@@ -1049,7 +1049,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     boolean regenerateTextAndChoiceField() {
-        String value = parent.getValueAsString();
+        String value = parent.getDisplayValue();
         final PdfName type = parent.getFormType();
 
         PdfPage page = PdfAnnotation.makeAnnotation(getPdfObject()).getPage();

@@ -145,6 +145,8 @@ public class PdfFormField extends AbstractPdfFormField {
 
     protected CheckBoxType checkType = CheckBoxType.CROSS;
 
+    private String displayValue;
+
     private List<AbstractPdfFormField> childFields = new ArrayList<>();
 
     static {
@@ -417,26 +419,27 @@ public class PdfFormField extends AbstractPdfFormField {
      * Sets the field value and the display string. The display string
      * is used to build the appearance.
      *
-     * @param value   the field value.
-     * @param display the string that is used for the appearance. If <CODE>null</CODE>
+     * @param value the field value.
+     * @param displayValue the string that is used for the appearance. If <CODE>null</CODE>
      *                the <CODE>value</CODE> parameter will be used.
      * @return the edited field.
      */
-    public PdfFormField setValue(String value, String display) {
-        if (display == null) {
+    public PdfFormField setValue(String value, String displayValue) {
+        if (value == null) {
+            LOGGER.warn(FormsLogMessageConstants.FIELD_VALUE_CANNOT_BE_NULL);
+            return this;
+        }
+
+        // Not valid for checkboxes and radiobuttons
+        // TODO: DEVSIX-6344 - Move specific methods to related form fields classes
+        if (displayValue == null || displayValue.equals(value)) {
             return setValue(value);
         }
-        setValue(display, true);
-        PdfName formType = getFormType();
-        if (PdfName.Btn.equals(formType)) {
-            if ((getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0) {
-                text = value;
-            } else {
-                put(PdfName.V, new PdfName(value));
-            }
-        } else {
-            put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
-        }
+
+        setValue(displayValue, true);
+        setValue(value, false);
+        this.displayValue = displayValue;
+
         return this;
     }
 
@@ -806,6 +809,22 @@ public class PdfFormField extends AbstractPdfFormField {
             return ((PdfString) value).toUnicodeString();
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Gets the current display value of the form field.
+     *
+     * @return the current display value, as a {@link String}, if it exists.
+     * If not, returns the value as a {@link String}.
+     */
+    public String getDisplayValue() {
+        if (displayValue != null) {
+            return displayValue;
+        } else if (text != null) {
+            return text;
+        } else {
+            return getValueAsString();
         }
     }
 
@@ -1379,6 +1398,14 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     private PdfFormField setFieldValue(String value, boolean generateAppearance) {
+        if (value == null) {
+            LOGGER.warn(FormsLogMessageConstants.FIELD_VALUE_CANNOT_BE_NULL);
+            return this;
+        }
+
+        // First, get rid of displayValue
+        displayValue = null;
+
         PdfName formType = getFormType();
         if (PdfName.Btn.equals(formType)) {
             if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
