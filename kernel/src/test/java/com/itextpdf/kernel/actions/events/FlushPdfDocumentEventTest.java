@@ -142,6 +142,15 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
     }
 
     @Test
+    public void doActionNullEventMapTest() throws IOException {
+        try (PdfDocument document = new DummyPdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
+            AssertUtil.doesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
+            Assert.assertTrue(document.getDocumentInfo().getProducer()
+                    .contains("Apryse Group NV (no registered products)"));
+        }
+    }
+
+    @Test
     public void flushEventAfterEachEventTest() throws IOException {
         String resourceInit = SOURCE_FOLDER + "hello.pdf";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -154,6 +163,17 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
             String producerLine = pdf.getDocumentInfo().getProducer();
             String modifiedByItext = "modified using iText\u00ae Core";
             Assert.assertNotEquals(producerLine.indexOf(modifiedByItext), producerLine.lastIndexOf(modifiedByItext));
+        }
+    }
+
+    private static class DummyPdfDocument extends PdfDocument {
+
+        public DummyPdfDocument(PdfReader reader) {
+            super(reader);
+        }
+
+        public SequenceId getDocumentIdWrapper() {
+            return null;
         }
     }
 
