@@ -42,6 +42,9 @@
  */
 package com.itextpdf.io.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * This file is a helper class for internal usage only.
  * Be aware that its API and functionality may be changed in future.
@@ -56,4 +59,12 @@ public final class EnumUtil {
         }
         return enumInstance;
     }
+
+    public static <T extends Enum<T>> List<T> getAllValuesOfEnum(Class<T> enumInstance) {
+        if (enumInstance == null) {
+            throw new RuntimeException("Expected not null enum instance");
+        }
+        return Arrays.asList(enumInstance.getEnumConstants());
+    }
+
 }

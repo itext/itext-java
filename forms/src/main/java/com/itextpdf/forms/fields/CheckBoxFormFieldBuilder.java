@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -38,7 +39,7 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
     /**
      * Creates builder for {@link PdfButtonFormField} creation.
      *
-     * @param document document to be used for form field creation
+     * @param document      document to be used for form field creation
      * @param formFieldName name of the form field
      */
     public CheckBoxFormFieldBuilder(PdfDocument document, String formFieldName) {
@@ -58,6 +59,7 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
      * Sets check type for checkbox form field. Default value is {@link CheckBoxType#CROSS}.
      *
      * @param checkType check type to be set for checkbox form field
+     *
      * @return this builder
      */
     public CheckBoxFormFieldBuilder setCheckType(CheckBoxType checkType) {
@@ -88,6 +90,14 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
         check.put(PdfName.V, new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
 
         if (getWidgetRectangle() != null) {
+            //TODO DEVSIX-7426 remove flag
+            if (ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
+                check.getFirstFormAnnotation()
+                        .drawCheckBoxAndSaveAppearanceExperimental(PdfFormAnnotation.ON_STATE_VALUE);
+                setPageToField(check);
+                return check;
+            }
+            //TODO DEVSIX-7426 remove from here till end
             if (getConformanceLevel() == null) {
                 check.getFirstFormAnnotation().drawCheckAppearance(getWidgetRectangle().getWidth(),
                         getWidgetRectangle().getHeight(), PdfFormAnnotation.ON_STATE_VALUE);

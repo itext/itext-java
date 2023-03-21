@@ -45,33 +45,30 @@ package com.itextpdf.forms.form.renderer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.util.DrawingUtil;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.CheckBox;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.forms.form.renderer.checkboximpl.AbstractCheckBoxRendererFactory;
+import com.itextpdf.forms.form.renderer.checkboximpl.CheckBoxHtmlRendererFactory;
+import com.itextpdf.forms.form.renderer.checkboximpl.CheckBoxPdfARendererFactory;
+import com.itextpdf.forms.form.renderer.checkboximpl.CheckBoxPdfRendererFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
-import com.itextpdf.layout.renderer.ParagraphRenderer;
+
 
 /**
  * The {@link AbstractOneLineTextFieldRenderer} implementation for checkboxes.
  */
 public class CheckBoxRenderer extends AbstractFormFieldRenderer {
 
-    private static final Color DEFAULT_BORDER_COLOR = ColorConstants.DARK_GRAY;
-    private static final Color DEFAULT_BACKGROUND_COLOR = ColorConstants.WHITE;
-    private static final float DEFAULT_BORDER_WIDTH = 0.75f; // 1px
-    private static final float DEFAULT_SIZE = 8.25f; // 11px
 
     /**
      * Creates a new {@link CheckBoxRenderer} instance.
@@ -90,15 +87,54 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         return new CheckBoxRenderer((CheckBox) modelElement);
     }
 
+
+    /**
+     * Gets the rendering mode of the checkbox.
+     *
+     * @return the rendering mode of the checkbox
+     */
+    public RenderingMode getRenderingMode() {
+        final RenderingMode renderingMode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        if (renderingMode != null) {
+            return renderingMode;
+        }
+        return RenderingMode.DEFAULT_LAYOUT_MODE;
+    }
+
+    /**
+     * Returns whether or not the checkbox is in PDF/A mode.
+     *
+     * @return true if the checkbox is in PDF/A mode, false otherwise
+     */
+    public boolean isPdfA() {
+        return this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL) != null;
+    }
+
+    /**
+     * Creates a flat renderer for the checkbox.
+     *
+     * @return an IRenderer object for the flat renderer
+     */
     @Override
     protected IRenderer createFlatRenderer() {
-        Paragraph paragraph = new Paragraph()
-                .setWidth(DEFAULT_SIZE)
-                .setHeight(DEFAULT_SIZE)
-                .setBorder(new SolidBorder(DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH))
-                .setBackgroundColor(DEFAULT_BACKGROUND_COLOR)
-                .setHorizontalAlignment(HorizontalAlignment.CENTER);
-        return new FlatParagraphRenderer(paragraph);
+        return createCheckBoxRenderFactory().createFlatRenderer();
+    }
+
+    /**
+     * Creates a CheckBoxRenderFactory for the checkbox based on the different rendering modes and PDFA mode.
+     *
+     * @return a CheckBoxRenderFactory object for the checkbox
+     */
+    public AbstractCheckBoxRendererFactory createCheckBoxRenderFactory() {
+        // html rendering is pdfa compliant so we dont have to check if its pdfa
+        if (getRenderingMode() == RenderingMode.HTML_MODE) {
+            return new CheckBoxHtmlRendererFactory(this);
+        }
+        if (getRenderingMode() == RenderingMode.DEFAULT_LAYOUT_MODE && isPdfA()) {
+            return new CheckBoxPdfARendererFactory(this);
+        }
+        return new CheckBoxPdfRendererFactory(this);
+
     }
 
     /* (non-Javadoc)
@@ -124,10 +160,16 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
-        PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area).createCheckBox();
-        checkBox.setValue(isBoxChecked() ? "Yes" : "Off", true);
-        PdfAcroForm.getAcroForm(doc, true).addField(checkBox, page);
+        final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name)
+                .setWidgetRectangle(area)
+                .setConformanceLevel(this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
+        if (this.hasProperty(FormProperty.FORM_CHECKBOX_TYPE)) {
+            builder.setCheckType((CheckBoxType) this.<CheckBoxType>getProperty(FormProperty.FORM_CHECKBOX_TYPE));
+        }
 
+        final PdfButtonFormField checkBox = builder.createCheckBox();
+        checkBox.setValue(isBoxChecked() ? PdfFormAnnotation.ON_STATE_VALUE : PdfFormAnnotation.OFF_STATE_VALUE, true);
+        PdfAcroForm.getAcroForm(doc, true).addField(checkBox, page);
         writeAcroFormFieldLangAttribute(doc);
     }
 
@@ -136,24 +178,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         return false;
     }
 
-    private class FlatParagraphRenderer extends ParagraphRenderer {
-
-        public FlatParagraphRenderer(Paragraph modelElement) {
-            super(modelElement);
-        }
-
-        @Override
-        public void drawChildren(DrawContext drawContext) {
-            if (isBoxChecked()) {
-                PdfCanvas canvas = drawContext.getCanvas();
-                Rectangle rectangle = getInnerAreaBBox();
-                canvas.saveState();
-                canvas.setFillColor(ColorConstants.BLACK);
-                DrawingUtil.drawPdfACheck(canvas, rectangle.getWidth(), rectangle.getHeight(),
-                        rectangle.getLeft(), rectangle.getBottom());
-                canvas.restoreState();
-            }
-        }
-    }
 }
+
+
 

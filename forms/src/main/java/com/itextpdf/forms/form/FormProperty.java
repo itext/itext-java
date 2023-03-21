@@ -89,6 +89,14 @@ public final class FormProperty {
     /** The Constant FORM_FIELD_RADIO_BORDER_CIRCLE. */
     public static final int FORM_FIELD_RADIO_BORDER_CIRCLE = PROPERTY_START + 13;
 
+    /**
+     * The Constant FORM_CHECKBOX_TYPE.
+     */
+    public static final int FORM_CHECKBOX_TYPE = PROPERTY_START + 14;
+
+    /** The Constant FORM_CONFORMANCE_LEVEL. */
+    public static final int FORM_CONFORMANCE_LEVEL = PROPERTY_START + 15;
+    
     private FormProperty() {
         // Empty constructor.
     }
