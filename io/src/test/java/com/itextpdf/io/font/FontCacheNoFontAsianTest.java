@@ -149,7 +149,7 @@ public class FontCacheNoFontAsianTest extends ExtendedITextTest {
     public void getCid2ByteCMapNoFontAsian() {
         // Without font-asian module in the class path
         // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> FontCache.getCid2Byte("78ms-RKSJ-H"));
+        Assert.assertThrows(IOException.class, () -> FontCache.getCidToCodepointCmap("78ms-RKSJ-H"));
     }
 
     private static class FontProgramMock extends FontProgram {

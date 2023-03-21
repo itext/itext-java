@@ -29,14 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author psoares
- */
-public class CMapCidByte extends AbstractCMap {
+public class CMapCidToCodepoint extends AbstractCMap {
+    private static final byte[] EMPTY = {};
 
-    private Map<Integer, byte[]> map = new HashMap<>();
-    private final byte[] EMPTY = {};
-    private List<byte[]> codeSpaceRanges = new ArrayList<>();
+    private final Map<Integer, byte[]> map = new HashMap<>();
+    private final List<byte[]> codeSpaceRanges = new ArrayList<>();
 
     @Override
     void addChar(String mark, CMapObject code) {
@@ -57,14 +54,14 @@ public class CMapCidByte extends AbstractCMap {
 
     public IntHashtable getReversMap() {
         IntHashtable code2cid = new IntHashtable(map.size());
-        for (int cid : map.keySet()) {
-            byte[] bytes = map.get(cid);
+        for (Map.Entry<Integer, byte[]> entry : map.entrySet()) {
+            byte[] bytes = entry.getValue();
             int byteCode = 0;
             for (byte b: bytes) {
                 byteCode <<= 8;
                 byteCode += b & 0xff;
             }
-            code2cid.put(byteCode, cid);
+            code2cid.put(byteCode, entry.getKey());
         }
         return code2cid;
     }

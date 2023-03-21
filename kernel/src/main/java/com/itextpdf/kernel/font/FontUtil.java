@@ -22,7 +22,6 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
@@ -30,6 +29,7 @@ import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.cmap.ICMapLocation;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -40,7 +40,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,9 +92,6 @@ public class FontUtil {
                 toUnicode = CMapToUnicode.getIdentity();
             } else {
                 CMapUniCid uni = FontCache.getUni2CidCmap(uniMap);
-                if (uni == null) {
-                    return null;
-                }
                 toUnicode = uni.exportToUnicode();
             }
             uniMaps.put(uniMap, toUnicode);

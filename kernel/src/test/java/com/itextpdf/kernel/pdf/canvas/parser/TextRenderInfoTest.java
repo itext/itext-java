@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrate
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -46,7 +47,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TextRenderInfoTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/TextRenderInfoTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/TextRenderInfoTest/";
 
     public static final int FIRST_PAGE = 1;
     public static final int FIRST_ELEMENT_INDEX = 0;
@@ -54,7 +55,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
     @Test
     public void testCharacterRenderInfos() throws Exception {
         PdfCanvasProcessor parser = new PdfCanvasProcessor(new CharacterPositionEventListener());
-        parser.processPageContent(new PdfDocument(new PdfReader(sourceFolder + "simple_text.pdf")).getPage(FIRST_PAGE));
+        parser.processPageContent(new PdfDocument(new PdfReader(SOURCE_FOLDER + "simple_text.pdf")).getPage(FIRST_PAGE));
     }
 
     /**
@@ -66,7 +67,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         StringBuilder sb = new StringBuilder();
         String inFile = "japanese_text.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inFile));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
         ITextExtractionStrategy start = new SimpleTextExtractionStrategy();
 
         sb.append(PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start));
@@ -85,7 +86,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         String inFile = "type3font_text.pdf";
         LineSegment origLineSegment = new LineSegment(new Vector(20.3246f, 769.4974f, 1.0f), new Vector(151.22923f, 769.4974f, 1.0f));
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inFile));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
         TextPositionEventListener renderListener = new TextPositionEventListener();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(renderListener);
 
@@ -96,6 +97,20 @@ public class TextRenderInfoTest extends ExtendedITextTest {
 
         Assert.assertEquals(renderListener.getLineSegments().get(FIRST_ELEMENT_INDEX).getEndPoint().get(FIRST_ELEMENT_INDEX),
                 origLineSegment.getEndPoint().get(FIRST_ELEMENT_INDEX), 1 / 2f);
+    }
+
+    @Test
+    public void testDoubleMappedCharacterExtraction() throws IOException {
+        String inFile = "double_cmap_mapping.pdf";
+        // TODO after fixing DEVSIX-6089 first hyphen should be 002D instead of 2011. The similar for the second line
+        String expectedResult = "Regular hyphen [\u2011] and non‑breaking hyphen [\u2011] (both CID 14)\n"
+                + "Turtle kyuujitai [\u9f9c] and turtle radical [\u9f9c] (both CID 7472)";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
+        ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+
+        String result = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), strategy).trim();
+        Assert.assertEquals(expectedResult, result);
     }
 
 

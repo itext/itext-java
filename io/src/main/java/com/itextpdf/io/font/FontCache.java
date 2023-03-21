@@ -25,14 +25,16 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.cmap.AbstractCMap;
 import com.itextpdf.io.font.cmap.CMapByteCid;
-import com.itextpdf.io.font.cmap.CMapCidByte;
+import com.itextpdf.io.font.cmap.CMapCidToCodepoint;
 import com.itextpdf.io.font.cmap.CMapCidUni;
+import com.itextpdf.io.font.cmap.CMapCodepointToCid;
 import com.itextpdf.io.font.cmap.CMapLocationResource;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.ResourceUtil;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -133,8 +135,7 @@ public class FontCache {
     }
 
     public static CMapUniCid getUni2CidCmap(String uniMap) {
-        CMapUniCid uniCid = new CMapUniCid();
-        return parseCmap(uniMap, uniCid);
+        return parseCmap(uniMap, new CMapUniCid());
     }
 
     public static CMapByteCid getByte2CidCmap(String cmap) {
@@ -142,9 +143,13 @@ public class FontCache {
         return parseCmap(cmap, uniCid);
     }
 
-    public static CMapCidByte getCid2Byte(String cmap) {
-        CMapCidByte cidByte = new CMapCidByte();
+    public static CMapCidToCodepoint getCidToCodepointCmap(String cmap) {
+        CMapCidToCodepoint cidByte = new CMapCidToCodepoint();
         return parseCmap(cmap, cidByte);
+    }
+
+    public static CMapCodepointToCid getCodepointToCidCmap(String uniMap) {
+        return parseCmap(uniMap, new CMapCodepointToCid());
     }
 
     /**

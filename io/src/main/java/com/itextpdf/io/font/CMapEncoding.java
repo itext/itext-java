@@ -22,34 +22,32 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.font.cmap.CMapCidByte;
-import com.itextpdf.io.font.cmap.CMapCidUni;
+import com.itextpdf.io.font.cmap.CMapCidToCodepoint;
+import com.itextpdf.io.font.cmap.CMapCodepointToCid;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.io.font.cmap.CMapParser;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
-import com.itextpdf.io.util.IntHashtable;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.slf4j.LoggerFactory;
 
 public class CMapEncoding {
 
     private static final List<byte[]> IDENTITY_H_V_CODESPACE_RANGES = Arrays.asList(new byte[] {0, 0}, new byte[] {(byte)0xff, (byte)0xff});
 
-    private String cmap;
+    private final String cmap;
     private String uniMap;
 
     // true if CMap is Identity-H/V
     private boolean isDirect;
 
-    private CMapCidUni cid2Uni;
-    private CMapCidByte cid2Code;
+    private CMapCidToCodepoint cid2Code;
 
-    private IntHashtable code2Cid;
+    private CMapCodepointToCid code2Cid;
 
     private List<byte[]> codeSpaceRanges;
 
@@ -76,22 +74,21 @@ public class CMapEncoding {
         this.cmap = cmap;
         this.uniMap = uniMap;
         if (cmap.equals(PdfEncodings.IDENTITY_H) || cmap.equals(PdfEncodings.IDENTITY_V)) {
-            cid2Uni = FontCache.getCid2UniCmap(uniMap);
             isDirect = true;
             this.codeSpaceRanges = IDENTITY_H_V_CODESPACE_RANGES;
         } else {
-            cid2Code = FontCache.getCid2Byte(cmap);
-            code2Cid = cid2Code.getReversMap();
+            cid2Code = FontCache.getCidToCodepointCmap(cmap);
+            code2Cid = CMapEncoding.getCodeToCidCmap(cmap, cid2Code);
             this.codeSpaceRanges = cid2Code.getCodeSpaceRanges();
         }
     }
 
     public CMapEncoding(String cmap, byte[] cmapBytes) {
         this.cmap = cmap;
-        cid2Code = new CMapCidByte();
+        cid2Code = new CMapCidToCodepoint();
         try {
             CMapParser.parseCid(cmap, cid2Code, new CMapLocationFromBytes(cmapBytes));
-            code2Cid = cid2Code.getReversMap();
+            code2Cid = CMapEncoding.getCodeToCidCmap(cmap, cid2Code);
             this.codeSpaceRanges = cid2Code.getCodeSpaceRanges();
         } catch (IOException e) {
             LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
@@ -190,7 +187,7 @@ public class CMapEncoding {
         if (isDirect) {
             return cmapCode;
         } else {
-            return code2Cid.get(cmapCode);
+            return code2Cid.lookup(cmapCode);
         }
     }
 
@@ -214,5 +211,14 @@ public class CMapEncoding {
             }
         }
         return false;
+    }
+
+    private static CMapCodepointToCid getCodeToCidCmap(String cmap, CMapCidToCodepoint cid2Code) {
+        try {
+            return FontCache.getCodepointToCidCmap(cmap);
+        } catch (com.itextpdf.io.exceptions.IOException ex) {
+            // if not found, fall back to reversing
+            return new CMapCodepointToCid(cid2Code);
+        }
     }
 }
