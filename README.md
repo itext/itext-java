@@ -4,7 +4,7 @@ The iText 7 Core/Community release contains:
 
 - ```kernel-x.y.z.jar```: low-level functionality
 - ```io-x.y.z.jar```:  low-level functionality
-- ```layout-x.y.z.jar```: high-level functionality
+- ```layout-x.y.z.jar```: high-level functionality. For more information see [layout overview][layoutMd].
 - ```forms-x.y.z.jar```: AcroForms
 - ```pdfa-x.y.z.jar```: PDF/A-specific functionality
 - ```pdftest-x.y.z.jar```: test helper classes
@@ -15,6 +15,9 @@ The iText 7 Core/Community release contains:
 - ```styled-xml-parser-x.y.z.jar```: use this if you need support for SVG or html2pdf
 - ```svg-x.y.z.jar```: SVG support
 - ```commons-x.y.z.jar```: commons module
+- ```bouncy-castle-connector-x.y.z.jar```: auxiliary internal module
+- ```bouncy-castle-adapter-x.y.z.jar```: use this to apply BouncyCastle as low-level cryptography library
+- ```bouncy-castle-fips-adapter-x.y.z.jar```: use this to apply BouncyCastle FIPS as low-level cryptography library
 
 The **iText 7 Community** source code is hosted on [Github][github], where you can also [download the latest releases][latest].
 
@@ -48,6 +51,7 @@ Contact [sales] for more info.
 [agpl]: LICENSE.md
 [building]: BUILDING.md
 [contributing]: CONTRIBUTING.md
+[layoutMd]: layout/MODULE_OVERVIEW.md
 [itext]: https://itextpdf.com/
 [github]: https://github.com/itext/itext7
 [latest]: https://github.com/itext/itext7/releases/latest
