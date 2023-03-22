@@ -381,15 +381,10 @@ public class PdfSigner {
      */
     public void setFieldName(String fieldName) {
         if (fieldName != null) {
-            if (fieldName.indexOf('.') >= 0) {
-                throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_NAMES_CANNOT_CONTAIN_A_DOT);
-            }
-
             PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
 
-            if (acroForm.getField(fieldName) != null) {
-                PdfFormField field = acroForm.getField(fieldName);
-
+            PdfFormField field = acroForm.getField(fieldName);
+            if (field != null) {
                 if (!PdfName.Sig.equals(field.getFormType())) {
                     throw new IllegalArgumentException(
                             SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE);
@@ -406,6 +401,12 @@ public class PdfSigner {
                     PdfWidgetAnnotation widget = widgets.get(0);
                     appearance.setPageRect(getWidgetRectangle(widget));
                     appearance.setPageNumber(getWidgetPageNumber(widget));
+                }
+            } else {
+                // Do not allow dots for new fields
+                // For existing fields dots are allowed because there it might be fully qualified name
+                if (fieldName.indexOf('.') >= 0) {
+                    throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_NAMES_CANNOT_CONTAIN_A_DOT);
                 }
             }
 
