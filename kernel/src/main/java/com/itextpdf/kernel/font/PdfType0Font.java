@@ -142,13 +142,24 @@ public class PdfType0Font extends PdfFont {
         newFont = false;
         PdfDictionary cidFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
         PdfObject cmap = fontDictionary.get(PdfName.Encoding);
+
+        String ordering = getOrdering(cidFont);
+        if(ordering == null) {
+            throw new PdfException(KernelExceptionMessageConstant.ORDERING_SHOULD_BE_DETERMINED);
+        }
+        CMapToUnicode toUnicodeCMap;
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
-        CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
+        if (toUnicode == null) {
+            toUnicodeCMap = FontUtil.parseUniversalToUnicodeCMap(ordering);
+        } else {
+            toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
+        }
+
         if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
                 PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
+
             if (toUnicodeCMap == null) {
-                String uniMap = getUniMapFromOrdering(getOrdering(cidFont),
-                        PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()));
+                String uniMap = getUniMapFromOrdering(ordering, PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()));
                 toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap == null) {
                     toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
@@ -162,7 +173,7 @@ public class PdfType0Font extends PdfFont {
             embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
-            String uniMap = getUniMapFromOrdering(getOrdering(cidFont), true);
+            String uniMap = getUniMapFromOrdering(ordering, true);
             if (uniMap != null && uniMap.startsWith("Uni") && CidFontProperties.isCidFont(cidFontName, uniMap)) {
                 try {
                     fontProgram = FontProgramFactory.createFont(cidFontName);

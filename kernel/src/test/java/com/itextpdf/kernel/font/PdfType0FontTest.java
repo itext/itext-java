@@ -28,6 +28,7 @@ import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -127,5 +128,19 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
         Assert.assertEquals("Identity-H", PdfType0Font.getUniMapFromOrdering("Identity", true));
         Assert.assertEquals("Identity-V", PdfType0Font.getUniMapFromOrdering("Identity", false));
+    }
+
+    @Test
+    public void descendantCidFontWithoutOrderingTest() {
+        PdfDictionary fontDict = new PdfDictionary();
+        PdfArray descendantFonts = new PdfArray();
+        PdfDictionary descendantFont = new PdfDictionary();
+        descendantFont.put(PdfName.CIDSystemInfo, new PdfDictionary());
+        descendantFonts.add(descendantFont);
+        fontDict.put(PdfName.DescendantFonts, descendantFonts);
+
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> new PdfType0Font(fontDict));
+        Assert.assertEquals(KernelExceptionMessageConstant.ORDERING_SHOULD_BE_DETERMINED, e.getMessage());
     }
 }

@@ -25,6 +25,7 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
+import com.itextpdf.io.font.cmap.CMapLocationResource;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.cmap.CMapUniCid;
@@ -40,6 +41,8 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +50,13 @@ public class FontUtil {
     private static final SecureRandom NUMBER_GENERATOR = new SecureRandom();
 
     private static final HashMap<String, CMapToUnicode> uniMaps = new HashMap<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FontUtil.class);
+
+    private static final String UNIVERSAL_CMAP_DIR = "toUnicode/";
+
+    private static final Set<String> UNIVERSAL_CMAP_ORDERINGS = new HashSet<>(Arrays.asList(
+            "CNS1", "GB1", "Japan1", "Korea1", "KR"));
 
     private FontUtil() {}
 
@@ -70,12 +80,26 @@ public class FontUtil {
                 cMapToUnicode = new CMapToUnicode();
                 CMapParser.parseCid("", cMapToUnicode, lb);
             } catch (Exception e) {
-                Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
-                logger.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
+                LOGGER.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP, e);
                 cMapToUnicode = CMapToUnicode.EmptyCMapToUnicodeMap;
             }
         } else if (PdfName.IdentityH.equals(toUnicode)) {
             cMapToUnicode = CMapToUnicode.getIdentity();
+        }
+        return cMapToUnicode;
+    }
+
+    static CMapToUnicode parseUniversalToUnicodeCMap(String ordering) {
+        if (!UNIVERSAL_CMAP_ORDERINGS.contains(ordering)) {
+            return null;
+        }
+        String cmapRelPath = UNIVERSAL_CMAP_DIR + "Adobe-" + ordering + "-UCS2";
+        CMapToUnicode cMapToUnicode = new CMapToUnicode();
+        try {
+            CMapParser.parseCid(cmapRelPath, cMapToUnicode, new CMapLocationResource());
+        } catch (Exception e) {
+            LOGGER.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP, e);
+            return null;
         }
         return cMapToUnicode;
     }
