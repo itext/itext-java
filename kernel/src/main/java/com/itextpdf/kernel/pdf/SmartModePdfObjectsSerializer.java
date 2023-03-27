@@ -26,17 +26,16 @@ import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.security.MessageDigest;
-
 import java.util.HashMap;
 import java.util.Map;
 
 class SmartModePdfObjectsSerializer {
-    private MessageDigest md5;
+    private MessageDigest sha512;
     private HashMap<SerializedObjectContent, PdfIndirectReference> serializedContentToObj = new HashMap<>();
 
     SmartModePdfObjectsSerializer() {
         try {
-            md5 = MessageDigest.getInstance("MD5");
+            sha512 = MessageDigest.getInstance("SHA-512");
         } catch (Exception e) {
             throw new PdfException(e);
         }
@@ -110,7 +109,7 @@ class SmartModePdfObjectsSerializer {
             serDic((PdfDictionary) obj, bb, level - 1, serializedCache);
             bb.append("$B");
             if (level > 0) {
-                bb.append(md5.digest(((PdfStream) obj).getBytes(false)));
+                bb.append(sha512.digest(((PdfStream) obj).getBytes(false)));
             }
         } else if (obj.isDictionary()) {
             serDic((PdfDictionary) obj, bb, level - 1, serializedCache);

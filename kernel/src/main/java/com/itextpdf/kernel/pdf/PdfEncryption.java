@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.securityhandler.PubKeySecurityHandler;
@@ -38,7 +37,9 @@ import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingStandard12
 import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingStandard40;
 import com.itextpdf.kernel.crypto.securityhandler.StandardSecurityHandler;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.security.IExternalDecryptionProcess;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -255,9 +256,9 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public static byte[] generateNewDocumentId() {
-        MessageDigest md5;
+        MessageDigest sha512;
         try {
-            md5 = MessageDigest.getInstance("MD5");
+            sha512 = MessageDigest.getInstance("SHA-512");
         } catch (Exception e) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
@@ -265,7 +266,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         long mem = SystemUtil.getFreeMemory();
         String s = time + "+" + mem + "+" + (seq++);
 
-        return md5.digest(s.getBytes(StandardCharsets.ISO_8859_1));
+        return sha512.digest(s.getBytes(StandardCharsets.ISO_8859_1));
     }
 
     /**
