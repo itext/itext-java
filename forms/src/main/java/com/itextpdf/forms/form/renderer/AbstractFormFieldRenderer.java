@@ -71,7 +71,20 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @return true, if fields need to be flattened
      */
     public boolean isFlatten() {
-        Boolean flatten = getPropertyAsBoolean(FormProperty.FORM_FIELD_FLATTEN);
+        Boolean flatten;
+        if (parent != null) {
+            // First check parent. This is a workaround for the case when some fields are inside other fields
+            // either directly or via other elements (input text field inside div inside input button field). In this
+            // case we do not want to create a form field for the inner field and just flatten it.
+            IRenderer nextParent = parent;
+            while (nextParent != null) {
+                if (nextParent instanceof AbstractFormFieldRenderer) {
+                    return true;
+                }
+                nextParent = nextParent.getParent();
+            }
+        }
+        flatten = getPropertyAsBoolean(FormProperty.FORM_FIELD_FLATTEN);
         return flatten == null ?
                 (boolean) modelElement.<Boolean>getDefaultProperty(FormProperty.FORM_FIELD_FLATTEN) : (boolean) flatten;
     }

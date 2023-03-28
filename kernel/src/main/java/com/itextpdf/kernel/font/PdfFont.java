@@ -253,7 +253,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the descent of a {@code String} in points. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
+     * less than or equal to zero even if all the characters have a higher descent.
      *
      * @param text     the {@code String} to get the descent of
      * @param fontSize the font size
@@ -285,7 +285,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Gets the descent of a char code in points. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
+     * less than or equal to zero even if all the characters have a higher descent.
      *
      * @param unicode  the char code to get the descent of
      * @param fontSize the font size

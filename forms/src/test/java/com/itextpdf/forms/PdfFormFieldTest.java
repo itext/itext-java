@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
@@ -61,7 +60,6 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -433,6 +431,87 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         group2.regenerateField();
         form.addField(group2);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void customizedPushButtonFieldTest() throws IOException, InterruptedException {
+        String file = "customizedPushButtonFieldTest.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String itext = "itextpdf";
+
+        PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
+                .setWidgetRectangle(new Rectangle(36, 500, 200, 200)).setCaption(itext)
+                .createPushButton();
+        button.setFontSize(0);
+        button.setValue(itext);
+
+        button.getFirstFormAnnotation()
+                .setBorderWidth(10).setBorderColor(ColorConstants.GREEN).setBackgroundColor(ColorConstants.GRAY)
+                .setVisibility(PdfFormAnnotation.VISIBLE);
+
+        form.addField(button);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void customizedPushButtonField2Test() throws IOException, InterruptedException {
+        String file = "customizedPushButtonField2Test.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String itext = "itextpdf";
+
+        PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
+                .setWidgetRectangle(new Rectangle(36, 500, 300, 110)).setCaption(itext)
+                .createPushButton();
+        button.setFontSize(0);
+        button.setValue(itext);
+
+        button.getFirstFormAnnotation()
+                .setBorderWidth(10).setBorderColor(ColorConstants.GREEN).setBackgroundColor(ColorConstants.GRAY)
+                .setVisibility(PdfFormAnnotation.VISIBLE);
+
+        form.addField(button);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, sourceFolder + "cmp_" + file, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void customizedPushButtonField3Test() throws IOException, InterruptedException {
+        String file = "customizedPushButtonField3Test.pdf";
+
+        String filename = destinationFolder + file;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String text = "toolongtext";
+
+        PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, text)
+                .setWidgetRectangle(new Rectangle(36, 500, 160, 300)).setCaption(text)
+                .createPushButton();
+        button.setFontSize(40);
+        button.setValue(text);
+
+        button.getFirstFormAnnotation()
+                .setBorderWidth(10).setBorderColor(ColorConstants.GREEN).setBackgroundColor(ColorConstants.GRAY)
+                .setVisibility(PdfFormAnnotation.VISIBLE);
+
+        form.addField(button);
 
         pdfDoc.close();
 

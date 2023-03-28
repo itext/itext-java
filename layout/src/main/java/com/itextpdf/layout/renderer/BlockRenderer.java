@@ -667,7 +667,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (FloatingHelper.isRendererFloating(this) || this instanceof CellRenderer) {
             // include floats in vertical alignment
             for (IRenderer child : childRenderers) {
-                if (child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
+                if (child.getOccupiedArea() != null &&
+                        child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
                     lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
                 }
             }
@@ -675,7 +676,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             int lastChildIndex = childRenderers.size() - 1;
             while (lastChildIndex >= 0) {
                 IRenderer child = childRenderers.get(lastChildIndex--);
-                if (!FloatingHelper.isRendererFloating(child)) {
+                if (!FloatingHelper.isRendererFloating(child) && child.getOccupiedArea() != null) {
                     lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
                     break;
                 }

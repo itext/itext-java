@@ -1252,7 +1252,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param rect    a rectangle the border box will be applied on.
      * @param reverse indicates whether the border box will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
+     *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      * @see #getBorders
      */
@@ -1266,7 +1266,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param rect    a rectangle paddings will be applied on.
      * @param reverse indicates whether paddings will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
+     *                inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      * @see #getPaddings
      */
@@ -1842,7 +1842,7 @@ public abstract class AbstractRenderer implements IRenderer {
         return rect.applyMargins(paddings[0] != null ? paddings[0].getValue() : 0,
                 paddings[1] != null ? paddings[1].getValue() : 0,
                 paddings[2] != null ? paddings[2].getValue() : 0,
-                paddings[3] != null ? paddings[3].getValue() : 3,
+                paddings[3] != null ? paddings[3].getValue() : 0,
                 reverse);
     }
 
@@ -2031,7 +2031,7 @@ public abstract class AbstractRenderer implements IRenderer {
     void updateHeightsOnSplit(float usedHeight, boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer, boolean enlargeOccupiedAreaOnHeightWasClipped) {
         if (wasHeightClipped) {
             // if height was clipped, max height exists and can be resolved
-            Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.warn(IoLogMessageConstant.CLIP_ELEMENT);
 
             if (enlargeOccupiedAreaOnHeightWasClipped) {

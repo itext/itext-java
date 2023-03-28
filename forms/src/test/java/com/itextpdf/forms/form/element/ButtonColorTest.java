@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.form.element;
 
-import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -77,12 +76,12 @@ public class ButtonColorTest extends ExtendedITextTest {
              Document document = new Document(pdfDocument)) {
 
             Button button = new Button("button");
-            button.add(new Paragraph("button child"));
-            InputButton inputButton = new InputButton("input button");
-            button.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
-            inputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
-            button.setProperty(FormProperty.FORM_FIELD_VALUE, "button value");
-            inputButton.setProperty(FormProperty.FORM_FIELD_VALUE, "input button value");
+            button.add(new Paragraph("button child paragraph"));
+            Button inputButton = new Button("input button");
+            button.setInteractive(true);
+            inputButton.setInteractive(true);
+            button.add(new Paragraph("button value"));
+            inputButton.setSingleLineValue("input button value");
             button.setProperty(Property.FONT_COLOR, color == null ? null : new TransparentColor(color));
             inputButton.setProperty(Property.BACKGROUND, color == null ? null : new Background(color));
 

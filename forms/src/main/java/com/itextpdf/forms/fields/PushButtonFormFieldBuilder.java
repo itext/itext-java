@@ -30,7 +30,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 /**
  * Builder for push button form field.
@@ -94,19 +93,13 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
 
         if (annotation != null) {
             field.getFirstFormAnnotation().backgroundColor = ColorConstants.LIGHT_GRAY;
-            PdfFormXObject xObject = field.getFirstFormAnnotation().drawPushButtonAppearance(
-                    getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight(),
-                    caption, getDocument().getDefaultFont(), AbstractPdfFormField.DEFAULT_FONT_SIZE);
-            annotation.setNormalAppearance(xObject.getPdfObject());
+            field.getFirstFormAnnotation().drawPushButtonFieldAndSaveAppearance();
 
             PdfDictionary mk = new PdfDictionary();
             mk.put(PdfName.CA, new PdfString(caption));
             mk.put(PdfName.BG, new PdfArray(field.getFirstFormAnnotation().backgroundColor.getColorValue()));
             annotation.setAppearanceCharacteristics(mk);
 
-            if (getConformanceLevel() != null) {
-                PdfFormAnnotation.createPushButtonAppearanceState(annotation.getPdfObject());
-            }
             setPageToField(field);
         }
 

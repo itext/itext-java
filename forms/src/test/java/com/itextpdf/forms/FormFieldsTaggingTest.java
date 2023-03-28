@@ -24,7 +24,6 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -202,6 +201,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
                 .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Capcha").createPushButton();
+        pushButton.setFontSize(12f);
 
         TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
         tagPointer.moveToKid(StandardRoles.DIV);

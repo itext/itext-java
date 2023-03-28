@@ -35,7 +35,12 @@ public final class Property {
     public static final int ALIGN_CONTENT = 130;
     public static final int ALIGN_ITEMS = 134;
     public static final int ALIGN_SELF = 129;
+
+    // This property is needed for form field appearance with right-to-left text. By setting true we avoid writing
+    // /ActualText and /ReversedChars to form field appearance streams because this resulted in Acrobat showing
+    // an empty appearance in such cases.
     public static final int APPEARANCE_STREAM_LAYOUT = 82;
+
     public static final int AREA_BREAK_TYPE = 2;
     public static final int AUTO_SCALE = 3;
     public static final int AUTO_SCALE_HEIGHT = 4;

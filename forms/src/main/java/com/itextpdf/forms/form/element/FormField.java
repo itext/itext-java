@@ -49,34 +49,11 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see IFormField#getId()
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.ElementPropertyContainer#getDefaultProperty(int)
-     */
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case FormProperty.FORM_FIELD_FLATTEN:
-                return (T1) (Object) true;
-            case FormProperty.FORM_FIELD_VALUE:
-                return (T1) (Object) "";
-            default:
-                return super.<T1>getDefaultProperty(property);
-        }
-    }
-
     /**
      * Sets the form field's width and height.
      *
      * @param size form field's width and height.
-     * 
+     *
      * @return this same {@link FormField} element.
      */
     public T setSize(float size) {
@@ -88,9 +65,9 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
 
     /**
      * Set the form field's width.
-     * 
+     *
      * @param width form field's width
-     * 
+     *
      * @return this {@link FormField} element.
      */
     public T setWidth(float width) {
@@ -111,26 +88,57 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
     }
 
     /**
-     * Set the form field to be interactive and added into Acroform instead of drawing it on a page.
+     * {@inheritDoc}
      *
-     * @param interactive {@code true} if the form field element shall be added into Acroform, {@code false} otherwise.
-     *                By default, the form field element is not interactive and drawn on a page.
-     * @return this same {@link FormField} instance.
+     * @param value {@inheritDoc}
+     *
+     * @return {@inheritDoc}
      */
-    public T setInteractive(boolean interactive) {
-        setProperty(FormProperty.FORM_FIELD_FLATTEN, !interactive);
+    @Override
+    public IFormField setValue(String value) {
+        setProperty(FormProperty.FORM_FIELD_VALUE, value);
         return (T) (Object) this;
     }
 
     /**
-     * Set value to the form field. Meaning of this depends on the form field type.
-     * 
-     * @param value string value to be set
-     * 
-     * @return this {@link FormField} element.
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
      */
-    public T setValue(String value) {
-        setProperty(FormProperty.FORM_FIELD_VALUE, value);
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param property {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public <T1> T1 getDefaultProperty(int property) {
+        switch (property) {
+            case FormProperty.FORM_FIELD_FLATTEN:
+                return (T1) (Object) true;
+            case FormProperty.FORM_FIELD_VALUE:
+                return (T1) (Object) "";
+            default:
+                return super.<T1>getDefaultProperty(property);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param interactive {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public IFormField setInteractive(boolean interactive) {
+        setProperty(FormProperty.FORM_FIELD_FLATTEN, !interactive);
         return (T) (Object) this;
     }
 }

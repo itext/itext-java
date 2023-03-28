@@ -150,9 +150,9 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
     }
 
     /**
-     * Sets values for a absolute repositioning of the Element.
+     * Sets values for an absolute repositioning of the Element.
      * The coordinates specified correspond to the
-     * bottom-left corner of the element and it grows upwards.
+     * bottom-left corner of the element, and it grows upwards.
      * Also has as a side effect that the Element's {@link Property#POSITION} is changed to
      * {@link LayoutPosition#FIXED fixed}.
      *

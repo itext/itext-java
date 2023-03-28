@@ -130,6 +130,7 @@ public class ParagraphRenderer extends BlockRenderer {
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         Float blockMaxHeight = retrieveMaxHeight();
+
         OverflowPropertyValue overflowY = (null == blockMaxHeight || blockMaxHeight > parentBBox.getHeight())
                 && !wasParentsHeightClipped
                 ? OverflowPropertyValue.FIT

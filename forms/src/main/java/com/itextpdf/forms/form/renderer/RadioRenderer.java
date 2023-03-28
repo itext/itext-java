@@ -183,13 +183,11 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
 
         PdfFormAnnotation radio =
                 new RadioFormFieldBuilder(doc, null).createRadioButton(getModelId(), area);
-        // Set background color
+
         Background background = this.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
             radio.setBackgroundColor(background.getColor());
         }
-
-        // Set border color and border width
         Border border = this.<Border>getProperty(Property.BORDER);
         if (border != null) {
             radio.setBorderColor(border.getColor());

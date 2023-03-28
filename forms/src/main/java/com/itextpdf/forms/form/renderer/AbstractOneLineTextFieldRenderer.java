@@ -44,11 +44,6 @@ public abstract class AbstractOneLineTextFieldRenderer extends AbstractTextField
         super(modelElement);
     }
 
-    @Override
-    public void move(float dxRight, float dyUp) {
-        super.move(dxRight, dyUp);
-    }
-
     /**
      * Crops the content lines.
      *

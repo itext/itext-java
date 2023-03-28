@@ -22,17 +22,36 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.layout.element.IBlockElement;
 
 /**
  * Common interface for HTML form elements.
  */
 public interface IFormField extends IBlockElement {
+    /**
+     * Sets the {@link FormProperty#FORM_FIELD_VALUE} property.
+     *
+     * @param value string value of the property to be set.
+     *
+     * @return this same {@link IFormField} instance.
+     */
+    IFormField setValue(String value);
+
+    /**
+     * Set the form field to be interactive and added into Acroform instead of drawing it on a page.
+     *
+     * @param interactive {@code true} if the form field element shall be added into Acroform, {@code false} otherwise.
+     *                By default, the form field element is not interactive and drawn on a page.
+     *
+     * @return this same {@link IFormField} instance.
+     */
+    IFormField setInteractive(boolean interactive);
 
     /**
      * Gets the id.
      *
-     * @return the id
+     * @return the id.
      */
     String getId();
 }

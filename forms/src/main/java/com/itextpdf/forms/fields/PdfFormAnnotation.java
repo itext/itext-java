@@ -33,6 +33,7 @@ import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.TextArea;
+import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.util.FontSizeUtil;
@@ -68,6 +69,7 @@ import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.Background;
@@ -119,6 +121,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     protected float borderWidth = 1;
     protected Color backgroundColor;
     protected Color borderColor;
+
+    private Button formFieldElement;
 
     /**
      * Creates a form field annotation as a wrapper of a {@link PdfWidgetAnnotation}.
@@ -390,6 +394,19 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
+     * Sets an element associated with the current field.
+     *
+     * @param element model element to set.
+     *
+     * @return this {@link PdfFormAnnotation}.
+     */
+    public PdfFormAnnotation setFormFieldElement(Button element) {
+        this.formFieldElement = element;
+        regenerateWidget();
+        return this;
+    }
+
+    /**
      * Gets the appearance state names.
      *
      * @return an array of Strings containing the names of the appearance states.
@@ -536,9 +553,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
         paragraphStyle.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
-        if (getColor() != null) {
-            paragraphStyle.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
-        }
+        paragraphStyle.setFontColor(getColor());
 
         int maxLen = new PdfTextFormField(parent.getPdfObject()).getMaxLen();
         // check if /Comb has been set
@@ -750,73 +765,67 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Draws the appearance for a push button.
-     *
-     * @param width    the width of the pushbutton
-     * @param height   the width of the pushbutton
-     * @param text     the text to display on the button
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     *
-     * @return a new {@link PdfFormXObject}
+     * Draws the appearance of a push button and saves it into an appearance stream.
      */
-    protected PdfFormXObject drawPushButtonAppearance(float width, float height, String text,
-            PdfFont font, float fontSize) {
-        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvas = new PdfCanvas(stream, new PdfResources(), getDocument());
+    protected void drawPushButtonFieldAndSaveAppearance() {
+        Rectangle rectangle = getRect(this.getPdfObject());
+        if (rectangle == null) {
+            return;
+        }
+        float width = rectangle.getWidth();
+        float height = rectangle.getHeight();
+
+        createInputButton();
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        drawBorder(canvas, xObject, width, height);
+        applyRotation(xObject, height, width);
+        Canvas canvas = new Canvas(xObject, this.getDocument());
+        setMetaInfoToCanvas(canvas);
 
+        String caption = parent.getDisplayValue();
+        if (caption != null && !caption.isEmpty()) {
+            formFieldElement.setSingleLineValue(caption);
+        }
+
+        float imagePadding = borderColor == null ? 0 : borderWidth;
         if (parent.img != null) {
-            PdfImageXObject imgXObj = new PdfImageXObject(parent.img);
-            canvas.addXObjectWithTransformationMatrix(imgXObj, width - borderWidth, 0, 0,
-                    height - borderWidth, borderWidth / 2, borderWidth / 2);
-            xObject.getResources().addImage(imgXObj);
+            // If we got here, the button will only contain the image that the user has set into the annotation.
+            // There is no way to pass other elements with this image.
+            formFieldElement.getChildren().clear();
+            Image image = new Image(new PdfImageXObject(parent.img), imagePadding, imagePadding);
+            image.setHeight(height - 2 * imagePadding);
+            image.setWidth(width - 2 * imagePadding);
+            formFieldElement.add(image);
         } else if (parent.form != null) {
-            canvas.addXObjectWithTransformationMatrix(parent.form,
-                    (height - borderWidth) / parent.form.getHeight(), 0, 0,
-                    (height - borderWidth) / parent.form.getHeight(), borderWidth / 2, borderWidth / 2);
-            xObject.getResources().addForm(parent.form);
+            // If we got here, the button will only contain the image that the user has set as form into the annotation.
+            // There is no way to pass other elements with this image as form.
+            formFieldElement.getChildren().clear();
+            Image image = new Image(parent.form, imagePadding, imagePadding);
+            image.setHeight(height - 2 * imagePadding);
+            formFieldElement.add(image);
         } else {
-            drawButton(canvas, 0, 0, width, height, text, font, fontSize);
-            xObject.getResources().addFont(getDocument(), font);
+            xObject.getResources().addFont(getDocument(), getFont());
         }
-        xObject.getPdfObject().getOutputStream().writeBytes(stream.getBytes());
+        canvas.add(formFieldElement);
 
-        return xObject;
-    }
-
-    /**
-     * Performs the low-level drawing operations to draw a button object.
-     *
-     * @param canvas   the {@link PdfCanvas} of the page to draw on.
-     * @param x        will be ignored, according to spec it shall be 0
-     * @param y        will be ignored, according to spec it shall be 0
-     * @param width    the width of the button
-     * @param height   the width of the button
-     * @param text     the text to display on the button
-     * @param font     a {@link PdfFont}
-     * @param fontSize the size of the font
-     */
-    protected void drawButton(PdfCanvas canvas, float x, float y, float width, float height, String text, PdfFont font,
-            float fontSize) {
-        if (getColor() == null) {
-            color = ColorConstants.BLACK;
+        PdfDictionary ap = new PdfDictionary();
+        PdfStream normalAppearanceStream = xObject.getPdfObject();
+        if (normalAppearanceStream != null) {
+            PdfName stateName = getPdfObject().getAsName(PdfName.AS);
+            if (stateName == null) {
+                stateName = new PdfName("push");
+            }
+            getPdfObject().put(PdfName.AS, stateName);
+            PdfDictionary normalAppearance = new PdfDictionary();
+            normalAppearance.put(stateName, normalAppearanceStream);
+            ap.put(PdfName.N, normalAppearance);
+            ap.setModified();
         }
-        if (text == null) {
-            text = "";
-        }
-
-        Paragraph paragraph = new Paragraph(text).setFont(font).setFontSize(fontSize).setMargin(0).
-                setMultipliedLeading(1).setVerticalAlignment(VerticalAlignment.MIDDLE);
-        Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, width, 2 * height));
-        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
-
-        setMetaInfoToCanvas(modelCanvas);
-
-        modelCanvas.showTextAligned(paragraph, width / 2, height / 2, TextAlignment.CENTER,
-                VerticalAlignment.MIDDLE);
+        put(PdfName.AP, ap);
+        // We need to draw waitingDrawingElements (drawn inside close method), but the close method
+        // flushes TagTreePointer that will be used later, so set null to the corresponding property.
+        canvas.setProperty(Property.TAGGING_HELPER, null);
+        canvas.close();
     }
 
     /**
@@ -1052,44 +1061,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         appearance.getPdfObject().setData(stream.getBytes());
     }
 
-    static void createPushButtonAppearanceState(PdfDictionary widget) {
-        PdfDictionary appearances = widget.getAsDictionary(PdfName.AP);
-        PdfStream normalAppearanceStream = appearances.getAsStream(PdfName.N);
-        if (normalAppearanceStream != null) {
-            PdfName stateName = widget.getAsName(PdfName.AS);
-            if (stateName == null) {
-                stateName = new PdfName("push");
-            }
-            widget.put(PdfName.AS, stateName);
-            PdfDictionary normalAppearance = new PdfDictionary();
-            normalAppearance.put(stateName, normalAppearanceStream);
-            appearances.put(PdfName.N, normalAppearance);
-        }
-    }
-
     static void setMetaInfoToCanvas(Canvas canvas) {
         MetaInfoContainer metaInfo = FormsMetaInfoStaticContainer.getMetaInfoForLayout();
         if (metaInfo != null) {
             canvas.setProperty(Property.META_INFO, metaInfo);
-        }
-    }
-
-    void regeneratePushButtonField() {
-        PdfDictionary widget = getPdfObject();
-        PdfFormXObject appearance;
-        Rectangle rect = getRect(widget);
-        PdfDictionary apDic = widget.getAsDictionary(PdfName.AP);
-
-        if (apDic == null) {
-            put(PdfName.AP, apDic = new PdfDictionary());
-        }
-        appearance = drawPushButtonAppearance(rect.getWidth(), rect.getHeight(), parent.getDisplayValue(),
-                getFont(), getFontSize(widget.getAsArray(PdfName.Rect), parent.getDisplayValue()));
-
-        apDic.put(PdfName.N, appearance.getPdfObject());
-
-        if (getPdfAConformanceLevel() != null) {
-            createPushButtonAppearanceState(widget);
         }
     }
 
@@ -1269,7 +1244,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return regenerateTextAndChoiceField();
         } else if (PdfName.Btn.equals(type)) {
             if (parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
-                regeneratePushButtonField();
+                drawPushButtonFieldAndSaveAppearance();
             } else if (parent.getFieldFlag(PdfButtonFormField.FF_RADIO)) {
                 drawRadioButtonAndSaveAppearance(getRadioButtonValue());
             } else {
@@ -1284,6 +1259,45 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return true;
         }
         return false;
+    }
+
+    void createInputButton() {
+        final Rectangle rect = getRect(getPdfObject());
+        if (rect == null) {
+            formFieldElement = null;
+            return;
+        }
+
+        if (formFieldElement == null) {
+            // Create it one time and re-set properties during each widget regeneration.
+            formFieldElement = new Button(parent.getFieldName().toUnicodeString());
+        }
+
+        formFieldElement.setFont(getFont());
+        formFieldElement.setFontSize(getFontSize(getPdfObject()
+                .getAsArray(PdfName.Rect), parent.getDisplayValue()));
+        if (getColor() == null) {
+            final TransparentColor transparentColor =
+                    formFieldElement.<TransparentColor>getProperty(Property.FONT_COLOR);
+            color = transparentColor == null ? ColorConstants.BLACK : transparentColor.getColor();
+        }
+        formFieldElement.setFontColor(color);
+
+        formFieldElement.setBackgroundColor(backgroundColor);
+        if (borderWidth > 0 && borderColor != null) {
+            final float borderWidth = Math.max(1, getBorderWidth());
+            // Don't take border into account as it will be drawn inside
+            Border border = FormBorderFactory.getBorder(getWidget().getBorderStyle(),
+                    borderWidth, borderColor, backgroundColor);
+            formFieldElement.setBorder(border != null ? border : new SolidBorder(borderColor, borderWidth));
+        }
+
+        // Set fixed size
+        formFieldElement.setProperty(Property.WIDTH, UnitValue.createPointValue(rect.getWidth()));
+        formFieldElement.setProperty(Property.HEIGHT, UnitValue.createPointValue(rect.getHeight()));
+
+        // Always flatten
+        formFieldElement.setInteractive(false);
     }
 
     Radio createRadio() {
@@ -1311,7 +1325,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         radio.setProperty(Property.HEIGHT, UnitValue.createPointValue(rect.getHeight()));
 
         // Always flatten
-        radio.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+        radio.setInteractive(false);
 
         return radio;
     }
