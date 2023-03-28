@@ -22,12 +22,12 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -35,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,12 +111,7 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
             fontProgram.avgWidth = 0;
             for (int cid : toUnicode.getCodes()) {
                 final int width = widths.containsKey(cid) ? widths.get(cid) : defaultWidth;
-                Glyph glyph = new Glyph(cid, width, toUnicode.lookup(cid));
-                if (glyph.hasValidUnicode()) {
-                    fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
-                }
-                fontProgram.codeToGlyph.put(cid, glyph);
-                fontProgram.avgWidth += width;
+                fontProgram.registerGlyph(cid, width, toUnicode.lookup(cid));
             }
             if (fontProgram.codeToGlyph.size() != 0) {
                 fontProgram.avgWidth /= fontProgram.codeToGlyph.size();
@@ -266,5 +262,14 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
                 break;
             }
         }
+    }
+
+    private void registerGlyph(int cid, int width, char[] unicode) {
+        Glyph glyph = new Glyph(cid, width, unicode);
+        if (glyph.hasValidUnicode()) {
+            this.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+        }
+        this.codeToGlyph.put(cid, glyph);
+        this.avgWidth += width;
     }
 }

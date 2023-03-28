@@ -25,13 +25,15 @@ package com.itextpdf.io.font.cmap;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a CMap file.
@@ -42,7 +44,9 @@ public class CMapToUnicode extends AbstractCMap {
 
     public static CMapToUnicode EmptyCMapToUnicodeMap = new CMapToUnicode(true);
 
-    private Map<Integer, char[]> byteMappings;
+    private final Map<Integer, char[]> byteMappings;
+
+    private final List<byte[]> codeSpaceRanges = new ArrayList<>();
 
     private CMapToUnicode(boolean emptyCMap) {
         byteMappings = Collections.<Integer, char[]>emptyMap();
@@ -60,6 +64,7 @@ public class CMapToUnicode extends AbstractCMap {
         for (int i = 0; i < 65537; i++) {
             uni.addChar(i, TextUtil.convertFromUtf32(i));
         }
+        uni.addCodeSpaceRange(new byte[] {0, 0}, new byte[] {(byte) 0xff, (byte) 0xff});
         return uni;
     }
 
@@ -126,6 +131,22 @@ public class CMapToUnicode extends AbstractCMap {
             }
         }
         return result;
+    }
+
+    /**
+     * Returns a list containing sequential pairs of code space beginning and endings:
+     * (begincodespacerange1, endcodespacerange1, begincodespacerange2, endcodespacerange1, ...)
+     *
+     * @return list of {@code byte[]} that contain code space ranges
+     */
+    public List<byte[]> getCodeSpaceRanges() {
+        return codeSpaceRanges;
+    }
+
+    @Override
+    void addCodeSpaceRange(byte[] low, byte[] high) {
+        codeSpaceRanges.add(low);
+        codeSpaceRanges.add(high);
     }
 
     private int convertToInt(char[] s) {

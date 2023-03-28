@@ -91,6 +91,8 @@ public class PdfType0Font extends PdfFont {
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
+    private final CMapToUnicode embeddedToUnicode;
+
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
         if (!PdfEncodings.IDENTITY_H.equals(cmap) && !PdfEncodings.IDENTITY_V.equals(cmap)) {
@@ -107,6 +109,7 @@ public class PdfType0Font extends PdfFont {
         cmapEncoding = new CMapEncoding(cmap);
         usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_2;
+        embeddedToUnicode = null;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
             byte[] bytes = new byte[1];
@@ -135,6 +138,7 @@ public class PdfType0Font extends PdfFont {
         cmapEncoding = new CMapEncoding(cmap, uniMap);
         usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_0;
+        embeddedToUnicode = null;
     }
 
     PdfType0Font(PdfDictionary fontDictionary) {
@@ -151,8 +155,10 @@ public class PdfType0Font extends PdfFont {
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
         if (toUnicode == null) {
             toUnicodeCMap = FontUtil.parseUniversalToUnicodeCMap(ordering);
+            embeddedToUnicode = null;
         } else {
             toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
+            embeddedToUnicode = toUnicodeCMap;
         }
 
         if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
@@ -555,6 +561,11 @@ public class PdfType0Font extends PdfFont {
     public boolean appendDecodedCodesToGlyphsList(List<Glyph> list, PdfString characterCodes) {
         boolean allCodesDecoded = true;
 
+        final boolean isToUnicodeEmbedded = embeddedToUnicode != null;
+        final CMapEncoding cmap = getCmap();
+        final FontProgram fontProgram = getFontProgram();
+        final List<byte[]> codeSpaceRanges = isToUnicodeEmbedded ? embeddedToUnicode.getCodeSpaceRanges() : cmap.getCodeSpaceRanges();
+
         String charCodesSequence = characterCodes.getValue();
         // A sequence of one or more bytes shall be extracted from the string and matched against the codespace
         // ranges in the CMap. That is, the first byte shall be matched against 1-byte codespace ranges; if no match is
@@ -568,13 +579,18 @@ public class PdfType0Font extends PdfFont {
             for (int codeLength = 1; codeLength <= MAX_CID_CODE_LENGTH && i + codeLength <= charCodesSequence.length();
                     codeLength++) {
                 code = (code << 8) + charCodesSequence.charAt(i + codeLength - 1);
-                if (!getCmap().containsCodeInCodeSpaceRange(code, codeLength)) {
-                    continue;
-                } else {
+
+                if (PdfType0Font.containsCodeInCodeSpaceRange(codeSpaceRanges, code, codeLength)) {
                     codeSpaceMatchedLength = codeLength;
+                } else {
+                    continue;
                 }
-                int glyphCode = getCmap().getCidCode(code);
-                glyph = getFontProgram().getGlyphByCode(glyphCode);
+
+                // According to paragraph 9.10.2 of PDF Specification ISO 32000-2, if toUnicode is embedded, it is
+                // necessary to use it to map directly code points to unicode. If not embedded, use CMap to map code
+                // points to CIDs and then CIDFont to map CIDs to unicode.
+                int glyphCode = isToUnicodeEmbedded ? code : cmap.getCidCode(code);
+                glyph = fontProgram.getGlyphByCode(glyphCode);
                 if (glyph != null) {
                     i += codeLength - 1;
                     break;
@@ -594,11 +610,11 @@ public class PdfType0Font extends PdfFont {
                 }
                 i += codeSpaceMatchedLength - 1;
             }
-            if (glyph != null && glyph.getChars() != null) {
-                list.add(glyph);
-            } else {
-                list.add(new Glyph(0, getFontProgram().getGlyphByCode(0).getWidth(), -1));
+            if (glyph == null || glyph.getChars() == null) {
+                list.add(new Glyph(0, fontProgram.getGlyphByCode(0).getWidth(), -1));
                 allCodesDecoded = false;
+            } else {
+                list.add(glyph);
             }
         }
         return allCodesDecoded;
@@ -672,6 +688,28 @@ public class PdfType0Font extends PdfFont {
         if (cidinfo == null)
             return null;
         return cidinfo.containsKey(PdfName.Ordering) ? cidinfo.get(PdfName.Ordering).toString() : null;
+    }
+
+    private static boolean containsCodeInCodeSpaceRange(List<byte[]> codeSpaceRanges, int code, int length) {
+        for (int i = 0; i < codeSpaceRanges.size(); i += 2) {
+            if (length == codeSpaceRanges.get(i).length) {
+                int mask = 0xff;
+                int totalShift = 0;
+                byte[] low = codeSpaceRanges.get(i);
+                byte[] high = codeSpaceRanges.get(i + 1);
+                boolean fitsIntoRange = true;
+                for (int ind = length - 1; ind >= 0; ind--, totalShift += 8, mask <<= 8) {
+                    int actualByteValue = (code & mask) >> totalShift;
+                    if (!(actualByteValue >= (0xff & low[ind]) && actualByteValue <= (0xff & high[ind]))) {
+                        fitsIntoRange = false;
+                    }
+                }
+                if (fitsIntoRange) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void flushFontData() {

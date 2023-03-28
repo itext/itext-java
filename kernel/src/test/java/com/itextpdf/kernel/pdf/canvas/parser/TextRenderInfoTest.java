@@ -113,6 +113,18 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         Assert.assertEquals(expectedResult, result);
     }
 
+    @Test
+    public void testEmbeddedIdentityToUnicodeTest() throws IOException {
+        String inFile = "embedded_identity_to_unicode.pdf";
+        String expectedResult = "Regular hyphen [\u002d] and non-breaking hyphen [\u2011] (both CID 14)\n"
+                + "Turtle kyuujitai [\u9f9c] and turtle radical [\u2fd4] (both CID 7472)";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
+        ITextExtractionStrategy start = new SimpleTextExtractionStrategy();
+
+        String result = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start).trim();
+        Assert.assertEquals(expectedResult, result);
+    }
 
     private static class TextPositionEventListener implements IEventListener {
         List<LineSegment> lineSegments = new ArrayList<>();
