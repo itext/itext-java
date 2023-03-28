@@ -34,6 +34,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
@@ -96,7 +98,17 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
                 && !((InputField) modelElement).getPlaceholder().isEmpty()) {
             return ((InputField) modelElement).getPlaceholder().createRendererSubTree();
         }
-        return super.createParagraphRenderer(defaultValue);
+        if (defaultValue.isEmpty()) {
+            defaultValue = "\u00A0";
+        }
+
+        Text text = new Text(defaultValue);
+        FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
+        text.setNextRenderer(nextRenderer);
+
+        IRenderer flatRenderer = new Paragraph(text).setMargin(0).createRendererSubTree();
+        flatRenderer.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
+        return flatRenderer;
     }
 
     /* (non-Javadoc)
@@ -131,6 +143,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         if (flatten && password) {
             defaultValue = obfuscatePassword(defaultValue);
         }
+
         return createParagraphRenderer(defaultValue);
     }
 
@@ -161,6 +174,10 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             inputField.setFieldFlag(PdfFormField.FF_PASSWORD, true);
         } else {
             inputField.setDefaultValue(new PdfString(value));
+        }
+        final int rotation = ((InputField)modelElement).getRotation();
+        if (rotation != 0) {
+            inputField.getFirstFormAnnotation().setRotation(rotation);
         }
         applyDefaultFieldProperties(inputField);
         PdfAcroForm.getAcroForm(doc, true).addField(inputField, page);

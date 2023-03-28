@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.form.renderer.InputFieldRenderer;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.layout.element.Paragraph;
@@ -46,6 +47,11 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
      * The placeholder paragraph.
      */
     private Paragraph placeholder;
+
+    /**
+     * Field rotation, counterclockwise. Must be a multiple of 90 degrees.
+     */
+    private int rotation = 0;
 
     /**
      * Creates a new input field.
@@ -104,6 +110,31 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
             default:
                 return super.<T1>getDefaultProperty(property);
         }
+    }
+
+    /**
+     * Set rotation of the input field.
+     *
+     * @param rotation new rotation value, counterclockwise. Must be a multiple of 90 degrees.
+     *                It has sense only in interactive mode, see {@link FormField#setInteractive}.
+     * @return the edited {@link InputField}.
+     */
+    public InputField setRotation(int rotation) {
+        if (rotation % 90 != 0) {
+            throw new IllegalArgumentException(FormsExceptionMessageConstant.INVALID_ROTATION_VALUE);
+        }
+
+        this.rotation = rotation;
+        return this;
+    }
+
+    /**
+     * Get rotation.
+     *
+     * @return rotation value.
+     */
+    public int getRotation() {
+        return this.rotation;
     }
 
     /* (non-Javadoc)

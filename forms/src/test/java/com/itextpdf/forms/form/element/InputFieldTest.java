@@ -23,6 +23,7 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.commons.utils.ExperimentalFeatures;
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -235,7 +236,7 @@ public class InputFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
-    
+
     @Test
     public void inputFieldWithJustificationTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "inputFieldWithJustification.pdf";
@@ -266,5 +267,39 @@ public class InputFieldTest extends ExtendedITextTest {
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void rotationTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "rotationTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_rotationTest.pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            InputField inputField = new InputField("1");
+            inputField.setProperty(FormProperty.FORM_FIELD_VALUE, "Long long text");
+            inputField.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0));
+            inputField.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0));
+            inputField.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(0));
+            inputField.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(0));
+            inputField.setProperty(Property.HEIGHT, UnitValue.createPointValue(50));
+            inputField.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+            inputField.setInteractive(true);
+            inputField.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+            document.add(inputField);
+
+            inputField.setRotation(90);
+            document.add(inputField);
+
+            inputField.setRotation(180);
+            document.add(inputField);
+
+            inputField.setRotation(270);
+            document.add(inputField);
+
+            Exception exception = Assert.assertThrows(IllegalArgumentException.class,
+                    () -> inputField.setRotation(45));
+            Assert.assertEquals(FormsExceptionMessageConstant.INVALID_ROTATION_VALUE, exception.getMessage());
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
     }
 }

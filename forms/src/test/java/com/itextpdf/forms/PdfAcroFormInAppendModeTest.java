@@ -124,16 +124,22 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
 
     @Test
     public void replaceFieldTest() throws IOException, InterruptedException {
-        String outputFile = "replaceFieldTest.pdf";
-        PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
-                new PdfWriter(DESTINATION_DIR + outputFile),
-                new StampingProperties().useAppendMode());
-        PdfFormField newField = new TextFormFieldBuilder(outputDoc, "newfield").setWidgetRectangle(
-                        new Rectangle(20, 160, 100, 20))
-                .createText().setValue("new field");
-        PdfAcroForm.getAcroForm(outputDoc, true).replaceField("textfield1", newField);
-        outputDoc.close();
-        compareWithCmp(outputFile);
+        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
+        try {
+            String outputFile = "replaceFieldTest.pdf";
+            PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
+                    new PdfWriter(DESTINATION_DIR + outputFile),
+                    new StampingProperties().useAppendMode());
+            PdfFormField newField = new TextFormFieldBuilder(outputDoc, "newfield").setWidgetRectangle(
+                            new Rectangle(20, 160, 100, 20))
+                    .createText().setValue("new field");
+            PdfAcroForm.getAcroForm(outputDoc, true).replaceField("textfield1", newField);
+            outputDoc.close();
+            compareWithCmp(outputFile);
+        } finally {
+            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        }
     }
 
     @Test

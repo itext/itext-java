@@ -28,12 +28,12 @@ import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.CheckBox;
-import com.itextpdf.forms.form.element.FormField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.forms.form.element.Button;
+import com.itextpdf.forms.form.renderer.FormFieldValueNonTrimmingTextRenderer;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.util.FontSizeUtil;
@@ -679,7 +679,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             }
         }
 
-        applyRotation(xObject, height, width);
+        PdfArray matrix = getRotationMatrix(getRotation() % 360, height, width);
+        if (matrix != null) {
+            xObject.put(PdfName.Matrix, matrix);
+        }
         canvas.restoreState();
     }
 
@@ -778,7 +781,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         createInputButton();
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        applyRotation(xObject, height, width);
+        PdfArray matrix = getRotationMatrix(getRotation() % 360, height, width);
+        if (matrix != null) {
+            xObject.put(PdfName.Matrix, matrix);
+        }
         Canvas canvas = new Canvas(xObject, this.getDocument());
         setMetaInfoToCanvas(canvas);
 
@@ -957,14 +963,28 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             textFormField.setProperty(Property.BACKGROUND, new Background(backgroundColor, 1f, 0, 0, 0, 0));
         }
 
-        textFormField.setProperty(Property.WIDTH, UnitValue.createPointValue(rectangle.getWidth()));
-        textFormField.setProperty(Property.HEIGHT, UnitValue.createPointValue(rectangle.getHeight()));
         // Always flatten
         textFormField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
 
+        // Rotation
+        final int fieldRotation = getRotation() % 360;
+        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
+        if (fieldRotation == 90 || fieldRotation == 270) {
+            Rectangle invertedRectangle = rectangle.clone();
+            invertedRectangle.setWidth(rectangle.getHeight());
+            invertedRectangle.setHeight(rectangle.getWidth());
+            rectangle = invertedRectangle;
+        }
+
+        // Set fixed size
+        textFormField.setProperty(Property.WIDTH, UnitValue.createPointValue(rectangle.getWidth()));
+        textFormField.setProperty(Property.HEIGHT, UnitValue.createPointValue(rectangle.getHeight()));
+
         PdfFormXObject xObject = new PdfFormXObject(
                 new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
-        applyRotation(xObject, rectangle.getWidth(), rectangle.getHeight());
+        if (matrix != null) {
+            xObject.put(PdfName.Matrix, matrix);
+        }
         Canvas canvas = new Canvas(xObject, this.getDocument());
         canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
         canvas.add(textFormField);
@@ -1143,7 +1163,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         } else {
             //Avoid NPE when handling corrupt pdfs
             Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
-            logger.error(FormsLogMessageConstants.INCORRECT_PAGEROTATION);
+            logger.error(FormsLogMessageConstants.INCORRECT_PAGE_ROTATION);
             matrix = new PdfArray(new double[] {1, 0, 0, 1, 0, 0});
         }
         //Apply field rotation
@@ -1479,20 +1499,20 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return new String(pchar);
     }
 
-    private void applyRotation(PdfFormXObject xObject, float height, float width) {
-        switch (getRotation()) {
+    private static PdfArray getRotationMatrix(int rotation, float height, float width) {
+        switch (rotation) {
+            case 0:
+                return null;
             case 90:
-                xObject.put(PdfName.Matrix, new PdfArray(new float[] {0, 1, -1, 0, height, 0}));
-                break;
+                return new PdfArray(new float[] {0, 1, -1, 0, height, 0});
             case 180:
-                xObject.put(PdfName.Matrix, new PdfArray(new float[] {-1, 0, 0, -1, width, height}));
-                break;
+                return new PdfArray(new float[] {-1, 0, 0, -1, width, height});
             case 270:
-                xObject.put(PdfName.Matrix, new PdfArray(new float[] {0, -1, 1, 0, 0, width}));
-                break;
+                return new PdfArray(new float[] {0, -1, 1, 0, 0, width});
             default:
-                // Rotation 0 - do nothing
-                break;
+                Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
+                logger.error(FormsLogMessageConstants.INCORRECT_WIDGET_ROTATION);
+                return null;
         }
     }
 

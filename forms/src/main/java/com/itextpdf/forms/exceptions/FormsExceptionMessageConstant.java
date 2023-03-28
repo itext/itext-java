@@ -45,6 +45,7 @@ public final class FormsExceptionMessageConstant {
     public static final String WIDGET_RECTANGLE_MUST_BE_PROVIDED = "Widget rectangle must be provided";
     public static final String EMPTY_RADIO_GROUP_NAME = "Radio group name cannot be empty.";
     public static final String CHECKBOX_TYPE_NOT_SUPPORTED = "Unsupported checkbox type for PDF/A";
+    public static final String INVALID_ROTATION_VALUE = "Invalid rotation. Rotation must be a multiple of 90 degrees.";
 
     private FormsExceptionMessageConstant(){}
 }
