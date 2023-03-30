@@ -1,0 +1,177 @@
+package com.itextpdf.signatures.sign;
+
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+
+@Category(IntegrationTest.class)
+// TODO DEVSIX-5438: Change assertions after implementing signature field tagging
+public class TaggedSigningFieldTest extends ExtendedITextTest {
+
+    @Test
+    public void checkSigningFieldTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(36, 648, 200, 100);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+
+    @Test
+    public void checkSigningFieldZeroSizeRectangleTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(36, 648, 0, 0);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+
+    @Test
+    public void checkSigningFieldPrintFlagTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfPage page = pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(36, 648, 200, 100);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            List<PdfAnnotation> annotations = page.getAnnotations();
+            annotations.get(0).setFlag(PdfAnnotation.PRINT);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+
+    @Test
+    public void checkSigningFieldHiddenFlagTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfPage page = pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(36, 648, 200, 100);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            List<PdfAnnotation> annotations = page.getAnnotations();
+            annotations.get(0).setFlag(PdfAnnotation.HIDDEN);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+
+    @Test
+    public void checkSigningFieldNoViewFlagTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfPage page = pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(36, 648, 200, 100);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            List<PdfAnnotation> annotations = page.getAnnotations();
+            annotations.get(0).setFlag(PdfAnnotation.NO_VIEW);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+
+    @Test
+    public void checkSigningFieldInvisibleFlagTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfPage page = pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(36, 648, 200, 100);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            List<PdfAnnotation> annotations = page.getAnnotations();
+            annotations.get(0).setFlag(PdfAnnotation.INVISIBLE);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+
+    @Test
+    public void checkSigningFieldOutsidePageTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(-150, -150, 100, 100);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+
+    @Test
+    public void checkSigningFieldOutsidePageAndHiddenTest() {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfPage page = pdfDoc.addNewPage();
+            pdfDoc.setTagged();
+
+            Rectangle rect = new Rectangle(-150, -150, 200, 100);
+            PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
+                    .createSignature();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.addField(signField);
+
+            List<PdfAnnotation> annotations = page.getAnnotations();
+            annotations.get(0).setFlag(PdfAnnotation.HIDDEN);
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            Assert.assertNotNull(tagPointer.moveToKid(StandardRoles.FORM));
+        }
+    }
+}
