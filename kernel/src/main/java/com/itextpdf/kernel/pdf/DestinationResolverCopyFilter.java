@@ -83,7 +83,8 @@ public class DestinationResolverCopyFilter implements ICopyFilter {
                     });
             return false;
         }
-        if (dict.getAsDictionary(PdfName.A) != null && dict.getAsDictionary(PdfName.A).get(PdfName.D) != null) {
+        if (dict.getAsDictionary(PdfName.A) != null && dict.getAsDictionary(PdfName.A).get(PdfName.D) != null
+                && !PdfName.GoToR.equals(dict.getAsDictionary(PdfName.A).get(PdfName.S))) {
             fromDocument.storeDestinationToReaddress(
                     PdfDestination.makeDestination(dict.getAsDictionary(PdfName.A).get(PdfName.D)),
                     (PdfDestination nd) -> {
