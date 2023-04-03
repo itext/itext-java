@@ -27,10 +27,10 @@ import com.itextpdf.commons.utils.StringSplitUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
-import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.forms.fields.PdfFormFieldMergeUtil;
 import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfFormFieldMergeUtil;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -216,7 +216,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (!field.getPdfObject().containsKey(PdfName.T)) {
             throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
         }
-        
+
         if (!replaceExisted) {
             PdfFormFieldMergeUtil.mergeKidsWithSameNames(field, true);
         }
@@ -1085,6 +1085,14 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Put a key/value pair in the  dictionary and overwrites the previous value if it already exists.
+     *
+     * @param key   the key as pdf name
+     * @param value the value as pdf object
+     *
+     * @return this {@link PdfAcroForm} instance
+     */
     public PdfAcroForm put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         setModified();

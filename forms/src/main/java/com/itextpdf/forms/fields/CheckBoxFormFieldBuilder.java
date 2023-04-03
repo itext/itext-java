@@ -90,14 +90,14 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
         check.put(PdfName.V, new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
 
         if (getWidgetRectangle() != null) {
-            //TODO DEVSIX-7426 remove flag
+            //TODO DEVSIX-7443 remove flag
             if (ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
                 check.getFirstFormAnnotation()
                         .drawCheckBoxAndSaveAppearanceExperimental(PdfFormAnnotation.ON_STATE_VALUE);
                 setPageToField(check);
                 return check;
             }
-            //TODO DEVSIX-7426 remove from here till end
+            //TODO DEVSIX-7443 remove from here till end
             if (getConformanceLevel() == null) {
                 check.getFirstFormAnnotation().drawCheckAppearance(getWidgetRectangle().getWidth(),
                         getWidgetRectangle().getHeight(), PdfFormAnnotation.ON_STATE_VALUE);

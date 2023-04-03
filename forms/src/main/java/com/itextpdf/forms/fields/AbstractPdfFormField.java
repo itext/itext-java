@@ -40,10 +40,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -55,16 +52,17 @@ import java.util.Set;
  */
 public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionary> {
 
-    private static final PdfName[] TERMINAL_FIELDS = new PdfName[]{PdfName.Btn, PdfName.Tx, PdfName.Ch, PdfName.Sig};
     /**
      * Size of text in form fields when font size is not explicitly set.
      */
-    static final int DEFAULT_FONT_SIZE = 12;
+    public static final int DEFAULT_FONT_SIZE = 12;
 
     /**
      * Minimal size of text in form fields.
      */
-    static final int MIN_FONT_SIZE = 4;
+    public static final int MIN_FONT_SIZE = 4;
+
+    private static final PdfName[] TERMINAL_FIELDS = new PdfName[] {PdfName.Btn, PdfName.Tx, PdfName.Ch, PdfName.Sig};
 
     /**
      * Index of font value in default appearance element.

@@ -28,8 +28,8 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.CheckBoxRenderer;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 
@@ -51,6 +51,8 @@ public class CheckBox extends FormField<CheckBox> {
      */
     public CheckBox(String id) {
         super(id);
+        setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        setChecked(false);
     }
 
 
@@ -63,23 +65,6 @@ public class CheckBox extends FormField<CheckBox> {
      */
     public CheckBox setChecked(boolean checked) {
         setProperty(FormProperty.FORM_FIELD_CHECKED, checked);
-        return this;
-    }
-
-    /**
-     * Sets the rendering mode for the checkbox.
-     *
-     * @param renderingMode the rendering mode to set
-     *
-     * @return this checkbox instance
-     */
-    public CheckBox setRenderingMode(RenderingMode renderingMode) {
-        if (renderingMode == null) {
-            LOGGER.warn(MessageFormatUtil.format(
-                    FormsLogMessageConstants.INVALID_VALUE_FALLBACK_TO_DEFAULT, "renderingMode", null));
-            return this;
-        }
-        setProperty(Property.RENDERING_MODE, renderingMode);
         return this;
     }
 

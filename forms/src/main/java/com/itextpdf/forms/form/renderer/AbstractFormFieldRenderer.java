@@ -22,9 +22,9 @@
  */
 package com.itextpdf.forms.form.renderer;
 
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -41,7 +41,6 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
-import com.itextpdf.layout.renderer.MetaInfoContainer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 
 import java.util.List;

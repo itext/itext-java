@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.xfdf.XfdfObject;
 import com.itextpdf.forms.xfdf.XfdfObjectFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -34,16 +35,17 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 
 @Category(IntegrationTest.class)
@@ -58,8 +60,23 @@ public class XfdfReaderTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+
+    private boolean experimentalCheckboxRendering;
+
+    @Before
+    public void before() {
+        experimentalCheckboxRendering = ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = false;
+    }
+
+    @After
+    public void after() {
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = experimentalCheckboxRendering;
+    }
+
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfNoFields() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfNoFields.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfNoFields.pdf")));

@@ -94,7 +94,8 @@ public class DrawingUtil {
             "h\n" +
             "f\n";
 
-    private static void drawPdfAAppearanceString(PdfCanvas canvas, float width, float height, float moveX, float moveY, String appearanceString) {
+    private static void drawPdfAAppearanceString(PdfCanvas canvas, float width, float height, float moveX, float moveY,
+            String appearanceString) {
         canvas.saveState();
         canvas.resetFillColorRgb();
         canvas.concatMatrix(width, 0, 0, height, moveX, moveY);
@@ -102,54 +103,158 @@ public class DrawingUtil {
         canvas.restoreState();
     }
 
+    /**
+     * Draws a PDF A compliant check mark in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     * @param moveX  the x coordinate of the bottom left corner of the rectangle
+     * @param moveY  the y coordinate of the bottom left corner of the rectangle
+     */
     public static void drawPdfACheck(PdfCanvas canvas, float width, float height, float moveX, float moveY) {
         drawPdfAAppearanceString(canvas, width, height, moveX, moveY, check);
     }
 
+    /**
+     * Draws a PDF A compliant check mark in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     */
     public static void drawPdfACheck(PdfCanvas canvas, float width, float height) {
         drawPdfAAppearanceString(canvas, width, height, 0, 0, check);
     }
 
+    /**
+     * Draws a PDF A compliant circle in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     * @param moveX  the x coordinate of the bottom left corner of the rectangle
+     * @param moveY  the y coordinate of the bottom left corner of the rectangle
+     */
     public static void drawPdfACircle(PdfCanvas canvas, float width, float height, float moveX, float moveY) {
         drawPdfAAppearanceString(canvas, width, height, moveX, moveY, circle);
     }
 
+    /**
+     * Draws a PDF A compliant circle in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     */
     public static void drawPdfACircle(PdfCanvas canvas, float width, float height) {
         drawPdfAAppearanceString(canvas, width, height, 0, 0, circle);
     }
 
+    /**
+     * Draws a PDF A compliant cross in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     * @param moveX  the x coordinate of the bottom left corner of the rectangle
+     * @param moveY  the y coordinate of the bottom left corner of the rectangle
+     */
     public static void drawPdfACross(PdfCanvas canvas, float width, float height, float moveX, float moveY) {
         drawPdfAAppearanceString(canvas, width, height, moveX, moveY, cross);
     }
 
+    /**
+     * Draws a PDF A compliant cross in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     */
     public static void drawPdfACross(PdfCanvas canvas, float width, float height) {
         drawPdfAAppearanceString(canvas, width, height, 0, 0, cross);
     }
 
+    /**
+     * Draws a PDF A compliant diamond in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     * @param moveX  the x coordinate of the bottom left corner of the rectangle
+     * @param moveY  the y coordinate of the bottom left corner of the rectangle
+     */
     public static void drawPdfADiamond(PdfCanvas canvas, float width, float height, float moveX, float moveY) {
         drawPdfAAppearanceString(canvas, width, height, moveX, moveY, diamond);
     }
 
+    /**
+     * Draws a PDF A compliant diamond in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     */
     public static void drawPdfADiamond(PdfCanvas canvas, float width, float height) {
         drawPdfAAppearanceString(canvas, width, height, 0, 0, diamond);
     }
 
+    /**
+     * Draws a PDF A compliant square in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     * @param moveX  the x coordinate of the bottom left corner of the rectangle
+     * @param moveY  the y coordinate of the bottom left corner of the rectangle
+     */
     public static void drawPdfASquare(PdfCanvas canvas, float width, float height, float moveX, float moveY) {
         drawPdfAAppearanceString(canvas, width, height, moveX, moveY, square);
     }
 
+    /**
+     * Draws a PDF A compliant square in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     */
     public static void drawPdfASquare(PdfCanvas canvas, float width, float height) {
         drawPdfAAppearanceString(canvas, width, height, 0, 0, square);
     }
 
+    /**
+     * Draws a PDF A compliant star in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     * @param moveX  the x coordinate of the bottom left corner of the rectangle
+     * @param moveY  the y coordinate of the bottom left corner of the rectangle
+     */
     public static void drawPdfAStar(PdfCanvas canvas, float width, float height, float moveX, float moveY) {
         drawPdfAAppearanceString(canvas, width, height, moveX, moveY, star);
     }
 
+    /**
+     * Draws a PDF A compliant star in the specified rectangle.
+     *
+     * @param canvas the canvas to draw on
+     * @param width  the width of the rectangle
+     * @param height the height of the rectangle
+     */
     public static void drawPdfAStar(PdfCanvas canvas, float width, float height) {
         drawPdfAAppearanceString(canvas, width, height, 0, 0, star);
     }
 
+    /**
+     * Draws a cross with the specified width and height.
+     *
+     * @param canvas      the canvas to draw on
+     * @param width       the width of the rectangle
+     * @param height      the height of the rectangle
+     * @param borderWidth the width of the border
+     */
     public static void drawCross(PdfCanvas canvas, float width, float height, float borderWidth) {
         float offset = borderWidth * 2;
         canvas.
@@ -160,6 +265,14 @@ public class DrawingUtil {
                 stroke();
     }
 
+    /**
+     * Draws a circle with the specified radius.
+     *
+     * @param canvas  the canvas to draw on
+     * @param centerX the x coordinate of the center of the circle
+     * @param centerY the y coordinate of the center of the circle
+     * @param radius  the radius of the circle
+     */
     public static void drawCircle(PdfCanvas canvas, float centerX, float centerY, float radius) {
         canvas
                 .circle(centerX, centerY, radius)

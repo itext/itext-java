@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -37,7 +38,9 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -55,6 +58,19 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_DIR);
+    }
+
+    private boolean experimentalCheckboxRendering;
+
+    @Before
+    public void before() {
+        experimentalCheckboxRendering = ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = false;
+    }
+
+    @After
+    public void after() {
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = experimentalCheckboxRendering;
     }
 
     @Test
@@ -112,7 +128,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
                 new PdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
-        PdfFormField newField = new TextFormFieldBuilder(outputDoc, "newfield").setWidgetRectangle(new Rectangle(20, 160, 100, 20))
+        PdfFormField newField = new TextFormFieldBuilder(outputDoc, "newfield").setWidgetRectangle(
+                        new Rectangle(20, 160, 100, 20))
                 .createText().setValue("new field");
         PdfAcroForm.getAcroForm(outputDoc, true).replaceField("textfield1", newField);
         outputDoc.close();
