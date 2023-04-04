@@ -988,7 +988,7 @@ public class PdfFormField extends AbstractPdfFormField {
      *
      * @return the current justification attribute.
      */
-    public HorizontalAlignment getJustification() {
+    public TextAlignment getJustification() {
         Integer justification = getPdfObject().getAsInt(PdfName.Q);
         if (justification == null && getParent() != null) {
             justification = getParent().getAsInt(PdfName.Q);
@@ -1005,9 +1005,11 @@ public class PdfFormField extends AbstractPdfFormField {
      * @param justification the value to set the justification attribute to.
      * @return the edited {@link PdfFormField}.
      */
-    public PdfFormField setJustification(HorizontalAlignment justification) {
-        put(PdfName.Q, new PdfNumber(justification.ordinal()));
-        regenerateField();
+    public PdfFormField setJustification(TextAlignment justification) {
+        if (justification != null) {
+            put(PdfName.Q, new PdfNumber(justification.ordinal()));
+            regenerateField();
+        }
         return this;
     }
 
@@ -1259,20 +1261,6 @@ public class PdfFormField extends AbstractPdfFormField {
         return sb.toString();
     }
 
-    TextAlignment convertJustificationToTextAlignment() {
-        HorizontalAlignment justification = getJustification();
-        
-        TextAlignment textAlignment;
-        if (justification == HorizontalAlignment.RIGHT) {
-            textAlignment = TextAlignment.RIGHT;
-        } else if (justification == HorizontalAlignment.CENTER) {
-            textAlignment = TextAlignment.CENTER;
-        } else {
-            textAlignment = TextAlignment.LEFT;
-        }
-        return textAlignment;
-    }
-
     /**
      * Adds a field to the children of the current field.
      *
@@ -1364,14 +1352,14 @@ public class PdfFormField extends AbstractPdfFormField {
         return formType;
     }
 
-    private static HorizontalAlignment numberToHorizontalAlignment(int alignment) {
+    private static TextAlignment numberToHorizontalAlignment(int alignment) {
         switch (alignment) {
             case 1:
-                return HorizontalAlignment.CENTER;
+                return TextAlignment.CENTER;
             case 2:
-                return HorizontalAlignment.RIGHT;
+                return TextAlignment.RIGHT;
             default:
-                return HorizontalAlignment.LEFT;
+                return TextAlignment.LEFT;
         }
     }
 

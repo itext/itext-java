@@ -22,21 +22,24 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,9 +52,19 @@ public class InputFieldTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/InputFieldTest/";
 
+
+    private static boolean experimentalRenderingPreviousValue;
+
     @BeforeClass
     public static void beforeClass() {
+        experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
     }
 
     @Test
@@ -217,6 +230,38 @@ public class InputFieldTest extends ExtendedITextTest {
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
             flattenInputField.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 10));
             flattenInputField.setProperty(Property.BORDER, new SolidBorder(2f));
+            document.add(flattenInputField);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+    
+    @Test
+    public void inputFieldWithJustificationTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inputFieldWithJustification.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldWithJustification.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            InputField flattenInputField = new InputField("input field");
+            flattenInputField.setValue("input field");
+            flattenInputField.setInteractive(true);
+            flattenInputField.setTextAlignment(TextAlignment.CENTER);
+            document.add(flattenInputField);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void inputFieldWithBorderTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inputFieldWithBorder.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldWithBorder.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            InputField flattenInputField = new InputField("input field");
+            flattenInputField.setValue("input field");
+            flattenInputField.setInteractive(true);
+            flattenInputField.setBorder(new DashedBorder(ColorConstants.ORANGE, 10));
             document.add(flattenInputField);
         }
 

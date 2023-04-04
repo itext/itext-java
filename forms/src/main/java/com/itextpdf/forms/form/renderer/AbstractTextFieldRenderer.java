@@ -27,9 +27,12 @@ import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -79,10 +82,25 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
      */
     void applyDefaultFieldProperties(PdfFormField inputField) {
         inputField.getWidgets().get(0).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE);
-        inputField.getFirstFormAnnotation().setBorderWidth(0);
         TransparentColor color = getPropertyAsTransparentColor(Property.FONT_COLOR);
         if (color != null) {
             inputField.setColor(color.getColor());
+        }
+        inputField.setJustification(this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT));
+        
+        Border border = this.<Border>getProperty(Property.BORDER);
+        if (border == null) {
+            // TODO For now we will use left border everywhere, shall be fixed in DEVSIX-7423.
+            border = this.<Border>getProperty(Property.BORDER_LEFT);
+        }
+        if (border != null) {
+            inputField.getFirstFormAnnotation().setBorderColor(border.getColor());
+            inputField.getFirstFormAnnotation().setBorderWidth(border.getWidth());
+        }
+        
+        Background background = this.<Background>getProperty(Property.BACKGROUND);
+        if (background != null) {
+            inputField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
         }
     }
 

@@ -504,6 +504,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         drawBackground(drawContext);
         drawBorder(drawContext);
 
+        addMarkedContent(drawContext, true);
         if (processOverflow) {
             drawContext.getCanvas().saveState();
             int pageNumber = occupiedArea.getPageNumber();
@@ -534,6 +535,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         drawChildren(drawContext);
+        addMarkedContent(drawContext, false);
         drawPositionedChildren(drawContext);
 
         if (processOverflow) {
@@ -1087,6 +1089,17 @@ public abstract class BlockRenderer extends AbstractRenderer {
         for (int i = splitRenderer.getChildRenderers().size() - 1; i >= 0; --i) {
             if (splitRenderer.getChildRenderers().get(i) == null) {
                 splitRenderer.getChildRenderers().remove(i);
+            }
+        }
+    }
+
+    private void addMarkedContent(DrawContext drawContext, boolean isBegin) {
+        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.ADD_MARKED_CONTENT_TEXT))) {
+            PdfCanvas canvas = drawContext.getCanvas();
+            if (isBegin) {
+                canvas.beginVariableText().saveState().endPath();
+            } else {
+                canvas.restoreState().endVariableText();
             }
         }
     }

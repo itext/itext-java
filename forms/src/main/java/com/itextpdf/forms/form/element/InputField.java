@@ -25,6 +25,10 @@ package com.itextpdf.forms.form.element;
 import com.itextpdf.forms.form.renderer.InputFieldRenderer;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.Leading;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 
 /**
@@ -34,18 +38,42 @@ import com.itextpdf.layout.renderer.IRenderer;
 public class InputField extends FormField<InputField> implements IPlaceholderable {
 
     /**
+     * Default padding X offset.
+     */
+    private static final float X_OFFSET = 2;
+
+    /**
+     * The placeholder paragraph.
+     */
+    private Paragraph placeholder;
+
+    /**
      * Creates a new input field.
      *
      * @param id the id
      */
     public InputField(String id) {
         super(id);
+        setProperties();
     }
 
     /**
-     * The placeholder paragraph.
+     * Determines, whether the input field will be password.
+     * 
+     * <p>
+     * Usually means that instead of glyphs '*' will be shown in case of flatten field.
+     * 
+     * <p>
+     * If the field is not flatten, value will be ignored.
+     * 
+     * @param isPassword {@code true} is this field shall be considered as password, {@code false} otherwise
+     * 
+     * @return this input field
      */
-    private Paragraph placeholder;
+    public InputField useAsPassword(boolean isPassword) {
+        setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, isPassword);
+        return this;
+    }
 
     /**
      * {@inheritDoc}
@@ -84,5 +112,11 @@ public class InputField extends FormField<InputField> implements IPlaceholderabl
     @Override
     protected IRenderer makeNewRenderer() {
         return new InputFieldRenderer(this);
+    }
+
+    private void setProperties() {
+        setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(X_OFFSET));
+        setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(X_OFFSET));
+        setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
     }
 }

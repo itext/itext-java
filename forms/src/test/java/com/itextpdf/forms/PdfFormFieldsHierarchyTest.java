@@ -94,7 +94,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(inPdf,
-                sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", inPdf, "diff_"));
+                sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", destinationFolder, "diff_"));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(inPdf,
-                sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", inPdf));
+                sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", destinationFolder, inPdf));
     }
 
     @Test

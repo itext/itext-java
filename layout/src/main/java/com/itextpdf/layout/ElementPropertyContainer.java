@@ -293,6 +293,11 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
         setProperty(Property.FONT_COLOR, fontColor != null ? new TransparentColor(fontColor, opacity) : null);
         return (T) (Object) this;
     }
+    
+    public T setFontColor(TransparentColor transparentColor) {
+        setProperty(Property.FONT_COLOR, transparentColor);
+        return (T) (Object) this;
+    }
 
     /**
      * Sets the font size of this Element, measured in points.

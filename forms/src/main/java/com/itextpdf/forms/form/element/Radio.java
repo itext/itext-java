@@ -75,19 +75,6 @@ public class Radio extends FormField<Radio> {
         return this;
     }
 
-    /**
-     * Sets the radio button width and height.
-     *
-     * @param size radio button width and height.
-     * @return this same {@link Radio} button.
-     */
-    public Radio setSize(float size) {
-        setProperty(Property.WIDTH, UnitValue.createPointValue(size));
-        setProperty(Property.HEIGHT, UnitValue.createPointValue(size));
-
-        return this;
-    }
-
     /* (non-Javadoc)
      * @see com.itextpdf.layout.element.AbstractElement#makeNewRenderer()
      */

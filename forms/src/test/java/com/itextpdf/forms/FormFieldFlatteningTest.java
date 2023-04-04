@@ -33,6 +33,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -211,18 +212,18 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
                     newValue = "HELLO!";
                 }
 
-                HorizontalAlignment justification = field.getJustification();
-                if (null == justification || justification == HorizontalAlignment.LEFT) {
+                TextAlignment justification = field.getJustification();
+                if (null == justification || justification == TextAlignment.LEFT) {
                     // reddish
                     for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
                         annot.setBackgroundColor(new DeviceRgb(255, 200, 200));
                     }
-                } else if (justification == HorizontalAlignment.CENTER) {
+                } else if (justification == TextAlignment.CENTER) {
                     // greenish
                     for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
                         annot.setBackgroundColor(new DeviceRgb(200, 255, 200));
                     }
-                } else if (justification == HorizontalAlignment.RIGHT) {
+                } else if (justification == TextAlignment.RIGHT) {
                     // blueish
                     for(PdfFormAnnotation annot: field.getChildFormAnnotations()) {
                         annot.setBackgroundColor(new DeviceRgb(200, 200, 255));

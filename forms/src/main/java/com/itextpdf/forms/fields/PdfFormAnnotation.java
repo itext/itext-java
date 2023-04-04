@@ -28,7 +28,11 @@ import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.CheckBox;
+import com.itextpdf.forms.form.element.FormField;
+import com.itextpdf.forms.form.element.IFormField;
+import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.Radio;
+import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.util.FontSizeUtil;
@@ -66,6 +70,7 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
@@ -114,7 +119,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     protected float borderWidth = 1;
     protected Color backgroundColor;
     protected Color borderColor;
-    protected int rotation = 0;
 
     /**
      * Creates a form field annotation as a wrapper of a {@link PdfWidgetAnnotation}.
@@ -205,8 +209,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             if (degRotation < 0) {
                 degRotation += 360;
             }
-
-            this.rotation = degRotation;
         }
         PdfDictionary mk = getWidget().getAppearanceCharacteristics();
         if (mk == null) {
@@ -214,10 +216,14 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             this.put(PdfName.MK, mk);
         }
         mk.put(PdfName.R, new PdfNumber(degRotation));
-
-        this.rotation = degRotation;
+        
         regenerateField();
         return this;
+    }
+    
+    public int getRotation() {
+        PdfDictionary mk = getWidget().getAppearanceCharacteristics();
+        return mk == null || mk.getAsInt(PdfName.R) == null ? 0 : (int) mk.getAsInt(PdfName.R);
     }
 
     /**
@@ -292,6 +298,21 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
+     * Get border object specified in the widget annotation dictionary.
+     * 
+     * @return {@link Border} specified in the widget annotation dictionary
+     */
+    public Border getBorder() {
+        float borderWidth = getBorderWidth();
+        Border border = FormBorderFactory.getBorder(
+                this.getWidget().getBorderStyle(), borderWidth, borderColor, backgroundColor);
+        if (border == null && borderWidth > 0 && borderColor != null) {
+            border = new SolidBorder(borderColor, Math.max(1, borderWidth));
+        }
+        return border;
+    }
+
+    /**
      * Sets the border width for the field.
      *
      * @param borderWidth The new border width.
@@ -299,13 +320,15 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * @return The edited {@link PdfFormAnnotation}.
      */
     public PdfFormAnnotation setBorderWidth(float borderWidth) {
+        // Acrobat doesn't support float border width therefore we round it.
+        int roundedBorderWidth = (int) Math.round(borderWidth);
         PdfDictionary bs = getWidget().getBorderStyle();
         if (bs == null) {
             bs = new PdfDictionary();
             put(PdfName.BS, bs);
         }
-        bs.put(PdfName.W, new PdfNumber(borderWidth));
-        this.borderWidth = borderWidth;
+        bs.put(PdfName.W, new PdfNumber(roundedBorderWidth));
+        this.borderWidth = roundedBorderWidth;
 
         regenerateField();
         return this;
@@ -497,7 +520,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                 saveState().
                 endPath();
 
-        TextAlignment textAlignment = parent.convertJustificationToTextAlignment();
+        TextAlignment textAlignment =
+                parent.getJustification() == null ? TextAlignment.LEFT : parent.getJustification();
         float x = 0;
         if (textAlignment == TextAlignment.RIGHT) {
             x = rect.getWidth();
@@ -584,7 +608,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             paragraph.setFontSize(getFontSize());
         }
         paragraph.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
-        paragraph.setTextAlignment(parent.convertJustificationToTextAlignment());
+        paragraph.setTextAlignment(parent.getJustification());
 
         if (getColor() != null) {
             paragraph.setFontColor(getColor());
@@ -891,6 +915,54 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         getWidget().setNormalAppearance(normalAppearance);
     }
 
+    /**
+     * Draws the appearance of a text form field with and saves it into an appearance stream.
+     */
+    protected void drawTextFormFieldAndSaveAppearance() {
+        Rectangle rectangle = getRect(this.getPdfObject());
+        if (rectangle == null) {
+            return;
+        }
+
+        IFormField textFormField;
+        if (parent.isMultiline()) {
+            textFormField = new TextArea(getParentField().getPartialFieldName().toUnicodeString());
+            textFormField.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
+        } else {
+            textFormField = new InputField(getParentField().getPartialFieldName().toUnicodeString());
+            textFormField.setProperty(Property.FONT_SIZE,
+                    UnitValue.createPointValue(getFontSize(new PdfArray(rectangle), parent.getValueAsString())));
+        }
+        textFormField.setProperty(FormProperty.FORM_FIELD_VALUE, parent.getDisplayValue());
+        textFormField.setProperty(Property.FONT, getFont());
+        textFormField.setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
+        textFormField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, getParentField().isPassword());
+        textFormField.setProperty(Property.ADD_MARKED_CONTENT_TEXT, true);
+        if (getColor() != null) {
+            textFormField.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
+        }
+
+        textFormField.setProperty(Property.BORDER, getBorder());
+
+        if (backgroundColor != null) {
+            textFormField.setProperty(Property.BACKGROUND, new Background(backgroundColor, 1f, 0, 0, 0, 0));
+        }
+
+        textFormField.setProperty(Property.WIDTH, UnitValue.createPointValue(rectangle.getWidth()));
+        textFormField.setProperty(Property.HEIGHT, UnitValue.createPointValue(rectangle.getHeight()));
+        // Always flatten
+        textFormField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+
+        PdfFormXObject xObject = new PdfFormXObject(
+                new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
+        applyRotation(xObject, rectangle.getWidth(), rectangle.getHeight());
+        Canvas canvas = new Canvas(xObject, this.getDocument());
+        canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
+        canvas.add(textFormField);
+
+        getWidget().setNormalAppearance(xObject.getPdfObject());
+    }
+
     @Override
     void retrieveStyles() {
         super.retrieveStyles();
@@ -951,7 +1023,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             Paragraph paragraph = new Paragraph(strings.get(index)).setFont(getFont())
                     .setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
             paragraph.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
-            paragraph.setTextAlignment(parent.convertJustificationToTextAlignment());
+            paragraph.setTextAlignment(parent.getJustification());
 
             if (getColor() != null) {
                 paragraph.setFontColor(getColor());
@@ -1190,7 +1262,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         final PdfName type = parent.getFormType();
 
-        if (PdfName.Tx.equals(type) || PdfName.Ch.equals(type)) {
+        if (PdfName.Tx.equals(type) && ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING) {
+            drawTextFormFieldAndSaveAppearance();
+            return true;
+        } else if (PdfName.Ch.equals(type) || PdfName.Tx.equals(type)) {
             return regenerateTextAndChoiceField();
         } else if (PdfName.Btn.equals(type)) {
             if (parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
@@ -1391,7 +1466,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     private void applyRotation(PdfFormXObject xObject, float height, float width) {
-        switch (rotation) {
+        switch (getRotation()) {
             case 90:
                 xObject.put(PdfName.Matrix, new PdfArray(new float[] {0, 1, -1, 0, height, 0}));
                 break;

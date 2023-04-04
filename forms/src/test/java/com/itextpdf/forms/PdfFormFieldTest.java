@@ -62,6 +62,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -180,6 +181,28 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+    
+    @Test
+    public void formFieldWithFloatBorderTest() throws IOException, InterruptedException {
+        String filename = destinationFolder + "formFieldWithFloatBorder.pdf";
+        String cmpFilename = sourceFolder + "cmp_formFieldWithFloatBorder.pdf";
+
+        // In this test it's important to open the document in the acrobat and make sure that border width
+        // does not change after clicking on the field. Acrobat doesn't support float border width therefore we round it
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true);
+
+            PdfTextFormField textFormField = new TextFormFieldBuilder(pdfDocument, "text field")
+                    .setWidgetRectangle(new Rectangle(100, 600, 100, 100)).createText();
+            textFormField.setValue("text field value");
+            textFormField.getFirstFormAnnotation().setBorderWidth(5.25f);
+            textFormField.getFirstFormAnnotation().setBorderColor(ColorConstants.RED);
+
+            form.addField(textFormField);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -917,8 +940,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
 
         form.getField("text1").setValue("123");
-        form.getField("text2").setJustification(HorizontalAlignment.CENTER).setValue("123");
-        form.getField("text3").setJustification(HorizontalAlignment.RIGHT).setValue("123");
+        form.getField("text2").setJustification(TextAlignment.CENTER).setValue("123");
+        form.getField("text3").setJustification(TextAlignment.RIGHT).setValue("123");
         form.getField("text4").setValue("12345678");
         form.getField("text5").setValue("123456789101112131415161718");
 
@@ -1253,7 +1276,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(100 + (30 * x), 100 + (100 * x), 55, 30);
             PdfFormField field = new TextFormFieldBuilder(pdfDoc, "f-" + x).setWidgetRectangle(rect)
                     .createText();
-            field.setValue("").setJustification(HorizontalAlignment.RIGHT).setFont(font).setFontSize(12.0f);
+            field.setValue("").setJustification(TextAlignment.RIGHT).setFont(font).setFontSize(12.0f);
             if (text != null) {
                 field.setValue(text);
             }

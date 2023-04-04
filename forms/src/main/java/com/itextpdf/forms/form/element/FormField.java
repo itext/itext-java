@@ -24,6 +24,8 @@ package com.itextpdf.forms.form.element;
 
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.layout.element.AbstractElement;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 
 /**
  * Implementation of the {@link AbstractElement} class for form fields.
@@ -71,14 +73,64 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
     }
 
     /**
+     * Sets the form field's width and height.
+     *
+     * @param size form field's width and height.
+     * 
+     * @return this same {@link FormField} element.
+     */
+    public T setSize(float size) {
+        setProperty(Property.WIDTH, UnitValue.createPointValue(size));
+        setProperty(Property.HEIGHT, UnitValue.createPointValue(size));
+
+        return (T) (Object) this;
+    }
+
+    /**
+     * Set the form field's width.
+     * 
+     * @param width form field's width
+     * 
+     * @return this {@link FormField} element.
+     */
+    public T setWidth(float width) {
+        setProperty(Property.WIDTH, UnitValue.createPointValue(width));
+        return (T) (Object) this;
+    }
+
+    /**
+     * Set the form field's height.
+     *
+     * @param height form field's height
+     *
+     * @return this {@link FormField} element.
+     */
+    public T setHeight(float height) {
+        setProperty(Property.HEIGHT, UnitValue.createPointValue(height));
+        return (T) (Object) this;
+    }
+
+    /**
      * Set the form field to be interactive and added into Acroform instead of drawing it on a page.
      *
      * @param interactive {@code true} if the form field element shall be added into Acroform, {@code false} otherwise.
      *                By default, the form field element is not interactive and drawn on a page.
      * @return this same {@link FormField} instance.
      */
-    public FormField<T> setInteractive(boolean interactive) {
+    public T setInteractive(boolean interactive) {
         setProperty(FormProperty.FORM_FIELD_FLATTEN, !interactive);
-        return this;
+        return (T) (Object) this;
+    }
+
+    /**
+     * Set value to the form field. Meaning of this depends on the form field type.
+     * 
+     * @param value string value to be set
+     * 
+     * @return this {@link FormField} element.
+     */
+    public T setValue(String value) {
+        setProperty(FormProperty.FORM_FIELD_VALUE, value);
+        return (T) (Object) this;
     }
 }

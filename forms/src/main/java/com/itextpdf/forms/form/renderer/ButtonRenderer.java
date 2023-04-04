@@ -24,7 +24,6 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Button;
@@ -43,7 +42,6 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
-import com.itextpdf.layout.renderer.MetaInfoContainer;
 
 import java.util.List;
 

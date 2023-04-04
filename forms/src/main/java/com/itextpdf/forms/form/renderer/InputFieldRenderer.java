@@ -150,7 +150,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
                     Property.FONT_SIZE));
         }
         final PdfDocument doc = drawContext.getDocument();
-        final Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
+        final Rectangle area = this.getOccupiedArea().getBBox().clone();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
 
@@ -186,6 +186,17 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             return width;
         }
         return super.<T1>getProperty(key);
+    }
+
+    @Override
+    public void draw(DrawContext drawContext) {
+        if (flatRenderer != null) {
+            if (isFlatten()) {
+                super.draw(drawContext);
+            } else {
+                drawChildren(drawContext);
+            }
+        }
     }
 
     @Override

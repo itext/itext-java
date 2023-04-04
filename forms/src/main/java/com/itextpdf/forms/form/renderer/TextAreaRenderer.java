@@ -35,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -51,6 +52,16 @@ import java.util.List;
  * The {@link AbstractTextFieldRenderer} implementation for text area fields.
  */
 public class TextAreaRenderer extends AbstractTextFieldRenderer {
+
+    /**
+     * Minimal size of text in form fields.
+     */
+    private static final int MIN_FONT_SIZE = 4;
+
+    /**
+     * Size of text in form fields when font size is not explicitly set.
+     */
+    private static final int DEFAULT_FONT_SIZE = 12;
 
     /**
      * Creates a new {@link TextAreaRenderer} instance.
@@ -88,6 +99,17 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
     }
 
     @Override
+    public void draw(DrawContext drawContext) {
+        if (flatRenderer != null) {
+            if (isFlatten()) {
+                super.draw(drawContext);
+            } else {
+                drawChildren(drawContext);
+            }
+        }
+    }
+
+    @Override
     protected Float getLastYLineRecursively() {
         if (occupiedArea != null && occupiedArea.getBBox() != null) {
             return occupiedArea.getBBox().getBottom();
@@ -101,6 +123,15 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
     @Override
     public IRenderer getNextRenderer() {
         return new TextAreaRenderer((TextArea) getModelElement());
+    }
+    
+    @Override
+    public LayoutResult layout(LayoutContext layoutContext) {
+        UnitValue fontSize = getPropertyAsUnitValue(Property.FONT_SIZE);
+        if (fontSize != null && fontSize.getValue() < EPS) {
+            approximateFontSizeToFitMultiLine(layoutContext);
+        }
+        return super.layout(layoutContext);
     }
 
     /* (non-Javadoc)
@@ -154,15 +185,14 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
                     Property.FONT_SIZE));
         }
         PdfDocument doc = drawContext.getDocument();
-        Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
+        Rectangle area = getOccupiedArea().getBBox().clone();
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
         final PdfString defaultValue = new PdfString(getDefaultValue());
 
-        final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area).createText()
-                .setValue(value);
+        final PdfFormField inputField = new TextFormFieldBuilder(doc, name)
+                .setWidgetRectangle(area).createMultilineText().setValue(value);
         inputField.setFont(font).setFontSize(fontSizeValue);
-        inputField.setFieldFlag(PdfFormField.FF_MULTILINE, true);
         inputField.setDefaultValue(defaultValue);
         applyDefaultFieldProperties(inputField);
         PdfAcroForm.getAcroForm(doc, true).addField(inputField, page);
@@ -222,5 +252,31 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         } else {
             adjustNumberOfContentLines(lines, bBox, rowsAttribute);
         }
+    }
+
+    private void approximateFontSizeToFitMultiLine(LayoutContext layoutContext) {
+        IRenderer flatRenderer = createFlatRenderer();
+        flatRenderer.setParent(this);
+        TextArea modelElement = (TextArea) this.getModelElement();
+
+        float lFontSize = MIN_FONT_SIZE;
+        float rFontSize = DEFAULT_FONT_SIZE;
+        flatRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(DEFAULT_FONT_SIZE));
+        if (flatRenderer.layout(layoutContext).getStatus() == LayoutResult.FULL) {
+            lFontSize = DEFAULT_FONT_SIZE;
+        } else {
+            final int numberOfIterations = 6;
+            for (int i = 0; i < numberOfIterations; i++) {
+                float mFontSize = (lFontSize + rFontSize) / 2;
+                flatRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(mFontSize));
+                LayoutResult result = flatRenderer.layout(layoutContext);
+                if (result.getStatus() == LayoutResult.FULL) {
+                    lFontSize = mFontSize;
+                } else {
+                    rFontSize = mFontSize;
+                }
+            }
+        }
+        modelElement.setFontSize(lFontSize);
     }
 }
