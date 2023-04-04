@@ -77,7 +77,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(IntegrationTest.class)
 public class PdfFormFieldTest extends ExtendedITextTest {
 
@@ -207,34 +206,28 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void textFieldLeadingSpacesAreNotTrimmedTest() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String filename = destinationFolder + "textFieldLeadingSpacesAreNotTrimmed.pdf";
-            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
-            pdfDoc.addNewPage();
+        String filename = destinationFolder + "textFieldLeadingSpacesAreNotTrimmed.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        pdfDoc.addNewPage();
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            PdfPage page = pdfDoc.getFirstPage();
-            Rectangle rect = new Rectangle(210, 490, 300, 22);
+        PdfPage page = pdfDoc.getFirstPage();
+        Rectangle rect = new Rectangle(210, 490, 300, 22);
 
-            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "TestField")
-                    .setWidgetRectangle(rect).createText();
-            field.setValue("        value with leading space");
+        PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "TestField")
+                .setWidgetRectangle(rect).createText();
+        field.setValue("        value with leading space");
 
-            form.addField(field, page);
+        form.addField(field, page);
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            CompareTool compareTool = new CompareTool();
-            String errorMessage = compareTool.compareByContent(filename,
-                    sourceFolder + "cmp_textFieldLeadingSpacesAreNotTrimmed.pdf", destinationFolder, "diff_");
-            if (errorMessage != null) {
-                Assert.fail(errorMessage);
-            }
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(filename,
+                sourceFolder + "cmp_textFieldLeadingSpacesAreNotTrimmed.pdf", destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
         }
     }
 
@@ -773,193 +766,163 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void formRegenerateWithInvalidDefaultAppearance01() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String testName = "formRegenerateWithInvalidDefaultAppearance01";
-            String outPdf = destinationFolder + testName + ".pdf";
-            String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
-            String srcPdf = sourceFolder + "invalidDA.pdf";
+        String testName = "formRegenerateWithInvalidDefaultAppearance01";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
+        String srcPdf = sourceFolder + "invalidDA.pdf";
 
-            PdfWriter writer = new PdfWriter(outPdf);
-            PdfReader reader = new PdfReader(srcPdf);
-            PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfReader reader = new PdfReader(srcPdf);
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            Map<String, PdfFormField> fields = form.getAllFormFields();
-            fields.get("Text1").setValue("New field value");
-            fields.get("Text2").setValue("New field value");
-            fields.get("Text3").setValue("New field value");
+        Map<String, PdfFormField> fields = form.getAllFormFields();
+        fields.get("Text1").setValue("New field value");
+        fields.get("Text2").setValue("New field value");
+        fields.get("Text3").setValue("New field value");
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            CompareTool compareTool = new CompareTool();
-            String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-            if (errorMessage != null) {
-                Assert.fail(errorMessage);
-            }
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
         }
     }
 
     @Test
     //Create a document with formfields and paragraphs in both fonts, and fill them before closing the document
     public void fillFieldWithHebrewCase1() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String testName = "fillFieldWithHebrewCase1";
-            String outPdf = destinationFolder + testName + ".pdf";
-            String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
+        String testName = "fillFieldWithHebrewCase1";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
-            PdfWriter writer = new PdfWriter(outPdf);
-            PdfDocument pdfDoc = new PdfDocument(writer);
-            Document document = new Document(pdfDoc);
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document document = new Document(pdfDoc);
 
-            PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
-                    PdfEncodings.IDENTITY_H);
-            hebrew.setSubset(false);
-            PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
-            sileot.setSubset(false);
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+                PdfEncodings.IDENTITY_H);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        sileot.setSubset(false);
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            String text = "שלום וברכה";
-            createAcroForm(pdfDoc, form, hebrew, text, 0);
-            createAcroForm(pdfDoc, form, sileot, text, 3);
+        String text = "שלום וברכה";
+        createAcroForm(pdfDoc, form, hebrew, text, 0);
+        createAcroForm(pdfDoc, form, sileot, text, 3);
 
-            addParagraph(document, text, hebrew);
-            addParagraph(document, text, sileot);
+        addParagraph(document, text, hebrew);
+        addParagraph(document, text, sileot);
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            Assert.assertNull(
-                    new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
-        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
     //Create a document with formfields and paragraphs in both fonts, and fill them after closing and reopening the document
     public void fillFieldWithHebrewCase2() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String testName = "fillFieldWithHebrewCase2";
-            String outPdf = destinationFolder + testName + ".pdf";
-            String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
+        String testName = "fillFieldWithHebrewCase2";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            PdfWriter writer = new PdfWriter(baos);
-            PdfDocument pdfDoc = new PdfDocument(writer);
-            Document document = new Document(pdfDoc);
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document document = new Document(pdfDoc);
 
-            PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
-                    PdfEncodings.IDENTITY_H);
-            hebrew.setSubset(false);
-            PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
-            sileot.setSubset(false);
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+                PdfEncodings.IDENTITY_H);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        sileot.setSubset(false);
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            createAcroForm(pdfDoc, form, hebrew, null, 0);
-            createAcroForm(pdfDoc, form, sileot, null, 3);
+        createAcroForm(pdfDoc, form, hebrew, null, 0);
+        createAcroForm(pdfDoc, form, sileot, null, 3);
 
-            String text = "שלום וברכה";
-            addParagraph(document, text, hebrew);
-            addParagraph(document, text, sileot);
+        String text = "שלום וברכה";
+        addParagraph(document, text, hebrew);
+        addParagraph(document, text, sileot);
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())),
-                    new PdfWriter(outPdf));
-            fillAcroForm(pdfDocument, text);
-            pdfDocument.close();
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())),
+                new PdfWriter(outPdf));
+        fillAcroForm(pdfDocument, text);
+        pdfDocument.close();
 
-            Assert.assertNull(
-                    new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
-        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
     //Create a document with formfields in both fonts, and fill them before closing the document
     public void fillFieldWithHebrewCase3() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String testName = "fillFieldWithHebrewCase3";
-            String outPdf = destinationFolder + testName + ".pdf";
-            String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
+        String testName = "fillFieldWithHebrewCase3";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
-            PdfWriter writer = new PdfWriter(outPdf);
-            PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfWriter writer = new PdfWriter(outPdf);
+        PdfDocument pdfDoc = new PdfDocument(writer);
 
-            PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
-                    PdfEncodings.IDENTITY_H);
-            hebrew.setSubset(false);
-            PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
-            sileot.setSubset(false);
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+                PdfEncodings.IDENTITY_H);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        sileot.setSubset(false);
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            String text = "שלום וברכה";
-            createAcroForm(pdfDoc, form, hebrew, text, 0);
-            createAcroForm(pdfDoc, form, sileot, text, 3);
+        String text = "שלום וברכה";
+        createAcroForm(pdfDoc, form, hebrew, text, 0);
+        createAcroForm(pdfDoc, form, sileot, text, 3);
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            Assert.assertNull(
-                    new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
-        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
     //Create a document with formfields in both fonts, and fill them after closing and reopening the document
     public void fillFieldWithHebrewCase4() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String testName = "fillFieldWithHebrewCase4";
-            String outPdf = destinationFolder + testName + ".pdf";
-            String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
+        String testName = "fillFieldWithHebrewCase4";
+        String outPdf = destinationFolder + testName + ".pdf";
+        String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            PdfWriter writer = new PdfWriter(baos);
-            PdfDocument pdfDoc = new PdfDocument(writer);
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdfDoc = new PdfDocument(writer);
 
-            PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
-                    PdfEncodings.IDENTITY_H);
-            hebrew.setSubset(false);
-            PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
-            sileot.setSubset(false);
+        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+                PdfEncodings.IDENTITY_H);
+        hebrew.setSubset(false);
+        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        sileot.setSubset(false);
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            createAcroForm(pdfDoc, form, hebrew, null, 0);
-            createAcroForm(pdfDoc, form, sileot, null, 3);
+        createAcroForm(pdfDoc, form, hebrew, null, 0);
+        createAcroForm(pdfDoc, form, sileot, null, 3);
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            String text = "שלום וברכה";
-            PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())),
-                    new PdfWriter(outPdf));
-            fillAcroForm(pdfDocument, text);
-            pdfDocument.close();
+        String text = "שלום וברכה";
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())),
+                new PdfWriter(outPdf));
+        fillAcroForm(pdfDocument, text);
+        pdfDocument.close();
 
-            Assert.assertNull(
-                    new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
-        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff" + testName + "_"));
     }
 
     @Test
@@ -1154,7 +1117,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         destDoc.close();
 
-        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
+        Assert.assertNull(
+                new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1296,36 +1260,46 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void textFieldWithWideUnicodeRange() throws IOException, InterruptedException {
-        String filename = "textFieldWithWideUnicodeRange.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
-        pdfDoc.addNewPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        // TODO: DEVSIX-7441 - remove flag
+        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = false;
+        try {
+            String filename = "textFieldWithWideUnicodeRange.pdf";
+            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+            pdfDoc.addNewPage();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        form.addField(new TextFormFieldBuilder(pdfDoc, "text_helvetica").setWidgetRectangle(new Rectangle(36, 400, 100, 40))
-                .createText().setValue("Helvetica"));
+            form.addField(new TextFormFieldBuilder(pdfDoc, "text_helvetica").setWidgetRectangle(
+                            new Rectangle(36, 400, 100, 40))
+                    .createText().setValue("Helvetica"));
 
+            PdfFont noto = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
+            noto.setSubset(false);
+            String value = "aAáÁàÀăĂắẮằẰẵẴẳẲâÂấẤầẦẫẪǎǍåÅǻǺäÄǟǞãÃą" +
+                    "ĄāĀảẢạẠặẶẬæÆǽǼbBḃḂcCćĆčČċĊçÇdDd̂D̂ďĎḋḊḑḐđĐðÐeE" +
+                    "éÉèÈĕĔêÊếẾềỀễỄěĚëËẽẼėĖęĘēĒẻẺẹẸệỆəƏfFḟḞgGǵǴğĞ" +
+                    "ǧǦġĠģĢḡḠǥǤhHȟȞḧḦħĦḥḤiIíÍìÌĭĬîÎǐǏïÏĩĨİįĮīĪỉỈị" +
+                    "ỊıjJĵĴǰJ̌kKḱḰǩǨķĶlLĺĹl̂L̂ľĽļĻłŁŀĿmMm̂M̂ṁṀnNńŃn̂N̂ňŇ" +
+                    "ñÑṅṄņŅŋŊoOóÓòÒŏŎôÔốỐồỒỗỖǒǑöÖȫȪőŐõÕȯȮȱȰøØǿǾǫǪ" +
+                    "ǭǬōŌỏỎơƠớỚờỜọỌộỘœŒpPṗṖqQĸrRŕŔřŘŗŖsSśŚšŠṡṠşŞṣ" +
+                    "ṢșȘßẞtTťŤṫṪţŢțȚŧŦuUúÚùÙûÛǔǓůŮüÜűŰũŨųŲūŪủỦưƯứ" +
+                    "ỨừỪữỮửỬựỰụỤvVwWẃẂẁẀŵŴẅẄxXẍẌyYýÝỳỲŷŶÿŸỹỸẏẎȳȲỷỶ" +
+                    "ỵỴzZźŹẑẐžŽżŻẓẒʒƷǯǮþÞŉ";
+            PdfFormField textField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(
+                            new Rectangle(36, 500, 400, 300))
+                    .createMultilineText().setValue(value);
+            textField.setFont(noto).setFontSize(12);
 
-        PdfFont noto = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
-        noto.setSubset(false);
-        String value = "aAáÁàÀăĂắẮằẰẵẴẳẲâÂấẤầẦẫẪǎǍåÅǻǺäÄǟǞãÃą" +
-                "ĄāĀảẢạẠặẶẬæÆǽǼbBḃḂcCćĆčČċĊçÇdDd̂D̂ďĎḋḊḑḐđĐðÐeE" +
-                "éÉèÈĕĔêÊếẾềỀễỄěĚëËẽẼėĖęĘēĒẻẺẹẸệỆəƏfFḟḞgGǵǴğĞ" +
-                "ǧǦġĠģĢḡḠǥǤhHȟȞḧḦħĦḥḤiIíÍìÌĭĬîÎǐǏïÏĩĨİįĮīĪỉỈị" +
-                "ỊıjJĵĴǰJ̌kKḱḰǩǨķĶlLĺĹl̂L̂ľĽļĻłŁŀĿmMm̂M̂ṁṀnNńŃn̂N̂ňŇ" +
-                "ñÑṅṄņŅŋŊoOóÓòÒŏŎôÔốỐồỒỗỖǒǑöÖȫȪőŐõÕȯȮȱȰøØǿǾǫǪ" +
-                "ǭǬōŌỏỎơƠớỚờỜọỌộỘœŒpPṗṖqQĸrRŕŔřŘŗŖsSśŚšŠṡṠşŞṣ" +
-                "ṢșȘßẞtTťŤṫṪţŢțȚŧŦuUúÚùÙûÛǔǓůŮüÜűŰũŨųŲūŪủỦưƯứ" +
-                "ỨừỪữỮửỬựỰụỤvVwWẃẂẁẀŵŴẅẄxXẍẌyYýÝỳỲŷŶÿŸỹỸẏẎȳȲỷỶ" +
-                "ỵỴzZźŹẑẐžŽżŻẓẒʒƷǯǮþÞŉ";
-        PdfFormField textField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 500, 400, 300))
-                .createMultilineText().setValue(value);
-        textField.setFont(noto).setFontSize(12);
+            form.addField(textField);
 
-        form.addField(textField);
+            pdfDoc.close();
 
-        pdfDoc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+            Assert.assertNull(
+                    new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename,
+                            destinationFolder, "diff_"));
+        } finally {
+            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        }
     }
 
     @Test
@@ -1456,33 +1430,27 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
             @LogMessage(messageTemplate = FormsLogMessageConstants.INPUT_FIELD_DOES_NOT_FIT)})
     public void appendModeAppearance() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String inputFile = "appendModeAppearance.pdf";
-            String outputFile = "appendModeAppearance.pdf";
+        String inputFile = "appendModeAppearance.pdf";
+        String outputFile = "appendModeAppearance.pdf";
 
-            String line1 = "ABC";
+        String line1 = "ABC";
 
-            PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inputFile),
-                    new PdfWriter(destinationFolder + outputFile),
-                    new StampingProperties().useAppendMode());
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
-            form.setNeedAppearances(true);
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inputFile),
+                new PdfWriter(destinationFolder + outputFile),
+                new StampingProperties().useAppendMode());
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        form.setNeedAppearances(true);
 
-            PdfFormField field;
-            for (Map.Entry<String, PdfFormField> entry : form.getAllFormFields().entrySet()) {
-                field = entry.getValue();
-                field.setValue(line1);
-            }
-
-            pdfDocument.close();
-
-            Assert.assertNull(new CompareTool().compareByContent(destinationFolder + outputFile,
-                    sourceFolder + "cmp_" + outputFile, destinationFolder, "diff_"));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        PdfFormField field;
+        for (Map.Entry<String, PdfFormField> entry : form.getAllFormFields().entrySet()) {
+            field = entry.getValue();
+            field.setValue(line1);
         }
+
+        pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + outputFile,
+                sourceFolder + "cmp_" + outputFile, destinationFolder, "diff_"));
     }
 
     @Test
@@ -1611,32 +1579,26 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void addChildToFormFieldTest() throws InterruptedException, IOException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String outPdf = destinationFolder + "addChildToFormFieldTest.pdf";
-            String cmpPdf = sourceFolder + "cmp_addChildToFormFieldTest.pdf";
-            try (PdfDocument outputDoc = new PdfDocument(new PdfWriter(outPdf))) {
-                PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
-                PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
-                        .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
-                acroForm.addField(field);
-                PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
-                        .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText().setValue("root");
-                PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
-                        .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("child");
-                root.addKid(child);
+        String outPdf = destinationFolder + "addChildToFormFieldTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_addChildToFormFieldTest.pdf";
+        try (PdfDocument outputDoc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
+                    .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
+            acroForm.addField(field);
+            PdfFormField root = new TextFormFieldBuilder(outputDoc, "root")
+                    .setWidgetRectangle(new Rectangle(100, 600, 200, 20)).createText().setValue("root");
+            PdfFormField child = new TextFormFieldBuilder(outputDoc, "child")
+                    .setWidgetRectangle(new Rectangle(100, 500, 200, 20)).createText().setValue("child");
+            root.addKid(child);
 
-                acroForm.addField(root);
-                Assert.assertEquals(2, acroForm.fields.size());
-                PdfArray fieldKids = root.getKids();
-                Assert.assertEquals(2, fieldKids.size());
-            }
-
-            Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+            acroForm.addField(root);
+            Assert.assertEquals(2, acroForm.fields.size());
+            PdfArray fieldKids = root.getKids();
+            Assert.assertEquals(2, fieldKids.size());
         }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 
     @Test

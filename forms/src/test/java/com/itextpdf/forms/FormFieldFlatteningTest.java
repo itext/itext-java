@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
@@ -106,18 +107,24 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
     @Test
     public void multiLineFormFieldClippingTest() throws IOException, InterruptedException {
+        // TODO: DEVSIX-7441 - remove flag
+        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = false;
+        try {
+            String src = sourceFolder + "multiLineFormFieldClippingTest.pdf";
+            String dest = destinationFolder + "multiLineFormFieldClippingTest_flattened.pdf";
+            String cmp = sourceFolder + "cmp_multiLineFormFieldClippingTest_flattened.pdf";
 
-        String src = sourceFolder + "multiLineFormFieldClippingTest.pdf";
-        String dest = destinationFolder + "multiLineFormFieldClippingTest_flattened.pdf";
-        String cmp = sourceFolder + "cmp_multiLineFormFieldClippingTest_flattened.pdf";
+            PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            form.getField("Text1").setValue("Tall letters: T I J L R E F");
+            form.flattenFields();
+            doc.close();
 
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
-        form.getField("Text1").setValue("Tall letters: T I J L R E F");
-        form.flattenFields();
-        doc.close();
-
-        Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+            Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
+        } finally {
+            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        }
     }
 
     @Test
@@ -181,7 +188,14 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
 
     @Test
     public void fieldsJustificationTest01() throws IOException, InterruptedException {
-        fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest01");
+        // TODO: DEVSIX-7441 - remove flag
+        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = false;
+        try {
+            fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest01");
+        } finally {
+            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        }
     }
 
     @Test
@@ -189,7 +203,14 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = FormsLogMessageConstants.ANNOTATION_IN_ACROFORM_DICTIONARY, count = 2)
     })
     public void fieldsJustificationTest02() throws IOException, InterruptedException {
-        fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest02");
+        // TODO: DEVSIX-7441 - remove flag
+        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = false;
+        try {
+            fillTextFieldsThenFlattenThenCompare("fieldsJustificationTest02");
+        } finally {
+            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        }
     }
 
     private static void fillTextFieldsThenFlattenThenCompare(String testName) throws IOException, InterruptedException {

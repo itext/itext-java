@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.widget;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
@@ -185,25 +184,19 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
     @Test
     public void fillFormWithRotatedFieldAndPageTest() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String outPdf = destinationFolder + "fillFormWithRotatedFieldAndPageTest.pdf";
-            String cmpPdf = sourceFolder + "cmp_fillFormWithRotatedFieldAndPageTest.pdf";
-            try (PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "pdfWithRotatedField.pdf"),
-                    new PdfWriter(outPdf))) {
+        String outPdf = destinationFolder + "fillFormWithRotatedFieldAndPageTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_fillFormWithRotatedFieldAndPageTest.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "pdfWithRotatedField.pdf"),
+                new PdfWriter(outPdf))) {
 
-                PdfAcroForm form1 = PdfAcroForm.getAcroForm(doc, false);
-                form1.getField("First field").setValue("We filled this field").getFirstFormAnnotation()
-                        .setBorderColor(ColorConstants.BLACK);
-            }
+            PdfAcroForm form1 = PdfAcroForm.getAcroForm(doc, false);
+            form1.getField("First field").setValue("We filled this field").getFirstFormAnnotation()
+                    .setBorderColor(ColorConstants.BLACK);
+        }
 
-            String errorMessage = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
-            if (errorMessage != null) {
-                Assert.fail(errorMessage);
-            }
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+        String errorMessage = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
         }
     }
 

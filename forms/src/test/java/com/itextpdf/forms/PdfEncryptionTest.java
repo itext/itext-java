@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
@@ -43,7 +42,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,18 +65,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
      */
     public static byte[] OWNER = "World".getBytes(StandardCharsets.ISO_8859_1);
 
-    private static boolean experimentalRenderingPreviousValue;
-
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
-        experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
     }
 
     // Custom entry in Info dictionary is used because standard entried are gone into metadata in PDF 2.0

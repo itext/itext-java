@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -78,54 +77,42 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
     @Test
     public void autosizeInheritedDAFormFieldsTest() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String inPdf = destinationFolder + "autosizeInheritedDAFormFields.pdf";
+        String inPdf = destinationFolder + "autosizeInheritedDAFormFields.pdf";
 
-            PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "autosizeInheritedDAFormFields.pdf"),
-                    new PdfWriter(inPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "autosizeInheritedDAFormFields.pdf"),
+                new PdfWriter(inPdf));
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            Map<String, PdfFormField> fields = form.getAllFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
 
-            fields.get("field_1").setValue("1111 2222 3333 4444");
-            fields.get("field_2").setValue("1111 2222 3333 4444");
-            fields.get("field_3").setValue("surname surname surname surname surname surname");
+        fields.get("field_1").setValue("1111 2222 3333 4444");
+        fields.get("field_2").setValue("1111 2222 3333 4444");
+        fields.get("field_3").setValue("surname surname surname surname surname surname");
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            Assert.assertNull(new CompareTool().compareByContent(inPdf,
-                    sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", destinationFolder, "diff_"));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
-        }
+        Assert.assertNull(new CompareTool().compareByContent(inPdf,
+                sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", destinationFolder, "diff_"));
     }
 
     @Test
     public void autosizeInheritedDAFormFieldsWithKidsTest() throws IOException, InterruptedException {
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-        try {
-            String inPdf = destinationFolder + "autosizeInheritedDAFormFieldsWithKids.pdf";
+        String inPdf = destinationFolder + "autosizeInheritedDAFormFieldsWithKids.pdf";
 
-            PdfDocument pdfDoc = new PdfDocument(
-                    new PdfReader(sourceFolder + "autosizeInheritedDAFormFieldsWithKids.pdf"),
-                    new PdfWriter(inPdf));
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "autosizeInheritedDAFormFieldsWithKids.pdf"),
+                new PdfWriter(inPdf));
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            form.getField("root.child.text1").setValue("surname surname surname surname surname");
-            form.getField("root.child.text2").setValue("surname surname surname surname surname");
+        form.getField("root.child.text1").setValue("surname surname surname surname surname");
+        form.getField("root.child.text2").setValue("surname surname surname surname surname");
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            Assert.assertNull(new CompareTool().compareByContent(inPdf,
-                    sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", destinationFolder, inPdf));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
-        }
+        Assert.assertNull(new CompareTool().compareByContent(inPdf,
+                sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", destinationFolder, inPdf));
     }
 
     @Test

@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.form.element;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -40,7 +39,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,19 +51,9 @@ public class InputFieldTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER =
             "./target/test/com/itextpdf/forms/form/element/InputFieldTest/";
 
-
-    private static boolean experimentalRenderingPreviousValue;
-
     @BeforeClass
     public static void beforeClass() {
-        experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
     }
 
     @Test

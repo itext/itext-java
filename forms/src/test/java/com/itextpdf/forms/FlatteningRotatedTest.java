@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +49,6 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningRotatedTest/";
 
     private final String inputPdfFileName;
-    private static boolean experimentalRenderingPreviousValue;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> inputFileNames() {
@@ -71,13 +68,6 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
-        experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
     }
 
     @Test

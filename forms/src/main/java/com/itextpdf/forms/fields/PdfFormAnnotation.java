@@ -911,10 +911,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         IFormField textFormField;
         if (parent.isMultiline()) {
-            textFormField = new TextArea(getParentField().getPartialFieldName().toUnicodeString());
+            textFormField = new TextArea("");
             textFormField.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
         } else {
-            textFormField = new InputField(getParentField().getPartialFieldName().toUnicodeString());
+            textFormField = new InputField("");
             textFormField.setProperty(Property.FONT_SIZE,
                     UnitValue.createPointValue(getFontSize(new PdfArray(rectangle), parent.getValueAsString())));
         }

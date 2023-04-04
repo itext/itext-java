@@ -13,7 +13,7 @@ public final class ExperimentalFeatures {
     /**
      * Determines, whether the old or the new text form field drawing logic will be used.
      */
-    public static boolean ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = false;
+    public static boolean ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
 
     private ExperimentalFeatures() {
         // utility class

@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -46,18 +45,9 @@ public class FormFieldAppendTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldAppendTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldAppendTest/";
 
-    private static boolean experimentalRenderingPreviousValue;
-
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
-        experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = true;
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
     }
 
     @Test

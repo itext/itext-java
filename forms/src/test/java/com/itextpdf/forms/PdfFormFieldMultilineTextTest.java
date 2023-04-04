@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
@@ -35,13 +36,13 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.util.Map;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,10 +54,22 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
 
+    private static boolean experimentalRenderingPreviousValue;
+
     @BeforeClass
     public static void beforeClass() {
+        // TODO: DEVSIX-7441 - remove flag
+        experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = false;
+
         createDestinationFolder(destinationFolder);
     }
+
+    @AfterClass
+    public static void afterClass() {
+        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
+    }
+
 
     @Test
     public void multilineFormFieldTest() throws IOException, InterruptedException {

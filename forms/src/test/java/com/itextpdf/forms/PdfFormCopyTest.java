@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
