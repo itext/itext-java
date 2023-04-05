@@ -147,8 +147,8 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
             if (annotation != null) {
                 PdfFormXObject xObject = new PdfFormXObject(
                         new Rectangle(0, 0, getWidgetRectangle().getWidth(), getWidgetRectangle().getHeight()));
-                field.getFirstFormAnnotation().drawChoiceAppearance(getWidgetRectangle(), field.fontSize,
-                        optionsArrayString, xObject, 0);
+                TextAndChoiceLegacyDrawer.drawChoiceAppearance(field.getFirstFormAnnotation(), getWidgetRectangle(),
+                        field.fontSize, optionsArrayString, xObject, 0);
                 annotation.setNormalAppearance(xObject.getPdfObject());
                 setPageToField(field);
             }

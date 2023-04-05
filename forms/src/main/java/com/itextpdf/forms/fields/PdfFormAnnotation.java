@@ -68,7 +68,6 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -84,7 +83,6 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.MetaInfoContainer;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,6 +115,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * Default padding X offset.
      */
     static final float X_OFFSET = 2;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormAnnotation.class);
 
     protected float borderWidth = 1;
     protected Color backgroundColor;
@@ -554,40 +554,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
         paragraphStyle.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
         paragraphStyle.setFontColor(getColor());
-
-        int maxLen = new PdfTextFormField(parent.getPdfObject()).getMaxLen();
-        // check if /Comb has been set
-        if (parent.getFieldFlag(PdfTextFormField.FF_COMB) && 0 != maxLen) {
-            float widthPerCharacter = width / maxLen;
-            int numberOfCharacters = Math.min(maxLen, value.length());
-
-            int start;
-            switch (textAlignment) {
-                case RIGHT:
-                    start = (maxLen - numberOfCharacters);
-                    break;
-                case CENTER:
-                    start = (maxLen - numberOfCharacters) / 2;
-                    break;
-                default:
-                    start = 0;
-            }
-            float startOffset = widthPerCharacter * (start + 0.5f);
-            for (int i = 0; i < numberOfCharacters; i++) {
-                modelCanvas.showTextAligned(new Paragraph(value.substring(i, i + 1)).addStyle(paragraphStyle),
-                        startOffset + widthPerCharacter * i, rect.getHeight() / 2, TextAlignment.CENTER,
-                        VerticalAlignment.MIDDLE);
-            }
-        } else {
-            if (parent.getFieldFlag(PdfTextFormField.FF_COMB)) {
-                Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
-                logger.error(MessageFormatUtil.format(
-                        IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
-            }
-            modelCanvas.showTextAligned(createParagraphForTextFieldValue(value).addStyle(paragraphStyle)
-                            .setPaddings(0, X_OFFSET, 0, X_OFFSET), x, rect.getHeight() / 2, textAlignment,
-                    VerticalAlignment.MIDDLE);
-        }
+        
+        modelCanvas.showTextAligned(createParagraphForTextFieldValue(value).addStyle(paragraphStyle)
+                        .setPaddings(0, X_OFFSET, 0, X_OFFSET), x, rect.getHeight() / 2, textAlignment,
+                VerticalAlignment.MIDDLE);
         canvas.
                 restoreState().
                 endVariableText();
@@ -1006,81 +976,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
     }
 
-    /**
-     * Draws the visual appearance of Choice box in a form field.
-     *
-     * @param rect       The location on the page for the list field
-     * @param value      The initial value
-     * @param appearance The appearance
-     */
-    void drawChoiceAppearance(Rectangle rect, float fontSize, String value, PdfFormXObject appearance, int topIndex) {
-        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfResources resources = appearance.getResources();
-        PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
-
-        float width = rect.getWidth();
-        float height = rect.getHeight();
-        float widthBorder = 6.0f;
-        float heightBorder = 2.0f;
-
-        drawBorder(canvas, appearance, width, height);
-        canvas.
-                beginVariableText().
-                saveState().
-                rectangle(3, 3, width - widthBorder, height - heightBorder).
-                clip().
-                endPath();
-
-        Canvas modelCanvas = new Canvas(canvas, new Rectangle(3, 0, Math.max(0, width - widthBorder),
-                Math.max(0, height - heightBorder)));
-        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
-
-        setMetaInfoToCanvas(modelCanvas);
-
-        Div div = new Div();
-        if (parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-            div.setVerticalAlignment(VerticalAlignment.MIDDLE);
-        }
-        div.setHeight(Math.max(0, height - heightBorder));
-        List<String> strings = getFont().splitString(value, fontSize, width - widthBorder);
-        for (int index = 0; index < strings.size(); index++) {
-            Boolean isFull = modelCanvas.getRenderer().getPropertyAsBoolean(Property.FULL);
-            if (Boolean.TRUE.equals(isFull)) {
-                break;
-            }
-
-            Paragraph paragraph = new Paragraph(strings.get(index)).setFont(getFont())
-                    .setFontSize(fontSize).setMargins(0, 0, 0, 0).setMultipliedLeading(1);
-            paragraph.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
-            paragraph.setTextAlignment(parent.getJustification());
-
-            if (getColor() != null) {
-                paragraph.setFontColor(getColor());
-            }
-            if (!parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-                PdfArray indices = getParent().getAsArray(PdfName.I);
-                if (indices != null && indices.size() > 0) {
-                    for (PdfObject ind : indices) {
-                        if (!ind.isNumber()) {
-                            continue;
-                        }
-                        if (((PdfNumber) ind).getValue() == index + topIndex) {
-                            paragraph.setBackgroundColor(new DeviceRgb(10, 36, 106));
-                            paragraph.setFontColor(ColorConstants.LIGHT_GRAY);
-                        }
-                    }
-                }
-            }
-            div.add(paragraph);
-        }
-        modelCanvas.add(div);
-        canvas.
-                restoreState().
-                endVariableText();
-
-        appearance.getPdfObject().setData(stream.getBytes());
-    }
-
     static void setMetaInfoToCanvas(Canvas canvas) {
         MetaInfoContainer metaInfo = FormsMetaInfoStaticContainer.getMetaInfoForLayout();
         if (metaInfo != null) {
@@ -1162,8 +1057,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             bBox = new PdfArray(rect);
         } else {
             //Avoid NPE when handling corrupt pdfs
-            Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
-            logger.error(FormsLogMessageConstants.INCORRECT_PAGE_ROTATION);
+            LOGGER.error(FormsLogMessageConstants.INCORRECT_PAGE_ROTATION);
             matrix = new PdfArray(new double[] {1, 0, 0, 1, 0, 0});
         }
         //Apply field rotation
@@ -1229,19 +1123,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             } else {
                 drawTextAppearance(bboxRectangle, getFont(), getFontSize(bBox, value), value, appearance);
             }
-        } else {
-            int topIndex = 0;
-            if (!parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
-                PdfNumber topIndexNum = this.getParent().getAsNumber(PdfName.TI);
-                PdfArray options = parent.getOptions();
-                if (null != options) {
-                    topIndex = null != topIndexNum ? topIndexNum.intValue() : 0;
-                    PdfArray visibleOptions = topIndex > 0
-                            ? new PdfArray(options.subList(topIndex, options.size())) : (PdfArray) options.clone();
-                    value = PdfFormField.optionsArrayToString(visibleOptions);
-                }
-            }
-            drawChoiceAppearance(bboxRectangle, getFontSize(bBox, value), value, appearance, topIndex);
         }
         PdfDictionary ap = new PdfDictionary();
         ap.put(PdfName.N, appearance.getPdfObject());
@@ -1257,11 +1138,15 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         final PdfName type = parent.getFormType();
 
-        if (PdfName.Tx.equals(type) && ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING) {
-            drawTextFormFieldAndSaveAppearance();
-            return true;
-        } else if (PdfName.Ch.equals(type) || PdfName.Tx.equals(type)) {
-            return regenerateTextAndChoiceField();
+        if (PdfName.Ch.equals(type) || this.isCombTextFormField()) {
+            return TextAndChoiceLegacyDrawer.regenerateTextAndChoiceField(this);
+        } else if (PdfName.Tx.equals(type)) {
+            if (ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING) {
+                drawTextFormFieldAndSaveAppearance();
+                return true;
+            } else {
+                return regenerateTextAndChoiceField();
+            }
         } else if (PdfName.Btn.equals(type)) {
             if (parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 drawPushButtonFieldAndSaveAppearance();
@@ -1350,26 +1235,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return radio;
     }
 
-    private static double degreeToRadians(double angle) {
-        return Math.PI * angle / 180.0;
-    }
-
-    private static Paragraph createParagraphForTextFieldValue(String value) {
-        Text text = new Text(value);
-        text.setNextRenderer(new FormFieldValueNonTrimmingTextRenderer(text));
-        return new Paragraph(text);
-    }
-
-    private String getRadioButtonValue() {
-        for (String state : getAppearanceStates()) {
-            if (!OFF_STATE_VALUE.equals(state)) {
-                return state;
-            }
-        }
-        return null;
-    }
-
-    private float getFontSize(PdfArray bBox, String value) {
+    float getFontSize(PdfArray bBox, String value) {
         if (getFontSize() == 0) {
             if (bBox == null || value == null || value.isEmpty()) {
                 return DEFAULT_FONT_SIZE;
@@ -1381,6 +1247,38 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return getFontSize();
     }
 
+    private static double degreeToRadians(double angle) {
+        return Math.PI * angle / 180.0;
+    }
+
+    private static Paragraph createParagraphForTextFieldValue(String value) {
+        Text text = new Text(value);
+        text.setNextRenderer(new FormFieldValueNonTrimmingTextRenderer(text));
+        return new Paragraph(text);
+    }
+
+    private boolean isCombTextFormField() {
+        final PdfName type = parent.getFormType();
+        if (PdfName.Tx.equals(type) && parent.getFieldFlag(PdfTextFormField.FF_COMB)) {
+            int maxLen = new PdfTextFormField(parent.getPdfObject()).getMaxLen();
+            if (maxLen == 0 || parent.isMultiline()) {
+                LOGGER.error(
+                        MessageFormatUtil.format(IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private String getRadioButtonValue() {
+        for (String state : getAppearanceStates()) {
+            if (!OFF_STATE_VALUE.equals(state)) {
+                return state;
+            }
+        }
+        return null;
+    }
 
     /**
      * Calculate the necessary height offset after applying field rotation
