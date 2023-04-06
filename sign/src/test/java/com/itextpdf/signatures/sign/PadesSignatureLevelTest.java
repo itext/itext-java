@@ -45,6 +45,7 @@ import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -97,7 +98,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
                 .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText7.");
+                .setLayer2Text("Approval test signature.\nCreated by iText.");
 
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);

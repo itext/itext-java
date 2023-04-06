@@ -49,13 +49,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class LinkTest extends ExtendedITextTest {
@@ -162,7 +162,7 @@ public class LinkTest extends ExtendedITextTest {
      * Stack overflow: Create local link in rotated PdfPCell in iTextSharp
      * </a>
      * <p>
-     * This is the equivalent Java code for iText 7 of the C# code for iTextSharp 5
+     * This is the equivalent Java code for iText of the C# code for iTextSharp 5
      * in the question.
      * <p>
      * @author mkl

@@ -48,18 +48,17 @@ import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleIntegrationTest.class)
 public class PadesSigTest extends ExtendedITextTest {
@@ -187,7 +186,7 @@ public class PadesSigTest extends ExtendedITextTest {
                 .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText7.");
+                .setLayer2Text("Approval test signature.\nCreated by iText.");
 
         if (sigPolicyIdentifier != null) {
             signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,

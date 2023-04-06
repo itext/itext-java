@@ -7,7 +7,7 @@
     <version>8.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>bouncy-castle-connector</artifactId>
-  <name>iText 7 - Bouncy Castle Connector</name>
+  <name>iText - Bouncy Castle Connector</name>
   <url>https://itextpdf.com/</url>
   
   <properties>

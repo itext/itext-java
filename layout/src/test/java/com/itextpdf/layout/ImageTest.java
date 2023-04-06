@@ -22,9 +22,9 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
@@ -56,12 +56,11 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class ImageTest extends ExtendedITextTest {
@@ -657,7 +656,7 @@ public class ImageTest extends ExtendedITextTest {
         img.setAutoScale(true);
         Table table = new Table(UnitValue.createPercentArray(4)).useAllAvailableWidth();
         for (int k = 0; k < 5; k++) {
-            table.addCell("Hello World from iText7");
+            table.addCell("Hello World from iText");
 
             List list = new List().setListSymbol("-> ");
             list.add("list item").add("list item").add("list item").add("list item").add("list item");

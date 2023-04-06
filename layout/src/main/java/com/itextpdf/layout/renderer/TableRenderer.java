@@ -1381,7 +1381,7 @@ public class TableRenderer extends AbstractRenderer {
         if (bordersHandler instanceof SeparatedTableBorders) {
             super.drawBorder(drawContext);
         } else {
-            // Do nothing here. Itext7 handles cell and table borders collapse and draws result borders during #drawBorders()
+            // Do nothing here. iText handles cell and table borders collapse and draws result borders during #drawBorders()
         }
     }
 

@@ -257,7 +257,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 EncodedRecipients.add(new PdfLiteral(StreamUtil.createEscapedString(cms)));
             } catch (GeneralSecurityException | IOException e) {
                 EncodedRecipients = null;
-                // break was added while porting to itext7
+                // break was added while porting to itext
                 break;
             }
         }

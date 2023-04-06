@@ -45,17 +45,6 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import java.security.NoSuchAlgorithmException;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
-import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -68,6 +57,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -76,6 +66,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
@@ -295,7 +293,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
                 .setPageRect(new Rectangle(50, 650, 200, 100))
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText7.");
+                .setLayer2Text("Approval test signature.\nCreated by iText.");
 
         signer.signDetached(
                 new BouncyCastleDigest(), pks, signChain, null, null, null, 0,

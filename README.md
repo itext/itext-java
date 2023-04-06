@@ -1,6 +1,6 @@
-**[iText 7 Community][itext]** consists of several jars.
+**[iText Community][itext]** consists of several jars.
 
-The iText 7 Core/Community release contains:
+The iText Core/Community release contains:
 
 - ```kernel-x.y.z.jar```: low-level functionality
 - ```io-x.y.z.jar```:  low-level functionality
@@ -19,19 +19,19 @@ The iText 7 Core/Community release contains:
 - ```bouncy-castle-adapter-x.y.z.jar```: use this to apply BouncyCastle as low-level cryptography library
 - ```bouncy-castle-fips-adapter-x.y.z.jar```: use this to apply BouncyCastle FIPS as low-level cryptography library
 
-The **iText 7 Community** source code is hosted on [Github][github], where you can also [download the latest releases][latest].
+The **iText Community** source code is hosted on [Github][github], where you can also [download the latest releases][latest].
 
-You can also [build iText 7 Community from source][building].
+You can also [build iText Community from source][building].
 
 We also provide opensource add-ons and tools to complement the core functionality:
 - [pdfHTML][pdfhtml] — allows you to easily convert HTML to PDF or iText objects
 - [pdfSweep][pdfsweep] — a highly efficient PDF tool to merge, split and redact data
 - [RUPS][rups] — a Java tool that can help you debug PDFs
 
-If you have an idea on how to improve **iText 7 Community** and you want to submit code,
+If you have an idea on how to improve **iText Community** and you want to submit code,
 please read our [Contribution Guidelines][contributing].
 
-**iText 7** is dual licensed as [AGPL][agpl]/[Commercial software][sales].
+**iText** is dual licensed as [AGPL][agpl]/[Commercial software][sales].
 
 AGPL is a free / open source software license.
 

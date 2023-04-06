@@ -55,17 +55,16 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
-import java.util.Collections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PdfA2Checker defines the requirements of the PDF/A-2 standard and contains a
@@ -343,12 +342,12 @@ public class PdfA2Checker extends PdfA1Checker {
     @Override
     protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
         String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
-        // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
+        // non-symbolic true type font will always has an encoding entry in font dictionary in itext
         if (!PdfEncodings.WINANSI.equals(encoding) && !PdfEncodings.MACROMAN.equals(encoding)) {
             throw new PdfAConformanceException(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING, trueTypeFont);
         }
 
-        // if font has differences array, itext7 ensures that all names in it are listed in AdobeGlyphList
+        // if font has differences array, itext ensures that all names in it are listed in AdobeGlyphList
     }
 
     @Override

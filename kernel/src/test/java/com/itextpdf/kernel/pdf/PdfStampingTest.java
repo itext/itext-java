@@ -22,15 +22,15 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
-import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
@@ -84,7 +84,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfReader reader2 = new PdfReader(filename1);
         PdfWriter writer2 = new PdfWriter(filename2);
         PdfDocument pdfDoc2 = new PdfDocument(reader2, writer2);
-        pdfDoc2.getDocumentInfo().setCreator("iText 7").setTitle("Empty iText 7 Document");
+        pdfDoc2.getDocumentInfo().setCreator("iText").setTitle("Empty iText Document");
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(filename2);
@@ -103,7 +103,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfDictionary trailer = document.getTrailer();
         PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
         PdfString creator = info.getAsString(PdfName.Creator);
-        assertEquals("iText 7", creator.toString());
+        assertEquals("iText", creator.toString());
         byte[] bytes = document.getPage(1).getContentBytes();
         assertEquals("%Hello World\n", new String(bytes));
         String date = document.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();
@@ -825,7 +825,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         pdfDoc1.close();
 
         PdfDocument pdfDoc2 = new PdfDocument(new PdfReader(filename1), new PdfWriter(filename2), new StampingProperties().useAppendMode());
-        pdfDoc2.getDocumentInfo().setCreator("iText 7").setTitle("Empty iText 7 Document");
+        pdfDoc2.getDocumentInfo().setCreator("iText").setTitle("Empty iText Document");
         pdfDoc2.close();
 
         PdfReader reader3 = new PdfReader(filename2);
@@ -844,7 +844,7 @@ public class PdfStampingTest extends ExtendedITextTest {
         PdfDictionary trailer = pdfDocument.getTrailer();
         PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
         PdfString creator = info.getAsString(PdfName.Creator);
-        assertEquals("iText 7", creator.toString());
+        assertEquals("iText", creator.toString());
         byte[] bytes = pdfDocument.getPage(1).getContentBytes();
         assertEquals("%Hello World\n", new String(bytes));
         String date = pdfDocument.getDocumentInfo().getPdfObject().getAsString(PdfName.ModDate).getValue();

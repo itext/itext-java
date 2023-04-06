@@ -87,7 +87,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         Paragraph h9 = new Paragraph("Header level 9");
         h9.getAccessibilityProperties().setRole("H9");
 
-        Paragraph h11 = new Paragraph("Hello World from iText7");
+        Paragraph h11 = new Paragraph("Hello World from iText");
         h11.getAccessibilityProperties().setRole("H11");
 
         document.add(h9);
@@ -110,7 +110,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         Paragraph h1 = new Paragraph("Header level 1");
         h1.getAccessibilityProperties().setRole(StandardRoles.H1);
 
-        Paragraph helloWorldPara = new Paragraph("Hello World from iText7");
+        Paragraph helloWorldPara = new Paragraph("Hello World from iText");
 
         document.add(h1);
         addSimpleContentToDoc(document, helloWorldPara);
@@ -134,7 +134,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         Paragraph h1 = new Paragraph("Header level 1");
         h1.getAccessibilityProperties().setRole(StandardRoles.H1);
 
-        Paragraph helloWorldPara = new Paragraph("Hello World from iText7");
+        Paragraph helloWorldPara = new Paragraph("Hello World from iText");
 
         document.add(h1);
         addSimpleContentToDoc(document, helloWorldPara);
@@ -720,7 +720,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         Paragraph h1P = new Paragraph("Header level 1");
         h1P.getAccessibilityProperties().setRole(HtmlRoles.h1);
 
-        Paragraph helloWorldPara = new Paragraph("Hello World from iText7");
+        Paragraph helloWorldPara = new Paragraph("Hello World from iText");
         helloWorldPara.getAccessibilityProperties().setRole(HtmlRoles.p);
 
         Image img = new Image(ImageDataFactory.create(sourceFolder + imageName)).setWidth(100);

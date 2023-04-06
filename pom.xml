@@ -5,7 +5,7 @@
   <artifactId>root</artifactId>
   <version>8.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>iText 7</name>
+  <name>iText</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
   <inceptionYear>1998</inceptionYear>
@@ -30,8 +30,8 @@
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
-      <subscribe>https://stackoverflow.com/questions/tagged/itext7</subscribe>
-      <archive>https://stackoverflow.com/questions/tagged/itext7</archive>
+      <subscribe>https://stackoverflow.com/questions/tagged/itext</subscribe>
+      <archive>https://stackoverflow.com/questions/tagged/itext</archive>
       <otherArchives>
         <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
         <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>

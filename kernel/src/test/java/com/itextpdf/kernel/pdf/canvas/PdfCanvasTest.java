@@ -77,8 +77,8 @@ public class PdfCanvasTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
 
     private static final String AUTHOR = "iText Software";
-    private static final String CREATOR = "iText 7";
-    private static final String TITLE = "Empty iText 7 Document";
+    private static final String CREATOR = "iText";
+    private static final String TITLE = "Empty iText Document";
 
     private static final ContentProvider DEFAULT_CONTENT_PROVIDER = new ContentProvider() {
         @Override

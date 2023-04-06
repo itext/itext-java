@@ -1,6 +1,6 @@
-To build **iText 7 Community**, [Maven][1] must be installed.
+To build **iText Community**, [Maven][1] must be installed.
 
-Running install without a profile will generate the **iText 7 Community** jars:
+Running install without a profile will generate the **iText Community** jars:
 ```bash
 $ mvn clean install \
     -Dmaven.test.skip=true \

@@ -27,14 +27,12 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
-import com.itextpdf.kernel.pdf.PdfXrefTable;
-import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -44,13 +42,17 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,9 +61,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
-import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -367,7 +366,7 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
         String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
-        // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
+        // non-symbolic true type font will always has an encoding entry in font dictionary in itext
         if (!PdfEncodings.WINANSI.equals(encoding) && !PdfEncodings.MACROMAN.equals(encoding) || trueTypeFont.getFontEncoding().hasDifferences()) {
             throw new PdfAConformanceException(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY, trueTypeFont);
         }
@@ -379,7 +378,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.ALL_SYMBOLIC_TRUE_TYPE_FONTS_SHALL_NOT_SPECIFY_ENCODING);
         }
 
-        // if symbolic font encoding doesn't have differences, itext7 won't write encoding for such font
+        // if symbolic font encoding doesn't have differences, itext won't write encoding for such font
     }
 
     @Override

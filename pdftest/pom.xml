@@ -7,7 +7,7 @@
     <version>8.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>pdftest</artifactId>
-  <name>iText 7 - pdftest</name>
+  <name>iText - pdftest</name>
   <url>https://itextpdf.com/</url>
   <properties>
     <sonar.skip>true</sonar.skip>

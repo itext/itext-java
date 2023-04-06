@@ -7,7 +7,7 @@
         xmlns:xmp="http://ns.adobe.com/xap/1.0/"
       dc:format="application/pdf"
       pdf:Producer="iText® 7.0.1-SNAPSHOT ©2000-2016 Apryse Group NV (AGPL-version)"
-      xmp:CreatorTool="iText 7">
+      xmp:CreatorTool="iText">
       <dc:creator>
         <rdf:Seq>
           <rdf:li>Alexander Chingarev</rdf:li>
@@ -15,7 +15,7 @@
       </dc:creator>
       <dc:title>
         <rdf:Alt>
-          <rdf:li xml:lang="x-default">Empty iText 7 Document</rdf:li>
+          <rdf:li xml:lang="x-default">Empty iText Document</rdf:li>
         </rdf:Alt>
       </dc:title>
     </rdf:Description>
