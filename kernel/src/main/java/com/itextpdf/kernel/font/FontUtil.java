@@ -61,12 +61,7 @@ public class FontUtil {
     private FontUtil() {}
 
     public static String addRandomSubsetPrefixForFontName(final String fontName) {
-        final StringBuilder newFontName = new StringBuilder(fontName.length() + 7);
-        byte[] randomByte = new byte[1];
-        for (int k = 0; k < 6; ++k) {
-            NUMBER_GENERATOR.nextBytes(randomByte);
-            newFontName.append((char) (Math.abs(randomByte[0]%26) + 'A'));
-        }
+        final StringBuilder newFontName = getRandomFontPrefix(6);
         newFontName.append('+').append(fontName);
         return newFontName.toString();
     }
@@ -124,11 +119,7 @@ public class FontUtil {
     }
 
     static String createRandomFontName() {
-        StringBuilder s = new StringBuilder("");
-        for (int k = 0; k < 7; ++k) {
-            s.append((char) (Math.random() * 26 + 'A'));
-        }
-        return s.toString();
+        return getRandomFontPrefix(7).toString();
     }
 
     static int[] convertSimpleWidthsArray(PdfArray widthsArray, int first, int missingWidth) {
@@ -171,5 +162,15 @@ public class FontUtil {
             }
         }
         return res;
+    }
+
+    private static StringBuilder getRandomFontPrefix(int length) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        final byte[] randomByte = new byte[length];
+        NUMBER_GENERATOR.nextBytes(randomByte);
+        for (int k = 0; k < length; ++k) {
+            stringBuilder.append((char) (Math.abs(randomByte[k] % 26) + 'A'));
+        }
+        return stringBuilder;
     }
 }
