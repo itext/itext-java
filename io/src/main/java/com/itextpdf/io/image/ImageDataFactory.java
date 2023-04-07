@@ -25,6 +25,7 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 
 import java.net.MalformedURLException;
@@ -113,9 +114,9 @@ public final class ImageDataFactory {
                                    int typeCCITT, int parameters, byte[] data,
                                    int[] transparency) {
         if (transparency != null && transparency.length != 2)
-            throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new IOException(IoExceptionMessageConstant.TRANSPARENCY_LENGTH_MUST_BE_EQUAL_TO_2_WITH_CCITT_IMAGES);
         if (typeCCITT != RawImageData.CCITTG4 && typeCCITT != RawImageData.CCITTG3_1D && typeCCITT != RawImageData.CCITTG3_2D)
-            throw new IOException(IOException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
+            throw new IOException(IoExceptionMessageConstant.CCITT_COMPRESSION_TYPE_MUST_BE_CCITTG4_CCITTG3_1D_OR_CCITTG3_2D);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         RawImageData image = new RawImageData(data, ImageType.RAW);
@@ -141,7 +142,7 @@ public final class ImageDataFactory {
     public static ImageData create(int width, int height, int components,
                                    int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
-            throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new IOException(IoExceptionMessageConstant.TRANSPARENCY_LENGTH_MUST_BE_EQUAL_TO_2_WITH_CCITT_IMAGES);
         if (components == 1 && bpc == 1) {
             byte[] g4 = CCITTG4Encoder.compress(data, width, height);
             return ImageDataFactory.create(width, height, false, RawImageData.CCITTG4, RawImageData.CCITT_BLACKIS1, g4, transparency);
@@ -150,9 +151,9 @@ public final class ImageDataFactory {
         image.height = height;
         image.width = width;
         if (components != 1 && components != 3 && components != 4)
-            throw new IOException(IOException.ComponentsMustBe1_3Or4);
+            throw new IOException(IoExceptionMessageConstant.COMPONENTS_MUST_BE_1_3_OR_4);
         if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
-            throw new IOException(IOException.BitsPerComponentMustBe1_2_4or8);
+            throw new IOException(IoExceptionMessageConstant.BITS_PER_COMPONENT_MUST_BE_1_2_4_OR_8);
         image.colorEncodingComponentsNumber = components;
         image.bpc = bpc;
         image.data = data;
@@ -474,7 +475,7 @@ public final class ImageDataFactory {
                 return image;
             }
             default:
-                throw new IOException(IOException.ImageFormatCannotBeRecognized);
+                throw new IOException(IoExceptionMessageConstant.IMAGE_FORMAT_CANNOT_BE_RECOGNIZED);
         }
     }
 
@@ -517,7 +518,7 @@ public final class ImageDataFactory {
                 return image;
             }
             default:
-                throw new IOException(IOException.ImageFormatCannotBeRecognized);
+                throw new IOException(IoExceptionMessageConstant.IMAGE_FORMAT_CANNOT_BE_RECOGNIZED);
         }
     }
 

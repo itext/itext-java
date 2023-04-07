@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -31,8 +32,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Map;
 
 
 @Category(UnitTest.class)
@@ -44,7 +43,7 @@ public class FontProgramTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(java.io.IOException.class,
                 () -> FontProgramFactory.createFont(notExistingFont)
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException._1NotFoundAsFileOrResource, notExistingFont), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.NOT_FOUND_AS_FILE_OR_RESOURCE, notExistingFont), e.getMessage());
     }
 
     @Test

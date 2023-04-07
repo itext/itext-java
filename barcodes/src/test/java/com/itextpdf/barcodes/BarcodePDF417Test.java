@@ -22,7 +22,7 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
+import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -445,7 +445,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcodePDF417.setOptions(BarcodePDF417.PDF417_USE_RAW_CODEWORDS);
         Exception exception = Assert.assertThrows(PdfException.class,
                 () -> barcodePDF417.paintCode());
-        Assert.assertEquals(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
+        Assert.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test
@@ -456,7 +456,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcodePDF417.setLenCodewords(0);
         Exception exception = Assert.assertThrows(PdfException.class,
                 () -> barcodePDF417.paintCode());
-        Assert.assertEquals(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
+        Assert.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test
@@ -467,7 +467,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         barcodePDF417.setLenCodewords(927);
         Exception exception = Assert.assertThrows(PdfException.class,
                 () -> barcodePDF417.paintCode());
-        Assert.assertEquals(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
+        Assert.assertEquals(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE, exception.getMessage());
     }
 
     @Test

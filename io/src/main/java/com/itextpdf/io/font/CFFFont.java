@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
@@ -145,7 +146,7 @@ public class CFFFont {
             return (char)(i & 0xff);
         }
         catch (Exception e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 
@@ -153,7 +154,7 @@ public class CFFFont {
         try {
             return buf.readChar();
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 
@@ -174,7 +175,7 @@ public class CFFFont {
         try {
             return buf.readShort();
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 
@@ -182,7 +183,7 @@ public class CFFFont {
         try {
             return buf.readInt();
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 
@@ -383,7 +384,7 @@ public class CFFFont {
                 for (int i=myOffset; i<myOffset+length; i++)
                     buffer[i] = buf.readByte();
             } catch (java.io.IOException e) {
-                throw new IOException(IOException.IoException, e);
+                throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
             }
             //System.err.println("finished range emit");
         }

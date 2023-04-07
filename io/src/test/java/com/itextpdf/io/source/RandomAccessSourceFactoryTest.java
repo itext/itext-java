@@ -22,7 +22,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -52,17 +52,17 @@ public class RandomAccessSourceFactoryTest extends ExtendedITextTest {
             extractedRandomAccessSource.close();
 
             Exception e = Assert.assertThrows(IllegalStateException.class, () -> rasInputStream.read());
-            Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
 
             e = Assert.assertThrows(IllegalStateException.class,
                     () -> randomAccessSource.get(0));
-            Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
             e = Assert.assertThrows(IllegalStateException.class,
                     () -> randomAccessSource.get(0, new byte[10], 0, 10));
-            Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
             e = Assert.assertThrows(IllegalStateException.class,
                     () -> randomAccessSource.length());
-            Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
         }
     }
 

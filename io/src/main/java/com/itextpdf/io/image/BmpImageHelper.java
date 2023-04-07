@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 
 import java.io.ByteArrayInputStream;
@@ -115,7 +116,7 @@ final class BmpImageHelper {
                 image.setDpi((int) (bmp.xPelsPerMeter * 0.0254d + 0.5d), (int) (bmp.yPelsPerMeter * 0.0254d + 0.5d));
             }
         } catch (java.io.IOException e){
-            throw new IOException(IOException.BmpImageException, e);
+            throw new IOException(IoExceptionMessageConstant.BMP_IMAGE_EXCEPTION, e);
         }
         RawImageHelper.updateImageAttributes(bmp.image, bmp.additional);
     }
@@ -126,7 +127,7 @@ final class BmpImageHelper {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
                     readUnsignedByte(bmp.inputStream) == 'M')) {
-                throw new IOException(IOException.InvalidMagicValueForBmpFileMustBeBM);
+                throw new IOException(IoExceptionMessageConstant.INVALID_MAGIC_VALUE_FOR_BMP_FILE_MUST_BE_BM);
             }
 
             // Read file size
@@ -338,7 +339,7 @@ final class BmpImageHelper {
                         break;
 
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
             } else if (size == 108) {
                 // Windows 4.x BMP
@@ -573,7 +574,7 @@ final class BmpImageHelper {
                         readRLE4(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_3_8_BIT:
@@ -585,7 +586,7 @@ final class BmpImageHelper {
                         readRLE8(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_3_24_BIT:
@@ -612,7 +613,7 @@ final class BmpImageHelper {
                         readRLE4(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_4_8_BIT:
@@ -624,7 +625,7 @@ final class BmpImageHelper {
                         readRLE8(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_4_16_BIT:
@@ -665,7 +666,7 @@ final class BmpImageHelper {
         while (bytesRead < sizeOfPalette) {
             int r = bmp.inputStream.read(bmp.palette, bytesRead, sizeOfPalette - bytesRead);
             if (r < 0) {
-                throw new IOException(IOException.IncompletePalette);
+                throw new IOException(IoExceptionMessageConstant.INCOMPLETE_PALETTE);
             }
             bytesRead += r;
         }

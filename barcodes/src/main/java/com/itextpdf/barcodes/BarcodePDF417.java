@@ -22,7 +22,7 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
+import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -706,13 +706,13 @@ public class BarcodePDF417 extends Barcode2D {
         int maxErr, lenErr, tot, pad;
         if ((options & PDF417_USE_RAW_CODEWORDS) != 0) {
             if (lenCodewords > MAX_DATA_CODEWORDS || lenCodewords < 1 || lenCodewords != codewords[0]) {
-                throw new PdfException(BarcodeExceptionMessageConstant.INVALID_CODEWORD_SIZE);
+                throw new PdfException(BarcodesExceptionMessageConstant.INVALID_CODEWORD_SIZE);
             }
         } else {
             if (code == null)
-                throw new PdfException(BarcodeExceptionMessageConstant.TEXT_CANNOT_BE_NULL);
+                throw new PdfException(BarcodesExceptionMessageConstant.TEXT_CANNOT_BE_NULL);
             if (code.length > ABSOLUTE_MAX_TEXT_SIZE) {
-                throw new PdfException(BarcodeExceptionMessageConstant.TEXT_IS_TOO_BIG);
+                throw new PdfException(BarcodesExceptionMessageConstant.TEXT_IS_TOO_BIG);
             }
             segmentList = new SegmentList();
             breakString();
@@ -1298,7 +1298,7 @@ public class BarcodePDF417 extends Barcode2D {
         int k, j;
         int size = length / 6 * 5 + length % 6;
         if (size + cwPtr > MAX_DATA_CODEWORDS) {
-            throw new PdfException(BarcodeExceptionMessageConstant.TEXT_IS_TOO_BIG);
+            throw new PdfException(BarcodesExceptionMessageConstant.TEXT_IS_TOO_BIG);
         }
         length += start;
         for (k = start; k < length; k += 6) {
@@ -1483,7 +1483,7 @@ public class BarcodePDF417 extends Barcode2D {
         else
             size = full + size / 3 + 1;
         if (size + cwPtr > MAX_DATA_CODEWORDS) {
-            throw new PdfException(BarcodeExceptionMessageConstant.TEXT_IS_TOO_BIG);
+            throw new PdfException(BarcodesExceptionMessageConstant.TEXT_IS_TOO_BIG);
         }
         length += start;
         for (k = start; k < length; k += 44) {
@@ -1494,13 +1494,13 @@ public class BarcodePDF417 extends Barcode2D {
 
     private void macroCodes() {
         if (macroSegmentId < 0) {
-            throw new PdfException(BarcodeExceptionMessageConstant.MACRO_SEGMENT_ID_MUST_BE_GT_OR_EQ_ZERO);
+            throw new PdfException(BarcodesExceptionMessageConstant.MACRO_SEGMENT_ID_MUST_BE_GT_OR_EQ_ZERO);
         }
         if (macroSegmentId >= macroSegmentCount) {
-            throw new PdfException(BarcodeExceptionMessageConstant.MACRO_SEGMENT_ID_MUST_BE_LT_MACRO_SEGMENT_COUNT);
+            throw new PdfException(BarcodesExceptionMessageConstant.MACRO_SEGMENT_ID_MUST_BE_LT_MACRO_SEGMENT_COUNT);
         }
         if (macroSegmentCount < 1) {
-            throw new PdfException(BarcodeExceptionMessageConstant.MACRO_SEGMENT_ID_MUST_BE_GT_ZERO);
+            throw new PdfException(BarcodesExceptionMessageConstant.MACRO_SEGMENT_ID_MUST_BE_GT_ZERO);
         }
 
         macroIndex = cwPtr;
@@ -1653,7 +1653,7 @@ public class BarcodePDF417 extends Barcode2D {
             dest[ptr++] = PS;
         size = (ptr + fullBytes) / 2;
         if (size + cwPtr > MAX_DATA_CODEWORDS) {
-            throw new PdfException(BarcodeExceptionMessageConstant.TEXT_IS_TOO_BIG);
+            throw new PdfException(BarcodesExceptionMessageConstant.TEXT_IS_TOO_BIG);
         }
         length = ptr;
         ptr = 0;

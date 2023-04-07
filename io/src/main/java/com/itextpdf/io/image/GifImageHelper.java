@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.util.StreamUtil;
 
@@ -122,7 +123,7 @@ public final class GifImageHelper {
             gifStream = new ByteArrayInputStream(image.getData());
             process(gifStream, gif, lastFrameNumber);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.GifImageException, e);
+            throw new IOException(IoExceptionMessageConstant.GIF_IMAGE_EXCEPTION, e);
         }
     }
 
@@ -131,7 +132,7 @@ public final class GifImageHelper {
         readHeader(gif);
         readContents(gif, lastFrameNumber);
         if (gif.currentFrame <= lastFrameNumber) {
-            throw new IOException(IOException.CannotFind1Frame).setMessageParams(lastFrameNumber);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_FIND_FRAME).setMessageParams(lastFrameNumber);
         }
     }
 
@@ -143,7 +144,7 @@ public final class GifImageHelper {
         for (int i = 0; i < 6; i++)
             id.append((char)gif.input.read());
         if (!id.toString().startsWith("GIF8")) {
-            throw new IOException(IOException.GifSignatureNotFound);
+            throw new IOException(IoExceptionMessageConstant.GIF_SIGNATURE_NOT_FOUND);
         }
 
         readLSD(gif);
@@ -319,7 +320,7 @@ public final class GifImageHelper {
                 img.setTransparency(new int[]{gif.transIndex, gif.transIndex});
             }
         } catch (Exception e) {
-            throw new IOException(IOException.GifImageException, e);
+            throw new IOException(IoExceptionMessageConstant.GIF_IMAGE_EXCEPTION, e);
         }
     }
 

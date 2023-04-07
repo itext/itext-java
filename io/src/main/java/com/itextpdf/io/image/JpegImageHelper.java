@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
@@ -122,7 +123,7 @@ class JpegImageHelper {
             image.imageSize = image.getData().length;
             processParameters(jpegStream, errorID, image);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.JpegImageException, e);
+            throw new IOException(IoExceptionMessageConstant.JPEG_IMAGE_EXCEPTION, e);
         } finally {
             if (jpegStream != null) {
                 try {
@@ -180,14 +181,14 @@ class JpegImageHelper {
     private static void processParameters(InputStream jpegStream, String errorID, ImageData image) throws java.io.IOException {
         byte[][] icc = null;
         if (jpegStream.read() != 0xFF || jpegStream.read() != 0xD8) {
-            throw new IOException(IOException._1IsNotAValidJpegFile).setMessageParams(errorID);
+            throw new IOException(IoExceptionMessageConstant.IS_NOT_A_VALID_JPEG_FILE).setMessageParams(errorID);
         }
         boolean firstPass = true;
         int len;
         while (true) {
             int v = jpegStream.read();
             if (v < 0)
-                throw new IOException(IOException.PrematureEofWhileReadingJpeg);
+                throw new IOException(IoExceptionMessageConstant.PREMATURE_EOF_WHILE_READING_JPEG);
             if (v == 0xFF) {
                 int marker = jpegStream.read();
                 if (firstPass && marker == M_APP0) {
@@ -200,7 +201,7 @@ class JpegImageHelper {
                     byte[] bcomp = new byte[JFIF_ID.length];
                     int r = jpegStream.read(bcomp);
                     if (r != bcomp.length)
-                        throw new IOException(IOException._1CorruptedJfifMarker).setMessageParams(errorID);
+                        throw new IOException(IoExceptionMessageConstant.CORRUPTED_JFIF_MARKER).setMessageParams(errorID);
                     boolean found = true;
                     for (int k = 0; k < bcomp.length; ++k) {
                         if (bcomp[k] != JFIF_ID[k]) {
@@ -342,7 +343,7 @@ class JpegImageHelper {
                 if (markertype == VALID_MARKER) {
                     StreamUtil.skip(jpegStream, 2);
                     if (jpegStream.read() != 0x08) {
-                        throw new IOException(IOException._1MustHave8BitsPerComponent).setMessageParams(errorID);
+                        throw new IOException(IoExceptionMessageConstant.MUST_HAVE_8_BITS_PER_COMPONENT).setMessageParams(errorID);
                     }
                     image.setHeight(getShort(jpegStream));
                     image.setWidth(getShort(jpegStream));
@@ -350,7 +351,7 @@ class JpegImageHelper {
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
-                    throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, Integer.toString(marker));
+                    throw new IOException(IoExceptionMessageConstant.UNSUPPORTED_JPEG_MARKER).setMessageParams(errorID, Integer.toString(marker));
                 } else if (markertype != NOPARAM_MARKER) {
                     StreamUtil.skip(jpegStream, getShort(jpegStream) - 2);
                 }

@@ -23,6 +23,7 @@
 package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
@@ -91,10 +92,10 @@ public class CMapContentParser {
             CMapObject obj = readObject();
             if (obj.isToken()) {
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(IOException.UnexpectedGtGt);
+                    tokeniser.throwError(IoExceptionMessageConstant.UNEXPECTED_GT_GT);
                 }
                 if (obj.toString().equals("]")) {
-                    tokeniser.throwError(IOException.UnexpectedCloseBracket);
+                    tokeniser.throwError(IoExceptionMessageConstant.UNEXPECTED_CLOSE_BRACKET);
                 }
             }
             dic.put(name, obj);
@@ -116,7 +117,7 @@ public class CMapContentParser {
                     break;
                 }
                 if (obj.toString().equals(">>")) {
-                    tokeniser.throwError(IOException.UnexpectedGtGt);
+                    tokeniser.throwError(IoExceptionMessageConstant.UNEXPECTED_GT_GT);
                 }
             }
             array.add(obj);

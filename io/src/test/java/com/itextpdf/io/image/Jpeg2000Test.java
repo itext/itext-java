@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -42,7 +43,7 @@ public class Jpeg2000Test extends ExtendedITextTest {
             // Test a more specific entry point
             ImageDataFactory.createJpeg2000(UrlUtil.toURL(sourceFolder + "WP_20140410_001.JP2"));
         } catch (IOException e) {
-            Assert.assertEquals(IOException.UnsupportedBoxSizeEqEq0, e.getMessage());
+            Assert.assertEquals(IoExceptionMessageConstant.UNSUPPORTED_BOX_SIZE_EQ_EQ_0, e.getMessage());
         }
     }
 

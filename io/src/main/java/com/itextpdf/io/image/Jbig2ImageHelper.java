@@ -24,6 +24,7 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -91,7 +92,7 @@ class Jbig2ImageHelper {
             image.setBpc(1);
             image.data = p.getData(true);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.Jbig2ImageException, e);
+            throw new IOException(IoExceptionMessageConstant.JBIG2_IMAGE_EXCEPTION, e);
         }
     }
 }

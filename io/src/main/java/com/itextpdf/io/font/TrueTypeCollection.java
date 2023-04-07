@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.FileUtil;
@@ -58,7 +59,7 @@ public class TrueTypeCollection {
      */
     public TrueTypeCollection(String ttcPath) throws java.io.IOException {
         if (!FileUtil.fileExists(ttcPath)) {
-            throw new IOException(IOException.FontFile1NotFound).setMessageParams(ttcPath);
+            throw new IOException(IoExceptionMessageConstant.FONT_FILE_NOT_FOUND).setMessageParams(ttcPath);
         }
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(ttcPath));
         this.ttcPath = ttcPath;
@@ -74,7 +75,7 @@ public class TrueTypeCollection {
      */
     public FontProgram getFontByTccIndex(int ttcIndex) throws java.io.IOException {
         if (ttcIndex > TTCSize - 1) {
-            throw new IOException(IOException.TtcIndexDoesNotExistInThisTtcFile);
+            throw new IOException(IoExceptionMessageConstant.TTC_INDEX_DOESNT_EXIST_IN_THIS_TTC_FILE);
         }
 
         if (ttcPath != null) {
@@ -114,7 +115,7 @@ public class TrueTypeCollection {
     private void initFontSize() throws java.io.IOException {
         String mainTag = raf.readString(4, PdfEncodings.WINANSI);
         if (!mainTag.equals("ttcf")) {
-            throw new IOException(IOException.InvalidTtcFile);
+            throw new IOException(IoExceptionMessageConstant.INVALID_TTC_FILE);
         }
         raf.skipBytes(4);
         TTCSize = raf.readInt();

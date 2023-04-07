@@ -24,15 +24,13 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,7 +92,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(IllegalArgumentException.class,
                 () -> new ImageMagickHelper("-")
         );
-        Assert.assertEquals(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY, e.getMessage());
+        Assert.assertEquals(IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY, e.getMessage());
     }
 
     @Test

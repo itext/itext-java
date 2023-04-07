@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.FilterUtil;
 import com.itextpdf.io.util.StreamUtil;
@@ -152,7 +153,7 @@ class PngImageHelper {
             png = new PngParameters((PngImageData) image);
             processPng(pngStream, png);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.PngImageException, e);
+            throw new IOException(IoExceptionMessageConstant.PNG_IMAGE_EXCEPTION, e);
         } finally {
             if (pngStream != null) {
                 try {
@@ -255,7 +256,7 @@ class PngImageHelper {
             png.image.setDpi(png.dpiX, png.dpiY);
             png.image.setXYRatio(png.XYRatio);
         } catch (Exception e) {
-            throw new IOException(IOException.PngImageException, e);
+            throw new IOException(IoExceptionMessageConstant.PNG_IMAGE_EXCEPTION, e);
         }
     }
 
@@ -512,7 +513,7 @@ class PngImageHelper {
                     break;
                 default:
                     // Error -- uknown filter type
-                    throw new IOException(IOException.UnknownPngFilter);
+                    throw new IOException(IoExceptionMessageConstant.UNKNOWN_PNG_FILTER);
             }
 
             processPixels(curr, xOffset, xStep, dstY, passWidth, png);

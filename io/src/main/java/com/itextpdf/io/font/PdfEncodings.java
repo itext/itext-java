@@ -24,6 +24,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.io.UnsupportedEncodingException;
@@ -205,7 +206,7 @@ public class PdfEncodings {
         try {
             return EncodingUtil.convertToBytes(text.toCharArray(), encoding);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CharacterCodeException, e);
+            throw new IOException(IoExceptionMessageConstant.CHARACTER_CODE_EXCEPTION, e);
         }
     }
 
@@ -241,7 +242,7 @@ public class PdfEncodings {
         try {
             return EncodingUtil.convertToBytes(new char[]{ch}, encoding);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CharacterCodeException, e);
+            throw new IOException(IoExceptionMessageConstant.CHARACTER_CODE_EXCEPTION, e);
         }
     }
 
@@ -286,7 +287,7 @@ public class PdfEncodings {
         try {
             return EncodingUtil.convertToString(bytes, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new IOException(IOException.UnsupportedEncodingException, e);
+            throw new IOException(IoExceptionMessageConstant.UNSUPPORTED_ENCODING_EXCEPTION, e);
         }
     }
 

@@ -24,6 +24,7 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -53,7 +54,7 @@ public class GifTest extends ExtendedITextTest {
     public void gifImageFrameOutOfBoundsTest() throws java.io.IOException {
         Exception e = Assert.assertThrows(IOException.class,
                 () -> ImageDataFactory.createGifFrame(UrlUtil.toURL(sourceFolder + "image-2frames.gif"), 3));
-        Assert.assertEquals(MessageFormatUtil.format(IOException.CannotFind1Frame, 2), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.CANNOT_FIND_FRAME, 2), e.getMessage());
     }
 
     @Test

@@ -23,6 +23,8 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +106,7 @@ public final class FilterUtil {
         try {
             inflater.inflate(inflated);
         } catch (DataFormatException dfe) {
-            throw new IOException(IOException.CannotInflateTiffImage);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_INFLATE_TIFF_IMAGE);
         }
     }
 

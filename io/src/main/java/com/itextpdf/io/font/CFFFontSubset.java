@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.util.GenericArray;
 
@@ -364,7 +365,7 @@ public class CFFFontSubset extends CFFFont {
             // Build the new file
             return BuildNewFile(j);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         } finally {
             try {
                 buf.close();

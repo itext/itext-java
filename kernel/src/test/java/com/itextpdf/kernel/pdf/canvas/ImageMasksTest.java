@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -188,6 +189,6 @@ public class ImageMasksTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> mask.makeMask()
         );
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException.ThisImageCanNotBeAnImageMask), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.THIS_IMAGE_CAN_NOT_BE_AN_IMAGE_MASK), e.getMessage());
     }
 }

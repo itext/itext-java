@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramDescriptor;
@@ -1422,7 +1423,7 @@ public class PdfFontTest extends ExtendedITextTest {
         } catch (com.itextpdf.io.exceptions.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException._1IsNotAnAfmOrPfmFontFile, font), message);
+        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.IS_NOT_AN_AFM_OR_PFM_FONT_FILE, font), message);
 
     }
 

@@ -22,7 +22,7 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -273,7 +273,7 @@ public final class RandomAccessSourceFactory {
     private IRandomAccessSource createByReadingToMemory(String filename) throws java.io.IOException {
         InputStream stream = ResourceUtil.getResourceStream(filename);
         if (stream == null) {
-            throw new java.io.IOException(MessageFormatUtil.format(IOException._1NotFoundAsFileOrResource, filename));
+            throw new java.io.IOException(MessageFormatUtil.format(IoExceptionMessageConstant.NOT_FOUND_AS_FILE_OR_RESOURCE, filename));
         }
         return createByReadingToMemory(stream);
     }

@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontStretches;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -473,9 +474,9 @@ class OpenTypeParser implements Closeable {
         table_location = tables.get("hmtx");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("hmtx", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("hmtx", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("hmtx");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("hmtx");
             }
         }
         glyphWidthsByIndex = new int[readNumGlyphs()];
@@ -542,9 +543,9 @@ class OpenTypeParser implements Closeable {
         tableLocation = tables.get("head");
         if (tableLocation == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("head", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("head");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("head");
             }
         }
         raf.seek(tableLocation[0] + HEAD_LOCA_FORMAT_OFFSET);
@@ -572,9 +573,9 @@ class OpenTypeParser implements Closeable {
         tableLocation = tables.get("glyf");
         if (tableLocation == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("glyf", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("glyf", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("glyf");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("glyf");
             }
         }
         int tableGlyphOffset = tableLocation[0];
@@ -614,9 +615,9 @@ class OpenTypeParser implements Closeable {
         int[] table_location = tables.get("name");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("name", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("name", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("name");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("name");
             }
         }
         allNameEntries = new LinkedHashMap<>();
@@ -664,9 +665,9 @@ class OpenTypeParser implements Closeable {
         int[] table_location = tables.get("hhea");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("hhea", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("hhea", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("hhea");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("hhea");
             }
         }
         raf.seek(table_location[0] + 4);
@@ -694,9 +695,9 @@ class OpenTypeParser implements Closeable {
         int[] table_location = tables.get("head");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("head", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("head");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("head");
             }
         }
         raf.seek(table_location[0] + 16);
@@ -722,9 +723,9 @@ class OpenTypeParser implements Closeable {
         int[] table_location = tables.get("OS/2");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("os/2", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("os/2", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("os/2");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("os/2");
             }
         }
         os_2 = new WindowsMetrics();
@@ -805,9 +806,9 @@ class OpenTypeParser implements Closeable {
         int[] table_location = tables.get("cmap");
         if (table_location == null) {
             if (fileName != null) {
-                throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("cmap", fileName);
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("cmap", fileName);
             } else {
-                throw new IOException(IOException.TableDoesNotExist).setMessageParams("cmap");
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("cmap");
             }
         }
         raf.seek(table_location[0]);

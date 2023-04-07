@@ -23,6 +23,7 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 
 public class OutputStream<T extends java.io.OutputStream> extends java.io.OutputStream {
@@ -137,7 +138,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
         try {
             write(value);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CannotWriteByte, e);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_WRITE_BYTE, e);
         }
     }
 
@@ -166,7 +167,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             write(numBuffer.getInternalBuffer(), numBuffer.capacity() - numBuffer.size(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CannotWriteIntNumber, e);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_WRITE_INT_NUMBER, e);
         }
     }
 
@@ -183,7 +184,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             write(numBuffer.getInternalBuffer(), numBuffer.capacity() - numBuffer.size(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CannotWriteIntNumber, e);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_WRITE_INT_NUMBER, e);
         }
     }
 
@@ -252,7 +253,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             write(numBuffer.getInternalBuffer(), numBuffer.capacity() - numBuffer.size(), numBuffer.size());
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CannotWriteFloatNumber, e);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_WRITE_FLOAT_NUMBER, e);
         }
     }
 
@@ -268,7 +269,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             write(value);
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CannotWriteByte, e);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_WRITE_BYTE, e);
         }
     }
 
@@ -315,7 +316,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             write(b);
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CannotWriteBytes, e);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_WRITE_BYTES, e);
         }
     }
 
@@ -335,7 +336,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             write(b, off, len);
             return (T) this;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.CannotWriteBytes, e);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_WRITE_BYTES, e);
         }
     }
 
@@ -387,7 +388,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             ((ByteArrayOutputStream) outputStream).assignBytes(bytes, count);
             currentPos = count;
         } else {
-            throw new IOException(IOException.BytesCanBeAssignedToByteArrayOutputStreamOnly);
+            throw new IOException(IoExceptionMessageConstant.BYTES_CAN_BE_ASSIGNED_TO_BYTE_ARRAY_OUTPUT_STREAM_ONLY);
         }
     }
 
@@ -402,7 +403,7 @@ public class OutputStream<T extends java.io.OutputStream> extends java.io.Output
             ((ByteArrayOutputStream) outputStream).reset();
             currentPos = 0;
         } else {
-            throw new IOException(IOException.BytesCanBeResetInByteArrayOutputStreamOnly);
+            throw new IOException(IoExceptionMessageConstant.BYTES_CAN_BE_RESET_IN_BYTE_ARRAY_OUTPUT_STREAM_ONLY);
         }
     }
 }

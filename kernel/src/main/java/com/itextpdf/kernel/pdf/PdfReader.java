@@ -1420,7 +1420,7 @@ public class PdfReader implements Closeable {
         } else if (PdfName.Standard.equals(filter)) {
             decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId());
         } else {
-            throw new UnsupportedSecurityHandlerException(MessageFormatUtil.format(UnsupportedSecurityHandlerException.UnsupportedSecurityHandler, filter));
+            throw new UnsupportedSecurityHandlerException(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER, filter));
         }
     }
 

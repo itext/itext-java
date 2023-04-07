@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.cmap.AbstractCMap;
 import com.itextpdf.io.font.cmap.CMapByteCid;
 import com.itextpdf.io.font.cmap.CMapCidToCodepoint;
@@ -247,7 +248,7 @@ public class FontCache {
         try {
             CMapParser.parseCid(name, cmap, new CMapLocationResource());
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
         return cmap;
     }

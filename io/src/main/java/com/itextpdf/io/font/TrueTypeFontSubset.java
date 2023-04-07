@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.util.ArrayList;
@@ -217,7 +218,7 @@ class TrueTypeFontSubset {
         rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000) {
-            throw new IOException(IOException.NotAtTrueTypeFile).setMessageParams(fileName);
+            throw new IOException(IoExceptionMessageConstant.NOT_AT_TRUE_TYPE_FILE).setMessageParams(fileName);
         }
         int num_tables = rf.readUnsignedShort();
         rf.skipBytes(6);
@@ -234,13 +235,13 @@ class TrueTypeFontSubset {
     private void readLoca() throws java.io.IOException {
         int[] tableLocation = tableDirectory.get("head");
         if (tableLocation == null) {
-            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("head", fileName);
+            throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("head", fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET] + HEAD_LOCA_FORMAT_OFFSET);
         locaShortTable = rf.readUnsignedShort() == 0;
         tableLocation = tableDirectory.get("loca");
         if (tableLocation == null) {
-            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("loca", fileName);
+            throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("loca", fileName);
         }
         rf.seek(tableLocation[TABLE_OFFSET]);
         if (locaShortTable) {
@@ -310,7 +311,7 @@ class TrueTypeFontSubset {
     private void flatGlyphs() throws java.io.IOException {
         int[] tableLocation = tableDirectory.get("glyf");
         if (tableLocation == null)
-            throw new IOException(IOException.TableDoesNotExistsIn).setMessageParams("glyf", fileName);
+            throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("glyf", fileName);
         int glyph0 = 0;
         if (!glyphsUsed.contains(glyph0)) {
             glyphsUsed.add(glyph0);

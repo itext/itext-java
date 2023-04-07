@@ -23,7 +23,7 @@
 package com.itextpdf.io.source;
 
 
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 /**
  * A RandomAccessSource that is based on an underlying byte array
@@ -42,7 +42,7 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
 
     public int get(long offset) {
         if (array == null) {
-            throw new IllegalStateException(IoExceptionMessage.ALREADY_CLOSED);
+            throw new IllegalStateException(IoExceptionMessageConstant.ALREADY_CLOSED);
         }
         if (offset >= array.length) {
             return -1;
@@ -52,7 +52,7 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
 
     public int get(long offset, byte[] bytes, int off, int len) {
         if (array == null) {
-            throw new IllegalStateException(IoExceptionMessage.ALREADY_CLOSED);
+            throw new IllegalStateException(IoExceptionMessageConstant.ALREADY_CLOSED);
         }
         if (offset >= array.length) {
             return -1;
@@ -67,7 +67,7 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
 
     public long length() {
         if (array == null) {
-            throw new IllegalStateException(IoExceptionMessage.ALREADY_CLOSED);
+            throw new IllegalStateException(IoExceptionMessageConstant.ALREADY_CLOSED);
         }
         return array.length;
     }

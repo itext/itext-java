@@ -16,6 +16,7 @@
 package com.itextpdf.io.font.woff2;
 
 import com.itextpdf.io.exceptions.FontCompressionException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.asU16;
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.asU8;
@@ -52,11 +53,11 @@ class VariableLength {
             code = buf.readByte();
             // Leading zeros are invalid.
             if (i == 0 && asU8(code) == 0x80) {
-                throw new FontCompressionException(FontCompressionException.READ_BASE_128_FAILED);
+                throw new FontCompressionException(IoExceptionMessageConstant.READ_BASE_128_FAILED);
             }
             // If any of the top seven bits are set then we're about to overflow.
             if ((result & 0xfe000000) != 0) {
-                throw new FontCompressionException(FontCompressionException.READ_BASE_128_FAILED);
+                throw new FontCompressionException(IoExceptionMessageConstant.READ_BASE_128_FAILED);
             }
             result = (result << 7) | (code & 0x7f);
             if ((code & 0x80) == 0) {
@@ -64,6 +65,6 @@ class VariableLength {
             }
         }
         // Make sure not to exceed the size bound
-        throw new FontCompressionException(FontCompressionException.READ_BASE_128_FAILED);
+        throw new FontCompressionException(IoExceptionMessageConstant.READ_BASE_128_FAILED);
     }
 }

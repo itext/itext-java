@@ -23,6 +23,7 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import org.slf4j.Logger;
@@ -201,7 +202,7 @@ public class PdfTokenizer implements Closeable {
         if (idx < 0) {
             idx = str.indexOf("%FDF-");
             if (idx < 0)
-                throw new IOException(IOException.PdfHeaderNotFound, this);
+                throw new IOException(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, this);
         }
 
         return idx;
@@ -212,7 +213,7 @@ public class PdfTokenizer implements Closeable {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
-            throw new IOException(IOException.PdfHeaderNotFound, this);
+            throw new IOException(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, this);
         return str.substring(idx + 1, idx + 8);
     }
 
@@ -221,7 +222,7 @@ public class PdfTokenizer implements Closeable {
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
         if (idx != 0)
-            throw new IOException(IOException.FdfStartxrefNotFound, this);
+            throw new IOException(IoExceptionMessageConstant.FDF_STARTXREF_NOT_FOUND, this);
     }
 
     public long getStartxref() throws java.io.IOException {
@@ -237,7 +238,7 @@ public class PdfTokenizer implements Closeable {
             // 9 = "startxref".length()
             pos = pos - arrLength + 9;
         }
-        throw new IOException(IOException.PdfStartxrefNotFound, this);
+        throw new IOException(IoExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND, this);
     }
 
     public void nextValidToken() throws java.io.IOException {
@@ -347,7 +348,7 @@ public class PdfTokenizer implements Closeable {
             case '>': {
                 ch = file.read();
                 if (ch != '>')
-                    throwError(IOException.GtNotExpected);
+                    throwError(IoExceptionMessageConstant.GT_NOT_EXPECTED);
                 type = TokenType.EndDic;
                 break;
             }
@@ -382,7 +383,7 @@ public class PdfTokenizer implements Closeable {
                     v1 = file.read();
                 }
                 if (v1 < 0 || v2 < 0)
-                    throwError(IOException.ErrorReadingString);
+                    throwError(IoExceptionMessageConstant.ERROR_READING_STRING);
                 break;
             }
             case '%': {
@@ -415,7 +416,7 @@ public class PdfTokenizer implements Closeable {
                     outBuf.append(ch);
                 }
                 if (ch == -1)
-                    throwError(IOException.ErrorReadingString);
+                    throwError(IoExceptionMessageConstant.ERROR_READING_STRING);
                 break;
             }
             default: {
@@ -662,7 +663,7 @@ public class PdfTokenizer implements Closeable {
      * @throws IOException wrap error message into {@code PdfRuntimeException} and add position in file.
      */
     public void throwError(String error, Object... messageParams) {
-        throw new IOException(IOException.ErrorAtFilePointer1, new IOException(error).setMessageParams(messageParams))
+        throw new IOException(IoExceptionMessageConstant.ERROR_AT_FILE_POINTER, new IOException(error).setMessageParams(messageParams))
                 .setMessageParams(file.getPosition());
     }
 

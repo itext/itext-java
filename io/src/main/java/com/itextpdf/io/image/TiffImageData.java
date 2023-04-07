@@ -24,6 +24,7 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.TIFFDirectory;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -67,7 +68,7 @@ public class TiffImageData extends RawImageData {
         try {
             return TIFFDirectory.getNumDirectories(raf);
         } catch (Exception e) {
-            throw new IOException(IOException.TiffImageException, e);
+            throw new IOException(IoExceptionMessageConstant.TIFF_IMAGE_EXCEPTION, e);
         }
     }
 

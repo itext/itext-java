@@ -25,6 +25,7 @@ package com.itextpdf.io.image;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -99,9 +100,9 @@ public final class RawImageHelper {
         image.setHeight(height);
         image.setWidth(width);
         if (components != 1 && components != 3 && components != 4)
-            throw new IOException(IOException.ComponentsMustBe1_3Or4);
+            throw new IOException(IoExceptionMessageConstant.COMPONENTS_MUST_BE_1_3_OR_4);
         if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
-            throw new IOException(IOException.BitsPerComponentMustBe1_2_4or8);
+            throw new IOException(IoExceptionMessageConstant.BITS_PER_COMPONENT_MUST_BE_1_2_4_OR_8);
         image.setColorEncodingComponentsNumber(components);
         image.setBpc(bpc);
         image.data = data;
@@ -110,7 +111,7 @@ public final class RawImageHelper {
     protected static void updateRawImageParameters(RawImageData image, int width, int height, int components,
                                                 int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
-            throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new IOException(IoExceptionMessageConstant.TRANSPARENCY_LENGTH_MUST_BE_EQUAL_TO_2_WITH_CCITT_IMAGES);
         if (components == 1 && bpc == 1) {
             byte[] g4 = CCITTG4Encoder.compress(data, width, height);
             updateRawImageParameters(image, width, height, false, RawImageData.CCITTG4,
@@ -124,14 +125,14 @@ public final class RawImageHelper {
     protected static void updateRawImageParameters(RawImageData image, int width, int height, boolean reverseBits,
                                                 int typeCCITT, int parameters, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != 2)
-            throw new IOException(IOException.TransparencyLengthMustBeEqualTo2WithCcittImages);
+            throw new IOException(IoExceptionMessageConstant.TRANSPARENCY_LENGTH_MUST_BE_EQUAL_TO_2_WITH_CCITT_IMAGES);
         updateCcittImageParameters(image, width, height, reverseBits, typeCCITT, parameters, data);
         image.setTransparency(transparency);
     }
 
     protected static void updateCcittImageParameters(RawImageData image, int width, int height, boolean reverseBits, int typeCcitt, int parameters, byte[] data) {
         if (typeCcitt != RawImageData.CCITTG4 && typeCcitt != RawImageData.CCITTG3_1D && typeCcitt != RawImageData.CCITTG3_2D)
-            throw new IOException(IOException.CcittCompressionTypeMustBeCcittg4Ccittg3_1dOrCcittg3_2d);
+            throw new IOException(IoExceptionMessageConstant.CCITT_COMPRESSION_TYPE_MUST_BE_CCITTG4_CCITTG3_1D_OR_CCITTG3_2D);
         if (reverseBits)
             TIFFFaxDecoder.reverseBits(data);
         image.setHeight(height);

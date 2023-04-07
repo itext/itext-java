@@ -25,7 +25,7 @@ package com.itextpdf.io.util;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -86,7 +86,7 @@ public class GhostscriptHelper {
         }
 
         if (!CliCommandUtil.isVersionCommandExecutable(gsExec, GHOSTSCRIPT_KEYWORD)) {
-            throw new IllegalArgumentException(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
+            throw new IllegalArgumentException(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
         }
     }
 
@@ -151,7 +151,7 @@ public class GhostscriptHelper {
             throws IOException, InterruptedException {
         if (!FileUtil.directoryExists(outDir)) {
             throw new IllegalArgumentException(
-                    IoExceptionMessage.CANNOT_OPEN_OUTPUT_DIRECTORY.replace("<filename>", pdf));
+                    IoExceptionMessageConstant.CANNOT_OPEN_OUTPUT_DIRECTORY.replace("<filename>", pdf));
         }
         if (!validateImageFilePattern(image)) {
             throw new IllegalArgumentException("Invalid output image pattern: " + image);
@@ -176,7 +176,7 @@ public class GhostscriptHelper {
                 temporaryOutputImages = FileUtil
                         .listFilesInDirectory(replacementImagesDirectory, false);
                 throw new GhostscriptExecutionException(
-                        IoExceptionMessage.GHOSTSCRIPT_FAILED.replace("<filename>", pdf));
+                        IoExceptionMessageConstant.GHOSTSCRIPT_FAILED.replace("<filename>", pdf));
             }
 
             temporaryOutputImages = FileUtil

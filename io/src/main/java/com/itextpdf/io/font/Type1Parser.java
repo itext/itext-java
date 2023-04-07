@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -95,7 +96,7 @@ class Type1Parser {
                 rf.close();
                 return new RandomAccessFileOrArray(sourceFactory.createSource(ba.toByteArray()));
             } else {
-                throw new IOException(IOException._1IsNotAnAfmOrPfmFontFile).setMessageParams(afmPath);
+                throw new IOException(IoExceptionMessageConstant.IS_NOT_AN_AFM_OR_PFM_FONT_FILE).setMessageParams(afmPath);
             }
         } else if (afmData != null) {
             RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createSource(afmData));

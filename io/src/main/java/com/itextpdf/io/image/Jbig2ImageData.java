@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -73,7 +74,7 @@ public class Jbig2ImageData extends ImageData {
             sr.read();
             return sr.numberOfPages();
         } catch (Exception e) {
-            throw new IOException(IOException.Jbig2ImageException, e);
+            throw new IOException(IoExceptionMessageConstant.JBIG2_IMAGE_EXCEPTION, e);
         }
     }
 

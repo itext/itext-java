@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.exceptions.FontCompressionException;
@@ -196,7 +197,7 @@ public final class FontProgramFactory {
                     try {
                         fontProgram = WoffConverter.convert(fontProgram);
                     } catch (IllegalArgumentException woffException) {
-                        throw new IOException(IOException.InvalidWoffFile, woffException);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_WOFF_FILE, woffException);
                     }
                 } else {
                     // ".woff2".equals(fontFileExtension)
@@ -204,7 +205,7 @@ public final class FontProgramFactory {
                     try {
                         fontProgram = Woff2Converter.convert(fontProgram);
                     } catch (FontCompressionException woff2Exception) {
-                        throw new IOException(IOException.InvalidWoff2File, woff2Exception);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_WOFF2_FONT_FILE, woff2Exception);
                     }
                 }
                 fontBuilt = new TrueTypeFont(fontProgram);
@@ -227,9 +228,9 @@ public final class FontProgramFactory {
         }
         if (fontBuilt == null) {
             if (name != null) {
-                throw new IOException(IOException.TypeOfFont1IsNotRecognized).setMessageParams(name);
+                throw new IOException(IoExceptionMessageConstant.TYPE_OF_FONT_IS_NOT_RECOGNIZED_PARAMETERIZED).setMessageParams(name);
             } else {
-                throw new IOException(IOException.TypeOfFontIsNotRecognized);
+                throw new IOException(IoExceptionMessageConstant.TYPE_OF_FONT_IS_NOT_RECOGNIZED);
             }
         }
         return cached ? FontCache.saveFont(fontBuilt, fontKey) : fontBuilt;

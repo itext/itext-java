@@ -24,7 +24,7 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -83,7 +83,7 @@ public class GhostscriptHelperTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(IllegalArgumentException.class,
                 () -> new GhostscriptHelper("-")
         );
-        Assert.assertEquals(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
+        Assert.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
     }
 
     @Test

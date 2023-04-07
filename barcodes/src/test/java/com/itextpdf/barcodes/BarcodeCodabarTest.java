@@ -23,7 +23,7 @@
 package com.itextpdf.barcodes;
 
 
-import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
+import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -79,7 +79,7 @@ public class BarcodeCodabarTest extends ExtendedITextTest {
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
         Exception exception = Assert.assertThrows(IllegalArgumentException.class,
                 () -> codabar.getBarsCodabar("qbcd"));
-        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
+        Assert.assertEquals(BarcodesExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
                 exception.getMessage());
     }
 
@@ -89,7 +89,7 @@ public class BarcodeCodabarTest extends ExtendedITextTest {
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
         Exception exception = Assert.assertThrows(IllegalArgumentException.class,
                 () -> codabar.getBarsCodabar("abcf"));
-        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
+        Assert.assertEquals(BarcodesExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
                 exception.getMessage());
     }
 
@@ -99,7 +99,7 @@ public class BarcodeCodabarTest extends ExtendedITextTest {
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
         Exception exception = Assert.assertThrows(IllegalArgumentException.class,
                 () -> codabar.getBarsCodabar("qbcq"));
-        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
+        Assert.assertEquals(BarcodesExceptionMessageConstant.CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER,
                 exception.getMessage());
     }
 
@@ -109,7 +109,7 @@ public class BarcodeCodabarTest extends ExtendedITextTest {
         BarcodeCodabar codabar = new BarcodeCodabar(pdfDocument);
         Exception exception = Assert.assertThrows(IllegalArgumentException.class,
                 () -> codabar.getBarsCodabar(""));
-        Assert.assertEquals(BarcodeExceptionMessageConstant.CODABAR_MUST_HAVE_AT_LEAST_START_AND_STOP_CHARACTER,
+        Assert.assertEquals(BarcodesExceptionMessageConstant.CODABAR_MUST_HAVE_AT_LEAST_START_AND_STOP_CHARACTER,
                 exception.getMessage());
     }
 }

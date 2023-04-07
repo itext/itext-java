@@ -30,6 +30,7 @@ import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.codec.TIFFLZWDecoder;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -75,7 +76,7 @@ class TiffImageHelper {
                 RawImageHelper.updateImageAttributes(tiff.image, tiff.additional);
             }
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.TiffImageException, e);
+            throw new IOException(IoExceptionMessageConstant.TIFF_IMAGE_EXCEPTION, e);
         }
     }
 
@@ -84,11 +85,11 @@ class TiffImageHelper {
         int page = tiff.image.getPage();
         boolean direct = tiff.image.isDirect();
         if (page < 1)
-            throw new IOException(IOException.PageNumberMustBeGtEq1);
+            throw new IOException(IoExceptionMessageConstant.PAGE_NUMBER_MUST_BE_GT_EQ_1);
         try {
             TIFFDirectory dir = new TIFFDirectory(s, page - 1);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_TILEWIDTH))
-                throw new IOException(IOException.TilesAreNotSupported);
+                throw new IOException(IoExceptionMessageConstant.TILES_ARE_NOT_SUPPORTED);
             int compression = TIFFConstants.COMPRESSION_NONE;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_COMPRESSION)) {
                 compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
@@ -265,7 +266,7 @@ class TiffImageHelper {
             if (rotation != 0)
                 tiff.image.setRotation(rotation);
         } catch (Exception e) {
-            throw new IOException(IOException.CannotReadTiffImage);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE);
         }
     }
 
@@ -287,7 +288,7 @@ class TiffImageHelper {
                 case TIFFConstants.COMPRESSION_JPEG:
                     break;
                 default:
-                    throw new IOException(IOException.Compression1IsNotSupported).setMessageParams(compression);
+                    throw new IOException(IoExceptionMessageConstant.COMPRESSION_IS_NOT_SUPPORTED).setMessageParams(compression);
             }
             int photometric = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_PHOTOMETRIC);
             switch (photometric) {
@@ -299,7 +300,7 @@ class TiffImageHelper {
                     break;
                 default:
                     if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG)
-                        throw new IOException(IOException.Photometric1IsNotSupported).setMessageParams(photometric);
+                        throw new IOException(IoExceptionMessageConstant.PHOTOMETRIC_IS_NOT_SUPPORTED).setMessageParams(photometric);
             }
             float rotation = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
@@ -313,7 +314,7 @@ class TiffImageHelper {
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                     && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
-                throw new IOException(IOException.PlanarImagesAreNotSupported);
+                throw new IOException(IoExceptionMessageConstant.PLANAR_IMAGES_ARE_NOT_SUPPORTED);
             int extraSamples = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_EXTRASAMPLES))
                 extraSamples = 1;
@@ -332,7 +333,7 @@ class TiffImageHelper {
                 case 8:
                     break;
                 default:
-                    throw new IOException(IOException.BitsPerSample1IsNotSupported).setMessageParams(bitsPerSample);
+                    throw new IOException(IoExceptionMessageConstant.BITS_PER_SAMPLE_0_IS_NOT_SUPPORTED).setMessageParams(bitsPerSample);
             }
             int h = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGELENGTH);
             int w = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGEWIDTH);
@@ -367,10 +368,10 @@ class TiffImageHelper {
                 if (predictorField != null) {
                     predictor = predictorField.getAsInt(0);
                     if (predictor != 1 && predictor != 2) {
-                        throw new IOException(IOException.IllegalValueForPredictorInTiffFile);
+                        throw new IOException(IoExceptionMessageConstant.ILLEGAL_VALUE_FOR_PREDICTOR_IN_TIFF_FILE);
                     }
                     if (predictor == 2 && bitsPerSample != 8) {
-                        throw new IOException(IOException._1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor).setMessageParams(bitsPerSample);
+                        throw new IOException(IoExceptionMessageConstant.BIT_SAMPLES_ARE_NOT_SUPPORTED_FOR_HORIZONTAL_DIFFERENCING_PREDICTOR).setMessageParams(bitsPerSample);
                     }
                 }
             }
@@ -401,7 +402,7 @@ class TiffImageHelper {
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
-                    throw new IOException(IOException.MissingTagsForOjpegCompression);
+                    throw new IOException(IoExceptionMessageConstant.MISSING_TAGS_FOR_OJPEG_COMPRESSION);
                 }
                 int jpegOffset = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
                 int jpegLength = (int) s.length() - jpegOffset;
@@ -423,7 +424,7 @@ class TiffImageHelper {
                 tiff.jpegProcessing = true;
             } else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
-                    throw new IOException(IOException.CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips).setMessageParams(size.length);
+                    throw new IOException(IoExceptionMessageConstant.COMPRESSION_JPEG_IS_ONLY_SUPPORTED_WITH_A_SINGLE_STRIP_THIS_IMAGE_HAS_STRIPS).setMessageParams(size.length);
                 byte[] jpeg = new byte[(int) size[0]];
                 s.seek(offset[0]);
                 s.readFully(jpeg);
@@ -568,7 +569,7 @@ class TiffImageHelper {
                 tiff.image.setImageMask(mimg);
             }
         } catch (Exception e) {
-            throw new IOException(IOException.CannotGetTiffImageColor);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_GET_TIFF_IMAGE_COLOR);
         }
     }
 
@@ -606,7 +607,7 @@ class TiffImageHelper {
             zip.write(outBuf, 0, optr);
             mzip.write(mask, 0, mptr);
         } else
-            throw new IOException(IOException.ExtraSamplesAreNotSupported);
+            throw new IOException(IoExceptionMessageConstant.EXTRA_SAMPLES_ARE_NOT_SUPPORTED);
     }
 
     private static long[] getArrayLongShort(TIFFDirectory dir, int tag) {

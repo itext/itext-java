@@ -16,6 +16,7 @@
 package com.itextpdf.io.font.woff2;
 
 import com.itextpdf.io.exceptions.FontCompressionException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 /**
  * Fixed memory block for woff2 out.
@@ -39,7 +40,7 @@ class Woff2MemoryOut implements Woff2Out {
     @Override
     public void write(byte[] buf, int buff_offset, int offset, int n) {
         if (offset > buf_size_ || n > buf_size_ - offset) {
-            throw new FontCompressionException(FontCompressionException.WRITE_FAILED);
+            throw new FontCompressionException(IoExceptionMessageConstant.WRITE_FAILED);
         }
         System.arraycopy(buf, buff_offset, buf_, offset, n);
         offset_ = Math.max(offset_, offset + n);

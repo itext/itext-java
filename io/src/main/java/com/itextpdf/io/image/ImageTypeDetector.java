@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 
 import java.io.ByteArrayInputStream;
@@ -114,7 +115,7 @@ public final class ImageTypeDetector {
         try (InputStream stream = UrlUtil.openStream(source)) {
             return readImageType(stream);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 
@@ -124,7 +125,7 @@ public final class ImageTypeDetector {
             stream.read(bytes);
             return bytes;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 

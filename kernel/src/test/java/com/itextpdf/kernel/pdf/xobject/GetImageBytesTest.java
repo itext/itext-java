@@ -26,6 +26,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.codec.TIFFField;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -224,7 +225,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 () -> processor.processPageContent(pdfDocument.getPage(1))
         );
         Assert.assertEquals(MessageFormatUtil
-                        .format(com.itextpdf.io.exceptions.IOException.ExpectedTrailingZeroBitsForByteAlignedLines),
+                        .format(IoExceptionMessageConstant.EXPECTED_TRAILING_ZERO_BITS_FOR_BYTE_ALIGNED_LINES),
                 e.getMessage());
     }
 

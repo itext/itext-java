@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
@@ -92,7 +93,7 @@ public final class StreamUtil {
         try {
             outputStream.write(buf.getInternalBuffer(), 0, buf.size());
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.CannotWriteBytes, e);
+            throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.CANNOT_WRITE_BYTES, e);
         }
     }
 
@@ -101,7 +102,7 @@ public final class StreamUtil {
         try {
             outputStream.write(buf.getInternalBuffer(), 0, buf.size());
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.CannotWriteBytes, e);
+            throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.CANNOT_WRITE_BYTES, e);
         }
     }
 

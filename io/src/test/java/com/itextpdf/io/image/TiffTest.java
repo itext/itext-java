@@ -24,6 +24,7 @@ package com.itextpdf.io.image;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.codec.TIFFDirectory;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.StreamUtil;
@@ -138,7 +139,7 @@ public class TiffTest extends ExtendedITextTest {
                 () -> createTiff(sourceFile, 1, 1024D, 768D));
 
         Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+                IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
 
@@ -202,7 +203,7 @@ public class TiffTest extends ExtendedITextTest {
                         false, 1, false));
 
         Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+                IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
@@ -213,7 +214,7 @@ public class TiffTest extends ExtendedITextTest {
                         SOURCE_FOLDER + "adobeDeflateCompression16BitMinIsBlack.tif")));
 
         Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+                IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
@@ -225,7 +226,7 @@ public class TiffTest extends ExtendedITextTest {
                         false, 1, false));
 
         Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+                IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
@@ -236,7 +237,7 @@ public class TiffTest extends ExtendedITextTest {
                         SOURCE_FOLDER + "adobeDeflateCompression16BitMinIsWhite.tif")));
 
         Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+                IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
@@ -248,7 +249,7 @@ public class TiffTest extends ExtendedITextTest {
                         false, 1, false));
 
         Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+                IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test
@@ -259,7 +260,7 @@ public class TiffTest extends ExtendedITextTest {
                         SOURCE_FOLDER + "adobeDeflateCompression16BitRgb.tif")));
 
         Assert.assertEquals(MessageFormatUtil.format(
-                com.itextpdf.io.exceptions.IOException.CannotReadTiffImage), e.getMessage());
+                IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
     }
 
     @Test

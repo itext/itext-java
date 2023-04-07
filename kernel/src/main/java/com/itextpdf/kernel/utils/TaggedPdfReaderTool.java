@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -172,7 +173,7 @@ public class TaggedPdfReaderTool {
                 out.write(" <flushedKid/> ");
             }
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.UnknownIOException, e);
+            throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.UNKNOWN_IO_EXCEPTION, e);
         }
     }
 
@@ -196,7 +197,7 @@ public class TaggedPdfReaderTool {
                     out.write("\"");
                 }
             } catch (java.io.IOException e) {
-                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.UnknownIOException, e);
+                throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.UNKNOWN_IO_EXCEPTION, e);
             }
         }
     }
@@ -231,7 +232,7 @@ public class TaggedPdfReaderTool {
         try {
             out.write(escapeXML(tagContent, true));
         } catch (java.io.IOException e) {
-            throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.UnknownIOException, e);
+            throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.UNKNOWN_IO_EXCEPTION, e);
         }
     }
 

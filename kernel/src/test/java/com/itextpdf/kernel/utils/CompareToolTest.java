@@ -22,13 +22,12 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
@@ -166,7 +165,7 @@ public class CompareToolTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(CompareTool.CompareToolExecutionException.class,
                 () -> new CompareTool("unspecified", null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_")
         );
-        Assert.assertEquals(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
+        Assert.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
     }
 
     @Test
@@ -179,13 +178,13 @@ public class CompareToolTest extends ExtendedITextTest {
         }
         String result = new CompareTool(gsExec, null)
                 .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
-        Assert.assertFalse(result.contains(IoExceptionMessage.COMPARE_COMMAND_IS_NOT_SPECIFIED));
+        Assert.assertFalse(result.contains(IoExceptionMessageConstant.COMPARE_COMMAND_IS_NOT_SPECIFIED));
         Assert.assertTrue(new File(destinationFolder + "diff_1.png").exists());
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY)})
+            @LogMessage(messageTemplate = IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY)})
     public void compareCommandSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
@@ -195,7 +194,7 @@ public class CompareToolTest extends ExtendedITextTest {
         }
         String result = new CompareTool(gsExec, "unspecified")
                 .compareVisually(outPdf, cmpPdf, destinationFolder, "diff_");
-        Assert.assertTrue(result.contains(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY));
+        Assert.assertTrue(result.contains(IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY));
     }
 
     @Test

@@ -22,7 +22,7 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
+import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -140,7 +140,7 @@ public class BarcodeInter25 extends Barcode1D {
     public static byte[] getBarsInter25(String text) {
         text = keepNumbers(text);
         if ((text.length() & 1) != 0) {
-            throw new PdfException(BarcodeExceptionMessageConstant.TEXT_MUST_BE_EVEN);
+            throw new PdfException(BarcodesExceptionMessageConstant.TEXT_MUST_BE_EVEN);
         }
         byte[] bars = new byte[text.length() * 5 + 7];
         int pb = 0;

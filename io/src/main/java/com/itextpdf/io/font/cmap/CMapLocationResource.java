@@ -23,6 +23,7 @@
 package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
@@ -41,7 +42,7 @@ public class CMapLocationResource implements ICMapLocation {
         String fullName = FontResources.CMAPS + location;
         InputStream inp = ResourceUtil.getResourceStream(fullName);
         if (inp == null) {
-            throw new IOException(IOException.Cmap1WasNotFound).setMessageParams(fullName);
+            throw new IOException(IoExceptionMessageConstant.CMAP_WAS_NOT_FOUND).setMessageParams(fullName);
         }
         return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(inp)));
     }

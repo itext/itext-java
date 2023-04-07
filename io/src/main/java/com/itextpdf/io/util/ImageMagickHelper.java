@@ -25,7 +25,7 @@ package com.itextpdf.io.util;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.ProcessInfo;
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -81,7 +81,7 @@ public class ImageMagickHelper {
         }
 
         if (!CliCommandUtil.isVersionCommandExecutable(compareExec, MAGICK_COMPARE_KEYWORD)) {
-            throw new IllegalArgumentException(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY);
+            throw new IllegalArgumentException(IoExceptionMessageConstant.COMPARE_COMMAND_SPECIFIED_INCORRECTLY);
         }
     }
 
@@ -238,7 +238,7 @@ public class ImageMagickHelper {
 
     private static long parseImageMagickProcessOutput(String processOutput) throws IOException {
         if (null == processOutput) {
-            throw new IllegalArgumentException(IoExceptionMessage.IMAGE_MAGICK_OUTPUT_IS_NULL);
+            throw new IllegalArgumentException(IoExceptionMessageConstant.IMAGE_MAGICK_OUTPUT_IS_NULL);
         }
 
         if (processOutput.isEmpty()) {
@@ -258,6 +258,6 @@ public class ImageMagickHelper {
             }
         }
 
-        throw new IOException(IoExceptionMessage.IMAGE_MAGICK_PROCESS_EXECUTION_FAILED + processOutput);
+        throw new IOException(IoExceptionMessageConstant.IMAGE_MAGICK_PROCESS_EXECUTION_FAILED + processOutput);
     }
 }

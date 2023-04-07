@@ -24,7 +24,7 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.io.exceptions.IoExceptionMessage;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -2073,7 +2073,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         // copy it to destination folder.
         File copiedFile = copyFileForTest(fileName, copiedFileName);
         Exception e = Assert.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> new PdfReader(fileName));
-        Assert.assertEquals(com.itextpdf.io.exceptions.IOException.PdfHeaderNotFound, e.getMessage());
+        Assert.assertEquals(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, e.getMessage());
         //This check is meaningfull only on Windows, since on other OS the fact of a stream being open doesn't
         // prevent the stream from being deleted.
         Assert.assertTrue(FileUtil.deleteFile(copiedFile));
@@ -2249,7 +2249,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
             Exception e = Assert.assertThrows(IllegalStateException.class,
                     () -> new PdfReader(rasInputStream));
-            Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+            Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
         }
     }
 
@@ -2264,7 +2264,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             try (PdfReader reader = new PdfReader(rasInputStream)) {
                 randomAccessSource.close();
                 Exception e = Assert.assertThrows(IllegalStateException.class, () -> new PdfDocument(reader));
-                Assert.assertEquals(IoExceptionMessage.ALREADY_CLOSED, e.getMessage());
+                Assert.assertEquals(IoExceptionMessageConstant.ALREADY_CLOSED, e.getMessage());
             }
         }
     }

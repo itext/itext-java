@@ -25,7 +25,7 @@ package com.itextpdf.barcodes.exceptions;
 /**
  * Class that bundles all the error message templates as constants.
  */
-public final class BarcodeExceptionMessageConstant {
+public final class BarcodesExceptionMessageConstant {
     public static final String CODABAR_MUST_HAVE_AT_LEAST_START_AND_STOP_CHARACTER = "Codabar must have at least start "
             + "and stop character.";
     public static final String CODABAR_MUST_HAVE_ONE_ABCD_AS_START_STOP_CHARACTER = "Codabar must have one of 'ABCD' "
@@ -45,5 +45,5 @@ public final class BarcodeExceptionMessageConstant {
     public static final String THERE_ARE_ILLEGAL_CHARACTERS_FOR_BARCODE_128 = "There are illegal characters for "
             + "barcode 128 in {0}.";
 
-    private BarcodeExceptionMessageConstant(){}
+    private BarcodesExceptionMessageConstant(){}
 }

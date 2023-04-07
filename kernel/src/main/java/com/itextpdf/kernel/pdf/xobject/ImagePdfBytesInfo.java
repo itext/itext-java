@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf.xobject;
 import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -77,22 +78,22 @@ class ImagePdfBytesInfo {
     public byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
         if (pngColorType < 0) {
             if (bpc != 8)
-                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
+                throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED).setMessageParams(bpc);
 
             if (colorspace instanceof PdfArray) {
                 PdfArray ca = (PdfArray) colorspace;
                 PdfObject tyca = ca.get(0);
                 if (!PdfName.ICCBased.equals(tyca))
-                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
+                    throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED).setMessageParams(tyca.toString());
 
                 PdfStream pr = (PdfStream) ca.get(1);
                 int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n != 4) {
-                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.NValueIsNotSupported).setMessageParams(n);
+                    throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.N_VALUE_IS_NOT_SUPPORTED).setMessageParams(n);
                 }
                 icc = pr.getBytes();
             } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
-                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
+                throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED).setMessageParams(colorspace.toString());
             }
             java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
 

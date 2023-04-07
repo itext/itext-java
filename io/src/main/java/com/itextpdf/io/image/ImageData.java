@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -220,9 +221,9 @@ public abstract class ImageData {
 
     public void setImageMask(ImageData imageMask) {
         if (this.mask)
-            throw new IOException(IOException.ImageMaskCannotContainAnotherImageMask);
+            throw new IOException(IoExceptionMessageConstant.IMAGE_MASK_CANNOT_CONTAIN_ANOTHER_IMAGE_MASK);
         if (!imageMask.mask)
-            throw new IOException(IOException.ImageIsNotMaskYouMustCallImageDataMakeMask);
+            throw new IOException(IoExceptionMessageConstant.IMAGE_IS_NOT_A_MASK_YOU_MUST_CALL_IMAGE_DATA_MAKE_MASK);
         this.imageMask = imageMask;
     }
 
@@ -232,7 +233,7 @@ public abstract class ImageData {
 
     public void makeMask() {
         if (!canBeMask())
-            throw new IOException(IOException.ThisImageCanNotBeAnImageMask);
+            throw new IOException(IoExceptionMessageConstant.THIS_IMAGE_CAN_NOT_BE_AN_IMAGE_MASK);
         mask = true;
     }
 
