@@ -157,7 +157,7 @@
   </dependencies>
 
   <build>
-    <finalName>itext7-${project.artifactId}-${project.version}</finalName>
+    <finalName>itext-${project.artifactId}-${project.version}</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
