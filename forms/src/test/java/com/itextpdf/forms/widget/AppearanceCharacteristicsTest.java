@@ -142,7 +142,6 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-4809 text in form filed with borders must start after border
     public void textStartsAfterFieldBorderTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "textStartsAfterFieldBorderTest.pdf";
         String cmpPdf = sourceFolder + "cmp_textStartsAfterFieldBorderTest.pdf";
@@ -170,7 +169,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
             PdfFormField simpleFormField = new TextFormFieldBuilder(doc, "formField1")
                     .setWidgetRectangle(new Rectangle(300, 450, 200, 100)).createText();
-            simpleFormField.getFirstFormAnnotation().setBorderWidth(15f);
+            simpleFormField.getFirstFormAnnotation().setBorderWidth(15f).setBorderColor(DeviceRgb.RED);
             simpleFormField.setValue("Text after border").regenerateField();
 
             form.addField(insetFormField);
