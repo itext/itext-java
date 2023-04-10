@@ -490,7 +490,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 51)
     })
     public void copyAndEditTextFields() throws IOException, InterruptedException {
-        //TODO: update after DEVSIX-2354
         String srcFileName = sourceFolder + "checkPdfFormCopy_Source.pdf";
         String destFilename = destinationFolder + "copyAndEditTextFields.pdf";
         String cmpFileName = sourceFolder + "cmp_copyAndEditTextFields.pdf";
@@ -521,7 +520,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 51)
     })
     public void copyAndEditCheckboxes() throws IOException, InterruptedException {
-        //TODO: update after DEVSIX-2354
         String srcFileName = sourceFolder + "checkPdfFormCopy_Source.pdf";
         String destFilename = destinationFolder + "copyAndEditCheckboxes.pdf";
         String cmpFileName = sourceFolder + "cmp_copyAndEditCheckboxes.pdf";
@@ -550,7 +548,6 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 51)
     })
     public void copyAndEditRadioButtons() throws IOException, InterruptedException {
-        //TODO: update after DEVSIX-2354
         String srcFileName = sourceFolder + "checkPdfFormCopy_Source.pdf";
         String destFilename = destinationFolder + "copyAndEditRadioButtons.pdf";
         String cmpFileName = sourceFolder + "cmp_copyAndEditRadioButtons.pdf";
