@@ -41,7 +41,7 @@ public class TextArea extends FormField<TextArea> implements IPlaceholderable {
     /**
      * Default padding X offset.
      */
-    private static final float X_OFFSET = 1;
+    private static final float X_OFFSET = 3;
 
     /**
      * The placeholder paragraph.
@@ -124,8 +124,5 @@ public class TextArea extends FormField<TextArea> implements IPlaceholderable {
         setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         
         setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
-        
-        setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
-        setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
     }
 }

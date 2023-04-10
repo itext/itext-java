@@ -1260,46 +1260,39 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
     @Test
     public void textFieldWithWideUnicodeRange() throws IOException, InterruptedException {
-        // TODO: DEVSIX-7441 - remove flag
-        final boolean experimentalRenderingPreviousValue = ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = false;
-        try {
-            String filename = "textFieldWithWideUnicodeRange.pdf";
-            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
-            pdfDoc.addNewPage();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        String filename = "textFieldWithWideUnicodeRange.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        pdfDoc.addNewPage();
+        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-            form.addField(new TextFormFieldBuilder(pdfDoc, "text_helvetica").setWidgetRectangle(
-                            new Rectangle(36, 400, 100, 40))
-                    .createText().setValue("Helvetica"));
+        form.addField(new TextFormFieldBuilder(pdfDoc, "text_helvetica").setWidgetRectangle(
+                new Rectangle(36, 400, 100, 40))
+                .createText().setValue("Helvetica"));
 
-            PdfFont noto = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
-            noto.setSubset(false);
-            String value = "aAáÁàÀăĂắẮằẰẵẴẳẲâÂấẤầẦẫẪǎǍåÅǻǺäÄǟǞãÃą" +
-                    "ĄāĀảẢạẠặẶẬæÆǽǼbBḃḂcCćĆčČċĊçÇdDd̂D̂ďĎḋḊḑḐđĐðÐeE" +
-                    "éÉèÈĕĔêÊếẾềỀễỄěĚëËẽẼėĖęĘēĒẻẺẹẸệỆəƏfFḟḞgGǵǴğĞ" +
-                    "ǧǦġĠģĢḡḠǥǤhHȟȞḧḦħĦḥḤiIíÍìÌĭĬîÎǐǏïÏĩĨİįĮīĪỉỈị" +
-                    "ỊıjJĵĴǰJ̌kKḱḰǩǨķĶlLĺĹl̂L̂ľĽļĻłŁŀĿmMm̂M̂ṁṀnNńŃn̂N̂ňŇ" +
-                    "ñÑṅṄņŅŋŊoOóÓòÒŏŎôÔốỐồỒỗỖǒǑöÖȫȪőŐõÕȯȮȱȰøØǿǾǫǪ" +
-                    "ǭǬōŌỏỎơƠớỚờỜọỌộỘœŒpPṗṖqQĸrRŕŔřŘŗŖsSśŚšŠṡṠşŞṣ" +
-                    "ṢșȘßẞtTťŤṫṪţŢțȚŧŦuUúÚùÙûÛǔǓůŮüÜűŰũŨųŲūŪủỦưƯứ" +
-                    "ỨừỪữỮửỬựỰụỤvVwWẃẂẁẀŵŴẅẄxXẍẌyYýÝỳỲŷŶÿŸỹỸẏẎȳȲỷỶ" +
-                    "ỵỴzZźŹẑẐžŽżŻẓẒʒƷǯǮþÞŉ";
-            PdfFormField textField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(
-                            new Rectangle(36, 500, 400, 300))
-                    .createMultilineText().setValue(value);
-            textField.setFont(noto).setFontSize(12);
+        PdfFont noto = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
+        noto.setSubset(false);
+        String value = "aAáÁàÀăĂắẮằẰẵẴẳẲâÂấẤầẦẫẪǎǍåÅǻǺäÄǟǞãÃą" +
+                "ĄāĀảẢạẠặẶẬæÆǽǼbBḃḂcCćĆčČċĊçÇdDd̂D̂ďĎḋḊḑḐđĐðÐeE" +
+                "éÉèÈĕĔêÊếẾềỀễỄěĚëËẽẼėĖęĘēĒẻẺẹẸệỆəƏfFḟḞgGǵǴğĞ" +
+                "ǧǦġĠģĢḡḠǥǤhHȟȞḧḦħĦḥḤiIíÍìÌĭĬîÎǐǏïÏĩĨİįĮīĪỉỈị" +
+                "ỊıjJĵĴǰJ̌kKḱḰǩǨķĶlLĺĹl̂L̂ľĽļĻłŁŀĿmMm̂M̂ṁṀnNńŃn̂N̂ňŇ" +
+                "ñÑṅṄņŅŋŊoOóÓòÒŏŎôÔốỐồỒỗỖǒǑöÖȫȪőŐõÕȯȮȱȰøØǿǾǫǪ" +
+                "ǭǬōŌỏỎơƠớỚờỜọỌộỘœŒpPṗṖqQĸrRŕŔřŘŗŖsSśŚšŠṡṠşŞṣ" +
+                "ṢșȘßẞtTťŤṫṪţŢțȚŧŦuUúÚùÙûÛǔǓůŮüÜűŰũŨųŲūŪủỦưƯứ" +
+                "ỨừỪữỮửỬựỰụỤvVwWẃẂẁẀŵŴẅẄxXẍẌyYýÝỳỲŷŶÿŸỹỸẏẎȳȲỷỶ" +
+                "ỵỴzZźŹẑẐžŽżŻẓẒʒƷǯǮþÞŉ";
+        PdfFormField textField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(
+                new Rectangle(36, 500, 400, 300))
+                .createMultilineText().setValue(value);
+        textField.setFont(noto).setFontSize(12);
 
-            form.addField(textField);
+        form.addField(textField);
 
-            pdfDoc.close();
+        pdfDoc.close();
 
-            Assert.assertNull(
-                    new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename,
-                            destinationFolder, "diff_"));
-        } finally {
-            ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING = experimentalRenderingPreviousValue;
-        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename,
+                        destinationFolder, "diff_"));
     }
 
     @Test

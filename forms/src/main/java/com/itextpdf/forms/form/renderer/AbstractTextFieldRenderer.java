@@ -69,7 +69,7 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
      */
     IRenderer createParagraphRenderer(String defaultValue) {
         if (defaultValue.trim().isEmpty()) {
-            defaultValue = "\u00A0";
+            defaultValue = "\u00a0";
         }
         Paragraph paragraph = new Paragraph(defaultValue).setMargin(0);
         return paragraph.createRendererSubTree();
@@ -170,8 +170,10 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
      */
     void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, float height) {
         float averageLineHeight = bBox.getHeight() / lines.size();
-        int visibleLinesNumber = (int) Math.ceil(height / averageLineHeight);
-        adjustNumberOfContentLines(lines, bBox, visibleLinesNumber, height);
+        if (averageLineHeight > EPS) {
+            int visibleLinesNumber = (int) Math.ceil(height / averageLineHeight);
+            adjustNumberOfContentLines(lines, bBox, visibleLinesNumber, height);
+        }
     }
 
     private static void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox,

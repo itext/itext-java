@@ -99,7 +99,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             return ((InputField) modelElement).getPlaceholder().createRendererSubTree();
         }
         if (defaultValue.isEmpty()) {
-            defaultValue = "\u00A0";
+            defaultValue = "\u00a0";
         }
 
         Text text = new Text(defaultValue);

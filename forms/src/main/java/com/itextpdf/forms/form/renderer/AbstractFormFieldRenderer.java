@@ -71,7 +71,6 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @return true, if fields need to be flattened
      */
     public boolean isFlatten() {
-        Boolean flatten;
         if (parent != null) {
             // First check parent. This is a workaround for the case when some fields are inside other fields
             // either directly or via other elements (input text field inside div inside input button field). In this
@@ -84,7 +83,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
                 nextParent = nextParent.getParent();
             }
         }
-        flatten = getPropertyAsBoolean(FormProperty.FORM_FIELD_FLATTEN);
+        Boolean flatten = getPropertyAsBoolean(FormProperty.FORM_FIELD_FLATTEN);
         return flatten == null ?
                 (boolean) modelElement.<Boolean>getDefaultProperty(FormProperty.FORM_FIELD_FLATTEN) : (boolean) flatten;
     }
@@ -112,8 +111,12 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         float parentHeight = layoutContext.getArea().getBBox().getHeight();
 
         IRenderer renderer = createFlatRenderer();
-        renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
-        renderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        if (renderer.<OverflowPropertyValue>getOwnProperty(Property.OVERFLOW_X) == null) {
+            renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        }
+        if (renderer.<OverflowPropertyValue>getOwnProperty(Property.OVERFLOW_Y) == null) {
+            renderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+        }
         addChild(renderer);
 
         Rectangle bBox = layoutContext.getArea().getBBox().clone().moveDown(INF - parentHeight).setHeight(INF);

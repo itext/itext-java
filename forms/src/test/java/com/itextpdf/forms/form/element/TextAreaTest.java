@@ -206,7 +206,7 @@ public class TextAreaTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             document.add(new Div().setBackgroundColor(ColorConstants.RED).setHeight(695));
-            
+
             TextArea textArea = new TextArea("text area");
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
@@ -215,6 +215,17 @@ public class TextAreaTest extends ExtendedITextTest {
             textArea.setFontSize(0);
             textArea.setHeight(75);
             document.add(textArea);
+
+            document.add(new Div().setBackgroundColor(ColorConstants.RED).setHeight(695));
+
+            TextArea flattenTextArea = new TextArea("text area");
+            flattenTextArea.setInteractive(false);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE,
+                    "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
+            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setFontSize(0);
+            flattenTextArea.setHeight(75);
+            document.add(flattenTextArea);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
@@ -229,11 +240,46 @@ public class TextAreaTest extends ExtendedITextTest {
             TextArea textArea = new TextArea("text area");
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
-                    "Font\n size \nof this\nText Area will not \nbe approximated\nbased on the content");
+                    "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
             textArea.setProperty(Property.BORDER, new SolidBorder(1f));
             textArea.setFontSize(0);
             textArea.setHeight(75);
             document.add(textArea);
+
+            TextArea flattenTextArea = new TextArea("text area");
+            flattenTextArea.setInteractive(false);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE,
+                    "Font\n size \nof this\nText Area will \nbe approximated\nbased on the content");
+            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setFontSize(0);
+            flattenTextArea.setHeight(75);
+            document.add(flattenTextArea);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void textAreaWith0FontSizeWithoutHeightTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "textAreaWith0FontSizeWithoutHeight.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWith0FontSizeWithoutHeight.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            TextArea textArea = new TextArea("text area");
+            textArea.setInteractive(true);
+            textArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not " 
+                    + "\nbe approximated\nbased on the content\nbecause height is not set");
+            textArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            textArea.setFontSize(0);
+            document.add(textArea);
+
+            TextArea flattenTextArea = new TextArea("text area");
+            flattenTextArea.setInteractive(false);
+            flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not " 
+                    + "\nbe approximated\nbased on the content\nbecause height is not set");
+            flattenTextArea.setProperty(Property.BORDER, new SolidBorder(1f));
+            flattenTextArea.setFontSize(0);
+            document.add(flattenTextArea);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));

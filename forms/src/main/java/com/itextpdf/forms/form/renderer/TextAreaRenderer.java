@@ -34,9 +34,13 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DrawContext;
@@ -167,7 +171,17 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
                 .getPlaceholder().isEmpty()) {
             return ((TextArea) modelElement).getPlaceholder().createRendererSubTree();
         }
-        return super.createParagraphRenderer(defaultValue);
+        if (defaultValue.isEmpty()) {
+            defaultValue = "\u00a0";
+        }
+
+        Text text = new Text(defaultValue);
+        FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
+        text.setNextRenderer(nextRenderer);
+
+        IRenderer flatRenderer = new Paragraph(text).setMargin(0).createRendererSubTree();
+        flatRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+        return flatRenderer;
     }
 
     /* (non-Javadoc)
@@ -211,9 +225,13 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
                     logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                             Property.FONT_SIZE));
                 }
+                float fontSizeValue = fontSize.getValue();
+                if (fontSizeValue < EPS) {
+                    fontSizeValue = DEFAULT_FONT_SIZE;
+                }
                 int cols = getCols();
                 return (T1) (Object) UnitValue.createPointValue(
-                        updateHtmlColsSizeBasedWidth(fontSize.getValue() * (cols * 0.5f + 2) + 2));
+                        updateHtmlColsSizeBasedWidth(fontSizeValue * (cols * 0.5f + 2) + 2));
             }
             return width;
         }
@@ -262,14 +280,22 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         float lFontSize = MIN_FONT_SIZE;
         float rFontSize = DEFAULT_FONT_SIZE;
         flatRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(DEFAULT_FONT_SIZE));
-        if (flatRenderer.layout(layoutContext).getStatus() == LayoutResult.FULL) {
+        Float areaWidth = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
+        Float areaHeight = retrieveHeight();
+        LayoutContext newLayoutContext;
+        if (areaWidth == null || areaHeight == null) {
+            modelElement.setFontSize(DEFAULT_FONT_SIZE);
+            return;
+        }
+        newLayoutContext = new LayoutContext(new LayoutArea(1, new Rectangle((float) areaWidth, (float) areaHeight)));
+        if (flatRenderer.layout(newLayoutContext).getStatus() == LayoutResult.FULL) {
             lFontSize = DEFAULT_FONT_SIZE;
         } else {
             final int numberOfIterations = 6;
             for (int i = 0; i < numberOfIterations; i++) {
                 float mFontSize = (lFontSize + rFontSize) / 2;
                 flatRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(mFontSize));
-                LayoutResult result = flatRenderer.layout(layoutContext);
+                LayoutResult result = flatRenderer.layout(newLayoutContext);
                 if (result.getStatus() == LayoutResult.FULL) {
                     lFontSize = mFontSize;
                 } else {
