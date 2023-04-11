@@ -212,6 +212,32 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             Assert.fail(errorMessage);
         }
     }
+    
+    @Test
+    public void keepCheckTypeTest() throws IOException, InterruptedException {
+        String srcPdf = destinationFolder + "keepCheckTypeTestInput.pdf";
+        String outPdf = destinationFolder + "keepCheckTypeTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_keepCheckTypeTest.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(srcPdf))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+            PdfButtonFormField checkField = new CheckBoxFormFieldBuilder(pdfDoc, "checkField")
+                    .setWidgetRectangle(new Rectangle(100, 600, 100, 100))
+                    .setCheckType(CheckBoxType.CHECK).createCheckBox();
+            checkField.setValue("Off");
+
+            checkField.setFontSizeAutoScale();
+            form.addField(checkField);
+        }
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            form.getField("checkField").setValue("Yes", false);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
 
     @Test
     public void appearanceRegenerationTest() throws IOException, InterruptedException {
