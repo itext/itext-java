@@ -117,7 +117,6 @@ import com.itextpdf.bouncycastlefips.openssl.jcajce.JceOpenSSLPKCS8DecryptorProv
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentSignerBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentVerifierProviderBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaDigestCalculatorProviderBuilderBCFips;
-
 import com.itextpdf.bouncycastlefips.tsp.TSPExceptionBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampRequestBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampRequestGeneratorBCFips;
@@ -1668,5 +1667,10 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         }
         cipher.init(Cipher.WRAP_MODE, x509certificate.getPublicKey());
         return cipher.wrap(new SecretKeySpec(abyte0, "AES"));
+    }
+
+    @Override
+    public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
+        //All features supported
     }
 }

@@ -22,6 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+
 import java.security.cert.Certificate;
 
 public class WriterProperties {
@@ -195,6 +197,7 @@ public class WriterProperties {
      * @return this {@link WriterProperties} instance
      */
     public WriterProperties setPublicKeyEncryption(Certificate[] certs, int[] permissions, int encryptionAlgorithm) {
+        BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(encryptionAlgorithm, true);
         encryptionProperties.setPublicKeyEncryption(certs, permissions, encryptionAlgorithm);
         return this;
     }

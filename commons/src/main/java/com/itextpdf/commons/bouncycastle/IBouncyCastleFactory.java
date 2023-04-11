@@ -1484,4 +1484,21 @@ public interface IBouncyCastleFactory {
      */
     byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException;
+
+    /**
+     * Checks whether an algorithm is supported for encryption by the chosen Bouncy Castle implementation,
+     * throws an exception when not supported.
+     *
+     * @param encryptionAlgorithm the type of encryption. It can be one of
+     *                            STANDARD_ENCRYPTION_40 = 0
+     *                            STANDARD_ENCRYPTION_128 = 1,
+     *                            ENCRYPTION_AES_128 = 2
+     *                            ENCRYPTION_AES_256 = 3
+     *                            in combination with (or-ed)
+     *                            DO_NOT_ENCRYPT_METADATA = 8
+     *                            and EMBEDDED_FILES_ONLY = 24
+     *
+     * @param withCertificate true when used with a certificate, false otherwise
+     */
+    void isEncryptionFeatureSupported(int encryptionAlgorithm, boolean withCertificate);
 }

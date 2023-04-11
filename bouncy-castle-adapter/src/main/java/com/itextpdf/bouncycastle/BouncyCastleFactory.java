@@ -1655,4 +1655,9 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
         }
         return cipher.doFinal(abyte0);
     }
+
+    @Override
+    public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
+        //All features supported
+    }
 }

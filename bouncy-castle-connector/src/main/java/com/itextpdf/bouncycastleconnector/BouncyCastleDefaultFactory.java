@@ -893,4 +893,9 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
             IAlgorithmIdentifier algorithmIdentifier) {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
+
+    @Override
+    public void isEncryptionFeatureSupported(int encryptionType, boolean withCertificate) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
 }
