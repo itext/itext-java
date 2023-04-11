@@ -24,14 +24,17 @@ package com.itextpdf.forms;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -208,6 +211,38 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         if (errorMessage != null) {
             Assert.fail(errorMessage);
         }
+    }
+
+    @Test
+    public void appearanceRegenerationTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "appearanceRegenerationTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_appearanceRegenerationTest.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+            PdfButtonFormField checkBox1 = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox1")
+                    .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
+            checkBox1.setValue("My_Value");
+
+            String offStream = "1 0 0 1 0.86 0.5 cm 0 0 m\n" +
+                    "0 0.204 -0.166 0.371 -0.371 0.371 c\n" +
+                    "-0.575 0.371 -0.741 0.204 -0.741 0 c\n" +
+                    "-0.741 -0.204 -0.575 -0.371 -0.371 -0.371 c\n" +
+                    "-0.166 -0.371 0 -0.204 0 0 c\n" +
+                    "f\n";
+            checkBox1.getFirstFormAnnotation().setAppearance(PdfName.N, "Off",
+                    new PdfStream(offStream.getBytes()));
+            String onStream = "1 0 0 1 0.835 0.835 cm 0 0 -0.669 -0.67 re\n" +
+                    "f\n";
+            checkBox1.getFirstFormAnnotation().setAppearance(PdfName.N, "My_Value",
+                    new PdfStream(onStream.getBytes()));
+
+            checkBox1.regenerateField();
+            form.addField(checkBox1);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
     private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, float checkBoxH)
