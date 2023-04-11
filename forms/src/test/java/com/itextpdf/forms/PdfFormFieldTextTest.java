@@ -23,9 +23,12 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -161,5 +164,27 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         document.close();
 
         ExtendedITextTest.printOutputPdfNameAndDir(destinationFolder + filename);
+    }
+
+    @Test
+    public void lineEndingsTest() throws IOException, InterruptedException {
+        String destFilename = destinationFolder + "lineEndingsTest.pdf";
+        String cmpFilename = sourceFolder + "cmp_lineEndingsTest.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destFilename))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "single")
+                    .setWidgetRectangle(new Rectangle(50, 700, 500, 120)).createText();
+            field.setValue("Line 1\nLine 2\rLine 3\r\nLine 4");
+            form.addField(field);
+
+            PdfTextFormField field2 = new TextFormFieldBuilder(pdfDoc, "multi")
+                    .setWidgetRectangle(new Rectangle(50, 500, 500, 120)).createMultilineText();
+            field2.setValue("Line 1\nLine 2\rLine 3\r\nLine 4");
+            form.addField(field2);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, destinationFolder, "diff_"));
     }
 }

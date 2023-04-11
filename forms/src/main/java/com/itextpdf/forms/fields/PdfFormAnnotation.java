@@ -116,11 +116,13 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      */
     static final float X_OFFSET = 2;
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormAnnotation.class);
-
     protected float borderWidth = 1;
     protected Color backgroundColor;
     protected Color borderColor;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormAnnotation.class);
+
+    private static final String LINE_ENDINGS_REGEXP = "\\r\\n|\\r|\\n";
 
     private Button formFieldElement;
 
@@ -910,6 +912,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
 
         IFormField textFormField;
+        String value = parent.getDisplayValue();
         if (parent.isMultiline()) {
             textFormField = new TextArea("");
             textFormField.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
@@ -917,8 +920,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             textFormField = new InputField("");
             textFormField.setProperty(Property.FONT_SIZE,
                     UnitValue.createPointValue(getFontSize(new PdfArray(rectangle), parent.getValueAsString())));
+            value = value.replaceAll(LINE_ENDINGS_REGEXP, " ");
         }
-        textFormField.setProperty(FormProperty.FORM_FIELD_VALUE, parent.getDisplayValue());
+        textFormField.setProperty(FormProperty.FORM_FIELD_VALUE, value);
         textFormField.setProperty(Property.FONT, getFont());
         textFormField.setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
         textFormField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, getParentField().isPassword());
