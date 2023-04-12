@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -38,9 +37,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -58,19 +55,6 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_DIR);
-    }
-
-    private boolean experimentalCheckboxRendering;
-
-    @Before
-    public void before() {
-        experimentalCheckboxRendering = ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = false;
-    }
-
-    @After
-    public void after() {
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = experimentalCheckboxRendering;
     }
 
     @Test

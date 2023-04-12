@@ -27,10 +27,6 @@ package com.itextpdf.commons.utils;
  */
 // TODO Shall be removed in the scope of DEVSIX-7385
 public final class ExperimentalFeatures {
-    /**
-     * Determines, whether the old or the new checkbox form field drawing logic will be used.
-     */
-    public static boolean ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = false;
 
     /**
      * Determines, whether the old or the new text form field drawing logic will be used.

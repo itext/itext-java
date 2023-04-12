@@ -38,21 +38,26 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DrawContext;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is used to draw a checkBox icon in PDF mode this is the default strategy for drawing a checkBox.
  */
 public final class PdfCheckBoxRenderingStrategy implements ICheckBoxRenderingStrategy {
-    private static final HashMap<CheckBoxType, String> CHECKBOX_TYPE_ZAPFDINGBATS_CODE = new HashMap<>();
+    public static final Map<CheckBoxType, String> CHECKBOX_TYPE_ZAPFDINGBATS_CODE;
 
     static {
-        CHECKBOX_TYPE_ZAPFDINGBATS_CODE.put(CheckBoxType.CHECK, "4");
-        CHECKBOX_TYPE_ZAPFDINGBATS_CODE.put(CheckBoxType.CIRCLE, "l");
-        CHECKBOX_TYPE_ZAPFDINGBATS_CODE.put(CheckBoxType.CROSS, "8");
-        CHECKBOX_TYPE_ZAPFDINGBATS_CODE.put(CheckBoxType.DIAMOND, "u");
-        CHECKBOX_TYPE_ZAPFDINGBATS_CODE.put(CheckBoxType.SQUARE, "n");
-        CHECKBOX_TYPE_ZAPFDINGBATS_CODE.put(CheckBoxType.STAR, "H");
+        Map<CheckBoxType, String> initialMap = new HashMap<>();
+        initialMap.put(CheckBoxType.CHECK, "4");
+        initialMap.put(CheckBoxType.CIRCLE, "l");
+        initialMap.put(CheckBoxType.CROSS, "8");
+        initialMap.put(CheckBoxType.DIAMOND, "u");
+        initialMap.put(CheckBoxType.SQUARE, "n");
+        initialMap.put(CheckBoxType.STAR, "H");
+        CHECKBOX_TYPE_ZAPFDINGBATS_CODE = Collections.unmodifiableMap(initialMap);
+
     }
 
     /**

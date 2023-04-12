@@ -34,7 +34,6 @@ public class ExperimentalFeaturesTest extends ExtendedITextTest {
 
     @Test
     public void testDefaults() {
-        Assert.assertFalse(ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING);
         Assert.assertTrue(ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING);
     }
 }

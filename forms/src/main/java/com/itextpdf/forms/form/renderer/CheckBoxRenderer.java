@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.form.renderer;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
@@ -34,14 +33,11 @@ import com.itextpdf.forms.form.renderer.checkboximpl.HtmlCheckBoxRenderingStrate
 import com.itextpdf.forms.form.renderer.checkboximpl.ICheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfACheckBoxRenderingStrategy;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
-import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.properties.Background;
@@ -49,6 +45,7 @@ import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
@@ -63,10 +60,9 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
 
     // 1px
     public static final float DEFAULT_BORDER_WIDTH = 0.75F;
-    private static final Color DEFAULT_BORDER_COLOR = ColorConstants.DARK_GRAY;
-    private static final Color DEFAULT_BACKGROUND_COLOR = ColorConstants.WHITE;
     // 11px
     private static final float DEFAULT_SIZE = 8.25F;
+
 
     /**
      * Creates a new {@link CheckBoxRenderer} instance.
@@ -75,6 +71,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
      */
     public CheckBoxRenderer(CheckBox modelElement) {
         super(modelElement);
+        this.setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
     }
 
     /* (non-Javadoc)
@@ -141,25 +138,16 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
 
     @Override
     public void drawBackground(DrawContext drawContext) {
-        if (!ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
-            super.drawBackground(drawContext);
-        }
         // draw background in child
     }
 
     @Override
     public void drawBorder(DrawContext drawContext) {
-        if (!ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
-            super.drawBorder(drawContext);
-        }
         //draw border in child
     }
 
     @Override
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
-        if (!ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
-            return super.applyBorderBox(rect, borders, reverse);
-        }
         // Do not apply borders here, they will be applied in flat renderer
         return rect;
     }
@@ -173,12 +161,14 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         return Boolean.TRUE.equals(this.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.attach.impl.layout.form.renderer.AbstractFormFieldRenderer#adjustFieldLayout()
+    /**
+     * Adjusts the field layout.
+     *
+     * @param layoutContext layout context
      */
     @Override
     protected void adjustFieldLayout(LayoutContext layoutContext) {
-        this.setProperty(Property.BACKGROUND, null);
+        //we don't need any layout adjustments
     }
 
     /**
@@ -188,20 +178,25 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
      */
     @Override
     public IRenderer createFlatRenderer() {
-        if (!ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
-            final Paragraph paragraph = new Paragraph().setWidth(DEFAULT_SIZE).setHeight(DEFAULT_SIZE)
-                    .setBorder(new SolidBorder(DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH))
-                    .setBackgroundColor(DEFAULT_BACKGROUND_COLOR).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            return new FlatParagraphRenderer(paragraph);
-        }
         final UnitValue heightUV = getPropertyAsUnitValue(Property.HEIGHT);
         final UnitValue widthUV = getPropertyAsUnitValue(Property.WIDTH);
 
-        final float height = null == heightUV ? DEFAULT_SIZE : heightUV.getValue();
-        final float width = null == widthUV ? DEFAULT_SIZE : widthUV.getValue();
+        // if it is a percentage value, we need to calculate the actual value but we
+        // don't have the parent's width yet, so we will take the default value
+        float height = DEFAULT_SIZE;
+        if (heightUV != null && heightUV.isPointValue()) {
+            height = heightUV.getValue();
+        }
+
+        float width = DEFAULT_SIZE;
+        if (widthUV != null && widthUV.isPointValue()) {
+            width = widthUV.getValue();
+        }
 
         final Paragraph paragraph = new Paragraph().setWidth(width).setHeight(height).setMargin(0)
-                .setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment.CENTER);
+                .setVerticalAlignment(VerticalAlignment.MIDDLE)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER)
+                .setTextAlignment(TextAlignment.CENTER);
 
         paragraph.setProperty(Property.BOX_SIZING, this.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
@@ -225,20 +220,20 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setConformanceLevel(this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
+
         if (this.hasProperty(FormProperty.FORM_CHECKBOX_TYPE)) {
             builder.setCheckType((CheckBoxType) this.<CheckBoxType>getProperty(FormProperty.FORM_CHECKBOX_TYPE));
         }
         final PdfButtonFormField checkBox = builder.createCheckBox();
-        if (ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
-            final Border border = this.<Border>getProperty(Property.BORDER);
-            if (border != null) {
-                checkBox.getFirstFormAnnotation().setBorderColor(border.getColor());
-                checkBox.getFirstFormAnnotation().setBorderWidth(border.getWidth());
-            }
-            final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
-            if (background != null) {
-                checkBox.getFirstFormAnnotation().setBackgroundColor(background.getColor());
-            }
+        checkBox.getFirstFormAnnotation().setRenderingMode(this.getRenderingMode());
+        final Border border = this.<Border>getProperty(Property.BORDER);
+        if (border != null) {
+            checkBox.getFirstFormAnnotation().setBorderColor(border.getColor());
+            checkBox.getFirstFormAnnotation().setBorderWidth(border.getWidth());
+        }
+        final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
+        if (background != null) {
+            checkBox.getFirstFormAnnotation().setBackgroundColor(background.getColor());
         }
 
         checkBox.setValue(PdfFormAnnotation.ON_STATE_VALUE);

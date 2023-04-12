@@ -54,7 +54,6 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 
 import java.io.ByteArrayOutputStream;
@@ -113,7 +112,6 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     private static final Set<PdfName> FORM_FIELD_KEYS = new HashSet<>();
 
-    private static final String[] CHECKBOX_TYPE_ZAPFDINGBATS_CODE = {"4", "l", "8", "u", "n", "H"};
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormField.class);
 
@@ -1068,7 +1066,6 @@ public class PdfFormField extends AbstractPdfFormField {
             checkType = CheckBoxType.CROSS;
         }
         this.checkType = checkType;
-        text = CHECKBOX_TYPE_ZAPFDINGBATS_CODE[checkType.ordinal()];
         if (getPdfAConformanceLevel() != null) {
             return this;
         }

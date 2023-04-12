@@ -25,17 +25,16 @@ package com.itextpdf.forms.fields;
 import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
-import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.CheckBox;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.TextArea;
-import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.renderer.FormFieldValueNonTrimmingTextRenderer;
+import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.util.FontSizeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
@@ -76,6 +75,7 @@ import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
@@ -126,6 +126,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
     private Button formFieldElement;
 
+    //TODO DEVSIX-7423 remove this and use the one from the element
+    private RenderingMode renderingMode;
     /**
      * Creates a form field annotation as a wrapper of a {@link PdfWidgetAnnotation}.
      *
@@ -197,6 +199,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         regenerateField();
         return this;
+    }
+
+
+    //TODO DEVSIX-7423 remove this and use the one from the element
+    public void setRenderingMode(RenderingMode renderingMode) {
+        this.renderingMode = renderingMode;
     }
 
     /**
@@ -659,87 +667,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Draws the appearance of a checkbox with a specified state value.
-     *
-     * @param width       the width of the checkbox to draw
-     * @param height      the height of the checkbox to draw
-     * @param onStateName the state of the form field that will be drawn
-     */
-    //TODO DEVSIX-7443 remove method
-    protected void drawCheckAppearance(float width, float height, String onStateName) {
-        Rectangle rect = new Rectangle(0, 0, width, height);
-
-        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        drawBorder(canvasOn, xObjectOn, width, height);
-        drawCheckBox(canvasOn, width, height, getFontSize());
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-        xObjectOn.getResources().addFont(getDocument(), getFont());
-
-        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
-        drawBorder(canvasOff, xObjectOff, width, height);
-        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
-        xObjectOff.getResources().addFont(getDocument(), getFont());
-
-        PdfDictionary normalAppearance = new PdfDictionary();
-        normalAppearance.put(new PdfName(onStateName), xObjectOn.getPdfObject());
-        normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
-
-        PdfDictionary mk = new PdfDictionary();
-        mk.put(PdfName.CA, new PdfString(parent.text));
-
-        PdfWidgetAnnotation widget = getWidget();
-        widget.put(PdfName.MK, mk);
-        widget.setNormalAppearance(normalAppearance);
-    }
-
-    /**
-     * Draws PDF/A-2 compliant check appearance.
-     * Actually it's just PdfA check appearance. According to corrigendum there is no difference between them
-     *
-     * @param width       width of the checkbox
-     * @param height      height of the checkbox
-     * @param onStateName name that corresponds to the "On" state of the checkbox
-     * @param checkType   the type that determines how the checkbox will look like. Instance of {@link CheckBoxType}
-     */
-    //TODO DEVSIX-7443 remove method
-    protected void drawPdfA2CheckAppearance(float width, float height, String onStateName, CheckBoxType checkType) {
-        parent.checkType = checkType;
-        Rectangle rect = new Rectangle(0, 0, width, height);
-
-        PdfStream streamOn = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOn = new PdfCanvas(streamOn, new PdfResources(), getDocument());
-        PdfFormXObject xObjectOn = new PdfFormXObject(rect);
-        xObjectOn.getResources();
-
-        drawBorder(canvasOn, xObjectOn, width, height);
-        drawPdfACheckBox(canvasOn, width, height, true);
-        xObjectOn.getPdfObject().getOutputStream().writeBytes(streamOn.getBytes());
-
-        PdfStream streamOff = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfCanvas canvasOff = new PdfCanvas(streamOff, new PdfResources(), getDocument());
-        PdfFormXObject xObjectOff = new PdfFormXObject(rect);
-        xObjectOff.getResources();
-
-        drawBorder(canvasOff, xObjectOff, width, height);
-        xObjectOff.getPdfObject().getOutputStream().writeBytes(streamOff.getBytes());
-
-        PdfDictionary normalAppearance = new PdfDictionary();
-        normalAppearance.put(new PdfName(onStateName), xObjectOn.getPdfObject());
-        normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
-
-        PdfDictionary mk = new PdfDictionary();
-        mk.put(PdfName.CA, new PdfString(parent.text));
-
-        PdfWidgetAnnotation widget = getWidget();
-        widget.put(PdfName.MK, mk);
-        widget.setNormalAppearance(normalAppearance);
-    }
-
-    /**
      * Draws the appearance of a push button and saves it into an appearance stream.
      */
     protected void drawPushButtonFieldAndSaveAppearance() {
@@ -804,68 +731,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         // flushes TagTreePointer that will be used later, so set null to the corresponding property.
         canvas.setProperty(Property.TAGGING_HELPER, null);
         canvas.close();
-    }
-
-    /**
-     * Performs the low-level drawing operations to draw a checkbox object.
-     *
-     * @param canvas   the {@link PdfCanvas} of the page to draw on.
-     * @param width    the width of the button
-     * @param height   the width of the button
-     * @param fontSize the size of the font
-     */
-    //TODO DEVSIX-7443 remove method
-    protected void drawCheckBox(PdfCanvas canvas, float width, float height, float fontSize) {
-        if (parent.checkType == CheckBoxType.CROSS) {
-            DrawingUtil.drawCross(canvas, width, height, borderWidth);
-            return;
-        }
-        PdfFont ufont = getFont();
-        if (fontSize <= 0) {
-            // there is no min font size for checkbox, however we can't set 0, because it means auto size.
-            final float minFontSize = 0.1F;
-            fontSize = FontSizeUtil.approximateFontSizeToFitSingleLine(ufont, new Rectangle(width, height),
-                    parent.text, minFontSize, borderWidth);
-        }
-        // PdfFont gets all width in 1000 normalized units
-        canvas.beginText().setFontAndSize(ufont, fontSize).resetFillColorRgb()
-                .setTextMatrix((width - ufont.getWidth(parent.text, fontSize)) / 2,
-                        (height - ufont.getAscent(parent.text, fontSize)) / 2).showText(parent.text).endText();
-    }
-
-    /**
-     * Performs the low-level drawing operations to draw a PDF A complication checkbox.
-     *
-     * @param canvas the {@link PdfCanvas} of the page to draw on.
-     * @param width  the width of the button
-     * @param height the height of the button
-     * @param on     the state of the checkbox
-     */
-    protected void drawPdfACheckBox(PdfCanvas canvas, float width, float height, boolean on) {
-        //TODO DEVSIX-7443 remove method
-        if (!on) {
-            return;
-        }
-        switch (parent.checkType) {
-            case CHECK:
-                DrawingUtil.drawPdfACheck(canvas, width, height);
-                break;
-            case CIRCLE:
-                DrawingUtil.drawPdfACircle(canvas, width, height);
-                break;
-            case CROSS:
-                DrawingUtil.drawPdfACross(canvas, width, height);
-                break;
-            case DIAMOND:
-                DrawingUtil.drawPdfADiamond(canvas, width, height);
-                break;
-            case SQUARE:
-                DrawingUtil.drawPdfASquare(canvas, width, height);
-                break;
-            case STAR:
-                DrawingUtil.drawPdfAStar(canvas, width, height);
-                break;
-        }
     }
 
     /**
@@ -987,29 +852,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
     }
 
-    //TODO DEVSIX-7443 remove method
-    void regenerateCheckboxField(CheckBoxType checkType) {
-        parent.setCheckType(checkType);
-        final String value = parent.getValueAsString();
-        Rectangle rect = getRect(getPdfObject());
-
-        PdfWidgetAnnotation widget = (PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(getPdfObject());
-        if (getPdfAConformanceLevel() == null) {
-            drawCheckAppearance(rect.getWidth(), rect.getHeight(),
-                    OFF_STATE_VALUE.equals(value) ? ON_STATE_VALUE : value);
-        } else {
-            drawPdfA2CheckAppearance(rect.getWidth(), rect.getHeight(),
-                    OFF_STATE_VALUE.equals(value) ? ON_STATE_VALUE : value, parent.checkType);
-            widget.setFlag(PdfAnnotation.PRINT);
-        }
-
-        if (widget.getNormalAppearanceObject() != null &&
-                widget.getNormalAppearanceObject().containsKey(new PdfName(value))) {
-            widget.setAppearanceState(new PdfName(value));
-        } else {
-            widget.setAppearanceState(new PdfName(OFF_STATE_VALUE));
-        }
-    }
 
     boolean regenerateTextAndChoiceField() {
         String value = parent.getDisplayValue();
@@ -1157,13 +999,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             } else if (parent.getFieldFlag(PdfButtonFormField.FF_RADIO)) {
                 drawRadioButtonAndSaveAppearance(getRadioButtonValue());
             } else {
-                //TODO DEVSIX-7443 remove flag
-                if (ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING) {
-                    drawCheckBoxAndSaveAppearanceExperimental(parent.getValueAsString());
-                } else {
-                    //TODO DEVSIX-7443 remove method
-                    regenerateCheckboxField(parent.checkType);
-                }
+                drawCheckBoxAndSaveAppearance(parent.getValueAsString());
             }
             return true;
         }
@@ -1441,12 +1277,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Experimental method to draw a checkbox and save its appearance.
+     * Draw a checkbox and save its appearance.
      *
      * @param onStateName the name of the appearance state for the checked state
      */
-    //TODO DEVSIX-7443 rename experimental method
-    protected void drawCheckBoxAndSaveAppearanceExperimental(String onStateName) {
+    protected void drawCheckBoxAndSaveAppearance(String onStateName) {
         final Rectangle rect = getRect(this.getPdfObject());
         if (rect == null) {
             return;
@@ -1458,30 +1293,38 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (getWidget().getNormalAppearanceObject() == null) {
             getWidget().setNormalAppearance(new PdfDictionary());
         }
-        final PdfDictionary normalAppearance = getWidget().getNormalAppearanceObject();
+        final PdfDictionary normalAppearance = new PdfDictionary();
         formField.setChecked(false);
-        final PdfFormXObject xObjectOff = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
+        final PdfFormXObject xObjectOff = new PdfFormXObject(
+                new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
         final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
         canvasOff.add(formField);
-        xObjectOff.getResources().addFont(getDocument(), getFont());
+        if (getPdfAConformanceLevel() == null) {
+            xObjectOff.getResources().addFont(getDocument(), getFont());
+        }
         normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
 
-        if (onStateName != null && !onStateName.isEmpty() && !PdfFormAnnotation.OFF_STATE_VALUE.equals(onStateName)) {
-            formField.setChecked(true);
-            final PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
-            final Canvas canvas = new Canvas(xObject, this.getDocument());
-            canvas.add(formField);
-            normalAppearance.put(new PdfName(onStateName), xObject.getPdfObject());
+        String onStateNameForAp = onStateName;
+        if (onStateName == null || onStateName.isEmpty() || PdfFormAnnotation.OFF_STATE_VALUE.equals(onStateName)) {
+            onStateNameForAp = ON_STATE_VALUE;
         }
 
-        if (getWidget().getAppearanceCharacteristics() == null) {
-            getWidget().setAppearanceCharacteristics(new PdfDictionary());
-        }
+        formField.setChecked(true);
+        final PdfFormXObject xObject = new PdfFormXObject(
+                new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
+        final Canvas canvas = new Canvas(xObject, this.getDocument());
+        canvas.add(formField);
+        normalAppearance.put(new PdfName(onStateNameForAp), xObject.getPdfObject());
 
-        final PdfDictionary mk = getWidget().getAppearanceCharacteristics();
-        if (parent.text != null) {
-            mk.put(PdfName.CA, new PdfString(parent.text));
-        }
+        getWidget().setNormalAppearance(normalAppearance);
+
+        final PdfDictionary mk = new PdfDictionary();
+        // We put the zapfDingbats code of the checkbox in the MK dictionary to make sure there is a way
+        // to retrieve the checkbox type even if the appearance is not present.
+        mk.put(PdfName.CA,
+                new PdfString(PdfCheckBoxRenderingStrategy.CHECKBOX_TYPE_ZAPFDINGBATS_CODE.get(parent.checkType)));
+
+        getWidget().put(PdfName.MK, mk);
         setCheckBoxAppearanceState(onStateName);
 
     }
@@ -1493,12 +1336,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             widget.setAppearanceState(new PdfName(onStateName));
         } else {
             widget.setAppearanceState(new PdfName(OFF_STATE_VALUE));
-        }
-        // Remove appearance state if it is not used
-        final int amountOfAppearanceStatesAllowed = 2;
-        if (widget.getNormalAppearanceObject().keySet().size() > amountOfAppearanceStatesAllowed
-                && !ON_STATE_VALUE.equals(onStateName)) {
-            widget.getNormalAppearanceObject().remove(new PdfName(ON_STATE_VALUE));
         }
     }
 
@@ -1514,10 +1351,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             final PdfDictionary bs = getWidget().getBorderStyle();
             Border border = FormBorderFactory.getBorder(bs, borderWidth, borderColor, backgroundColor);
             if (border == null) {
-                // TODO DEVSIX-7443 1 is copied from the previous implementation, but it is not clear why it is needed
-                // we should actually check if we want to use a fallback value or if we would allow the user to have a
-                // very thin border
-                borderWidth = Math.max(1, getBorderWidth());
+                // while the checkbox is flattend tiny border get displayed correctly
+                // but with formfields the minimum border width is .5 for it to be displayed
+                // so to keep behavior consistent we set the border width to .5 when it is less than .5
+                borderWidth = Math.max(.5F, getBorderWidth());
                 border = new SolidBorder(borderColor, borderWidth);
             }
             checkBox.setBorder(border);
@@ -1525,6 +1362,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         if (backgroundColor != null) {
             checkBox.setBackgroundColor(backgroundColor);
+        }
+        if (renderingMode != null) {
+            checkBox.setProperty(Property.RENDERING_MODE, renderingMode);
         }
 
         //make font size auto calculated

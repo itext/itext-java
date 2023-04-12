@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms;
 
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.forms.xfdf.XfdfObject;
 import com.itextpdf.forms.xfdf.XfdfObjectFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -39,9 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -58,20 +55,6 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
-    }
-
-
-    private boolean experimentalCheckboxRendering;
-
-    @Before
-    public void before() {
-        experimentalCheckboxRendering = ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING;
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = false;
-    }
-
-    @After
-    public void after() {
-        ExperimentalFeatures.ENABLE_EXPERIMENTAL_CHECKBOX_RENDERING = experimentalCheckboxRendering;
     }
 
     @Test
