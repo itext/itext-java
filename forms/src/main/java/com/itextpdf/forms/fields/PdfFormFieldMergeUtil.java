@@ -100,10 +100,11 @@ public final class PdfFormFieldMergeUtil {
                                                          boolean throwExceptionOnError) {
         PdfName firstFieldFormType = firstField.getFormType();
         PdfObject firstFieldValue = firstField.getValue();
+        PdfObject secondFieldValue = secondField.getValue();
         PdfObject firstFieldDefaultValue = firstField.getDefaultValue();
         PdfObject secondFieldDefaultValue = secondField.getDefaultValue();
         if ((firstFieldFormType == null || firstFieldFormType.equals(secondField.getFormType())) &&
-                (firstFieldValue == null || firstFieldValue.equals(secondField.getValue())) &&
+                (firstFieldValue == null || secondFieldValue == null || firstFieldValue.equals(secondFieldValue)) &&
                 (firstFieldDefaultValue == null || secondFieldDefaultValue == null ||
                         firstFieldDefaultValue.equals(secondFieldDefaultValue))) {
             mergeFormFields(firstField, secondField, throwExceptionOnError);
@@ -156,9 +157,7 @@ public final class PdfFormFieldMergeUtil {
         for (PdfFormField field : parentField.getChildFormFields()) {
             PdfDictionary formDict = field.getPdfObject();
             // Process form fields without PdfName.Widget having only annotations as children
-            if (!PdfFormAnnotationUtil.isPureWidgetOrMergedField(formDict) &&
-                    field.getChildFields().size() > 0 &&
-                    field.getChildFormFields().size() == 0) {
+            if (field.getChildFields().size() > 0 && field.getChildFormFields().size() == 0) {
                 boolean shouldBeMerged = true;
 
                 // If parent is radio button we don't care about field related keys, always merge
@@ -194,16 +193,17 @@ public final class PdfFormFieldMergeUtil {
         PdfFormAnnotationUtil.separateWidgetAndField(secondField);
         PdfDictionary firstFieldDict = firstField.getPdfObject();
         PdfDictionary secondFieldDict = secondField.getPdfObject();
-        // Sometimes we merge field with its merged widget annotation, so secondField's /Parent is firstField.
-        // It can be a problem in case firstField is a root field, that's why secondField's /Parent is removed.
-        secondFieldDict.remove(PdfName.Parent);
+
         for (PdfName key : new ArrayList<>(secondFieldDict.keySet())) {
             if (PdfName.Kids.equals(key)) {
                 // Merge kids
                 for (AbstractPdfFormField kid : new ArrayList<>(secondField.getChildFields())) {
                     firstField.addKid(kid, throwExceptionOnError);
                 }
-            } else if (!firstFieldDict.containsKey(key)) {
+            } else if (PdfName.Parent.equals(key)) {
+                // Never copy parent
+            }
+            else if (!firstFieldDict.containsKey(key)) {
                 // Add all unique keys from the second field into the first field
                 firstField.put(key, secondFieldDict.get(key));
             }

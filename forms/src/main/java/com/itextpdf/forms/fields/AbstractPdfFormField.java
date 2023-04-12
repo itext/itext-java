@@ -501,4 +501,26 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
         }
         return null;
     }
+
+    /**
+     * Indicate whether some other object is "equal to" this one. Compares wrapped objects.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        return getPdfObject() == ((AbstractPdfFormField) o).getPdfObject();
+    }
+
+    /**
+     * Generate a hash code for this object.
+     */
+    @Override
+    public int hashCode() {
+        return getPdfObject().hashCode();
+    }
 }

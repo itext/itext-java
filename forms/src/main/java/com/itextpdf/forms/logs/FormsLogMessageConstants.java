@@ -79,6 +79,9 @@ public final class FormsLogMessageConstants {
 
     public static final String FIELD_VALUE_CANNOT_BE_NULL = "Field value cannot be null.";
 
+    public static final String FORM_FIELD_MUST_HAVE_A_NAME = "Form field must have a name."
+            + " Set it using PdfFormField#setFieldName call.";
+
     private FormsLogMessageConstants() {
     }
 }

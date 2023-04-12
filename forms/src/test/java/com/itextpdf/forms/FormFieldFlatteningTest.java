@@ -239,7 +239,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 5)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 4)})
     //Logging is expected since there are duplicate field names
     public void flattenReadOnly() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());

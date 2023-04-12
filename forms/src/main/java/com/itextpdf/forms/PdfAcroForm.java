@@ -209,23 +209,35 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param field the {@link PdfFormField} to be added to the form
      * @param page  the {@link PdfPage} on which to add the field
-     * @param replaceExisted if true then the existed form field will be replaced by a new one
-     *                       in case they have the same names
      */
-    public void addField(PdfFormField field, PdfPage page, boolean replaceExisted) {
+    public void addField(PdfFormField field, PdfPage page) {
+        addField(field, page, true);
+    }
+
+    /**
+     * This method adds the field to a specific page.
+     *
+     * @param field the {@link PdfFormField} to be added to the form
+     * @param page  the {@link PdfPage} on which to add the field
+     * @param throwExceptionOnError true if the exception is expected to be thrown in case of error.
+     */
+    public void addField(PdfFormField field, PdfPage page, boolean throwExceptionOnError) {
         if (!field.getPdfObject().containsKey(PdfName.T)) {
-            throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
+            if (throwExceptionOnError) {
+                throw new PdfException(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME);
+            } else {
+                LOGGER.warn(FormsLogMessageConstants.FORM_FIELD_MUST_HAVE_A_NAME);
+                return;
+            }
         }
 
-        if (!replaceExisted) {
-            PdfFormFieldMergeUtil.mergeKidsWithSameNames(field, true);
-        }
+        PdfFormFieldMergeUtil.mergeKidsWithSameNames(field, throwExceptionOnError);
 
         PdfDictionary fieldDict = field.getPdfObject();
         // PdfPageFormCopier expects that we replace existed field by a new one in case they have the same names.
         String fieldName = field.getFieldName().toUnicodeString();
-        if (replaceExisted || !fields.containsKey(fieldName) ||
-                !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(fieldName), field, true)) {
+        if (!fields.containsKey(fieldName) ||
+                !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(fieldName), field, throwExceptionOnError)) {
             PdfArray fieldsArray = getFields();
             fieldsArray.add(fieldDict);
             fieldsArray.setModified();
@@ -238,16 +250,6 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         }
 
         setModified();
-    }
-
-    /**
-     * This method adds the field to a specific page.
-     *
-     * @param field the {@link PdfFormField} to be added to the form
-     * @param page  the {@link PdfPage} on which to add the field
-     */
-    public void addField(PdfFormField field, PdfPage page) {
-        addField(field, page, false);
     }
 
     /**

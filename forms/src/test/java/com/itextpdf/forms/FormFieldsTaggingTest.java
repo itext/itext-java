@@ -212,6 +212,41 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         compareOutput(outFileName, cmpFileName);
     }
 
+    @Test
+    public void mergeFieldTaggingTest08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "mergeFieldTaggingTest08.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeFieldTaggingTest08.pdf";
+        String srcFileName = sourceFolder + "mergeFieldTaggingTest08.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+            pdfDoc.setTagged();
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+            addFormFieldsToDocument(pdfDoc, form);
+        }
+
+        compareOutput(outFileName, cmpFileName);
+    }
+
+    @Test
+    public void mergeFieldTaggingTest09() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "mergeFieldTaggingTest09.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeFieldTaggingTest09.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            pdfDoc.setTagged();
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+            addFormFieldsToDocument(pdfDoc, form);
+            addFormFieldsToDocument(pdfDoc, form);
+        }
+
+        compareOutput(outFileName, cmpFileName);
+        compareOutput(outFileName, sourceFolder + "cmp_mergeFieldTaggingTest08.pdf");
+    }
+
     private void addFormFieldsToDocument(PdfDocument pdfDoc, PdfAcroForm acroForm) {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
@@ -223,7 +258,6 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         group.addKid(builder.createRadioButton("1", rect));
         group.addKid(builder.createRadioButton("2", rect1));
-
 
         acroForm.addField(group);
 

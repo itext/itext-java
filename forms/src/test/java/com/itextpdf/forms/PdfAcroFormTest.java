@@ -304,6 +304,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.FORM_FIELD_MUST_HAVE_A_NAME))
     public void namelessFieldTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
@@ -318,6 +319,8 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfPage page = outputDoc.getLastPage();
             e = Assert.assertThrows(PdfException.class, () -> acroForm.addField(field, page));
             Assert.assertEquals(FormsExceptionMessageConstant.FORM_FIELD_MUST_HAVE_A_NAME, e.getMessage());
+
+            acroForm.addField(field, page, false);
 
             Assert.assertEquals(0, acroForm.getDirectFormFields().size());
         }

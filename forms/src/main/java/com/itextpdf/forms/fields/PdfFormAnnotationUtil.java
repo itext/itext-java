@@ -123,6 +123,8 @@ public final class PdfFormAnnotationUtil {
                 field.getPdfObject().mergeDifferent(kidDict);
                 field.removeChildren();
                 field.setChildField(PdfFormAnnotation.makeFormAnnotation(field.getPdfObject(), field.getDocument()));
+
+                replaceAnnotationOnPage(kidDict, field.getPdfObject());
             }
         }
     }
@@ -155,9 +157,9 @@ public final class PdfFormAnnotationUtil {
         }
     }
 
-    private static void replaceAnnotationOnPage(PdfDictionary fieldDict, PdfDictionary widgetDict) {
+    private static void replaceAnnotationOnPage(PdfDictionary oldAnnotDict, PdfDictionary newAnnotDict) {
         // Get page for the old annotation
-        PdfAnnotation oldAnnot = PdfAnnotation.makeAnnotation(fieldDict);
+        PdfAnnotation oldAnnot = PdfAnnotation.makeAnnotation(oldAnnotDict);
         PdfPage page = oldAnnot.getPage();
 
         // Remove old annotation and add new
@@ -165,17 +167,17 @@ public final class PdfFormAnnotationUtil {
             int annotIndex = -1;
             PdfArray annots = page.getPdfObject().getAsArray(PdfName.Annots);
             if (annots != null) {
-                annotIndex = annots.indexOf(fieldDict);
+                annotIndex = annots.indexOf(oldAnnotDict);
             }
             page.removeAnnotation(oldAnnot, true);
-            fieldDict.remove(PdfName.P);
+            oldAnnotDict.remove(PdfName.P);
             if (annotIndex >= page.getAnnotsSize()) {
                 annotIndex = -1;
             }
-            if (widgetDict.get(PdfName.P) == null) {
-                widgetDict.put(PdfName.P, page.getPdfObject());
+            if (newAnnotDict.get(PdfName.P) == null) {
+                newAnnotDict.put(PdfName.P, page.getPdfObject());
             }
-            addNewWidgetToPage(page, widgetDict, annotIndex);
+            addNewWidgetToPage(page, newAnnotDict, annotIndex);
         }
     }
 
