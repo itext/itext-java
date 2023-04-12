@@ -41,6 +41,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DrawContext;
@@ -152,6 +153,9 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
             setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flatBBox.setHeight(0);
         } else {
+            if (!hasOwnOrModelProperty(FormProperty.FORM_FIELD_ROWS)) {
+                setProperty(FormProperty.FORM_FIELD_ROWS, flatLines.size());
+            }
             cropContentLines(flatLines, flatBBox);
         }
         flatBBox.setWidth((float) retrieveWidth(layoutContext.getArea().getBBox().getWidth()));
@@ -200,15 +204,21 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         }
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
+        applyMargins(area, false);
+        deleteMargins();
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
         final PdfString defaultValue = new PdfString(getDefaultValue());
 
+        // Default html2pdf text area appearance differs from the default one for form fields.
+        // That's why we got rid of several properties we set by default during TextArea instance creation.
+        modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         final PdfFormField inputField = new TextFormFieldBuilder(doc, name)
                 .setWidgetRectangle(area).createMultilineText().setValue(value);
         inputField.setFont(font).setFontSize(fontSizeValue);
         inputField.setDefaultValue(defaultValue);
         applyDefaultFieldProperties(inputField);
+        inputField.getFirstFormAnnotation().setFormFieldElement((TextArea) modelElement);
         PdfAcroForm.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);

@@ -42,8 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 
 // Temporarily public, make it package private on cleanup of PdfFormAnnotation
-// TODO DEVSIX-7423 (or put another devsix if the usage of this class is not removed from PdfFormAnnotation
-//  as part of DEVSIX-7423)
+// TODO DEVSIX-7385 Finalize code related to form fields renderers separation
 public class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
     // Determines whether we want to trim leading space. In particular we don't want to trim
     // the very first leading spaces of the text value. When text overflows to the next lines,

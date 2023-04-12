@@ -38,6 +38,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DrawContext;
@@ -164,9 +165,14 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         }
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = this.getOccupiedArea().getBBox().clone();
+        applyMargins(area, false);
+        deleteMargins();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
 
+        // Default html2pdf input field appearance differs from the default one for form fields.
+        // That's why we got rid of several properties we set by default during InputField instance creation.
+        modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area).createText()
                 .setValue(value);
         inputField.setFont(font).setFontSize(fontSizeValue);
@@ -180,6 +186,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             inputField.getFirstFormAnnotation().setRotation(rotation);
         }
         applyDefaultFieldProperties(inputField);
+        inputField.getFirstFormAnnotation().setFormFieldElement((InputField) modelElement);
         PdfAcroForm.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);

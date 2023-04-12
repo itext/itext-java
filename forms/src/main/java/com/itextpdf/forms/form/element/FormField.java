@@ -64,25 +64,27 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
     }
 
     /**
-     * Set the form field's width.
+     * {@inheritDoc}
      *
-     * @param width form field's width
+     * @param width {@inheritDoc}
      *
-     * @return this {@link FormField} element.
+     * @return {@inheritDoc}
      */
-    public T setWidth(float width) {
+    @Override
+    public IFormField setWidth(float width) {
         setProperty(Property.WIDTH, UnitValue.createPointValue(width));
         return (T) (Object) this;
     }
 
     /**
-     * Set the form field's height.
+     * {@inheritDoc}
      *
-     * @param height form field's height
+     * @param height {@inheritDoc}
      *
-     * @return this {@link FormField} element.
+     * @return {@inheritDoc}
      */
-    public T setHeight(float height) {
+    @Override
+    public IFormField setHeight(float height) {
         setProperty(Property.HEIGHT, UnitValue.createPointValue(height));
         return (T) (Object) this;
     }

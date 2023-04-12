@@ -35,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
@@ -193,6 +194,33 @@ public class InputButtonTest extends ExtendedITextTest {
             formInputButton.setFontSize(50);
             formInputButton.setSingleLineValue("Caption");
             document.add(formInputButton);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void inputButtonWithMarginsPaddingsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "inputButtonWithMarginsPaddings.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_inputButtonWithMarginsPaddings.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            Div div = new Div().setBackgroundColor(ColorConstants.PINK);
+            Button formInputButton = new Button("button");
+            formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formInputButton.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(20));
+            formInputButton.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20));
+            formInputButton.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(20));
+            formInputButton.setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(20));
+            formInputButton.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(20));
+            formInputButton.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20));
+            formInputButton.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(20));
+            formInputButton.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(20));
+            formInputButton.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 20));
+            formInputButton.setFontSize(20);
+            formInputButton.setSingleLineValue("Caption");
+            div.add(formInputButton);
+            document.add(div);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));

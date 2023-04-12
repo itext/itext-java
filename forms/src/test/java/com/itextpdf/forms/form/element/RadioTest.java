@@ -36,9 +36,11 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.DottedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -277,6 +279,27 @@ public class RadioTest extends ExtendedITextTest {
                     new SolidBorder(ColorConstants.BLUE, 1), ColorConstants.GREEN, true, true);
             flattenRadio1.setSize(825f);
             document.add(flattenRadio1);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void radioWithMarginsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "radioWithMargins.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_radioWithMargins.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            Div div = new Div().setBackgroundColor(ColorConstants.PINK);
+            Radio radio = createRadioButton("radio", "form radio group",
+                    new SolidBorder(ColorConstants.DARK_GRAY, 20), ColorConstants.WHITE, true, false);
+            radio.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(20));
+            radio.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20));
+            radio.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(20));
+            radio.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(20));
+            radio.setSize(100);
+            div.add(radio);
+            document.add(div);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));

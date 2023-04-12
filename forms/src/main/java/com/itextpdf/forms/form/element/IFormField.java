@@ -42,7 +42,7 @@ public interface IFormField extends IBlockElement {
      * Set the form field to be interactive and added into Acroform instead of drawing it on a page.
      *
      * @param interactive {@code true} if the form field element shall be added into Acroform, {@code false} otherwise.
-     *                By default, the form field element is not interactive and drawn on a page.
+     *                    By default, the form field element is not interactive and drawn on a page.
      *
      * @return this same {@link IFormField} instance.
      */
@@ -54,4 +54,22 @@ public interface IFormField extends IBlockElement {
      * @return the id.
      */
     String getId();
+
+    /**
+     * Set the form field's width.
+     *
+     * @param width form field's width.
+     *
+     * @return this {@link FormField} element.
+     */
+    IFormField setWidth(float width);
+
+    /**
+     * Set the form field's height.
+     *
+     * @param height form field's height.
+     *
+     * @return this {@link FormField} element.
+     */
+    IFormField setHeight(float height);
 }

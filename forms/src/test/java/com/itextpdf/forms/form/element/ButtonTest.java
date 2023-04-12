@@ -26,6 +26,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.ButtonRenderer;
 import com.itextpdf.forms.form.renderer.InputFieldRenderer;
@@ -33,14 +34,19 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
@@ -168,6 +174,105 @@ public class ButtonTest extends ExtendedITextTest {
                     .setBorderWidth(1).setBorderColor(ColorConstants.MAGENTA).setBackgroundColor(ColorConstants.PINK)
                     .setVisibility(PdfFormAnnotation.VISIBLE);
             form.addField(button);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void borderBoxesTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "borderBoxes.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_borderBoxes.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            // BORDER_BOX
+            Button interactiveButton = new Button("interactiveButton")
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 10));
+            interactiveButton.setWidth(200);
+            interactiveButton.setInteractive(true);
+            interactiveButton.setValue("interactive border box");
+            interactiveButton.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            document.add(interactiveButton);
+
+            // CONTENT_BOX
+            Button interactiveButton2 = new Button("interactiveButton")
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 10));
+            interactiveButton2.setWidth(200);
+            interactiveButton2.setInteractive(true);
+            interactiveButton2.setValue("interactive content box");
+            interactiveButton2.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.CONTENT_BOX);
+            document.add(interactiveButton2);
+
+            // BORDER_BOX
+            Button flattenButton = new Button("flattenButton")
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 10));
+            flattenButton.setWidth(200);
+            flattenButton.setInteractive(false);
+            flattenButton.setValue("flatten border box");
+            flattenButton.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            document.add(flattenButton);
+
+            // CONTENT_BOX
+            Button flattenButton2 = new Button("flattenButton")
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 10));
+            flattenButton2.setWidth(200);
+            flattenButton2.setInteractive(false);
+            flattenButton2.setValue("flatten content box");
+            flattenButton2.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.CONTENT_BOX);
+            document.add(flattenButton2);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void borderTypesTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "borderTypes.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_borderTypes.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            // DASHED
+            Button button = new Button("button")
+                    .setBorder(new DashedBorder(ColorConstants.PINK, 10))
+                    .setBackgroundColor(ColorConstants.YELLOW);
+            button.setWidth(100);
+            button.setInteractive(true);
+            button.setValue("dashed");
+            document.add(button);
+
+            PdfDictionary bs = new PdfDictionary();
+            // UNDERLINE
+            bs.put(PdfName.S, PdfAnnotation.STYLE_UNDERLINE);
+            Button button2 = new Button("button2")
+                    .setBorder(FormBorderFactory.getBorder(bs, 10f, ColorConstants.YELLOW,
+                            ColorConstants.ORANGE))
+                    .setBackgroundColor(ColorConstants.PINK);
+            button2.setSize(100);
+            button2.setInteractive(true);
+            button2.setValue("underline");
+            document.add(button2);
+
+            // INSET
+            bs.put(PdfName.S, PdfAnnotation.STYLE_INSET);
+            Button button3 = new Button("button3")
+                    .setBorder(FormBorderFactory.getBorder(bs, 10f, ColorConstants.PINK,
+                            ColorConstants.RED))
+                    .setBackgroundColor(ColorConstants.YELLOW);
+            button3.setSize(100);
+            button3.setInteractive(true);
+            button3.setValue("inset");
+            document.add(button3);
+
+            // BEVELLED
+            bs.put(PdfName.S, PdfAnnotation.STYLE_BEVELED);
+            Button button4 = new Button("button4")
+                    .setBorder(FormBorderFactory.getBorder(bs, 10f, ColorConstants.YELLOW,
+                            ColorConstants.ORANGE))
+                    .setBackgroundColor(ColorConstants.PINK);
+            button4.setSize(100);
+            button4.setInteractive(true);
+            button4.setValue("bevelled");
+            document.add(button4);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));

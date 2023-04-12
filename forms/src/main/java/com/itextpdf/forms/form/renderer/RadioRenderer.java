@@ -163,6 +163,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
         Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
+        deleteMargins();
 
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         String groupName = this.<String>getProperty(FormProperty.FORM_FIELD_RADIO_GROUP_NAME);
@@ -188,11 +189,8 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         if (background != null) {
             radio.setBackgroundColor(background.getColor());
         }
-        Border border = this.<Border>getProperty(Property.BORDER);
-        if (border != null) {
-            radio.setBorderColor(border.getColor());
-            radio.setBorderWidth(border.getWidth());
-        }
+        applyBorderProperty(radio);
+        radio.setFormFieldElement((Radio) modelElement);
 
         radioGroup.addKid(radio);
 

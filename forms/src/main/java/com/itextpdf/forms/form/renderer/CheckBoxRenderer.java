@@ -217,6 +217,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final String name = getModelId();
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
+        deleteMargins();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setConformanceLevel(this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
@@ -225,21 +226,16 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
             builder.setCheckType((CheckBoxType) this.<CheckBoxType>getProperty(FormProperty.FORM_CHECKBOX_TYPE));
         }
         final PdfButtonFormField checkBox = builder.createCheckBox();
-        checkBox.getFirstFormAnnotation().setRenderingMode(this.getRenderingMode());
-        final Border border = this.<Border>getProperty(Property.BORDER);
-        if (border != null) {
-            checkBox.getFirstFormAnnotation().setBorderColor(border.getColor());
-            checkBox.getFirstFormAnnotation().setBorderWidth(border.getWidth());
-        }
+        applyBorderProperty(checkBox.getFirstFormAnnotation());
         final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
             checkBox.getFirstFormAnnotation().setBackgroundColor(background.getColor());
         }
-
         checkBox.setValue(PdfFormAnnotation.ON_STATE_VALUE);
         if (!isBoxChecked()) {
             checkBox.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
         }
+        checkBox.getFirstFormAnnotation().setFormFieldElement((CheckBox) modelElement);
 
         PdfAcroForm.getAcroForm(doc, true).addField(checkBox, page);
         writeAcroFormFieldLangAttribute(doc);

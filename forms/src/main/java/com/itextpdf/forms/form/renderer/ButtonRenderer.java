@@ -266,6 +266,7 @@ public class ButtonRenderer extends AbstractTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
+        deleteMargins();
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
@@ -287,12 +288,7 @@ public class ButtonRenderer extends AbstractTextFieldRenderer {
         button.setFont(font).setFontSize(fontSizeValue);
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
-        Border border = getBorders()[0];
-        if (border != null) {
-            button.getFirstFormAnnotation().setBorderColor(border.getColor());
-            button.getFirstFormAnnotation().setBorderWidth(border.getWidth());
-        }
-        button.getFirstFormAnnotation().setFormFieldElement((Button)modelElement);
+        button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);
         PdfAcroForm forms = PdfAcroForm.getAcroForm(doc, true);
         // Fields can be already added on split, e.g. when button split into multiple pages. But now we merge fields
         // with the same names (and add all the widgets as kids to that merged field), so we can add it anyway.

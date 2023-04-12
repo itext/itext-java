@@ -38,7 +38,6 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.FontSizeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -124,10 +123,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
     private static final String LINE_ENDINGS_REGEXP = "\\r\\n|\\r|\\n";
 
-    private Button formFieldElement;
+    private IFormField formFieldElement;
 
-    //TODO DEVSIX-7423 remove this and use the one from the element
-    private RenderingMode renderingMode;
     /**
      * Creates a form field annotation as a wrapper of a {@link PdfWidgetAnnotation}.
      *
@@ -199,12 +196,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         regenerateField();
         return this;
-    }
-
-
-    //TODO DEVSIX-7423 remove this and use the one from the element
-    public void setRenderingMode(RenderingMode renderingMode) {
-        this.renderingMode = renderingMode;
     }
 
     /**
@@ -404,13 +395,18 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Sets an element associated with the current field.
+     * This method sets the model element associated with the current annotation and can be useful to take into account
+     * when drawing those properties that the annotation does not have. Note that annotation properties will take
+     * precedence, so such properties cannot be overridden by using this method (e.g. background, text color, etc.).
+     *
+     * <p>
+     * Also note that the model element won't be used for annotations for choice form field.
      *
      * @param element model element to set.
      *
      * @return this {@link PdfFormAnnotation}.
      */
-    public PdfFormAnnotation setFormFieldElement(Button element) {
+    public PdfFormAnnotation setFormFieldElement(IFormField element) {
         this.formFieldElement = element;
         regenerateWidget();
         return this;
@@ -689,7 +685,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         String caption = parent.getDisplayValue();
         if (caption != null && !caption.isEmpty()) {
-            formFieldElement.setSingleLineValue(caption);
+            ((Button) formFieldElement).setSingleLineValue(caption);
         }
 
         float imagePadding = borderColor == null ? 0 : borderWidth;
@@ -700,14 +696,14 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             Image image = new Image(new PdfImageXObject(parent.img), imagePadding, imagePadding);
             image.setHeight(height - 2 * imagePadding);
             image.setWidth(width - 2 * imagePadding);
-            formFieldElement.add(image);
+            ((Button) formFieldElement).add(image);
         } else if (parent.form != null) {
             // If we got here, the button will only contain the image that the user has set as form into the annotation.
             // There is no way to pass other elements with this image as form.
             formFieldElement.getChildren().clear();
             Image image = new Image(parent.form, imagePadding, imagePadding);
             image.setHeight(height - 2 * imagePadding);
-            formFieldElement.add(image);
+            ((Button) formFieldElement).add(image);
         } else {
             xObject.getResources().addFont(getDocument(), getFont());
         }
@@ -744,23 +740,28 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
 
-        Radio formField = createRadio();
+        if (!(formFieldElement instanceof Radio)) {
+            // Create it one time and re-set properties during each widget regeneration.
+            formFieldElement = new Radio("");
+        }
+        setModelElementProperties(getRect(getPdfObject()));
+
         // First draw off appearance
-        formField.setChecked(false);
+        ((Radio) formFieldElement).setChecked(false);
         PdfFormXObject xObjectOff = new PdfFormXObject(
                 new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
         Canvas canvasOff = new Canvas(xObjectOff, this.getDocument());
-        canvasOff.add(formField);
+        canvasOff.add(formFieldElement);
         PdfDictionary normalAppearance = new PdfDictionary();
         normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
 
         // Draw on appearance
         if (value != null && !value.isEmpty() && !PdfFormAnnotation.OFF_STATE_VALUE.equals(value)) {
-            formField.setChecked(true);
+            ((Radio) formFieldElement).setChecked(true);
             PdfFormXObject xObject = new PdfFormXObject(
                     new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
             Canvas canvas = new Canvas(xObject, this.getDocument());
-            canvas.add(formField);
+            canvas.add(formFieldElement);
             normalAppearance.put(new PdfName(value), xObject.getPdfObject());
         }
 
@@ -776,34 +777,30 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
 
-        IFormField textFormField;
         String value = parent.getDisplayValue();
+        if (!(parent.isMultiline() && formFieldElement instanceof TextArea ||
+                        !parent.isMultiline() && formFieldElement instanceof InputField)) {
+            // Create it one time and re-set properties during each widget regeneration.
+            formFieldElement = parent.isMultiline() ?
+                    (IFormField) new TextArea("") :
+                    (IFormField) new InputField("");
+        }
         if (parent.isMultiline()) {
-            textFormField = new TextArea("");
-            textFormField.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
+            formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
         } else {
-            textFormField = new InputField("");
-            textFormField.setProperty(Property.FONT_SIZE,
+            formFieldElement.setProperty(Property.FONT_SIZE,
                     UnitValue.createPointValue(getFontSize(new PdfArray(rectangle), parent.getValueAsString())));
             value = value.replaceAll(LINE_ENDINGS_REGEXP, " ");
         }
-        textFormField.setProperty(FormProperty.FORM_FIELD_VALUE, value);
-        textFormField.setProperty(Property.FONT, getFont());
-        textFormField.setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
-        textFormField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, getParentField().isPassword());
-        textFormField.setProperty(Property.ADD_MARKED_CONTENT_TEXT, true);
+        formFieldElement.setValue(value);
+        formFieldElement.setProperty(Property.FONT, getFont());
+        formFieldElement.setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
+        formFieldElement.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, getParentField().isPassword());
+        formFieldElement.setProperty(Property.ADD_MARKED_CONTENT_TEXT, Boolean.TRUE);
+
         if (getColor() != null) {
-            textFormField.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
+            formFieldElement.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
         }
-
-        textFormField.setProperty(Property.BORDER, getBorder());
-
-        if (backgroundColor != null) {
-            textFormField.setProperty(Property.BACKGROUND, new Background(backgroundColor, 1f, 0, 0, 0, 0));
-        }
-
-        // Always flatten
-        textFormField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
 
         // Rotation
         final int fieldRotation = getRotation() % 360;
@@ -815,9 +812,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             rectangle = invertedRectangle;
         }
 
-        // Set fixed size
-        textFormField.setProperty(Property.WIDTH, UnitValue.createPointValue(rectangle.getWidth()));
-        textFormField.setProperty(Property.HEIGHT, UnitValue.createPointValue(rectangle.getHeight()));
+        setModelElementProperties(rectangle);
 
         PdfFormXObject xObject = new PdfFormXObject(
                 new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
@@ -826,7 +821,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         Canvas canvas = new Canvas(xObject, this.getDocument());
         canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
-        canvas.add(textFormField);
+        canvas.add(formFieldElement);
 
         getWidget().setNormalAppearance(xObject.getPdfObject());
     }
@@ -1007,72 +1002,19 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     void createInputButton() {
-        final Rectangle rect = getRect(getPdfObject());
-        if (rect == null) {
-            formFieldElement = null;
-            return;
-        }
-
-        if (formFieldElement == null) {
+        if (!(formFieldElement instanceof Button)) {
             // Create it one time and re-set properties during each widget regeneration.
             formFieldElement = new Button(parent.getFieldName().toUnicodeString());
         }
 
-        formFieldElement.setFont(getFont());
-        formFieldElement.setFontSize(getFontSize(getPdfObject()
+        ((Button) formFieldElement).setFont(getFont());
+        ((Button) formFieldElement).setFontSize(getFontSize(getPdfObject()
                 .getAsArray(PdfName.Rect), parent.getDisplayValue()));
-        if (getColor() == null) {
-            final TransparentColor transparentColor =
-                    formFieldElement.<TransparentColor>getProperty(Property.FONT_COLOR);
-            color = transparentColor == null ? ColorConstants.BLACK : transparentColor.getColor();
-        }
-        formFieldElement.setFontColor(color);
-
-        formFieldElement.setBackgroundColor(backgroundColor);
-        if (borderWidth > 0 && borderColor != null) {
-            final float borderWidth = Math.max(1, getBorderWidth());
-            // Don't take border into account as it will be drawn inside
-            Border border = FormBorderFactory.getBorder(getWidget().getBorderStyle(),
-                    borderWidth, borderColor, backgroundColor);
-            formFieldElement.setBorder(border != null ? border : new SolidBorder(borderColor, borderWidth));
+        if (getColor() != null) {
+            ((Button) formFieldElement).setFontColor(color);
         }
 
-        // Set fixed size
-        formFieldElement.setProperty(Property.WIDTH, UnitValue.createPointValue(rect.getWidth()));
-        formFieldElement.setProperty(Property.HEIGHT, UnitValue.createPointValue(rect.getHeight()));
-
-        // Always flatten
-        formFieldElement.setInteractive(false);
-    }
-
-    Radio createRadio() {
-        final Rectangle rect = getRect(getPdfObject());
-        if (rect == null) {
-            return null;
-        }
-
-        // id doesn't matter here
-        Radio radio = new Radio("");
-
-        // Border
-        if (getBorderWidth() > 0 && borderColor != null) {
-            Border border = new SolidBorder(Math.max(1, getBorderWidth()));
-            border.setColor(borderColor);
-            radio.setBorder(border);
-        }
-
-        if (backgroundColor != null) {
-            radio.setBackgroundColor(backgroundColor);
-        }
-
-        // Set fixed size
-        radio.setProperty(Property.WIDTH, UnitValue.createPointValue(rect.getWidth()));
-        radio.setProperty(Property.HEIGHT, UnitValue.createPointValue(rect.getHeight()));
-
-        // Always flatten
-        radio.setInteractive(false);
-
-        return radio;
+        setModelElementProperties(getRect(getPdfObject()));
     }
 
     float getFontSize(PdfArray bBox, String value) {
@@ -1286,19 +1228,16 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (rect == null) {
             return;
         }
-        final CheckBox formField = createCheckBox();
-        if (formField == null) {
-            return;
-        }
+        createCheckBox();
         if (getWidget().getNormalAppearanceObject() == null) {
             getWidget().setNormalAppearance(new PdfDictionary());
         }
         final PdfDictionary normalAppearance = new PdfDictionary();
-        formField.setChecked(false);
+        ((CheckBox) formFieldElement).setChecked(false);
         final PdfFormXObject xObjectOff = new PdfFormXObject(
                 new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
         final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
-        canvasOff.add(formField);
+        canvasOff.add(formFieldElement);
         if (getPdfAConformanceLevel() == null) {
             xObjectOff.getResources().addFont(getDocument(), getFont());
         }
@@ -1309,11 +1248,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             onStateNameForAp = ON_STATE_VALUE;
         }
 
-        formField.setChecked(true);
+        ((CheckBox) formFieldElement).setChecked(true);
         final PdfFormXObject xObject = new PdfFormXObject(
                 new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
         final Canvas canvas = new Canvas(xObject, this.getDocument());
-        canvas.add(formField);
+        canvas.add(formFieldElement);
         normalAppearance.put(new PdfName(onStateNameForAp), xObject.getPdfObject());
 
         getWidget().setNormalAppearance(normalAppearance);
@@ -1326,7 +1265,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         getWidget().put(PdfName.MK, mk);
         setCheckBoxAppearanceState(onStateName);
-
     }
 
     private void setCheckBoxAppearanceState(String onStateName) {
@@ -1339,44 +1277,32 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
     }
 
-    private CheckBox createCheckBox() {
-        Rectangle rect = getRect(getPdfObject());
-        if (rect == null) {
-            return null;
-        }
-        rect = rect.clone();
-        final CheckBox checkBox = new CheckBox("");
-        if (getBorderWidth() > 0 && borderColor != null) {
-            float borderWidth = getBorderWidth();
-            final PdfDictionary bs = getWidget().getBorderStyle();
-            Border border = FormBorderFactory.getBorder(bs, borderWidth, borderColor, backgroundColor);
-            if (border == null) {
-                // while the checkbox is flattend tiny border get displayed correctly
-                // but with formfields the minimum border width is .5 for it to be displayed
-                // so to keep behavior consistent we set the border width to .5 when it is less than .5
-                borderWidth = Math.max(.5F, getBorderWidth());
-                border = new SolidBorder(borderColor, borderWidth);
-            }
-            checkBox.setBorder(border);
+    private void createCheckBox() {
+        if (!(formFieldElement instanceof CheckBox)) {
+            // Create it one time and re-set properties during each widget regeneration.
+            formFieldElement = new CheckBox("");
         }
 
+        // Make font size auto calculated
+        formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
+        setModelElementProperties(getRect(getPdfObject()));
+        ((CheckBox) formFieldElement).setPdfAConformanceLevel(getPdfAConformanceLevel());
+        ((CheckBox) formFieldElement).setCheckBoxType(parent.checkType);
+    }
+
+    private void setModelElementProperties(Rectangle rectangle) {
         if (backgroundColor != null) {
-            checkBox.setBackgroundColor(backgroundColor);
+            formFieldElement.setProperty(Property.BACKGROUND, new Background(backgroundColor));
         }
-        if (renderingMode != null) {
-            checkBox.setProperty(Property.RENDERING_MODE, renderingMode);
-        }
-
-        //make font size auto calculated
-        checkBox.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
+        formFieldElement.setProperty(Property.BORDER, getBorder());
         // Set fixed size
-        checkBox.setProperty(Property.WIDTH, UnitValue.createPointValue(rect.getWidth()));
-        checkBox.setProperty(Property.HEIGHT, UnitValue.createPointValue(rect.getHeight()));
+        BoxSizingPropertyValue boxSizing = formFieldElement.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
+        // Borders are already taken into account for rectangle area, but shouldn't be included into width and height
+        // of the field in case of content-box value of box-sizing property.
+        float extraBorderWidth = BoxSizingPropertyValue.CONTENT_BOX == boxSizing ? 2 * borderWidth : 0;
+        formFieldElement.setWidth(rectangle.getWidth() - extraBorderWidth);
+        formFieldElement.setHeight(rectangle.getHeight() - extraBorderWidth);
         // Always flatten
-
-        checkBox.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
-        checkBox.setPdfAConformanceLevel(getPdfAConformanceLevel());
-        checkBox.setCheckBoxType(parent.checkType);
-        return checkBox;
+        formFieldElement.setInteractive(false);
     }
 }

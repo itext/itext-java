@@ -40,7 +40,10 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
@@ -434,6 +437,107 @@ public class CheckBoxTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
+    @Test
+    public void checkBoxWithMarginsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "checkBoxWithMargins.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_checkBoxWithMargins.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            Div div = new Div().setBackgroundColor(ColorConstants.PINK);
+            CheckBox checkBox = new CheckBox("check");
+            checkBox.setInteractive(true);
+            checkBox.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(20));
+            checkBox.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(20));
+            checkBox.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(20));
+            checkBox.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue(20));
+            checkBox.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 20))
+                    .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                    .setSize(100)
+                    .setChecked(true);
+            div.add(checkBox);
+            document.add(div);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void borderBoxesTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "borderBoxes.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_borderBoxes.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            // BORDER_BOX
+            CheckBox interactiveCheckBox1 = new CheckBox("checkBox1")
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 10))
+                    .setSize(50)
+                    .setChecked(false);
+            interactiveCheckBox1.setInteractive(true);
+            interactiveCheckBox1.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            document.add(interactiveCheckBox1);
+
+            // CONTENT_BOX
+            CheckBox interactiveCheckBox2 = new CheckBox("checkBox2")
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 10))
+                    .setSize(50)
+                    .setChecked(true);
+            interactiveCheckBox2.setInteractive(true);
+            interactiveCheckBox2.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.CONTENT_BOX);
+            document.add(interactiveCheckBox2);
+
+            // BORDER_BOX
+            CheckBox flattenCheckBox1 = new CheckBox("checkBox3")
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 10))
+                    .setSize(50)
+                    .setChecked(true);
+            flattenCheckBox1.setInteractive(false);
+            flattenCheckBox1.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            document.add(flattenCheckBox1);
+
+            // CONTENT_BOX
+            CheckBox flattenCheckBox2 = new CheckBox("checkBox4")
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 10))
+                    .setSize(50)
+                    .setChecked(false);
+            flattenCheckBox2.setInteractive(false);
+            flattenCheckBox2.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.CONTENT_BOX);
+            document.add(flattenCheckBox2);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void addFieldWithTwoWidgetsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "fieldWithTwoWidgets.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_fieldWithTwoWidgets.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            // Create checkboxes using html element.
+            CheckBox checkBox1 = new CheckBox("checkbox");
+            checkBox1.setInteractive(true);
+            checkBox1.setSize(100);
+            checkBox1.setBackgroundColor(ColorConstants.YELLOW);
+            checkBox1.setBorder(new SolidBorder(ColorConstants.PINK, 5));
+            checkBox1.setChecked(true);
+            document.add(checkBox1);
+
+            // Add break to the end of the page.
+            document.add(new AreaBreak());
+
+            // Note that fields with the same fully qualified field name shall have the same
+            // field type, value, and default value.
+            CheckBox checkBox2 = new CheckBox("checkbox");
+            checkBox2.setInteractive(true);
+            checkBox2.setSize(200);
+            checkBox2.setBackgroundColor(ColorConstants.PINK);
+            checkBox2.setBorder(new SolidBorder(ColorConstants.YELLOW, 10));
+            checkBox2.setChecked(true);
+            document.add(checkBox2);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
 
     private void generateCheckBoxesForAllRenderingModes(Document document, Consumer<CheckBox> alterFunction) {
         document.add(new Paragraph("Normal rendering mode"));

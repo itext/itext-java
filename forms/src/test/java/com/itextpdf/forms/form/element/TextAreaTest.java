@@ -32,6 +32,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
@@ -137,15 +138,14 @@ public class TextAreaTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO Paddings are not taken into account in interactive form. Shall be fixed in DEVSIX-7423
     public void hugeMarginPaddingBorderTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "hugeMarginPaddingBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_hugeMarginPaddingBorder.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            TextArea formTextArea = new TextArea("flatten text area with height");
+            TextArea formTextArea = new TextArea("interactive text area with paddings");
             formTextArea.setInteractive(true);
-            formTextArea.setValue("flatten\ntext area\nwith height");
+            formTextArea.setValue("interactive\ntext area\nwith paddings");
             formTextArea.setBorder(new SolidBorder(20));
             formTextArea.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(20));
             formTextArea.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20));
@@ -157,9 +157,9 @@ public class TextAreaTest extends ExtendedITextTest {
             formTextArea.setProperty(Property.MARGIN_LEFT, UnitValue.createPointValue(20));
             document.add(formTextArea);
 
-            TextArea flattenTextArea = new TextArea("flatten text area with height");
+            TextArea flattenTextArea = new TextArea("flatten text area with paddings");
             flattenTextArea.setInteractive(false);
-            flattenTextArea.setValue("flatten\ntext area\nwith height");
+            flattenTextArea.setValue("flatten\ntext area\nwith paddings");
             flattenTextArea.setBorder(new SolidBorder(20));
             flattenTextArea.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(20));
             flattenTextArea.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20));
@@ -358,6 +358,43 @@ public class TextAreaTest extends ExtendedITextTest {
             flattenTextArea.setProperty(Property.MAX_HEIGHT, new UnitValue(UnitValue.POINT, 28));
             flattenTextArea.setProperty(Property.BORDER, new SolidBorder(2f));
             document.add(flattenTextArea);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void textAreaWithCustomLeadingTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "textAreaWithCustomLeading.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWithCustomLeading.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            TextArea textArea = new TextArea("text1").setBorder(new SolidBorder(ColorConstants.PINK, 1));
+            textArea.setValue("text area with 1 used as the basis for the leading calculation");
+            textArea.setInteractive(true);
+            textArea.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
+            textArea.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(5));
+            document.add(textArea);
+
+            TextArea textArea2 = new TextArea("text2").setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
+            textArea2.setValue("text area with 3 used as the basis for the leading calculation");
+            textArea2.setInteractive(true);
+            textArea2.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 3));
+            textArea2.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(5));
+            document.add(textArea2);
+
+            TextArea flattenedTextArea = new TextArea("text3").setBorder(new SolidBorder(ColorConstants.PINK, 1));
+            flattenedTextArea.setValue("text area with 5 used as the basis for the leading calculation");
+            flattenedTextArea.setInteractive(false);
+            flattenedTextArea.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 5));
+            flattenedTextArea.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(5));
+            document.add(flattenedTextArea);
+
+            TextArea flattenedTextArea2 = new TextArea("text4").setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
+            flattenedTextArea2.setValue("text area with 0.5 used as the basis for the leading calculation");
+            flattenedTextArea2.setInteractive(false);
+            flattenedTextArea2.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 0.5f));
+            document.add(flattenedTextArea2);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
