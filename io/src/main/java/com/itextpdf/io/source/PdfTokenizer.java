@@ -22,15 +22,15 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfTokenizer implements Closeable {
 
@@ -525,7 +525,8 @@ public class PdfTokenizer implements Closeable {
 
         // <6954657874ae...>
         if (hexWriting) {
-            for (int i = from; i <= to; ) {
+            int i = from;
+            while (i <= to) {
                 int v1 = ByteBuffer.getHex(content[i++]);
                 if (i > to) {
                     buffer.append(v1 << 4);
@@ -537,8 +538,8 @@ public class PdfTokenizer implements Closeable {
             }
         } else {
             // ((iText\( some version)...)
-
-            for (int i = from; i <= to; ) {
+            int i = from;
+            while (i <= to) {
                 int ch = content[i++];
                 if (ch == '\\') {
                     boolean lineBreak = false;
@@ -577,19 +578,17 @@ public class PdfTokenizer implements Closeable {
                                 break;
                             }
                             int octal = ch - '0';
-                            ch = content[i++];
-                            if (ch < '0' || ch > '7') {
-                                i--;
+                            if (i > to) {
                                 ch = octal;
                                 break;
                             }
+                            ch = content[i++];
                             octal = (octal << 3) + ch - '0';
-                            ch = content[i++];
-                            if (ch < '0' || ch > '7') {
-                                i--;
+                            if (ch < '0' || ch > '7' || i > to) {
                                 ch = octal;
                                 break;
                             }
+                            ch = content[i++];
                             octal = (octal << 3) + ch - '0';
                             ch = octal & 0xff;
                             break;

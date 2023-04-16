@@ -22,8 +22,8 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.source.PdfTokenizer.TokenType;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.source.PdfTokenizer.TokenType;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -437,6 +437,30 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         tok.nextValidToken();
         Assert.assertEquals(PdfTokenizer.TokenType.Number, tok.getTokenType());
         Assert.assertEquals("-116.23", new String(tok.getByteContent()));
+    }
+
+    @Test
+    public void octalNumberLong1Test() {
+        // 49 equal to string "1", octal 1 equals to 1 in decimal
+        byte[] bytes = new byte[] {92, 49};
+        byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
+        Assert.assertArrayEquals(new byte[] {1}, result);
+    }
+
+    @Test
+    public void octalNumberLong2Test() {
+        // 49 50 equal to string "12", octal 12 equals to 10 in decimal
+        byte[] bytes = new byte[] {92, 49, 50};
+        byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
+        Assert.assertArrayEquals(new byte[] {10}, result);
+    }
+
+    @Test
+    public void octalNumberLong3Test() {
+        // 49 50 51 equal to string "123", octal 123 equals to 83 in decimal
+        byte[] bytes = new byte[] {92, 49, 50, 51};
+        byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
+        Assert.assertArrayEquals(new byte[] {83}, result);
     }
 
     private void checkTokenTypes(String data, TokenType... expectedTypes) throws Exception {
