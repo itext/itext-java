@@ -233,7 +233,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            form.getField("checkField").setValue("Yes", false);
+            form.getField("checkField").setValue("Yes");
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));

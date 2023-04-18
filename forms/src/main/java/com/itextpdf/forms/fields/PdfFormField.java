@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.commons.datastructures.NullableContainer;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
@@ -119,7 +120,7 @@ public class PdfFormField extends AbstractPdfFormField {
     protected ImageData img;
     protected PdfFormXObject form;
 
-    protected CheckBoxType checkType = CheckBoxType.CROSS;
+    protected NullableContainer<CheckBoxType> checkType = null;
 
     private String displayValue;
 
@@ -1065,7 +1066,7 @@ public class PdfFormField extends AbstractPdfFormField {
         if (checkType == null) {
             checkType = CheckBoxType.CROSS;
         }
-        this.checkType = checkType;
+        this.checkType = new NullableContainer<>(checkType);
         if (getPdfAConformanceLevel() != null) {
             return this;
         }

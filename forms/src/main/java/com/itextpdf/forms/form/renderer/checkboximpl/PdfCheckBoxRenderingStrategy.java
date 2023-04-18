@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer.checkboximpl;
 
+import com.itextpdf.commons.datastructures.BiMap;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.renderer.CheckBoxRenderer;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -38,25 +39,20 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DrawContext;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * This class is used to draw a checkBox icon in PDF mode this is the default strategy for drawing a checkBox.
  */
 public final class PdfCheckBoxRenderingStrategy implements ICheckBoxRenderingStrategy {
-    public static final Map<CheckBoxType, String> CHECKBOX_TYPE_ZAPFDINGBATS_CODE;
+    public static final BiMap<CheckBoxType, String> ZAPFDINGBATS_CHECKBOX_MAPPING;
 
     static {
-        Map<CheckBoxType, String> initialMap = new HashMap<>();
-        initialMap.put(CheckBoxType.CHECK, "4");
-        initialMap.put(CheckBoxType.CIRCLE, "l");
-        initialMap.put(CheckBoxType.CROSS, "8");
-        initialMap.put(CheckBoxType.DIAMOND, "u");
-        initialMap.put(CheckBoxType.SQUARE, "n");
-        initialMap.put(CheckBoxType.STAR, "H");
-        CHECKBOX_TYPE_ZAPFDINGBATS_CODE = Collections.unmodifiableMap(initialMap);
+        ZAPFDINGBATS_CHECKBOX_MAPPING = new BiMap<>();
+        ZAPFDINGBATS_CHECKBOX_MAPPING.put(CheckBoxType.CHECK, "4");
+        ZAPFDINGBATS_CHECKBOX_MAPPING.put(CheckBoxType.CIRCLE, "l");
+        ZAPFDINGBATS_CHECKBOX_MAPPING.put(CheckBoxType.CROSS, "8");
+        ZAPFDINGBATS_CHECKBOX_MAPPING.put(CheckBoxType.DIAMOND, "u");
+        ZAPFDINGBATS_CHECKBOX_MAPPING.put(CheckBoxType.SQUARE, "n");
+        ZAPFDINGBATS_CHECKBOX_MAPPING.put(CheckBoxType.STAR, "H");
 
     }
 
@@ -93,7 +89,7 @@ public final class PdfCheckBoxRenderingStrategy implements ICheckBoxRenderingStr
             final float customBorderWidth = border == null ? 1 : borderWidth;
             DrawingUtil.drawCross(canvas, rectangle.getWidth(), rectangle.getHeight(), customBorderWidth);
         } else {
-            final String text = CHECKBOX_TYPE_ZAPFDINGBATS_CODE.get(checkBoxType);
+            final String text = ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(checkBoxType);
             final PdfFont fontContainingSymbols = loadFontContainingSymbols();
             float fontSize = calculateFontSize(checkBoxRenderer, fontContainingSymbols, text, rectangle, borderWidth);
             drawZapfdingbatsIcon(fontContainingSymbols, text, fontSize, rectangle, canvas);

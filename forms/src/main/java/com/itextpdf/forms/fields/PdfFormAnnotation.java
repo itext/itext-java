@@ -22,9 +22,11 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.commons.datastructures.NullableContainer;
 import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.CheckBox;
@@ -74,7 +76,6 @@ import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
@@ -1228,6 +1229,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (rect == null) {
             return;
         }
+        reconstructCheckBoxType();
         createCheckBox();
         if (getWidget().getNormalAppearanceObject() == null) {
             getWidget().setNormalAppearance(new PdfDictionary());
@@ -1258,11 +1260,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         getWidget().setNormalAppearance(normalAppearance);
 
         final PdfDictionary mk = new PdfDictionary();
+
         // We put the zapfDingbats code of the checkbox in the MK dictionary to make sure there is a way
         // to retrieve the checkbox type even if the appearance is not present.
         mk.put(PdfName.CA,
-                new PdfString(PdfCheckBoxRenderingStrategy.CHECKBOX_TYPE_ZAPFDINGBATS_CODE.get(parent.checkType)));
-
+                new PdfString(PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(
+                        parent.checkType.getValue())));
         getWidget().put(PdfName.MK, mk);
         setCheckBoxAppearanceState(onStateName);
     }
@@ -1277,6 +1280,29 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
     }
 
+    private void reconstructCheckBoxType() {
+
+        // if checkbox type is null it means we are reading from a document and we need to retrieve the type from the
+        // mk dictionary in the ca
+        if (parent.checkType == null) {
+            PdfDictionary oldMk = getWidget().getAppearanceCharacteristics();
+            if (oldMk != null) {
+                PdfString oldCa = oldMk.getAsString(PdfName.CA);
+                if (oldCa != null && PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.containsValue(
+                        oldCa.getValue())) {
+                    parent.checkType = new NullableContainer<>(
+                            PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByValue(oldCa.getValue()));
+                    // we need to set the font size to 0 to make sure the font size is recalculated
+                    fontSize = 0;
+                }
+            }
+        }
+        // if its still null default to default value
+        if (parent.checkType == null) {
+            parent.checkType = new NullableContainer<>(CheckBoxType.CROSS);
+        }
+    }
+
     private void createCheckBox() {
         if (!(formFieldElement instanceof CheckBox)) {
             // Create it one time and re-set properties during each widget regeneration.
@@ -1287,7 +1313,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
         setModelElementProperties(getRect(getPdfObject()));
         ((CheckBox) formFieldElement).setPdfAConformanceLevel(getPdfAConformanceLevel());
-        ((CheckBox) formFieldElement).setCheckBoxType(parent.checkType);
+        ((CheckBox) formFieldElement).setCheckBoxType(parent.checkType.getValue());
     }
 
     private void setModelElementProperties(Rectangle rectangle) {
