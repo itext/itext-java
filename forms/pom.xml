@@ -10,11 +10,6 @@
   <name>iText - forms</name>
   <url>https://itextpdf.com/</url>
   
-  <properties>
-    <sonar.coverage.exclusions>**/forms/fields/TextAndChoiceLegacyDrawer.java</sonar.coverage.exclusions>
-    <sonar.cpd.exclusions>**/forms/fields/TextAndChoiceLegacyDrawer.java</sonar.cpd.exclusions>
-  </properties>
-  
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>

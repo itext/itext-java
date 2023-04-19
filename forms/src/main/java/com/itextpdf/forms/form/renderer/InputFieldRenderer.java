@@ -64,8 +64,8 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         super(modelElement);
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.IRenderer#getNextRenderer()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public IRenderer getNextRenderer() {
@@ -93,27 +93,23 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
                 <Boolean>getDefaultProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG) : (boolean) password;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     IRenderer createParagraphRenderer(String defaultValue) {
         if (defaultValue.isEmpty() && null != ((InputField) modelElement).getPlaceholder()
                 && !((InputField) modelElement).getPlaceholder().isEmpty()) {
             return ((InputField) modelElement).getPlaceholder().createRendererSubTree();
         }
-        if (defaultValue.isEmpty()) {
-            defaultValue = "\u00a0";
-        }
 
-        Text text = new Text(defaultValue);
-        FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
-        text.setNextRenderer(nextRenderer);
-
-        IRenderer flatRenderer = new Paragraph(text).setMargin(0).createRendererSubTree();
+        IRenderer flatRenderer = super.createParagraphRenderer(defaultValue);
         flatRenderer.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
         return flatRenderer;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.attach.impl.layout.form.renderer.AbstractFormFieldRenderer#adjustFieldLayout()
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void adjustFieldLayout(LayoutContext layoutContext) {
@@ -133,8 +129,8 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         flatBBox.setWidth((float) retrieveWidth(layoutContext.getArea().getBBox().getWidth()));
     }
 
-    /* (non-Javadoc)
-     * @see AbstractFormFieldRenderer#createFlatRenderer()
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected IRenderer createFlatRenderer() {
@@ -148,8 +144,8 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         return createParagraphRenderer(defaultValue);
     }
 
-    /* (non-Javadoc)
-     * @see AbstractFormFieldRenderer#applyAcroField(com.itextpdf.layout.renderer.DrawContext)
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void applyAcroField(DrawContext drawContext) {
@@ -192,6 +188,9 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         writeAcroFormFieldLangAttribute(doc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T1> T1 getProperty(int key) {
         if (key == Property.WIDTH) {
@@ -212,17 +211,9 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         return super.<T1>getProperty(key);
     }
 
-    @Override
-    public void draw(DrawContext drawContext) {
-        if (flatRenderer != null) {
-            if (isFlatten()) {
-                super.draw(drawContext);
-            } else {
-                drawChildren(drawContext);
-            }
-        }
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
         boolean result = false;

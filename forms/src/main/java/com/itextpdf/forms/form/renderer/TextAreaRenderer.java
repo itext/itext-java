@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -57,17 +58,6 @@ import java.util.List;
  * The {@link AbstractTextFieldRenderer} implementation for text area fields.
  */
 public class TextAreaRenderer extends AbstractTextFieldRenderer {
-
-    /**
-     * Minimal size of text in form fields.
-     */
-    private static final int MIN_FONT_SIZE = 4;
-
-    /**
-     * Size of text in form fields when font size is not explicitly set.
-     */
-    private static final int DEFAULT_FONT_SIZE = 12;
-
     /**
      * Creates a new {@link TextAreaRenderer} instance.
      *
@@ -104,17 +94,6 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
     }
 
     @Override
-    public void draw(DrawContext drawContext) {
-        if (flatRenderer != null) {
-            if (isFlatten()) {
-                super.draw(drawContext);
-            } else {
-                drawChildren(drawContext);
-            }
-        }
-    }
-
-    @Override
     protected Float getLastYLineRecursively() {
         if (occupiedArea != null && occupiedArea.getBBox() != null) {
             return occupiedArea.getBBox().getBottom();
@@ -122,14 +101,17 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.IRenderer#getNextRenderer()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public IRenderer getNextRenderer() {
         return new TextAreaRenderer((TextArea) getModelElement());
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         UnitValue fontSize = getPropertyAsUnitValue(Property.FONT_SIZE);
@@ -139,8 +121,35 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         return super.layout(layoutContext);
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.html2pdf.attach.impl.layout.form.renderer.AbstractFormFieldRenderer#adjustFieldLayout()
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T1> T1 getProperty(int key) {
+        if (key == Property.WIDTH) {
+            T1 width = super.<T1>getProperty(Property.WIDTH);
+            if (width == null) {
+                UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
+                if (!fontSize.isPointValue()) {
+                    Logger logger = LoggerFactory.getLogger(TextAreaRenderer.class);
+                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                            Property.FONT_SIZE));
+                }
+                float fontSizeValue = fontSize.getValue();
+                if (fontSizeValue < EPS) {
+                    fontSizeValue = AbstractPdfFormField.DEFAULT_FONT_SIZE;
+                }
+                int cols = getCols();
+                return (T1) (Object) UnitValue.createPointValue(
+                        updateHtmlColsSizeBasedWidth(fontSizeValue * (cols * 0.5f + 2) + 2));
+            }
+            return width;
+        }
+        return super.<T1>getProperty(key);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void adjustFieldLayout(LayoutContext layoutContext) {
@@ -161,35 +170,16 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         flatBBox.setWidth((float) retrieveWidth(layoutContext.getArea().getBBox().getWidth()));
     }
 
-    /* (non-Javadoc)
-     * @see AbstractFormFieldRenderer#createFlatRenderer()
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected IRenderer createFlatRenderer() {
         return createParagraphRenderer(getDefaultValue());
     }
 
-    @Override
-    IRenderer createParagraphRenderer(String defaultValue) {
-        if (defaultValue.isEmpty() && null != ((TextArea) modelElement).getPlaceholder() && !((TextArea) modelElement)
-                .getPlaceholder().isEmpty()) {
-            return ((TextArea) modelElement).getPlaceholder().createRendererSubTree();
-        }
-        if (defaultValue.isEmpty()) {
-            defaultValue = "\u00a0";
-        }
-
-        Text text = new Text(defaultValue);
-        FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
-        text.setNextRenderer(nextRenderer);
-
-        IRenderer flatRenderer = new Paragraph(text).setMargin(0).createRendererSubTree();
-        flatRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
-        return flatRenderer;
-    }
-
-    /* (non-Javadoc)
-     * @see AbstractFormFieldRenderer#applyAcroField(com.itextpdf.layout.renderer.DrawContext)
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void applyAcroField(DrawContext drawContext) {
@@ -224,30 +214,9 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         writeAcroFormFieldLangAttribute(doc);
     }
 
-    @Override
-    public <T1> T1 getProperty(int key) {
-        if (key == Property.WIDTH) {
-            T1 width = super.<T1>getProperty(Property.WIDTH);
-            if (width == null) {
-                UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
-                if (!fontSize.isPointValue()) {
-                    Logger logger = LoggerFactory.getLogger(TextAreaRenderer.class);
-                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                            Property.FONT_SIZE));
-                }
-                float fontSizeValue = fontSize.getValue();
-                if (fontSizeValue < EPS) {
-                    fontSizeValue = DEFAULT_FONT_SIZE;
-                }
-                int cols = getCols();
-                return (T1) (Object) UnitValue.createPointValue(
-                        updateHtmlColsSizeBasedWidth(fontSizeValue * (cols * 0.5f + 2) + 2));
-            }
-            return width;
-        }
-        return super.<T1>getProperty(key);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
         if (!hasAbsoluteUnitValue(Property.WIDTH)) {
@@ -263,6 +232,18 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
             return result;
         }
         return super.setMinMaxWidthBasedOnFixedWidth(minMaxWidth);
+    }
+
+    @Override
+    IRenderer createParagraphRenderer(String defaultValue) {
+        if (defaultValue.isEmpty() && null != ((TextArea) modelElement).getPlaceholder() && !((TextArea) modelElement)
+                .getPlaceholder().isEmpty()) {
+            return ((TextArea) modelElement).getPlaceholder().createRendererSubTree();
+        }
+
+        IRenderer flatRenderer = super.createParagraphRenderer(defaultValue);
+        flatRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+        return flatRenderer;
     }
 
     private void cropContentLines(List<LineRenderer> lines, Rectangle bBox) {
@@ -287,19 +268,20 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         flatRenderer.setParent(this);
         TextArea modelElement = (TextArea) this.getModelElement();
 
-        float lFontSize = MIN_FONT_SIZE;
-        float rFontSize = DEFAULT_FONT_SIZE;
-        flatRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(DEFAULT_FONT_SIZE));
+        float lFontSize = AbstractPdfFormField.MIN_FONT_SIZE;
+        float rFontSize = AbstractPdfFormField.DEFAULT_FONT_SIZE;
+        flatRenderer.setProperty(
+                Property.FONT_SIZE, UnitValue.createPointValue(AbstractPdfFormField.DEFAULT_FONT_SIZE));
         Float areaWidth = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
         Float areaHeight = retrieveHeight();
         LayoutContext newLayoutContext;
         if (areaWidth == null || areaHeight == null) {
-            modelElement.setFontSize(DEFAULT_FONT_SIZE);
+            modelElement.setFontSize(AbstractPdfFormField.DEFAULT_FONT_SIZE);
             return;
         }
         newLayoutContext = new LayoutContext(new LayoutArea(1, new Rectangle((float) areaWidth, (float) areaHeight)));
         if (flatRenderer.layout(newLayoutContext).getStatus() == LayoutResult.FULL) {
-            lFontSize = DEFAULT_FONT_SIZE;
+            lFontSize = AbstractPdfFormField.DEFAULT_FONT_SIZE;
         } else {
             final int numberOfIterations = 6;
             for (int i = 0; i < numberOfIterations; i++) {

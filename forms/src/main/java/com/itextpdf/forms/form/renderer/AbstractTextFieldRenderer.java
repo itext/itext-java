@@ -28,6 +28,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -42,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract {@link BlockRenderer} for form fields with text content.
+ * Abstract {@link AbstractFormFieldRenderer} for form fields with text content.
  */
 public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRenderer {
 
@@ -67,11 +68,15 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
      * @return the renderer
      */
     IRenderer createParagraphRenderer(String defaultValue) {
-        if (defaultValue.trim().isEmpty()) {
+        if (defaultValue.isEmpty()) {
             defaultValue = "\u00a0";
         }
-        Paragraph paragraph = new Paragraph(defaultValue).setMargin(0);
-        return paragraph.createRendererSubTree();
+
+        Text text = new Text(defaultValue);
+        FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
+        text.setNextRenderer(nextRenderer);
+
+        return new Paragraph(text).setMargin(0).createRendererSubTree();
     }
 
     /**

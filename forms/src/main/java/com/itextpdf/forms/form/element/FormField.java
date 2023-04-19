@@ -73,7 +73,7 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
     @Override
     public IFormField setWidth(float width) {
         setProperty(Property.WIDTH, UnitValue.createPointValue(width));
-        return (T) (Object) this;
+        return this;
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
     @Override
     public IFormField setHeight(float height) {
         setProperty(Property.HEIGHT, UnitValue.createPointValue(height));
-        return (T) (Object) this;
+        return this;
     }
 
     /**
@@ -99,7 +99,7 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
     @Override
     public IFormField setValue(String value) {
         setProperty(FormProperty.FORM_FIELD_VALUE, value);
-        return (T) (Object) this;
+        return this;
     }
 
     /**
@@ -141,6 +141,6 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
     @Override
     public IFormField setInteractive(boolean interactive) {
         setProperty(FormProperty.FORM_FIELD_FLATTEN, !interactive);
-        return (T) (Object) this;
+        return this;
     }
 }

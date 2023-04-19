@@ -58,9 +58,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * The {@link AbstractOneLineTextFieldRenderer} implementation for buttons.
+ * The {@link AbstractTextFieldRenderer} implementation for buttons.
  */
-public class ButtonRenderer extends AbstractTextFieldRenderer {
+public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
 
     /**
      * Default padding Y offset for an input button.
@@ -131,22 +131,6 @@ public class ButtonRenderer extends AbstractTextFieldRenderer {
                 if (deltaY > 0) {
                     flatRenderer.move(0, -deltaY / 2);
                 }
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param drawContext {@inheritDoc}
-     */
-    @Override
-    public void draw(DrawContext drawContext) {
-        if (flatRenderer != null) {
-            if (isFlatten()) {
-                super.draw(drawContext);
-            } else {
-                drawChildren(drawContext);
             }
         }
     }
@@ -298,34 +282,10 @@ public class ButtonRenderer extends AbstractTextFieldRenderer {
     }
 
     /**
-     * Crops the content lines.
-     *
-     * @param lines a list of lines
-     * @param bBox  the bounding box
+     * {@inheritDoc}
      */
-    private void cropContentLines(List<LineRenderer> lines, Rectangle bBox) {
-        adjustNumberOfContentLines(lines, bBox, 1);
-        Float height = retrieveHeight();
-        Float minHeight = retrieveMinHeight();
-        Float maxHeight = retrieveMaxHeight();
-        float originalHeight = flatRenderer.getOccupiedArea().getBBox().getHeight();
-        if (height != null && (float) height > 0) {
-            setContentHeight(flatRenderer, (float) height);
-        } else if (minHeight != null && (float) minHeight > originalHeight) {
-            setContentHeight(flatRenderer, (float) minHeight);
-        } else if (maxHeight != null && (float) maxHeight > 0 && (float) maxHeight < originalHeight) {
-            setContentHeight(flatRenderer, (float) maxHeight);
-        }
-
-    }
-
-    /**
-     * Sets the content height.
-     *
-     * @param flatRenderer  the flat renderer
-     * @param height        the height
-     */
-    private void setContentHeight(IRenderer flatRenderer, float height) {
+    @Override
+    void setContentHeight(IRenderer flatRenderer, float height) {
         Rectangle bBox = flatRenderer.getOccupiedArea().getBBox();
         Border border = getBorders()[0];
         if (border != null) {

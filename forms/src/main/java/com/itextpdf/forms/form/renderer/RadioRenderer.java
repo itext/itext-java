@@ -52,7 +52,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 /**
- * The {@link AbstractOneLineTextFieldRenderer} implementation for radio buttons.
+ * The {@link AbstractFormFieldRenderer} implementation for radio buttons.
  */
 public class RadioRenderer extends AbstractFormFieldRenderer {
 
@@ -71,8 +71,8 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.IRenderer#getNextRenderer()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public IRenderer getNextRenderer() {
@@ -113,6 +113,9 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         return rect;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected IRenderer createFlatRenderer() {
         UnitValue heightUV = getPropertyAsUnitValue(Property.HEIGHT);
@@ -139,11 +142,12 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         return new FlatParagraphRenderer(paragraph);
     }
 
-    /* (non-Javadoc)
-     * @see AbstractFormFieldRenderer#adjustFieldLayout()
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void adjustFieldLayout(LayoutContext layoutContext) {
+        // We don't need any adjustments (even default ones) for radio button.
     }
 
     /**
@@ -155,8 +159,8 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         return Boolean.TRUE.equals(this.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
     }
 
-    /* (non-Javadoc)
-     * @see AbstractFormFieldRenderer#applyAcroField(com.itextpdf.layout.renderer.DrawContext)
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void applyAcroField(DrawContext drawContext) {
@@ -203,6 +207,9 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         writeAcroFormFieldLangAttribute(doc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isLayoutBasedOnFlatRenderer() {
         return false;

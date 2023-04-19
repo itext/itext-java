@@ -57,7 +57,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     public void orphanedNamelessFormFieldTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "orphanedFormField.pdf"))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            Assert.assertEquals(3, form.getDirectFormFields().size());
+            Assert.assertEquals(3, form.getRootFormFields().size());
         }
     }
 

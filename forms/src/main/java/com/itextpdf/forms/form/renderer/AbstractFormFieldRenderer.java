@@ -104,8 +104,8 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
                 modelElement.<String>getDefaultProperty(FormProperty.FORM_FIELD_VALUE) : defaultValue;
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.BlockRenderer#layout(com.itextpdf.layout.layout.LayoutContext)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
@@ -169,18 +169,22 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
                         new MinMaxWidth(occupiedArea.getBBox().getWidth(), occupiedArea.getBBox().getWidth(), 0));
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.BlockRenderer#draw(com.itextpdf.layout.renderer.DrawContext)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void draw(DrawContext drawContext) {
         if (flatRenderer != null) {
-            super.draw(drawContext);
+            if (isFlatten()) {
+                super.draw(drawContext);
+            } else {
+                drawChildren(drawContext);
+            }
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.AbstractRenderer#drawChildren(com.itextpdf.layout.renderer.DrawContext)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void drawChildren(DrawContext drawContext) {
@@ -195,8 +199,8 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         drawContext.getCanvas().restoreState();
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.BlockRenderer#getMinMaxWidth(float)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public MinMaxWidth getMinMaxWidth() {
@@ -263,6 +267,11 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
     }
 
+    /**
+     * Determines, whether the layout is based in the renderer itself or flat renderer.
+     * 
+     * @return {@code true} if layout is based on flat renderer, false otherwise
+     */
     protected boolean isLayoutBasedOnFlatRenderer() {
         return true;
     }

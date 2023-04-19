@@ -23,7 +23,6 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.datastructures.NullableContainer;
-import com.itextpdf.commons.utils.ExperimentalFeatures;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
@@ -34,7 +33,6 @@ import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.TextArea;
-import com.itextpdf.forms.form.renderer.FormFieldValueNonTrimmingTextRenderer;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.util.FontSizeUtil;
@@ -43,8 +41,6 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -54,8 +50,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
@@ -65,21 +59,14 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
-import com.itextpdf.layout.properties.Leading;
-import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.MetaInfoContainer;
 
 import java.util.LinkedHashSet;
@@ -110,11 +97,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * Value which represents "on" state of form field.
      */
     public static final String ON_STATE_VALUE = "Yes";
-
-    /**
-     * Default padding X offset.
-     */
-    static final float X_OFFSET = 2;
     
     protected float borderWidth = 1;
     protected Color backgroundColor;
@@ -226,7 +208,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         regenerateField();
         return this;
     }
-    
+
+    /**
+     * Get rotation property specified in this form annotation.
+     * 
+     * @return {@code int} value which represents field's rotation
+     */
     public int getRotation() {
         PdfDictionary mk = getWidget().getAppearanceCharacteristics();
         return mk == null || mk.getAsInt(PdfName.R) == null ? 0 : (int) mk.getAsInt(PdfName.R);
@@ -517,106 +504,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Draws the visual appearance of text in a form field.
-     *
-     * @param rect       The location on the page for the list field.
-     * @param font       a {@link PdfFont}.
-     * @param fontSize   The size of the font.
-     * @param value      The initial value.
-     * @param appearance The appearance.
-     */
-    protected void drawTextAppearance(Rectangle rect, PdfFont font, float fontSize, String value,
-            PdfFormXObject appearance) {
-        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfResources resources = appearance.getResources();
-        PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
-
-        float height = rect.getHeight();
-        float width = rect.getWidth();
-        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        drawBorder(canvas, xObject, width, height);
-        if (parent.isPassword()) {
-            value = obfuscatePassword(value);
-        }
-
-        canvas.
-                beginVariableText().
-                saveState().
-                endPath();
-
-        TextAlignment textAlignment =
-                parent.getJustification() == null ? TextAlignment.LEFT : parent.getJustification();
-        float x = 0;
-        if (textAlignment == TextAlignment.RIGHT) {
-            x = rect.getWidth();
-        } else if (textAlignment == TextAlignment.CENTER) {
-            x = rect.getWidth() / 2;
-        }
-
-        Canvas modelCanvas = new Canvas(canvas, new Rectangle(0, -height, 0, 2 * height));
-        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
-
-        setMetaInfoToCanvas(modelCanvas);
-
-        Style paragraphStyle = new Style().setFont(font).setFontSize(fontSize);
-        paragraphStyle.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 1));
-        paragraphStyle.setFontColor(getColor());
-        
-        modelCanvas.showTextAligned(createParagraphForTextFieldValue(value).addStyle(paragraphStyle)
-                        .setPaddings(0, X_OFFSET, 0, X_OFFSET), x, rect.getHeight() / 2, textAlignment,
-                VerticalAlignment.MIDDLE);
-        canvas.
-                restoreState().
-                endVariableText();
-
-        appearance.getPdfObject().setData(stream.getBytes());
-    }
-
-    protected void drawMultiLineTextAppearance(Rectangle rect, PdfFont font, String value, PdfFormXObject appearance) {
-        PdfStream stream = (PdfStream) new PdfStream().makeIndirect(getDocument());
-        PdfResources resources = appearance.getResources();
-        PdfCanvas canvas = new PdfCanvas(stream, resources, getDocument());
-
-        float width = rect.getWidth();
-        float height = rect.getHeight();
-
-        drawBorder(canvas, appearance, width, height);
-        canvas.beginVariableText();
-
-        Rectangle areaRect = new Rectangle(0, 0, width, height);
-        Canvas modelCanvas = new Canvas(canvas, areaRect);
-        modelCanvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
-
-        setMetaInfoToCanvas(modelCanvas);
-
-        Paragraph paragraph = createParagraphForTextFieldValue(value).setFont(font)
-                .setMargin(0)
-                .setPadding(3)
-                .setMultipliedLeading(1);
-        if (getFontSize() == 0) {
-            paragraph.setFontSize(FontSizeUtil.
-                    approximateFontSizeToFitMultiLine(paragraph, areaRect, modelCanvas.getRenderer()));
-        } else {
-            paragraph.setFontSize(getFontSize());
-        }
-        paragraph.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
-        paragraph.setTextAlignment(parent.getJustification());
-
-        if (getColor() != null) {
-            paragraph.setFontColor(getColor());
-        }
-        // here we subtract an epsilon to make sure that element won't be split but overflown
-        paragraph.setHeight(height - 0.00001f);
-        paragraph.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
-        paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
-        paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
-        modelCanvas.add(paragraph);
-        canvas.endVariableText();
-
-        appearance.getPdfObject().setData(stream.getBytes());
-    }
-
-    /**
      * Draws a border using the borderWidth and borderColor of the form field.
      *
      * @param canvas  The {@link PdfCanvas} on which to draw
@@ -752,6 +639,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         PdfFormXObject xObjectOff = new PdfFormXObject(
                 new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
         Canvas canvasOff = new Canvas(xObjectOff, this.getDocument());
+        setMetaInfoToCanvas(canvasOff);
         canvasOff.add(formFieldElement);
         PdfDictionary normalAppearance = new PdfDictionary();
         normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
@@ -762,6 +650,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             PdfFormXObject xObject = new PdfFormXObject(
                     new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
             Canvas canvas = new Canvas(xObject, this.getDocument());
+            setMetaInfoToCanvas(canvas);
             canvas.add(formFieldElement);
             normalAppearance.put(new PdfName(value), xObject.getPdfObject());
         }
@@ -821,6 +710,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             xObject.put(PdfName.Matrix, matrix);
         }
         Canvas canvas = new Canvas(xObject, this.getDocument());
+        setMetaInfoToCanvas(canvas);
         canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
         canvas.add(formFieldElement);
 
@@ -848,132 +738,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
     }
 
-
-    boolean regenerateTextAndChoiceField() {
-        String value = parent.getDisplayValue();
-        final PdfName type = parent.getFormType();
-
-        PdfPage page = PdfAnnotation.makeAnnotation(getPdfObject()).getPage();
-        PdfArray bBox = getPdfObject().getAsArray(PdfName.Rect);
-
-        //Apply Page rotation
-        int pageRotation = 0;
-        if (page != null) {
-            pageRotation = page.getRotation();
-            //Clockwise, so negative
-            pageRotation *= -1;
-        }
-        PdfArray matrix;
-        if (pageRotation % 90 == 0) {
-            //Cast angle to [-360, 360]
-            double angle = pageRotation % 360;
-            //Get angle in radians
-            angle = degreeToRadians(angle);
-            Rectangle initialBboxRectangle = bBox.toRectangle();
-            //rotate the bounding box
-            Rectangle rect = initialBboxRectangle.clone();
-            //Calculate origin offset
-            double translationWidth = 0;
-            double translationHeight = 0;
-            if (angle >= -1 * Math.PI && angle <= -1 * Math.PI / 2) {
-                translationWidth = rect.getWidth();
-            }
-            if (angle <= -1 * Math.PI) {
-                translationHeight = rect.getHeight();
-            }
-
-            //Store rotation and translation in the matrix
-            matrix = new PdfArray(
-                    new double[] {Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle), translationWidth,
-                            translationHeight});
-            // If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box
-            // need to be switched
-            if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
-                rect.setWidth(initialBboxRectangle.getHeight());
-                rect.setHeight(initialBboxRectangle.getWidth());
-            }
-            // Adapt origin
-            rect.setX(rect.getX() + (float) translationWidth);
-            rect.setY(rect.getY() + (float) translationHeight);
-            //Copy Bounding box
-            bBox = new PdfArray(rect);
-        } else {
-            //Avoid NPE when handling corrupt pdfs
-            LOGGER.error(FormsLogMessageConstants.INCORRECT_PAGE_ROTATION);
-            matrix = new PdfArray(new double[] {1, 0, 0, 1, 0, 0});
-        }
-        //Apply field rotation
-        float fieldRotation = 0;
-        if (this.getPdfObject().getAsDictionary(PdfName.MK) != null
-                && this.getPdfObject().getAsDictionary(PdfName.MK).get(PdfName.R) != null) {
-            fieldRotation = (float) this.getPdfObject().getAsDictionary(PdfName.MK).getAsFloat(PdfName.R);
-            //Get relative field rotation
-            fieldRotation += pageRotation;
-        }
-        if (fieldRotation % 90 == 0) {
-            Rectangle initialBboxRectangle = bBox.toRectangle();
-            //Cast angle to [-360, 360]
-            double angle = fieldRotation % 360;
-            //Get angle in radians
-            angle = degreeToRadians(angle);
-            //Calculate origin offset
-            double translationWidth = calculateTranslationWidthAfterFieldRot(initialBboxRectangle,
-                    degreeToRadians(pageRotation), angle);
-            double translationHeight = calculateTranslationHeightAfterFieldRot(initialBboxRectangle,
-                    degreeToRadians(pageRotation), angle);
-
-            //Concatenate rotation and translation into the matrix
-            Matrix currentMatrix = new Matrix(matrix.getAsNumber(0).floatValue(),
-                    matrix.getAsNumber(1).floatValue(),
-                    matrix.getAsNumber(2).floatValue(),
-                    matrix.getAsNumber(3).floatValue(),
-                    matrix.getAsNumber(4).floatValue(),
-                    matrix.getAsNumber(5).floatValue());
-            Matrix toConcatenate = new Matrix((float) Math.cos(angle),
-                    (float) (-Math.sin(angle)),
-                    (float) (Math.sin(angle)),
-                    (float) (Math.cos(angle)),
-                    (float) translationWidth,
-                    (float) translationHeight);
-            currentMatrix = currentMatrix.multiply(toConcatenate);
-            matrix = new PdfArray(
-                    new float[] {currentMatrix.get(0), currentMatrix.get(1), currentMatrix.get(3), currentMatrix.get(4),
-                            currentMatrix.get(6), currentMatrix.get(7)});
-
-            // Construct bounding box
-            Rectangle rect = initialBboxRectangle.clone();
-            // If the angle is a multiple of 90 and not a multiple of 180, height and width of the bounding box
-            // need to be switched
-            if (angle % (Math.PI / 2) == 0 && angle % (Math.PI) != 0) {
-                rect.setWidth(initialBboxRectangle.getHeight());
-                rect.setHeight(initialBboxRectangle.getWidth());
-            }
-            rect.setX(rect.getX() + (float) translationWidth);
-            rect.setY(rect.getY() + (float) translationHeight);
-            // Copy Bounding box
-            bBox = new PdfArray(rect);
-        }
-        // Create appearance
-        Rectangle bboxRectangle = bBox.toRectangle();
-        PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0, bboxRectangle.getWidth(),
-                bboxRectangle.getHeight()));
-        appearance.put(PdfName.Matrix, matrix);
-        //Create text appearance
-        if (PdfName.Tx.equals(type)) {
-            if (parent.isMultiline()) {
-                drawMultiLineTextAppearance(bboxRectangle, getFont(), value, appearance);
-            } else {
-                drawTextAppearance(bboxRectangle, getFont(), getFontSize(bBox, value), value, appearance);
-            }
-        }
-        PdfDictionary ap = new PdfDictionary();
-        ap.put(PdfName.N, appearance.getPdfObject());
-        ap.setModified();
-        put(PdfName.AP, ap);
-
-        return true;
-    }
-
     boolean regenerateWidget() {
         if (parent == null) {
             return true;
@@ -983,12 +747,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (PdfName.Ch.equals(type) || this.isCombTextFormField()) {
             return TextAndChoiceLegacyDrawer.regenerateTextAndChoiceField(this);
         } else if (PdfName.Tx.equals(type)) {
-            if (ExperimentalFeatures.ENABLE_EXPERIMENTAL_TEXT_FORM_RENDERING) {
-                drawTextFormFieldAndSaveAppearance();
-                return true;
-            } else {
-                return regenerateTextAndChoiceField();
-            }
+            drawTextFormFieldAndSaveAppearance();
+            return true;
         } else if (PdfName.Btn.equals(type)) {
             if (parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 drawPushButtonFieldAndSaveAppearance();
@@ -1030,16 +790,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return getFontSize();
     }
 
-    private static double degreeToRadians(double angle) {
-        return Math.PI * angle / 180.0;
-    }
-
-    private static Paragraph createParagraphForTextFieldValue(String value) {
-        Text text = new Text(value);
-        text.setNextRenderer(new FormFieldValueNonTrimmingTextRenderer(text));
-        return new Paragraph(text);
-    }
-
     private boolean isCombTextFormField() {
         final PdfName type = parent.getFormType();
         if (PdfName.Tx.equals(type) && parent.getFieldFlag(PdfTextFormField.FF_COMB)) {
@@ -1061,123 +811,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             }
         }
         return null;
-    }
-
-    /**
-     * Calculate the necessary height offset after applying field rotation
-     * so that the origin of the bounding box is the lower left corner with respect to the field text.
-     *
-     * @param bBox             bounding box rectangle before rotation
-     * @param pageRotation     rotation of the page
-     * @param relFieldRotation rotation of the field relative to the page
-     *
-     * @return translation value for height
-     */
-    private static float calculateTranslationHeightAfterFieldRot(Rectangle bBox, double pageRotation,
-            double relFieldRotation) {
-        if (relFieldRotation == 0) {
-            return 0.0f;
-        }
-        if (pageRotation == 0) {
-            if (relFieldRotation == Math.PI / 2) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI) {
-                return bBox.getHeight();
-            }
-
-        }
-        if (pageRotation == -Math.PI / 2) {
-            if (relFieldRotation == -Math.PI / 2) {
-                return bBox.getWidth() - bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI / 2) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI) {
-                return bBox.getWidth();
-            }
-
-        }
-        if (pageRotation == -Math.PI) {
-            if (relFieldRotation == -1 * Math.PI) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == -1 * Math.PI / 2) {
-                return bBox.getHeight() - bBox.getWidth();
-            }
-
-            if (relFieldRotation == Math.PI / 2) {
-                return bBox.getWidth();
-            }
-        }
-        if (pageRotation == -3 * Math.PI / 2) {
-            if (relFieldRotation == -3 * Math.PI / 2) {
-                return bBox.getWidth();
-            }
-            if (relFieldRotation == -Math.PI) {
-                return bBox.getWidth();
-            }
-        }
-
-        return 0.0f;
-    }
-
-    /**
-     * Calculate the necessary width offset after applying field rotation
-     * so that the origin of the bounding box is the lower left corner with respect to the field text.
-     *
-     * @param bBox             bounding box rectangle before rotation
-     * @param pageRotation     rotation of the page
-     * @param relFieldRotation rotation of the field relative to the page
-     *
-     * @return translation value for width
-     */
-    private static float calculateTranslationWidthAfterFieldRot(Rectangle bBox, double pageRotation,
-            double relFieldRotation) {
-        if (relFieldRotation == 0) {
-            return 0.0f;
-        }
-        if (pageRotation == 0 && (relFieldRotation == Math.PI || relFieldRotation == 3 * Math.PI / 2)) {
-            return bBox.getWidth();
-        }
-        if (pageRotation == -Math.PI / 2) {
-            if (relFieldRotation == -Math.PI / 2 || relFieldRotation == Math.PI) {
-                return bBox.getHeight();
-            }
-        }
-
-        if (pageRotation == -Math.PI) {
-            if (relFieldRotation == -1 * Math.PI) {
-                return bBox.getWidth();
-            }
-            if (relFieldRotation == -1 * Math.PI / 2) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == Math.PI / 2) {
-                return -1 * (bBox.getHeight() - bBox.getWidth());
-            }
-        }
-        if (pageRotation == -3 * Math.PI / 2) {
-            if (relFieldRotation == -3 * Math.PI / 2) {
-                return -1 * (bBox.getWidth() - bBox.getHeight());
-            }
-            if (relFieldRotation == -Math.PI) {
-                return bBox.getHeight();
-            }
-            if (relFieldRotation == -Math.PI / 2) {
-                return bBox.getWidth();
-            }
-        }
-        return 0.0f;
-    }
-
-    private static String obfuscatePassword(String text) {
-        char[] pchar = new char[text.length()];
-        for (int i = 0; i < text.length(); i++) {
-            pchar[i] = '*';
-        }
-        return new String(pchar);
     }
 
     private static PdfArray getRotationMatrix(int rotation, float height, float width) {
@@ -1239,6 +872,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         final PdfFormXObject xObjectOff = new PdfFormXObject(
                 new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
         final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
+        setMetaInfoToCanvas(canvasOff);
         canvasOff.add(formFieldElement);
         if (getPdfAConformanceLevel() == null) {
             xObjectOff.getResources().addFont(getDocument(), getFont());
@@ -1254,6 +888,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         final PdfFormXObject xObject = new PdfFormXObject(
                 new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
         final Canvas canvas = new Canvas(xObject, this.getDocument());
+        setMetaInfoToCanvas(canvas);
         canvas.add(formFieldElement);
         normalAppearance.put(new PdfName(onStateNameForAp), xObject.getPdfObject());
 

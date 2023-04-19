@@ -78,7 +78,7 @@ public class XfdfObjectFactory {
         XfdfObject resultXfdf = new XfdfObject();
         FieldsObject xfdfFields = new FieldsObject();
 
-        if (form != null && form.getDirectFormFields() != null && !form.getDirectFormFields().isEmpty()) {
+        if (form != null && form.getRootFormFields() != null && !form.getRootFormFields().isEmpty()) {
             for (String fieldName : form.getAllFormFields().keySet()) {
                 String delims = ".";
                 StringTokenizer st = new StringTokenizer(fieldName, delims);

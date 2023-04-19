@@ -287,11 +287,11 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Gets the high-level{@link PdfFormField form field}s as a {@link Map}.
+     * Gets root fields (i.e. direct children of Acroform dictionary).
      *
      * @return a map of field names and their associated {@link PdfFormField form field} objects
      */
-    public Map<String, PdfFormField> getDirectFormFields() {
+    public Map<String, PdfFormField> getRootFormFields() {
         if (fields.size() == 0) {
             fields = populateFormFieldsMap();
         }
@@ -1088,7 +1088,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Put a key/value pair in the  dictionary and overwrites the previous value if it already exists.
+     * Put a key/value pair in the dictionary and overwrite previous value if it already exists.
      *
      * @param key   the key as pdf name
      * @param value the value as pdf object

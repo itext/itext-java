@@ -54,7 +54,7 @@ import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 
 /**
- * The {@link AbstractOneLineTextFieldRenderer} implementation for checkboxes.
+ * The {@link AbstractFormFieldRenderer} implementation for checkboxes.
  */
 public class CheckBoxRenderer extends AbstractFormFieldRenderer {
 
@@ -74,8 +74,8 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         this.setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
     }
 
-    /* (non-Javadoc)
-     * @see com.itextpdf.layout.renderer.IRenderer#getNextRenderer()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public IRenderer getNextRenderer() {
@@ -136,16 +136,25 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         return renderingStrategy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawBackground(DrawContext drawContext) {
-        // draw background in child
+        // Do not draw background here. It will be drawn in flat renderer.
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawBorder(DrawContext drawContext) {
-        //draw border in child
+        // Do not draw border here. It will be drawn in flat renderer.
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
         // Do not apply borders here, they will be applied in flat renderer
@@ -168,7 +177,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
      */
     @Override
     protected void adjustFieldLayout(LayoutContext layoutContext) {
-        //we don't need any layout adjustments
+        // We don't need any layout adjustments
     }
 
     /**
@@ -212,6 +221,9 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         return new FlatParagraphRenderer(paragraph);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void applyAcroField(DrawContext drawContext) {
         final String name = getModelId();
@@ -241,6 +253,9 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         writeAcroFormFieldLangAttribute(doc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isLayoutBasedOnFlatRenderer() {
         return false;
@@ -260,6 +275,9 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
             super(modelElement);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void drawChildren(DrawContext drawContext) {
             final Rectangle rectangle = this.getInnerAreaBBox().clone();

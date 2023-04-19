@@ -27,7 +27,6 @@ import com.itextpdf.forms.form.renderer.InputFieldRenderer;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
-import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;

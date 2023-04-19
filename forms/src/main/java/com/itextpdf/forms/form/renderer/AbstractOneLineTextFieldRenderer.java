@@ -31,7 +31,7 @@ import com.itextpdf.layout.renderer.LineRenderer;
 import java.util.List;
 
 /**
- * Abstract {@link BlockRenderer} for a single line of text content in a form field.
+ * Abstract {@link AbstractTextFieldRenderer} for a single line of text content in a form field.
  */
 public abstract class AbstractOneLineTextFieldRenderer extends AbstractTextFieldRenderer {
 
@@ -78,7 +78,7 @@ public abstract class AbstractOneLineTextFieldRenderer extends AbstractTextField
      * @param flatRenderer  the flat renderer
      * @param height        the height
      */
-    private void setContentHeight(IRenderer flatRenderer, float height) {
+    void setContentHeight(IRenderer flatRenderer, float height) {
         Rectangle bBox = flatRenderer.getOccupiedArea().getBBox();
         float dy = (height - bBox.getHeight()) / 2;
         bBox.moveDown(dy);

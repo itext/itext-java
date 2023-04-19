@@ -96,7 +96,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         if (fieldsFrom.size() <= 0) {
             return;
         }
-        Map<String, PdfFormField> fieldsTo = formTo.getDirectFormFields();
+        Map<String, PdfFormField> fieldsTo = formTo.getRootFormFields();
 
         List<PdfAnnotation> annots = toPage.getAnnotations();
 

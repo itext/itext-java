@@ -322,7 +322,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
             acroForm.addField(field, page, false);
 
-            Assert.assertEquals(0, acroForm.getDirectFormFields().size());
+            Assert.assertEquals(0, acroForm.getRootFormFields().size());
         }
     }
 
@@ -734,7 +734,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
             assert field != null;
             acroForm.addField(field);
-            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals(1, acroForm.getRootFormFields().size());
 
 
             PdfDictionary fieldDictReplace = new PdfDictionary();
@@ -743,7 +743,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
 
             acroForm.replaceField("field1", fieldReplace);
-            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals(1, acroForm.getRootFormFields().size());
             Assert.assertEquals("field2", acroForm.getField("field2").getFieldName().toUnicodeString());
 
         }
@@ -762,7 +762,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
 
             assert field != null;
             acroForm.addField(field);
-            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals(1, acroForm.getRootFormFields().size());
 
 
             PdfDictionary fieldDictReplace = new PdfDictionary();
@@ -771,7 +771,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
 
             acroForm.replaceField(null, fieldReplace);
-            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals(1, acroForm.getRootFormFields().size());
         }
 
     }
@@ -796,7 +796,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             field.addKid(fieldChild);
 
             acroForm.addField(field);
-            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals(1, acroForm.getRootFormFields().size());
 
 
             PdfDictionary fieldDictReplace = new PdfDictionary();
@@ -805,7 +805,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             PdfFormField fieldReplace = PdfFormField.makeFormField(fieldDictReplace.makeIndirect(outputDoc), outputDoc);
 
             acroForm.replaceField("field1.child1", fieldReplace);
-            Assert.assertEquals(1, acroForm.getDirectFormFields().size());
+            Assert.assertEquals(1, acroForm.getRootFormFields().size());
             Assert.assertEquals("field1.field2", acroForm.getField("field1.field2").getFieldName().toUnicodeString());
 
         }

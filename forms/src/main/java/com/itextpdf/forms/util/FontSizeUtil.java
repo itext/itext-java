@@ -22,15 +22,9 @@
  */
 package com.itextpdf.forms.util;
 
-import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.renderer.IRenderer;
 
 
 /**
@@ -40,41 +34,6 @@ public final class FontSizeUtil {
 
     private FontSizeUtil() {
         //utility class
-    }
-
-    /**
-     * Calculates the font size that will fit the text in the given rectangle.
-     *
-     * @param paragraph      the paragraph to be fitted
-     * @param rect           the rectangle to fit the text in
-     * @param parentRenderer the parent renderer
-     *
-     * @return the font size that will fit the text in the given rectangle
-     */
-    public static float approximateFontSizeToFitMultiLine(Paragraph paragraph, Rectangle rect,
-            IRenderer parentRenderer) {
-        final IRenderer renderer = paragraph.createRendererSubTree().setParent(parentRenderer);
-        final LayoutContext layoutContext = new LayoutContext(new LayoutArea(1, rect));
-        float lFontSize = AbstractPdfFormField.MIN_FONT_SIZE;
-        float rFontSize = AbstractPdfFormField.DEFAULT_FONT_SIZE;
-
-        paragraph.setFontSize(AbstractPdfFormField.DEFAULT_FONT_SIZE);
-        if (renderer.layout(layoutContext).getStatus() != LayoutResult.FULL) {
-            final int numberOfIterations = 6;
-            for (int i = 0; i < numberOfIterations; i++) {
-                float mFontSize = (lFontSize + rFontSize) / 2;
-                paragraph.setFontSize(mFontSize);
-                LayoutResult result = renderer.layout(layoutContext);
-                if (result.getStatus() == LayoutResult.FULL) {
-                    lFontSize = mFontSize;
-                } else {
-                    rFontSize = mFontSize;
-                }
-            }
-        } else {
-            lFontSize = AbstractPdfFormField.DEFAULT_FONT_SIZE;
-        }
-        return lFontSize;
     }
 
     /**

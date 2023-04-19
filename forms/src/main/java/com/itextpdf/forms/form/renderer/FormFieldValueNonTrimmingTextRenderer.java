@@ -41,9 +41,7 @@ import org.slf4j.LoggerFactory;
  * trimming strategy matches Acrobat's behavior
  */
 
-// Temporarily public, make it package private on cleanup of PdfFormAnnotation
-// TODO DEVSIX-7385 Finalize code related to form fields renderers separation
-public class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
+class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
     // Determines whether we want to trim leading space. In particular we don't want to trim
     // the very first leading spaces of the text value. When text overflows to the next lines,
     // whether we should trim the text depends on why the overflow happened
