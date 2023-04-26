@@ -1,50 +1,29 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -53,14 +32,14 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
+import com.itextpdf.kernel.pdf.function.IPdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfType2Function;
 
 /**
  * The abstract PdfShading class that represents the Shading Dictionary PDF object.
  */
 public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
-
-
+    
     /**
      * constants of shading type (see ISO-320001 Table 78)
      */
@@ -196,10 +175,10 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      * Sets the function that represents color transitions
      * across the shading geometry as one object.
      *
-     * @param function The {@link PdfFunction} to set.
+     * @param function The {@link IPdfFunction} to set.
      */
-    public void setFunction(PdfFunction function) {
-        getPdfObject().put(PdfName.Function, function.getPdfObject());
+    public void setFunction(IPdfFunction function) {
+        getPdfObject().put(PdfName.Function, function.getAsPdfObject());
         setModified();
     }
 
@@ -207,12 +186,12 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
      * Sets the function object that represents color transitions
      * across the shading geometry as an array of functions.
      *
-     * @param functions The array of {@link PdfFunction} to be set.
+     * @param functions The array of {@link IPdfFunction} to be set.
      */
-    public void setFunction(PdfFunction[] functions) {
+    public void setFunction(IPdfFunction[] functions) {
         PdfArray arr = new PdfArray();
-        for (PdfFunction func : functions) {
-            arr.add(func.getPdfObject());
+        for (IPdfFunction func : functions) {
+            arr.add(func.getAsPdfObject());
         }
         getPdfObject().put(PdfName.Function, arr);
         setModified();
@@ -258,9 +237,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * Creates the new instance of the class.
          *
          * @param colorSpace the {@link PdfColorSpace} object in which colour values shall be expressed.
-         * @param function the {@link PdfFunction}, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction}, that is used to calculate color transitions.
          */
-        public FunctionBased(PdfColorSpace colorSpace, PdfFunction function) {
+        public FunctionBased(PdfColorSpace colorSpace, IPdfFunction function) {
             this(colorSpace.getPdfObject(), function);
         }
 
@@ -268,9 +247,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * Creates the new instance of the class.
          *
          * @param colorSpace the {@link PdfObject}, that represents color space in which colour values shall be expressed.
-         * @param function the {@link PdfFunction}, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction}, that is used to calculate color transitions.
          */
-        public FunctionBased(PdfObject colorSpace, PdfFunction function) {
+        public FunctionBased(PdfObject colorSpace, IPdfFunction function) {
             super(new PdfDictionary(), ShadingType.FUNCTION_BASED, PdfColorSpace.makeColorSpace(colorSpace));
 
             setFunction(function);
@@ -380,8 +359,7 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             super(new PdfDictionary(), ShadingType.AXIAL, cs);
 
             setCoords(x0, y0, x1, y1);
-            PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] {0, 1}), null,
-                    new PdfArray(color0), new PdfArray(color1), new PdfNumber(1));
+            IPdfFunction func = new PdfType2Function(new float[] {0, 1}, null, color0, color1, 1);
             setFunction(func);
         }
 
@@ -415,9 +393,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *           The special Pattern space isn't excepted.
          * @param coords the {@link PdfArray} of four numbers [x0 y0 x1 y1] that specified the starting
          *               and the endings coordinates of thew axis, expressed in the shading's target coordinate space.
-         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction} object, that is used to calculate color transitions.
          */
-        public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
+        public Axial(PdfColorSpace cs, PdfArray coords, IPdfFunction function) {
             this(cs, coords, null, function);
         }
 
@@ -432,9 +410,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          * @param domain   the {@link PdfArray} of two numbers [t0 t1] specifying the limiting values
          *                 of a parametric variable t which is considered to vary linearly between
          *                 these two values and becomes the input argument to the colour function.
-         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction} object, that is used to calculate color transitions.
          */
-        public Axial(PdfColorSpace cs, PdfArray coords, PdfArray domain, PdfFunction function) {
+        public Axial(PdfColorSpace cs, PdfArray coords, PdfArray domain, IPdfFunction function) {
             super(new PdfDictionary(), ShadingType.AXIAL, cs);
             setCoords(coords);
             if (domain != null) {
@@ -592,8 +570,8 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
             super(new PdfDictionary(), ShadingType.RADIAL, cs);
 
             setCoords(x0, y0, r0, x1, y1, r1);
-            PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] {0, 1}), null,
-                    new PdfArray(color0), new PdfArray(color1), new PdfNumber(1));
+            IPdfFunction func = new PdfType2Function(new float[] {0, 1}, null,
+                    color0, color1, 1);
             setFunction(func);
         }
 
@@ -637,9 +615,9 @@ public abstract class PdfShading extends PdfObjectWrapper<PdfDictionary> {
          *               The radii r0 and r1 shall both be greater than or equal to 0.
          *               If one radius is 0, the corresponding circle shall be treated as a point;
          *               if both are 0, nothing shall be painted.
-         * @param function the {@link PdfFunction} object, that is used to calculate color transitions.
+         * @param function the {@link IPdfFunction} object, that is used to calculate color transitions.
          */
-        public Radial(PdfColorSpace cs, PdfArray coords, PdfFunction function) {
+        public Radial(PdfColorSpace cs, PdfArray coords, IPdfFunction function) {
             super(new PdfDictionary(), ShadingType.RADIAL, cs);
             setCoords(coords);
             setFunction(function);

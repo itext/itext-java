@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,28 +22,33 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class BouncyCastleDigestUnitTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     @Test
-    public void getMessageDigestMD2Test() throws GeneralSecurityException {
-        getMessageDigestTest("MD2", "MD2");
+    public void getMessageDigestMD2Test() {
+        IExternalDigest digest = new BouncyCastleDigest();
+        Assert.assertThrows(NoSuchAlgorithmException.class, () -> digest.getMessageDigest("MD2"));
     }
 
     @Test
     public void getMessageDigestMD5Test() throws GeneralSecurityException {
-        getMessageDigestTest("MD5", "MD5");
+        IExternalDigest digest = new BouncyCastleDigest();
+        Assert.assertThrows(NoSuchAlgorithmException.class, () -> digest.getMessageDigest("MD5"));
     }
 
     @Test
@@ -73,22 +78,42 @@ public class BouncyCastleDigestUnitTest extends ExtendedITextTest {
 
     @Test
     public void getMessageDigestRIPEMD128Test() throws GeneralSecurityException {
-        getMessageDigestTest("RIPEMD128", "RIPEMD128");
+        if (FACTORY.isInApprovedOnlyMode()) {
+            Assert.assertThrows(NoSuchAlgorithmException.class,
+                    () -> new BouncyCastleDigest().getMessageDigest("RIPEMD128"));
+        } else {
+            getMessageDigestTest("RIPEMD128", "RIPEMD128");
+        }
     }
 
     @Test
     public void getMessageDigestRIPEMD160Test() throws GeneralSecurityException {
-        getMessageDigestTest("RIPEMD160", "RIPEMD160");
+        if (FACTORY.isInApprovedOnlyMode()) {
+            Assert.assertThrows(NoSuchAlgorithmException.class,
+                    () -> new BouncyCastleDigest().getMessageDigest("RIPEMD160"));
+        } else {
+            getMessageDigestTest("RIPEMD160", "RIPEMD160");
+        }
     }
 
     @Test
     public void getMessageDigestRIPEMD256Test() throws GeneralSecurityException {
-        getMessageDigestTest("RIPEMD256", "RIPEMD256");
+        if (FACTORY.isInApprovedOnlyMode()) {
+            Assert.assertThrows(NoSuchAlgorithmException.class,
+                    () -> new BouncyCastleDigest().getMessageDigest("RIPEMD256"));
+        } else {
+            getMessageDigestTest("RIPEMD256", "RIPEMD256");
+        }
     }
 
     @Test
     public void getMessageDigestGOST3411Test() throws GeneralSecurityException {
-        getMessageDigestTest("GOST3411", "GOST3411");
+        if (FACTORY.isInApprovedOnlyMode()) {
+            Assert.assertThrows(NoSuchAlgorithmException.class,
+                    () -> new BouncyCastleDigest().getMessageDigest("GOST3411"));
+        } else {
+            getMessageDigestTest("GOST3411", "GOST3411");
+        }
     }
 
     @Test

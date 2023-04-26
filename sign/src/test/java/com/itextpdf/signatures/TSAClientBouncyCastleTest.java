@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,13 +22,17 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.builder.TestTimestampTokenBuilder;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -36,15 +40,13 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class TSAClientBouncyCastleTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     @Test
     public void setTSAInfoTest() {
@@ -148,10 +150,10 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         byte[] timestampTokenArray = tsaClientBouncyCastle.getTimeStampToken(tsaClientBouncyCastle
                 .getMessageDigest().digest());
 
-        TimeStampToken expectedToken = new TimeStampResponse(tsaClientBouncyCastle.getExpectedTsaResponseBytes())
+        ITimeStampToken expectedToken = BOUNCY_CASTLE_FACTORY.createTimeStampResponse(tsaClientBouncyCastle.getExpectedTsaResponseBytes())
                 .getTimeStampToken();
-        TimeStampTokenInfo expectedTsTokenInfo = expectedToken.getTimeStampInfo();
-        TimeStampTokenInfo resultTsTokenInfo = itsaInfoBouncyCastle.getTimeStampTokenInfo();
+        ITimeStampTokenInfo expectedTsTokenInfo = expectedToken.getTimeStampInfo();
+        ITimeStampTokenInfo resultTsTokenInfo = itsaInfoBouncyCastle.getTimeStampTokenInfo();
 
         Assert.assertNotNull(timestampTokenArray);
         Assert.assertNotNull(resultTsTokenInfo);
@@ -161,7 +163,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
     @Test
     public void getTimeStampTokenFailureExceptionTest() throws Exception {
-        String allowedDigest = "MD5";
+        String allowedDigest = "SHA1";
         String signatureAlgorithm = "SHA256withRSA";
         String url = "url";
 
@@ -179,7 +181,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
     }
 
     private static final class CustomTsaClientBouncyCastle extends TSAClientBouncyCastle {
-        private static final char[] PASSWORD = "testpass".toCharArray();
+        private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
         private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
@@ -196,11 +198,10 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
             this.signatureAlgorithm = signatureAlgorithm;
             this.allowedDigest = allowedDigest;
-            tsaPrivateKey = Pkcs12FileHelper
-                    .readFirstKey(CERTS_SRC + "signCertRsa01.p12", PASSWORD, PASSWORD);
+            tsaPrivateKey = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
 
-            String tsaCertFileName = CERTS_SRC + "tsCertRsa.p12";
-            tsaCertificateChain = Arrays.asList(Pkcs12FileHelper.readFirstChain(tsaCertFileName, PASSWORD));
+            String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
+            tsaCertificateChain = Arrays.asList(PemFileHelper.readFirstChain(tsaCertFileName));
         }
 
         public byte[] getExpectedTsaResponseBytes() {
@@ -217,15 +218,14 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
 
     private static final class CustomItsaInfoBouncyCastle implements ITSAInfoBouncyCastle {
 
-        private TimeStampTokenInfo timeStampTokenInfo;
+        private ITimeStampTokenInfo timeStampTokenInfo;
 
         @Override
-        public void inspectTimeStampTokenInfo(TimeStampTokenInfo info) {
+        public void inspectTimeStampTokenInfo(ITimeStampTokenInfo info) {
             this.timeStampTokenInfo = info;
         }
 
-
-        public TimeStampTokenInfo getTimeStampTokenInfo() {
+        public ITimeStampTokenInfo getTimeStampTokenInfo() {
             return timeStampTokenInfo;
         }
     }

@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -35,6 +35,7 @@ import org.junit.experimental.categories.Category;
 public class KeyStoreUtilUnitTest extends ExtendedITextTest {
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCacertsKeyStoreSUNTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore("SUN");
         Assert.assertEquals("JKS", keyStore.getType());
@@ -42,6 +43,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreNoSuchProviderTest() {
         PdfException e = Assert.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("unknown provider"));
@@ -49,6 +51,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreJKSNotFoundTest() {
         PdfException e = Assert.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore("SunPCSC"));
@@ -56,6 +59,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreNullTest() {
         KeyStore keyStore = KeyStoreUtil.loadCacertsKeyStore(null);
         Assert.assertEquals("JKS", keyStore.getType());
@@ -63,6 +67,7 @@ public class KeyStoreUtilUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
     public void loadCaCertsKeyStoreEmptyTest() {
         PdfException e = Assert.assertThrows(PdfException.class,
                 () -> KeyStoreUtil.loadCacertsKeyStore(""));

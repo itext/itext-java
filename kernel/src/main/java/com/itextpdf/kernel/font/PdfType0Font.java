@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.font;
 
@@ -112,6 +91,8 @@ public class PdfType0Font extends PdfFont {
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
+    private final CMapToUnicode embeddedToUnicode;
+
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
         if (!PdfEncodings.IDENTITY_H.equals(cmap) && !PdfEncodings.IDENTITY_V.equals(cmap)) {
@@ -128,6 +109,7 @@ public class PdfType0Font extends PdfFont {
         cmapEncoding = new CMapEncoding(cmap);
         usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_2;
+        embeddedToUnicode = null;
         if (ttf.isFontSpecific()) {
             specificUnicodeDifferences = new char[256];
             byte[] bytes = new byte[1];
@@ -156,6 +138,7 @@ public class PdfType0Font extends PdfFont {
         cmapEncoding = new CMapEncoding(cmap, uniMap);
         usedGlyphs = new TreeSet<>();
         cidFontType = CID_FONT_TYPE_0;
+        embeddedToUnicode = null;
     }
 
     PdfType0Font(PdfDictionary fontDictionary) {
@@ -163,13 +146,26 @@ public class PdfType0Font extends PdfFont {
         newFont = false;
         PdfDictionary cidFont = fontDictionary.getAsArray(PdfName.DescendantFonts).getAsDictionary(0);
         PdfObject cmap = fontDictionary.get(PdfName.Encoding);
+
+        String ordering = getOrdering(cidFont);
+        if(ordering == null) {
+            throw new PdfException(KernelExceptionMessageConstant.ORDERING_SHOULD_BE_DETERMINED);
+        }
+        CMapToUnicode toUnicodeCMap;
         PdfObject toUnicode = fontDictionary.get(PdfName.ToUnicode);
-        CMapToUnicode toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
+        if (toUnicode == null) {
+            toUnicodeCMap = FontUtil.parseUniversalToUnicodeCMap(ordering);
+            embeddedToUnicode = null;
+        } else {
+            toUnicodeCMap = FontUtil.processToUnicode(toUnicode);
+            embeddedToUnicode = toUnicodeCMap;
+        }
+
         if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
                 PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
+
             if (toUnicodeCMap == null) {
-                String uniMap = getUniMapFromOrdering(getOrdering(cidFont),
-                        PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()));
+                String uniMap = getUniMapFromOrdering(ordering, PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()));
                 toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
                 if (toUnicodeCMap == null) {
                     toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
@@ -183,7 +179,7 @@ public class PdfType0Font extends PdfFont {
             embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
         } else {
             String cidFontName = cidFont.getAsName(PdfName.BaseFont).getValue();
-            String uniMap = getUniMapFromOrdering(getOrdering(cidFont), true);
+            String uniMap = getUniMapFromOrdering(ordering, true);
             if (uniMap != null && uniMap.startsWith("Uni") && CidFontProperties.isCidFont(cidFontName, uniMap)) {
                 try {
                     fontProgram = FontProgramFactory.createFont(cidFontName);
@@ -256,33 +252,6 @@ public class PdfType0Font extends PdfFont {
             return result + 'H';
         }
         return result + 'V';
-    }
-
-    /**
-     * Get Unicode mapping name from ordering.
-     * @param ordering the text ordering to base to unicode mapping on
-     *
-     * @return Unicode mapping name
-     *
-     * @deprecated Replaced by {@link #getUniMapFromOrdering(String, boolean)}
-     * for proper handling of IDENTITY_V encoding.
-     */
-    @Deprecated
-    public static String getUniMapFromOrdering(String ordering) {
-        switch (ordering) {
-            case "CNS1":
-                return "UniCNS-UTF16-H";
-            case "Japan1":
-                return "UniJIS-UTF16-H";
-            case "Korea1":
-                return "UniKS-UTF16-H";
-            case "GB1":
-                return "UniGB-UTF16-H";
-            case "Identity":
-                return "Identity-H";
-            default:
-                return null;
-        }
     }
 
     @Override
@@ -592,6 +561,11 @@ public class PdfType0Font extends PdfFont {
     public boolean appendDecodedCodesToGlyphsList(List<Glyph> list, PdfString characterCodes) {
         boolean allCodesDecoded = true;
 
+        final boolean isToUnicodeEmbedded = embeddedToUnicode != null;
+        final CMapEncoding cmap = getCmap();
+        final FontProgram fontProgram = getFontProgram();
+        final List<byte[]> codeSpaceRanges = isToUnicodeEmbedded ? embeddedToUnicode.getCodeSpaceRanges() : cmap.getCodeSpaceRanges();
+
         String charCodesSequence = characterCodes.getValue();
         // A sequence of one or more bytes shall be extracted from the string and matched against the codespace
         // ranges in the CMap. That is, the first byte shall be matched against 1-byte codespace ranges; if no match is
@@ -605,13 +579,18 @@ public class PdfType0Font extends PdfFont {
             for (int codeLength = 1; codeLength <= MAX_CID_CODE_LENGTH && i + codeLength <= charCodesSequence.length();
                     codeLength++) {
                 code = (code << 8) + charCodesSequence.charAt(i + codeLength - 1);
-                if (!getCmap().containsCodeInCodeSpaceRange(code, codeLength)) {
-                    continue;
-                } else {
+
+                if (PdfType0Font.containsCodeInCodeSpaceRange(codeSpaceRanges, code, codeLength)) {
                     codeSpaceMatchedLength = codeLength;
+                } else {
+                    continue;
                 }
-                int glyphCode = getCmap().getCidCode(code);
-                glyph = getFontProgram().getGlyphByCode(glyphCode);
+
+                // According to paragraph 9.10.2 of PDF Specification ISO 32000-2, if toUnicode is embedded, it is
+                // necessary to use it to map directly code points to unicode. If not embedded, use CMap to map code
+                // points to CIDs and then CIDFont to map CIDs to unicode.
+                int glyphCode = isToUnicodeEmbedded ? code : cmap.getCidCode(code);
+                glyph = fontProgram.getGlyphByCode(glyphCode);
                 if (glyph != null) {
                     i += codeLength - 1;
                     break;
@@ -631,11 +610,11 @@ public class PdfType0Font extends PdfFont {
                 }
                 i += codeSpaceMatchedLength - 1;
             }
-            if (glyph != null && glyph.getChars() != null) {
-                list.add(glyph);
-            } else {
-                list.add(new Glyph(0, getFontProgram().getGlyphByCode(0).getWidth(), -1));
+            if (glyph == null || glyph.getChars() == null) {
+                list.add(new Glyph(0, fontProgram.getGlyphByCode(0).getWidth(), -1));
                 allCodesDecoded = false;
+            } else {
+                list.add(glyph);
             }
         }
         return allCodesDecoded;
@@ -709,6 +688,28 @@ public class PdfType0Font extends PdfFont {
         if (cidinfo == null)
             return null;
         return cidinfo.containsKey(PdfName.Ordering) ? cidinfo.get(PdfName.Ordering).toString() : null;
+    }
+
+    private static boolean containsCodeInCodeSpaceRange(List<byte[]> codeSpaceRanges, int code, int length) {
+        for (int i = 0; i < codeSpaceRanges.size(); i += 2) {
+            if (length == codeSpaceRanges.get(i).length) {
+                int mask = 0xff;
+                int totalShift = 0;
+                byte[] low = codeSpaceRanges.get(i);
+                byte[] high = codeSpaceRanges.get(i + 1);
+                boolean fitsIntoRange = true;
+                for (int ind = length - 1; ind >= 0; ind--, totalShift += 8, mask <<= 8) {
+                    int actualByteValue = (code & mask) >> totalShift;
+                    if (!(actualByteValue >= (0xff & low[ind]) && actualByteValue <= (0xff & high[ind]))) {
+                        fitsIntoRange = false;
+                    }
+                }
+                if (fitsIntoRange) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void flushFontData() {

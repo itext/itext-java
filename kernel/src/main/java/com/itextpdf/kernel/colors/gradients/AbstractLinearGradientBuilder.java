@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -25,19 +25,22 @@ package com.itextpdf.kernel.colors.gradients;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
+import com.itextpdf.kernel.colors.gradients.GradientColorStop.HintOffsetType;
+import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfShading;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
-import com.itextpdf.kernel.colors.gradients.GradientColorStop.HintOffsetType;
-import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
+import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
+import com.itextpdf.kernel.pdf.function.IPdfFunction;
+import com.itextpdf.kernel.pdf.function.PdfType2Function;
+import com.itextpdf.kernel.pdf.function.PdfType3Function;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -552,11 +555,11 @@ public abstract class AbstractLinearGradientBuilder {
         return adjustedStops;
     }
 
-    private static PdfFunction constructFunction(List<GradientColorStop> toConstruct) {
+    private static IPdfFunction constructFunction(List<GradientColorStop> toConstruct) {
         int functionsAmount = toConstruct.size() - 1;
 
         double[] bounds = new double[functionsAmount - 1];
-        List<PdfFunction> type2Functions = new ArrayList<>(functionsAmount);
+        List<AbstractPdfFunction<? extends PdfDictionary>> type2Functions = new ArrayList<>(functionsAmount);
 
         GradientColorStop currentStop;
         GradientColorStop nextStop = toConstruct.get(0);
@@ -579,11 +582,12 @@ public abstract class AbstractLinearGradientBuilder {
             encode[i + 1] = 1d;
         }
 
-        return new PdfFunction.Type3(new PdfArray(new double[] {domainStart, domainEnd}), null,
-                type2Functions, new PdfArray(bounds), new PdfArray(encode));
+        return new PdfType3Function(new double[] {domainStart, domainEnd}, null, type2Functions, bounds, encode);
     }
 
-    private static PdfFunction constructSingleGradientSegmentFunction(GradientColorStop from, GradientColorStop to) {
+    private static AbstractPdfFunction<? extends PdfDictionary> constructSingleGradientSegmentFunction(
+            GradientColorStop from, GradientColorStop to) {
+
         double exponent = 1d;
         float[] fromColor = from.getRgbArray();
         float[] toColor = to.getRgbArray();
@@ -598,8 +602,7 @@ public abstract class AbstractLinearGradientBuilder {
                 exponent = Math.log(0.5) / Math.log(hintOffset);
             }
         }
-        return new PdfFunction.Type2(new PdfArray(new float[] {0f, 1f}), null,
-                new PdfArray(fromColor), new PdfArray(toColor), new PdfNumber(exponent));
+        return new PdfType2Function(new float[] {0f, 1f}, null, fromColor, toColor, exponent);
     }
 
     private static PdfArray createCoordsPdfArray(Point[] coordsPoints) {

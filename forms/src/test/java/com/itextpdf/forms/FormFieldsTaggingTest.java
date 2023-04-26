@@ -1,49 +1,31 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
-import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -107,7 +89,8 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         pdfDoc.initializeOutlines();
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
-        acroForm.addField(PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1"));
+        acroForm.addField(new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
+                .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox().setValue("1", true));
 
         PdfDocument docToCopyFrom = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms07.pdf"));
         docToCopyFrom.copyPagesTo(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
@@ -216,7 +199,9 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
+        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
+                .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Capcha").createPushButton();
+        pushButton.setFontSize(12f);
 
         TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
         tagPointer.moveToKid(StandardRoles.DIV);
@@ -227,19 +212,60 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         compareOutput(outFileName, cmpFileName);
     }
 
+    @Test
+    public void mergeFieldTaggingTest08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "mergeFieldTaggingTest08.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeFieldTaggingTest08.pdf";
+        String srcFileName = sourceFolder + "mergeFieldTaggingTest08.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+            pdfDoc.setTagged();
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+            addFormFieldsToDocument(pdfDoc, form);
+        }
+
+        compareOutput(outFileName, cmpFileName);
+    }
+
+    @Test
+    public void mergeFieldTaggingTest09() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "mergeFieldTaggingTest09.pdf";
+        String cmpFileName = sourceFolder + "cmp_mergeFieldTaggingTest09.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            pdfDoc.setTagged();
+
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+
+            addFormFieldsToDocument(pdfDoc, form);
+            addFormFieldsToDocument(pdfDoc, form);
+        }
+
+        compareOutput(outFileName, cmpFileName);
+        compareOutput(outFileName, sourceFolder + "cmp_mergeFieldTaggingTest08.pdf");
+    }
+
     private void addFormFieldsToDocument(PdfDocument pdfDoc, PdfAcroForm acroForm) {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
 
-        PdfButtonFormField group = PdfFormField.createRadioGroup(pdfDoc, "TestGroup", "1");
+        String formFieldName = "TestGroup";
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, formFieldName);
+        PdfButtonFormField group = builder.createRadioGroup();
+        group.setValue("1", true);
 
-        PdfFormField.createRadioButton(pdfDoc, rect, group, "1");
-        PdfFormField.createRadioButton(pdfDoc, rect1, group, "2");
+        group.addKid(builder.createRadioButton("1", rect));
+        group.addKid(builder.createRadioButton("2", rect1));
 
         acroForm.addField(group);
 
-        PdfButtonFormField pushButton = PdfFormField.createPushButton(pdfDoc, new Rectangle(36, 650, 40, 20), "push", "Capcha");
-        PdfButtonFormField checkBox = PdfFormField.createCheckBox(pdfDoc, new Rectangle(36, 560, 20, 20), "TestCheck", "1");
+        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
+                .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Capcha").createPushButton();
+        PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
+                .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox();
+        checkBox.setValue("1", true);
 
         acroForm.addField(pushButton);
         acroForm.addField(checkBox);

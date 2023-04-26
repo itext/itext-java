@@ -4,10 +4,10 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.2.5</version>
+    <version>8.0.0</version>
   </parent>
   <artifactId>hyph</artifactId>
-  <name>iText 7 - hyph</name>
+  <name>iText - hyph</name>
   <description>XML files that can be used for hyphenation</description>
   <url>https://itextpdf.com/</url>
   <licenses>

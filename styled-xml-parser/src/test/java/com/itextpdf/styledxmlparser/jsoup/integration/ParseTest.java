@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -112,6 +112,7 @@ public class ParseTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void testBaidu() throws IOException {
         // tests <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
         File in = getFile("/htmltests/baidu-cn-home.html");
@@ -127,7 +128,8 @@ public class ParseTest extends ExtendedITextTest {
         Assert.assertEquals("http://news.baidu.com", newsLink.absUrl("href"));
 
         // check auto-detect from meta
-        Assert.assertEquals("GB2312", doc.outputSettings().charset().displayName());
+        // Android-Conversion-Skip-Line (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
+        Assert.assertEquals("GB2312", doc.outputSettings().charset().name()); // Android-Conversion-Replace Assert.assertEquals("GBK", doc.outputSettings().charset().name());
         Assert.assertEquals("<title>百度一下，你就知道      </title>", doc.select("title").outerHtml());
 
         doc.outputSettings().charset("ascii");
@@ -136,34 +138,38 @@ public class ParseTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void testBaiduVariant() throws IOException {
         // tests <meta charset> when preceded by another <meta>
         File in = getFile("/htmltests/baidu-variant.html");
         Document doc = Jsoup.parse(in, null,
                 "http://www.baidu.com/"); // http charset is gb2312, but NOT specifying it, to test http-equiv parse
         // check auto-detect from meta
-        Assert.assertEquals("GB2312", doc.outputSettings().charset().displayName());
+        // Android-Conversion-Skip-Line (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
+        Assert.assertEquals("GB2312", doc.outputSettings().charset().name()); // Android-Conversion-Replace Assert.assertEquals("GBK", doc.outputSettings().charset().name());
         Assert.assertEquals("<title>百度一下，你就知道</title>", doc.select("title").outerHtml());
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void testHtml5Charset() throws IOException {
         // test that <meta charset="gb2312"> works
         File in = getFile("/htmltests/meta-charset-1.html");
         Document doc = Jsoup.parse(in, null, "http://example.com/"); //gb2312, has html5 <meta charset>
         Assert.assertEquals("新", doc.text());
-        Assert.assertEquals("GB2312", doc.outputSettings().charset().displayName());
+        // Android-Conversion-Skip-Line (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
+        Assert.assertEquals("GB2312", doc.outputSettings().charset().name()); // Android-Conversion-Replace Assert.assertEquals("GBK", doc.outputSettings().charset().name());
 
         // double check, no charset, falls back to utf8 which is incorrect
         in = getFile("/htmltests/meta-charset-2.html"); //
         doc = Jsoup.parse(in, null, "http://example.com"); // gb2312, no charset
-        Assert.assertEquals("UTF-8", doc.outputSettings().charset().displayName());
+        Assert.assertEquals("UTF-8", doc.outputSettings().charset().name());
         Assert.assertNotEquals("新", doc.text());
 
         // confirm fallback to utf8
         in = getFile("/htmltests/meta-charset-3.html");
         doc = Jsoup.parse(in, null, "http://example.com/"); // utf8, no charset
-        Assert.assertEquals("UTF-8", doc.outputSettings().charset().displayName());
+        Assert.assertEquals("UTF-8", doc.outputSettings().charset().name());
         Assert.assertEquals("新", doc.text());
     }
 
@@ -174,7 +180,7 @@ public class ParseTest extends ExtendedITextTest {
                 "<body></body>\n" +
                 "</html>");
         Document doc = Jsoup.parse(in, null, "http://example.com/");
-        Assert.assertEquals("UTF-8", doc.outputSettings().charset().displayName());
+        Assert.assertEquals("UTF-8", doc.outputSettings().charset().name());
     }
 
     @Test

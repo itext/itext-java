@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -99,6 +99,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
     public void emptyZipCreationTest() throws IOException {
         final String pathToFile = DESTINATION_FOLDER + "emptyZipCreation.zip";
 
@@ -113,6 +114,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
     public void addNullFileEntryTest() throws IOException {
         final String pathToFile = DESTINATION_FOLDER + "addNullFileEntry.zip";
 
@@ -124,6 +126,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
     public void addEntryWithNotExistingFileTest() throws IOException {
         try (ZipFileWriter writer = new ZipFileWriter(
                 DESTINATION_FOLDER + "addEntryWithNotExistingFile.zip")) {
@@ -133,6 +136,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
     public void addNullStreamEntryTest() throws IOException {
         final String pathToFile = DESTINATION_FOLDER + "addNullStreamEntry.zip";
 
@@ -144,6 +148,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
     public void addNullJsonEntryTest() throws IOException {
         final String pathToFile = DESTINATION_FOLDER + "addNullJsonEntry.zip";
 
@@ -155,6 +160,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
     public void addEntryWhenWriterIsClosedTest() throws IOException {
         final String pathToFile = DESTINATION_FOLDER + "addEntryWhenWriterIsClosed.zip";
 
@@ -276,6 +282,7 @@ public class ZipFileWriterTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6906 fix different behavior of ZipFileWriter\Reader)
     public void addEntryWithNullFileNameTest() throws IOException {
         final String pathToFile = DESTINATION_FOLDER + "addEntryWithNullFileName.zip";
         final String firstTextFilePath = SOURCE_FOLDER + "testFile.txt";

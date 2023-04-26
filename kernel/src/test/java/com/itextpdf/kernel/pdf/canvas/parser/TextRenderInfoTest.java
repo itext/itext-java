@@ -1,44 +1,24 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
@@ -54,6 +34,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrate
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -66,7 +47,7 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class TextRenderInfoTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/TextRenderInfoTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/TextRenderInfoTest/";
 
     public static final int FIRST_PAGE = 1;
     public static final int FIRST_ELEMENT_INDEX = 0;
@@ -74,7 +55,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
     @Test
     public void testCharacterRenderInfos() throws Exception {
         PdfCanvasProcessor parser = new PdfCanvasProcessor(new CharacterPositionEventListener());
-        parser.processPageContent(new PdfDocument(new PdfReader(sourceFolder + "simple_text.pdf")).getPage(FIRST_PAGE));
+        parser.processPageContent(new PdfDocument(new PdfReader(SOURCE_FOLDER + "simple_text.pdf")).getPage(FIRST_PAGE));
     }
 
     /**
@@ -86,7 +67,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         StringBuilder sb = new StringBuilder();
         String inFile = "japanese_text.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inFile));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
         ITextExtractionStrategy start = new SimpleTextExtractionStrategy();
 
         sb.append(PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start));
@@ -105,7 +86,7 @@ public class TextRenderInfoTest extends ExtendedITextTest {
         String inFile = "type3font_text.pdf";
         LineSegment origLineSegment = new LineSegment(new Vector(20.3246f, 769.4974f, 1.0f), new Vector(151.22923f, 769.4974f, 1.0f));
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inFile));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
         TextPositionEventListener renderListener = new TextPositionEventListener();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(renderListener);
 
@@ -118,6 +99,32 @@ public class TextRenderInfoTest extends ExtendedITextTest {
                 origLineSegment.getEndPoint().get(FIRST_ELEMENT_INDEX), 1 / 2f);
     }
 
+    @Test
+    public void testDoubleMappedCharacterExtraction() throws IOException {
+        String inFile = "double_cmap_mapping.pdf";
+        // TODO after fixing DEVSIX-6089 first hyphen should be 002D instead of 2011. The similar for the second line
+        String expectedResult = "Regular hyphen [\u002D] and non-breaking hyphen [\u002D] (both CID 14)\n"
+                + "Turtle kyuujitai [\u9f9c] and turtle radical [\u9f9c] (both CID 7472)";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
+        ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+
+        String result = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), strategy).trim();
+        Assert.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testEmbeddedIdentityToUnicodeTest() throws IOException {
+        String inFile = "embedded_identity_to_unicode.pdf";
+        String expectedResult = "Regular hyphen [\u002d] and non-breaking hyphen [\u2011] (both CID 14)\n"
+                + "Turtle kyuujitai [\u9f9c] and turtle radical [\u2fd4] (both CID 7472)";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFile));
+        ITextExtractionStrategy start = new SimpleTextExtractionStrategy();
+
+        String result = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(FIRST_PAGE), start).trim();
+        Assert.assertEquals(expectedResult, result);
+    }
 
     private static class TextPositionEventListener implements IEventListener {
         List<LineSegment> lineSegments = new ArrayList<>();

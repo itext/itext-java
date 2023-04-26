@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.layout.renderer;
 
@@ -265,7 +244,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (RenderingMode.HTML_MODE.equals(mode)) {
             currentLineAscender = ascenderDescender[0];
             currentLineDescender = ascenderDescender[1];
-            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
+            currentLineHeight = (currentLineAscender - currentLineDescender) * FontProgram.convertTextSpaceToGlyphSpace(
+                    fontSize.getValue()) + textRise;
         }
 
         savedWordBreakAtLineEnding = null;
@@ -372,10 +352,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     tabAnchorCharacter = null;
                 }
 
-                float glyphWidth = getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                final float glyphWidth = FontProgram.convertTextSpaceToGlyphSpace(
+                        getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing));
                 float xAdvance = previousCharPos != -1 ? text.get(previousCharPos).getXAdvance() : 0;
                 if (xAdvance != 0) {
-                    xAdvance = scaleXAdvance(xAdvance, fontSize.getValue(), hScale) / TEXT_SPACE_COEFF;
+                    xAdvance = FontProgram.convertTextSpaceToGlyphSpace(
+                            scaleXAdvance(xAdvance, fontSize.getValue(), hScale));
                 }
 
                 final float potentialWidth =
@@ -419,7 +401,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                 nonBreakablePartMaxAscender = Math.max(nonBreakablePartMaxAscender, ascender);
                 nonBreakablePartMaxDescender = Math.min(nonBreakablePartMaxDescender, descender);
-                nonBreakablePartMaxHeight = (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
+                nonBreakablePartMaxHeight = FontProgram.convertTextSpaceToGlyphSpace(
+                        (nonBreakablePartMaxAscender - nonBreakablePartMaxDescender) * fontSize.getValue()) + textRise;
 
                 previousCharPos = ind;
 
@@ -623,8 +606,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             // process empty line (e.g. '\n')
                             currentLineAscender = ascender;
                             currentLineDescender = descender;
-                            currentLineHeight = (currentLineAscender - currentLineDescender) * fontSize.getValue() / TEXT_SPACE_COEFF + textRise;
-                            currentLineWidth += getCharWidth(line.get(line.start), fontSize.getValue(), hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
+                            currentLineHeight = FontProgram.convertTextSpaceToGlyphSpace(
+                                    (currentLineAscender - currentLineDescender) * fontSize.getValue()) + textRise;
+                            currentLineWidth += FontProgram.convertTextSpaceToGlyphSpace(
+                                    getCharWidth(line.get(line.start), fontSize.getValue(), hScale, characterSpacing,
+                                            wordSpacing));
                         }
                     }
                     if (line.end <= line.start) {
@@ -663,7 +649,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
-        yLineOffset = currentLineAscender * fontSize.getValue() / TEXT_SPACE_COEFF;
+        yLineOffset = FontProgram.convertTextSpaceToGlyphSpace(currentLineAscender * fontSize.getValue());
 
         occupiedArea.getBBox().moveDown(currentLineHeight);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
@@ -947,7 +933,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     // For PdfType0Font we must add word manually with glyph offsets
                     for (int gInd = line.start; gInd < line.end; gInd++) {
                         if (TextUtil.isUni0020(line.get(gInd))) {
-                            short advance = (short) (TextRenderer.TEXT_SPACE_COEFF * (float) wordSpacing / fontSize.getValue());
+                            final short advance = (short) (FontProgram.convertGlyphSpaceToTextSpace((float) wordSpacing)
+                                    / fontSize.getValue());
                             Glyph copy = new Glyph(line.get(gInd));
                             copy.setXAdvance(advance);
                             line.set(gInd, copy);
@@ -1081,8 +1068,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             saveWordBreakIfNotYetSaved(currentGlyph);
 
-            float currentCharWidth = getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing) / TEXT_SPACE_COEFF;
-            float xAdvance = firstNonSpaceCharIndex > line.start ? scaleXAdvance(line.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize.getValue(), hScale) / TEXT_SPACE_COEFF : 0;
+            final float currentCharWidth = FontProgram.convertTextSpaceToGlyphSpace(
+                    getCharWidth(currentGlyph, fontSize.getValue(), hScale, characterSpacing, wordSpacing));
+            final float xAdvance = firstNonSpaceCharIndex > line.start ? FontProgram.convertTextSpaceToGlyphSpace(
+                    scaleXAdvance(line.get(firstNonSpaceCharIndex - 1).getXAdvance(), fontSize.getValue(), hScale)) : 0;
             trimmedSpace += currentCharWidth - xAdvance;
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - currentCharWidth);
 
@@ -1683,10 +1672,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         float resultWidth = g.getWidth() * fontSize * (float) hScale;
         if (characterSpacing != null) {
-            resultWidth += (float) characterSpacing * (float) hScale * TEXT_SPACE_COEFF;
+            resultWidth += FontProgram.convertGlyphSpaceToTextSpace((float) characterSpacing * (float) hScale);
         }
         if (wordSpacing != null && g.getUnicode() == ' ') {
-            resultWidth += (float) wordSpacing * (float) hScale * TEXT_SPACE_COEFF;
+            resultWidth += FontProgram.convertGlyphSpaceToTextSpace((float) wordSpacing * (float) hScale);
         }
         return resultWidth;
     }
@@ -1705,7 +1694,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 width += xAdvance;
             }
         }
-        return width / TEXT_SPACE_COEFF;
+        return FontProgram.convertTextSpaceToGlyphSpace(width);
     }
 
     private int[] getWordBoundsForHyphenation(GlyphLine text, int leftTextPos, int rightTextPos, int wordMiddleCharPos) {

@@ -1,49 +1,29 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.io.ByteArrayInputStream;
@@ -101,15 +81,15 @@ final class Jpeg2000ImageHelper {
                 jp2.parameters.isJp2 = true;
                 box.type = cio_read(4, jpeg2000Stream);
                 if (JP2_JP != box.type) {
-                    throw new IOException(IOException.ExpectedJpMarker);
+                    throw new IOException(IoExceptionMessageConstant.EXPECTED_JP_MARKER);
                 }
                 if (0x0d0a870a != cio_read(4, jpeg2000Stream)) {
-                    throw new IOException(IOException.ErrorWithJpMarker);
+                    throw new IOException(IoExceptionMessageConstant.ERROR_WITH_JP_MARKER);
                 }
 
                 jp2_read_boxhdr(box, jpeg2000Stream);
                 if (JP2_FTYP != box.type) {
-                    throw new IOException(IOException.ExpectedFtypMarker);
+                    throw new IOException(IoExceptionMessageConstant.EXPECTED_FTYP_MARKER);
                 }
                 StreamUtil.skip(jpeg2000Stream, 8);
                 for (int i = 4; i < box.length / 4; ++i) {
@@ -122,7 +102,7 @@ final class Jpeg2000ImageHelper {
                 do {
                     if (JP2_JP2H != box.type) {
                         if (box.type == JP2_JP2C) {
-                            throw new IOException(IOException.ExpectedJp2hMarker);
+                            throw new IOException(IoExceptionMessageConstant.EXPECTED_JP2H_MARKER);
                         }
                         StreamUtil.skip(jpeg2000Stream, box.length - 8);
                         jp2_read_boxhdr(box, jpeg2000Stream);
@@ -130,7 +110,7 @@ final class Jpeg2000ImageHelper {
                 } while (JP2_JP2H != box.type);
                 jp2_read_boxhdr(box, jpeg2000Stream);
                 if (JP2_IHDR != box.type) {
-                    throw new IOException(IOException.ExpectedIhdrMarker);
+                    throw new IOException(IoExceptionMessageConstant.EXPECTED_IHDR_MARKER);
                 }
                 jp2.setHeight(cio_read(4, jpeg2000Stream));
                 jp2.setWidth(cio_read(4, jpeg2000Stream));
@@ -165,10 +145,10 @@ final class Jpeg2000ImageHelper {
                 jp2.setHeight(y1 - y0);
                 jp2.setWidth(x1 - x0);
             } else {
-                throw new IOException(IOException.InvalidJpeg2000File);
+                throw new IOException(IoExceptionMessageConstant.INVALID_JPEG2000_FILE);
             }
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.Jpeg2000ImageException, e);
+            throw new IOException(IoExceptionMessageConstant.JPEG2000_IMAGE_EXCEPTION, e);
         }
     }
 
@@ -199,11 +179,11 @@ final class Jpeg2000ImageHelper {
         box.type = cio_read(4, jpeg2000Stream);
         if (box.length == 1) {
             if (cio_read(4, jpeg2000Stream) != 0) {
-                throw new IOException(IOException.CannotHandleBoxSizesHigherThan2_32);
+                throw new IOException(IoExceptionMessageConstant.CANNOT_HANDLE_BOX_SIZES_HIGHER_THAN_2_32);
             }
             box.length = cio_read(4, jpeg2000Stream);
             if (box.length == 0)
-                throw new IOException(IOException.UnsupportedBoxSizeEqEq0);
+                throw new IOException(IoExceptionMessageConstant.UNSUPPORTED_BOX_SIZE_EQ_EQ_0);
         } else if (box.length == 0) {
             throw new ZeroBoxSizeException("Unsupported box size == 0");
         }

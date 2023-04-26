@@ -1,48 +1,28 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramFactory;
@@ -55,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,23 +51,11 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         super(fontName);
     }
 
-    static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding, CMapToUnicode toUnicode) {
-        PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
-        String baseFont;
-        if (baseFontName != null) {
-            baseFont = baseFontName.getValue();
-        } else {
-            baseFont = FontUtil.createRandomFontName();
-        }
+    static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding,
+            CMapToUnicode toUnicode) {
+        final String baseFont = getBaseFont(fontDictionary);
         if (!fontDictionary.containsKey(PdfName.FontDescriptor)) {
-            Type1Font type1StdFont;
-            try {
-                //if there are no font modifiers, cached font could be used,
-                //otherwise a new instance should be created.
-                type1StdFont = (Type1Font) FontProgramFactory.createFont(baseFont, true);
-            } catch (Exception e) {
-                type1StdFont = null;
-            }
+            final Type1Font type1StdFont = getType1Font(baseFont);
             if (type1StdFont != null) {
                 return type1StdFont;
             }
@@ -95,10 +64,16 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         PdfDictionary fontDesc = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fontProgram.subtype = fontDesc != null ? fontDesc.getAsName(PdfName.Subtype) : null;
         fillFontDescriptor(fontProgram, fontDesc);
+        processWidth(fontDictionary,fontEncoding,toUnicode,fontProgram);
+        return fontProgram;
+    }
 
+    static void processWidth(PdfDictionary fontDictionary, FontEncoding fontEncoding,
+            CMapToUnicode toUnicode, DocType1Font fontProgram) {
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.intValue(), 0) : 0;
-        int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar, fontProgram.getMissingWidth());
+        final int[] widths = FontUtil.convertSimpleWidthsArray(fontDictionary.getAsArray(PdfName.Widths), firstChar,
+                fontProgram.getMissingWidth());
         fontProgram.avgWidth = 0;
         int glyphsWithWidths = 0;
         for (int i = 0; i < 256; i++) {
@@ -120,8 +95,26 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         if (glyphsWithWidths != 0) {
             fontProgram.avgWidth /= glyphsWithWidths;
         }
-        return fontProgram;
     }
+
+    static String getBaseFont(PdfDictionary fontDictionary) {
+        final PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
+        if (baseFontName == null) {
+            return FontUtil.createRandomFontName();
+        }
+        return baseFontName.getValue();
+    }
+
+    static Type1Font getType1Font(String baseFont) {
+        try {
+            //if there are no font modifiers, cached font could be used,
+            //otherwise a new instance should be created.
+            return (Type1Font) FontProgramFactory.createFont(baseFont, true);
+        } catch (Exception e ) {
+            return null;
+        }
+    }
+
 
     @Override
     public PdfStream getFontFile() {
@@ -142,6 +135,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
      * Returns false, because we cannot rely on an actual font subset and font name.
      *
      * @param fontName a font name or path to a font program
+     *
      * @return return false.
      */
     @Override
@@ -226,13 +220,16 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
             }
             font.setBbox(bbox);
 
-            // If ascender or descender in font descriptor are zero, we still want to get more or less correct valuee for
+            // If ascender or descender in font descriptor are zero, we still want to get more or less correct valuee
+            // for
             // text extraction, stamping etc. Thus we rely on font bbox in this case
             if (font.getFontMetrics().getTypoAscender() == 0 && font.getFontMetrics().getTypoDescender() == 0) {
                 float maxAscent = Math.max(bbox[3], font.getFontMetrics().getTypoAscender());
                 float minDescent = Math.min(bbox[1], font.getFontMetrics().getTypoDescender());
-                font.setTypoAscender((int) (maxAscent * 1000 / (maxAscent - minDescent)));
-                font.setTypoDescender((int) (minDescent * 1000 / (maxAscent - minDescent)));
+                font.setTypoAscender(
+                        (int) (FontProgram.convertGlyphSpaceToTextSpace(maxAscent) / (maxAscent - minDescent)));
+                font.setTypoDescender(
+                        (int) (FontProgram.convertGlyphSpaceToTextSpace(minDescent) / (maxAscent - minDescent)));
             }
         }
 
@@ -253,7 +250,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         }
 
         PdfName[] fontFileNames = new PdfName[] {PdfName.FontFile, PdfName.FontFile2, PdfName.FontFile3};
-        for (PdfName fontFile: fontFileNames) {
+        for (PdfName fontFile : fontFileNames) {
             if (fontDesc.containsKey(fontFile)) {
                 font.fontFileName = fontFile;
                 font.fontFile = fontDesc.getAsStream(fontFile);

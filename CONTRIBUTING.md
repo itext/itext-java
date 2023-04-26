@@ -1,6 +1,6 @@
-# Contributing to iText 7 Community
+# Contributing to iText Community
 
-We'd love for you to contribute to our source code and to make **iText 7 Community** even better than it is
+We'd love for you to contribute to our source code and to make **iText Community** even better than it is
 today! Here are the guidelines we'd like you to follow:
 
  - [Question or Problem?](#question)
@@ -15,7 +15,7 @@ today! Here are the guidelines we'd like you to follow:
 
 ## <a name="question">Got a Question or Problem?</a>
 
-If you have questions about how to use **iText 7 Community**, please direct these to [Stack Overflow][stackoverflow].
+If you have questions about how to use **iText Community**, please direct these to [Stack Overflow][stackoverflow].
 
 If you are a customer with a [support agreement][support], you also have direct access to our JIRA and our developers.
 
@@ -55,7 +55,7 @@ chances of your issue being dealt with quickly:
 * **Related Issues** - has a similar issue been reported before?
 * **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
   causing the problem (line of code or commit)
-* **Tag the question** - add the tag `itext7` to your question so we can find it.
+* **Tag the question** - add the tag `itext` to your question so we can find it.
 
 **If you get help, help others. Good karma rulez!**
 
@@ -79,7 +79,7 @@ Before you submit your pull request consider the following guidelines:
 * Build your changes locally to ensure all the tests pass.
 * Push your changes to your GitHub account.
 * Create a pull request in GitHub.
-"Head fork" should be your repository, and the "base fork" should be the iText7 official repository.
+"Head fork" should be your repository, and the "base fork" should be the iText official repository.
 * If we suggest changes then:
   * Make the required updates.
   * Fix up your commits if needed, with an interactive rebase.
@@ -111,7 +111,7 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 We have guidelines on how our git commit messages should be formatted. This leads to **more
 readable messages** that are easy to follow when looking through the **project history**. But also,
-we use the git commit messages to **generate the iText 7 Community change log**.
+we use the git commit messages to **generate the iText Community change log**.
 
 These guidelines were taken from Chris Beams' blog post [How to Write a Git Commit Message][git-commit].
 
@@ -169,7 +169,7 @@ We use the [Stack Exchange][stackoverflow] network for free support and [GitHub]
 [javadocs]: https://itextpdf.com/api
 [pull]: https://github.com/itext/itext7/pulls
 [sscce]: http://sscce.org/
-[stackoverflow]: https://stackoverflow.com/questions/tagged/itext7
+[stackoverflow]: https://stackoverflow.com/questions/tagged/itext
 [good-questions]: https://stackoverflow.com/help/how-to-ask
 [mcve]: https://stackoverflow.com/help/mcve
 [support]: https://itextpdf.com/support

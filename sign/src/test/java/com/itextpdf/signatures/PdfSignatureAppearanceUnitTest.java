@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -34,20 +36,17 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,7 +56,7 @@ import org.junit.experimental.categories.Category;
  * The idea of this test is to check the {@link PdfSignatureAppearance}'s getters.
  * For actual result of setters invocations one should check the integration test for this class.
  */
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     // The source folder points to the integration test, so that the resources are nor duplicated
     public static final String SOURCE_FOLDER
@@ -65,17 +64,18 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER
             = "./target/test/com/itextpdf/signatures/sign/PdfSignatureAppearanceUnitTest/";
     public static final String KEYSTORE_PATH
-            = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.p12";
+            = "./src/test/resources/com/itextpdf/signatures/sign/PdfSignatureAppearanceTest/test.pem";
     public static final char[] PASSWORD = "kspass".toCharArray();
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static Certificate[] chain;
 
     @BeforeClass
-    public static void before() throws KeyStoreException, IOException, CertificateException,
-            NoSuchAlgorithmException {
-        Security.addProvider(new BouncyCastleProvider());
+    public static void before() throws IOException, CertificateException {
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-        chain = Pkcs12FileHelper.readFirstChain(KEYSTORE_PATH, PASSWORD);
+        chain = PemFileHelper.readFirstChain(KEYSTORE_PATH);
     }
 
     @Test

@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -28,12 +28,11 @@ import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.jsoup.select.NodeVisitor;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -42,7 +41,8 @@ import static org.junit.Assert.assertEquals;
  @author Jonathan Hedley, jonathan@hedley.net */
 @Category(UnitTest.class)
 public class NodeTest extends ExtendedITextTest {
-    @Test public void handlesBaseUri() {
+    @Test
+    public void handlesBaseUri() {
         Tag tag = Tag.valueOf("a");
         Attributes attribs = new Attributes();
         attribs.put("relHref", "/foo");
@@ -61,7 +61,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("http://bar/qux", dodgyBase.absUrl("absHref")); // base fails, but href good, so get that
     }
 
-    @Test public void handlesBaseUriBaseFails() {
+    @Test
+    public void handlesBaseUriBaseFails() {
         Tag tag = Tag.valueOf("a");
         Attributes attribs = new Attributes();
         attribs.put("relHref", "/foo");
@@ -71,7 +72,8 @@ public class NodeTest extends ExtendedITextTest {
         assertEquals("", dodgyBase.absUrl("relHref")); // base fails, only rel href, so return nothing
     }
 
-    @Test public void setBaseUriIsRecursive() {
+    @Test
+    public void setBaseUriIsRecursive() {
         Document doc = Jsoup.parse("<div><p></p></div>");
         String baseUri = "https://jsoup.org";
         doc.setBaseUri(baseUri);
@@ -81,7 +83,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals(baseUri, doc.select("p").first().baseUri());
     }
 
-    @Test public void handlesAbsPrefix() {
+    @Test
+    public void handlesAbsPrefix() {
         Document doc = Jsoup.parse("<a href=/foo>Hello</a>", "https://jsoup.org/");
         Element a = doc.select("a").first();
         Assert.assertEquals("/foo", a.attr("href"));
@@ -89,14 +92,16 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertTrue(a.hasAttr("abs:href"));
     }
 
-    @Test public void handlesAbsOnImage() {
+    @Test
+    public void handlesAbsOnImage() {
         Document doc = Jsoup.parse("<p><img src=\"/rez/osi_logo.png\" /></p>", "https://jsoup.org/");
         Element img = doc.select("img").first();
         Assert.assertEquals("https://jsoup.org/rez/osi_logo.png", img.attr("abs:src"));
         Assert.assertEquals(img.absUrl("src"), img.attr("abs:src"));
     }
 
-    @Test public void handlesAbsPrefixOnHasAttr() {
+    @Test
+    public void handlesAbsPrefixOnHasAttr() {
         // 1: no abs url; 2: has abs url
         Document doc = Jsoup.parse("<a id=1 href='/foo'>One</a> <a id=2 href='https://jsoup.org/'>Two</a>");
         Element one = doc.select("#1").first();
@@ -111,7 +116,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("https://jsoup.org/", two.absUrl("href"));
     }
 
-    @Test public void literalAbsPrefix() {
+    @Test
+    public void literalAbsPrefix() {
         // if there is a literal attribute "abs:xxx", don't try and make absolute.
         Document doc = Jsoup.parse("<a abs:href='odd'>One</a>");
         Element el = doc.select("a").first();
@@ -165,7 +171,8 @@ public class NodeTest extends ExtendedITextTest {
     /*
     Test for an issue with Java's abs URL handler.
      */
-    @Test public void absHandlesRelativeQuery() {
+    @Test
+    public void absHandlesRelativeQuery() {
         Document doc = Jsoup.parse("<a href='?foo'>One</a> <a href='bar.html?foo'>Two</a>", "https://jsoup.org/path/file?bar");
 
         Element a1 = doc.select("a").first();
@@ -175,13 +182,15 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("https://jsoup.org/path/bar.html?foo", a2.absUrl("href"));
     }
 
-    @Test public void absHandlesDotFromIndex() {
+    @Test
+    public void absHandlesDotFromIndex() {
         Document doc = Jsoup.parse("<a href='./one/two.html'>One</a>", "http://example.com");
         Element a1 = doc.select("a").first();
         Assert.assertEquals("http://example.com/one/two.html", a1.absUrl("href"));
     }
 
-    @Test public void testRemove() {
+    @Test
+    public void testRemove() {
         Document doc = Jsoup.parse("<p>One <span>two</span> three</p>");
         Element p = doc.select("p").first();
         p.childNode(0).remove();
@@ -190,7 +199,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("<span>two</span> three", TextUtil.stripNewlines(p.html()));
     }
 
-    @Test public void testReplace() {
+    @Test
+    public void testReplace() {
         Document doc = Jsoup.parse("<p>One <span>two</span> three</p>");
         Element p = doc.select("p").first();
         Element insert = doc.createElement("em").text("foo");
@@ -199,7 +209,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("One <em>foo</em> three", p.html());
     }
 
-    @Test public void ownerDocument() {
+    @Test
+    public void ownerDocument() {
         Document doc = Jsoup.parse("<p>Hello");
         Element p = doc.select("p").first();
         Assert.assertSame(p.ownerDocument(), doc);
@@ -207,7 +218,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertNull(doc.parent());
     }
 
-    @Test public void root() {
+    @Test
+    public void root() {
         Document doc = Jsoup.parse("<div><p>Hello");
         Element p = doc.select("p").first();
         Node root = p.root();
@@ -222,7 +234,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertNull(standAlone.ownerDocument());
     }
 
-    @Test public void before() {
+    @Test
+    public void before() {
         Document doc = Jsoup.parse("<p>One <b>two</b> three</p>");
         Element newNode = new Element(Tag.valueOf("em"), "");
         newNode.appendText("four");
@@ -234,7 +247,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("<p>One <em>four</em><i>five</i><b>two</b> three</p>", doc.body().html());
     }
 
-    @Test public void after() {
+    @Test
+    public void after() {
         Document doc = Jsoup.parse("<p>One <b>two</b> three</p>");
         Element newNode = new Element(Tag.valueOf("em"), "");
         newNode.appendText("four");
@@ -246,7 +260,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("<p>One <b>two</b><i>five</i><em>four</em> three</p>", doc.body().html());
     }
 
-    @Test public void unwrap() {
+    @Test
+    public void unwrap() {
         Document doc = Jsoup.parse("<div>One <span>Two <b>Three</b></span> Four</div>");
         Element span = doc.select("span").first();
         Node twoText = span.childNode(0);
@@ -259,7 +274,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals(node.parent(), doc.select("div").first());
     }
 
-    @Test public void unwrapNoChildren() {
+    @Test
+    public void unwrapNoChildren() {
         Document doc = Jsoup.parse("<div>One <span></span> Two</div>");
         Element span = doc.select("span").first();
         Node node = span.unwrap();
@@ -267,7 +283,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertNull(node);
     }
 
-    @Test public void traverse() {
+    @Test
+    public void traverse() {
         Document doc = Jsoup.parse("<div><p>Hello</p></div><div>There</div>");
         final StringBuilder accum = new StringBuilder();
         doc.select("div").first().traverse(new NodeVisitor() {
@@ -284,7 +301,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("<div><p><#text></#text></p></div>", accum.toString());
     }
 
-    @Test public void orphanNodeReturnsNullForSiblingElements() {
+    @Test
+    public void orphanNodeReturnsNullForSiblingElements() {
         Node node = new Element(Tag.valueOf("p"), "");
         Element el = new Element(Tag.valueOf("p"), "");
 
@@ -299,7 +317,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertNull(el.nextElementSibling());
     }
 
-    @Test public void nodeIsNotASiblingOfItself() {
+    @Test
+    public void nodeIsNotASiblingOfItself() {
         Document doc = Jsoup.parse("<div><p>One<p>Two<p>Three</div>");
         Element p2 = doc.select("p").get(1);
 
@@ -310,7 +329,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("<p>Three</p>", nodes.get(1).outerHtml());
     }
 
-    @Test public void childNodesCopy() {
+    @Test
+    public void childNodesCopy() {
         Document doc = Jsoup.parse("<div id=1>Text 1 <p>One</p> Text 2 <p>Two<p>Three</div><div id=2>");
         Element div1 = doc.select("#1").first();
         Element div2 = doc.select("#2").first();
@@ -325,7 +345,8 @@ public class NodeTest extends ExtendedITextTest {
             +"<p>One</p> Text 2 <p>Two</p><p>Three</p></div>", TextUtil.stripNewlines(doc.body().html()));
     }
 
-    @Test public void supportsClone() {
+    @Test
+    public void supportsClone() {
         Document doc = com.itextpdf.styledxmlparser.jsoup.Jsoup.parse("<div class=foo>Text</div>");
         Element el = doc.select("div").first();
         Assert.assertTrue(el.hasClass("foo"));
@@ -342,7 +363,8 @@ public class NodeTest extends ExtendedITextTest {
         Assert.assertEquals("Text", elClone.text());
     }
 
-    @Test public void changingAttributeValueShouldReplaceExistingAttributeCaseInsensitive() {
+    @Test
+    public void changingAttributeValueShouldReplaceExistingAttributeCaseInsensitive() {
         Document document = Jsoup.parse("<INPUT id=\"foo\" NAME=\"foo\" VALUE=\"\">");
         Element inputElement = document.select("#foo").first();
 

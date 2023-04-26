@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -107,16 +107,6 @@ public class DataUtilTest extends ExtendedITextTest {
     @Test
     public void shouldReturnNullForIllegalCharsetNames() {
         Assert.assertNull(DataUtil.getCharsetFromContentType("text/html; charset=$HJKDF§$/("));
-    }
-
-    @Test
-    public void generatesMimeBoundaries() {
-        String m1 = DataUtil.mimeBoundary();
-        String m2 = DataUtil.mimeBoundary();
-
-        Assert.assertEquals(DataUtil.boundaryLength, m1.length());
-        Assert.assertEquals(DataUtil.boundaryLength, m2.length());
-        Assert.assertNotSame(m1, m2);
     }
 
     @Test

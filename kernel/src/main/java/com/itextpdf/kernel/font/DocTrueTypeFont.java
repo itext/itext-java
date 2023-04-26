@@ -1,53 +1,33 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -55,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,30 +88,30 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         return fontProgram;
     }
 
+    static int getDefaultWithOfFont(PdfDictionary fontDictionary, PdfDictionary fontDescriptor) {
+        int defaultWidth;
+        if (fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)) {
+            defaultWidth = (int) fontDescriptor.getAsInt(PdfName.DW);
+        } else if (fontDictionary.containsKey(PdfName.DW)) {
+            defaultWidth = (int) fontDictionary.getAsInt(PdfName.DW);
+        } else {
+            defaultWidth = DEFAULT_WIDTH;
+        }
+        return defaultWidth;
+    }
+
     static TrueTypeFont createFontProgram(PdfDictionary fontDictionary, CMapToUnicode toUnicode) {
         DocTrueTypeFont fontProgram = new DocTrueTypeFont(fontDictionary);
         PdfDictionary fontDescriptor = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fillFontDescriptor(fontProgram, fontDescriptor);
-        int dw;
-        if (fontDescriptor != null && fontDescriptor.containsKey(PdfName.DW)) {
-            dw = (int) fontDescriptor.getAsInt(PdfName.DW);
-        } else if (fontDictionary.containsKey(PdfName.DW)) {
-            dw = (int) fontDictionary.getAsInt(PdfName.DW);
-        } else {
-            dw = 1000;
-        }
+        final int defaultWidth = getDefaultWithOfFont(fontDictionary, fontDescriptor);
         IntHashtable widths = null;
         if (toUnicode != null) {
             widths = FontUtil.convertCompositeWidthsArray(fontDictionary.getAsArray(PdfName.W));
             fontProgram.avgWidth = 0;
             for (int cid : toUnicode.getCodes()) {
-                int width = widths.containsKey(cid) ? widths.get(cid) : dw;
-                Glyph glyph = new Glyph(cid, width, toUnicode.lookup(cid));
-                if (glyph.hasValidUnicode()) {
-                    fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
-                }
-                fontProgram.codeToGlyph.put(cid, glyph);
-                fontProgram.avgWidth += width;
+                final int width = widths.containsKey(cid) ? widths.get(cid) : defaultWidth;
+                fontProgram.registerGlyph(cid, width, toUnicode.lookup(cid));
             }
             if (fontProgram.codeToGlyph.size() != 0) {
                 fontProgram.avgWidth /= fontProgram.codeToGlyph.size();
@@ -138,7 +119,8 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
         }
 
         if (fontProgram.codeToGlyph.get(0) == null) {
-            fontProgram.codeToGlyph.put(0, new Glyph(0, widths != null && widths.containsKey(0) ? widths.get(0) : dw, -1));
+            fontProgram.codeToGlyph.put(0,
+                    new Glyph(0, widths != null && widths.containsKey(0) ? widths.get(0) : defaultWidth, -1));
         }
         return fontProgram;
     }
@@ -249,8 +231,10 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
             if (font.getFontMetrics().getTypoAscender() == 0 && font.getFontMetrics().getTypoDescender() == 0) {
                 float maxAscent = Math.max(bbox[3], font.getFontMetrics().getTypoAscender());
                 float minDescent = Math.min(bbox[1], font.getFontMetrics().getTypoDescender());
-                font.setTypoAscender((int) (maxAscent * 1000 / (maxAscent - minDescent)));
-                font.setTypoDescender((int) (minDescent * 1000 / (maxAscent - minDescent)));
+                font.setTypoAscender(
+                        (int) (FontProgram.convertGlyphSpaceToTextSpace(maxAscent) / (maxAscent - minDescent)));
+                font.setTypoDescender(
+                        (int) (FontProgram.convertGlyphSpaceToTextSpace(minDescent) / (maxAscent - minDescent)));
             }
         }
 
@@ -278,5 +262,14 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
                 break;
             }
         }
+    }
+
+    private void registerGlyph(int cid, int width, char[] unicode) {
+        Glyph glyph = new Glyph(cid, width, unicode);
+        if (glyph.hasValidUnicode()) {
+            this.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+        }
+        this.codeToGlyph.put(cid, glyph);
+        this.avgWidth += width;
     }
 }

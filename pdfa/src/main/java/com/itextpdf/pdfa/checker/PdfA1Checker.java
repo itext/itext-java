@@ -1,60 +1,38 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
-import com.itextpdf.kernel.pdf.PdfXrefTable;
-import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -64,13 +42,17 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.canvas.parser.util.PdfCanvasParser;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,9 +61,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
-import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -387,7 +366,7 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
         String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
-        // non-symbolic true type font will always has an encoding entry in font dictionary in itext7
+        // non-symbolic true type font will always has an encoding entry in font dictionary in itext
         if (!PdfEncodings.WINANSI.equals(encoding) && !PdfEncodings.MACROMAN.equals(encoding) || trueTypeFont.getFontEncoding().hasDifferences()) {
             throw new PdfAConformanceException(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY, trueTypeFont);
         }
@@ -399,7 +378,7 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfAConformanceException.ALL_SYMBOLIC_TRUE_TYPE_FONTS_SHALL_NOT_SPECIFY_ENCODING);
         }
 
-        // if symbolic font encoding doesn't have differences, itext7 won't write encoding for such font
+        // if symbolic font encoding doesn't have differences, itext won't write encoding for such font
     }
 
     @Override
@@ -654,7 +633,8 @@ public class PdfA1Checker extends PdfAChecker {
             if (ap.containsKey(PdfName.D) || ap.containsKey(PdfName.R)) {
                 throw new PdfAConformanceException(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE);
             }
-            if (PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && PdfName.Btn.equals(annotDic.getAsName(PdfName.FT))) {
+            if (PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) &&
+                    (PdfName.Btn.equals(PdfFormField.getFormType(annotDic)))) {
                 if (ap.getAsDictionary(PdfName.N) == null) {
                     throw new PdfAConformanceException(PdfAConformanceException.N_KEY_SHALL_BE_APPEARANCE_SUBDICTIONARY);
                 }

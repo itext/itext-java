@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,13 +22,16 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 
 public final class TextPreprocessingUtil {
+
     private TextPreprocessingUtil() {
     }
+
 
     /**
      * Replaces special whitespace glyphs to new whitespace '\u0020' glyph that has custom width.
@@ -36,6 +39,7 @@ public final class TextPreprocessingUtil {
      *
      * @param line the string for preprocessing
      * @param font the font that will be used when displaying the string
+     *
      * @return old line with new special whitespace glyphs
      */
     public static GlyphLine replaceSpecialWhitespaceGlyphs(GlyphLine line, PdfFont font) {
@@ -43,50 +47,52 @@ public final class TextPreprocessingUtil {
             boolean isMonospaceFont = font.getFontProgram().getFontMetrics().isFixedPitch();
             Glyph space = font.getGlyph('\u0020');
             int spaceWidth = space.getWidth();
-            Glyph glyph;
             int lineSize = line.size();
             for (int i = 0; i < lineSize; i++) {
-                glyph = line.get(i);
-
-                int xAdvance = 0;
-                boolean isSpecialWhitespaceGlyph = false;
-
-                if (glyph.getCode() <= 0) {
-                    switch (glyph.getUnicode()) {
-                        // ensp
-                        case '\u2002': {
-                            xAdvance = isMonospaceFont ? 0 : 500 - spaceWidth;
-                            isSpecialWhitespaceGlyph = true;
-                            break;
-                        }
-                        // emsp
-                        case '\u2003': {
-                            xAdvance = isMonospaceFont ? 0 : 1000 - spaceWidth;
-                            isSpecialWhitespaceGlyph = true;
-                            break;
-                        }
-                        // thinsp
-                        case '\u2009': {
-                            xAdvance = isMonospaceFont ? 0 : 200 - spaceWidth;
-                            isSpecialWhitespaceGlyph = true;
-                            break;
-                        }
-                        case '\t': {
-                            xAdvance = 3 * spaceWidth;
-                            isSpecialWhitespaceGlyph = true;
-                            break;
-                        }
-                    }
-                }
-
+                final Glyph glyph = line.get(i);
+                final Integer xAdvance = calculateXAdvancement(spaceWidth, isMonospaceFont, glyph);
+                final boolean isSpecialWhitespaceGlyph = xAdvance != null;
                 if (isSpecialWhitespaceGlyph) {
                     Glyph newGlyph = new Glyph(space, glyph.getUnicode());
                     assert xAdvance <= Short.MAX_VALUE && xAdvance >= Short.MIN_VALUE;
-                    newGlyph.setXAdvance((short) xAdvance);
+                    newGlyph.setXAdvance((short) (int) xAdvance);
                     line.set(i, newGlyph);
                 }
             }
         }
         return line;
     }
+
+    static final int NON_MONO_SPACE_ENSP_WIDTH = 500;
+    static final int NON_MONO_SPACE_THINSP_WIDTH = 200;
+    static final int AMOUNT_OF_SPACE_IN_TAB = 3;
+
+    private static Integer calculateXAdvancement(int spaceWidth, boolean isMonospaceFont, Glyph glyph) {
+        Integer xAdvance = null;
+        if (glyph.getCode() <= 0) {
+
+            switch (glyph.getUnicode()) {
+                // ensp
+                case '\u2002':
+                    xAdvance = isMonospaceFont ? 0 : (NON_MONO_SPACE_ENSP_WIDTH - spaceWidth);
+                    break;
+                // emsp
+                case '\u2003':
+                    xAdvance = isMonospaceFont ? 0 : (FontProgram.UNITS_NORMALIZATION - spaceWidth);
+                    break;
+                // thinsp
+                case '\u2009':
+                    xAdvance = isMonospaceFont ? 0 : (NON_MONO_SPACE_THINSP_WIDTH - spaceWidth);
+                    break;
+                case '\t':
+                    xAdvance = AMOUNT_OF_SPACE_IN_TAB * spaceWidth;
+                    break;
+                default:
+                    return xAdvance;
+            }
+        }
+        return xAdvance;
+    }
+
+
 }

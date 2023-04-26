@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.2.5</version>
+  <version>8.0.0</version>
   <packaging>pom</packaging>
-  <name>iText 7</name>
+  <name>iText</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
   <inceptionYear>1998</inceptionYear>
   <organization>
-    <name>iText Group NV</name>
+    <name>Apryse Group NV</name>
     <url>https://itextpdf.com/</url>
   </organization>
   <licenses>
@@ -30,8 +30,8 @@
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
-      <subscribe>https://stackoverflow.com/questions/tagged/itext7</subscribe>
-      <archive>https://stackoverflow.com/questions/tagged/itext7</archive>
+      <subscribe>https://stackoverflow.com/questions/tagged/itext</subscribe>
+      <archive>https://stackoverflow.com/questions/tagged/itext</archive>
       <otherArchives>
         <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
         <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
@@ -56,6 +56,9 @@
     <module>sign</module>
     <module>styled-xml-parser</module>
     <module>svg</module>
+    <module>bouncy-castle-fips-adapter</module>
+    <module>bouncy-castle-adapter</module>
+    <module>bouncy-castle-connector</module>
   </modules>
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
@@ -73,6 +76,8 @@
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.70</bouncycastle.version>
+    <bouncycastleintegrationtests>com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest</bouncycastleintegrationtests>
+    <bouncycastleunittests>com.itextpdf.test.annotations.type.BouncyCastleUnitTest</bouncycastleunittests>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
@@ -152,7 +157,7 @@
   </dependencies>
 
   <build>
-    <finalName>itext7-${project.artifactId}-${project.version}</finalName>
+    <finalName>itext-${project.artifactId}-${project.version}</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -496,6 +501,8 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
+              <!-- TODO: DEVSIX-7229. Remove this skip=true during 8.0.0 release -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
@@ -681,6 +688,71 @@
               setting this parameter might fade. It's not used for anything else but making sure code coverage is
               measured correctly. -->
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- This profile shall always go after test profile because it overrides several plugins -->
+    <profile>
+      <id>bouncy-castle-fips-test</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+              <groups>${bouncycastleintegrationtests}</groups>
+            </configuration>
+            <executions>
+              <execution>
+                <id>general-mode</id>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            <execution>
+              <id>approved-mode</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+              <configuration>
+                <systemPropertyVariables>
+                  <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
+                </systemPropertyVariables>
+              </configuration>
+            </execution>
+          </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <groups>${bouncycastleunittests}</groups>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <id>general-mode</id>
+              </execution>
+              <execution>
+                <id>approved-mode</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

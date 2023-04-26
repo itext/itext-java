@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -28,6 +28,8 @@ import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 
+import java.util.regex.Pattern;
+
 /**
  * Utilities class for CSS types validating operations.
  */
@@ -41,6 +43,8 @@ public final class CssTypesValidationUtils {
     //  Add new relative units to array and move this array to the CommonCssConstants
     private static final String[] RELATIVE_MEASUREMENTS_VALUES = new String[] {CommonCssConstants.PERCENTAGE,
             CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
+
+    private static final Pattern BASE64_PATTERN = Pattern.compile("^data:[^\\s]+;base64,");
 
     /**
      * Creates a new {@link CssTypesValidationUtils} instance.
@@ -78,7 +82,7 @@ public final class CssTypesValidationUtils {
      * @return true, if the data is base 64 encoded
      */
     public static boolean isBase64Data(String data) {
-        return data.matches("^data:([^\\s]*);base64,([^\\s]*)");
+        return BASE64_PATTERN.matcher(data).find();
     }
 
     /**

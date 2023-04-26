@@ -1,48 +1,36 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
+import com.itextpdf.commons.bouncycastle.asn1.cmp.IPKIFailureInfo;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -54,14 +42,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.cmp.PKIFailureInfo;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampRequest;
-import org.bouncycastle.tsp.TimeStampRequestGenerator;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +53,8 @@ import org.slf4j.LoggerFactory;
  * for ease of subclassing.
  */
 public class TSAClientBouncyCastle implements ITSAClient {
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     /**
      * The default value for the hash algorithm
@@ -213,32 +195,34 @@ public class TSAClientBouncyCastle implements ITSAClient {
      *
      * @return encoded, TSA signed data of the timeStampToken
      * @throws IOException if I/O error occurs
-     * @throws TSPException if the TSA response is malformed
+     * @throws AbstractTSPException if the TSA response is malformed
      */
     @Override
-    public byte[] getTimeStampToken(byte[] imprint) throws IOException, TSPException {
+    public byte[] getTimeStampToken(byte[] imprint)
+            throws IOException, AbstractTSPException {
         byte[] respBytes = null;
         // Setup the time stamp request
-        TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
+        ITimeStampRequestGenerator tsqGenerator = BOUNCY_CASTLE_FACTORY.createTimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
         if (tsaReqPolicy != null && tsaReqPolicy.length() > 0) {
             tsqGenerator.setReqPolicy(tsaReqPolicy);
         }
         // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getTimeBasedSeed());
-        TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
+        ITimeStampRequest request = tsqGenerator.generate(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                DigestAlgorithms.getAllowedDigest(digestAlgorithm)), imprint, nonce);
         byte[] requestBytes = request.getEncoded();
 
         // Call the communications layer
         respBytes = getTSAResponse(requestBytes);
 
         // Handle the TSA response
-        TimeStampResponse response = new TimeStampResponse(respBytes);
+        ITimeStampResponse response = BOUNCY_CASTLE_FACTORY.createTimeStampResponse(respBytes);
 
         // validate communication level attributes (RFC 3161 PKIStatus)
         response.validate(request);
-        PKIFailureInfo failure = response.getFailInfo();
-        int value = (failure == null) ? 0 : failure.intValue();
+        IPKIFailureInfo failure = response.getFailInfo();
+        int value = failure.isNull() ? 0 : failure.intValue();
         if (value != 0) {
             // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
             throw new PdfException(SignExceptionMessageConstant.INVALID_TSA_RESPONSE)
@@ -248,13 +232,13 @@ public class TSAClientBouncyCastle implements ITSAClient {
         //        assure we do not sign using an invalid timestamp).
 
         // extract just the time stamp token (removes communication status info)
-        TimeStampToken tsToken = response.getTimeStampToken();
+        ITimeStampToken tsToken = response.getTimeStampToken();
         if (tsToken == null) {
             throw new PdfException(
                     SignExceptionMessageConstant.THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN
             ).setMessageParams(tsaURL, response.getStatusString());
         }
-        TimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
+        ITimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
         byte[] encoded = tsToken.getEncoded();
 
         LOGGER.info("Timestamp generated: " + tsTokenInfo.getGenTime());

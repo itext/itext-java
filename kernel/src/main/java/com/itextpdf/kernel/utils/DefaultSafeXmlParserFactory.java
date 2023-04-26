@@ -1,59 +1,42 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.EntityResolver;
@@ -103,7 +86,9 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
     /**
      * Disable external DTDs.
      */
+    // Android-Conversion-Skip-Block-Start (standard library XML lib doesn't have this feature on Android)
     private final static String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+    // Android-Conversion-Skip-Block-End
 
     /**
      * Creates instance of {@link DefaultSafeXmlParserFactory}.
@@ -145,9 +130,22 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         return xmlReader;
     }
 
+    @Override
+    public Transformer createTransformerInstance() {
+        TransformerFactory factory = TransformerFactory.newInstance();
+        configureSafeTransformerFactory(factory);
+        Transformer transformer;
+        try {
+            transformer = factory.newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new PdfException(e.getMessage(), e);
+        }
+        return transformer;
+    }
+
     /**
      * Creates a document builder factory implementation.
-     * 
+     *
      * @return result of {@link DocumentBuilderFactory#newInstance()} call
      */
     protected DocumentBuilderFactory createDocumentBuilderFactory() {
@@ -156,7 +154,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     /**
      * Creates a SAX parser factory implementation.
-     * 
+     *
      * @return result of {@link SAXParserFactory#newInstance()} call
      */
     protected SAXParserFactory createSAXParserFactory() {
@@ -165,14 +163,14 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
     /**
      * Configures document builder factory to make it secure against xml attacks.
-     * 
+     *
      * @param factory {@link DocumentBuilderFactory} instance to be configured
      */
     protected void configureSafeDocumentBuilderFactory(DocumentBuilderFactory factory) {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
-        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false);
+        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
         // recommendations from Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
         factory.setXIncludeAware(false);
         factory.setExpandEntityReferences(false);
@@ -187,9 +185,19 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         tryToSetFeature(factory, DISALLOW_DOCTYPE_DECL, true);
         tryToSetFeature(factory, EXTERNAL_GENERAL_ENTITIES, false);
         tryToSetFeature(factory, EXTERNAL_PARAMETER_ENTITIES, false);
-        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false);
+        tryToSetFeature(factory, LOAD_EXTERNAL_DTD, false); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
         // recommendations from Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
         factory.setXIncludeAware(false);
+    }
+
+    /**
+     * Configures transformer factory to make it secure against xml attacks.
+     *
+     * @param factory {@link TransformerFactory} instance to be configured
+     */
+    protected void configureSafeTransformerFactory(TransformerFactory factory) {
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
     }
 
     private void tryToSetFeature(DocumentBuilderFactory factory, String feature, boolean value) {

@@ -1,57 +1,34 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.barcodes.exceptions.BarcodeExceptionMessageConstant;
+import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
-
-import java.awt.Image;
 
 
 /**
@@ -163,7 +140,7 @@ public class BarcodeInter25 extends Barcode1D {
     public static byte[] getBarsInter25(String text) {
         text = keepNumbers(text);
         if ((text.length() & 1) != 0) {
-            throw new PdfException(BarcodeExceptionMessageConstant.TEXT_MUST_BE_EVEN);
+            throw new PdfException(BarcodesExceptionMessageConstant.TEXT_MUST_BE_EVEN);
         }
         byte[] bars = new byte[text.length() * 5 + 7];
         int pb = 0;
@@ -330,8 +307,7 @@ public class BarcodeInter25 extends Barcode1D {
         return getBarcodeSize();
     }
 
-    // AWT related methods (remove this if you port to Android / GAE)
-
+    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
      * Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
@@ -341,7 +317,7 @@ public class BarcodeInter25 extends Barcode1D {
      * @return the image
      */
     @Override
-    public Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
+    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
         int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
         int g = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
         java.awt.Canvas canvas = new java.awt.Canvas();
@@ -373,4 +349,5 @@ public class BarcodeInter25 extends Barcode1D {
         }
         return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
     }
+    // Android-Conversion-Skip-Block-End
 }

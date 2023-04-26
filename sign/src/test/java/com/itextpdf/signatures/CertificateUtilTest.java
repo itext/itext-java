@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,25 +22,29 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
+
+import java.io.IOException;
+import java.security.cert.CRL;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.security.cert.X509Certificate;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class CertificateUtilTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final char[] PASSWORD = "testpass".toCharArray();
 
     @Test
     public void getTSAURLAdobeExtensionTest() throws Exception {
         X509Certificate tsaCert =
-                (X509Certificate) Pkcs12FileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCert.p12", PASSWORD)[0];
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCert.pem")[0];
         String url = CertificateUtil.getTSAURL(tsaCert);
 
         Assert.assertEquals("https://itextpdf.com/en", url);
@@ -49,7 +53,7 @@ public class CertificateUtilTest extends ExtendedITextTest {
     @Test
     public void getTSAURLUsualTimestampCertificateTest() throws Exception {
         X509Certificate tsaCert =
-                (X509Certificate) Pkcs12FileHelper.readFirstChain(CERTS_SRC + "tsCertRsa.p12", PASSWORD)[0];
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "tsCertRsa.pem")[0];
         String url = CertificateUtil.getTSAURL(tsaCert);
 
         Assert.assertNull(url);
@@ -58,8 +62,22 @@ public class CertificateUtilTest extends ExtendedITextTest {
     @Test
     public void getTSAURLAdobeExtensionNotTaggedTest() throws Exception {
         X509Certificate tsaCert = (X509Certificate)
-                Pkcs12FileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCertWithoutTag.p12", PASSWORD)[0];
+                PemFileHelper.readFirstChain(CERTS_SRC + "adobeExtensionCertWithoutTag.pem")[0];
 
-        Assert.assertThrows(ClassCastException.class, () -> CertificateUtil.getTSAURL(tsaCert));
+        Assert.assertThrows(NullPointerException.class, () -> CertificateUtil.getTSAURL(tsaCert));
+    }
+    
+    @Test
+    public void getCRLFromStringNullTest() throws CertificateException, CRLException, IOException {
+        Assert.assertNull(CertificateUtil.getCRL((String) null));
+    }
+
+    @Test
+    public void getCRLFromCertificateWithoutCRLTest() throws IOException, CertificateException, CRLException {
+        X509Certificate tsaCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "rootRsa.pem")[0];
+        CRL crl = CertificateUtil.getCRL(tsaCert);
+        
+        Assert.assertNull(crl);
     }
 }

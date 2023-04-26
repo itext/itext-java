@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -23,6 +23,7 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 
 import java.io.ByteArrayInputStream;
@@ -114,7 +115,7 @@ public final class ImageTypeDetector {
         try (InputStream stream = UrlUtil.openStream(source)) {
             return readImageType(stream);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 
@@ -124,7 +125,7 @@ public final class ImageTypeDetector {
             stream.read(bytes);
             return bytes;
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.IoException, e);
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
     }
 

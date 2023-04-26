@@ -4,10 +4,10 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>7.2.5</version>
+    <version>8.0.0</version>
   </parent>
   <artifactId>sign</artifactId>
-  <name>iText 7 - sign</name>
+  <name>iText - sign</name>
   <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
@@ -31,43 +31,42 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>pdftest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>bouncy-castle-connector</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*.java</include>
-          </includes>
-          <groups>${integrationtests}</groups>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <groups>${unittests}</groups>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <profiles>
+    <profile>
+      <id>bouncy-castle-test</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>bouncy-castle-adapter</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>bouncy-castle-fips-test</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>bouncy-castle-fips-adapter</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

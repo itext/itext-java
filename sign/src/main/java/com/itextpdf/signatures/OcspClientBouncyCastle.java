@@ -1,50 +1,39 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 
 import java.io.IOException;
@@ -55,16 +44,7 @@ import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.RevokedStatus;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.operator.OperatorException;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +54,8 @@ import org.slf4j.LoggerFactory;
  * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements IOcspClient {
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     /**
      * The Logger instance.
@@ -100,18 +82,18 @@ public class OcspClientBouncyCastle implements IOcspClient {
      * @param rootCert  the parent certificate
      * @param url       to get the verification
      *
-     * @return OCSP response
+     * @return {@link IBasicOCSPResp} an OCSP response wrapper
      */
-    public BasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
+    public IBasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
-            OCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
+            IOCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);
             if (ocspResponse == null) {
                 return null;
             }
-            if (ocspResponse.getStatus() != OCSPResponseStatus.SUCCESSFUL) {
+            if (ocspResponse.getStatus() != BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus().getSuccessful()) {
                 return null;
             }
-            BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResponse.getResponseObject();
+            IBasicOCSPResp basicResponse = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(ocspResponse.getResponseObject());
             if (verifier != null) {
                 verifier.isValidResponse(basicResponse, rootCert, DateTimeUtil.getCurrentTimeDate());
             }
@@ -128,18 +110,18 @@ public class OcspClientBouncyCastle implements IOcspClient {
     @Override
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
-            BasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
+            IBasicOCSPResp basicResponse = getBasicOCSPResp(checkCert, rootCert, url);
             if (basicResponse != null) {
-                SingleResp[] responses = basicResponse.getResponses();
+                ISingleResp[] responses = basicResponse.getResponses();
                 if (responses.length == 1) {
-                    SingleResp resp = responses[0];
-                    Object status = resp.getCertStatus();
-                    if (status == CertificateStatus.GOOD) {
+                    ISingleResp resp = responses[0];
+                    ICertificateStatus status = resp.getCertStatus();
+                    if (Objects.equals(status, BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood())) {
                         return basicResponse.getEncoded();
-                    } else if (status instanceof RevokedStatus) {
-                        throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
+                    } else if (BOUNCY_CASTLE_FACTORY.createRevokedStatus(status) == null) {
+                        throw new IOException(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
                     } else {
-                        throw new java.io.IOException(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
+                        throw new IOException(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
                     }
                 }
             }
@@ -156,19 +138,19 @@ public class OcspClientBouncyCastle implements IOcspClient {
      * @param issuerCert   certificate of the issues
      * @param serialNumber serial number
      *
-     * @return an OCSP request
+     * @return {@link IOCSPReq} an OCSP request wrapper
      *
-     * @throws OCSPException is thrown if any errors occur while handling OCSP requests/responses
-     * @throws IOException signals that an I/O exception has occurred
+     * @throws AbstractOCSPException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws IOException           signals that an I/O exception has occurred
      */
-    private static OCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
-            throws OCSPException, IOException,
-            OperatorException, CertificateEncodingException {
+    private static IOCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
+            throws AbstractOCSPException, IOException, CertificateEncodingException, AbstractOperatorCreationException {
         //Add provider BC
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
 
         // Generate the id for the certificate we are looking for
-        CertificateID id = SignUtils.generateCertificateId(issuerCert, serialNumber, CertificateID.HASH_SHA1);
+        ICertificateID id = SignUtils.generateCertificateId(issuerCert, serialNumber,
+                BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
 
         // basic request generation with nonce
         return SignUtils.generateOcspRequestWithNonce(id);
@@ -182,15 +164,15 @@ public class OcspClientBouncyCastle implements IOcspClient {
      * @param url       to get the verification. If it's null it will be taken
      *                  from the check cert or from other implementation specific source
      *
-     * @return an OCSP response
+     * @return {@link IOCSPResp} an OCSP response wrapper
      *
-     * @throws GeneralSecurityException if any execution errors occur
-     * @throws OCSPException            if any errors occur while handling OCSP requests/responses
-     * @throws IOException              if any I/O execution errors occur
-     * @throws OperatorException        if any BC execution errors occur
+     * @throws GeneralSecurityException          if any execution errors occur
+     * @throws AbstractOCSPException             if any errors occur while handling OCSP requests/responses
+     * @throws IOException                       if any I/O execution errors occur
+     * @throws AbstractOperatorCreationException if any BC execution errors occur
      */
-    OCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
-            throws GeneralSecurityException, OCSPException, IOException, OperatorException {
+    IOCSPResp getOcspResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
+            throws GeneralSecurityException, AbstractOCSPException, IOException, AbstractOperatorCreationException {
         if (checkCert == null || rootCert == null) {
             return null;
         }
@@ -201,10 +183,10 @@ public class OcspClientBouncyCastle implements IOcspClient {
             return null;
         }
         LOGGER.info("Getting OCSP from " + url);
-        OCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
+        IOCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
         URL urlt = new URL(url);
         InputStream in = SignUtils.getHttpResponseForOcspRequest(array, urlt);
-        return new OCSPResp(StreamUtil.inputStreamToArray(in));
+        return BOUNCY_CASTLE_FACTORY.createOCSPResp(StreamUtil.inputStreamToArray(in));
     }
 }

@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -23,11 +23,8 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
-import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
@@ -49,11 +46,8 @@ public class PdfFormFieldUnitTest extends ExtendedITextTest {
     @Test
     public void cannotGetRectangleIfKidsIsNullTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        PdfDictionary pdfDictionary = new PdfDictionary();
         PdfFormField pdfFormField = new PdfFormField(pdfDocument);
-        Exception exception = Assert.assertThrows(PdfException.class,
-                () -> pdfFormField.getRect(pdfDictionary));
-        Assert.assertEquals(FormsExceptionMessageConstant.WRONG_FORM_FIELD_ADD_ANNOTATION_TO_THE_FIELD, exception.getMessage());
+        Assert.assertNull(pdfFormField.getFirstFormAnnotation());
     }
 
     @Test
@@ -62,7 +56,7 @@ public class PdfFormFieldUnitTest extends ExtendedITextTest {
         MetaInfoContainer metaInfoContainer = new MetaInfoContainer(new IMetaInfo() {
         });
         FormsMetaInfoStaticContainer.useMetaInfoDuringTheAction(metaInfoContainer,
-                () -> PdfFormField.setMetaInfoToCanvas(canvas));
+                () -> PdfFormAnnotation.setMetaInfoToCanvas(canvas));
 
         Assert.assertSame(metaInfoContainer, canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
     }
@@ -70,7 +64,7 @@ public class PdfFormFieldUnitTest extends ExtendedITextTest {
     @Test
     public void setMetaInfoToCanvasMetaInfoNotUsedTest() {
         Canvas canvas = createCanvas();
-        PdfFormField.setMetaInfoToCanvas(canvas);
+        PdfFormAnnotation.setMetaInfoToCanvas(canvas);
 
         Assert.assertNull(canvas.<MetaInfoContainer>getProperty(Property.META_INFO));
     }

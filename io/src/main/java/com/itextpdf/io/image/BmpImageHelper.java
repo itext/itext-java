@@ -1,49 +1,29 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 
 import java.io.ByteArrayInputStream;
@@ -136,7 +116,7 @@ final class BmpImageHelper {
                 image.setDpi((int) (bmp.xPelsPerMeter * 0.0254d + 0.5d), (int) (bmp.yPelsPerMeter * 0.0254d + 0.5d));
             }
         } catch (java.io.IOException e){
-            throw new IOException(IOException.BmpImageException, e);
+            throw new IOException(IoExceptionMessageConstant.BMP_IMAGE_EXCEPTION, e);
         }
         RawImageHelper.updateImageAttributes(bmp.image, bmp.additional);
     }
@@ -147,7 +127,7 @@ final class BmpImageHelper {
             // Start File Header
             if (!(readUnsignedByte(bmp.inputStream) == 'B' &&
                     readUnsignedByte(bmp.inputStream) == 'M')) {
-                throw new IOException(IOException.InvalidMagicValueForBmpFileMustBeBM);
+                throw new IOException(IoExceptionMessageConstant.INVALID_MAGIC_VALUE_FOR_BMP_FILE_MUST_BE_BM);
             }
 
             // Read file size
@@ -359,7 +339,7 @@ final class BmpImageHelper {
                         break;
 
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
             } else if (size == 108) {
                 // Windows 4.x BMP
@@ -594,7 +574,7 @@ final class BmpImageHelper {
                         readRLE4(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_3_8_BIT:
@@ -606,7 +586,7 @@ final class BmpImageHelper {
                         readRLE8(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_3_24_BIT:
@@ -633,7 +613,7 @@ final class BmpImageHelper {
                         readRLE4(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_4_8_BIT:
@@ -645,7 +625,7 @@ final class BmpImageHelper {
                         readRLE8(bmp);
                         break;
                     default:
-                        throw new IOException(IOException.InvalidBmpFileCompression);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_BMP_FILE_COMPRESSION);
                 }
                 return true;
             case VERSION_4_16_BIT:
@@ -686,7 +666,7 @@ final class BmpImageHelper {
         while (bytesRead < sizeOfPalette) {
             int r = bmp.inputStream.read(bmp.palette, bytesRead, sizeOfPalette - bytesRead);
             if (r < 0) {
-                throw new IOException(IOException.IncompletePalette);
+                throw new IOException(IoExceptionMessageConstant.INCOMPLETE_PALETTE);
             }
             bytesRead += r;
         }

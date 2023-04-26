@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf;
 
@@ -55,6 +34,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -399,22 +379,38 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return copied {@link PdfPage}.
      */
     public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
-        final ICopyFilter copyFilter = new DestinationResolverCopyFilter(this.getDocument(), toDocument);
-        final PdfDictionary dictionary = getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true, copyFilter);
-        PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
-        copyInheritedProperties(page, toDocument, NullCopyFilter.getInstance());
-        copyAnnotations(toDocument, page, copyFilter);
+        return copyTo(toDocument, copier, false, -1);
+    }
 
-        if (copier != null) {
-            copier.copy(this, page);
-        } else {
-            if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
-                Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
-                toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
+    /**
+     * Copies page and adds it to the specified document to the end or by index if the corresponding parameter is true.
+     * <br><br>
+     * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
+     *
+     * @param toDocument a document to copy page to.
+     * @param copier     a copier which bears a special copy logic. May be null.
+     *                   It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                   for the same output document.
+     * @param addPageToDocument true if page should be added to document.
+     * @param pageInsertIndex position to add the page to, if -1 page will be added to the end of the document,
+     *                        will be ignored if addPageToDocument is false.
+     *
+     * @return copied {@link PdfPage}.
+     */
+    public PdfPage copyTo(PdfDocument toDocument, IPdfPageExtraCopier copier,
+                          boolean addPageToDocument, int pageInsertIndex) {
+        final ICopyFilter copyFilter = new DestinationResolverCopyFilter(this.getDocument(), toDocument);
+        final PdfDictionary dictionary =
+                getPdfObject().copyTo(toDocument, PAGE_EXCLUDED_KEYS, true, copyFilter);
+        PdfPage page = getDocument().getPageFactory().createPdfPage(dictionary);
+        if (addPageToDocument) {
+            if (pageInsertIndex == -1) {
+                toDocument.addPage(page);
+            } else {
+                toDocument.addPage(pageInsertIndex, page);
             }
         }
-        return page;
+        return copyTo(page, toDocument, copier);
     }
 
     /**
@@ -666,11 +662,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setArtBox(Rectangle rectangle) {
-        if (getPdfObject().getAsRectangle(PdfName.TrimBox) != null) {
-            getPdfObject().remove(PdfName.TrimBox);
-            Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.warn(IoLogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
-        }
         put(PdfName.ArtBox, new PdfArray(rectangle));
         return this;
     }
@@ -694,11 +685,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setTrimBox(Rectangle rectangle) {
-        if (getPdfObject().getAsRectangle(PdfName.ArtBox) != null) {
-            getPdfObject().remove(PdfName.ArtBox);
-            Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.warn(IoLogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
-        }
         put(PdfName.TrimBox, new PdfArray(rectangle));
         return this;
     }
@@ -899,31 +885,59 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * Removes an annotation from the page.
-     * <br><br>
-     * NOTE: If document is tagged, PdfDocument's PdfTagStructure instance will point at annotation tag parent after method call.
      *
-     * @param annotation an annotation to be removed.
+     * <p>
+     * When document is tagged a corresponding logical structure content item for this annotation
+     * will be removed; its immediate structure element parent will be removed as well if the following
+     * conditions are met: annotation content item was its single child and structure element role
+     * is either Annot or Form.
+     *
+     * @param annotation an annotation to be removed
      * @return this {@link PdfPage} instance.
      */
     public PdfPage removeAnnotation(PdfAnnotation annotation) {
+        return removeAnnotation(annotation, false);
+    }
+
+    /**
+     * Removes an annotation from the page.
+     *
+     * <p>
+     * When document is tagged a corresponding logical structure content item for this annotation
+     * will be removed; its immediate structure element parent will be removed as well if the following
+     * conditions are met: annotation content item was its single child and structure element role
+     * is either Annot or Form.
+     *
+     * @param annotation         an annotation to be removed
+     * @param rememberTagPointer if set to true, the {@link TagStructureContext#getAutoTaggingPointer()}
+     *                           instance of {@link TagTreePointer} will be moved to the parent of the removed
+     *                           annotation tag. Can be used to add a new annotation to the same place in the
+     *                           tag structure. (E.g. when merged Acroform field is split into a field and
+     *                           a pure widget, the page annotation needs to be replaced by the new one)
+     *
+     * @return this {@link PdfPage} instance.
+     */
+    public PdfPage removeAnnotation(PdfAnnotation annotation, boolean rememberTagPointer) {
         PdfArray annots = getAnnots(false);
         if (annots != null) {
             annots.remove(annotation.getPdfObject());
 
             if (annots.isEmpty()) {
-                getPdfObject().remove(PdfName.Annots);
-                setModified();
+                remove(PdfName.Annots);
             } else if (annots.getIndirectReference() == null) {
                 setModified();
+            } else {
+                annots.setModified();
             }
         }
 
         if (getDocument().isTagged()) {
-            TagTreePointer tagPointer = getDocument().getTagStructureContext().removeAnnotationTag(annotation);
+            TagTreePointer tagPointer = getDocument().getTagStructureContext()
+                    .removeAnnotationTag(annotation, rememberTagPointer);
             if (tagPointer != null) {
                 boolean standardAnnotTagRole = StandardRoles.ANNOT.equals(tagPointer.getRole())
                         || StandardRoles.FORM.equals(tagPointer.getRole());
-                if (tagPointer.getKidsRoles().size() == 0 && standardAnnotTagRole) {
+                if (tagPointer.getKidsRoles().isEmpty() && standardAnnotTagRole) {
                     tagPointer.removeTag();
                 }
             }
@@ -1105,15 +1119,29 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Helper method that associate specified value with specified key in the underlined {@link PdfDictionary}.
-     * May be used in chain.
+     * Helper method that associates specified value with the specified key in the underlying
+     * {@link PdfDictionary}. Can be used in method chaining.
      *
-     * @param key   the {@link PdfName} key with which the specified value is to be associated.
+     * @param key   the {@link PdfName} key with which the specified value is to be associated
      * @param value the {@link PdfObject} value to be associated with the specified key.
      * @return this {@link PdfPage} object.
      */
     public PdfPage put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
+        return this;
+    }
+
+    /**
+     * Helper method that removes the value associated with the specified key
+     * from the underlying {@link PdfDictionary}. Can be used in method chaining.
+     *
+     * @param key the {@link PdfName} key for which associated value is to be removed
+     *
+     * @return this {@link PdfPage} object
+     */
+    public PdfPage remove(PdfName key) {
+        getPdfObject().remove(key);
         setModified();
         return this;
     }
@@ -1162,7 +1190,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
-            getDocument().getCatalog().addNameToNameTree(description, fs.getPdfObject(), PdfName.EmbeddedFiles);
+            PdfString key = new PdfString(description);
+            getDocument().getCatalog()
+                    .addNameToNameTree(key, fs.getPdfObject(), PdfName.EmbeddedFiles);
         }
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null) {
@@ -1222,6 +1252,23 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return true;
+    }
+
+    private PdfPage copyTo(PdfPage page, PdfDocument toDocument, IPdfPageExtraCopier copier) {
+        final ICopyFilter copyFilter = new DestinationResolverCopyFilter(this.getDocument(), toDocument);
+        copyInheritedProperties(page, toDocument, NullCopyFilter.getInstance());
+        copyAnnotations(toDocument, page, copyFilter);
+
+        if (copier != null) {
+            copier.copy(this, page);
+        } else {
+            if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
+                Logger logger = LoggerFactory.getLogger(PdfPage.class);
+                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
+                toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
+            }
+        }
+        return page;
     }
 
     private PdfArray getAnnots(boolean create) {
@@ -1400,6 +1447,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             if (newParent.isFlushed()) {
                 newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent),
                         true, NullCopyFilter.getInstance());
+            }
+            if (oldParent == oldParent.getAsDictionary(PdfName.Parent)) {
+                return;
             }
             rebuildFormFieldParent(oldParent, newParent, toDocument);
 

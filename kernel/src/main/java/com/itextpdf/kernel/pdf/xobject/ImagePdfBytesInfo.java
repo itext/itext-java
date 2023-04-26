@@ -1,50 +1,31 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.io.codec.PngWriter;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TiffWriter;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -63,7 +44,7 @@ class ImagePdfBytesInfo {
     private static final String TIFFTAG_SOFTWARE_VALUE = "iText\u00ae " +
             ITextCoreProductData.getInstance().getVersion() + " \u00a9" + ITextCoreProductData.getInstance()
             .getSinceCopyrightYear() + "-" + ITextCoreProductData.getInstance().getToCopyrightYear()
-            + " iText Group NV";
+            + " Apryse Group NV";
     private final int bpc;
     private final int width;
     private final int height;
@@ -97,22 +78,22 @@ class ImagePdfBytesInfo {
     public byte[] decodeTiffAndPngBytes(byte[] imageBytes) throws IOException {
         if (pngColorType < 0) {
             if (bpc != 8)
-                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorDepthIsNotSupported).setMessageParams(bpc);
+                throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED).setMessageParams(bpc);
 
             if (colorspace instanceof PdfArray) {
                 PdfArray ca = (PdfArray) colorspace;
                 PdfObject tyca = ca.get(0);
                 if (!PdfName.ICCBased.equals(tyca))
-                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(tyca.toString());
+                    throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED).setMessageParams(tyca.toString());
 
                 PdfStream pr = (PdfStream) ca.get(1);
                 int n = pr.getAsNumber(PdfName.N).intValue();
                 if (n != 4) {
-                    throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.NValueIsNotSupported).setMessageParams(n);
+                    throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.N_VALUE_IS_NOT_SUPPORTED).setMessageParams(n);
                 }
                 icc = pr.getBytes();
             } else if (!PdfName.DeviceCMYK.equals(colorspace)) {
-                throw new com.itextpdf.io.exceptions.IOException(com.itextpdf.io.exceptions.IOException.ColorSpaceIsNotSupported).setMessageParams(colorspace.toString());
+                throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED).setMessageParams(colorspace.toString());
             }
             java.io.ByteArrayOutputStream ms = new java.io.ByteArrayOutputStream();
 

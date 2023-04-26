@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -77,7 +77,7 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
         if (events == null || events.isEmpty()) {
             final ProductData productData = ITextCoreProductData.getInstance();
             final String noEventProducer = "iText\u00ae \u00a9" + productData.getSinceCopyrightYear() + "-"
-                    + productData.getToCopyrightYear() + " iText Group NV (no registered products)";
+                    + productData.getToCopyrightYear() + " Apryse Group NV (no registered products)";
             pdfDocument.getDocumentInfo().setProducer(noEventProducer);
             return;
         }

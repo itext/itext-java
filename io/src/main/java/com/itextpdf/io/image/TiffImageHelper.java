@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.io.image;
 
@@ -51,6 +30,7 @@ import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.codec.TIFFLZWDecoder;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -96,7 +76,7 @@ class TiffImageHelper {
                 RawImageHelper.updateImageAttributes(tiff.image, tiff.additional);
             }
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.TiffImageException, e);
+            throw new IOException(IoExceptionMessageConstant.TIFF_IMAGE_EXCEPTION, e);
         }
     }
 
@@ -105,11 +85,11 @@ class TiffImageHelper {
         int page = tiff.image.getPage();
         boolean direct = tiff.image.isDirect();
         if (page < 1)
-            throw new IOException(IOException.PageNumberMustBeGtEq1);
+            throw new IOException(IoExceptionMessageConstant.PAGE_NUMBER_MUST_BE_GT_EQ_1);
         try {
             TIFFDirectory dir = new TIFFDirectory(s, page - 1);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_TILEWIDTH))
-                throw new IOException(IOException.TilesAreNotSupported);
+                throw new IOException(IoExceptionMessageConstant.TILES_ARE_NOT_SUPPORTED);
             int compression = TIFFConstants.COMPRESSION_NONE;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_COMPRESSION)) {
                 compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
@@ -286,7 +266,7 @@ class TiffImageHelper {
             if (rotation != 0)
                 tiff.image.setRotation(rotation);
         } catch (Exception e) {
-            throw new IOException(IOException.CannotReadTiffImage);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE);
         }
     }
 
@@ -308,7 +288,7 @@ class TiffImageHelper {
                 case TIFFConstants.COMPRESSION_JPEG:
                     break;
                 default:
-                    throw new IOException(IOException.Compression1IsNotSupported).setMessageParams(compression);
+                    throw new IOException(IoExceptionMessageConstant.COMPRESSION_IS_NOT_SUPPORTED).setMessageParams(compression);
             }
             int photometric = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_PHOTOMETRIC);
             switch (photometric) {
@@ -320,7 +300,7 @@ class TiffImageHelper {
                     break;
                 default:
                     if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG)
-                        throw new IOException(IOException.Photometric1IsNotSupported).setMessageParams(photometric);
+                        throw new IOException(IoExceptionMessageConstant.PHOTOMETRIC_IS_NOT_SUPPORTED).setMessageParams(photometric);
             }
             float rotation = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
@@ -334,7 +314,7 @@ class TiffImageHelper {
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                     && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
-                throw new IOException(IOException.PlanarImagesAreNotSupported);
+                throw new IOException(IoExceptionMessageConstant.PLANAR_IMAGES_ARE_NOT_SUPPORTED);
             int extraSamples = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_EXTRASAMPLES))
                 extraSamples = 1;
@@ -353,7 +333,7 @@ class TiffImageHelper {
                 case 8:
                     break;
                 default:
-                    throw new IOException(IOException.BitsPerSample1IsNotSupported).setMessageParams(bitsPerSample);
+                    throw new IOException(IoExceptionMessageConstant.BITS_PER_SAMPLE_0_IS_NOT_SUPPORTED).setMessageParams(bitsPerSample);
             }
             int h = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGELENGTH);
             int w = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGEWIDTH);
@@ -388,10 +368,10 @@ class TiffImageHelper {
                 if (predictorField != null) {
                     predictor = predictorField.getAsInt(0);
                     if (predictor != 1 && predictor != 2) {
-                        throw new IOException(IOException.IllegalValueForPredictorInTiffFile);
+                        throw new IOException(IoExceptionMessageConstant.ILLEGAL_VALUE_FOR_PREDICTOR_IN_TIFF_FILE);
                     }
                     if (predictor == 2 && bitsPerSample != 8) {
-                        throw new IOException(IOException._1BitSamplesAreNotSupportedForHorizontalDifferencingPredictor).setMessageParams(bitsPerSample);
+                        throw new IOException(IoExceptionMessageConstant.BIT_SAMPLES_ARE_NOT_SUPPORTED_FOR_HORIZONTAL_DIFFERENCING_PREDICTOR).setMessageParams(bitsPerSample);
                     }
                 }
             }
@@ -422,7 +402,7 @@ class TiffImageHelper {
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
-                    throw new IOException(IOException.MissingTagsForOjpegCompression);
+                    throw new IOException(IoExceptionMessageConstant.MISSING_TAGS_FOR_OJPEG_COMPRESSION);
                 }
                 int jpegOffset = (int) dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
                 int jpegLength = (int) s.length() - jpegOffset;
@@ -444,7 +424,7 @@ class TiffImageHelper {
                 tiff.jpegProcessing = true;
             } else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
-                    throw new IOException(IOException.CompressionJpegIsOnlySupportedWithASingleStripThisImageHas1Strips).setMessageParams(size.length);
+                    throw new IOException(IoExceptionMessageConstant.COMPRESSION_JPEG_IS_ONLY_SUPPORTED_WITH_A_SINGLE_STRIP_THIS_IMAGE_HAS_STRIPS).setMessageParams(size.length);
                 byte[] jpeg = new byte[(int) size[0]];
                 s.seek(offset[0]);
                 s.readFully(jpeg);
@@ -589,7 +569,7 @@ class TiffImageHelper {
                 tiff.image.setImageMask(mimg);
             }
         } catch (Exception e) {
-            throw new IOException(IOException.CannotGetTiffImageColor);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_GET_TIFF_IMAGE_COLOR);
         }
     }
 
@@ -627,7 +607,7 @@ class TiffImageHelper {
             zip.write(outBuf, 0, optr);
             mzip.write(mask, 0, mptr);
         } else
-            throw new IOException(IOException.ExtraSamplesAreNotSupported);
+            throw new IOException(IoExceptionMessageConstant.EXTRA_SAMPLES_ARE_NOT_SUPPORTED);
     }
 
     private static long[] getArrayLongShort(TIFFDirectory dir, int tag) {

@@ -1,52 +1,28 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.io.image;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.PixelGrabber;
-
+// Android-Conversion-Skip-File (java.awt library isn't available on Android)
 class AwtImageDataFactory {
     /**
      * Gets an instance of an Image from a {@link java.awt.Image}
@@ -66,20 +42,20 @@ class AwtImageDataFactory {
      * @return RawImage
      */
     public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
-        if (image instanceof BufferedImage) {
-            BufferedImage bi = (BufferedImage) image;
-            if (bi.getType() == BufferedImage.TYPE_BYTE_BINARY && bi.getColorModel().getPixelSize() == 1) {
+        if (image instanceof java.awt.image.BufferedImage) {
+            java.awt.image.BufferedImage bi = (java.awt.image.BufferedImage) image;
+            if (bi.getType() == java.awt.image.BufferedImage.TYPE_BYTE_BINARY && bi.getColorModel().getPixelSize() == 1) {
                 forceBW = true;
             }
         }
 
-        PixelGrabber pg = new PixelGrabber(image, 0, 0, -1, -1, true);
+        java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(image, 0, 0, -1, -1, true);
         try {
             pg.grabPixels();
         } catch (InterruptedException e) {
             throw new java.io.IOException("Java.awt.image was interrupted. Waiting for pixels");
         }
-        if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
+        if ((pg.getStatus() & java.awt.image.ImageObserver.ABORT) != 0) {
             throw new java.io.IOException("Java.awt.image fetch aborted or errored");
         }
         int w = pg.getWidth();
@@ -229,5 +205,4 @@ class AwtImageDataFactory {
             return img;
         }
     }
-
 }

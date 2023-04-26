@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -27,6 +27,7 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -52,6 +53,8 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
     private static final String JP_REGULAR_PATH = FONTS_FOLDER + "NotoSansJP-Regular_charsetDataFormat0.otf";
     private static final int JP_REGULAR_CFF_OFFSET = 337316;
     private static final int JP_REGULAR_CFF_LENGTH = 4210891;
+
+    private static final String PURITAN_PATH = FONTS_FOLDER + "Puritan2.otf";
 
     @Test
     public void subsetNotoSansCjkJpBoldNoUsedGlyphsTest() throws IOException {
@@ -105,6 +108,20 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
 
         byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetNotoSansJPRegularOneUsedGlyph.cff"));
         Assert.assertArrayEquals(cmpBytes, cffSubsetBytes);
+    }
+
+    @Test
+    public void subsetNonCidCFFFontRangeCheck() throws IOException {
+        // 'H' (not that it matters which glyph we use)
+        int glyphGid1 = 41;
+        HashSet<Integer> glyphsUsed = new HashSet<>(Collections.singletonList(glyphGid1));
+        byte[] cffData = new TrueTypeFont(PURITAN_PATH).getFontStreamBytes();
+        byte[] cffSubsetBytes = new CFFFontSubset(cffData, glyphsUsed).Process();
+        CFFFont result = new CFFFont(cffSubsetBytes);
+        int expectedCharsetLength = 255;
+        // skip over the format ID (1 byte) and the first SID (2 bytes)
+        result.seek(result.fonts[0].charsetOffset + 3);
+        Assert.assertEquals(expectedCharsetLength - 2, result.getCard16());
     }
 
     private byte[] subsetNotoSansCjkJpBoldCff(String otfFile, int offsetToCff, int cffLength,

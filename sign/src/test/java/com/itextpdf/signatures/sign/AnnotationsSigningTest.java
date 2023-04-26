@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,6 +22,10 @@
  */
 package com.itextpdf.signatures.sign;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -32,55 +36,53 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class AnnotationsSigningTest extends ExtendedITextTest {
+    
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/AnnotationsSigningTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/AnnotationsSigningTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
-    private static final char[] PASSWORD = "testpass".toCharArray();
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private Certificate[] chain;
     private PrivateKey pk;
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Before
     public void init()
-            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        pk = Pkcs12FileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.p12", PASSWORD, PASSWORD);
-        chain = Pkcs12FileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.p12", PASSWORD);
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
+        pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
+        chain = PemFileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.pem");
     }
 
     @Test
@@ -192,7 +194,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
 
         signer.setFieldName(name);
         // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
+        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);
     }
 

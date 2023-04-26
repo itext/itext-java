@@ -1,10 +1,10 @@
-**[iText 7 Community][itext]** consists of several jars.
+**[iText Community][itext]** consists of several jars.
 
-The iText 7 Core/Community release contains:
+The iText Core/Community release contains:
 
 - ```kernel-x.y.z.jar```: low-level functionality
 - ```io-x.y.z.jar```:  low-level functionality
-- ```layout-x.y.z.jar```: high-level functionality
+- ```layout-x.y.z.jar```: high-level functionality. For more information see [layout overview][layoutMd].
 - ```forms-x.y.z.jar```: AcroForms
 - ```pdfa-x.y.z.jar```: PDF/A-specific functionality
 - ```pdftest-x.y.z.jar```: test helper classes
@@ -15,20 +15,23 @@ The iText 7 Core/Community release contains:
 - ```styled-xml-parser-x.y.z.jar```: use this if you need support for SVG or html2pdf
 - ```svg-x.y.z.jar```: SVG support
 - ```commons-x.y.z.jar```: commons module
+- ```bouncy-castle-connector-x.y.z.jar```: auxiliary internal module
+- ```bouncy-castle-adapter-x.y.z.jar```: use this to apply BouncyCastle as low-level cryptography library
+- ```bouncy-castle-fips-adapter-x.y.z.jar```: use this to apply BouncyCastle FIPS as low-level cryptography library
 
-The **iText 7 Community** source code is hosted on [Github][github], where you can also [download the latest releases][latest].
+The **iText Community** source code is hosted on [Github][github], where you can also [download the latest releases][latest].
 
-You can also [build iText 7 Community from source][building].
+You can also [build iText Community from source][building].
 
 We also provide opensource add-ons and tools to complement the core functionality:
 - [pdfHTML][pdfhtml] — allows you to easily convert HTML to PDF or iText objects
 - [pdfSweep][pdfsweep] — a highly efficient PDF tool to merge, split and redact data
 - [RUPS][rups] — a Java tool that can help you debug PDFs
 
-If you have an idea on how to improve **iText 7 Community** and you want to submit code,
+If you have an idea on how to improve **iText Community** and you want to submit code,
 please read our [Contribution Guidelines][contributing].
 
-**iText 7** is dual licensed as [AGPL][agpl]/[Commercial software][sales].
+**iText** is dual licensed as [AGPL][agpl]/[Commercial software][sales].
 
 AGPL is a free / open source software license.
 
@@ -48,6 +51,7 @@ Contact [sales] for more info.
 [agpl]: LICENSE.md
 [building]: BUILDING.md
 [contributing]: CONTRIBUTING.md
+[layoutMd]: layout/MODULE_OVERVIEW.md
 [itext]: https://itextpdf.com/
 [github]: https://github.com/itext/itext7
 [latest]: https://github.com/itext/itext7/releases/latest

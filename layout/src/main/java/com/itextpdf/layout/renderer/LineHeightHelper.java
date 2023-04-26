@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -40,7 +40,9 @@ class LineHeightHelper {
 
     /**
      * Get actual ascender, descender.
+     *
      * @param renderer the renderer to retrieve the ascender and descender from
+     *
      * @return an array containing in this order actual ascender
      */
     static float[] getActualAscenderDescender(AbstractRenderer renderer) {
@@ -50,7 +52,9 @@ class LineHeightHelper {
 
     /**
      * Get actual ascender, descender, xHeight and leading.
+     *
      * @param renderer the renderer to retrieve the font info from
+     *
      * @return an array containing in this order actual ascender, descender, xHeight and leading
      */
     static float[] getActualFontInfo(AbstractRenderer renderer) {
@@ -69,10 +73,13 @@ class LineHeightHelper {
         float fontSize = renderer.getPropertyAsUnitValue(Property.FONT_SIZE).getValue();
         float[] fontAscenderDescenderFromMetrics = TextRenderer.calculateAscenderDescender(font,
                 RenderingMode.HTML_MODE);
-        float fontAscender = fontAscenderDescenderFromMetrics[0] / FontProgram.UNITS_NORMALIZATION * fontSize;
-        float fontDescender = fontAscenderDescenderFromMetrics[1] / FontProgram.UNITS_NORMALIZATION * fontSize;
-        float xHeight = ((float) font.getFontProgram().getFontMetrics().getXHeight())/
-                FontProgram.UNITS_NORMALIZATION * fontSize;
+        final float fontAscender =
+                FontProgram.convertTextSpaceToGlyphSpace(fontAscenderDescenderFromMetrics[0]) * fontSize;
+        final float fontDescender =
+                FontProgram.convertTextSpaceToGlyphSpace(fontAscenderDescenderFromMetrics[1]) * fontSize;
+        final float xHeight =
+                FontProgram.convertTextSpaceToGlyphSpace(font.getFontProgram().getFontMetrics().getXHeight())
+                        * fontSize;
         return new float[] {fontAscender, fontDescender, xHeight};
     }
 

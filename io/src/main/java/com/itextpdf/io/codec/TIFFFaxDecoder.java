@@ -46,6 +46,7 @@
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 /**
  * Class that can decode TIFF files.
@@ -709,11 +710,11 @@ public class TIFFFaxDecoder {
 
                 // ERROR
                 } else if (bits == 0) {
-                    throw new IOException(IOException.InvalidCodeEncountered);
+                    throw new IOException(IoExceptionMessageConstant.INVALID_CODE_ENCOUNTERED);
 
                 // EOL
                 } else if (bits == 15) {
-                    throw new IOException(IOException.EolCodeWordEncounteredInWhiteRun);
+                    throw new IOException(IoExceptionMessageConstant.EOL_CODE_WORD_ENCOUNTERED_IN_WHITE_RUN);
                 } else {
 
                     // 11 bits - 0000 0111 1111 1111 = 0x07ff
@@ -774,7 +775,7 @@ public class TIFFFaxDecoder {
                     } else if (bits == 15) {
 
                         // EOL code
-                        throw new IOException(IOException.EolCodeWordEncounteredInWhiteRun);
+                        throw new IOException(IoExceptionMessageConstant.EOL_CODE_WORD_ENCOUNTERED_IN_WHITE_RUN);
                     } else {
                         setToBlack(buffer, lineOffset, bitOffset, code);
                         bitOffset += code;
@@ -853,7 +854,7 @@ public class TIFFFaxDecoder {
 
         // The data must start with an EOL code
         if (readEOL() != 1) {
-            throw new IOException(IOException.FirstScanlineMustBe1dEncoded);
+            throw new IOException(IoExceptionMessageConstant.FIRST_SCANLINE_MUST_BE_1D_ENCODED);
         }
 
         int lineOffset = 0;
@@ -955,7 +956,7 @@ public class TIFFFaxDecoder {
 
                         updatePointer(7 - bits);
                     } else {
-                        throw new IOException(IOException.InvalidCodeEncounteredWhileDecoding2dGroup3CompressedData);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_CODE_ENCOUNTERED_WHILE_DECODING_2D_GROUP_3_COMPRESSED_DATA);
                     }
                 }
 
@@ -1035,7 +1036,7 @@ public class TIFFFaxDecoder {
                 if (bitPointer > 0) {
                     int bitsLeft = 8 - bitPointer;
                     if (nextNBits(bitsLeft) != 0) {
-                        throw new IOException(IOException.ExpectedTrailingZeroBitsForByteAlignedLines);
+                        throw new IOException(IoExceptionMessageConstant.EXPECTED_TRAILING_ZERO_BITS_FOR_BYTE_ALIGNED_LINES);
                     }
                 }
             }
@@ -1125,7 +1126,7 @@ public class TIFFFaxDecoder {
                     updatePointer(7 - bits);
                 } else if (code == 11) {
                     if (nextLesserThan8Bits(3) != 7) {
-                        throw new IOException(IOException.InvalidCodeEncounteredWhileDecoding2dGroup4CompressedData);
+                        throw new IOException(IoExceptionMessageConstant.INVALID_CODE_ENCOUNTERED_WHILE_DECODING_2D_GROUP_4_COMPRESSED_DATA);
                     }
 
                     int zeros = 0;
@@ -1290,14 +1291,14 @@ public class TIFFFaxDecoder {
 
             // ERROR
             } else if (bits == 0) {
-                throw new IOException(IOException.InvalidCodeEncountered);
+                throw new IOException(IoExceptionMessageConstant.INVALID_CODE_ENCOUNTERED);
 
             // EOL
             } else if (bits == 15) {
                 if (runLength == 0) {
                     isWhite = false;
                 } else {
-                    throw new IOException(IOException.EolCodeWordEncounteredInWhiteRun);
+                    throw new IOException(IoExceptionMessageConstant.EOL_CODE_WORD_ENCOUNTERED_IN_WHITE_RUN);
                 }
             } else {
 
@@ -1356,7 +1357,7 @@ public class TIFFFaxDecoder {
                 } else if (bits == 15) {
 
                     // EOL code
-                    throw new IOException(IOException.EolCodeWordEncounteredInBlackRun);
+                    throw new IOException(IoExceptionMessageConstant.EOL_CODE_WORD_ENCOUNTERED_IN_BLACK_RUN);
                 } else {
                     runLength += code;
                     updatePointer(9 - bits);
@@ -1394,7 +1395,7 @@ public class TIFFFaxDecoder {
         updatePointer(12);
         int next12Bits = nextNBits(12);
         if (next12Bits != 1) {
-            throw new IOException(IOException.AllFillBitsPrecedingEolCodeMustBe0);
+            throw new IOException(IoExceptionMessageConstant.ALL_FILL_BITS_PRECEDING_EOL_CODE_MUST_BE_0);
         }
         // If one dimensional encoding mode, then always return 1
         if (oneD == 0) {
@@ -1472,7 +1473,7 @@ public class TIFFFaxDecoder {
                 next2next = flipTable[data[bp + 2] & 0xff];
             }
         } else {
-            throw new IOException(IOException.TiffFillOrderTagMustBeEither1Or2);
+            throw new IOException(IoExceptionMessageConstant.TIFF_FILL_ORDER_TAG_MUST_BE_EITHER_1_OR_2);
         }
 
         int bitsLeft = 8 - bitPointer;
@@ -1532,7 +1533,7 @@ public class TIFFFaxDecoder {
                 }
             }
         } else {
-            throw new IOException(IOException.TiffFillOrderTagMustBeEither1Or2);
+            throw new IOException(IoExceptionMessageConstant.TIFF_FILL_ORDER_TAG_MUST_BE_EITHER_1_OR_2);
         }
 
         int bitsLeft = 8 - bitPointer;

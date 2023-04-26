@@ -1,44 +1,24 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf;
 
@@ -81,9 +61,9 @@ public class PdfNameTreeTest extends ExtendedITextTest {
     public void embeddedFileAndJavascriptTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "FileWithSingleAttachment.pdf"));
         PdfNameTree embeddedFilesNameTree = pdfDocument.getCatalog().getNameTree(PdfName.EmbeddedFiles);
-        Map<String, PdfObject> objs = embeddedFilesNameTree.getNames();
+        Map<PdfString, PdfObject> objs = embeddedFilesNameTree.getNames();
         PdfNameTree javascript = pdfDocument.getCatalog().getNameTree(PdfName.JavaScript);
-        Map<String, PdfObject> objs2 = javascript.getNames();
+        Map<PdfString, PdfObject> objs2 = javascript.getNames();
         pdfDocument.close();
         Assert.assertEquals(1, objs.size());
         Assert.assertEquals(1, objs2.size());
@@ -123,10 +103,10 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         PdfDocument finalDoc = new PdfDocument(finalReader);
 
         PdfNameTree embeddedFilesNameTree = finalDoc.getCatalog().getNameTree(PdfName.EmbeddedFiles);
-        Map<String, PdfObject> embeddedFilesMap = embeddedFilesNameTree.getNames();
+        Map<PdfString, PdfObject> embeddedFilesMap = embeddedFilesNameTree.getNames();
 
         Assert.assertTrue(embeddedFilesMap.size()>0);
-        Assert.assertTrue(embeddedFilesMap.containsKey("Test File"));
+        Assert.assertTrue(embeddedFilesMap.containsKey(new PdfString("Test File")));
     }
 
     @Test
@@ -147,7 +127,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         pdfDocument.getCatalog().getPdfObject().put(PdfName.Names, dictionary);
 
         PdfNameTree appearance = pdfDocument.getCatalog().getNameTree(PdfName.AP);
-        Map<String, PdfObject> objs = appearance.getNames();
+        Map<PdfString, PdfObject> objs = appearance.getNames();
         pdfDocument.close();
         Assert.assertEquals(1, objs.size());
     }
@@ -175,8 +155,11 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         System.out.println("Expected names: " + expectedNames);
 
         for (int i = 0; i < 10; i++) {
-            Map<String, PdfObject> names = doc.getCatalog().getNameTree(PdfName.Dests).getNames();
-            List<String> actualNames = new ArrayList<>(names.keySet());
+            IPdfNameTreeAccess names = doc.getCatalog().getNameTree(PdfName.Dests);
+            List<String> actualNames = new ArrayList<>();
+            for (PdfString name : names.getKeys()) {
+                actualNames.add(name.toUnicodeString());
+            }
 
             System.out.println("Actual names:   " + actualNames);
 
@@ -187,10 +170,10 @@ public class PdfNameTreeTest extends ExtendedITextTest {
     }
 
     private static void testSetModified(boolean isAppendMode) throws IOException {
-        String[] expectedKeys = {
-                "new_key1",
-                "new_key2",
-                "new_key3",
+        PdfString[] expectedKeys = {
+                new PdfString("new_key1"),
+                new PdfString("new_key2"),
+                new PdfString("new_key3"),
         };
 
         ByteArrayOutputStream sourceFile = createDocumentInMemory();
@@ -200,8 +183,8 @@ public class PdfNameTreeTest extends ExtendedITextTest {
                 ? new PdfDocument(reader, new PdfWriter(modifiedFile), new StampingProperties().useAppendMode())
                 : new PdfDocument(reader, new PdfWriter(modifiedFile));
         PdfNameTree nameTree = pdfDoc.getCatalog().getNameTree(PdfName.Dests);
-        Map<String, PdfObject> names = nameTree.getNames();
-        ArrayList<String> keys = new ArrayList<>(names.keySet());
+        Map<PdfString, PdfObject> names = nameTree.getNames();
+        List<PdfString> keys = new ArrayList<>(names.keySet());
 
         for (int i = 0; i < keys.size(); i++) {
             names.put(expectedKeys[i], names.get(keys.get(i)));
@@ -215,7 +198,7 @@ public class PdfNameTreeTest extends ExtendedITextTest {
         reader = new PdfReader(new ByteArrayInputStream(modifiedFile.toByteArray()));
         pdfDoc = new PdfDocument(reader);
         nameTree = pdfDoc.getCatalog().getNameTree(PdfName.Dests);
-        Set<String> actualKeys = nameTree.getNames().keySet();
+        Set<PdfString> actualKeys = nameTree.getNames().keySet();
 
         Assert.assertArrayEquals(expectedKeys, actualKeys.toArray());
     }
