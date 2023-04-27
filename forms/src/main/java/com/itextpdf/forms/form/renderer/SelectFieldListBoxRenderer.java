@@ -22,8 +22,8 @@
  */
 package com.itextpdf.forms.form.renderer;
 
-import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;

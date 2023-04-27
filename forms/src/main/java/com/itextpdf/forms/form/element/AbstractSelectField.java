@@ -22,7 +22,10 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,27 +35,91 @@ import java.util.List;
  */
 public abstract class AbstractSelectField extends FormField<AbstractSelectField> {
 
-    private final List<IBlockElement> options = new ArrayList<>();
+    protected List<SelectFieldItem> options = new ArrayList<>();
 
     protected AbstractSelectField(String id) {
         super(id);
     }
 
     /**
-     * Adds a container with option(s). This might be a container for options group.
+     * Add a container with options. This might be a container for options group.
      *
-     * @param optionElement a container with option(s)
+     * @param optionElement a container with options.
+     * @deprecated starting from 8.0.1.
      */
+    @Deprecated
     public void addOption(IBlockElement optionElement) {
-        options.add(optionElement);
+        String value = tryAndExtractText(optionElement);
+        addOption(new SelectFieldItem(value, optionElement));
+    }
+
+    /**
+     * Add an option to the element.
+     *
+     * @param option a {@link SelectFieldItem}.
+     */
+    public void addOption(SelectFieldItem option) {
+        options.add(option);
+    }
+
+    /**
+     * Get a list of {@link SelectFieldItem}.
+     *
+     * @return a list of options.
+     */
+    public List<SelectFieldItem> getItems() {
+        return options;
     }
 
     /**
      * Gets a list of containers with option(s). Every container might be a container for options group.
      *
-     * @return a list of containers with option(s)
+     * @return a list of containers with options.
+     * @deprecated starting from 8.0.1.
      */
+    @Deprecated
     public List<IBlockElement> getOptions() {
-        return options;
+        List<IBlockElement> blockElements = new ArrayList<>();
+        for (SelectFieldItem option : options) {
+            blockElements.add(option.getElement());
+        }
+        return blockElements;
+    }
+
+
+    /**
+     * Clear all options.
+     *
+     * @return this element.
+     */
+    public AbstractSelectField clear() {
+        options.clear();
+        return this;
+    }
+
+    public boolean hasExportAndDisplayValues() {
+        for (SelectFieldItem option : options) {
+            if (option.hasExportAndDisplayValues()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String tryAndExtractText(IBlockElement optionElement) {
+        String label = optionElement.<String>getProperty(FormProperty.FORM_FIELD_LABEL);
+        if (label != null) {
+            return label;
+        }
+
+        for (IElement child : optionElement.getChildren()) {
+            if (child instanceof Text) {
+                return ((Text) child).getText();
+            } else if (child instanceof IBlockElement) {
+                return tryAndExtractText((IBlockElement) child);
+            }
+        }
+        return "";
     }
 }
+

@@ -38,7 +38,7 @@ public final class FormsExceptionMessageConstant {
     public static final String PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING = ""
             + "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page "
             + "flushing.";
-    
+
     public static final String FORM_FIELD_MUST_HAVE_A_NAME = "Form field must have a name."
             + " Set it using PdfFormField#setFieldName call.";
     public static final String APEARANCE_NAME_MUST_BE_PROVIDED = "Appearance name must be provided";
@@ -46,6 +46,9 @@ public final class FormsExceptionMessageConstant {
     public static final String EMPTY_RADIO_GROUP_NAME = "Radio group name cannot be empty.";
     public static final String CHECKBOX_TYPE_NOT_SUPPORTED = "Unsupported checkbox type for PDF/A";
     public static final String INVALID_ROTATION_VALUE = "Invalid rotation. Rotation must be a multiple of 90 degrees.";
+    public static final String OPTION_ELEMENT_SHALL_NOT_BE_NULL = "Option element shall not be null.";
+    public static final String VALUE_SHALL_NOT_BE_NULL = "Value <{0}> shall not be null";
 
-    private FormsExceptionMessageConstant(){}
+    private FormsExceptionMessageConstant() {
+    }
 }
