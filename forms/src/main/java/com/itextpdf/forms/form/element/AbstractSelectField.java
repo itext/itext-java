@@ -72,6 +72,22 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     }
 
     /**
+     * Get an option {@link SelectFieldItem} by its string value.
+     *
+     * @param value string value to find an option by.
+     * @return a {@link SelectFieldItem}.
+     */
+    public SelectFieldItem getOption(String value) {
+        for (SelectFieldItem option : options) {
+            if (option.getExportValue().equals(value)) {
+                return option;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Gets a list of containers with option(s). Every container might be a container for options group.
      *
      * @return a list of containers with options.

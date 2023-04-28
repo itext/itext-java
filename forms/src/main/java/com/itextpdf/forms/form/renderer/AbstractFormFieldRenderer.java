@@ -308,10 +308,20 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * @param annotation the annotation to set border characteristics to.
      */
     void applyBorderProperty(PdfFormAnnotation annotation) {
-        Border border = this.<Border>getProperty(Property.BORDER);
+        applyBorderProperty(this, annotation);
+    }
+
+    /**
+     * Applies the border property to the renderer.
+     *
+     * @param renderer renderer to apply border properties to.
+     * @param annotation the annotation to set border characteristics to.
+     */
+    static void applyBorderProperty(IRenderer renderer, PdfFormAnnotation annotation) {
+        Border border = renderer.<Border>getProperty(Property.BORDER);
         if (border == null) {
             // For now, we set left border to an annotation, but appropriate borders for an element will be drawn.
-            border = this.<Border>getProperty(Property.BORDER_LEFT);
+            border = renderer.<Border>getProperty(Property.BORDER_LEFT);
         }
         if (border != null) {
             annotation.setBorderStyle(transformBorderTypeToBorderStyleDictionary(border.getType()));
@@ -320,18 +330,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         }
     }
 
-    private void processLangAttribute() {
-        IPropertyContainer propertyContainer = flatRenderer.getModelElement();
-        String lang = getLang();
-        if (propertyContainer instanceof IAccessibleElement && lang != null) {
-            AccessibilityProperties properties = ((IAccessibleElement) propertyContainer).getAccessibilityProperties();
-            if (properties.getLanguage() == null) {
-                properties.setLanguage(lang);
-            }
-        }
-    }
-
-    private static PdfDictionary transformBorderTypeToBorderStyleDictionary(int borderType) {
+    static private PdfDictionary transformBorderTypeToBorderStyleDictionary(int borderType) {
         PdfDictionary bs = new PdfDictionary();
         PdfName style;
         switch (borderType) {
@@ -356,5 +355,16 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         }
         bs.put(PdfName.S, style);
         return bs;
+    }
+
+    private void processLangAttribute() {
+        IPropertyContainer propertyContainer = flatRenderer.getModelElement();
+        String lang = getLang();
+        if (propertyContainer instanceof IAccessibleElement && lang != null) {
+            AccessibilityProperties properties = ((IAccessibleElement) propertyContainer).getAccessibilityProperties();
+            if (properties.getLanguage() == null) {
+                properties.setLanguage(lang);
+            }
+        }
     }
 }

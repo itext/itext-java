@@ -73,7 +73,8 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.ACROFORM_NOT_SUPPORTED_FOR_SELECT))
+    @LogMessages(messages = {@LogMessage
+            (messageTemplate = FormsLogMessageConstants.ACROFORM_NOT_SUPPORTED_FOR_SELECT)})
     public void basicComboBoxFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicComboBoxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicComboBoxField.pdf";

@@ -31,7 +31,9 @@ import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.CheckBox;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.InputField;
+import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.forms.form.element.Radio;
+import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -61,9 +63,12 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
@@ -659,7 +664,59 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Draws the appearance of a text form field with and saves it into an appearance stream.
+     * Draws the appearance of a list box form field and saves it into an appearance stream.
+     */
+    protected void drawListFormFieldAndSaveAppearance() {
+        Rectangle rectangle = getRect(this.getPdfObject());
+        if (rectangle == null) {
+            return;
+        }
+
+        if (!(formFieldElement instanceof ListBoxField)) {
+            // Create it once and reset properties during each widget regeneration.
+            formFieldElement = new ListBoxField("", 0, parent.getFieldFlag(PdfChoiceFormField.FF_MULTI_SELECT));
+        }
+        formFieldElement.setProperty(FormProperty.FORM_FIELD_MULTIPLE,
+                parent.getFieldFlag(PdfChoiceFormField.FF_MULTI_SELECT));
+
+        PdfArray indices = getParent().getAsArray(PdfName.I);
+        PdfArray options = parent.getOptions();
+        for (int index = 0; index < options.size(); ++index) {
+            final String optionValue = options.get(index).toString();
+            final boolean selected = indices == null ? false : indices.contains(new PdfNumber(index));
+            SelectFieldItem existingItem = ((ListBoxField) formFieldElement).getOption(optionValue);
+            if (existingItem == null) {
+                existingItem = new SelectFieldItem(optionValue);
+                ((ListBoxField) formFieldElement).addOption(existingItem);
+            }
+            existingItem.getElement().setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
+            existingItem.getElement().setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+            existingItem.getElement().setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            existingItem.getElement().setProperty(FormProperty.FORM_FIELD_SELECTED, selected);
+        }
+
+        formFieldElement.setProperty(Property.FONT, getFont());
+        if (getColor() != null) {
+            formFieldElement.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
+        }
+
+        setModelElementProperties(rectangle);
+
+        PdfFormXObject xObject = new PdfFormXObject(
+                new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
+
+        Canvas canvas = new Canvas(xObject, this.getDocument());
+        setMetaInfoToCanvas(canvas);
+        canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
+        canvas.getPdfCanvas().beginVariableText().saveState().endPath();
+        canvas.add(formFieldElement);
+        canvas.getPdfCanvas().restoreState().endVariableText();
+
+        getWidget().setNormalAppearance(xObject.getPdfObject());
+    }
+
+    /**
+     * Draws the appearance of a text form field and saves it into an appearance stream.
      */
     protected void drawTextFormFieldAndSaveAppearance() {
         Rectangle rectangle = getRect(this.getPdfObject());
@@ -744,8 +801,15 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         final PdfName type = parent.getFormType();
 
-        if (PdfName.Ch.equals(type) || this.isCombTextFormField()) {
+        if ((PdfName.Ch.equals(type) && parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) || this.isCombTextFormField()) {
             return TextAndChoiceLegacyDrawer.regenerateTextAndChoiceField(this);
+        } else if (PdfName.Ch.equals(type) && !parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
+            if (formFieldElement != null) {
+                drawListFormFieldAndSaveAppearance();
+                return true;
+            } else {
+                return TextAndChoiceLegacyDrawer.regenerateTextAndChoiceField(this);
+            }
         } else if (PdfName.Tx.equals(type)) {
             drawTextFormFieldAndSaveAppearance();
             return true;

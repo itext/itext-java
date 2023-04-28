@@ -27,6 +27,9 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -54,7 +57,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     protected AbstractSelectFieldRenderer(AbstractSelectField modelElement) {
         super(modelElement);
         addChild(createFlatRenderer());
-        if (!isFlatten()) {
+        if (!isFlatten() && this instanceof SelectFieldComboBoxRenderer) {
             // TODO DEVSIX-1901
             Logger logger = LoggerFactory.getLogger(AbstractSelectFieldRenderer.class);
             logger.warn(FormsLogMessageConstants.ACROFORM_NOT_SUPPORTED_FOR_SELECT);
@@ -75,11 +78,14 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
 
         LayoutArea area = layoutContext.getArea().clone();
         area.getBBox().moveDown(INF - area.getBBox().getHeight()).setHeight(INF).setWidth(childrenMaxWidth + EPS);
+        // A workaround for the issue that super.layout clears Property.FORCED_PLACEMENT,
+        // but we need it later in this function
+        final boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         LayoutResult layoutResult = super.layout(new LayoutContext(area, layoutContext.getMarginsCollapseInfo(),
                 layoutContext.getFloatRendererAreas(), layoutContext.isClippedHeight()));
 
         if (layoutResult.getStatus() != LayoutResult.FULL) {
-            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            if (isForcedPlacement) {
                 layoutResult = makeLayoutResultFull(layoutContext.getArea(), layoutResult);
             } else {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -112,6 +118,17 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         return layoutResult;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void draw(DrawContext drawContext) {
+        if (isFlatten()) {
+            super.draw(drawContext);
+        } else {
+            drawChildren(drawContext);
+        }
+    }
 
     @Override
     public void drawChildren(DrawContext drawContext) {
@@ -129,6 +146,20 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     protected String getLang() {
         return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+    }
+
+    protected void writeAcroFormFieldLangAttribute(PdfDocument pdfDoc) {
+        if (pdfDoc.isTagged()) {
+            TagTreePointer formParentPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            List<String> kidsRoles = formParentPointer.getKidsRoles();
+            int lastFormIndex = kidsRoles.lastIndexOf(StandardRoles.FORM);
+            TagTreePointer formPointer = formParentPointer.moveToKid(lastFormIndex);
+
+            if (getLang() != null) {
+                formPointer.getProperties().setLanguage(getLang());
+            }
+            formParentPointer.moveToParent();
+        }
     }
 
     protected abstract IRenderer createFlatRenderer();

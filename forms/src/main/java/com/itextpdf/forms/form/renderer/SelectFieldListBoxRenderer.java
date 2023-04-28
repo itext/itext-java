@@ -24,18 +24,30 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
+import com.itextpdf.forms.form.element.ListBoxField;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.AbstractRenderer;
@@ -44,6 +56,8 @@ import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SelectFieldListBoxRenderer} implementation for select field renderer.
@@ -158,14 +172,63 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
                 calculatedHeight = (float) minHeight;
             }
         } else {
-            calculatedHeight = actualHeight;
+            calculatedHeight = height.floatValue();
         }
         return super.getFinalSelectFieldHeight(availableHeight, calculatedHeight, isClippedHeight);
     }
 
     @Override
     protected void applyAcroField(DrawContext drawContext) {
-        // TODO DEVSIX-1901
+        // Retrieve font properties
+        Object retrievedFont = this.<Object>getProperty(Property.FONT);
+        PdfFont font = retrievedFont instanceof PdfFont ? (PdfFont) retrievedFont : null;
+        UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
+        if (!fontSize.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(SelectFieldListBoxRenderer.class);
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.FONT_SIZE));
+        }
+
+        final PdfDocument doc = drawContext.getDocument();
+        final Rectangle area = this.getOccupiedArea().getBBox().clone();
+        final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
+
+        // Some properties are set to the HtmlDocumentRenderer, which is root renderer for this ButtonRenderer, but
+        // in forms logic root renderer is CanvasRenderer, and these properties will have default values. So
+        // we get them from renderer and set these properties to model element, which will be passed to forms logic.
+        modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
+        modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
+
+        ListBoxField lbModelElement = (ListBoxField) modelElement;
+        List<String> options = lbModelElement.getStrings();
+        List<String> selectedOptions = lbModelElement.getSelectedStrings();
+        PdfChoiceFormField choiceField = new ChoiceFormFieldBuilder(doc, getModelId())
+                .setWidgetRectangle(area).setOptions(options.toArray(new String[options.size()]))
+                .createList();
+        if (font != null) {
+            choiceField.setFont(font);
+        }
+        choiceField.setFontSize(fontSize.getValue());
+        choiceField.setMultiSelect(isMultiple());
+        choiceField.setListSelected(selectedOptions.toArray(new String[selectedOptions.size()]));
+
+        TransparentColor color = getPropertyAsTransparentColor(Property.FONT_COLOR);
+        if (color != null) {
+            choiceField.setColor(color.getColor());
+        }
+        choiceField.setJustification(this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT));
+
+        AbstractFormFieldRenderer.applyBorderProperty(this, choiceField.getFirstFormAnnotation());
+
+        Background background = this.<Background>getProperty(Property.BACKGROUND);
+        if (background != null) {
+            choiceField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
+        }
+
+        choiceField.getFirstFormAnnotation().setFormFieldElement(lbModelElement);
+        PdfAcroForm.getAcroForm(doc, true).addField(choiceField, page);
+
+        writeAcroFormFieldLangAttribute(doc);
     }
 
     private float getCalculatedHeight(IRenderer flatRenderer) {

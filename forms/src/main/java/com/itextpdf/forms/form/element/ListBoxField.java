@@ -24,7 +24,17 @@ package com.itextpdf.forms.form.element;
 
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.SelectFieldListBoxRenderer;
+import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A field that represents a control for selecting one or several of the provided options.
@@ -32,7 +42,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 public class ListBoxField extends AbstractSelectField {
 
     /**
-     * Creates a new list box field.
+     * Create a new list box field.
      *
      * @param size the size of the list box, which will define the height of visible properties,
      *             shall be greater than zero
@@ -44,6 +54,14 @@ public class ListBoxField extends AbstractSelectField {
         super(id);
         setProperty(FormProperty.FORM_FIELD_SIZE, size);
         setProperty(FormProperty.FORM_FIELD_MULTIPLE, allowMultipleSelection);
+        setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+        setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(1));
+        setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(1));
+        setProperty(Property.PADDING_TOP, UnitValue.createPointValue(1));
+        setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(1));
+
+        // This property allows to show selected item if height is smaller than the size of all items
+        setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
     }
 
     /* (non-Javadoc)
@@ -59,6 +77,61 @@ public class ListBoxField extends AbstractSelectField {
             default:
                 return super.<T1>getDefaultProperty(property);
         }
+    }
+
+    /**
+     * Add an option for {@link ListBoxField}. The option is not selected.
+     *
+     * @param option string representation of the option.
+     * @return this {@link ListBoxField}.
+     */
+    public ListBoxField addOption(String option) {
+        return addOption(option, false);
+    }
+
+    /**
+     * Add an option for {@link ListBoxField}.
+     *
+     * @param option string representation of the option.
+     * @param selected {@code true} is the option if selected, {@code false} otherwise.
+     * @return this {@link ListBoxField}.
+     */
+    public ListBoxField addOption(String option, boolean selected) {
+        SelectFieldItem item = new SelectFieldItem(option);
+        addOption(item);
+        item.getElement().setProperty(FormProperty.FORM_FIELD_SELECTED, selected);
+
+        return this;
+    }
+
+    /**
+     * Get a list of options.
+     *
+     * @return a list of options.
+     */
+    public List<String> getStrings() {
+        List<String> stringOptions = new ArrayList<String>();
+        for (SelectFieldItem option : options) {
+            stringOptions.add(option.getExportValue());
+        }
+
+        return stringOptions;
+    }
+
+    /**
+     * Get a list of selected options.
+     *
+     * @return a list of selected options.
+     */
+    public List<String> getSelectedStrings() {
+        List<String> selectedStrings = new ArrayList<String>();
+        for (SelectFieldItem option : options) {
+            if (Boolean.TRUE.equals(option.getElement().<Boolean>getProperty(FormProperty.FORM_FIELD_SELECTED))) {
+                selectedStrings.add(option.getExportValue());
+            }
+        }
+
+        return selectedStrings;
     }
 
     @Override
