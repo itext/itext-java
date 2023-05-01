@@ -61,7 +61,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
      */
     public static final String DEFAULTHASHALGORITHM = "SHA-256";
     /**
-     * The default value for the hash algorithm
+     * The default value for the token size estimate
      */
     public static final int DEFAULTTOKENSIZE = 4096;
     /**
@@ -115,7 +115,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * @param password String - password
      */
     public TSAClientBouncyCastle(String url, String username, String password) {
-        this(url, username, password, 4096, DEFAULTHASHALGORITHM);
+        this(url, username, password, DEFAULTTOKENSIZE, DEFAULTHASHALGORITHM);
     }
 
     /**
