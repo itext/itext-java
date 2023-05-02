@@ -22,12 +22,21 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
@@ -43,6 +52,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -431,4 +441,93 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
+    @Test
+    public void exportValueTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "exportValue.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_exportValue.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            ListBoxField listBoxField = new ListBoxField("export value field", 0, true);
+            listBoxField.setInteractive(false);
+            listBoxField.setWidth(200);
+            listBoxField.addOption(new SelectFieldItem("English"));
+            listBoxField.addOption(new SelectFieldItem("German", "Deutch"), true);
+            listBoxField.addOption(new SelectFieldItem("Italian", "Italiano"), true);
+            document.add(listBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(listBoxField.setInteractive(true));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void invalidOptionsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "invalidOptions.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_invalidOptions.pdf";
+
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            ListBoxField listBoxField = new ListBoxField("invalid", 0, true);
+            listBoxField.setInteractive(true);
+            listBoxField.setWidth(200);
+
+            // Invalid options array here
+            PdfArray option1 = new PdfArray();
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English3"));
+            PdfArray option2 = new PdfArray();
+            option2.add(new PdfString("German"));
+            option2.add(new PdfString("Deutch"));
+            PdfArray option3 = new PdfArray();
+            option3.add(new PdfString("Italian"));
+            PdfArray options = new PdfArray();
+            options.add(option1);
+            options.add(option2);
+            options.add(option3);
+            options.add(new PdfArray());
+
+            PdfChoiceFormField field = new ChoiceFormFieldBuilder(doc, "invalid")
+                    .setWidgetRectangle(new Rectangle(100, 500, 100, 100))
+                    .createList();
+            field.setOptions(options);
+            field.getFirstFormAnnotation().setFormFieldElement(listBoxField);
+
+            PdfAcroForm.getAcroForm(doc, true).addField(field);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void invalidOptionsExceptionTest() throws IOException, InterruptedException {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, "invalid")
+                    .setWidgetRectangle(new Rectangle(100, 500, 100, 100));
+
+            PdfArray option1 = new PdfArray();
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English3"));
+            PdfArray options = new PdfArray();
+            options.add(option1);
+            Exception e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
+            Assert.assertEquals(FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS, e.getMessage());
+            options.clear();
+
+            option1 = new PdfArray();
+            option1.add(new PdfString("English"));
+            option1.add(new PdfNumber(1));
+            options.add(option1);
+            e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
+            Assert.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
+
+            PdfArray options2 = new PdfArray();
+            options2.add(new PdfNumber(1));
+            e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options2));
+            Assert.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
+        }
+    }
 }

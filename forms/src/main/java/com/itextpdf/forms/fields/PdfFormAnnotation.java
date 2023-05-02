@@ -682,11 +682,26 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         PdfArray indices = getParent().getAsArray(PdfName.I);
         PdfArray options = parent.getOptions();
         for (int index = 0; index < options.size(); ++index) {
-            final String optionValue = options.get(index).toString();
+            final PdfObject option = options.get(index);
+            String exportValue = null;
+            String displayValue = null;
+            if (option.isString()) {
+                exportValue = option.toString();
+            } else if (option.isArray()) {
+                PdfArray optionArray = (PdfArray) option;
+                if (optionArray.size() > 1) {
+                    exportValue = optionArray.get(0).toString();
+                    displayValue = optionArray.get(1).toString();
+                }
+            }
+            if (exportValue == null) {
+                continue;
+            }
+
             final boolean selected = indices == null ? false : indices.contains(new PdfNumber(index));
-            SelectFieldItem existingItem = ((ListBoxField) formFieldElement).getOption(optionValue);
+            SelectFieldItem existingItem = ((ListBoxField) formFieldElement).getOption(exportValue);
             if (existingItem == null) {
-                existingItem = new SelectFieldItem(optionValue);
+                existingItem = new SelectFieldItem(exportValue, displayValue);
                 ((ListBoxField) formFieldElement).addOption(existingItem);
             }
             existingItem.getElement().setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());

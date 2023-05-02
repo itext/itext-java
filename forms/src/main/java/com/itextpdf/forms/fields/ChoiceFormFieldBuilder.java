@@ -28,6 +28,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
@@ -66,6 +67,7 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
      * @return this builder
      */
     public ChoiceFormFieldBuilder setOptions(PdfArray options) {
+        verifyOptions(options);
         this.options = options;
         return this;
     }
@@ -174,6 +176,25 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
             array.add(subArray);
         }
         return array;
+    }
+
+    private static void verifyOptions(PdfArray options) {
+        for (PdfObject option : options) {
+            if (option.isArray()) {
+                PdfArray optionsArray = ((PdfArray) option);
+                if (optionsArray.size() != 2) {
+                    throw new IllegalArgumentException(
+                            FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS);
+                }
+                if (!optionsArray.get(0).isString() || !optionsArray.get(1).isString()) {
+                    throw new IllegalArgumentException(
+                            FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY);
+                }
+            } else if (!option.isString()) {
+                throw new IllegalArgumentException(
+                        FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY);
+            }
+        }
     }
 
     /**

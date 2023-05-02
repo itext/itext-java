@@ -63,6 +63,17 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     }
 
     /**
+     * Add an option to the element.
+     *
+     * @param option a {@link SelectFieldItem}.
+     * @param selected {@code true} is the option if selected, {@code false} otherwise.
+     */
+    public void addOption(SelectFieldItem option, boolean selected) {
+        option.getElement().setProperty(FormProperty.FORM_FIELD_SELECTED, selected);
+        options.add(option);
+    }
+
+    /**
      * Get a list of {@link SelectFieldItem}.
      *
      * @return a list of options.

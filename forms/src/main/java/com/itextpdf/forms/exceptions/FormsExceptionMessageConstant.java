@@ -34,6 +34,8 @@ public final class FormsExceptionMessageConstant {
             + "in append mode.";
     
     public static final String INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS = "Inner arrays shall have exactly two elements";
+
+    public static final String OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY = "Option element must be a string or an array";
     
     public static final String PAGE_ALREADY_FLUSHED_USE_ADD_FIELD_APPEARANCE_TO_PAGE_METHOD_BEFORE_PAGE_FLUSHING = ""
             + "The page has been already flushed. Use PdfAcroForm#addFieldAppearanceToPage() method before page "

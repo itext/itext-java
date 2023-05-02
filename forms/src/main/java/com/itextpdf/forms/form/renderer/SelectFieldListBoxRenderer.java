@@ -200,11 +200,10 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
 
         ListBoxField lbModelElement = (ListBoxField) modelElement;
-        List<String> options = lbModelElement.getStrings();
         List<String> selectedOptions = lbModelElement.getSelectedStrings();
-        PdfChoiceFormField choiceField = new ChoiceFormFieldBuilder(doc, getModelId())
-                .setWidgetRectangle(area).setOptions(options.toArray(new String[options.size()]))
-                .createList();
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId()).setWidgetRectangle(area);
+        setupBuilderValues(builder, lbModelElement);
+        PdfChoiceFormField choiceField = builder.createList();
         if (font != null) {
             choiceField.setFont(font);
         }

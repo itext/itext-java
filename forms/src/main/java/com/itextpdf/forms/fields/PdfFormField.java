@@ -1246,8 +1246,8 @@ public class PdfFormField extends AbstractPdfFormField {
             if (obj.isString()) {
                 sb.append(((PdfString) obj).toUnicodeString()).append('\n');
             } else if (obj.isArray()) {
-                PdfObject element = ((PdfArray) obj).get(1);
-                if (element.isString()) {
+                PdfObject element = ((PdfArray) obj).size() > 1 ? ((PdfArray) obj).get(1) : null;
+                if (element != null && element.isString()) {
                     sb.append(((PdfString) element).toUnicodeString()).append('\n');
                 }
             } else {

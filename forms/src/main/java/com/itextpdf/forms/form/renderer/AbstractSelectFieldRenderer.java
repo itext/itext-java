@@ -22,6 +22,8 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
@@ -182,6 +184,43 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     protected String getModelId() {
         return ((IFormField) getModelElement()).getId();
+    }
+
+    /**
+     * Retrieve the options from select field (can be combo box or list box field) and set them
+     * to the form field builder.
+     *
+     * @param builder {@link ChoiceFormFieldBuilder} to set options to.
+     * @param field {@link AbstractSelectField} to retrieve the options from.
+     */
+    protected void setupBuilderValues(ChoiceFormFieldBuilder builder, AbstractSelectField field) {
+        List<SelectFieldItem> options = field.getItems();
+        if (options.isEmpty()) {
+            builder.setOptions(new String[0]);
+            return;
+        }
+
+        final boolean supportExportValueAndDisplayValue = field.hasExportAndDisplayValues();
+        // If one element has export value and display value, then all elements must have export value and display value
+        if (supportExportValueAndDisplayValue) {
+            String[][] exportValuesAndDisplayValues = new String[options.size()][];
+            for (int i = 0; i < options.size(); i++) {
+                SelectFieldItem option = options.get(i);
+                String[] exportValues = new String[2];
+                exportValues[0] = option.getExportValue();
+                exportValues[1] = option.getDisplayValue();
+                exportValuesAndDisplayValues[i] = exportValues;
+            }
+            builder.setOptions(exportValuesAndDisplayValues);
+        } else {
+            // In normal case we just use display values as this will correctly give the one value that we need
+            String[] displayValues = new String[options.size()];
+            for (int i = 0; i < options.size(); i++) {
+                SelectFieldItem option = options.get(i);
+                displayValues[i] = option.getDisplayValue();
+            }
+            builder.setOptions(displayValues);
+        }
     }
 
     protected float getFinalSelectFieldHeight(float availableHeight, float actualHeight, boolean isClippedHeight) {

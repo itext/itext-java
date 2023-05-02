@@ -121,13 +121,13 @@ public class ListBoxField extends AbstractSelectField {
     /**
      * Get a list of selected options.
      *
-     * @return a list of selected options.
+     * @return a list of display values of selected options.
      */
     public List<String> getSelectedStrings() {
         List<String> selectedStrings = new ArrayList<String>();
         for (SelectFieldItem option : options) {
             if (Boolean.TRUE.equals(option.getElement().<Boolean>getProperty(FormProperty.FORM_FIELD_SELECTED))) {
-                selectedStrings.add(option.getExportValue());
+                selectedStrings.add(option.getDisplayValue());
             }
         }
 
