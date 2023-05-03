@@ -41,20 +41,22 @@ public class ARCFOUREncryption {
     }
 
     public void prepareARCFOURKey(byte[] key, int off, int len) {
-        int index1 = 0;
-        int index2 = 0;
-        for (int k = 0; k < 256; ++k) {
-            state[k] = (byte) k;
-        }
-        x = 0;
-        y = 0;
-        byte tmp;
-        for (int k = 0; k < 256; ++k) {
-            index2 = (key[index1 + off] + state[k] + index2) & 255;
-            tmp = state[k];
-            state[k] = state[index2];
-            state[index2] = tmp;
-            index1 = (index1 + 1) % len;
+        if (len != 0) {
+            int index1 = 0;
+            int index2 = 0;
+            for (int k = 0; k < 256; ++k) {
+                state[k] = (byte) k;
+            }
+            x = 0;
+            y = 0;
+            byte tmp;
+            for (int k = 0; k < 256; ++k) {
+                index2 = (key[index1 + off] + state[k] + index2) & 255;
+                tmp = state[k];
+                state[k] = state[index2];
+                state[index2] = tmp;
+                index1 = (index1 + 1) % len;
+            }
         }
     }
 
