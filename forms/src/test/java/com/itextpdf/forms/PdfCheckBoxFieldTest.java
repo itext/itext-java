@@ -25,6 +25,7 @@ package com.itextpdf.forms;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -180,7 +181,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_checkBoxToggleTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField checkBox = form.getField("cb_fs_6_7_7");
         checkBox.setValue("Off");
 
@@ -200,7 +201,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_checkBoxToggleTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField checkBox = form.getField("cb_fs_6_7_7");
         checkBox.setValue("Off", false);
 
@@ -220,7 +221,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_keepCheckTypeTest.pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(srcPdf))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfButtonFormField checkField = new CheckBoxFormFieldBuilder(pdfDoc, "checkField")
                     .setWidgetRectangle(new Rectangle(100, 600, 100, 100))
@@ -232,7 +233,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         }
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.getField("checkField").setValue("Yes");
         }
 
@@ -245,7 +246,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_appearanceRegenerationTest.pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfButtonFormField checkBox1 = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox1")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
@@ -283,7 +284,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
     private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, PdfFormField checkBox)
             throws IOException {
         PdfPage page = pdfDoc.getFirstPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         if (fontSize >= 0) {
             checkBox.setFontSize(fontSize);
         }

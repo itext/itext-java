@@ -52,7 +52,7 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
      * @return new {@link PdfButtonFormField} instance
      */
     public PdfButtonFormField createRadioGroup() {
-        PdfButtonFormField radioGroup = new PdfButtonFormField(getDocument());
+        PdfButtonFormField radioGroup = PdfFormCreator.createButtonFormField(getDocument());
         radioGroup.pdfAConformanceLevel = getConformanceLevel();
         radioGroup.setFieldName(getFormFieldName());
         radioGroup.setFieldFlags(PdfButtonFormField.FF_RADIO);
@@ -85,7 +85,7 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
         if (getConformanceLevel() != null) {
             annotation.setFlag(PdfAnnotation.PRINT);
         }
-        PdfFormAnnotation radio = new PdfFormAnnotation(annotation, getDocument());
+        PdfFormAnnotation radio = PdfFormCreator.createFormAnnotation(annotation, getDocument());
         setPageToField(radio);
         radio.pdfAConformanceLevel = getConformanceLevel();
         return radio;

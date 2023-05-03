@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -225,7 +226,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         }
 
         choiceField.getFirstFormAnnotation().setFormFieldElement(lbModelElement);
-        PdfAcroForm.getAcroForm(doc, true).addField(choiceField, page);
+        PdfFormCreator.getAcroForm(doc, true).addField(choiceField, page);
 
         writeAcroFormFieldLangAttribute(doc);
     }

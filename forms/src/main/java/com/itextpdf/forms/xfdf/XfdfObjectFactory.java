@@ -23,6 +23,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -73,7 +74,7 @@ public class XfdfObjectFactory {
      * @return XfdfObject containing data from pdf forms and annotations.
      */
     public XfdfObject createXfdfObject(PdfDocument document, String filename) {
-        PdfAcroForm form = PdfAcroForm.getAcroForm(document, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(document, false);
 
         XfdfObject resultXfdf = new XfdfObject();
         FieldsObject xfdfFields = new FieldsObject();

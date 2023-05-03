@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -60,7 +61,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         for (PdfFormField field : form.getAllFormFields().values()) {
             field.setValue("Test");
         }
@@ -89,7 +90,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         for (PdfFormField field : form.getAllFormFields().values()) {
             field.setValue("Different");
         }
@@ -109,7 +110,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
 
     private void flatten(String src, String dest) throws IOException {
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         form.flattenFields();
         doc.close();
     }

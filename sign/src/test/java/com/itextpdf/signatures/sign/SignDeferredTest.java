@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -241,7 +242,7 @@ public class SignDeferredTest extends ExtendedITextTest {
     static void validateTemplateForSignedDeferredResult(String output, String sigFieldName, PdfName filter, PdfName subFilter, int estimatedSize) throws IOException {
         PdfDocument outDocument = new PdfDocument(new PdfReader(output));
 
-        PdfObject outSigDictObj = PdfAcroForm.getAcroForm(outDocument, false).getField(sigFieldName).getValue();
+        PdfObject outSigDictObj = PdfFormCreator.getAcroForm(outDocument, false).getField(sigFieldName).getValue();
         Assert.assertTrue(outSigDictObj.isDictionary());
 
         PdfDictionary outSigDict = (PdfDictionary) outSigDictObj;

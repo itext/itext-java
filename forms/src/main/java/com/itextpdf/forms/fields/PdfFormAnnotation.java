@@ -124,7 +124,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      *
      * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
      */
-    PdfFormAnnotation(PdfDictionary pdfObject) {
+    protected PdfFormAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
     }
 
@@ -148,7 +148,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         final PdfName subType = dictionary.getAsName(PdfName.Subtype);
         // If widget annotation
         if (PdfName.Widget.equals(subType)) {
-            field = new PdfFormAnnotation((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(dictionary),
+            field = PdfFormCreator.createFormAnnotation((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(dictionary),
                     document);
         } else {
             return null;
@@ -994,7 +994,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     private boolean isCombTextFormField() {
         final PdfName type = parent.getFormType();
         if (PdfName.Tx.equals(type) && parent.getFieldFlag(PdfTextFormField.FF_COMB)) {
-            int maxLen = new PdfTextFormField(parent.getPdfObject()).getMaxLen();
+            int maxLen = PdfFormCreator.createTextFormField(parent.getPdfObject()).getMaxLen();
             if (maxLen == 0 || parent.isMultiline()) {
                 LOGGER.error(
                         MessageFormatUtil.format(IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT));

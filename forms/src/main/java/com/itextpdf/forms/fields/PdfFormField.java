@@ -242,16 +242,16 @@ public class PdfFormField extends AbstractPdfFormField {
         PdfFormField field;
         PdfName formType = dictionary.getAsName(PdfName.FT);
         if (PdfName.Tx.equals(formType)) {
-            field = new PdfTextFormField(dictionary);
+            field = PdfFormCreator.createTextFormField(dictionary);
         } else if (PdfName.Btn.equals(formType)) {
-            field = new PdfButtonFormField(dictionary);
+            field = PdfFormCreator.createButtonFormField(dictionary);
         } else if (PdfName.Ch.equals(formType)) {
-            field = new PdfChoiceFormField(dictionary);
+            field = PdfFormCreator.createChoiceFormField(dictionary);
         } else if (PdfName.Sig.equals(formType)) {
-            field = new PdfSignatureFormField(dictionary);
+            field = PdfFormCreator.createSignatureFormField(dictionary);
         } else {
             // No form type but still a form field
-            field = new PdfFormField(dictionary);
+            field = PdfFormCreator.createFormField(dictionary);
         }
         field.makeIndirect(document);
 
@@ -577,7 +577,7 @@ public class PdfFormField extends AbstractPdfFormField {
         kid.setParent(getPdfObject());
         PdfDictionary pdfObject = kid.getPdfObject();
         pdfObject.makeIndirect(this.getDocument());
-        AbstractPdfFormField field = new PdfFormAnnotation(pdfObject);
+        AbstractPdfFormField field = PdfFormCreator.createFormAnnotation(pdfObject);
         return addKid(field);
     }
 
@@ -730,8 +730,8 @@ public class PdfFormField extends AbstractPdfFormField {
     public PdfFormField setFieldFlags(int flags) {
         int oldFlags = getFieldFlags();
         put(PdfName.Ff, new PdfNumber(flags));
-        if (((oldFlags ^ flags) & PdfTextFormField.FF_COMB) != 0
-                && PdfName.Tx.equals(getFormType()) && new PdfTextFormField(getPdfObject()).getMaxLen() != 0)
+        if (((oldFlags ^ flags) & PdfTextFormField.FF_COMB) != 0 && PdfName.Tx.equals(getFormType())
+                && PdfFormCreator.createTextFormField(getPdfObject()).getMaxLen() != 0)
             regenerateField();
         return this;
     }
@@ -1398,7 +1398,7 @@ public class PdfFormField extends AbstractPdfFormField {
                 if (this instanceof PdfChoiceFormField) {
                     ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
                 } else {
-                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
+                    PdfChoiceFormField choice = PdfFormCreator.createChoiceFormField(this.getPdfObject());
                     choice.setListSelected(new String[] {value}, false);
                 }
             } else {

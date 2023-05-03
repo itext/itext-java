@@ -23,6 +23,7 @@
 package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.fields.AbstractPdfFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -209,7 +210,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         inputField.setDefaultValue(defaultValue);
         applyDefaultFieldProperties(inputField);
         inputField.getFirstFormAnnotation().setFormFieldElement((TextArea) modelElement);
-        PdfAcroForm.getAcroForm(doc, true).addField(inputField, page);
+        PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);
     }

@@ -24,6 +24,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -70,7 +71,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.setTagged();
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         addFormFieldsToDocument(pdfDoc, form);
 
@@ -91,7 +92,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         pdfDoc.setTagged();
         pdfDoc.initializeOutlines();
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
         acroForm.addField(new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
                 .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox().setValue("1", true));
 
@@ -113,7 +114,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms01.pdf"), new PdfWriter(outFileName));
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
         acroForm.flattenFields();
 
         pdfDoc.close();
@@ -131,7 +132,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms01.pdf"), new PdfWriter(outFileName));
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
         acroForm.removeField("TestCheck");
         acroForm.removeField("push");
 
@@ -151,7 +152,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         pdfDoc.setTagged();
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         addFormFieldsToDocument(pdfDoc, form);
 
@@ -173,7 +174,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         pdfDoc.setTagged();
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         addFormFieldsToDocument(pdfDoc, form);
 
@@ -200,7 +201,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         // Original document is already tagged, so there is no need to mark it as tagged again
 //        pdfDoc.setTagged();
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
                 .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Capcha").createPushButton();
@@ -224,7 +225,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
             pdfDoc.setTagged();
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             addFormFieldsToDocument(pdfDoc, form);
         }
@@ -240,7 +241,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
             pdfDoc.setTagged();
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             addFormFieldsToDocument(pdfDoc, form);
             addFormFieldsToDocument(pdfDoc, form);

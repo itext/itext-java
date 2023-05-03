@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -56,7 +57,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     @Test
     public void orphanedNamelessFormFieldTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "orphanedFormField.pdf"))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             Assert.assertEquals(3, form.getRootFormFields().size());
         }
     }
@@ -68,7 +69,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "mergeMergedFieldsWithTheSameNames.pdf";
 
         try (PdfDocument sourceDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(sourceDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(sourceDoc, true);
 
             Assert.assertEquals(1, acroForm.getFields().size());
             Assert.assertNull(acroForm.getField("Field").getKids());
@@ -91,7 +92,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "fieldsWithTheSameNamesButDifferentValues.pdf";
         try (PdfDocument outputDoc = new PdfDocument(new PdfWriter(outFileName))) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField root = new TextFormFieldBuilder(outputDoc, "root").createText();
             PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "field")
@@ -114,14 +115,14 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     public void processFieldsWithTheSameNamesButDifferentValuesInReadingModeTest() throws IOException {
         String srcFileName = SOURCE_FOLDER + "cmp_fieldsWithTheSameNamesButDifferentValues.pdf";
         try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName))) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
             Assert.assertEquals(1, acroForm.getFields().size());
 
             PdfFormField root = acroForm.getField("root");
             Assert.assertEquals(2, root.getKids().size());
 
             root.getChildField("field").setValue("field");
-            PdfAcroForm.getAcroForm(document, true);
+            PdfFormCreator.getAcroForm(document, true);
             // Check that fields weren't merged
             Assert.assertEquals(2, root.getKids().size());
         }
@@ -133,14 +134,14 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String srcFileName = SOURCE_FOLDER + "cmp_fieldsWithTheSameNamesButDifferentValues.pdf";
         String outFileName = DESTINATION_FOLDER + "processFieldsWithTheSameNamesInWritingMode.pdf";
         try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
             Assert.assertEquals(1, acroForm.getFields().size());
 
             PdfFormField root = acroForm.getField("root");
             Assert.assertEquals(2, root.getKids().size());
 
             root.getChildField("field").setValue("field");
-            PdfAcroForm.getAcroForm(document, true);
+            PdfFormCreator.getAcroForm(document, true);
             // Check that fields were merged
             Assert.assertEquals(1, root.getKids().size());
         }

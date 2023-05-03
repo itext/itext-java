@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -70,7 +71,7 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
     public void copy(PdfPage fromPage, PdfPage toPage) {
         if (documentFrom != fromPage.getDocument()) {
             documentFrom = fromPage.getDocument();
-            formFrom = PdfAcroForm.getAcroForm(documentFrom, false);
+            formFrom = PdfFormCreator.getAcroForm(documentFrom, false);
         }
         if (documentTo != toPage.getDocument()) {
             documentTo = toPage.getDocument();
@@ -78,7 +79,7 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
         // We should always regenerate the acroform if we expect the same result when the old or new
         // PdfPageFormCopier instance is used because getAcroForm changes the fields structure,
         // e.g. removes wrong field keys from the pure widget annotations dictionaries.
-        formTo = PdfAcroForm.getAcroForm(documentTo, true);
+        formTo = PdfFormCreator.getAcroForm(documentTo, true);
 
         if (formFrom == null) {
             return;
@@ -115,7 +116,7 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
                 // It makes sense to create the Acroform only after copying the tag structure,
                 // so fields with the same names will be merged ang tag structure will be correct,
                 // but when the document is not tagged we can re-create Acroform with added fields right away.
-                PdfAcroForm.getAcroForm(documentTo, true);
+                PdfFormCreator.getAcroForm(documentTo, true);
             }
         } finally {
             collectedFieldObjects.clear();
@@ -124,7 +125,7 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
 
     @Override
     public void recreateAcroformToProcessCopiedFields(PdfDocument documentTo) {
-        PdfAcroForm.getAcroForm(documentTo, true);
+        PdfFormCreator.getAcroForm(documentTo, true);
     }
 
     private AbstractPdfFormField makeFormField(PdfObject fieldDict) {

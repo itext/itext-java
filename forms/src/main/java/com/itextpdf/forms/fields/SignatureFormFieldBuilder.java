@@ -49,13 +49,13 @@ public class SignatureFormFieldBuilder extends TerminalFormFieldBuilder<Signatur
     public PdfSignatureFormField createSignature() {
         PdfSignatureFormField signatureFormField;
         if (getWidgetRectangle() == null) {
-            signatureFormField = new PdfSignatureFormField(getDocument());
+            signatureFormField = PdfFormCreator.createSignatureFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
             if (getConformanceLevel() != null) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
-            signatureFormField = new PdfSignatureFormField(annotation, getDocument());
+            signatureFormField = PdfFormCreator.createSignatureFormField(annotation, getDocument());
             setPageToField(signatureFormField);
         }
         signatureFormField.pdfAConformanceLevel = getConformanceLevel();

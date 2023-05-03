@@ -74,14 +74,14 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
     public PdfButtonFormField createCheckBox() {
         PdfButtonFormField check;
         if (getWidgetRectangle() == null) {
-            check = new PdfButtonFormField(getDocument());
+            check = PdfFormCreator.createButtonFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
             annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
             if (getConformanceLevel() != null) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
-            check = new PdfButtonFormField(annotation, getDocument());
+            check = PdfFormCreator.createButtonFormField(annotation, getDocument());
         }
         check.pdfAConformanceLevel = getConformanceLevel();
         check.setCheckType(checkType);

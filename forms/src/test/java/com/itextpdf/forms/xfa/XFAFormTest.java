@@ -23,6 +23,7 @@
 package com.itextpdf.forms.xfa;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -98,14 +99,14 @@ public class XFAFormTest extends ExtendedITextTest {
     public void readXFAFormTest() throws IOException {
         String inFileName = sourceFolder + "formTemplate.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
-        AssertUtil.doesNotThrow(() -> PdfAcroForm.getAcroForm(pdfDocument, true));
+        AssertUtil.doesNotThrow(() -> PdfFormCreator.getAcroForm(pdfDocument, true));
     }
 
     @Test
     public void findFieldName() throws IOException {
         String inFileName = sourceFolder + "TextField1.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, true);
         XfaForm xfaForm = acroForm.getXfaForm();
         xfaForm.findFieldName("TextField1");
         String secondRun = xfaForm.findFieldName("TextField1");
@@ -116,7 +117,7 @@ public class XFAFormTest extends ExtendedITextTest {
     public void findFieldNameWithoutDataSet() throws IOException {
         String inFileName = sourceFolder + "TextField1_empty.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, true);
         XfaForm xfaForm = acroForm.getXfaForm();
         String name = xfaForm.findFieldName("TextField1");
         Assert.assertNull(name);

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
@@ -66,7 +67,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_fillFormWithAutosizeTest.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("First field").setValue("name name name ");
         fields.get("Second field").setValue("surname surname surname surname surname surname");
@@ -79,7 +80,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
     public void defaultAppearanceExtractionForNotMergedFieldsTest() throws IOException, InterruptedException {
         PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "sourceDAExtractionTest.pdf"),
                 new PdfWriter(destinationFolder + "defaultAppearanceExtractionTest.pdf"));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, false);
         form.getField("First field").setValue("Your name");
         form.getField("Text1").setValue("Your surname");
         doc.close();
@@ -100,14 +101,14 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         font.setSubset(false);
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         form.getField("description").setValue(TEXT, font, 12f);
 
         pdfDoc.close();
 
         PdfDocument document = new PdfDocument(new PdfReader(destinationFolder + filename));
 
-        PdfDictionary actualDocumentFonts = PdfAcroForm.getAcroForm(document, false).getPdfObject()
+        PdfDictionary actualDocumentFonts = PdfFormCreator.getAcroForm(document, false).getPdfObject()
                 .getAsDictionary(PdfName.DR).getAsDictionary(PdfName.Font);
 
         // Note that we know the structure of the expected pdf file
@@ -134,7 +135,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         font.setSubset(false);
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         form.getField("description").setFont(font);
         form.getField("description").setValue(TEXT);
 
@@ -147,7 +148,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfString expectedFieldsDAFont = new PdfString("/F3 12 Tf");
 
         PdfObject actualAcroFormDAFont = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm).get(PdfName.DA);
-        PdfDictionary actualDocumentFonts = PdfAcroForm.getAcroForm(document, false).getPdfObject()
+        PdfDictionary actualDocumentFonts = PdfFormCreator.getAcroForm(document, false).getPdfObject()
                 .getAsDictionary(PdfName.DR).getAsDictionary(PdfName.Font);
         PdfObject actualFieldDAFont = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm)
                 .getAsArray(PdfName.Fields).getAsDictionary(0).get(PdfName.DA);
@@ -172,7 +173,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_lineEndingsTest.pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destFilename))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "single")
                     .setWidgetRectangle(new Rectangle(50, 700, 500, 120)).createText();

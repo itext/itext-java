@@ -23,6 +23,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -68,7 +69,7 @@ class XfdfReader {
         }
         //TODO DEVSIX-4026 check for ids original/modified compatability with those in pdf document
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, false);
         if (form != null) {
             mergeFields(xfdfObject.getFields(), form);
             mergeAnnotations(xfdfObject.getAnnots(), pdfDocument);

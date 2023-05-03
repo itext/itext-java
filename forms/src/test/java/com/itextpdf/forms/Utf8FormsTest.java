@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
@@ -59,7 +60,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
     public void readUtf8FieldName() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-field-name.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         Map<String,PdfFormField> fields = form.getAllFormFields();
         pdfDoc.close();
         for (String fldName : fields.keySet()) {
@@ -73,7 +74,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
     public void readUtf8TextAnnot() throws java.io.IOException {
         String filename = sourceFolder + "utf-8-text-annot.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         Map<String,PdfFormField> fields = form.getAllFormFields();
         pdfDoc.close();
         for (String fldName : fields.keySet()) {
@@ -86,7 +87,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
     //TODO DEVSIX-2798
     public void writeUtf8FieldNameAndValue() throws java.io.IOException, InterruptedException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "writeUtf8FieldNameAndValue.pdf"));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "")
                 .setWidgetRectangle(new Rectangle(99, 753, 425, 15)).createText();
         field.setValue("");

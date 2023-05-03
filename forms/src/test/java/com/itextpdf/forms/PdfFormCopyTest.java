@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -147,7 +148,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         srcDoc.copyPagesTo(1, srcDoc.getNumberOfPages(), destDoc, formCopier);
         srcDoc.copyPagesTo(1, srcDoc.getNumberOfPages(), destDoc, formCopier);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(destDoc, false);
         Assert.assertEquals(1, form.getFields().size());
         Assert.assertNotNull(form.getField("Name1"));
 
@@ -186,7 +187,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
 
         acroForm.getField("text_1").setValue("Text 1!");
         acroForm.getField("text_2").setValue("Text 2!");
@@ -216,7 +217,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
 
         acroForm.getField("text.3").setValue("Text 3!");
 
@@ -243,7 +244,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
 
         acroForm.getField("text_1").setValue("Text 1!");
 
@@ -271,7 +272,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
 
         acroForm.getField("text_1").setValue("Text 1!");
         acroForm.getField("text_2").setValue("Text 2!");
@@ -450,7 +451,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
 
         acroForm.getField("text").setValue("Text!");
 
@@ -501,7 +502,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
         acroForm.getField("text_1").setValue("text_1");
         acroForm.getField("NumberField_text.2").setValue("-100.00");
         acroForm.getField("NumberField_text.2_1").setValue("3.00");
@@ -531,7 +532,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
         acroForm.getField("CheckBox_1").setValue("On");
         acroForm.getField("Check Box.2").setValue("Off");
         acroForm.getField("CheckBox4.1#1").setValue("Off");
@@ -559,7 +560,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
             srcDoc.copyPagesTo(1, 1, destDoc, pdfPageFormCopier);
         }
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
         acroForm.getField("Group.4").setValue("Choice_3!<>3.3.3");
 
         destDoc.close();
@@ -582,7 +583,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader1 = new PdfReader(srcFileName1);
                 PdfDocument sourceDoc1 = new PdfDocument(reader1)) {
-            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfFormCreator.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 
             sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
@@ -609,7 +610,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfDocument sourceDoc1 = new PdfDocument(reader1);
                 PdfReader reader2 = new PdfReader(srcFileName2);
                 PdfDocument sourceDoc2 = new PdfDocument(reader2)) {
-            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfFormCreator.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 
             sourceDoc1.copyPagesTo(1, sourceDoc1.getNumberOfPages(), resultPdfDocument, formCopier);
@@ -636,7 +637,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfDocument sourceDoc1 = new PdfDocument(reader1);
                 PdfReader reader2 = new PdfReader(srcFileName2);
                 PdfDocument sourceDoc2 = new PdfDocument(reader2)) {
-            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfFormCreator.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 
             sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);
@@ -660,7 +661,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader2 = new PdfReader(srcFileName2);
                 PdfDocument sourceDoc2 = new PdfDocument(reader2)) {
-            PdfAcroForm.getAcroForm(resultPdfDocument, true);
+            PdfFormCreator.getAcroForm(resultPdfDocument, true);
             PdfPageFormCopier formCopier = new PdfPageFormCopier();
 
             sourceDoc2.copyPagesTo(1, sourceDoc2.getNumberOfPages(), resultPdfDocument, formCopier);

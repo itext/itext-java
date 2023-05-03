@@ -26,6 +26,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.CheckBox;
@@ -249,7 +250,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         }
         checkBox.getFirstFormAnnotation().setFormFieldElement((CheckBox) modelElement);
 
-        PdfAcroForm.getAcroForm(doc, true).addField(checkBox, page);
+        PdfFormCreator.getAcroForm(doc, true).addField(checkBox, page);
         writeAcroFormFieldLangAttribute(doc);
     }
 

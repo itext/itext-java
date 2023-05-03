@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -55,7 +56,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(36, 648, 200, 100);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
@@ -72,7 +73,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(36, 648, 0, 0);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
@@ -89,7 +90,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(36, 648, 200, 100);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             List<PdfAnnotation> annotations = page.getAnnotations();
@@ -109,7 +110,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(36, 648, 200, 100);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             List<PdfAnnotation> annotations = page.getAnnotations();
@@ -129,7 +130,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(36, 648, 200, 100);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             List<PdfAnnotation> annotations = page.getAnnotations();
@@ -149,7 +150,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(36, 648, 200, 100);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             List<PdfAnnotation> annotations = page.getAnnotations();
@@ -169,7 +170,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(-150, -150, 100, 100);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
@@ -186,7 +187,7 @@ public class TaggedSigningFieldTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(-150, -150, 200, 100);
             PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature").setWidgetRectangle(rect)
                     .createSignature();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.addField(signField);
 
             List<PdfAnnotation> annotations = page.getAnnotations();

@@ -26,6 +26,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ComboBoxField;
@@ -151,7 +152,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
 
         comboBoxField.getFirstFormAnnotation().setFormFieldElement(comboBoxFieldModelElement);
 
-        PdfAcroForm.getAcroForm(doc, true).addField(comboBoxField, page);
+        PdfFormCreator.getAcroForm(doc, true).addField(comboBoxField, page);
         writeAcroFormFieldLangAttribute(doc);
     }
 

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -79,7 +80,7 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
         String cmp_flattened = sourceFolder + "cmp_" + inputPdfFileName + "_flattened.pdf";
 
         try (PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             for (PdfFormField field : form.getAllFormFields().values()) {
                 field.setValue("Long Long Text");
                 field.getFirstFormAnnotation().setBorderWidth(1);
@@ -89,7 +90,7 @@ public class FlatteningRotatedTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
 
         try (PdfDocument doc = new PdfDocument(new PdfReader(dest), new PdfWriter(dest_flattened))) {
-            PdfAcroForm.getAcroForm(doc, true).flattenFields();
+            PdfFormCreator.getAcroForm(doc, true).flattenFields();
         }
         Assert.assertNull(new CompareTool().compareByContent(dest_flattened, cmp_flattened, destinationFolder, "diff_"));
     }

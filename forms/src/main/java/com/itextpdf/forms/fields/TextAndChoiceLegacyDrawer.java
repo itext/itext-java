@@ -296,7 +296,7 @@ final class TextAndChoiceLegacyDrawer {
             paragraphStyle.setProperty(Property.FONT_COLOR, new TransparentColor(formAnnotation.getColor()));
         }
 
-        int maxLen = new PdfTextFormField(formAnnotation.parent.getPdfObject()).getMaxLen();
+        int maxLen = PdfFormCreator.createTextFormField(formAnnotation.parent.getPdfObject()).getMaxLen();
         // check if /Comb has been set
         float widthPerCharacter = width / maxLen;
         int numberOfCharacters = Math.min(maxLen, value.length());

@@ -32,6 +32,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.pdf.CompressionConstants;
@@ -143,7 +144,7 @@ public class LtvVerification {
      */
     public LtvVerification(PdfDocument document) {
         this.document = document;
-        this.acroForm = PdfAcroForm.getAcroForm(document, true);
+        this.acroForm = PdfFormCreator.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
     }
 

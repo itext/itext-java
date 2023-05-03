@@ -25,6 +25,7 @@ package com.itextpdf.forms.form.renderer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Button;
@@ -273,7 +274,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
         button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);
-        PdfAcroForm forms = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);
         // Fields can be already added on split, e.g. when button split into multiple pages. But now we merge fields
         // with the same names (and add all the widgets as kids to that merged field), so we can add it anyway.
         forms.addField(button, page);
