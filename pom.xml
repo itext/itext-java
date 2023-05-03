@@ -501,6 +501,8 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
               </parameter>
+              <!-- TODO: DEVSIX-7485. Remove this skip=true after 8.0.0 release publishing -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
