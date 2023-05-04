@@ -56,7 +56,6 @@
     <module>sign</module>
     <module>styled-xml-parser</module>
     <module>svg</module>
-    <module>bouncy-castle-fips-adapter</module>
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
   </modules>

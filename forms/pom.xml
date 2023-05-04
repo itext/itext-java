@@ -53,8 +53,10 @@
       <id>bouncy-castle-fips-test</id>
       <dependencies>
         <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>bouncy-castle-fips-adapter</artifactId>
+          <groupId>com.itextpdf.android</groupId>
+          <!-- iText doesn't provide bc-fips functionality on Android, so to
+           get green build on CI override this profile for using usual bc -->
+          <artifactId>bouncy-castle-adapter-android</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>
         </dependency>
