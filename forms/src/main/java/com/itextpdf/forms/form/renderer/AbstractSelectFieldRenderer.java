@@ -41,8 +41,6 @@ import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,12 +57,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     protected AbstractSelectFieldRenderer(AbstractSelectField modelElement) {
         super(modelElement);
         addChild(createFlatRenderer());
-        if (!isFlatten() && this instanceof SelectFieldComboBoxRenderer) {
-            // TODO DEVSIX-1901
-            Logger logger = LoggerFactory.getLogger(AbstractSelectFieldRenderer.class);
-            logger.warn(FormsLogMessageConstants.ACROFORM_NOT_SUPPORTED_FOR_SELECT);
-            setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
-        }
     }
 
     @Override
@@ -73,7 +65,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         // If it's inline-block context, relative width is already resolved.
         Float width = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
         if (width != null) {
-            updateWidth(UnitValue.createPointValue((float)width));
+            updateWidth(UnitValue.createPointValue((float) width));
         }
 
         float childrenMaxWidth = getMinMaxWidth().getMaxWidth();
@@ -249,6 +241,15 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         return selectedOptions;
     }
 
+    static boolean isOptGroupRenderer(IRenderer renderer) {
+        return renderer.hasProperty(FormProperty.FORM_FIELD_LABEL) &&
+                !renderer.hasProperty(FormProperty.FORM_FIELD_SELECTED);
+    }
+
+    static boolean isOptionRenderer(IRenderer child) {
+        return child.hasProperty(FormProperty.FORM_FIELD_SELECTED);
+    }
+
     private LayoutResult makeLayoutResultFull(LayoutArea layoutArea, LayoutResult layoutResult) {
         IRenderer splitRenderer = layoutResult.getSplitRenderer() == null ? this : layoutResult.getSplitRenderer();
         if (occupiedArea == null) {
@@ -257,14 +258,5 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         }
         layoutResult = new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
         return layoutResult;
-    }
-
-    static boolean isOptGroupRenderer(IRenderer renderer) {
-        return renderer.hasProperty(FormProperty.FORM_FIELD_LABEL) &&
-                !renderer.hasProperty(FormProperty.FORM_FIELD_SELECTED);
-    }
-
-    static boolean isOptionRenderer(IRenderer child) {
-        return child.hasProperty(FormProperty.FORM_FIELD_SELECTED);
     }
 }

@@ -50,6 +50,7 @@ public final class FormsExceptionMessageConstant {
     public static final String INVALID_ROTATION_VALUE = "Invalid rotation. Rotation must be a multiple of 90 degrees.";
     public static final String OPTION_ELEMENT_SHALL_NOT_BE_NULL = "Option element shall not be null.";
     public static final String VALUE_SHALL_NOT_BE_NULL = "Value <{0}> shall not be null";
+    public static final String INDEX_OUT_OF_BOUNDS = "Index: {0}, Size: {1}";
 
     private FormsExceptionMessageConstant() {
     }

@@ -22,16 +22,33 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
+import com.itextpdf.forms.form.element.ComboBoxField;
+import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -39,6 +56,8 @@ import com.itextpdf.layout.tagging.IAccessibleElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SelectFieldComboBoxRenderer} implementation for select field renderer.
@@ -53,6 +72,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
      */
     public SelectFieldComboBoxRenderer(AbstractSelectField modelElement) {
         super(modelElement);
+        setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
         setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
         setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
@@ -80,22 +100,86 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
     }
 
     @Override
-    protected void applyAcroField(DrawContext drawContext) {
-        // TODO DEVSIX-1901
-    }
-
-    @Override
     protected IRenderer createFlatRenderer() {
         return createFlatRenderer(false);
     }
 
+    @Override
+    protected void applyAcroField(DrawContext drawContext) {
+        final ComboBoxField comboBoxFieldModelElement = (ComboBoxField) this.modelElement;
+        final String name = getModelId();
+        final PdfDocument doc = drawContext.getDocument();
+        final Rectangle area = getOccupiedAreaBBox();
+        final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
+        final ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setConformanceLevel(this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
+
+        modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
+        modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
+        setupBuilderValues(builder, comboBoxFieldModelElement);
+        final PdfChoiceFormField comboBoxField = builder.createComboBox();
+
+        final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
+        if (background != null) {
+            comboBoxField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
+        }
+        AbstractFormFieldRenderer.applyBorderProperty(this, comboBoxField.getFirstFormAnnotation());
+        PdfFont font = getRetrievedFont();
+        if (font != null) {
+            comboBoxField.setFont(font);
+        }
+        UnitValue fontSize = getFontSize();
+        if (fontSize != null) {
+            comboBoxField.setFontSize(fontSize.getValue());
+        }
+        SelectFieldItem selectedLabel = comboBoxFieldModelElement.getSelectedOption();
+        if (selectedLabel != null) {
+            comboBoxField.setValue(selectedLabel.getDisplayValue());
+        } else {
+            String exportValue = comboBoxFieldModelElement.getSelectedExportValue();
+            if (exportValue == null) {
+                RenderingMode renderingMode = comboBoxFieldModelElement.<RenderingMode>getProperty(
+                        Property.RENDERING_MODE);
+                if (RenderingMode.HTML_MODE == renderingMode && comboBoxFieldModelElement.hasOptions()) {
+                    comboBoxFieldModelElement.setSelected(0);
+                    comboBoxField.setValue(comboBoxFieldModelElement.getSelectedExportValue());
+                }
+            } else {
+                comboBoxField.setValue(comboBoxFieldModelElement.getSelectedExportValue());
+            }
+        }
+
+        comboBoxField.getFirstFormAnnotation().setFormFieldElement(comboBoxFieldModelElement);
+
+        PdfAcroForm.getAcroForm(doc, true).addField(comboBoxField, page);
+        writeAcroFormFieldLangAttribute(doc);
+    }
+
+    private PdfFont getRetrievedFont() {
+        Object retrievedFont = this.<Object>getProperty(Property.FONT);
+        return retrievedFont instanceof PdfFont ? (PdfFont) retrievedFont : null;
+    }
+
+    private UnitValue getFontSize() {
+        if (!this.hasProperty(Property.FONT_SIZE)) {
+            return null;
+        }
+        UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
+        if (!fontSize.isPointValue()) {
+            Logger logger = LoggerFactory.getLogger(SelectFieldComboBoxRenderer.class);
+            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    Property.FONT_SIZE));
+        }
+        return fontSize;
+    }
+
     private IRenderer createFlatRenderer(boolean addAllOptionsToChildren) {
         AbstractSelectField selectField = (AbstractSelectField) modelElement;
-        List<IBlockElement> options = selectField.getOptions();
+        List<SelectFieldItem> options = selectField.getItems();
 
         Div pseudoContainer = new Div();
-        for (IBlockElement option : options) {
-            pseudoContainer.add(option);
+        for (SelectFieldItem option : options) {
+            pseudoContainer.add(option.getElement());
         }
 
         List<Paragraph> allOptions;
@@ -140,6 +224,20 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
             Paragraph p = createComboBoxOptionFlatElement(label, false);
             processLangAttribute(p, selectedOption);
             selectedOptionFlatRendererList.add(p);
+        } else {
+            ComboBoxField modelElement = (ComboBoxField) getModelElement();
+            SelectFieldItem selectedOptionItem = modelElement.getSelectedOption();
+            String label = modelElement.getSelectedExportValue();
+            if (selectedOptionItem != null) {
+                label = selectedOptionItem.getDisplayValue();
+            }
+            if (label != null) {
+                Paragraph p = createComboBoxOptionFlatElement(label, false);
+                p.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
+                processLangAttribute(p, p.getRenderer());
+                selectedOptionFlatRendererList.add(p);
+            }
+
         }
         return selectedOptionFlatRendererList;
     }
@@ -176,11 +274,22 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         return options;
     }
 
-    private static Paragraph createComboBoxOptionFlatElement() {
+    private void processLangAttribute(Paragraph optionFlatElement, IRenderer originalOptionRenderer) {
+        IPropertyContainer propertyContainer = originalOptionRenderer.getModelElement();
+        if (propertyContainer instanceof IAccessibleElement) {
+            String lang = ((IAccessibleElement) propertyContainer).getAccessibilityProperties().getLanguage();
+            AccessibilityProperties properties = ((IAccessibleElement) optionFlatElement).getAccessibilityProperties();
+            if (properties.getLanguage() == null) {
+                properties.setLanguage(lang);
+            }
+        }
+    }
+
+    private Paragraph createComboBoxOptionFlatElement() {
         return createComboBoxOptionFlatElement(null, false);
     }
 
-    private static Paragraph createComboBoxOptionFlatElement(String label, boolean simulateOptGroupMargin) {
+    private Paragraph createComboBoxOptionFlatElement(String label, boolean simulateOptGroupMargin) {
         Paragraph paragraph = new Paragraph().setMargin(0);
         if (simulateOptGroupMargin) {
             paragraph.add("\u200d    ");
@@ -193,23 +302,28 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         paragraph.add(label);
         paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
-        // These constants are defined according to values in default.css.
-        // At least in Chrome paddings of options in comboboxes cannot be altered through css styles.
-        float leftRightPaddingVal = 2 * 0.75f;
-        float bottomPaddingVal = 0.75f;
-        float topPaddingVal = 0;
-        paragraph.setPaddings(topPaddingVal, leftRightPaddingVal, bottomPaddingVal, leftRightPaddingVal);
+        paragraph.setFontColor(modelElement.<TransparentColor>getProperty(Property.FONT_COLOR));
+        UnitValue fontSize = modelElement.<UnitValue>getProperty(Property.FONT_SIZE);
+        if (fontSize != null) {
+            paragraph.setFontSize(fontSize.getValue());
+        }
+
+        PdfFont font = getRetrievedFont();
+        if (font != null) {
+            paragraph.setFont(font);
+        }
+
+        final float paddingTop = 0f;
+        final float paddingBottom = 0.75f;
+        final float paddingLeft = 1.5f;
+
+        float paddingRight = 1.5f;
+        if (!isFlatten()) {
+            final float extraPaddingChrome = 10f;
+            paddingRight += extraPaddingChrome;
+        }
+        paragraph.setPaddings(paddingTop, paddingRight, paddingBottom, paddingLeft);
         return paragraph;
     }
 
-    private void processLangAttribute(Paragraph optionFlatElement, IRenderer originalOptionRenderer) {
-        IPropertyContainer propertyContainer = originalOptionRenderer.getModelElement();
-        if (propertyContainer instanceof IAccessibleElement) {
-            String lang = ((IAccessibleElement) propertyContainer).getAccessibilityProperties().getLanguage();
-            AccessibilityProperties properties = ((IAccessibleElement) optionFlatElement).getAccessibilityProperties();
-            if (properties.getLanguage() == null) {
-                properties.setLanguage(lang);
-            }
-        }
-    }
 }

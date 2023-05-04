@@ -105,20 +105,6 @@ public class ListBoxField extends AbstractSelectField {
     }
 
     /**
-     * Get a list of options.
-     *
-     * @return a list of options.
-     */
-    public List<String> getStrings() {
-        List<String> stringOptions = new ArrayList<String>();
-        for (SelectFieldItem option : options) {
-            stringOptions.add(option.getExportValue());
-        }
-
-        return stringOptions;
-    }
-
-    /**
      * Get a list of selected options.
      *
      * @return a list of display values of selected options.

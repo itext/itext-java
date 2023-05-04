@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.CheckBox;
+import com.itextpdf.forms.form.element.ComboBoxField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.ListBoxField;
@@ -63,9 +64,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
@@ -102,15 +101,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * Value which represents "on" state of form field.
      */
     public static final String ON_STATE_VALUE = "Yes";
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormAnnotation.class);
+    private static final String LINE_ENDINGS_REGEXP = "\\r\\n|\\r|\\n";
     protected float borderWidth = 1;
     protected Color backgroundColor;
     protected Color borderColor;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormAnnotation.class);
-
-    private static final String LINE_ENDINGS_REGEXP = "\\r\\n|\\r|\\n";
-
     private IFormField formFieldElement;
 
     /**
@@ -131,6 +126,41 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      */
     PdfFormAnnotation(PdfDictionary pdfObject) {
         super(pdfObject);
+    }
+
+    /**
+     * Creates a {@link PdfFormAnnotation} object.
+     *
+     * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
+     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}.
+     * @param document  the {@link PdfDocument} to create the field in.
+     *
+     * @return a new {@link PdfFormAnnotation}, or <code>null</code> if
+     * <code>pdfObject</code> is not a widget annotation.
+     */
+    public static PdfFormAnnotation makeFormAnnotation(PdfObject pdfObject, PdfDocument document) {
+        if (!pdfObject.isDictionary()) {
+            return null;
+        }
+
+        PdfFormAnnotation field;
+        PdfDictionary dictionary = (PdfDictionary) pdfObject;
+        final PdfName subType = dictionary.getAsName(PdfName.Subtype);
+        // If widget annotation
+        if (PdfName.Widget.equals(subType)) {
+            field = new PdfFormAnnotation((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(dictionary),
+                    document);
+        } else {
+            return null;
+        }
+        field.makeIndirect(document);
+
+        if (document != null && document.getReader() != null
+                && document.getReader().getPdfAConformanceLevel() != null) {
+            field.pdfAConformanceLevel = document.getReader().getPdfAConformanceLevel();
+        }
+
+        return field;
     }
 
     /**
@@ -157,6 +187,56 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     @Override
     public PdfString getDefaultAppearance() {
         return getPdfObject().getAsString(PdfName.DA);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public boolean regenerateField() {
+        if (parent != null) {
+            parent.updateDefaultAppearance();
+        }
+        return regenerateWidget();
+    }
+
+    /**
+     * Gets the appearance state names.
+     *
+     * @return an array of Strings containing the names of the appearance states.
+     */
+    @Override
+    public String[] getAppearanceStates() {
+        Set<String> names = new LinkedHashSet<>();
+
+        PdfDictionary dic = getPdfObject();
+        dic = dic.getAsDictionary(PdfName.AP);
+        if (dic != null) {
+            dic = dic.getAsDictionary(PdfName.N);
+            if (dic != null) {
+                for (PdfName state : dic.keySet()) {
+                    names.add(state.getValue());
+                }
+            }
+        }
+
+        return names.toArray(new String[names.size()]);
+    }
+
+    @Override
+    void retrieveStyles() {
+        super.retrieveStyles();
+
+        PdfDictionary appearanceCharacteristics = getPdfObject().getAsDictionary(PdfName.MK);
+        if (appearanceCharacteristics != null) {
+            backgroundColor = appearancePropToColor(appearanceCharacteristics, PdfName.BG);
+            Color extractedBorderColor = appearancePropToColor(appearanceCharacteristics, PdfName.BC);
+            if (extractedBorderColor != null) {
+                borderColor = extractedBorderColor;
+            }
+        }
     }
 
     /**
@@ -187,6 +267,16 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
+     * Get rotation property specified in this form annotation.
+     *
+     * @return {@code int} value which represents field's rotation
+     */
+    public int getRotation() {
+        PdfDictionary mk = getWidget().getAppearanceCharacteristics();
+        return mk == null || mk.getAsInt(PdfName.R) == null ? 0 : (int) mk.getAsInt(PdfName.R);
+    }
+
+    /**
      * Basic setter for the <code>degRotation</code> property. Regenerates
      * the field appearance after setting the new value.
      *
@@ -209,19 +299,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             this.put(PdfName.MK, mk);
         }
         mk.put(PdfName.R, new PdfNumber(degRotation));
-        
+
         regenerateField();
         return this;
-    }
-
-    /**
-     * Get rotation property specified in this form annotation.
-     * 
-     * @return {@code int} value which represents field's rotation
-     */
-    public int getRotation() {
-        PdfDictionary mk = getWidget().getAppearanceCharacteristics();
-        return mk == null || mk.getAsInt(PdfName.R) == null ? 0 : (int) mk.getAsInt(PdfName.R);
     }
 
     /**
@@ -267,19 +347,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public boolean regenerateField() {
-        if (parent != null) {
-            parent.updateDefaultAppearance();
-        }
-        return regenerateWidget();
-    }
-
-    /**
      * Gets the border width for the field.
      *
      * @return the current border width.
@@ -293,21 +360,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             }
         }
         return borderWidth;
-    }
-
-    /**
-     * Get border object specified in the widget annotation dictionary.
-     * 
-     * @return {@link Border} specified in the widget annotation dictionary
-     */
-    public Border getBorder() {
-        float borderWidth = getBorderWidth();
-        Border border = FormBorderFactory.getBorder(
-                this.getWidget().getBorderStyle(), borderWidth, borderColor, backgroundColor);
-        if (border == null && borderWidth > 0 && borderColor != null) {
-            border = new SolidBorder(borderColor, Math.max(1, borderWidth));
-        }
-        return border;
     }
 
     /**
@@ -330,6 +382,21 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         regenerateField();
         return this;
+    }
+
+    /**
+     * Get border object specified in the widget annotation dictionary.
+     *
+     * @return {@link Border} specified in the widget annotation dictionary
+     */
+    public Border getBorder() {
+        float borderWidth = getBorderWidth();
+        Border border = FormBorderFactory.getBorder(
+                this.getWidget().getBorderStyle(), borderWidth, borderColor, backgroundColor);
+        if (border == null && borderWidth > 0 && borderColor != null) {
+            border = new SolidBorder(borderColor, Math.max(1, borderWidth));
+        }
+        return border;
     }
 
     /**
@@ -406,29 +473,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
-     * Gets the appearance state names.
-     *
-     * @return an array of Strings containing the names of the appearance states.
-     */
-    @Override
-    public String[] getAppearanceStates() {
-        Set<String> names = new LinkedHashSet<>();
-
-        PdfDictionary dic = getPdfObject();
-        dic = dic.getAsDictionary(PdfName.AP);
-        if (dic != null) {
-            dic = dic.getAsDictionary(PdfName.N);
-            if (dic != null) {
-                for (PdfName state : dic.keySet()) {
-                    names.add(state.getValue());
-                }
-            }
-        }
-
-        return names.toArray(new String[names.size()]);
-    }
-
-    /**
      * Sets an appearance for (the widgets related to) the form field.
      *
      * @param appearanceType   the type of appearance stream to be added
@@ -458,41 +502,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
 
         return this;
-    }
-
-    /**
-     * Creates a {@link PdfFormAnnotation} object.
-     *
-     * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
-     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}.
-     * @param document  the {@link PdfDocument} to create the field in.
-     *
-     * @return a new {@link PdfFormAnnotation}, or <code>null</code> if
-     * <code>pdfObject</code> is not a widget annotation.
-     */
-    public static PdfFormAnnotation makeFormAnnotation(PdfObject pdfObject, PdfDocument document) {
-        if (!pdfObject.isDictionary()) {
-            return null;
-        }
-
-        PdfFormAnnotation field;
-        PdfDictionary dictionary = (PdfDictionary) pdfObject;
-        final PdfName subType = dictionary.getAsName(PdfName.Subtype);
-        // If widget annotation
-        if (PdfName.Widget.equals(subType)) {
-            field = new PdfFormAnnotation((PdfWidgetAnnotation) PdfAnnotation.makeAnnotation(dictionary),
-                    document);
-        } else {
-            return null;
-        }
-        field.makeIndirect(document);
-
-        if (document != null && document.getReader() != null
-                && document.getReader().getPdfAConformanceLevel() != null) {
-            field.pdfAConformanceLevel = document.getReader().getPdfAConformanceLevel();
-        }
-
-        return field;
     }
 
     /**
@@ -741,7 +750,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         String value = parent.getDisplayValue();
         if (!(parent.isMultiline() && formFieldElement instanceof TextArea ||
-                        !parent.isMultiline() && formFieldElement instanceof InputField)) {
+                !parent.isMultiline() && formFieldElement instanceof InputField)) {
             // Create it one time and re-set properties during each widget regeneration.
             formFieldElement = parent.isMultiline() ?
                     (IFormField) new TextArea("") :
@@ -789,18 +798,126 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         getWidget().setNormalAppearance(xObject.getPdfObject());
     }
 
-    @Override
-    void retrieveStyles() {
-        super.retrieveStyles();
 
-        PdfDictionary appearanceCharacteristics = getPdfObject().getAsDictionary(PdfName.MK);
-        if (appearanceCharacteristics != null) {
-            backgroundColor = appearancePropToColor(appearanceCharacteristics, PdfName.BG);
-            Color extractedBorderColor = appearancePropToColor(appearanceCharacteristics, PdfName.BC);
-            if (extractedBorderColor != null) {
-                borderColor = extractedBorderColor;
+    /**
+     * Draws the appearance of a Combo box form field and saves it into an appearance stream.
+     */
+    protected void drawComboBoxAndSaveAppearance() {
+        Rectangle rectangle = getRect(this.getPdfObject());
+        if (rectangle == null) {
+            return;
+        }
+        if (!(formFieldElement instanceof ComboBoxField)) {
+            formFieldElement = new ComboBoxField("");
+        }
+
+        ComboBoxField comboBoxField = (ComboBoxField) formFieldElement;
+        prepareComboBoxFieldWithCorrectOptionsAndValues(comboBoxField);
+        comboBoxField.setFont(getFont());
+        setModelElementProperties(rectangle);
+        if (getFontSize() <= 0) {
+            Rectangle r2 = rectangle.clone();
+            // because the border is drawn inside the rectangle, we need to take this into account
+            float marginToApply = borderWidth;
+            r2.applyMargins(marginToApply, marginToApply, marginToApply, marginToApply, false);
+            UnitValue estimatedFontSize = UnitValue.createPointValue(
+                    getFontSize(new PdfArray(r2), parent.getValueAsString()));
+            comboBoxField.setFontSize(estimatedFontSize.getValue());
+        } else {
+            comboBoxField.setFontSize(getFontSize());
+        }
+        if (getColor() != null) {
+            comboBoxField.setFontColor(getColor());
+        }
+        comboBoxField.setTextAlignment(parent.getJustification());
+
+        Rectangle pdfXobjectRectangle = new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight());
+        final PdfFormXObject xObject = new PdfFormXObject(pdfXobjectRectangle);
+        final Canvas canvas = new Canvas(xObject, getDocument());
+        canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
+        setMetaInfoToCanvas(canvas);
+        canvas.setFont(getFont());
+        canvas.getPdfCanvas().beginVariableText().saveState().endPath();
+        canvas.add(comboBoxField);
+        canvas.getPdfCanvas().restoreState().endVariableText();
+        getWidget().setNormalAppearance(xObject.getPdfObject());
+
+    }
+
+    private void prepareComboBoxFieldWithCorrectOptionsAndValues(ComboBoxField comboBoxField) {
+        for (PdfObject option : parent.getOptions()) {
+            SelectFieldItem item = null;
+            if (option.isString()) {
+                item = new SelectFieldItem(((PdfString) option).getValue());
+            }
+            if (option.isArray()) {
+                assert option instanceof PdfArray;
+                PdfArray array = (PdfArray) option;
+                final int thereShouldBeTwoElementsInArray = 2;
+                if (array.size() == thereShouldBeTwoElementsInArray) {
+                    String exportValue = ((PdfString) array.get(0)).getValue();
+                    String displayValue = ((PdfString) array.get(1)).getValue();
+                    item = new SelectFieldItem(exportValue, displayValue);
+                }
+            }
+            if (item != null && comboBoxField.getOption(item.getExportValue()) == null) {
+                comboBoxField.addOption(item);
             }
         }
+        comboBoxField.setSelected(parent.getDisplayValue());
+    }
+
+    /**
+     * Draw a checkbox and save its appearance.
+     *
+     * @param onStateName the name of the appearance state for the checked state
+     */
+    protected void drawCheckBoxAndSaveAppearance(String onStateName) {
+        final Rectangle rect = getRect(this.getPdfObject());
+        if (rect == null) {
+            return;
+        }
+        reconstructCheckBoxType();
+        createCheckBox();
+        if (getWidget().getNormalAppearanceObject() == null) {
+            getWidget().setNormalAppearance(new PdfDictionary());
+        }
+        final PdfDictionary normalAppearance = new PdfDictionary();
+        ((CheckBox) formFieldElement).setChecked(false);
+        final PdfFormXObject xObjectOff = new PdfFormXObject(
+                new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
+        final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
+        setMetaInfoToCanvas(canvasOff);
+        canvasOff.add(formFieldElement);
+        if (getPdfAConformanceLevel() == null) {
+            xObjectOff.getResources().addFont(getDocument(), getFont());
+        }
+        normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
+
+        String onStateNameForAp = onStateName;
+        if (onStateName == null || onStateName.isEmpty() || PdfFormAnnotation.OFF_STATE_VALUE.equals(onStateName)) {
+            onStateNameForAp = ON_STATE_VALUE;
+        }
+
+        ((CheckBox) formFieldElement).setChecked(true);
+        final PdfFormXObject xObject = new PdfFormXObject(
+                new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
+        final Canvas canvas = new Canvas(xObject, this.getDocument());
+        setMetaInfoToCanvas(canvas);
+        canvas.add(formFieldElement);
+        normalAppearance.put(new PdfName(onStateNameForAp), xObject.getPdfObject());
+
+        getWidget().setNormalAppearance(normalAppearance);
+
+        final PdfDictionary mk = new PdfDictionary();
+
+        // We put the zapfDingbats code of the checkbox in the MK dictionary to make sure there is a way
+        // to retrieve the checkbox type even if the appearance is not present.
+        mk.put(PdfName.CA,
+                new PdfString(PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(
+                        parent.checkType.getValue())));
+        getWidget().put(PdfName.MK, mk);
+        setCheckBoxAppearanceState(onStateName);
     }
 
     static void setMetaInfoToCanvas(Canvas canvas) {
@@ -816,7 +933,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         final PdfName type = parent.getFormType();
 
-        if ((PdfName.Ch.equals(type) && parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) || this.isCombTextFormField()) {
+        if ((PdfName.Ch.equals(type) && parent.getFieldFlag(PdfChoiceFormField.FF_COMBO))
+                || this.isCombTextFormField()) {
+            if (parent.getFieldFlag(PdfChoiceFormField.FF_COMBO) && formFieldElement != null) {
+                drawComboBoxAndSaveAppearance();
+                return true;
+            }
             return TextAndChoiceLegacyDrawer.regenerateTextAndChoiceField(this);
         } else if (PdfName.Ch.equals(type) && !parent.getFieldFlag(PdfChoiceFormField.FF_COMBO)) {
             if (formFieldElement != null) {
@@ -892,98 +1014,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return null;
     }
 
-    private static PdfArray getRotationMatrix(int rotation, float height, float width) {
-        switch (rotation) {
-            case 0:
-                return null;
-            case 90:
-                return new PdfArray(new float[] {0, 1, -1, 0, height, 0});
-            case 180:
-                return new PdfArray(new float[] {-1, 0, 0, -1, width, height});
-            case 270:
-                return new PdfArray(new float[] {0, -1, 1, 0, 0, width});
-            default:
-                Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
-                logger.error(FormsLogMessageConstants.INCORRECT_WIDGET_ROTATION);
-                return null;
-        }
-    }
-
-    private static Color appearancePropToColor(PdfDictionary appearanceCharacteristics, PdfName property) {
-        PdfArray colorData = appearanceCharacteristics.getAsArray(property);
-        if (colorData != null) {
-            float[] backgroundFloat = new float[colorData.size()];
-            for (int i = 0; i < colorData.size(); i++) {
-                backgroundFloat[i] = colorData.getAsNumber(i).floatValue();
-            }
-            switch (colorData.size()) {
-                case 0:
-                    return null;
-                case 1:
-                    return new DeviceGray(backgroundFloat[0]);
-                case 3:
-                    return new DeviceRgb(backgroundFloat[0], backgroundFloat[1], backgroundFloat[2]);
-                case 4:
-                    return new DeviceCmyk(backgroundFloat[0], backgroundFloat[1], backgroundFloat[2],
-                            backgroundFloat[3]);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Draw a checkbox and save its appearance.
-     *
-     * @param onStateName the name of the appearance state for the checked state
-     */
-    protected void drawCheckBoxAndSaveAppearance(String onStateName) {
-        final Rectangle rect = getRect(this.getPdfObject());
-        if (rect == null) {
-            return;
-        }
-        reconstructCheckBoxType();
-        createCheckBox();
-        if (getWidget().getNormalAppearanceObject() == null) {
-            getWidget().setNormalAppearance(new PdfDictionary());
-        }
-        final PdfDictionary normalAppearance = new PdfDictionary();
-        ((CheckBox) formFieldElement).setChecked(false);
-        final PdfFormXObject xObjectOff = new PdfFormXObject(
-                new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
-        final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
-        setMetaInfoToCanvas(canvasOff);
-        canvasOff.add(formFieldElement);
-        if (getPdfAConformanceLevel() == null) {
-            xObjectOff.getResources().addFont(getDocument(), getFont());
-        }
-        normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());
-
-        String onStateNameForAp = onStateName;
-        if (onStateName == null || onStateName.isEmpty() || PdfFormAnnotation.OFF_STATE_VALUE.equals(onStateName)) {
-            onStateNameForAp = ON_STATE_VALUE;
-        }
-
-        ((CheckBox) formFieldElement).setChecked(true);
-        final PdfFormXObject xObject = new PdfFormXObject(
-                new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
-        final Canvas canvas = new Canvas(xObject, this.getDocument());
-        setMetaInfoToCanvas(canvas);
-        canvas.add(formFieldElement);
-        normalAppearance.put(new PdfName(onStateNameForAp), xObject.getPdfObject());
-
-        getWidget().setNormalAppearance(normalAppearance);
-
-        final PdfDictionary mk = new PdfDictionary();
-
-        // We put the zapfDingbats code of the checkbox in the MK dictionary to make sure there is a way
-        // to retrieve the checkbox type even if the appearance is not present.
-        mk.put(PdfName.CA,
-                new PdfString(PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(
-                        parent.checkType.getValue())));
-        getWidget().put(PdfName.MK, mk);
-        setCheckBoxAppearanceState(onStateName);
-    }
-
     private void setCheckBoxAppearanceState(String onStateName) {
         final PdfWidgetAnnotation widget = getWidget();
         if (widget.getNormalAppearanceObject() != null && widget.getNormalAppearanceObject()
@@ -995,7 +1025,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     private void reconstructCheckBoxType() {
-
         // if checkbox type is null it means we are reading from a document and we need to retrieve the type from the
         // mk dictionary in the ca
         if (parent.checkType == null) {
@@ -1044,5 +1073,44 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         formFieldElement.setHeight(rectangle.getHeight() - extraBorderWidth);
         // Always flatten
         formFieldElement.setInteractive(false);
+    }
+
+    private static PdfArray getRotationMatrix(int rotation, float height, float width) {
+        switch (rotation) {
+            case 0:
+                return null;
+            case 90:
+                return new PdfArray(new float[] {0, 1, -1, 0, height, 0});
+            case 180:
+                return new PdfArray(new float[] {-1, 0, 0, -1, width, height});
+            case 270:
+                return new PdfArray(new float[] {0, -1, 1, 0, 0, width});
+            default:
+                Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
+                logger.error(FormsLogMessageConstants.INCORRECT_WIDGET_ROTATION);
+                return null;
+        }
+    }
+
+    private static Color appearancePropToColor(PdfDictionary appearanceCharacteristics, PdfName property) {
+        PdfArray colorData = appearanceCharacteristics.getAsArray(property);
+        if (colorData != null) {
+            float[] backgroundFloat = new float[colorData.size()];
+            for (int i = 0; i < colorData.size(); i++) {
+                backgroundFloat[i] = colorData.getAsNumber(i).floatValue();
+            }
+            switch (colorData.size()) {
+                case 0:
+                    return null;
+                case 1:
+                    return new DeviceGray(backgroundFloat[0]);
+                case 3:
+                    return new DeviceRgb(backgroundFloat[0], backgroundFloat[1], backgroundFloat[2]);
+                case 4:
+                    return new DeviceCmyk(backgroundFloat[0], backgroundFloat[1], backgroundFloat[2],
+                            backgroundFloat[3]);
+            }
+        }
+        return null;
     }
 }

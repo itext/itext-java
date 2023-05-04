@@ -45,6 +45,7 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
      * Add a container with options. This might be a container for options group.
      *
      * @param optionElement a container with options.
+     *
      * @deprecated starting from 8.0.1.
      */
     @Deprecated
@@ -65,7 +66,7 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
     /**
      * Add an option to the element.
      *
-     * @param option a {@link SelectFieldItem}.
+     * @param option   a {@link SelectFieldItem}.
      * @param selected {@code true} is the option if selected, {@code false} otherwise.
      */
     public void addOption(SelectFieldItem option, boolean selected) {
@@ -82,10 +83,30 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
         return options;
     }
 
+
+    /**
+     * Gets the total amount of options available.
+     *
+     * @return the number of options in the element.
+     */
+    public int optionsCount() {
+        return this.getItems().size();
+    }
+
+    /**
+     * Checks if the element has any options.
+     *
+     * @return true if the element has options, false otherwise.
+     */
+    public boolean hasOptions() {
+        return optionsCount() > 0;
+    }
+
     /**
      * Get an option {@link SelectFieldItem} by its string value.
      *
      * @param value string value to find an option by.
+     *
      * @return a {@link SelectFieldItem}.
      */
     public SelectFieldItem getOption(String value) {
@@ -102,6 +123,7 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
      * Gets a list of containers with option(s). Every container might be a container for options group.
      *
      * @return a list of containers with options.
+     *
      * @deprecated starting from 8.0.1.
      */
     @Deprecated
@@ -113,17 +135,11 @@ public abstract class AbstractSelectField extends FormField<AbstractSelectField>
         return blockElements;
     }
 
-
     /**
-     * Clear all options.
+     * Checks if the field has options with export and display values.
      *
-     * @return this element.
+     * @return {@code true} if the field has options with export and display values, {@code false} otherwise.
      */
-    public AbstractSelectField clear() {
-        options.clear();
-        return this;
-    }
-
     public boolean hasExportAndDisplayValues() {
         for (SelectFieldItem option : options) {
             if (option.hasExportAndDisplayValues()) {
