@@ -70,7 +70,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.IOException;
 import org.junit.Assert;
@@ -255,7 +254,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -424,7 +422,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -484,7 +481,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName, cmp, DESTINATION_FOLDER));
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -512,7 +508,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             form.addField(field, pdfDoc.getPage(1));
         }
 
-        Assert.assertNull(new VeraPdfValidator().validate(fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
         PdfADocument pdfDocToMerge;
         try (InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");

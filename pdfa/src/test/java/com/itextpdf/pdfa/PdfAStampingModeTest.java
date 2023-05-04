@@ -28,7 +28,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.IOException;
 import org.junit.Assert;
@@ -58,7 +57,6 @@ public class PdfAStampingModeTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         Assert.assertNull(compareTool.compareByContent(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, destinationFolder, "diff_"));
         Assert.assertNull(compareTool.compareXmp(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, true));
-        Assert.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -72,6 +70,5 @@ public class PdfAStampingModeTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         Assert.assertNull(compareTool.compareByContent(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, destinationFolder, "diff_"));
         Assert.assertNull(compareTool.compareXmp(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, true));
-        Assert.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 }

@@ -38,7 +38,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -368,6 +367,5 @@ public class PdfAFontTest extends ExtendedITextTest {
                     .endText()
                     .restoreState();
         }
-        Assert.assertEquals(expectedVeraPdfWarning, new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 }
