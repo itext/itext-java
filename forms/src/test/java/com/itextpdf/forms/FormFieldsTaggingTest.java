@@ -26,6 +26,7 @@ import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -34,6 +35,8 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -245,6 +248,29 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
 
         compareOutput(outFileName, cmpFileName);
         compareOutput(outFileName, sourceFolder + "cmp_mergeFieldTaggingTest08.pdf");
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 2)})
+    public void formFieldTaggingTest10() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "taggedPdfWithForms10.pdf";
+        String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms10.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        pdfDoc.setTagged();
+        pdfDoc.initializeOutlines();
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+        acroForm.addField(new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
+                .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox().setValue("1", true));
+
+        PdfDocument docToCopyFrom = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms07.pdf"));
+        docToCopyFrom.copyPagesTo(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+        docToCopyFrom.copyPagesTo(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+
+        pdfDoc.close();
+
+        compareOutput(outFileName, cmpFileName);
     }
 
     private void addFormFieldsToDocument(PdfDocument pdfDoc, PdfAcroForm acroForm) {
