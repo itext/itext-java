@@ -1,44 +1,24 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.signatures.sign;
 
@@ -50,13 +30,15 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -64,7 +46,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class CrlClientOnlineTest extends ExtendedITextTest {
 
     private static final String certSrc = "./src/test/resources/com/itextpdf/signatures/sign/CrlClientOnlineTest/";
@@ -138,7 +120,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     }
 
     @Test
-    public void cannotGetEncodedWhenCertIsNullTest() {
+    public void cannotGetEncodedWhenCertIsNullTest() throws CertificateEncodingException, IOException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
         Assert.assertNull(crlClientOnline.getEncoded(null, ""));
         Assert.assertEquals(0, crlClientOnline.getUrlsSize());
@@ -153,7 +135,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
-    public void unreachableCrlDistributionPointTest() {
+    public void unreachableCrlDistributionPointTest() throws CertificateEncodingException, IOException {
         CrlClientOnline crlClientOnline = new CrlClientOnline("http://www.example.com/crl/test.crl");
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");
@@ -171,7 +153,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_DISTRIBUTION_POINT, logLevel =
                     LogLevelConstants.INFO)
     })
-    public void unreachableCrlDistributionPointFromCertChainTest() {
+    public void unreachableCrlDistributionPointFromCertChainTest() throws CertificateEncodingException, IOException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");

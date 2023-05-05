@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,14 +22,19 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+
 import java.security.cert.X509Certificate;
 
 /**
  * Class for internal usage in tests.
  */
 public final class SignaturesTestUtils {
+    
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String EXPIRED_CERTIFICATE_DATE_PREFIX_MESSAGE = "NotAfter: ";
+    private static final String EXPIRED_CERTIFICATE_DATE_PREFIX_MESSAGE = "certificate expired on ";
 
     private SignaturesTestUtils() {
         // Empty constructor.
@@ -43,6 +48,6 @@ public final class SignaturesTestUtils {
      * @return expected string.
      */
     public static String getExpiredMessage(X509Certificate certificate) {
-        return EXPIRED_CERTIFICATE_DATE_PREFIX_MESSAGE + certificate.getNotAfter().toString();
+        return EXPIRED_CERTIFICATE_DATE_PREFIX_MESSAGE + FACTORY.createTime(certificate.getNotAfter());
     }
 }

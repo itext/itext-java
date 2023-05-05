@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -264,18 +264,6 @@ public final class DataUtil {
         cs = cs.toUpperCase(Locale.ENGLISH);
         if (PortUtil.charsetIsSupported(cs)) return cs;
         return null;
-    }
-
-    /**
-     * Creates a random string, suitable for use as a mime boundary
-     */
-    static String mimeBoundary() {
-        final StringBuilder mime = StringUtil.borrowBuilder();
-        final Random rand = new Random();
-        for (int i = 0; i < boundaryLength; i++) {
-            mime.append(mimeBoundaryChars[rand.nextInt(mimeBoundaryChars.length)]);
-        }
-        return StringUtil.releaseBuilder(mime);
     }
 
     private static BomCharset detectCharsetFromBom(final ByteBuffer byteData) {

@@ -1,49 +1,29 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.io.image;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.colors.IccProfile;
@@ -143,7 +123,7 @@ class JpegImageHelper {
             image.imageSize = image.getData().length;
             processParameters(jpegStream, errorID, image);
         } catch (java.io.IOException e) {
-            throw new IOException(IOException.JpegImageException, e);
+            throw new IOException(IoExceptionMessageConstant.JPEG_IMAGE_EXCEPTION, e);
         } finally {
             if (jpegStream != null) {
                 try {
@@ -201,14 +181,14 @@ class JpegImageHelper {
     private static void processParameters(InputStream jpegStream, String errorID, ImageData image) throws java.io.IOException {
         byte[][] icc = null;
         if (jpegStream.read() != 0xFF || jpegStream.read() != 0xD8) {
-            throw new IOException(IOException._1IsNotAValidJpegFile).setMessageParams(errorID);
+            throw new IOException(IoExceptionMessageConstant.IS_NOT_A_VALID_JPEG_FILE).setMessageParams(errorID);
         }
         boolean firstPass = true;
         int len;
         while (true) {
             int v = jpegStream.read();
             if (v < 0)
-                throw new IOException(IOException.PrematureEofWhileReadingJpeg);
+                throw new IOException(IoExceptionMessageConstant.PREMATURE_EOF_WHILE_READING_JPEG);
             if (v == 0xFF) {
                 int marker = jpegStream.read();
                 if (firstPass && marker == M_APP0) {
@@ -221,7 +201,7 @@ class JpegImageHelper {
                     byte[] bcomp = new byte[JFIF_ID.length];
                     int r = jpegStream.read(bcomp);
                     if (r != bcomp.length)
-                        throw new IOException(IOException._1CorruptedJfifMarker).setMessageParams(errorID);
+                        throw new IOException(IoExceptionMessageConstant.CORRUPTED_JFIF_MARKER).setMessageParams(errorID);
                     boolean found = true;
                     for (int k = 0; k < bcomp.length; ++k) {
                         if (bcomp[k] != JFIF_ID[k]) {
@@ -363,7 +343,7 @@ class JpegImageHelper {
                 if (markertype == VALID_MARKER) {
                     StreamUtil.skip(jpegStream, 2);
                     if (jpegStream.read() != 0x08) {
-                        throw new IOException(IOException._1MustHave8BitsPerComponent).setMessageParams(errorID);
+                        throw new IOException(IoExceptionMessageConstant.MUST_HAVE_8_BITS_PER_COMPONENT).setMessageParams(errorID);
                     }
                     image.setHeight(getShort(jpegStream));
                     image.setWidth(getShort(jpegStream));
@@ -371,7 +351,7 @@ class JpegImageHelper {
                     image.setBpc(8);
                     break;
                 } else if (markertype == UNSUPPORTED_MARKER) {
-                    throw new IOException(IOException._1UnsupportedJpegMarker2).setMessageParams(errorID, Integer.toString(marker));
+                    throw new IOException(IoExceptionMessageConstant.UNSUPPORTED_JPEG_MARKER).setMessageParams(errorID, Integer.toString(marker));
                 } else if (markertype != NOPARAM_MARKER) {
                     StreamUtil.skip(jpegStream, getShort(jpegStream) - 2);
                 }

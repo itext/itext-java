@@ -4,10 +4,10 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>7.2.5</version>
+    <version>8.0.0</version>
   </parent>
   <artifactId>pdftest-android</artifactId>
-  <name>iText 7 - pdftest</name>
+  <name>iText - pdftest</name>
   <url>https://itextpdf.com/</url>
   <properties>
     <sonar.skip>true</sonar.skip>
@@ -32,21 +32,6 @@
   </dependencies>
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*.java</include>
-          </includes>
-          <groups>${integrationtests}</groups>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <groups>${unittests}</groups>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>

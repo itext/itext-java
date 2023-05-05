@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
-><f href="../itext7/java/itextcore/forms/target/test/com/itextpdf/forms/PdfFormFieldTest/myout.pdf"
+><f href="../itext/java/itextcore/forms/target/test/com/itextpdf/forms/PdfFormFieldTest/myout.pdf"
 /><fields
 ><field name="root"
 ><field name="child"

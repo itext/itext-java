@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -71,8 +71,17 @@ public final class SignExceptionMessageConstant {
     public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNKNOWN_HASH_ALGORITHM = "Unknown hash algorithm: {0}.";
-    public static final String UNKNOWN_KEY_ALGORITHM = "Unknown key algorithm: {0}.";
+    public static final String COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID = "Could not determine OID for signature algorithm {0} with digest {1}.";
     public static final String VERIFICATION_ALREADY_OUTPUT = "Verification already output.";
+
+    public static final String ALGO_REQUIRES_SPECIFIC_HASH = "{0} requires the document to be digested using {1}, not {2}";
+
+    public static final String ONLY_MGF1_SUPPORTED_IN_RSASSA_PSS = "Only MGF1 is supported in RSASSA-PSS";
+    public static final String RSASSA_PSS_DIGESTMISSMATCH = "Digest algorithm in RSASSA-PSS parameters is {0} while" +
+            " ambientdigest algorithm is {1}";
+    public static final String DISGEST_ALGORITM_MGF_MISMATCH = "Digest algorithm in MGF1 parameters is {0} while" +
+            " ambient digest algorithm is {1}";
+    public static final String INVALID_ARGUMENTS = "Invalid parameters provided.";
 
     private SignExceptionMessageConstant(){
         // Private constructor will prevent the instantiation of this class directly

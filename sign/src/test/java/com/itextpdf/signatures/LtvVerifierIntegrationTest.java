@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.LtvVerification.CertificateOption;
@@ -29,26 +31,25 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.util.List;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class LtvVerifierIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerifierIntegrationTest/";
-
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
 
     @Test
@@ -131,12 +132,12 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             Assert.assertEquals(2, verificationOKList.size());
             VerificationOK verificationOK = verificationOKList.get(0);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
 
             verificationOK = verificationOKList.get(1);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Root certificate passed without checking", verificationOK.message);
         }
     }
@@ -249,17 +250,17 @@ public class LtvVerifierIntegrationTest extends ExtendedITextTest {
             Assert.assertEquals(3, verificationOKList.size());
             VerificationOK verificationOK = verificationOKList.get(0);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Valid OCSPs Found: 1", verificationOK.message);
 
             verificationOK = verificationOKList.get(1);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Root certificate in final revision", verificationOK.message);
 
             verificationOK = verificationOKList.get(2);
             Assert.assertEquals("C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot",
-                    verificationOK.certificate.getSubjectDN().getName());
+                    BOUNCY_CASTLE_FACTORY.createX500Name(verificationOK.certificate).toString());
             Assert.assertEquals("Root certificate passed without checking", verificationOK.message);
         }
     }

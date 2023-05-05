@@ -3,3 +3,4 @@ This software uses the following test resources under the following licenses:
 | NotoSansTC-Regular.otf | OFL-1.1 | OFL.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
 | NotoSansSC-Regular.otf | OFL-1.1 | OFL.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
 | NotoSansCJKjp-Bold.otf | OFL-1.1 | OFL.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
+| Puritan2 | OFL-1.1 | OFL.txt |

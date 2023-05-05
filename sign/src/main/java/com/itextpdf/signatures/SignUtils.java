@@ -1,48 +1,46 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
+import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
+import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IExtension;
+import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReqBuilder;
+import com.itextpdf.commons.bouncycastle.cms.ISignerInformationVerifier;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
@@ -60,6 +58,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -68,6 +67,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
@@ -75,6 +75,9 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -85,37 +88,11 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.esf.SigPolicyQualifierInfo;
-import org.bouncycastle.asn1.esf.SigPolicyQualifiers;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
-import org.bouncycastle.cms.SignerInformationVerifier;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.jce.provider.X509CertParser;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.x509.util.StreamParsingException;
+import javax.security.auth.x500.X500Principal;
 
 final class SignUtils {
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
         if (algorithm.equals("EC")) {
@@ -166,31 +143,33 @@ final class SignUtils {
         return (InputStream) con.getContent();
     }
 
-    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
-            AlgorithmIdentifier digestAlgorithmIdentifier)
-            throws OperatorCreationException, CertificateEncodingException, OCSPException {
-        return new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
-                new JcaX509CertificateHolder(issuerCert), serialNumber);
+    static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
+            IAlgorithmIdentifier digestAlgorithmIdentifier)
+            throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
+        return FACTORY.createCertificateID(
+                FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
+                FACTORY.createJcaX509CertificateHolder(issuerCert),
+                serialNumber);
     }
 
-    static CertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
-            ASN1ObjectIdentifier identifier)
-            throws OperatorCreationException, CertificateEncodingException, OCSPException {
-        return new CertificateID(
-                new JcaDigestCalculatorProviderBuilder().build().get(
-                        new AlgorithmIdentifier(identifier, DERNull.INSTANCE)),
-                new JcaX509CertificateHolder(issuerCert), serialNumber);
+    static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
+            IASN1ObjectIdentifier identifier)
+            throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
+        return FACTORY.createCertificateID(
+                FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(
+                        FACTORY.createAlgorithmIdentifier(identifier, FACTORY.createDERNull())),
+                FACTORY.createJcaX509CertificateHolder(issuerCert), serialNumber);
     }
 
-    static OCSPReq generateOcspRequestWithNonce(CertificateID id) throws IOException, OCSPException {
-        OCSPReqBuilder gen = new OCSPReqBuilder();
+    static IOCSPReq generateOcspRequestWithNonce(ICertificateID id) throws IOException, AbstractOCSPException {
+        IOCSPReqBuilder gen = FACTORY.createOCSPReqBuilder();
         gen.addRequest(id);
 
-        DEROctetString derOctetString = new DEROctetString(
-                new DEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded());
-        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, derOctetString);
-        gen.setRequestExtensions(new Extensions(new Extension[]{ext}));
+        IDEROctetString derOctetString = FACTORY.createDEROctetString(
+                FACTORY.createDEROctetString(PdfEncryption.generateNewDocumentId()).getEncoded());
+        IExtension ext = FACTORY.createExtension(
+                FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNonce(), false, derOctetString);
+        gen.setRequestExtensions(FACTORY.createExtensions(ext));
         return gen.build();
     }
 
@@ -212,40 +191,41 @@ final class SignUtils {
         return (InputStream) con.getContent();
     }
 
-    static boolean isSignatureValid(BasicOCSPResp validator, Certificate certStoreX509, String provider)
-            throws OperatorCreationException, OCSPException {
+    static boolean isSignatureValid(IBasicOCSPResp validator, Certificate certStoreX509, String provider)
+            throws AbstractOperatorCreationException, AbstractOCSPException {
         if (provider == null) {
-            provider = "BC";
+            provider = FACTORY.getProviderName();
         }
-        return validator.isSignatureValid(
-                new JcaContentVerifierProviderBuilder().setProvider(provider).build(certStoreX509.getPublicKey()));
+        return validator.isSignatureValid(FACTORY.createJcaContentVerifierProviderBuilder()
+                .setProvider(provider).build(certStoreX509.getPublicKey()));
     }
 
-    static void isSignatureValid(TimeStampToken validator, X509Certificate certStoreX509, String provider)
-            throws OperatorCreationException, TSPException {
+    static void isSignatureValid(ITimeStampToken validator, X509Certificate certStoreX509, String provider)
+            throws AbstractOperatorCreationException, AbstractTSPException {
         if (provider == null) {
-            provider = "BC";
+            provider = FACTORY.getProviderName();
         }
-        SignerInformationVerifier verifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider(provider)
+        ISignerInformationVerifier verifier = FACTORY.createJcaSimpleSignerInfoVerifierBuilder().setProvider(provider)
                 .build(certStoreX509);
         validator.validate(verifier);
     }
 
-    static boolean checkIfIssuersMatch(CertificateID certID, X509Certificate issuerCert)
-            throws CertificateEncodingException, IOException, OCSPException {
+    static boolean checkIfIssuersMatch(ICertificateID certID, X509Certificate issuerCert)
+            throws CertificateEncodingException, IOException, AbstractOCSPException, AbstractOperatorCreationException {
         return certID.matchesIssuer(
-                new X509CertificateHolder(issuerCert.getEncoded()), new BcDigestCalculatorProvider());
+                FACTORY.createX509CertificateHolder(issuerCert.getEncoded()),
+                FACTORY.createJcaDigestCalculatorProviderBuilder().build());
     }
 
     static Date add180Sec(Date date) {
         return new Date(date.getTime() + 180000L);
     }
 
-    static Iterable<X509Certificate> getCertsFromOcspResponse(BasicOCSPResp ocspResp) {
+    static Iterable<X509Certificate> getCertsFromOcspResponse(IBasicOCSPResp ocspResp) {
         List<X509Certificate> certs = new ArrayList<>();
-        X509CertificateHolder[] certHolders = ocspResp.getCerts();
-        JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
-        for (X509CertificateHolder certHolder : certHolders) {
+        IX509CertificateHolder[] certHolders = ocspResp.getCerts();
+        IJcaX509CertificateConverter converter = FACTORY.createJcaX509CertificateConverter();
+        for (IX509CertificateHolder certHolder : certHolders) {
             try {
                 certs.add(converter.getCertificate(certHolder));
             } catch (Exception ex) {
@@ -255,18 +235,17 @@ final class SignUtils {
         return certs;
     }
 
-    static Collection<Certificate> readAllCerts(byte[] contentsKey) throws StreamParsingException {
-        X509CertParser cr = new X509CertParser();
-        cr.engineInit(new ByteArrayInputStream(contentsKey));
-        return cr.engineReadAll();
+    static Collection<Certificate> readAllCerts(byte[] contentsKey) throws CertificateException {
+        final CertificateFactory factory = CertificateFactory.getInstance("X509", FACTORY.getProvider());
+        return new ArrayList<>(factory.generateCertificates(new ByteArrayInputStream(contentsKey)));
     }
 
     static <T> T getFirstElement(Iterable<T> iterable) {
         return iterable.iterator().next();
     }
 
-    static X509Principal getIssuerX509Name(ASN1Sequence issuerAndSerialNumber) throws IOException {
-        return new X509Principal(issuerAndSerialNumber.getObjectAt(0).toASN1Primitive().getEncoded());
+    static X500Principal getIssuerX500Principal(IASN1Sequence issuerAndSerialNumber) throws IOException {
+        return new X500Principal(issuerAndSerialNumber.getObjectAt(0).toASN1Primitive().getEncoded());
     }
 
     public static String dateToString(Calendar signDate) {
@@ -324,7 +303,7 @@ final class SignUtils {
      * During major release I'd suggest changing java unsupported extensions check logic to the same as in .NET,
      * but only if it is possible to customize this logic.
      */
-    // TODO DEVSIX-2534
+    // TODO DEVSIX-2634
     @Deprecated
     static boolean hasUnsupportedCriticalExtension(X509Certificate cert) {
         if (cert == null) {
@@ -342,9 +321,13 @@ final class SignUtils {
         return false;
     }
 
-    static Calendar getTimeStampDate(TimeStampToken timeStampToken) {
+    static Calendar getTimeStampDate(ITSTInfo timeStampTokenInfo) {
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(timeStampToken.getTimeStampInfo().getGenTime());
+        try {
+            calendar.setTime(timeStampTokenInfo.getGenTime());
+        } catch (ParseException ignored) {
+            // Do nothing.
+        }
         return calendar;
     }
 
@@ -353,6 +336,17 @@ final class SignUtils {
         return provider == null
                 ? Signature.getInstance(algorithm)
                 : Signature.getInstance(algorithm, provider);
+    }
+
+    static void setRSASSAPSSParamsWithMGF1(Signature signature, String digestAlgoName, int saltLen, int trailerField)
+            throws InvalidAlgorithmParameterException {
+        MGF1ParameterSpec mgf1Spec = new MGF1ParameterSpec(digestAlgoName);
+        PSSParameterSpec spec = new PSSParameterSpec(digestAlgoName, "MGF1", mgf1Spec, saltLen, trailerField);
+        signature.setParameter(spec);
+    }
+
+    public static void updateVerifier(Signature signature, byte[] attr) throws SignatureException {
+        signature.update(attr);
     }
 
     static boolean verifyCertificateSignature(X509Certificate certificate, PublicKey issuerPublicKey, String provider) {
@@ -368,10 +362,6 @@ final class SignUtils {
         }
 
         return res;
-    }
-
-    static SigPolicyQualifiers createSigPolicyQualifiers(SigPolicyQualifierInfo... sigPolicyQualifierInfo) {
-        return new SigPolicyQualifiers(sigPolicyQualifierInfo);
     }
 
     static Iterable<X509Certificate> getCertificates(final KeyStore keyStore) throws KeyStoreException {

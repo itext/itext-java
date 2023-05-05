@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,7 +22,11 @@
  */
 package com.itextpdf.signatures.sign;
 
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -31,55 +35,56 @@ import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class EncryptedSigningTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/EncryptedSigningTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/EncryptedSigningTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
-    private static final char[] PASSWORD = "testpass".toCharArray();
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private Certificate[] chain;
     private PrivateKey pk;
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Before
     public void init()
-            throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException,
-            UnrecoverableKeyException {
-        pk = Pkcs12FileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.p12", PASSWORD, PASSWORD);
-        chain = Pkcs12FileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.p12", PASSWORD);
+            throws IOException, CertificateException, AbstractPKCSException, AbstractOperatorCreationException {
+        pk = PemFileHelper.readFirstKey(CERTS_SRC + "signCertRsa01.pem", PASSWORD);
+        chain = PemFileHelper.readFirstChain(CERTS_SRC + "signCertRsa01.pem");
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void signEncryptedPdfTest() throws GeneralSecurityException, IOException {
         String srcFile = SOURCE_FOLDER + "encrypted.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_signedEncrypted.pdf";
@@ -95,7 +100,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
         signer.setFieldName(fieldName);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
+                FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         //Password to open out and cmp files are the same
@@ -106,24 +111,28 @@ public class EncryptedSigningTest extends ExtendedITextTest {
 
     @Test
     public void signCertificateSecurityPdfTest() throws IOException, GeneralSecurityException {
-        String srcFile = SOURCE_FOLDER + "signCertificateSecurityPdf.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_signCertificateSecurityPdf.pdf";
-        String outPdf = DESTINATION_FOLDER + "signCertificateSecurityPdf.pdf";
+        //RSA keys in FIPS are supported for signature verification only
+        if (!FACTORY.getProviderName().contains("FIPS")) {
+            String srcFile = SOURCE_FOLDER + "signCertificateSecurityPdf.pdf";
+            String cmpPdf = SOURCE_FOLDER + "cmp_signCertificateSecurityPdf.pdf";
+            String outPdf = DESTINATION_FOLDER + "signCertificateSecurityPdf.pdf";
 
-        PdfReader reader = new PdfReader(srcFile, new ReaderProperties()
-                .setPublicKeySecurityParams(chain[0], pk, new BouncyCastleProvider().getName(), null));
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
-                new StampingProperties().useAppendMode());
+            PdfReader reader = new PdfReader(srcFile, new ReaderProperties()
+                    .setPublicKeySecurityParams(chain[0], pk, FACTORY.getProviderName(), null));
+            PdfSigner signer = new PdfSigner(reader, new FileOutputStream(outPdf),
+                    new StampingProperties().useAppendMode());
 
-        // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
-                BouncyCastleProvider.PROVIDER_NAME);
-        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+            // Creating the signature
+            IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                    FACTORY.getProviderName());
+            signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0,
+                    PdfSigner.CryptoStandard.CADES);
 
-        ReaderProperties properties = new ReaderProperties().setPublicKeySecurityParams(chain[0], pk,
-                new BouncyCastleProvider().getName(),null);
+            ReaderProperties properties = new ReaderProperties().setPublicKeySecurityParams(chain[0], pk,
+                    FACTORY.getProviderName(), null);
 
-        //Public key to open out and cmp files are the same
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
+            //Public key to open out and cmp files are the same
+            Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf, properties, properties));
+        }
     }
 }

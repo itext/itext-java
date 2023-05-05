@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,9 +22,11 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,8 +36,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class CertificateInfoTest extends ExtendedITextTest {
+
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final String EXPECTED_EXCEPTION_MESSAGE = FACTORY.getBouncyCastleFactoryTestUtil().getCertificateInfoTestConst();
+
     @Test
     public void X500InvalidDirectoryConstructorTest() {
         Assert.assertThrows(IllegalArgumentException.class, () -> new CertificateInfo.X500Name("some_dir"));
@@ -81,13 +87,13 @@ public class CertificateInfoTest extends ExtendedITextTest {
     public void getIssuerFieldsExceptionTest() {
         Exception exception =
                 Assert.assertThrows(PdfException.class, () -> CertificateInfo.getIssuer(new byte[] {4, 8, 15, 16, 23, 42}));
-        Assert.assertEquals("corrupted stream - out of bounds length found: 8 >= 6", exception.getCause().getMessage());
+        Assert.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getCause().getMessage());
     }
 
     @Test
     public void getSubjectExceptionTest() {
         Exception exception =
                 Assert.assertThrows(PdfException.class, () -> CertificateInfo.getSubject(new byte[] {4, 8, 15, 16, 23, 42}));
-        Assert.assertEquals("corrupted stream - out of bounds length found: 8 >= 6", exception.getCause().getMessage());
+        Assert.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getCause().getMessage());
     }
 }

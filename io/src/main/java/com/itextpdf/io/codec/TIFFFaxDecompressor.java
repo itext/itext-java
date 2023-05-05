@@ -46,6 +46,7 @@
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 /**
  * Class that can decompress TIFF files.
@@ -643,7 +644,7 @@ public class TIFFFaxDecompressor {
                 this.uncompressedMode = (t6Options & 0x02) >> 1;
                 decodeT6();
             } else {
-                throw new IOException(IOException.UnknownCompressionType1).setMessageParams(compression);
+                throw new IOException(IoExceptionMessageConstant.UNKNOWN_COMPRESSION_TYPE).setMessageParams(compression);
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             //ignore

@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,6 +22,10 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -33,13 +37,14 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.LtvVerification.CertificateInclusion;
 import com.itextpdf.signatures.LtvVerification.CertificateOption;
 import com.itextpdf.signatures.LtvVerification.Level;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,6 +52,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,21 +62,22 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class LtvVerificationTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerificationTest/";
     private static final String SRC_PDF = SOURCE_FOLDER + "pdfWithDssDictionary.pdf";
     private static final String SIG_FIELD_NAME = "Signature1";
     private static final String CRL_DISTRIBUTION_POINT = "http://example.com";
     private static final String CERT_FOLDER_PATH = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final char[] PASSWORD = "testpass".toCharArray();
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private static LtvVerification TEST_VERIFICATION;
 
     @BeforeClass
     public static void before() throws IOException {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF));
         TEST_VERIFICATION = new LtvVerification(pdfDoc);
     }
@@ -82,7 +89,8 @@ public class LtvVerificationTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "CRL added", logLevel = LogLevelConstants.INFO),
             @LogMessage(messageTemplate = "Certificate: C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot", logLevel = LogLevelConstants.INFO)
     })
-    public void addVerificationToDocumentWithAlreadyExistedDss() throws IOException, GeneralSecurityException {
+    public void addVerificationToDocumentWithAlreadyExistedDss()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         String input = SOURCE_FOLDER + "signingCertHasChainWithOcspOnlyForChildCert.pdf";
         String signatureHash = "C5CC1458AAA9B8BAB0677F9EA409983B577178A3";
 
@@ -106,9 +114,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), new PdfWriter(baos), new StampingProperties().useAppendMode())) {
             LtvVerification verification = new LtvVerification(pdfDocument);
 
-            String rootCertPath = CERT_FOLDER_PATH + "rootRsa.p12";
-            X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootCertPath, PASSWORD)[0];
-            PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootCertPath, PASSWORD, PASSWORD);
+            String rootCertPath = CERT_FOLDER_PATH + "rootRsa.pem";
+            X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertPath)[0];
+            PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootCertPath, PASSWORD);
 
             verification.addVerification("TestSignature", null, new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey),
                     CertificateOption.SIGNING_CERTIFICATE, Level.CRL, CertificateInclusion.NO);
@@ -143,6 +151,34 @@ public class LtvVerificationTest extends ExtendedITextTest {
         certs.add(new byte[0]);
 
         Assert.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
+    }
+    
+    @Test
+    public void tryAddVerificationAfterMerge() throws IOException, GeneralSecurityException {
+        List<byte[]> crls = new ArrayList<>();
+        crls.add(new byte[0]);
+        List<byte[]> ocsps = new ArrayList<>();
+        ocsps.add(new byte[0]);
+        List<byte[]> certs = new ArrayList<>();
+        certs.add(new byte[0]);
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF), new PdfWriter(new ByteArrayOutputStream()))) {
+            LtvVerification verificationWithWriter = new LtvVerification(pdfDoc);
+
+            verificationWithWriter.merge();
+            verificationWithWriter.addVerification(SIG_FIELD_NAME, ocsps, crls, certs);
+            
+            verificationWithWriter.merge();
+            Exception exception1 = Assert.assertThrows(IllegalStateException.class,
+                    () -> verificationWithWriter.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
+            Assert.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception1.getMessage());
+
+            verificationWithWriter.merge();
+            Exception exception2 = Assert.assertThrows(IllegalStateException.class,
+                    () -> verificationWithWriter.addVerification(null, null, null,
+                            CertificateOption.SIGNING_CERTIFICATE, Level.CRL, CertificateInclusion.YES));
+            Assert.assertEquals(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT, exception2.getMessage());
+        }
     }
 
     @Test
@@ -343,7 +379,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -355,7 +390,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -365,7 +399,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -377,7 +410,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -389,7 +421,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 Level.OCSP_OPTIONAL_CRL, CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -401,7 +432,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -411,7 +441,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -423,7 +452,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -435,7 +463,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 Level.OCSP_OPTIONAL_CRL, CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -449,7 +476,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -463,7 +489,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -473,7 +498,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -487,7 +511,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.YES, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -501,7 +524,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -515,7 +537,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, true);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO)
@@ -525,7 +546,6 @@ public class LtvVerificationTest extends ExtendedITextTest {
                 CertificateInclusion.NO, false);
     }
 
-    @Ignore("DEVSIX-6354 : Remove this ignore after closing this ticket.")
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = "Added CRL url: http://example.com", logLevel = LogLevelConstants.INFO),
@@ -537,6 +557,14 @@ public class LtvVerificationTest extends ExtendedITextTest {
     public void validateSigNameWholeChainCrlNoTest() throws IOException, GeneralSecurityException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.WHOLE_CHAIN, Level.CRL,
                 CertificateInclusion.NO, true);
+    }
+    
+    @Test
+    public void getParentWithoutCertsTest() {
+        try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            LtvVerification verification = new LtvVerification(document);
+            Assert.assertNull(verification.getParent(null, new Certificate[0]));
+        }
     }
 
     private static void validateOptionLevelInclusion(String crlUrl, CertificateOption certificateOption, Level level,

@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.utils;
 
@@ -61,6 +40,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNameTree;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -135,8 +115,8 @@ public class CompareTool {
 
     private static final String VERSION_REGEXP = "(\\d+\\.)+\\d+(-SNAPSHOT)?";
     private static final String VERSION_REPLACEMENT = "<version>";
-    private static final String COPYRIGHT_REGEXP = "\u00a9\\d+-\\d+ iText Group NV";
-    private static final String COPYRIGHT_REPLACEMENT = "\u00a9<copyright years> iText Group NV";
+    private static final String COPYRIGHT_REGEXP = "\u00a9\\d+-\\d+ (?:iText Group NV|Apryse Group NV)";
+    private static final String COPYRIGHT_REPLACEMENT = "\u00a9<copyright years> Apryse Group NV";
 
     private static final String NEW_LINES = "\\r|\\n";
 
@@ -332,6 +312,9 @@ public class CompareTool {
      * Compares two documents visually. For the comparison two external tools are used: Ghostscript and ImageMagick.
      * For more info about needed configuration for visual comparison process see {@link CompareTool} class description.
      * <p>
+     * Note, that this method uses {@link ImageMagickHelper} and {@link GhostscriptHelper} classes and therefore may
+     * create temporary files and directories.
+     * <p>
      * During comparison for every page of the two documents an image file will be created in the folder specified by
      * outPath parameter. Then those page images will be compared and if there are any differences for some pages,
      * another image file will be created with marked differences on it.
@@ -354,6 +337,9 @@ public class CompareTool {
     /**
      * Compares two documents visually. For the comparison two external tools are used: Ghostscript and ImageMagick.
      * For more info about needed configuration for visual comparison process see {@link CompareTool} class description.
+     * <p>
+     * Note, that this method uses {@link ImageMagickHelper} and {@link GhostscriptHelper} classes and therefore may
+     * create temporary files and directories.
      * <p>
      * During comparison for every page of two documents an image file will be created in the folder specified by
      * outPath parameter. Then those page images will be compared and if there are any differences for some pages,
@@ -1746,20 +1732,26 @@ public class CompareTool {
             else {
                 PdfArray explicitCmpDest = null;
                 PdfArray explicitOutDest = null;
-                Map<String, PdfObject> cmpNamedDestinations = cmpDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
-                Map<String, PdfObject> outNamedDestinations = outDocument.getCatalog().getNameTree(PdfName.Dests).getNames();
+                PdfNameTree cmpNamedDestinations = cmpDocument
+                        .getCatalog().getNameTree(PdfName.Dests);
+                PdfNameTree outNamedDestinations = outDocument
+                        .getCatalog().getNameTree(PdfName.Dests);
                 switch (cmpDestObject.getType()) {
                     case PdfObject.ARRAY:
                         explicitCmpDest = (PdfArray) cmpDestObject;
                         explicitOutDest = (PdfArray) outDestObject;
                         break;
                     case PdfObject.NAME:
-                        explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfName) cmpDestObject).getValue());
-                        explicitOutDest = (PdfArray) outNamedDestinations.get(((PdfName) outDestObject).getValue());
+                        String cmpDestName = ((PdfName) cmpDestObject).getValue();
+                        explicitCmpDest = (PdfArray) cmpNamedDestinations.getEntry(cmpDestName);
+                        String outDestName = ((PdfName) outDestObject).getValue();
+                        explicitOutDest = (PdfArray) outNamedDestinations.getEntry(outDestName);
                         break;
                     case PdfObject.STRING:
-                        explicitCmpDest = (PdfArray) cmpNamedDestinations.get(((PdfString) cmpDestObject).toUnicodeString());
-                        explicitOutDest = (PdfArray) outNamedDestinations.get(((PdfString) outDestObject).toUnicodeString());
+                        explicitCmpDest = (PdfArray) cmpNamedDestinations
+                                .getEntry((PdfString) cmpDestObject);
+                        explicitOutDest = (PdfArray) outNamedDestinations
+                                .getEntry((PdfString) outDestObject);
                         break;
                     default:
                         break;

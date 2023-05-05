@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -30,7 +30,7 @@ import com.itextpdf.commons.actions.ProductNameConstant;
  */
 public final class ITextCoreProductData {
     private static final String CORE_PUBLIC_PRODUCT_NAME = "Core";
-    private static final String CORE_VERSION = "7.2.5";
+    private static final String CORE_VERSION = "8.0.0";
     private static final int CORE_COPYRIGHT_SINCE = 2000;
     private static final int CORE_COPYRIGHT_TO = 2023;
 

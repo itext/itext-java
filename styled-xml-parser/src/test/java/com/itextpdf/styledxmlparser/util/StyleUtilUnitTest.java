@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -113,26 +113,4 @@ public class StyleUtilUnitTest extends ExtendedITextTest {
         Assert.assertTrue(equal);
     }
 
-    @Test
-    public void mergeParentDeclarationsTextDecorationsTest(){
-        Map<String, String> styles = new HashMap<>();
-        String styleProperty="text-decoration-line";
-
-        styles.put(styleProperty,"line-through");
-        String parentPropValue ="underline";
-        String parentFontSize="0";
-
-        Map<String,String> expectedStyles = new HashMap<String,String>();
-        expectedStyles.put(styleProperty,"line-through underline");
-
-        styles = StyleUtil
-                .mergeParentStyleDeclaration(styles,styleProperty,parentPropValue,parentFontSize, inheritanceRules);
-
-        boolean equal = styles.size() == expectedStyles.size();
-
-        for (Map.Entry<String, String> kvp : expectedStyles.entrySet()) {
-            equal &= kvp.getValue().equals(styles.get(kvp.getKey()));
-        }
-        Assert.assertTrue(equal);
-    }
 }

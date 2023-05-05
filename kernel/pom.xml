@@ -4,10 +4,10 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>7.2.5</version>
+    <version>8.0.0</version>
   </parent>
   <artifactId>kernel-android</artifactId>
-  <name>iText 7 - kernel</name>
+  <name>iText - kernel</name>
   <url>https://itextpdf.com/</url>
   <properties>
     <sonar.exclusions>**/com/itextpdf/kernel/xmp/**</sonar.exclusions>
@@ -19,14 +19,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15to18</artifactId>
-      <version>${bouncycastle.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15to18</artifactId>
-      <version>${bouncycastle.version}</version>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>bouncy-castle-connector-android</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf.android</groupId>
@@ -41,25 +36,33 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*.java</include>
-          </includes>
-          <groups>${integrationtests}</groups>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <groups>${unittests}</groups>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <profiles>
+    <profile>
+      <id>bouncy-castle-test</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf.android</groupId>
+          <artifactId>bouncy-castle-adapter-android</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>bouncy-castle-fips-test</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf.android</groupId>
+          <!-- iText doesn't provide bc-fips functionality on Android, so to
+           get green build on CI override this profile for using usual bc -->
+          <artifactId>bouncy-castle-adapter-android</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

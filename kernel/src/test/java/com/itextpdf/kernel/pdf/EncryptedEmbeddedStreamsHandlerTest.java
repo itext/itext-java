@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -23,11 +23,14 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +38,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncryptedEmbeddedStreamsHandlerTest/";
@@ -47,6 +50,8 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void noReaderStandardEncryptionAddFileAttachment() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "noReaderStandardEncryptionAddFileAttachment.pdf";
         String cmpFileName = sourceFolder + "cmp_noReaderStandardEncryptionAddFileAttachment.pdf";
@@ -63,6 +68,8 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void noReaderAesEncryptionAddFileAttachment() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "noReaderAesEncryptionAddFileAttachment.pdf";
         String cmpFileName = sourceFolder + "cmp_noReaderAesEncryptionAddFileAttachment.pdf";
@@ -79,6 +86,8 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void withReaderStandardEncryptionAddFileAttachment() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "withReaderStandardEncryptionAddFileAttachment.pdf";
         String cmpFileName = sourceFolder + "cmp_withReaderStandardEncryptionAddFileAttachment.pdf";
@@ -98,6 +107,8 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void noReaderStandardEncryptionAddAnnotation() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "noReaderStandardEncryptionAddAnnotation.pdf";
         String cmpFileName = sourceFolder + "cmp_noReaderStandardEncryptionAddAnnotation.pdf";
@@ -114,6 +125,8 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void withReaderStandardEncryptionAddAnnotation() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "withReaderStandardEncryptionAddAnnotation.pdf";
         String cmpFileName = sourceFolder + "cmp_withReaderStandardEncryptionAddAnnotation.pdf";
@@ -133,6 +146,8 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void readerWithoutEncryptionWriterStandardEncryption() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "readerWithoutEncryptionWriterStandardEncryption.pdf";
         String cmpFileName = sourceFolder + "cmp_readerWithoutEncryptionWriterStandardEncryption.pdf";

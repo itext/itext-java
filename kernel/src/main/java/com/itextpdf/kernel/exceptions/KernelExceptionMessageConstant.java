@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -156,6 +156,7 @@ public final class KernelExceptionMessageConstant {
             + "decompression a single stream occupied more than a maximum integer value. Please check your pdf.";
     public static final String END_OF_CONTENT_STREAM_REACHED_BEFORE_END_OF_IMAGE_DATA = "End of content stream "
             + "reached before end of image data.";
+    public static final String ERROR_WHILE_INITIALIZING_AES_CIPHER = "Exception initializing AES cipher.";
     public static final String ERROR_WHILE_READING_OBJECT_STREAM = "Error while reading Object Stream.";
     public static final String ENCRYPTED_PAYLOAD_FILE_SPEC_DOES_NOT_HAVE_ENCRYPTED_PAYLOAD_DICTIONARY = "Encrypted "
             + "payload file spec shall have encrypted payload dictionary.";
@@ -191,6 +192,7 @@ public final class KernelExceptionMessageConstant {
     public static final String FORM_XOBJECT_MUST_HAVE_BBOX = "Form XObject must have BBox.";
     public static final String FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE = "Function is not compatible with "
             + "ColorSpace.";
+    public static final String NO_SUCH_ALGORITHM_FOR_PROVIDER_BCFIPS = "no such algorithm: {0} for provider BCFIPS";
     public static final String ILLEGAL_CHARACTER_IN_ASCIIHEXDECODE = "illegal character in ASCIIHexDecode.";
     public static final String ILLEGAL_CHARACTER_IN_ASCII85DECODE = "Illegal character in ASCII85Decode.";
     public static final String ILLEGAL_LENGTH_VALUE = "Illegal length value.";
@@ -277,6 +279,7 @@ public final class KernelExceptionMessageConstant {
     public static final String ONLY_BMP_CAN_BE_WRAPPED_IN_WMF = "Only BMP can be wrapped in WMF.";
     public static final String OPERATOR_EI_NOT_FOUND_AFTER_END_OF_IMAGE_DATA = "Operator EI not found after the end "
             + "of image data.";
+    public static final String ORDERING_SHOULD_BE_DETERMINED = "Ordering should be determined for CIDFont of Type0 font.";
     public static final String PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT =
             "The passed page belongs to document {0} (page {1} of the document) and therefore cannot be added "
                     + "to this document ({2}).";
@@ -351,12 +354,8 @@ public final class KernelExceptionMessageConstant {
     public static final String UNBALANCED_SAVE_RESTORE_STATE_OPERATORS = "Unbalanced save restore state operators.";
     public static final String UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE = "Unexpected character {0} "
             + "found after ID in inline image.";
-    @Deprecated
-    public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_COLOR_SPACE = "Unexpected ColorSpace: {0}.";
     public static final String UNEXPECTED_END_OF_FILE = "Unexpected end of file.";
-    @Deprecated
-    public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNEXPECTED_TOKEN = "unexpected {0} was encountered.";
     public static final String UNEXPECTED_SHADING_TYPE = "Unexpected shading type.";
     public static final String UNKNOWN_ENCRYPTION_TYPE_R = "Unknown encryption type R == {0}.";
@@ -422,6 +421,8 @@ public final class KernelExceptionMessageConstant {
             "Invalid object type, a function type 4 requires a stream object";
     public static final String FUCTIONFACTORY_INVALID_OBJECT_TYPE_TYPE0 =
             "Invalid object type, a function type 0 requires a stream object";
+    public static final String UNSUPPORTED_SECURITY_HANDLER =
+            "Failed to open the document. Security handler {0} is not supported";
 
 
     private KernelExceptionMessageConstant(){}

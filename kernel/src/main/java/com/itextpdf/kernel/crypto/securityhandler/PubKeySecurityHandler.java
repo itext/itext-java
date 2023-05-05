@@ -1,48 +1,42 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
+import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEncryptedContentInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IEnvelopedData;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IIssuerAndSerialNumber;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IKeyTransRecipientInfo;
+import com.itextpdf.commons.bouncycastle.asn1.cms.IRecipientIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -64,28 +58,13 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1OutputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.EncryptedContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
-import org.bouncycastle.asn1.cms.RecipientIdentifier;
-import org.bouncycastle.asn1.cms.RecipientInfo;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.TBSCertificateStructure;
 
 /**
  * @author Aiken Sam (aikensam@ieee.org)
  */
 public abstract class PubKeySecurityHandler extends SecurityHandler {
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final int SEED_LENGTH = 20;
 
@@ -109,9 +88,10 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 encodedRecipient = getEncodedRecipient(i);
                 md.update(encodedRecipient);
             }
-            if (!encryptMetadata)
-                md.update(new byte[]{(byte) 255, (byte) 255, (byte) 255,
+            if (!encryptMetadata) {
+                md.update(new byte[] {(byte) 255, (byte) 255, (byte) 255,
                         (byte) 255});
+            }
         } catch (Exception e) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
@@ -120,14 +100,14 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
     }
 
     protected static byte[] computeGlobalKeyOnReading(PdfDictionary encryptionDictionary, PrivateKey certificateKey,
-                                             Certificate certificate, String certificateKeyProvider,
-                                             IExternalDecryptionProcess externalDecryptionProcess,
-                                             boolean encryptMetadata, String digestAlgorithm) {
+            Certificate certificate, String certificateKeyProvider,
+            IExternalDecryptionProcess externalDecryptionProcess,
+            boolean encryptMetadata, String digestAlgorithm) {
         PdfArray recipients = encryptionDictionary.getAsArray(PdfName.Recipients);
         if (recipients == null) {
             recipients = encryptionDictionary.getAsDictionary(PdfName.CF)
-                                            .getAsDictionary(PdfName.DefaultCryptFilter)
-                                            .getAsArray(PdfName.Recipients);
+                    .getAsDictionary(PdfName.DefaultCryptFilter)
+                    .getAsArray(PdfName.Recipients);
         }
 
         byte[] envelopedData = EncryptionUtils.fetchEnvelopedData(certificateKey, certificate, certificateKeyProvider,
@@ -143,7 +123,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 md.update(encodedRecipient);
             }
             if (!encryptMetadata) {
-                md.update(new byte[]{(byte) 255, (byte) 255, (byte) 255, (byte) 255});
+                md.update(new byte[] {(byte) 255, (byte) 255, (byte) 255, (byte) 255});
             }
             encryptionKey = md.digest();
         } catch (Exception f) {
@@ -170,14 +150,15 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         return recipients;
     }
 
-    protected abstract void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly);
+    protected abstract void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary,
+            boolean encryptMetadata, boolean embeddedFilesOnly);
 
     protected abstract String getDigestAlgorithm();
 
     protected abstract void initKey(byte[] globalKey, int keyLength);
 
     protected void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, Certificate[] certs, int[] permissions,
-                                          boolean encryptMetadata, boolean embeddedFilesOnly) {
+            boolean encryptMetadata, boolean embeddedFilesOnly) {
         addAllRecipients(certs, permissions);
 
         Integer keyLen = encryptionDictionary.getAsInt(PdfName.Length);
@@ -190,9 +171,10 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         setPubSecSpecificHandlerDicEntries(encryptionDictionary, encryptMetadata, embeddedFilesOnly);
     }
 
-    protected void initKeyAndReadDictionary(PdfDictionary encryptionDictionary, Key certificateKey, Certificate certificate,
-                                          String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess,
-                                          boolean encryptMetadata) {
+    protected void initKeyAndReadDictionary(PdfDictionary encryptionDictionary, Key certificateKey,
+            Certificate certificate,
+            String certificateKeyProvider, IExternalDecryptionProcess externalDecryptionProcess,
+            boolean encryptMetadata) {
         String digestAlgorithm = getDigestAlgorithm();
         byte[] encryptionKey = computeGlobalKeyOnReading(encryptionDictionary, (PrivateKey) certificateKey, certificate,
                 certificateKeyProvider, externalDecryptionProcess, encryptMetadata, digestAlgorithm);
@@ -222,10 +204,13 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         PublicKeyRecipient recipient = recipients.get(index);
         byte[] cms = recipient.getCms();
 
-        if (cms != null) return cms;
+        if (cms != null) {
+            return cms;
+        }
 
         Certificate certificate = recipient.getCertificate();
-        //constants permissions: PdfWriter.AllowCopy | PdfWriter.AllowPrinting | PdfWriter.AllowScreenReaders | PdfWriter.AllowAssembly;
+        //constants permissions: PdfWriter.AllowCopy | PdfWriter.AllowPrinting | PdfWriter.AllowScreenReaders |
+        // PdfWriter.AllowAssembly;
         int permission = recipient.getPermission();
         // NOTE! Added while porting to itext7
         // Previous strange code was:
@@ -252,9 +237,11 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         pkcs7input[23] = one;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ASN1OutputStream k = CryptoUtil.createAsn1OutputStream(baos, ASN1Encoding.DER);
-        ASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate) certificate);
-        k.writeObject(obj);
+        try (IASN1OutputStream k =
+                CryptoUtil.createAsn1OutputStream(baos, BOUNCY_CASTLE_FACTORY.createASN1Encoding().getDer())) {
+            IASN1Primitive obj = createDERForRecipient(pkcs7input, (X509Certificate) certificate);
+            k.writeObject(obj);
+        }
         cms = baos.toByteArray();
         recipient.setCms(cms);
 
@@ -268,13 +255,9 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
             try {
                 cms = getEncodedRecipient(i);
                 EncodedRecipients.add(new PdfLiteral(StreamUtil.createEscapedString(cms)));
-            } catch (GeneralSecurityException e) {
+            } catch (GeneralSecurityException | IOException e) {
                 EncodedRecipients = null;
-                // break was added while porting to itext7
-                break;
-            } catch (IOException e) {
-                EncodedRecipients = null;
-                // break was added while porting to itext7
+                // break was added while porting to itext
                 break;
             }
         }
@@ -282,32 +265,39 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         return EncodedRecipients;
     }
 
-    private ASN1Primitive createDERForRecipient(byte[] in, X509Certificate cert)
+    private IASN1Primitive createDERForRecipient(byte[] in, X509Certificate cert)
             throws IOException, GeneralSecurityException {
         EncryptionUtils.DERForRecipientParams parameters = EncryptionUtils.calculateDERForRecipientParams(in);
 
-        KeyTransRecipientInfo keytransrecipientinfo = computeRecipientInfo(cert, parameters.abyte0);
-        DEROctetString deroctetstring = new DEROctetString(parameters.abyte1);
-        DERSet derset = new DERSet(new RecipientInfo(keytransrecipientinfo));
-        EncryptedContentInfo encryptedcontentinfo =
-                new EncryptedContentInfo(PKCSObjectIdentifiers.data, parameters.algorithmIdentifier, deroctetstring);
-        EnvelopedData env = new EnvelopedData(null, derset, encryptedcontentinfo, (ASN1Set) null);
-        ContentInfo contentinfo = new ContentInfo(PKCSObjectIdentifiers.envelopedData, env);
+        IKeyTransRecipientInfo keytransrecipientinfo = computeRecipientInfo(cert, parameters.abyte0);
+        IDEROctetString deroctetstring = BOUNCY_CASTLE_FACTORY.createDEROctetString(parameters.abyte1);
+        IDERSet derset = BOUNCY_CASTLE_FACTORY.createDERSet(
+                BOUNCY_CASTLE_FACTORY.createRecipientInfo(keytransrecipientinfo));
+        IEncryptedContentInfo encryptedcontentinfo =
+                BOUNCY_CASTLE_FACTORY.createEncryptedContentInfo(
+                        BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers().getData(), parameters.algorithmIdentifier,
+                        deroctetstring);
+        IEnvelopedData env = BOUNCY_CASTLE_FACTORY.createEnvelopedData(BOUNCY_CASTLE_FACTORY.createNullOriginatorInfo(),
+                derset, encryptedcontentinfo, BOUNCY_CASTLE_FACTORY.createNullASN1Set());
+        IContentInfo contentinfo = BOUNCY_CASTLE_FACTORY.createContentInfo(
+                BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers().getEnvelopedData(), env);
         return contentinfo.toASN1Primitive();
     }
 
-    private KeyTransRecipientInfo computeRecipientInfo(X509Certificate x509certificate, byte[] abyte0)
+    private IKeyTransRecipientInfo computeRecipientInfo(X509Certificate x509Certificate, byte[] abyte0)
             throws GeneralSecurityException, IOException {
-        ASN1InputStream asn1inputstream = new ASN1InputStream(new ByteArrayInputStream(x509certificate.getTBSCertificate()));
-        TBSCertificateStructure tbscertificatestructure = TBSCertificateStructure.getInstance(asn1inputstream.readObject());
-        assert tbscertificatestructure != null;
-        AlgorithmIdentifier algorithmidentifier = tbscertificatestructure.getSubjectPublicKeyInfo().getAlgorithm();
-        IssuerAndSerialNumber issuerandserialnumber = new IssuerAndSerialNumber(
-                tbscertificatestructure.getIssuer(),
-                tbscertificatestructure.getSerialNumber().getValue());
-        byte[] cipheredBytes = EncryptionUtils.cipherBytes(x509certificate, abyte0, algorithmidentifier);
-        DEROctetString deroctetstring = new DEROctetString(cipheredBytes);
-        RecipientIdentifier recipId = new RecipientIdentifier(issuerandserialnumber);
-        return new KeyTransRecipientInfo(recipId, algorithmidentifier, deroctetstring);
+        ITBSCertificate tbsCertificate;
+        try (IASN1InputStream asn1InputStream = BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                new ByteArrayInputStream(x509Certificate.getTBSCertificate()))) {
+            tbsCertificate = BOUNCY_CASTLE_FACTORY.createTBSCertificate(asn1InputStream.readObject());
+        }
+        IAlgorithmIdentifier algorithmIdentifier = tbsCertificate.getSubjectPublicKeyInfo().getAlgorithm();
+        IIssuerAndSerialNumber issuerAndSerialNumber = BOUNCY_CASTLE_FACTORY.createIssuerAndSerialNumber(
+                tbsCertificate.getIssuer(),
+                tbsCertificate.getSerialNumber().getValue());
+        byte[] cipheredBytes = EncryptionUtils.cipherBytes(x509Certificate, abyte0, algorithmIdentifier);
+        IDEROctetString derOctetString = BOUNCY_CASTLE_FACTORY.createDEROctetString(cipheredBytes);
+        IRecipientIdentifier recipId = BOUNCY_CASTLE_FACTORY.createRecipientIdentifier(issuerAndSerialNumber);
+        return BOUNCY_CASTLE_FACTORY.createKeyTransRecipientInfo(recipId, algorithmIdentifier, derOctetString);
     }
 }

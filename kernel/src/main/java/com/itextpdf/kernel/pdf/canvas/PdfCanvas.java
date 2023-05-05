@@ -1,48 +1,28 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.ActualTextIterator;
 import com.itextpdf.io.font.otf.Glyph;
@@ -745,7 +725,7 @@ public class PdfCanvas {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
-        float fontSize = currentGs.getFontSize() / 1000f;
+        final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         List<GlyphLine.GlyphLinePart> glyphLineParts = iteratorToList(iterator);
@@ -866,7 +846,7 @@ public class PdfCanvas {
      * XAdvance is not taken into account neither before `from` nor after `to` glyphs.
      */
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
-        float fontSize = currentGs.getFontSize() / 1000f;
+        final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
         float width = 0;
@@ -885,7 +865,7 @@ public class PdfCanvas {
     }
 
     private float getSubrangeYDelta(GlyphLine text, int from, int to) {
-        float fontSize = currentGs.getFontSize() / 1000f;
+        final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float yDelta = 0;
         for (int iter = from; iter < to; iter++) {
             yDelta += text.get(iter).getYAdvance() * fontSize;
@@ -2038,28 +2018,6 @@ public class PdfCanvas {
     }
 
     /**
-     * Adds {@link PdfXObject} to the specified position in the case of {@link PdfImageXObject}
-     * or moves to the specified offset in the case of {@link PdfFormXObject}.
-     *
-     * @param xObject the xObject to add
-     * @param x the horizontal offset of the formXObject position or the horizontal position of the imageXObject
-     * @param y the vertical offset of the formXObject position or the vertical position of the imageXObject
-     * @return the current canvas
-     * @deprecated will be removed in 7.2, use {@link #addXObjectAt(PdfXObject, float, float)} instead
-     */
-    @Deprecated
-    //TODO DEVSIX-5729 Remove deprecated api in PdfCanvas
-    public PdfCanvas addXObject(PdfXObject xObject, float x, float y) {
-        if (xObject instanceof PdfFormXObject) {
-            return addForm((PdfFormXObject) xObject, x, y);
-        } else if (xObject instanceof PdfImageXObject) {
-            return addImageAt((PdfImageXObject) xObject, x, y);
-        } else {
-            throw new IllegalArgumentException("PdfFormXObject or PdfImageXObject expected.");
-        }
-    }
-
-    /**
      * Adds {@link PdfXObject} fitted into specific rectangle on canvas.
      *
      * @param xObject the xObject to add
@@ -2329,21 +2287,6 @@ public class PdfCanvas {
 
         float[] result = PdfCanvas.calculateTransformationMatrix(rectMin, rectMax, bBoxMin, bBoxMax);
         return addFormWithTransformationMatrix(form, result[0], result[1], result[2], result[3], result[4], result[5], false);
-    }
-
-    /**
-     * Adds {@link PdfFormXObject} to the canvas and moves to the specified offset.
-     *
-     * @param form the formXObject to add
-     * @param x the horizontal offset of the formXObject position
-     * @param y the vertical offset of the formXObject position
-     * @return the current canvas
-     * @deprecated will be removed in 7.2, use {@link #addFormAt(PdfFormXObject, float, float)} instead
-     */
-    @Deprecated
-    //TODO DEVSIX-5729 Remove deprecated api in PdfCanvas
-    private PdfCanvas addForm(PdfFormXObject form, float x, float y) {
-        return addFormWithTransformationMatrix(form, 1, 0, 0, 1, x, y, true);
     }
 
     /**

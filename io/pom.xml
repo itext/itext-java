@@ -4,10 +4,10 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>7.2.5</version>
+    <version>8.0.0</version>
   </parent>
   <artifactId>io-android</artifactId>
-  <name>iText 7 - io</name>
+  <name>iText - io</name>
   <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
@@ -21,6 +21,10 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- In Open JDK Xerces library is embedded as the default implementation used for JAXP implementation. 
+    In Android versions that we've tested Android JRE contained its own JAXP implementation. For consistency
+    of code and behavior between vanilla and Android versions, we decided to explicitly add dependency on 
+    Xerces in android-version of itext library.-->
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
@@ -30,7 +34,7 @@
     Cryptographic Service Provider (CSP). So add dependency to BouncyCastle provider. -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15to18</artifactId>
+      <artifactId>bcpkix-jdk15on</artifactId>
       <version>${bouncycastle.version}</version>
       <optional>true</optional>
       <scope>test</scope>

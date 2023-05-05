@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
-<f href="../itext7/java/itextcore/forms/target/test/com/itextpdf/forms/PdfFormFieldTest/formFieldTest04.pdf"/>
+<f href="../itext/java/itextcore/forms/target/test/com/itextpdf/forms/PdfFormFieldTest/formFieldTest04.pdf"/>
 <fields>
 <field name="Check Box2">
 <value>Да</value>

@@ -4,10 +4,10 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>7.2.5</version>
+    <version>8.0.0</version>
   </parent>
   <artifactId>pdfa-android</artifactId>
-  <name>iText 7 - pdfa</name>
+  <name>iText - pdfa</name>
   <url>https://itextpdf.com/</url>
   <dependencies>
     <dependency>
@@ -25,7 +25,6 @@
       <groupId>com.itextpdf.android</groupId>
       <artifactId>forms-android</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.itextpdf.android</groupId>
@@ -34,25 +33,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*.java</include>
-          </includes>
-          <groups>${integrationtests}</groups>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <groups>${unittests}</groups>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

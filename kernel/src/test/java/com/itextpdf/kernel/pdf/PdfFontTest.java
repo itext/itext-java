@@ -1,48 +1,29 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramDescriptor;
@@ -55,8 +36,8 @@ import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -75,13 +56,13 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
 
 @Category(IntegrationTest.class)
 public class PdfFontTest extends ExtendedITextTest {
@@ -91,7 +72,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfFontTest/";
 
     static final String author = "Alexander Chingarev";
-    static final String creator = "iText 7";
+    static final String creator = "iText";
 
     @BeforeClass
     public static void beforeClass() {
@@ -293,7 +274,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String testString = "A A A A E E E ~ \u00E9";
 
         //writing type3 font characters
-        String title = "Type3 font iText 7 Document";
+        String title = "Type3 font iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -386,7 +367,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String testString = "A A A A E E E ~ \u00E9";
 
         //writing type3 font characters
-        String title = "Type3 font iText 7 Document";
+        String title = "Type3 font iText Document";
 
         PdfWriter writer = new PdfWriter(filename, new WriterProperties());
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -484,7 +465,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithHelveticaOblique() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithHelveticaOblique.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelveticaOblique.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -519,7 +500,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String filename = destinationFolder + "DocumentWithHelveticaBoldOblique.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithHelveticaBoldOblique.pdf";
 
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -553,7 +534,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithCourierBold() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCourierBold.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCourierBold.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -587,7 +568,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithType1FontAfm() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10Afm.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -635,7 +616,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithType1FontPfm() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithCMR10Pfm.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Pfm.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -669,7 +650,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithTrueTypeFont1() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeFont1.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont1.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -720,7 +701,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithTrueTypeFont1NotEmbedded() throws IOException, InterruptedException {
         String filename = destinationFolder + "createDocumentWithTrueTypeFont1NotEmbedded.pdf";
         String cmpFilename = sourceFolder + "cmp_createDocumentWithTrueTypeFont1NotEmbedded.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -771,7 +752,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithTrueTypeOtfFont() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTrueTypeOtfFont.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeOtfFont.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -864,7 +845,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void createDocumentWithType0OtfFont() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithType0OtfFont.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithType0OtfFont.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -919,7 +900,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName = sourceFolder + "type3Font.pdf";
         String outputFileName = destinationFolder + "type3Font_update.pdf";
         String cmpOutputFileName = sourceFolder + "cmp_type3Font_update.pdf";
-        String title = "Type3 font iText 7 Document";
+        String title = "Type3 font iText Document";
 
         int numberOfGlyphs = 0;
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName),
@@ -960,7 +941,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName = sourceFolder + "type3Font.pdf";
         String outputFileName = destinationFolder + "type3Font_new.pdf";
         String cmpOutputFileName = sourceFolder + "cmp_type3Font_new.pdf";
-        String title = "Type3 font iText 7 Document";
+        String title = "Type3 font iText Document";
 
         int numberOfGlyphs = 0;
         try (PdfDocument inputPdfDoc = new PdfDocument(new PdfReader(inputFileName));
@@ -1037,7 +1018,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName1 = sourceFolder + "DocumentWithCMR10Afm.pdf";
         String filename = destinationFolder + "DocumentWithCMR10Afm_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithCMR10Afm_new.pdf";
-        String title = "Type 1 font iText 7 Document";
+        String title = "Type 1 font iText Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -1109,7 +1090,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeFont2.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeFont2_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeFont2_new.pdf";
-        String title = "True Type font iText 7 Document";
+        String title = "True Type font iText Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -1177,7 +1158,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_update.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_update.pdf";
-        String title = "Type0 font iText 7 Document";
+        String title = "Type0 font iText Document";
 
         PdfReader reader = new PdfReader(inputFileName1);
         PdfWriter writer = new PdfWriter(filename);
@@ -1212,7 +1193,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName1 = sourceFolder + "DocumentWithKozmin.pdf";
         String filename = destinationFolder + "DocumentWithKozmin_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithKozmin_new.pdf";
-        String title = "Type0 font iText 7 Document";
+        String title = "Type0 font iText Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -1249,7 +1230,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0_new.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0_new.pdf";
-        String title = "Type0 font iText 7 Document";
+        String title = "Type0 font iText Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -1286,7 +1267,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName1 = sourceFolder + "DocumentWithTrueTypeAsType0.pdf";
         String filename = destinationFolder + "DocumentWithTrueTypeAsType0_update.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTrueTypeAsType0_update.pdf";
-        String title = "Type0 font iText 7 Document";
+        String title = "Type0 font iText Document";
 
         PdfReader reader = new PdfReader(inputFileName1);
         PdfWriter writer = new PdfWriter(filename);
@@ -1320,7 +1301,7 @@ public class PdfFontTest extends ExtendedITextTest {
         String inputFileName1 = sourceFolder + "fontWithToUnicode.pdf";
         String filename = destinationFolder + "fontWithToUnicode_new.pdf";
         String cmpFilename = sourceFolder + "cmp_fontWithToUnicode_new.pdf";
-        String title = "Type1 font iText 7 Document";
+        String title = "Type1 font iText Document";
 
         PdfReader reader1 = new PdfReader(inputFileName1);
         PdfDocument inputPdfDoc1 = new PdfDocument(reader1);
@@ -1442,7 +1423,7 @@ public class PdfFontTest extends ExtendedITextTest {
         } catch (com.itextpdf.io.exceptions.IOException e) {
             message = e.getMessage();
         }
-        Assert.assertEquals(MessageFormatUtil.format(com.itextpdf.io.exceptions.IOException._1IsNotAnAfmOrPfmFontFile, font), message);
+        Assert.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.IS_NOT_AN_AFM_OR_PFM_FONT_FILE, font), message);
 
     }
 
@@ -1519,7 +1500,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testWriteTTC() throws IOException, InterruptedException {
         String filename = destinationFolder + "DocumentWithTTC.pdf";
         String cmpFilename = sourceFolder + "cmp_DocumentWithTTC.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
@@ -1574,7 +1555,7 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testWriteTTCNotEmbedded() throws IOException, InterruptedException {
         String filename = destinationFolder + "testWriteTTCNotEmbedded.pdf";
         String cmpFilename = sourceFolder + "cmp_testWriteTTCNotEmbedded.pdf";
-        String title = "Empty iText 7 Document";
+        String title = "Empty iText Document";
 
         PdfWriter writer = new PdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);

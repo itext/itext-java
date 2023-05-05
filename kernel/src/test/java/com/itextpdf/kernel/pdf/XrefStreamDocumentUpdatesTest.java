@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -22,11 +22,14 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
 import org.junit.Assert;
@@ -34,7 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
@@ -133,6 +136,8 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+            ignore = true))
     public void checkEncryptionInXrefStmInIncrementsTest() throws IOException, InterruptedException {
         String inFileName = sourceFolder + "encryptedDocWithXrefStm.pdf";
         String outFileName = destinationFolder + "checkEncryptionInXrefStmInIncrements.pdf";

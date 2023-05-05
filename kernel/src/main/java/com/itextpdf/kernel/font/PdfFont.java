@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.font;
 
@@ -47,8 +26,8 @@ import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.TextUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -108,6 +87,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Get glyph by unicode
      *
      * @param unicode a unicode code point
+     *
      * @return {@link Glyph} if it exists or .NOTDEF if supported, otherwise {@code null}.
      */
     public abstract Glyph getGlyph(int unicode);
@@ -116,6 +96,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Check whether font contains glyph with specified unicode.
      *
      * @param unicode a unicode code point
+     *
      * @return true if font contains glyph, represented with the unicode code point,
      * otherwise false.
      */
@@ -143,6 +124,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param from   from index of the text.
      * @param to     to index of the text.
      * @param glyphs array for a new glyphs, shall not be null.
+     *
      * @return number of processed chars from text.
      */
     public abstract int appendGlyphs(String text, int from, int to, List<Glyph> glyphs);
@@ -154,6 +136,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * @param text   String to convert to glyphs.
      * @param from   from index of the text.
      * @param glyphs array for a new glyph, shall not be null.
+     *
      * @return number of processed chars: 2 in case surrogate pair, otherwise 1
      */
     public abstract int appendAnyGlyph(String text, int from, List<Glyph> glyphs);
@@ -164,6 +147,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * used are stored.
      *
      * @param text the text to convert
+     *
      * @return the conversion
      */
     public abstract byte[] convertToBytes(String text);
@@ -210,6 +194,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * Returns the width of a certain character of this font in 1000 normalized units.
      *
      * @param unicode a certain character.
+     *
      * @return a width in Text Space.
      */
     public int getWidth(int unicode) {
@@ -222,16 +207,18 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param unicode  a certain character.
      * @param fontSize the font size.
+     *
      * @return a width in points.
      */
     public float getWidth(int unicode, float fontSize) {
-        return getWidth(unicode) * fontSize / FontProgram.UNITS_NORMALIZATION;
+        return FontProgram.convertTextSpaceToGlyphSpace(getWidth(unicode) * fontSize);
     }
 
     /**
      * Returns the width of a string of this font in 1000 normalized units.
      *
      * @param text a string content.
+     *
      * @return a width of string in Text Space.
      */
     public int getWidth(String text) {
@@ -257,21 +244,23 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param text     the {@code String} to get the width of
      * @param fontSize the font size
+     *
      * @return the width in points
      */
     public float getWidth(String text, float fontSize) {
-        return getWidth(text) * fontSize / FontProgram.UNITS_NORMALIZATION;
+        return FontProgram.convertTextSpaceToGlyphSpace(getWidth(text) * fontSize);
     }
 
     /**
      * Gets the descent of a {@code String} in points. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
+     * less than or equal to zero even if all the characters have a higher descent.
      *
      * @param text     the {@code String} to get the descent of
      * @param fontSize the font size
+     *
      * @return the descent in points
      */
-    public int getDescent(String text, float fontSize) {
+    public float getDescent(String text, float fontSize) {
         int min = 0;
         for (int k = 0; k < text.length(); ++k) {
             int ch;
@@ -291,18 +280,19 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
-        return (int) (min * fontSize / FontProgram.UNITS_NORMALIZATION);
+        return FontProgram.convertTextSpaceToGlyphSpace(min * fontSize);
     }
 
     /**
      * Gets the descent of a char code in points. The descent will always be
-     * less than or equal to zero even if all the characters have an higher descent.
+     * less than or equal to zero even if all the characters have a higher descent.
      *
      * @param unicode  the char code to get the descent of
      * @param fontSize the font size
+     *
      * @return the descent in points
      */
-    public int getDescent(int unicode, float fontSize) {
+    public float getDescent(int unicode, float fontSize) {
         int min = 0;
         Glyph glyph = getGlyph(unicode);
         if (glyph == null) {
@@ -315,7 +305,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             min = getFontProgram().getFontMetrics().getTypoDescender();
         }
 
-        return (int) (min * fontSize / FontProgram.UNITS_NORMALIZATION);
+        return FontProgram.convertTextSpaceToGlyphSpace(min * fontSize);
     }
 
     /**
@@ -324,9 +314,10 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param text     the {@code String} to get the ascent of
      * @param fontSize the font size
+     *
      * @return the ascent in points
      */
-    public int getAscent(String text, float fontSize) {
+    public float getAscent(String text, float fontSize) {
         int max = 0;
         for (int k = 0; k < text.length(); ++k) {
             int ch;
@@ -347,7 +338,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
-        return (int) (max * fontSize / FontProgram.UNITS_NORMALIZATION);
+        return FontProgram.convertTextSpaceToGlyphSpace(max * fontSize);
     }
 
     /**
@@ -356,9 +347,10 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param unicode  the char code to get the ascent of
      * @param fontSize the font size
+     *
      * @return the ascent in points
      */
-    public int getAscent(int unicode, float fontSize) {
+    public float getAscent(int unicode, float fontSize) {
         int max = 0;
         Glyph glyph = getGlyph(unicode);
         if (glyph == null) {
@@ -371,7 +363,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
             max = getFontProgram().getFontMetrics().getTypoAscender();
         }
 
-        return (int) (max * fontSize / FontProgram.UNITS_NORMALIZATION);
+        return FontProgram.convertTextSpaceToGlyphSpace(max * fontSize);
     }
 
     public FontProgram getFontProgram() {
@@ -399,6 +391,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * the full font will be included and all subset ranges will be removed.
      *
      * @param subset new value of property subset
+     *
      * @see #addSubsetRange(int[])
      */
     public void setSubset(boolean subset) {
@@ -464,7 +457,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param fontProgram a font name or path to a font program
      * @param encoding    an encoding or CMAP
+     *
      * @return true, if the PdfFont was built with the fontProgram and encoding. Otherwise false.
+     *
      * @see PdfDocument#findFont(String, String)
      * @see FontProgram#isBuiltWith(String)
      * @see com.itextpdf.io.font.FontEncoding#isBuiltWith(String)
@@ -496,9 +491,10 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Adds a unique subset prefix to be added to the font name when the font is embedded and subsetted.
      *
-     * @param fontName the original font name.
-     * @param isSubset denotes whether font in question is subsetted, i.e. only used symbols are kept in it.
+     * @param fontName   the original font name.
+     * @param isSubset   denotes whether font in question is subsetted, i.e. only used symbols are kept in it.
      * @param isEmbedded denotes whether font in question is embedded into the PDF document.
+     *
      * @return the font name prefixed with subset if isSubset and isEmbedded are true,
      * otherwise original font name is returned intact.
      */
@@ -514,7 +510,9 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param fontStreamBytes   original font data, must be not null.
      * @param fontStreamLengths array to generate {@code Length*} keys, must be not null.
+     *
      * @return the PdfStream containing the font or {@code null}, if there is an error reading the font.
+     *
      * @throws PdfException Method will throw exception if {@code fontStreamBytes} is {@code null}.
      */
     protected PdfStream getPdfFontStream(byte[] fontStreamBytes, int[] fontStreamLengths) {
@@ -535,6 +533,7 @@ public abstract class PdfFont extends PdfObjectWrapper<PdfDictionary> {
      * If there is no PdfDocument, mark the object as {@code MUST_BE_INDIRECT}.
      *
      * @param obj an object to make indirect.
+     *
      * @return if current object isn't indirect, returns {@code false}, otherwise {@code tree}
      */
     boolean makeObjectIndirect(PdfObject obj) {

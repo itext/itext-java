@@ -19,6 +19,7 @@
 package com.itextpdf.io.font.woff2;
 
 import com.itextpdf.io.exceptions.FontCompressionException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.asU8;
 import static com.itextpdf.io.font.woff2.JavaUnsignedUtil.toU16;
@@ -69,11 +70,11 @@ class Buffer {
 
     public void read(byte[] data, int data_offset, int n_bytes) {
         if (offset + n_bytes > length || offset > length - n_bytes) {
-            throw new FontCompressionException(FontCompressionException.BUFFER_READ_FAILED);
+            throw new FontCompressionException(IoExceptionMessageConstant.BUFFER_READ_FAILED);
         }
         if (data != null) {
             if (data_offset + n_bytes > data.length || data_offset > data.length - n_bytes) {
-                throw new FontCompressionException(FontCompressionException.BUFFER_READ_FAILED);
+                throw new FontCompressionException(IoExceptionMessageConstant.BUFFER_READ_FAILED);
             }
             System.arraycopy(this.data, initial_offset + offset, data, data_offset, n_bytes);
         }

@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
@@ -64,6 +43,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -225,7 +205,7 @@ public class TagStructureContext {
      * See {@link #getDocumentDefaultNamespace()} for more info.
      *
      * <p>
-     * Be careful when changing this property value. It is most recommended to do it right after the {@link PdfDocument} was
+     * Be careful when changing this property value. It is most recommended doing it right after the {@link PdfDocument} was
      * created, before any content was added. Changing this value after any content was added might result in the mingled
      * tag structure from the namespaces point of view. So in order to maintain the document consistent but in the namespace
      * different from default, set this value before any modifications to the document were made and before
@@ -355,6 +335,20 @@ public class TagStructureContext {
      * otherwise returns null
      */
     public TagTreePointer removeAnnotationTag(PdfAnnotation annotation) {
+        return removeAnnotationTag(annotation, false);
+    }
+
+    /**
+     * Removes annotation content item from the tag structure and sets autoTaggingPointer if true is passed.
+     * If annotation is not added to the document or is not tagged, nothing will happen.
+     *
+     * @param annotation            the {@link PdfAnnotation} that will be removed from the tag structure
+     * @param setAutoTaggingPointer true if {@link TagTreePointer} should be set to autoTaggingPointer
+     *
+     * @return {@link TagTreePointer} instance which points at annotation tag parent if annotation was removed,
+     * otherwise returns null
+     */
+    public TagTreePointer removeAnnotationTag(PdfAnnotation annotation, boolean setAutoTaggingPointer) {
         PdfStructElem structElem = null;
         PdfDictionary annotDic = annotation.getPdfObject();
 
@@ -372,7 +366,11 @@ public class TagStructureContext {
         annotDic.setModified();
 
         if (structElem != null) {
-            return new TagTreePointer(document).setCurrentStructElem(structElem);
+            TagTreePointer pointer = new TagTreePointer(document).setCurrentStructElem(structElem);
+            if (setAutoTaggingPointer) {
+                autoTaggingPointer = pointer;
+            }
+            return pointer;
         }
         return null;
     }
@@ -511,6 +509,28 @@ public class TagStructureContext {
      */
     public PdfStructElem getPointerStructElem(TagTreePointer pointer) {
         return pointer.getCurrentStructElem();
+    }
+
+    /**
+     * Retrieve a pointer to a structure element by ID.
+     *
+     * @param id  the ID of the element to retrieve
+     * @return a {@link TagTreePointer} to the element in question, or null if there is none.
+     */
+    public TagTreePointer getTagPointerById(byte[] id) {
+        PdfStructElem elem = document.getStructTreeRoot().getIdTree().getStructElemById(id);
+        return elem == null ? null : new TagTreePointer(document).setCurrentStructElem(elem);
+    }
+
+    /**
+     * Retrieve a pointer to a structure element by ID. * The ID will be encoded as a
+     * UTF-8 string and passed to {@link TagStructureContext#getTagPointerById(byte[])}.
+     *
+     * @param id  the ID of the element to retrieve
+     * @return a {@link TagTreePointer} to the element in question, or null if there is none.
+     */
+    public TagTreePointer getTagPointerByIdString(String id) {
+        return this.getTagPointerById(id.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

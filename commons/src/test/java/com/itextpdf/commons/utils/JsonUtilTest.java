@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -68,7 +68,6 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    @org.junit.Ignore
     public void serializeInstanceWithEnumStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "classWithEnum.json";
 
@@ -101,7 +100,6 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    @org.junit.Ignore
     public void serializeToMinimalInstanceWithEnumStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "minimalClassWithEnum.json";
 
@@ -182,7 +180,6 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    @org.junit.Ignore
     public void serializeComplexStructureStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "complexStructure.json";
 
@@ -215,7 +212,6 @@ public class JsonUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    @org.junit.Ignore
     public void serializeToMinimalComplexStructureStringTest() throws IOException {
         String cmp = SOURCE_FOLDER + "minimalComplexStructure.json";
 

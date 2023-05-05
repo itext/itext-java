@@ -1,48 +1,36 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
@@ -74,15 +62,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
-import org.bouncycastle.asn1.ocsp.OCSPResponse;
-import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
-import org.bouncycastle.asn1.ocsp.ResponseBytes;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +72,8 @@ import org.slf4j.LoggerFactory;
  */
 public class LtvVerification {
 
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
     private Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
 
     private PdfDocument document;
@@ -101,6 +82,7 @@ public class LtvVerification {
     private Map<PdfName, ValidationData> validated = new HashMap<>();
     private boolean used = false;
     private String securityProviderCode = null;
+
     /**
      * What type of verification to include.
      */
@@ -151,6 +133,7 @@ public class LtvVerification {
          */
         NO
     }
+
     /**
      * The verification constructor. This class should only be created with
      * PdfStamper.getLtvVerification() otherwise the information will not be
@@ -169,10 +152,10 @@ public class LtvVerification {
      * PdfStamper.getLtvVerification() otherwise the information will not be
      * added to the Pdf.
      *
-     * @param document The {@link PdfDocument} to apply the validation to.
+     * @param document             The {@link PdfDocument} to apply the validation to.
      * @param securityProviderCode Security provider to use
      */
-    public LtvVerification(PdfDocument document, String securityProviderCode){
+    public LtvVerification(PdfDocument document, String securityProviderCode) {
         this(document);
         this.securityProviderCode = securityProviderCode;
     }
@@ -181,29 +164,32 @@ public class LtvVerification {
      * Add verification for a particular signature.
      *
      * @param signatureName the signature to validate (it may be a timestamp)
-     * @param ocsp the interface to get the OCSP
-     * @param crl the interface to get the CRL
-     * @param certOption options as to how many certificates to include
-     * @param level the validation options to include
-     * @param certInclude certificate inclusion options
+     * @param ocsp          the interface to get the OCSP
+     * @param crl           the interface to get the CRL
+     * @param certOption    options as to how many certificates to include
+     * @param level         the validation options to include
+     * @param certInclude   certificate inclusion options
+     *
      * @return true if a validation was generated, false otherwise
+     *
      * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
-     * is not available
-     * @throws IOException signals that an I/O exception has occurred
+     *                                  is not available
+     * @throws IOException              signals that an I/O exception has occurred
      */
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
             Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
-        if (used)
+        if (used) {
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
+        }
         PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
         Certificate[] xc = pk.getCertificates();
         X509Certificate cert;
         X509Certificate signingCert = pk.getSigningCertificate();
         ValidationData vd = new ValidationData();
-        for (int k = 0; k < xc.length; ++k) {
-            cert = (X509Certificate)xc[k];
-            LOGGER.info("Certificate: " + cert.getSubjectDN());
+        for (Certificate certificate : xc) {
+            cert = (X509Certificate) certificate;
+            LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
             if (certOption == CertificateOption.SIGNING_CERTIFICATE
                     && !cert.equals(signingCert)) {
                 continue;
@@ -248,16 +234,52 @@ public class LtvVerification {
     }
 
     /**
+     * Adds verification to the signature.
+     *
+     * @param signatureName name of the signature
+     * @param ocsps         collection of DER-encoded BasicOCSPResponses
+     * @param crls          collection of DER-encoded CRLs
+     * @param certs         collection of DER-encoded certificates
+     *
+     * @return boolean
+     *
+     * @throws IOException              signals that an I/O exception has occurred
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     *                                  is not available
+     */
+    public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls,
+            Collection<byte[]> certs) throws IOException, GeneralSecurityException {
+        if (used) {
+            throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
+        }
+        ValidationData vd = new ValidationData();
+        if (ocsps != null) {
+            for (byte[] ocsp : ocsps) {
+                vd.ocsps.add(buildOCSPResponse(ocsp));
+            }
+        }
+        if (crls != null) {
+            vd.crls.addAll(crls);
+        }
+        if (certs != null) {
+            vd.certs.addAll(certs);
+        }
+        validated.put(getSignatureHashKey(signatureName), vd);
+        return true;
+    }
+
+    /**
      * Get the issuing certificate for a child certificate.
      *
-     * @param cert	the certificate for which we search the parent
-     * @param certs	an array with certificates that contains the parent
+     * @param cert  the certificate for which we search the parent
+     * @param certs an array with certificates that contains the parent
+     *
      * @return the parent certificate
      */
-    private X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
+    X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
         X509Certificate parent;
-        for (int i = 0; i < certs.length; i++) {
-            parent = (X509Certificate)certs[i];
+        for (Certificate certificate : certs) {
+            parent = (X509Certificate) certificate;
             if (!cert.getIssuerDN().equals(parent.getSubjectDN())) {
                 continue;
             }
@@ -271,48 +293,14 @@ public class LtvVerification {
         return null;
     }
 
-    /**
-     * Adds verification to the signature.
-     *
-     * @param signatureName name of the signature
-     * @param ocsps collection of DER-encoded BasicOCSPResponses
-     * @param crls collection of DER-encoded CRLs
-     * @param certs collection of DER-encoded certificates
-     * @return boolean
-     * @throws IOException signals that an I/O exception has occurred
-     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
-     * is not available
-     */
-    public boolean addVerification(String signatureName, Collection<byte[]> ocsps, Collection<byte[]> crls,
-            Collection<byte[]> certs) throws IOException, GeneralSecurityException {
-        if (used)
-            throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
-        ValidationData vd = new ValidationData();
-        if (ocsps != null) {
-            for (byte[] ocsp : ocsps) {
-                vd.ocsps.add(buildOCSPResponse(ocsp));
-            }
-        }
-        if (crls != null) {
-            for (byte[] crl : crls) {
-                vd.crls.add(crl);
-            }
-        }
-        if (certs != null) {
-            for (byte[] cert : certs) {
-                vd.certs.add(cert);
-            }
-        }
-        validated.put(getSignatureHashKey(signatureName), vd);
-        return true;
-    }
-
     private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
-        DEROctetString doctet = new DEROctetString(basicOcspResponse);
-        OCSPResponseStatus respStatus = new OCSPResponseStatus(OCSPRespBuilder.SUCCESSFUL);
-        ResponseBytes responseBytes = new ResponseBytes(OCSPObjectIdentifiers.id_pkix_ocsp_basic, doctet);
-        OCSPResponse ocspResponse = new OCSPResponse(respStatus, responseBytes);
-        return new OCSPResp(ocspResponse).getEncoded();
+        IDEROctetString doctet = BOUNCY_CASTLE_FACTORY.createDEROctetString(basicOcspResponse);
+        IOCSPResponseStatus respStatus = BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus(
+                BOUNCY_CASTLE_FACTORY.createOCSPRespBuilderInstance().getSuccessful());
+        IResponseBytes responseBytes = BOUNCY_CASTLE_FACTORY.createResponseBytes(
+                BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspBasic(), doctet);
+        IOCSPResponse ocspResponse = BOUNCY_CASTLE_FACTORY.createOCSPResponse(respStatus, responseBytes);
+        return BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspResponse).getEncoded();
     }
 
     private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
@@ -321,9 +309,10 @@ public class LtvVerification {
         byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
         byte[] bt = null;
         if (PdfName.ETSI_RFC3161.equals(sig.getSubFilter())) {
-            ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(bc));
-            ASN1Primitive pkcs = din.readObject();
-            bc = pkcs.getEncoded();
+            try (IASN1InputStream din = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(bc))) {
+                IASN1Primitive pkcs = din.readObject();
+                bc = pkcs.getEncoded();
+            }
         }
         bt = hashBytesSha1(bc);
         return new PdfName(convertToHex(bt));
@@ -338,8 +327,9 @@ public class LtvVerification {
      * Merges the validation with any validation already in the document or creates a new one.
      */
     public void merge() {
-        if (used || validated.size() == 0)
+        if (used || validated.size() == 0) {
             return;
+        }
         used = true;
         PdfDictionary catalog = document.getCatalog().getPdfObject();
         PdfObject dss = catalog.get(PdfName.DSS);
@@ -487,12 +477,12 @@ public class LtvVerification {
         public List<byte[]> certs = new ArrayList<>();
     }
 
-    // TODO: Refactor. Copied from itext5 Utilities
     /**
      * Converts an array of bytes to a String of hexadecimal values
      *
-     * @param bytes	a byte array
-     * @return	the same bytes expressed as hexadecimal values
+     * @param bytes a byte array
+     *
+     * @return the same bytes expressed as hexadecimal values
      */
     public static String convertToHex(byte[] bytes) {
         ByteBuffer buf = new ByteBuffer();

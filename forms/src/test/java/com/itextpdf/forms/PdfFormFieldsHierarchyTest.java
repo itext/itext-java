@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -59,7 +59,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
 
-        Map<String, PdfFormField> formFields = acroForm.getFormFields();
+        Map<String, PdfFormField> formFields = acroForm.getAllFormFields();
 
         for (String key : formFields.keySet()) {
             PdfFormField field = acroForm.getField(key);
@@ -84,7 +84,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
 
         fields.get("field_1").setValue("1111 2222 3333 4444");
         fields.get("field_2").setValue("1111 2222 3333 4444");
@@ -93,27 +93,26 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(inPdf,
-                sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", inPdf, "diff_"));
+                sourceFolder + "cmp_autosizeInheritedDAFormFields.pdf", destinationFolder, "diff_"));
     }
 
     @Test
     public void autosizeInheritedDAFormFieldsWithKidsTest() throws IOException, InterruptedException {
         String inPdf = destinationFolder + "autosizeInheritedDAFormFieldsWithKids.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "autosizeInheritedDAFormFieldsWithKids.pdf"),
+        PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(sourceFolder + "autosizeInheritedDAFormFieldsWithKids.pdf"),
                 new PdfWriter(inPdf));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
-
-        fields.get("root.child.text1").setValue("surname surname surname surname surname");
-        fields.get("root.child.text2").setValue("surname surname surname surname surname");
+        form.getField("root.child.text1").setValue("surname surname surname surname surname");
+        form.getField("root.child.text2").setValue("surname surname surname surname surname");
 
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(inPdf,
-                sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", inPdf));
+                sourceFolder + "cmp_autosizeInheritedDAFormFieldsWithKids.pdf", destinationFolder, inPdf));
     }
 
     @Test
@@ -127,7 +126,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.setGenerateAppearance(false);
 
-        Map<String, PdfFormField> fields = form.getFormFields();
+        Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("root").setValue("Deutschland");
 
         form.flattenFields();

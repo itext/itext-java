@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf.colorspace;
 
@@ -53,7 +32,6 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfFunctionFactory;
 
 import java.util.Arrays;
@@ -132,25 +110,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
          * @param alternateSpace The alternate colorspace
          * @param tintTransform The function how the transform colors in the separation color space
          *                      to the alternate color space
-         * @deprecated This constructor has been replaced
-         *             by {@link #Separation(String, PdfColorSpace, IPdfFunction)}
-         */
-        @Deprecated
-        public Separation(String name, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
-            this(new PdfName(name), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (!tintTransform.checkCompatibilityWithColorSpace(alternateSpace)) {
-                throw new PdfException(
-                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
-            }
-        }
-
-        /**
-         * Creates a new separation color space.
-         *
-         * @param name The name for the separation color
-         * @param alternateSpace The alternate colorspace
-         * @param tintTransform The function how the transform colors in the separation color space
-         *                      to the alternate color space
          */
         public Separation(String name, PdfColorSpace alternateSpace, IPdfFunction tintTransform) {
             this(new PdfName(name), alternateSpace.getPdfObject(),
@@ -209,26 +168,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
         }
 
         /**
-         * Creates a new DeviceN colorspace.
-         *
-         * @param names the names of the components
-         * @param alternateSpace the alternate colorspace
-         * @param tintTransform the function to transform colors to the alternate colorspace
-         *
-         * @deprecated Use constructor {@link #DeviceN(List, PdfColorSpace, IPdfFunction)} instead.
-         */
-
-        @Deprecated
-        public DeviceN(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform) {
-            this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject());
-            if (tintTransform.getInputSize() != numOfComponents ||
-                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
-                throw new PdfException(
-                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
-            }
-        }
-
-        /**
          * Creates a new DiviceN colorspace.
          *
          * @param names the names of the components
@@ -278,27 +217,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
         public NChannel(PdfArray names, PdfObject alternateSpace, PdfObject tintTransform, PdfDictionary attributes) {
             this(getNChannelCsArray(names, alternateSpace, tintTransform, attributes));
-        }
-
-        /**
-         * Creates a new NChannel colorspace.
-         *
-         * @param names the names for the components
-         * @param alternateSpace the alternative colorspace
-         * @param tintTransform the function to transform colors to the alternate color space
-         * @param attributes NChannel specific attributes
-         * @deprecated Use constructor {@link #NChannel(PdfArray, PdfObject, PdfObject, PdfDictionary) NChannel} instead
-         */
-
-        @Deprecated
-        public NChannel(List<String> names, PdfColorSpace alternateSpace, PdfFunction tintTransform,
-                PdfDictionary attributes) {
-            this(new PdfArray(names, true), alternateSpace.getPdfObject(), tintTransform.getPdfObject(), attributes);
-            if (tintTransform.getInputSize() != 1 ||
-                    tintTransform.getOutputSize() != alternateSpace.getNumberOfComponents()) {
-                throw new PdfException(
-                        KernelExceptionMessageConstant.FUNCTION_IS_NOT_COMPATIBLE_WITH_COLOR_SPACE, this);
-            }
         }
 
         /**

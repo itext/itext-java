@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -128,7 +128,7 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 ((PdfWidgetAnnotation) annot).getAction().get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
 
@@ -193,7 +193,7 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 ((PdfWidgetAnnotation) annot).getAction().get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
 
@@ -258,7 +258,7 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.U).get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
 
@@ -324,7 +324,7 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.U).get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
 
@@ -389,7 +389,7 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.D).get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
 
@@ -455,7 +455,7 @@ PdfFormCopyWithGotoTest extends ExtendedITextTest {
                 ((PdfWidgetAnnotation) annot).getAdditionalAction().getAsDictionary(PdfName.D).get(PdfName.D));
 
         Assert.assertEquals(resultDoc.getPage(5).getPdfObject(),
-                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests).getNames()));
+                dest.getDestinationPage(resultDoc.getCatalog().getNameTree(PdfName.Dests)));
     }
 
 }

@@ -46,6 +46,7 @@
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.io.EOFException;
@@ -139,13 +140,13 @@ public class TIFFDirectory {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new IOException(IOException.BadEndiannessTag0x4949Or0x4d4d);
+            throw new IOException(IoExceptionMessageConstant.BAD_ENDIANNESS_TAG_0X4949_OR_0X4D4D);
         }
         isBigEndian = endian == 0x4d4d;
 
         int magic = readUnsignedShort(stream);
         if (magic != 42) {
-            throw new IOException(IOException.BadMagicNumberShouldBe42);
+            throw new IOException(IoExceptionMessageConstant.BAD_MAGIC_NUMBER_SHOULD_BE_42);
         }
 
         // Get the initial ifd offset as an unsigned int (using a long)
@@ -153,7 +154,7 @@ public class TIFFDirectory {
 
         for (int i = 0; i < directory; i++) {
             if (ifd_offset == 0L) {
-                throw new IOException(IOException.DirectoryNumberIsTooLarge);
+                throw new IOException(IoExceptionMessageConstant.DIRECTORY_NUMBER_IS_TOO_LARGE);
             }
 
             stream.seek(ifd_offset);
@@ -189,7 +190,7 @@ public class TIFFDirectory {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new IOException(IOException.BadEndiannessTag0x4949Or0x4d4d);
+            throw new IOException(IoExceptionMessageConstant.BAD_ENDIANNESS_TAG_0X4949_OR_0X4D4D);
         }
         isBigEndian = endian == 0x4d4d;
 
@@ -698,12 +699,12 @@ public class TIFFDirectory {
         stream.seek(0L);
         int endian = stream.readUnsignedShort();
         if (!isValidEndianTag(endian)) {
-            throw new IOException(IOException.BadEndiannessTag0x4949Or0x4d4d);
+            throw new IOException(IoExceptionMessageConstant.BAD_ENDIANNESS_TAG_0X4949_OR_0X4D4D);
         }
         boolean isBigEndian = endian == 0x4d4d;
         int magic = readUnsignedShort(stream, isBigEndian);
         if (magic != 42) {
-            throw new IOException(IOException.BadMagicNumberShouldBe42);
+            throw new IOException(IoExceptionMessageConstant.BAD_MAGIC_NUMBER_SHOULD_BE_42);
         }
 
         stream.seek(4L);

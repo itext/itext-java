@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -24,6 +24,7 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.crypto.securityhandler.UnsupportedSecurityHandlerException;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
@@ -42,7 +43,7 @@ public class PdfReaderCustomFilterTest extends ExtendedITextTest {
     public void encryptedDocumentCustomFilterStandartTest() throws IOException {
         try (PdfReader reader = new PdfReader(sourceFolder + "customSecurityHandler.pdf")) {
             Exception e = Assert.assertThrows(UnsupportedSecurityHandlerException.class, () -> new PdfDocument(reader));
-            Assert.assertEquals(MessageFormatUtil.format(UnsupportedSecurityHandlerException.UnsupportedSecurityHandler,
+            Assert.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER,
                     "/Standart"), e.getMessage());
         }
     }

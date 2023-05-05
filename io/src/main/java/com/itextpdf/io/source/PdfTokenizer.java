@@ -1,56 +1,36 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 
 import java.io.Closeable;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfTokenizer implements Closeable {
 
@@ -222,7 +202,7 @@ public class PdfTokenizer implements Closeable {
         if (idx < 0) {
             idx = str.indexOf("%FDF-");
             if (idx < 0)
-                throw new IOException(IOException.PdfHeaderNotFound, this);
+                throw new IOException(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, this);
         }
 
         return idx;
@@ -233,7 +213,7 @@ public class PdfTokenizer implements Closeable {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
-            throw new IOException(IOException.PdfHeaderNotFound, this);
+            throw new IOException(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, this);
         return str.substring(idx + 1, idx + 8);
     }
 
@@ -242,7 +222,7 @@ public class PdfTokenizer implements Closeable {
         String str = readString(1024);
         int idx = str.indexOf("%FDF-");
         if (idx != 0)
-            throw new IOException(IOException.FdfStartxrefNotFound, this);
+            throw new IOException(IoExceptionMessageConstant.FDF_STARTXREF_NOT_FOUND, this);
     }
 
     public long getStartxref() throws java.io.IOException {
@@ -258,7 +238,7 @@ public class PdfTokenizer implements Closeable {
             // 9 = "startxref".length()
             pos = pos - arrLength + 9;
         }
-        throw new IOException(IOException.PdfStartxrefNotFound, this);
+        throw new IOException(IoExceptionMessageConstant.PDF_STARTXREF_NOT_FOUND, this);
     }
 
     public void nextValidToken() throws java.io.IOException {
@@ -368,7 +348,7 @@ public class PdfTokenizer implements Closeable {
             case '>': {
                 ch = file.read();
                 if (ch != '>')
-                    throwError(IOException.GtNotExpected);
+                    throwError(IoExceptionMessageConstant.GT_NOT_EXPECTED);
                 type = TokenType.EndDic;
                 break;
             }
@@ -403,7 +383,7 @@ public class PdfTokenizer implements Closeable {
                     v1 = file.read();
                 }
                 if (v1 < 0 || v2 < 0)
-                    throwError(IOException.ErrorReadingString);
+                    throwError(IoExceptionMessageConstant.ERROR_READING_STRING);
                 break;
             }
             case '%': {
@@ -436,7 +416,7 @@ public class PdfTokenizer implements Closeable {
                     outBuf.append(ch);
                 }
                 if (ch == -1)
-                    throwError(IOException.ErrorReadingString);
+                    throwError(IoExceptionMessageConstant.ERROR_READING_STRING);
                 break;
             }
             default: {
@@ -545,7 +525,8 @@ public class PdfTokenizer implements Closeable {
 
         // <6954657874ae...>
         if (hexWriting) {
-            for (int i = from; i <= to; ) {
+            int i = from;
+            while (i <= to) {
                 int v1 = ByteBuffer.getHex(content[i++]);
                 if (i > to) {
                     buffer.append(v1 << 4);
@@ -557,8 +538,8 @@ public class PdfTokenizer implements Closeable {
             }
         } else {
             // ((iText\( some version)...)
-
-            for (int i = from; i <= to; ) {
+            int i = from;
+            while (i <= to) {
                 int ch = content[i++];
                 if (ch == '\\') {
                     boolean lineBreak = false;
@@ -597,19 +578,17 @@ public class PdfTokenizer implements Closeable {
                                 break;
                             }
                             int octal = ch - '0';
-                            ch = content[i++];
-                            if (ch < '0' || ch > '7') {
-                                i--;
+                            if (i > to) {
                                 ch = octal;
                                 break;
                             }
+                            ch = content[i++];
                             octal = (octal << 3) + ch - '0';
-                            ch = content[i++];
-                            if (ch < '0' || ch > '7') {
-                                i--;
+                            if (ch < '0' || ch > '7' || i > to) {
                                 ch = octal;
                                 break;
                             }
+                            ch = content[i++];
                             octal = (octal << 3) + ch - '0';
                             ch = octal & 0xff;
                             break;
@@ -683,7 +662,7 @@ public class PdfTokenizer implements Closeable {
      * @throws IOException wrap error message into {@code PdfRuntimeException} and add position in file.
      */
     public void throwError(String error, Object... messageParams) {
-        throw new IOException(IOException.ErrorAtFilePointer1, new IOException(error).setMessageParams(messageParams))
+        throw new IOException(IoExceptionMessageConstant.ERROR_AT_FILE_POINTER, new IOException(error).setMessageParams(messageParams))
                 .setMessageParams(file.getPosition());
     }
 

@@ -1,45 +1,24 @@
 /*
-
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: Bruno Lowagie, Paulo Soares, et al.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.kernel.pdf.extgstate;
 
@@ -53,7 +32,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.function.PdfFunction;
+import com.itextpdf.kernel.pdf.function.IPdfFunction;
 
 /**
  * Graphics state parameter dictionary wrapper.
@@ -346,7 +325,8 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the black-generation function value, {@code BG}.
      *
-     * @return a {@link PdfObject}, should be {@link PdfFunction}.
+     * @return a {@link PdfObject}, should be an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
      */
     public PdfObject getBlackGenerationFunction() {
         return getPdfObject().get(PdfName.BG);
@@ -355,7 +335,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the black-generation function value, {@code BG}.
      *
-     * @param blackGenerationFunction a {@link PdfObject}, shall be {@link PdfFunction}.
+     * @param blackGenerationFunction a {@link PdfObject}, shall be an object representing custom function
+     *      (see {@link IPdfFunction} object wrapper for convenience API in reading/manipulating such
+     *      function objects).
+     *
      * @return object itself.
      */
     public PdfExtGState setBlackGenerationFunction(PdfObject blackGenerationFunction) {
@@ -365,7 +348,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the black-generation function value or {@code Default}, {@code BG2} key.
      *
-     * @return a {@link PdfObject} value, should be either {@link PdfFunction} or {@link PdfName}.
+     * @return the returned value is {@link PdfObject} value, which is either a {@link PdfName} of
+     *      a predefined value or an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
      */
     public PdfObject getBlackGenerationFunction2() {
         return getPdfObject().get(PdfName.BG2);
@@ -376,8 +361,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * Note, if both {@code BG} and {@code BG2} are present in the same graphics state parameter dictionary,
      * {@code BG2} takes precedence.
      *
-     * @param blackGenerationFunction2 a {@link PdfObject} value, shall be either {@link PdfFunction}
-     *                                 or {@code Default}.
+     * @param blackGenerationFunction2 a {@link PdfObject} value, shall be an object representing custom function
+     *      (see {@link IPdfFunction} object wrapper for convenience API in reading/manipulating such
+     *      function objects) or {@code Default}.
+     *
      * @return object itself.
      */
     public PdfExtGState setBlackGenerationFunction2(PdfObject blackGenerationFunction2) {
@@ -387,7 +374,8 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the undercolor-removal function, {@code UCR} key.
      *
-     * @return a {@link PdfObject}, should be {@link PdfFunction}.
+     * @return a {@link PdfObject}, should be an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
      */
     public PdfObject getUndercolorRemovalFunction() {
         return getPdfObject().get(PdfName.UCR);
@@ -396,7 +384,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the undercolor-removal function, {@code UCR} key.
      *
-     * @param undercolorRemovalFunction a {@link PdfObject}, shall be {@link PdfFunction}.
+     * @param undercolorRemovalFunction a {@link PdfObject}, shall be an object representing custom function
+     *      (see {@link IPdfFunction} object wrapper for convenience API in reading/manipulating
+     *      such function objects).
+     *
      * @return object itself.
      */
     public PdfExtGState setUndercolorRemovalFunction(PdfObject undercolorRemovalFunction) {
@@ -406,7 +397,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the undercolor-removal function value or {@code Default}, {@code UCR2} key.
      *
-     * @return a {@link PdfObject} value, should be either {@link PdfFunction} or {@link PdfName}.
+     * @return the returned value is {@link PdfObject} value, which is either a {@link PdfName} of
+     *      a predefined value or an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
      */
     public PdfObject getUndercolorRemovalFunction2() {
         return getPdfObject().get(PdfName.UCR2);
@@ -417,8 +410,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * Note, if both {@code UCR} and {@code UCR2} are present in the same graphics state parameter dictionary,
      * {@code UCR2} takes precedence.
      *
-     * @param undercolorRemovalFunction2 a {@link PdfObject} value, shall be either {@link PdfFunction}
-     *                                   or {@code Default}.
+     * @param undercolorRemovalFunction2 a {@link PdfObject} value, shall be an object representing custom function
+     *      (see {@link IPdfFunction} object wrapper for convenience API in reading/manipulating such
+     *      function objects) or {@code Default}.
+     *
      * @return object itself.
      */
     public PdfExtGState setUndercolorRemovalFunction2(PdfObject undercolorRemovalFunction2) {
@@ -428,8 +423,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the transfer function value, {@code TR} key.
      *
-     * @return a {@link PdfObject}, should be either {@link PdfFunction},
-     * {@link PdfArray} or {@link PdfName}.
+     * @return the returned value is {@link PdfObject} value, which is either a {@link PdfName} or {@link PdfArray} of
+     *      a predefined value or an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
      */
     public PdfObject getTransferFunction() {
         return getPdfObject().get(PdfName.TR);
@@ -438,8 +434,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Sets the transfer function value, {@code TR} key.
      *
-     * @param transferFunction a {@link PdfObject}, shall be either {@link PdfFunction},
-     *                         {@link PdfArray} or {@link PdfName}.
+     * @param transferFunction a {@link PdfObject}, shall be either a {@link PdfName} or {@link PdfArray} of
+     *      a predefined value or an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
+     *
      * @return object itself.
      */
     public PdfExtGState setTransferFunction(PdfObject transferFunction) {
@@ -449,8 +447,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets the transfer function value or {@code Default}, {@code TR2} key.
      *
-     * @return a {@link PdfObject}, should be either {@link PdfFunction},
-     * {@link PdfArray} or {@link PdfName}.
+     * @return the returned value is {@link PdfObject} value, which is either a {@link PdfName} or {@link PdfArray} of
+     *      a predefined value or an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
      */
     public PdfObject getTransferFunction2() {
         return getPdfObject().get(PdfName.TR2);
@@ -461,8 +460,10 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
      * Note, if both {@code TR} and {@code TR2} are present in the same graphics state parameter dictionary,
      * {@code TR2} takes precedence.
      *
-     * @param transferFunction2 a {@link PdfObject}, shall be either {@link PdfFunction},
-     *                          {@link PdfArray}, {@link PdfName} or {@code Default}.
+     * @param transferFunction2 a {@link PdfObject}, shall be either a {@link PdfName} or {@link PdfArray} of
+     *      a predefined value or an object representing custom function (see {@link IPdfFunction}
+     *      object wrapper for convenience API in reading/manipulating such function objects).
+     *
      * @return object itself.
      */
     public PdfExtGState setTransferFunction2(PdfObject transferFunction2) {

@@ -1,93 +1,72 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation with the addition of the
-    following permission added to Section 15 as permitted in Section 7(a):
-    FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
-    ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
-    OF THIRD PARTY RIGHTS
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
 
-    This program is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-    or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU Affero General Public License for more details.
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
     You should have received a copy of the GNU Affero General Public License
-    along with this program; if not, see http://www.gnu.org/licenses or write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA, 02110-1301 USA, or download the license from the following URL:
-    http://itextpdf.com/terms-of-use/
-
-    The interactive user interfaces in modified source and object code versions
-    of this program must display Appropriate Legal Notices, as required under
-    Section 5 of the GNU Affero General Public License.
-
-    In accordance with Section 7(b) of the GNU Affero General Public License,
-    a covered work must retain the producer line in every PDF that is created
-    or manipulated using iText.
-
-    You can be released from the requirements of the license by purchasing
-    a commercial license. Buying such a license is mandatory as soon as you
-    develop commercial activities involving the iText software without
-    disclosing the source code of your own applications.
-    These activities include: offering paid services to customers as an ASP,
-    serving PDFs on the fly in a web application, shipping iText with a closed
-    source product.
-
-    For more information, please contact iText Software Corp. at this
-    address: sales@itextpdf.com
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IUnknownStatus;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.UnitTest;
-import com.itextpdf.test.signutils.Pkcs12FileHelper;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
-import org.bouncycastle.cert.ocsp.RevokedStatus;
-import org.bouncycastle.cert.ocsp.UnknownStatus;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.OperatorException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+@Category(BouncyCastleUnitTest.class)
 public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     private static final String ocspCertsSrc = "./src/test/resources/com/itextpdf/signatures/OcspClientBouncyCastleTest/";
-    private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.p12";
-    private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.p12";
-    private static final char[] password = "testpass".toCharArray();
+    private static final String rootOcspCert = ocspCertsSrc + "ocspRootRsa.pem";
+    private static final String signOcspCert = ocspCertsSrc + "ocspSignRsa.pem";
+    private static final char[] password = "testpassphrase".toCharArray();
     private static final String ocspServiceUrl = "http://localhost:9000/demo/ocsp/ocsp-service";
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static X509Certificate checkCert;
     private static X509Certificate rootCert;
@@ -95,34 +74,34 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void before() {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
 
     @Before
     public void setUp()
-            throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        builder = createBuilder(CertificateStatus.GOOD);
-        checkCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(signOcspCert, password)[0];
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        builder = createBuilder(BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood());
+        checkCert = (X509Certificate) PemFileHelper.readFirstChain(signOcspCert)[0];
         rootCert = builder.getIssuerCert();
     }
 
     @Test
     public void getOcspResponseWhenCheckCertIsNullTest()
-            throws OCSPException, GeneralSecurityException, IOException, OperatorException {
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertNull(castle.getOcspResponse(null, rootCert, ocspServiceUrl));
     }
 
     @Test
     public void getOcspResponseWhenRootCertIsNullTest()
-            throws OCSPException, GeneralSecurityException, IOException, OperatorException {
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertNull(castle.getOcspResponse(checkCert, null, ocspServiceUrl));
     }
 
     @Test
     public void getOcspResponseWhenRootAndCheckCertIsNullTest()
-            throws OCSPException, GeneralSecurityException, IOException, OperatorException {
+            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractOCSPException {
         OcspClientBouncyCastle castle = new OcspClientBouncyCastle(null);
         Assert.assertNull(castle.getOcspResponse(null, null, ocspServiceUrl));
     }
@@ -169,7 +148,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOcspRespTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
 
-        BasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
+        IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
                 .getBasicOCSPResp(checkCert, rootCert, ocspServiceUrl);
         Assert.assertNotNull(basicOCSPResp);
         Assert.assertTrue(basicOCSPResp.getResponses().length > 0);
@@ -179,7 +158,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOcspRespNullTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = new OcspClientBouncyCastle(null);
 
-        BasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
+        IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle
                 .getBasicOCSPResp(checkCert, null, ocspServiceUrl);
         Assert.assertNull(basicOCSPResp);
     }
@@ -190,7 +169,7 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
     public void getBasicOCSPRespLogMessageTest() {
         OcspClientBouncyCastle ocspClientBouncyCastle = createOcspClient();
 
-        BasicOCSPResp basicOCSPResp = ocspClientBouncyCastle.getBasicOCSPResp(null, null, null);
+        IBasicOCSPResp basicOCSPResp = ocspClientBouncyCastle.getBasicOCSPResp(null, null, null);
         Assert.assertNull(basicOCSPResp);
     }
 
@@ -208,10 +187,9 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_REVOKED),
     })
     public void ocspStatusIsRevokedTest()
-            throws UnrecoverableKeyException, CertificateException, KeyStoreException, IOException,
-            NoSuchAlgorithmException {
-        RevokedStatus status = new RevokedStatus(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
-                OCSPResp.SUCCESSFUL);
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        IRevokedStatus status = BOUNCY_CASTLE_FACTORY.createRevokedStatus(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
+                BOUNCY_CASTLE_FACTORY.createOCSPResp().getSuccessful());
         TestOcspResponseBuilder responseBuilder = createBuilder(status);
         OcspClientBouncyCastle ocspClientBouncyCastle = createTestOcspClient(responseBuilder);
 
@@ -224,9 +202,8 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN),
     })
     public void ocspStatusIsUnknownTest()
-            throws CertificateException, UnrecoverableKeyException, KeyStoreException, IOException,
-            NoSuchAlgorithmException {
-        UnknownStatus status = new UnknownStatus();
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        IUnknownStatus status = BOUNCY_CASTLE_FACTORY.createUnknownStatus();
         TestOcspResponseBuilder responseBuilder = createBuilder(status);
         OcspClientBouncyCastle ocspClientBouncyCastle = createTestOcspClient(responseBuilder);
 
@@ -247,10 +224,10 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         return createOcspClient(responseBuilder);
     }
 
-    private static TestOcspResponseBuilder createBuilder(CertificateStatus status)
-            throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        X509Certificate caCert = (X509Certificate) Pkcs12FileHelper.readFirstChain(rootOcspCert, password)[0];
-        PrivateKey caPrivateKey = Pkcs12FileHelper.readFirstKey(rootOcspCert, password, password);
+    private static TestOcspResponseBuilder createBuilder(ICertificateStatus status)
+            throws CertificateException, IOException, AbstractPKCSException, AbstractOperatorCreationException {
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(rootOcspCert)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(rootOcspCert, password);
         return new TestOcspResponseBuilder(caCert, caPrivateKey, status);
     }
 
@@ -263,15 +240,16 @@ public class OcspClientBouncyCastleTest extends ExtendedITextTest {
         }
 
         @Override
-        OCSPResp getOcspResponse(X509Certificate chCert, X509Certificate rCert, String url) throws OCSPException {
+        IOCSPResp getOcspResponse(X509Certificate chCert, X509Certificate rCert, String url)
+                throws AbstractOCSPException {
             try {
-                CertificateID id = SignTestPortUtil.generateCertificateId(rootCert, checkCert.getSerialNumber(),
-                        CertificateID.HASH_SHA1);
-                BasicOCSPResp basicOCSPResp = testOcspBuilder.makeOcspResponseObject(SignTestPortUtil
+                ICertificateID id = SignTestPortUtil.generateCertificateId(rootCert, checkCert.getSerialNumber(),
+                        BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
+                IBasicOCSPResp basicOCSPResp = testOcspBuilder.makeOcspResponseObject(SignTestPortUtil
                         .generateOcspRequestWithNonce(id).getEncoded());
-                return new OCSPRespBuilder().build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp);
+                return BOUNCY_CASTLE_FACTORY.createOCSPRespBuilder().build(BOUNCY_CASTLE_FACTORY.createOCSPRespBuilderInstance().getSuccessful(), basicOCSPResp);
             } catch (Exception e) {
-                throw new OCSPException(e.getMessage());
+                throw BOUNCY_CASTLE_FACTORY.createAbstractOCSPException(e);
             }
         }
     }

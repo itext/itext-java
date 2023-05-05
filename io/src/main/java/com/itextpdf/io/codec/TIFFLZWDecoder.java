@@ -46,6 +46,7 @@
 package com.itextpdf.io.codec;
 
 import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 /**
  * A class for performing LZW decoding.
@@ -91,7 +92,7 @@ public class TIFFLZWDecoder {
     public byte[] decode(byte[] data, byte[] uncompData, int h) {
 
         if (data[0] == (byte) 0x00 && data[1] == (byte) 0x01) {
-            throw new IOException(IOException.Tiff50StyleLzwCodesAreNotSupported);
+            throw new IOException(IoExceptionMessageConstant.TIFF_50_STYLE_LZW_CODES_ARE_NOT_SUPPORTED);
         }
 
         initializeStringTable();

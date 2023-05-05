@@ -1,6 +1,6 @@
-To build **iText 7 Community**, [Maven][1] must be installed.
+To build **iText Community**, [Maven][1] must be installed.
 
-Running install without a profile will generate the **iText 7 Community** jars:
+Running install without a profile will generate the **iText Community** jars:
 ```bash
 $ mvn clean install \
     -Dmaven.test.skip=true \
@@ -26,6 +26,16 @@ To run build with tests, activate the `test` profile and pass ITEXT_GS_EXEC and 
 ```bash
 $ mvn clean install \
 	-P test \
+    -Dmaven.test.failure.ignore=false \
+    -DITEXT_GS_EXEC="gs command" \
+    -DITEXT_MAGICK_COMPARE_EXEC="magick compare command" \
+    > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
+```
+
+By default tests are run with the non FIPS mode version of Bouncy Castle. To run the tests in FIPS mode the profile bouncy-castle-test must be deactivated and the profile bouncy-castle-fips-test must be activated:
+```bash
+$ mvn clean install \
+	-P test,bouncy-castle-fips-test,!bouncy-castle-test \
     -Dmaven.test.failure.ignore=false \
     -DITEXT_GS_EXEC="gs command" \
     -DITEXT_MAGICK_COMPARE_EXEC="magick compare command" \
