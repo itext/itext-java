@@ -28,7 +28,6 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -196,8 +195,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
      * @param factory {@link TransformerFactory} instance to be configured
      */
     protected void configureSafeTransformerFactory(TransformerFactory factory) {
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); // Android-Conversion-Skip-Line (standard library XML lib doesn't have this feature on Android)
+        
     }
 
     private void tryToSetFeature(DocumentBuilderFactory factory, String feature, boolean value) {
