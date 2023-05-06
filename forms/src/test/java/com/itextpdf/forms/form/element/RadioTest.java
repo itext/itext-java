@@ -305,6 +305,34 @@ public class RadioTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
+    @Test
+    public void radioWithPaddingsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "radioWithPaddings.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_radioWithPaddings.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            Div div = new Div().setBackgroundColor(ColorConstants.PINK);
+            Radio radio = createRadioButton("radio", "form radio group",
+                    new SolidBorder(ColorConstants.DARK_GRAY, 20), ColorConstants.WHITE, true, false);
+            radio.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(20));
+            radio.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(20));
+            radio.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(20));
+            radio.setProperty(Property.PADDING_RIGHT, UnitValue.createPointValue(20));
+
+            // Paddings are always 0 for radio buttons
+            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_BOTTOM), UnitValue.createPointValue(0));
+            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_TOP), UnitValue.createPointValue(0));
+            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_LEFT), UnitValue.createPointValue(0));
+            Assert.assertEquals(radio.<UnitValue>getProperty(Property.PADDING_RIGHT), UnitValue.createPointValue(0));
+
+            radio.setSize(100);
+            div.add(radio);
+            document.add(div);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
     static private Radio createRadioButton(String name, String groupName, Border border, Color backgroundColor,
             boolean checked, boolean flatten) {
         Radio radio = new Radio(name, groupName);
