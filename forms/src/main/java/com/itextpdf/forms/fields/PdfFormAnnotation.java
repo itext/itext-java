@@ -1052,7 +1052,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             formFieldElement = new CheckBox("");
         }
 
-        // Make font size auto calculated
         formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
         setModelElementProperties(getRect(getPdfObject()));
         ((CheckBox) formFieldElement).setPdfAConformanceLevel(getPdfAConformanceLevel());

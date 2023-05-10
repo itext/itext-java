@@ -86,8 +86,9 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
         check.pdfAConformanceLevel = getConformanceLevel();
         check.setCheckType(checkType);
         check.setFieldName(getFormFieldName());
+        // the default behavior is to automatically calculate the fontsize
+        check.setFontSize(0);
         check.put(PdfName.V, new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
-
         if (getWidgetRectangle() != null) {
             check.getFirstFormAnnotation()
                     .drawCheckBoxAndSaveAppearance(PdfFormAnnotation.ON_STATE_VALUE);
