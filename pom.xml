@@ -483,6 +483,7 @@
               <skip>true</skip>
             </configuration>
           </plugin>
+          <!-- Compares current version to the latest released version to prevent breaking changes -->
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
@@ -500,9 +501,15 @@
                 <onlyModified>true</onlyModified>
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
+                <excludes>
+                  <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                </excludes>
+                <excludeModules>
+                  <excludeModule>bouncy-castle-adapter</excludeModule>
+                  <excludeModule>bouncy-castle-connector</excludeModule>
+                  <excludeModule>bouncy-castle-fips-adapter</excludeModule>
+                </excludeModules>
               </parameter>
-              <!-- TODO: DEVSIX-7485. Remove this skip=true after 8.0.0 release publishing -->
-              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
