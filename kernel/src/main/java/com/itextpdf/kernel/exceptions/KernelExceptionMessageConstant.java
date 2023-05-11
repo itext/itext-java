@@ -35,6 +35,9 @@ public final class KernelExceptionMessageConstant {
     public static final String BAD_USER_PASSWORD =
             "Bad user password. Password is not provided or wrong password provided. Correct password should be passed "
                     + "to PdfReader constructor with properties. See ReaderProperties#setPassword() method.";
+
+    public static final String BAD_PASSWORD_HASH =
+            "Password hash exceeds 48 bytes and extra bytes are not 0";
     public static final String CANNOT_ADD_KID_TO_THE_FLUSHED_ELEMENT = "Cannot add kid to the flushed element.";
     public static final String CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS =
             "{0} cannot be embedded due to licensing restrictions.";
