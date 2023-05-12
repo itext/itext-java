@@ -936,6 +936,25 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * Disables appearance stream regeneration for all the root fields in the Acroform, so all of its children
+     * in the hierarchy will also not be regenerated.
+     */
+    public void disableRegenerationForAllFields() {
+        for (PdfFormField rootField : getRootFormFields().values()) {
+            rootField.disableFieldRegeneration();
+        }
+    }
+
+    /**
+     * Enables appearance stream regeneration for all the fields in the Acroform and regenerates them.
+     */
+    public void enableRegenerationForAllFields() {
+        for (PdfFormField rootField : getRootFormFields().values()) {
+            rootField.enableFieldRegeneration();
+        }
+    }
+
+    /**
      * Gets all AcroForm fields in the document.
      *
      * @return a {@link PdfArray} of field dictionaries

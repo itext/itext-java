@@ -64,11 +64,12 @@ public class TextFormFieldBuilder extends TerminalFormFieldBuilder<TextFormField
             field = PdfFormCreator.createTextFormField(annotation, getDocument());
             setPageToField(field);
         }
-
+        field.disableFieldRegeneration();
         field.pdfAConformanceLevel = getConformanceLevel();
         field.setMultiline(multiline);
         field.setFieldName(getFormFieldName());
         field.setValue(TEXT_FORM_FIELD_DEFAULT_VALUE);
+        field.enableFieldRegeneration();
 
         return field;
     }

@@ -196,7 +196,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      */
     @Override
     public boolean regenerateField() {
-        if (parent != null) {
+        if (parent != null && parent.isFieldRegenerationEnabled()) {
             parent.updateDefaultAppearance();
         }
         return regenerateWidget();
@@ -236,6 +236,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             if (extractedBorderColor != null) {
                 borderColor = extractedBorderColor;
             }
+            if (parent != null) {
+                parent.text = appearancePropToCaption(appearanceCharacteristics);
+            }
         }
     }
 
@@ -263,6 +266,49 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         kid.setAppearanceCharacteristics(mk);
 
         regenerateField();
+        return this;
+    }
+
+    /**
+     * Basic setter for the push button caption. Regenerates the field appearance after setting the new caption.
+     *
+     * @param caption button caption to be set.
+     *
+     * @return The edited {@link PdfFormAnnotation}.
+     */
+    public PdfFormAnnotation setCaption(String caption) {
+        return setCaption(caption, true);
+    }
+
+    /**
+     * Basic setter for the push button caption. Regenerates the field appearance after setting the new caption
+     * if corresponding parameter is specified.
+     *
+     * @param caption         button caption to be set.
+     * @param regenerateField true if field should be regenerated, false otherwise.
+     *
+     * @return The edited {@link PdfFormAnnotation}.
+     */
+    public PdfFormAnnotation setCaption(String caption, boolean regenerateField) {
+        if (parent != null) {
+            parent.text = caption;
+        }
+        PdfDictionary mk;
+        PdfWidgetAnnotation kid = getWidget();
+        mk = kid.getAppearanceCharacteristics();
+        if (mk == null) {
+            mk = new PdfDictionary();
+        }
+        if (caption == null) {
+            mk.remove(PdfName.CA);
+        } else {
+            mk.put(PdfName.CA, new PdfString(caption));
+        }
+        kid.setAppearanceCharacteristics(mk);
+
+        if (regenerateField) {
+            regenerateField();
+        }
         return this;
     }
 
@@ -928,10 +974,14 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     boolean regenerateWidget() {
+        if (!isFieldRegenerationEnabled()) {
+            return false;
+        }
         if (parent == null) {
             return true;
         }
         final PdfName type = parent.getFormType();
+        retrieveStyles();
 
         if ((PdfName.Ch.equals(type) && parent.getFieldFlag(PdfChoiceFormField.FF_COMBO))
                 || this.isCombTextFormField()) {
@@ -966,7 +1016,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     void createInputButton() {
         if (!(formFieldElement instanceof Button)) {
             // Create it one time and re-set properties during each widget regeneration.
-            formFieldElement = new Button(parent.getFieldName().toUnicodeString());
+            formFieldElement = new Button(parent.getPartialFieldName().toUnicodeString());
         }
 
         ((Button) formFieldElement).setFont(getFont());
@@ -1109,6 +1159,14 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                     return new DeviceCmyk(backgroundFloat[0], backgroundFloat[1], backgroundFloat[2],
                             backgroundFloat[3]);
             }
+        }
+        return null;
+    }
+
+    private static String appearancePropToCaption(PdfDictionary appearanceCharacteristics) {
+        PdfString captionData = appearanceCharacteristics.getAsString(PdfName.CA);
+        if (captionData != null) {
+            return captionData.getValue();
         }
         return null;
     }

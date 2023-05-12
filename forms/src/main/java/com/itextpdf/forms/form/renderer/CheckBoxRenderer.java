@@ -239,6 +239,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
             builder.setCheckType((CheckBoxType) this.<CheckBoxType>getProperty(FormProperty.FORM_CHECKBOX_TYPE));
         }
         final PdfButtonFormField checkBox = builder.createCheckBox();
+        checkBox.disableFieldRegeneration();
         applyBorderProperty(checkBox.getFirstFormAnnotation());
         final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
@@ -249,6 +250,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
             checkBox.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
         }
         checkBox.getFirstFormAnnotation().setFormFieldElement((CheckBox) modelElement);
+        checkBox.enableFieldRegeneration();
 
         PdfFormCreator.getAcroForm(doc, true).addField(checkBox, page);
         writeAcroFormFieldLangAttribute(doc);

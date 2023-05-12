@@ -205,6 +205,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId()).setWidgetRectangle(area);
         setupBuilderValues(builder, lbModelElement);
         PdfChoiceFormField choiceField = builder.createList();
+        choiceField.disableFieldRegeneration();
         if (font != null) {
             choiceField.setFont(font);
         }
@@ -226,6 +227,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         }
 
         choiceField.getFirstFormAnnotation().setFormFieldElement(lbModelElement);
+        choiceField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(choiceField, page);
 
         writeAcroFormFieldLangAttribute(doc);

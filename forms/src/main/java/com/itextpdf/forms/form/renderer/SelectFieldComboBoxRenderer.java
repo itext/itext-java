@@ -119,6 +119,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         setupBuilderValues(builder, comboBoxFieldModelElement);
         final PdfChoiceFormField comboBoxField = builder.createComboBox();
+        comboBoxField.disableFieldRegeneration();
 
         final Background background = this.modelElement.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
@@ -151,6 +152,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         }
 
         comboBoxField.getFirstFormAnnotation().setFormFieldElement(comboBoxFieldModelElement);
+        comboBoxField.enableFieldRegeneration();
 
         PdfFormCreator.getAcroForm(doc, true).addField(comboBoxField, page);
         writeAcroFormFieldLangAttribute(doc);

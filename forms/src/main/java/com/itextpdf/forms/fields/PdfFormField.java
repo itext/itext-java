@@ -1086,7 +1086,11 @@ public class PdfFormField extends AbstractPdfFormField {
     @Override
     public boolean regenerateField() {
         boolean result = true;
-        updateDefaultAppearance();
+        if (isFieldRegenerationEnabled()) {
+            updateDefaultAppearance();
+        } else {
+            result = false;
+        }
         for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormAnnotation) {
                 PdfFormAnnotation annotation = (PdfFormAnnotation) child;
@@ -1376,7 +1380,14 @@ public class PdfFormField extends AbstractPdfFormField {
                 try {
                     img = ImageDataFactory.create(Base64.decode(value));
                 } catch (Exception e) {
-                    text = value;
+                    if (generateAppearance) {
+                        // Display value.
+                        for (PdfFormAnnotation annot : getChildFormAnnotations()) {
+                            annot.setCaption(value, false);
+                        }
+                    } else {
+                        text = value;
+                    }
                 }
             } else {
                 // We expect that radio buttons should have only widget children,

@@ -180,15 +180,19 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         boolean addNew = false;
         if (null == radioGroup) {
             radioGroup = new RadioFormFieldBuilder(doc, groupName).createRadioGroup();
+            radioGroup.disableFieldRegeneration();
             radioGroup.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
             addNew = true;
+        } else {
+            radioGroup.disableFieldRegeneration();
         }
         if (isBoxChecked()) {
             radioGroup.setValue(getModelId());
         }
 
-        PdfFormAnnotation radio =
-                new RadioFormFieldBuilder(doc, null).createRadioButton(getModelId(), area);
+        PdfFormAnnotation radio = new RadioFormFieldBuilder(doc, null)
+                .createRadioButton(getModelId(), area);
+        radio.disableFieldRegeneration();
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
@@ -198,6 +202,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         radio.setFormFieldElement((Radio) modelElement);
 
         radioGroup.addKid(radio);
+        radioGroup.enableFieldRegeneration();
 
         if (addNew) {
             form.addField(radioGroup, page);

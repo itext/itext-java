@@ -268,12 +268,14 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         // we get them from renderer and set these properties to model element, which will be passed to forms logic.
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
-        final PdfButtonFormField button = new PushButtonFormFieldBuilder(doc, name)
-                .setWidgetRectangle(area).createPushButton();
+        final PdfButtonFormField button = new PushButtonFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .createPushButton();
+        button.disableFieldRegeneration();
         button.setFont(font).setFontSize(fontSizeValue);
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
         button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);
+        button.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);
         // Fields can be already added on split, e.g. when button split into multiple pages. But now we merge fields
         // with the same names (and add all the widgets as kids to that merged field), so we can add it anyway.

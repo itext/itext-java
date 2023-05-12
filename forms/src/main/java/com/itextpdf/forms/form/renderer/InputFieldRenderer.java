@@ -170,8 +170,10 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         // Default html2pdf input field appearance differs from the default one for form fields.
         // That's why we got rid of several properties we set by default during InputField instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
-        final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area).createText()
-                .setValue(value);
+        final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .createText();
+        inputField.disableFieldRegeneration();
+        inputField.setValue(value);
         inputField.setFont(font).setFontSize(fontSizeValue);
         if (password) {
             inputField.setFieldFlag(PdfFormField.FF_PASSWORD, true);
@@ -184,6 +186,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         }
         applyDefaultFieldProperties(inputField);
         inputField.getFirstFormAnnotation().setFormFieldElement((InputField) modelElement);
+        inputField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);

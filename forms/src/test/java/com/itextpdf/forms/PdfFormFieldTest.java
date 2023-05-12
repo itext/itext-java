@@ -55,6 +55,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Canvas;
@@ -1719,6 +1720,180 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             form.setSignatureFlag(1);
             Assert.assertEquals(1, form.getSignatureFlags());
+        }
+    }
+
+    @Test
+    public void disableRegenerationForTheRootFieldTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "disableRegenerationForTheRootField.pdf";
+        String cmpPdf = sourceFolder + "cmp_regenerationEnabled.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
+            CustomButtonFormField root = new CustomButtonFormField(document.getPdfDocument(), "root");
+            CustomButtonFormField parent = new CustomButtonFormField(document.getPdfDocument(), "parent");
+            CustomButtonFormField child = new CustomButtonFormField(new PdfWidgetAnnotation(
+                    new Rectangle(200, 550, 150, 100)), document.getPdfDocument(), "child");
+            parent.addKid(child);
+            root.addKid(parent);
+
+            // Disable all fields regeneration
+            root.disableFieldRegeneration();
+            child.getFirstFormAnnotation().setCaption("regenerated button")
+                    .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
+                    .setVisibility(PdfFormAnnotation.VISIBLE);
+
+            Assert.assertEquals(0, root.getCounter());
+            Assert.assertEquals(0, parent.getCounter());
+            Assert.assertEquals(0, child.getCounter());
+
+            root.enableFieldRegeneration();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            // Disable only root field regeneration
+            root.disableCurrentFieldRegeneration();
+            root.regenerateField();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(2, parent.getCounter());
+            Assert.assertEquals(2, child.getCounter());
+
+            root.enableCurrentFieldRegeneration();
+
+            Assert.assertEquals(2, root.getCounter());
+            Assert.assertEquals(3, parent.getCounter());
+            Assert.assertEquals(3, child.getCounter());
+
+            form.addField(root);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void disableRegenerationForTheMiddleFieldTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "disableRegenerationForTheMiddleField.pdf";
+        String cmpPdf = sourceFolder + "cmp_regenerationEnabled.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
+            CustomButtonFormField root = new CustomButtonFormField(document.getPdfDocument(), "root");
+            CustomButtonFormField parent = new CustomButtonFormField(document.getPdfDocument(), "parent");
+            CustomButtonFormField child = new CustomButtonFormField(new PdfWidgetAnnotation(
+                    new Rectangle(200, 550, 150, 100)), document.getPdfDocument(), "child");
+            parent.addKid(child);
+            root.addKid(parent);
+
+            // Disable parent field level regeneration
+            parent.disableFieldRegeneration();
+            child.getFirstFormAnnotation().setCaption("regenerated button")
+                    .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
+                    .setVisibility(PdfFormAnnotation.VISIBLE);
+            root.regenerateField();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(0, parent.getCounter());
+            Assert.assertEquals(0, child.getCounter());
+
+            parent.enableFieldRegeneration();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            // Disable only parent field regeneration
+            parent.disableCurrentFieldRegeneration();
+            root.regenerateField();
+
+            Assert.assertEquals(2, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(2, child.getCounter());
+
+            parent.enableCurrentFieldRegeneration();
+
+            Assert.assertEquals(2, root.getCounter());
+            Assert.assertEquals(2, parent.getCounter());
+            Assert.assertEquals(3, child.getCounter());
+
+            form.addField(root);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void disableChildRegenerationTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "disableChildRegeneration.pdf";
+        String cmpPdf = sourceFolder + "cmp_regenerationEnabled.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
+            CustomButtonFormField root = new CustomButtonFormField(document.getPdfDocument(), "root");
+            CustomButtonFormField parent = new CustomButtonFormField(document.getPdfDocument(), "parent");
+            CustomButtonFormField child = new CustomButtonFormField(new PdfWidgetAnnotation(
+                    new Rectangle(200, 550, 150, 100)), document.getPdfDocument(), "child");
+            parent.addKid(child);
+            root.addKid(parent);
+
+            // Disable child field regeneration
+            child.disableFieldRegeneration();
+            child.getFirstFormAnnotation().setBorderWidth(10).setBorderColor(ColorConstants.PINK)
+                    .setBackgroundColor(ColorConstants.BLUE);
+            root.regenerateField();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(0, child.getCounter());
+
+            child.enableFieldRegeneration();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            // Disable only child field regeneration (so widget should be regenerated)
+            child.disableCurrentFieldRegeneration();
+
+            child.getFirstFormAnnotation().setCaption("regenerated button")
+                    .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
+                    .setVisibility(PdfFormAnnotation.VISIBLE);
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            form.addField(root);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    static class CustomButtonFormField extends PdfButtonFormField {
+        private int counter = 0;
+
+        CustomButtonFormField(PdfDocument pdfDocument, String formFieldName) {
+            super(pdfDocument);
+            setPushButton(true);
+            setFieldName(formFieldName);
+        }
+
+        CustomButtonFormField(PdfWidgetAnnotation annotation, PdfDocument pdfDocument, String formFieldName) {
+            super(annotation, pdfDocument);
+            setPushButton(true);
+            setFieldName(formFieldName);
+        }
+
+        public int getCounter() {
+            return counter;
+        }
+
+        @Override
+        public boolean regenerateField() {
+            boolean isRegenerated = super.regenerateField();
+            if (isRegenerated) {
+                counter++;
+            }
+            return isRegenerated;
         }
     }
 }
