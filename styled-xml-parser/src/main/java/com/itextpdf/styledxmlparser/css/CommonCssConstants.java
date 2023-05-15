@@ -892,6 +892,8 @@ public class CommonCssConstants {
      */
     public static final String COLUMN_REVERSE = "column-reverse";
 
+    public static final String COLUMN_COUNT = "column-count";
+
     /**
      * The Constant CONTAIN.
      */
