@@ -97,7 +97,7 @@ final class FlexUtil {
         // 9.3. Main Size Determination
 
         // 5. Collect flex items into flex lines:
-        boolean isSingleLine = !flexContainerRenderer.hasProperty(Property.FLEX_WRAP)
+        final boolean isSingleLine = !flexContainerRenderer.hasProperty(Property.FLEX_WRAP)
                 || FlexWrapPropertyValue.NOWRAP == flexContainerRenderer.<FlexWrapPropertyValue>getProperty(
                 Property.FLEX_WRAP);
 
@@ -118,7 +118,7 @@ final class FlexUtil {
 
         // 8. Calculate the cross size of each flex line.
         List<Float> lineCrossSizes =
-                calculateCrossSizeOfEachFlexLine(lines, isSingleLine, minCrossSize, crossSize, maxCrossSize);
+                calculateCrossSizeOfEachFlexLine(lines, minCrossSize, crossSize, maxCrossSize);
 
         // TODO DEVSIX-5003 min/max height calculations are not supported
         // If the flex container is single-line, then clamp the line’s cross-size to be within
@@ -424,7 +424,8 @@ final class FlexUtil {
     }
 
     static List<Float> calculateCrossSizeOfEachFlexLine(List<List<FlexItemCalculationInfo>> lines,
-            boolean isSingleLine, Float minCrossSize, Float crossSize, Float maxCrossSize) {
+            Float minCrossSize, Float crossSize, Float maxCrossSize) {
+        boolean isSingleLine = lines.size() == 1;
         List<Float> lineCrossSizes = new ArrayList<>();
         if (isSingleLine && crossSize != null && !lines.isEmpty()) {
             lineCrossSizes.add((float) crossSize);
@@ -538,23 +539,31 @@ final class FlexUtil {
                         (AlignmentPropertyValue) itemInfo.renderer.<AlignmentPropertyValue>getProperty(
                                 Property.ALIGN_SELF, itemsAlignment);
 
-                float freeSpace = lineCrossSize - itemInfo.getOuterCrossSize(itemInfo.crossSize);
+                final float freeSpace = lineCrossSize - itemInfo.getOuterCrossSize(itemInfo.crossSize);
 
                 switch (selfAlignment) {
                     case SELF_END:
                     case END:
-                    case FLEX_END:
                         itemInfo.yShift = freeSpace;
+                        break;
+                    case FLEX_END:
+                        if (!renderer.isWrapReverse()) {
+                            itemInfo.yShift = freeSpace;
+                        }
                         break;
                     case CENTER:
                         itemInfo.yShift = freeSpace / 2;
+                        break;
+                    case FLEX_START:
+                        if (renderer.isWrapReverse()) {
+                            itemInfo.yShift = freeSpace;
+                        }
                         break;
                     case START:
                     case BASELINE:
                     case SELF_START:
                     case STRETCH:
                     case NORMAL:
-                    case FLEX_START:
                     default:
                         // We don't need to do anything in these cases
                 }

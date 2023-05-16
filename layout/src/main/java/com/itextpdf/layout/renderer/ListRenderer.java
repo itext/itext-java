@@ -321,7 +321,6 @@ public class ListRenderer extends BlockRenderer {
                     listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
                     currentSymbolRenderer.setParent(null);
                 }
-                childRenderers.get(i).setParent(null);
                 boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
                 boolean listSymbolNotFit = listSymbolLayoutResult != null &&
                         listSymbolLayoutResult.getStatus() != LayoutResult.FULL;
@@ -352,8 +351,6 @@ public class ListRenderer extends BlockRenderer {
             Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
             listItemNum = 0;
             for (IRenderer childRenderer : childRenderers) {
-                childRenderer.setParent(this);
-
                 // Symbol indent's value should be summed with the margin's value
                 boolean isRtl = BaseDirection.RIGHT_TO_LEFT ==
                         childRenderer.<BaseDirection>getProperty(Property.BASE_DIRECTION);

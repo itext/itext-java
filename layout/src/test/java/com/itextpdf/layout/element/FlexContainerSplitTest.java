@@ -30,7 +30,10 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
 import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.FlexWrapPropertyValue;
+import com.itextpdf.layout.properties.JustifyContent;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
@@ -152,6 +155,150 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
+    @Test
+    public void simpleWrapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "simpleWrapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void simpleWrapStartTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "simpleWrapStartTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapStartTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void simpleWrapEndTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "simpleWrapEndTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapEndTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_END);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_END);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void reverseWrapStartTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "reverseWrapStartTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapStartTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void reverseWrapEndTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "reverseWrapEndTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapEndTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_END);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_END);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void reverseWrapStartHeightTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "reverseWrapStartHeightTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapStartHeightTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
+            flexContainer.setHeight(1250);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void reverseWrapEndHeightTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "reverseWrapEndHeightTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapEndHeightTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_END);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_END);
+            flexContainer.setHeight(1250);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void simpleWrapCenterTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "simpleWrapCenterTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapCenterTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.CENTER);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.CENTER);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
     private Div createDefaultFlexContainer() {
         Div flexContainer = new FlexContainer();
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
@@ -169,6 +316,23 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
         p2.setProperty(Property.FLEX_GROW, 1f);
         p2.setProperty(Property.FLEX_SHRINK, 1f);
         flexContainer.add(p2);
+
+        return flexContainer;
+    }
+
+    private Div createDefaultFlexContainerForWrap() {
+        Div flexContainer = new FlexContainer();
+        flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
+        flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
+        Paragraph p1 = new Paragraph(SHORT_TEXT)
+                .setWidth(UnitValue.createPercentValue(20))
+                .setBackgroundColor(ColorConstants.BLUE);
+
+        Paragraph p2 = new Paragraph(VERY_LONG_TEXT)
+                .setWidth(UnitValue.createPercentValue(40))
+                .setBackgroundColor(ColorConstants.YELLOW);
+
+        flexContainer.add(p1).add(p2).add(p1).add(p2).add(p1).add(p2).add(p1).add(p2);
 
         return flexContainer;
     }
