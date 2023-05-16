@@ -25,9 +25,9 @@ package com.itextpdf.io.font.cmap;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.PdfTokenizer.TokenType;
+import com.itextpdf.io.util.PdfNameUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -148,7 +148,7 @@ public class CMapContentParser {
                 }
                 return obj;
             case Name:
-                return new CMapObject(CMapObject.NAME, decodeName(tokeniser.getByteContent()));
+                return new CMapObject(CMapObject.NAME, PdfNameUtil.decodeName(tokeniser.getByteContent()));
             case Number:
                 CMapObject numObject = new CMapObject(CMapObject.NUMBER, null);
                 try {
@@ -182,24 +182,16 @@ public class CMapContentParser {
         return false;
     }
 
-    // TODO: Duplicates PdfName.generateValue (REFACTOR)
+    /**
+     * Use {@link PdfNameUtil#decodeName(byte[])} instead.
+     *
+     * @param content to decode
+     * @return decoded content
+     * @deprecated
+     */
+    @Deprecated
     protected static String decodeName(byte[] content) {
-        StringBuilder buf = new StringBuilder();
-        try {
-            for (int k = 0; k < content.length; ++k) {
-                char c = (char) content[k];
-                if (c == '#') {
-                    byte c1 = content[k + 1];
-                    byte c2 = content[k + 2];
-                    c = (char) ((ByteBuffer.getHex(c1) << 4) + ByteBuffer.getHex(c2));
-                    k += 2;
-                }
-                buf.append(c);
-            }
-        } catch (IndexOutOfBoundsException e) {
-            // empty on purpose
-        }
-        return buf.toString();
+        return PdfNameUtil.decodeName(content);
     }
 
     private static String toHex4(int n) {

@@ -340,7 +340,6 @@ public class FontMetrics {
         this.superscriptOffset = (int) (superscriptOffset * normalizationCoef);
     }
 
-    //todo change to protected!
     public void setStemV(int stemV) {
         this.stemV = stemV;
     }

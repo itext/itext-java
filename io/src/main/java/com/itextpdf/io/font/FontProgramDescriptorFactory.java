@@ -156,7 +156,6 @@ public final class FontProgramDescriptorFactory {
     }
 
     private static FontProgramDescriptor fetchType1FontDescriptor(String fontName, byte[] afm) throws java.io.IOException {
-        //TODO close original stream, may be separate static method should introduced
         Type1Font fp = new Type1Font(fontName, null, afm, null);
         return new FontProgramDescriptor(fp.getFontNames(), fp.getFontMetrics());
     }
