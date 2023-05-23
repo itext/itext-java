@@ -30,6 +30,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.IRecipientInformation;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -48,7 +49,9 @@ import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -71,6 +74,12 @@ final class EncryptionUtils {
     private static final int ENVELOPE_ENCRYPTION_KEY_LENGTH = 256;
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
+    private static final Set<String> UNSUPPORTED_ALGORITHMS = new HashSet<>();
+
+    static {
+        UNSUPPORTED_ALGORITHMS.add("1.2.840.10045.2.1");
+    }
 
     static byte[] generateSeed(int seedLength) {
         byte[] seedBytes;
@@ -146,6 +155,11 @@ final class EncryptionUtils {
 
     static byte[] cipherBytes(X509Certificate x509certificate, byte[] abyte0, IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
+        String algorithm = algorithmIdentifier.getAlgorithm().getId();
+        if (UNSUPPORTED_ALGORITHMS.contains(algorithm)) {
+            throw new PdfException(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.ALGORITHM_IS_NOT_SUPPORTED, algorithm));
+        }
         return BOUNCY_CASTLE_FACTORY.createCipherBytes(x509certificate, abyte0, algorithmIdentifier);
     }
 

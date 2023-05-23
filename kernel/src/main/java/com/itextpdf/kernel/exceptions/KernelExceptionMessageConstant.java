@@ -26,6 +26,7 @@ package com.itextpdf.kernel.exceptions;
  * Class that bundles all the error message templates as constants.
  */
 public final class KernelExceptionMessageConstant {
+    public static final String ALGORITHM_IS_NOT_SUPPORTED = "Algorithm {0} is not supported.";
     public static final String AMOUNT_OF_BYTES_LESS_THAN_ZERO =
             "Amount of bytes in the PDF document cannot be less than zero";
     public static final String ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE = "Annotation shall have reference to page.";

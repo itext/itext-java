@@ -28,6 +28,9 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cms.AbstractCMSException;
 import com.itextpdf.commons.bouncycastle.cms.IRecipient;
 import com.itextpdf.commons.bouncycastle.cms.IRecipientInformation;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -188,9 +191,19 @@ public final class PdfEncryptor {
      */
     public static byte[] getContent(IRecipientInformation recipientInfo, PrivateKey certificateKey,
             String certificateKeyProvider) throws AbstractCMSException {
-        IRecipient jceKeyTransRecipient = BOUNCY_CASTLE_FACTORY.createJceKeyTransEnvelopedRecipient(certificateKey)
-                .setProvider(certificateKeyProvider);
-        return recipientInfo.getContent(jceKeyTransRecipient);
+        String algorithm = certificateKey.getAlgorithm();
+        IRecipient jceKeyRecipient;
+        if (algorithm.contains("RSA")) {
+            jceKeyRecipient = BOUNCY_CASTLE_FACTORY.createJceKeyTransEnvelopedRecipient(certificateKey)
+                    .setProvider(certificateKeyProvider);
+        } else if (algorithm.contains("EC")) {
+            jceKeyRecipient = BOUNCY_CASTLE_FACTORY.createJceKeyAgreeEnvelopedRecipient(certificateKey)
+                    .setProvider(certificateKeyProvider);
+        } else {
+            throw new PdfException(MessageFormatUtil.format(KernelExceptionMessageConstant.ALGORITHM_IS_NOT_SUPPORTED,
+                    algorithm));
+        }
+        return recipientInfo.getContent(jceKeyRecipient);
     }
 
     /**

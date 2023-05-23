@@ -92,6 +92,8 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
                 md.update(new byte[] {(byte) 255, (byte) 255, (byte) 255,
                         (byte) 255});
             }
+        } catch (PdfException pdfException) {
+            throw pdfException;
         } catch (Exception e) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }

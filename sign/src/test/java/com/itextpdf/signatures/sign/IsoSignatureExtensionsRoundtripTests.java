@@ -43,7 +43,7 @@ import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -71,11 +71,12 @@ import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(IntegrationTest.class)
+@Category(BouncyCastleIntegrationTest.class)
 public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -89,6 +90,7 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
 
     @BeforeClass
     public static void before() {
+        Assume.assumeFalse(BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode());
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }

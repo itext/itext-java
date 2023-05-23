@@ -111,6 +111,7 @@ import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
+import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
@@ -648,6 +649,15 @@ public interface IBouncyCastleFactory {
      * @return created Jce Key trans enveloped recipient wrapper
      */
     IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey);
+
+    /**
+     * Create Jce Key agree enveloped recipient wrapper from {@link PrivateKey}.
+     *
+     * @param privateKey {@link PrivateKey} to create Jce Key agree enveloped recipient wrapper from
+     *
+     * @return created Jce Key agree enveloped recipient wrapper
+     */
+    IJceKeyAgreeEnvelopedRecipient createJceKeyAgreeEnvelopedRecipient(PrivateKey privateKey);
 
     /**
      * Create Jca Content verifier provider builder wrapper without parameters.
