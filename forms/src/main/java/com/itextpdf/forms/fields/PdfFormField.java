@@ -1394,6 +1394,11 @@ public class PdfFormField extends AbstractPdfFormField {
                 // so we need to get rid of the form fields kids
                 PdfFormFieldMergeUtil.processDirtyAnnotations(this, true);
                 put(PdfName.V, new PdfName(value));
+                if (generateAppearance && !getFieldFlag(PdfButtonFormField.FF_RADIO)) {
+                    if (tryGenerateCheckboxAppearance(value)) {
+                        return this;
+                    }
+                }
                 for (PdfWidgetAnnotation widget : getWidgets()) {
                     List<String> states = Arrays.asList(PdfFormAnnotation
                             .makeFormAnnotation(widget.getPdfObject(), getDocument()).getAppearanceStates());
@@ -1423,6 +1428,36 @@ public class PdfFormField extends AbstractPdfFormField {
 
         this.setModified();
         return this;
+    }
+
+    /**
+     * Distinguish mutually exclusive and regular checkboxes: check all the on states of the widgets, if they are
+     * not all equal, then consider that this checkbox is mutually exclusive and do nothing, otherwise regenerate
+     * normal appearance with value as on appearance state for all the widgets.
+     *
+     * @param value not empty value different from "Off".
+     */
+    private boolean tryGenerateCheckboxAppearance(String value) {
+        if (value == null || value.isEmpty() || PdfFormAnnotation.OFF_STATE_VALUE.equals(value)) {
+            return false;
+        }
+        Set<String> allStates = new HashSet<>();
+        for (PdfFormAnnotation annotation : getChildFormAnnotations()) {
+            allStates.addAll(Arrays.asList(annotation.getAppearanceStates()));
+            if (allStates.size() > 2) {
+                return false;
+            }
+        }
+        allStates.remove(PdfFormAnnotation.OFF_STATE_VALUE);
+        if (allStates.isEmpty() || allStates.size() == 1 &&
+                !value.equals(allStates.toArray(new String[allStates.size()])[0])) {
+            for (PdfFormAnnotation annotation : getChildFormAnnotations()) {
+                annotation.setCheckBoxAppearanceOnStateName(value);
+            }
+            updateDefaultAppearance();
+            return true;
+        }
+        return false;
     }
 
     private boolean mergeKidsIfKidWithSuchNameExists(AbstractPdfFormField newKid, boolean throwExceptionOnError) {

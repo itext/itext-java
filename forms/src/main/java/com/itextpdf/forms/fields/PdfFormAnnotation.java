@@ -551,6 +551,23 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
+     * Sets on state name for the checkbox annotation normal appearance and regenerates widget.
+     *
+     * @param onStateName the new appearance name representing on state.
+     *
+     * @return The edited {@link PdfFormAnnotation}.
+     */
+    public PdfFormAnnotation setCheckBoxAppearanceOnStateName(String onStateName) {
+        if (isCheckBox() && onStateName != null && !onStateName.isEmpty()
+                && !PdfFormAnnotation.OFF_STATE_VALUE.equals(onStateName)) {
+            drawCheckBoxAndSaveAppearance(onStateName);
+            getWidget().setAppearanceState(new PdfName(onStateName.equals(parent.getValueAsString()) ?
+                    onStateName : OFF_STATE_VALUE));
+        }
+        return this;
+    }
+
+    /**
      * Gets a {@link Rectangle} that matches the current size and position of this form field.
      *
      * @param field current form field.
@@ -925,9 +942,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         reconstructCheckBoxType();
         createCheckBox();
-        if (getWidget().getNormalAppearanceObject() == null) {
-            getWidget().setNormalAppearance(new PdfDictionary());
-        }
         final PdfDictionary normalAppearance = new PdfDictionary();
         ((CheckBox) formFieldElement).setChecked(false);
         final PdfFormXObject xObjectOff = new PdfFormXObject(
@@ -963,7 +977,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                 new PdfString(PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(
                         parent.checkType.getValue())));
         getWidget().put(PdfName.MK, mk);
-        setCheckBoxAppearanceState(onStateName);
     }
 
     static void setMetaInfoToCanvas(Canvas canvas) {
@@ -1006,7 +1019,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             } else if (parent.getFieldFlag(PdfButtonFormField.FF_RADIO)) {
                 drawRadioButtonAndSaveAppearance(getRadioButtonValue());
             } else {
-                drawCheckBoxAndSaveAppearance(parent.getValueAsString());
+                drawCheckBoxAndSaveAppearance(getCheckBoxValue());
             }
             return true;
         }
@@ -1064,14 +1077,13 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return null;
     }
 
-    private void setCheckBoxAppearanceState(String onStateName) {
-        final PdfWidgetAnnotation widget = getWidget();
-        if (widget.getNormalAppearanceObject() != null && widget.getNormalAppearanceObject()
-                .containsKey(new PdfName(onStateName))) {
-            widget.setAppearanceState(new PdfName(onStateName));
-        } else {
-            widget.setAppearanceState(new PdfName(OFF_STATE_VALUE));
+    private String getCheckBoxValue() {
+        for (String state : getAppearanceStates()) {
+            if (!OFF_STATE_VALUE.equals(state)) {
+                return state;
+            }
         }
+        return parent.getValueAsString();
     }
 
     private void reconstructCheckBoxType() {
@@ -1169,5 +1181,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return captionData.getValue();
         }
         return null;
+    }
+
+    private boolean isCheckBox() {
+        return parent != null && PdfName.Btn.equals(parent.getFormType())
+                && !parent.getFieldFlag(PdfButtonFormField.FF_RADIO)
+                && !parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON);
     }
 }
