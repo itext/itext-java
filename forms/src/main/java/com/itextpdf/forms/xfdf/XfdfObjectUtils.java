@@ -43,7 +43,11 @@ final class XfdfObjectUtils {
 
     /**
      * Converts a string containing 2 or 4 float values into a {@link Rectangle}.
-     * If only two coordinates are present, they should represent {@link Rectangle} width and height.
+     *
+     * @param rectString the annotation rectangle, defining the location of the annotation on the page
+     *                   in default user space units. The value is four comma separated real numbers
+     *                   which may be positive or negative: (xLeft, yBottom, xRight, yTop). If only two coordinates
+     *                   are present, they should represent {@link Rectangle} width and height.
      */
     static Rectangle convertRectFromString(String rectString) {
         String delims = ",";
@@ -57,8 +61,11 @@ final class XfdfObjectUtils {
         if (coordsList.size() == 2) {
             return new Rectangle(Float.parseFloat(coordsList.get(0)), Float.parseFloat(coordsList.get(1)));
         } else if (coordsList.size() == 4) {
-            return new Rectangle(Float.parseFloat(coordsList.get(0)), Float.parseFloat(coordsList.get(1)),
-                    Float.parseFloat(coordsList.get(2)), Float.parseFloat(coordsList.get(3)));
+            float xLeft = Float.parseFloat(coordsList.get(0));
+            float yBottom =  Float.parseFloat(coordsList.get(1));
+            float width = Float.parseFloat(coordsList.get(2)) - xLeft;
+            float height = Float.parseFloat(coordsList.get(3)) - yBottom;
+            return new Rectangle(xLeft, yBottom, width, height);
         }
 
         return null;
@@ -276,7 +283,7 @@ final class XfdfObjectUtils {
         String colorString = colorHexString.substring(colorHexString.indexOf('#') + 1);
         if (colorString.length() == 6) {
             for (int i = 0; i < 3; i++) {
-                result[i] = Integer.parseInt(colorString.substring(i * 2, 2 + i * 2), 16);
+                result[i] = Integer.parseInt(colorString.substring(i * 2, 2 + i * 2), 16) / 255f;
             }
         }
         return result;
