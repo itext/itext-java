@@ -117,7 +117,7 @@ public final class ProductData {
     /**
      * Getter for the minimal compatible licensekey version.
      *
-         * @return minimal compatible version of licensekey library.
+     * @return minimal compatible version of licensekey library.
      */
     public String getMinCompatibleLicensingModuleVersion() {
         return minimalCompatibleLicenseKeyVersion;
