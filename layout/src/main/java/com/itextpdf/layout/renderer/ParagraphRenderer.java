@@ -38,6 +38,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
@@ -48,14 +49,13 @@ import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
@@ -105,6 +105,10 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
+        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
+            ContinuousContainer.setupContinuousContainer(this);
+        }
+
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
         Boolean nowrapProp = this.getPropertyAsBoolean(Property.NO_SOFT_WRAP_INLINE);
@@ -113,11 +117,14 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean notAllKidsAreFloats = false;
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
-        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas,
+                parentBBox);
+        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection,
+                FloatingHelper.isRendererFloating(this));
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue, overflowX);
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas,
+                    floatPropertyValue, overflowX);
             floatRendererAreas = new ArrayList<>();
         }
 
@@ -470,6 +477,13 @@ public class ParagraphRenderer extends BlockRenderer {
             floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
+        final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
+                Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
+        if (continuousContainer != null) {
+            continuousContainer.reApplyProperties(this);
+            paddings = getPaddings();
+            borders = getBorders();
+        }
 
         correctFixedLayout(layoutBox);
 
@@ -633,6 +647,9 @@ public class ParagraphRenderer extends BlockRenderer {
         overflowRenderer.parent = parent;
         fixOverflowRenderer(overflowRenderer);
         overflowRenderer.addAllProperties(getOwnProperties());
+        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
+            ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
+        }
         return overflowRenderer;
     }
 

@@ -59,9 +59,10 @@ public class ColumnContainerRenderer extends AbstractRenderer {
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        ((ColumnContainer)this.getModelElement()).copyAllPropertiesToChildren();
+
+        ((ColumnContainer) this.getModelElement()).copyAllPropertiesToChildren();
         final Rectangle initialBBox = layoutContext.getArea().getBBox();
-        final int columnCount = (int)this.<Integer>getProperty(Property.COLUMN_COUNT);
+        final int columnCount = (int) this.<Integer>getProperty(Property.COLUMN_COUNT);
         final float columnWidth = initialBBox.getWidth() / columnCount;
         if (getChildRenderers().isEmpty() && !(getChildRenderers().get(0) instanceof BlockRenderer)) {
             throw new IllegalStateException("Invalid child renderers, it should be one, " +
@@ -69,7 +70,6 @@ public class ColumnContainerRenderer extends AbstractRenderer {
         }
         BlockRenderer blockRenderer = (BlockRenderer) getChildRenderers().get(0);
         blockRenderer.setParent(this);
-
         LayoutResult prelayoutResult = blockRenderer.layout(
                 new LayoutContext(new LayoutArea(1, new Rectangle(columnWidth, INF))));
         if (prelayoutResult.getStatus() != LayoutResult.FULL) {
@@ -78,7 +78,7 @@ public class ColumnContainerRenderer extends AbstractRenderer {
         }
 
         blockRenderer = prelayoutResult.getSplitRenderer() != null ?
-                (BlockRenderer)prelayoutResult.getSplitRenderer() : blockRenderer;
+                (BlockRenderer) prelayoutResult.getSplitRenderer() : blockRenderer;
 
         float approximateHeight = prelayoutResult.getOccupiedArea().getBBox().getHeight() / columnCount;
 
