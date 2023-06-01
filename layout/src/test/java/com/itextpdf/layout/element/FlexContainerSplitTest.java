@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -30,12 +31,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
-import com.itextpdf.layout.properties.AlignmentPropertyValue;
-import com.itextpdf.layout.properties.Background;
-import com.itextpdf.layout.properties.FlexWrapPropertyValue;
-import com.itextpdf.layout.properties.JustifyContent;
-import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.*;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -219,6 +215,51 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
             flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
             flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
             flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 556)
+    })
+    public void rowWrapRtlStartTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "rowWrapRtlStartTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_rowWrapRtlStartTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
+            flexContainer.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 556)
+    })
+    public void reverseRowWrapRtlStartTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "reverseRowWrapRtlStartTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_reverseRowWrapRtlStartTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = createDefaultFlexContainerForWrap();
+            flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+            flexContainer.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.ROW_REVERSE);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
+            flexContainer.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
             document.add(flexContainer);
         }
 

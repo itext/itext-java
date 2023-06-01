@@ -32,11 +32,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.properties.AlignmentPropertyValue;
-import com.itextpdf.layout.properties.FlexWrapPropertyValue;
-import com.itextpdf.layout.properties.OverflowPropertyValue;
-import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +51,8 @@ public class FlexContainerRenderer extends DivRenderer {
     private final Map<Float, Float> hypotheticalCrossSizes = new HashMap<>();
 
     private List<List<FlexItemInfo>> lines;
+
+    private IFlexItemMainDirector flexItemMainDirector = null;
 
     /**
      * Creates a FlexContainerRenderer from its corresponding layout object.
@@ -90,6 +88,9 @@ public class FlexContainerRenderer extends DivRenderer {
         setThisAsParent(getChildRenderers());
         lines = FlexUtil.calculateChildrenRectangles(layoutContextRectangle, this);
         applyWrapReverse();
+        List<IRenderer> renderers = getFlexItemMainDirector().applyDirection(lines);
+        removeAllChildRenderers(getChildRenderers());
+        addAllChildRenderers(renderers);
 
         final List<UnitValue> previousWidths = new ArrayList<>();
         final List<UnitValue> previousHeights = new ArrayList<>();
@@ -118,6 +119,10 @@ public class FlexContainerRenderer extends DivRenderer {
                 // it is extended to the height predicted by the algo
                 itemInfo.getRenderer().setProperty(Property.MIN_HEIGHT,
                         UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
+
+                // Property.HORIZONTAL_ALIGNMENT mustn't play, in flex container items are aligned
+                // using justify-content and align-items
+                itemInfo.getRenderer().setProperty(Property.HORIZONTAL_ALIGNMENT, null);
             }
         }
 
@@ -171,12 +176,20 @@ public class FlexContainerRenderer extends DivRenderer {
         return minMaxWidth;
     }
 
+    IFlexItemMainDirector getFlexItemMainDirector() {
+        if (flexItemMainDirector == null) {
+            flexItemMainDirector = createMainDirector();
+        }
+
+        return flexItemMainDirector;
+    }
+
     /**
      * Check if flex container is wrapped reversely.
      *
      * @return {@code true} if flex-wrap property is set to wrap-reverse, {@code false} otherwise.
      */
-    public boolean isWrapReverse() {
+    boolean isWrapReverse() {
         return FlexWrapPropertyValue.WRAP_REVERSE ==
                 this.<FlexWrapPropertyValue>getProperty(Property.FLEX_WRAP, null);
     }
@@ -200,8 +213,14 @@ public class FlexContainerRenderer extends DivRenderer {
 
             // If the renderer to split is in the current line
             if (isSplitLine && !forcedPlacement && layoutStatus == LayoutResult.PARTIAL) {
+                // It has sense to call it also for LayoutResult.NOTHING. And then try to layout remaining renderers
+                // in line inside fillSplitOverflowRenderersForPartialResult to see if some of them can be left or
+                // partially left on the first page (in split renderer). But it's not that easy.
+                // So currently, if the 1st not fully layouted renderer is layouted with LayoutResult.NOTHING,
+                // the whole line is moved to the next page (overflow renderer).
                 fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
                         childResult);
+                getFlexItemMainDirector().applyDirectionForLine(overflowRenderer.getChildRenderers());
             } else {
                 List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
                 for (final FlexItemInfo itemInfo : line) {
@@ -211,6 +230,7 @@ public class FlexContainerRenderer extends DivRenderer {
                         splitRenderer.addChildRenderer(itemInfo.getRenderer());
                     }
                 }
+                getFlexItemMainDirector().applyDirectionForLine(overflowRendererChildren);
 
                 // If wrapped reversely we should add a line into beginning to correctly recalculate
                 // and inverse lines while layouting overflowRenderer.
@@ -454,8 +474,7 @@ public class FlexContainerRenderer extends DivRenderer {
 
                 if (childResult.getOverflowRenderer() != null) {
                     // Get rid of cross alignment for item with partial result
-                    childResult.getOverflowRenderer().setProperty(Property.ALIGN_SELF,
-                            isWrapReverse() ? AlignmentPropertyValue.FLEX_END : AlignmentPropertyValue.FLEX_START);
+                    childResult.getOverflowRenderer().setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
                     overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
                 }
 
@@ -488,8 +507,8 @@ public class FlexContainerRenderer extends DivRenderer {
                 if (neighbourLayoutResult.getOverflowRenderer() != null) {
                     if (neighbourLayoutResult.getStatus() == LayoutResult.PARTIAL) {
                         // Get rid of cross alignment for item with partial result
-                        neighbourLayoutResult.getOverflowRenderer().setProperty(Property.ALIGN_SELF,
-                                isWrapReverse() ? AlignmentPropertyValue.FLEX_END : AlignmentPropertyValue.FLEX_START);
+                        neighbourLayoutResult.getOverflowRenderer()
+                                .setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
                     }
                     overflowRenderer.addChildRenderer(neighbourLayoutResult.getOverflowRenderer());
                 } else {
@@ -548,5 +567,23 @@ public class FlexContainerRenderer extends DivRenderer {
         }
         minMaxWidthHandler.updateMaxChildWidth(maxWidth);
         minMaxWidthHandler.updateMinChildWidth(minWidth);
+    }
+
+    /**
+     * Check if flex container direction is row reverse.
+     *
+     * @return {@code true} if flex-direction property is set to row-reverse, {@code false} otherwise.
+     */
+    private boolean isRowReverse() {
+        return FlexDirectionPropertyValue.ROW_REVERSE ==
+                this.<FlexDirectionPropertyValue>getProperty(Property.FLEX_DIRECTION, null);
+    }
+
+    private IFlexItemMainDirector createMainDirector() {
+        final boolean isRtlDirection = BaseDirection.RIGHT_TO_LEFT ==
+                this.<BaseDirection>getProperty(Property.BASE_DIRECTION, null);
+        flexItemMainDirector = isRowReverse() ^ isRtlDirection
+                ? (IFlexItemMainDirector) new RtlFlexItemMainDirector() : new LtrFlexItemMainDirector();
+        return flexItemMainDirector;
     }
 }

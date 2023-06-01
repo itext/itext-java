@@ -76,6 +76,8 @@ public final class Property {
     public static final int FLEX_GROW = 132;
     public static final int FLEX_SHRINK = 127;
     public static final int FLEX_WRAP = 128;
+    public static final int FLEX_DIRECTION = 139;
+
     public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;
 

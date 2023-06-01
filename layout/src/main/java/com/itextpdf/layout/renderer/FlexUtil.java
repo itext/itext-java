@@ -155,6 +155,7 @@ final class FlexUtil {
 
         // TODO DEVSIX-5164 16. Align all flex lines per align-content.
 
+        // Convert FlexItemCalculationInfo's into FlexItemInfo's
         List<List<FlexItemInfo>> layoutTable = new ArrayList<>();
         for (List<FlexItemCalculationInfo> line : lines) {
             List<FlexItemInfo> layoutLine = new ArrayList<>();
@@ -581,29 +582,9 @@ final class FlexUtil {
             for (FlexItemCalculationInfo itemInfo : line) {
                 childrenWidth += itemInfo.getOuterMainSize(itemInfo.mainSize);
             }
-            float freeSpace = mainSize - childrenWidth;
-
-            switch (justifyContent) {
-                case RIGHT:
-                case END:
-                case SELF_END:
-                case FLEX_END:
-                    line.get(0).xShift = freeSpace;
-                    break;
-                case CENTER:
-                    line.get(0).xShift = freeSpace / 2;
-                    break;
-                case NORMAL:
-                case STRETCH:
-                case START:
-                case LEFT:
-                case SELF_START:
-                case FLEX_START:
-                default:
-                    // We don't need to do anything in these cases
-            }
+            final float freeSpace = mainSize - childrenWidth;
+            renderer.getFlexItemMainDirector().applyAlignment(line, justifyContent, freeSpace);
         }
-
     }
 
     private static float calculateFreeSpace(final List<FlexItemCalculationInfo> line, final float initialFreeSpace) {
