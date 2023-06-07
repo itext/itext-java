@@ -85,6 +85,9 @@
             <fileset reason="System.Collections needs to be added by addCustomUsingDeclaration">
                 <file path="com/itextpdf/io/font/otf/ActualTextIterator.java"/>
             </fileset>
+            <fileset reason="Underlying implementation classes not autoportable (e.g. java.nio.charset.Charset, java.nio.charset.CharsetEncoder, java.nio.ByteBuffer">
+                <file path="com/itextpdf/io/font/cmap/CMapCharsetEncoder.java" />
+            </fileset>
             <fileset reason="Java specific class that uses java.nio.ByteBuffer and has no alternative in .Net.">
                 <file path="com/itextpdf/io/source/ByteBufferRandomAccessSource.java"/>
                 <file path="com/itextpdf/io/source/ByteBufferRandomAccessSourceTest.java"/>
@@ -177,6 +180,7 @@
                 <file path="com/itextpdf/bouncycastle/cms/RecipientInformationStoreBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cms/SignerInformationVerifierBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cms/jcajce/JceKeyTransEnvelopedRecipientBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/jcajce/JceKeyAgreeEnvelopedRecipientBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cms/jcajce/JcaSignerInfoGeneratorBuilderBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cms/jcajce/JcaSimpleSignerInfoVerifierBuilderBC.java"/>
                 <file path="com/itextpdf/bouncycastle/openssl/PEMParserBC.java"/>
@@ -240,6 +244,7 @@
                 <file path="com/itextpdf/bouncycastlefips/cms/RecipientInformationStoreBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cms/SignerInformationVerifierBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JceKeyTransEnvelopedRecipientBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JceKeyAgreeEnvelopedRecipientBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JcaSignerInfoGeneratorBuilderBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JcaSimpleSignerInfoVerifierBuilderBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/openssl/PEMParserBCFips.java"/>
@@ -301,6 +306,7 @@
                 <file path="com/itextpdf/commons/bouncycastle/cms/IRecipientInformationStore.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/cms/ISignerInformationVerifier.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJceKeyTransEnvelopedRecipient.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJceKeyAgreeEnvelopedRecipient.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJcaSignerInfoGeneratorBuilder.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJcaSimpleSignerInfoVerifierBuilder.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/openssl/IPEMParser.java"/>
@@ -325,6 +331,10 @@
             <file path="com/itextpdf/kernel/crypto/AESCipherCBCnoPad.java"/>
             <file path="com/itextpdf/kernel/crypto/OutputStreamEncryption.java"/>
             <file path="com/itextpdf/kernel/crypto/CryptoUtil.java"/>
+            <fileset reason="Encrypting and decrypting works differently in fips mode">
+                <file path="com/itextpdf/kernel/crypto/PdfDecryptingTest.java" />
+                <file path="com/itextpdf/kernel/crypto/PdfEncryptingTest.java" />
+            </fileset>
             <fileset reason="This test is affected by FIPS Mode, where some encryption features are not supported">
                 <file path="com/itextpdf/kernel/crypto/PdfEncryptionManuallyPortedTest.java"/>
             </fileset>
