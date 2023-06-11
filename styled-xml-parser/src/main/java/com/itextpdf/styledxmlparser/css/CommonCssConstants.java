@@ -305,6 +305,11 @@ public class CommonCssConstants {
     public static final String COLUMN_GAP = "column-gap";
 
     /**
+     * The Constant COLUMNS
+     */
+    public static final String COLUMNS = "columns";
+
+    /**
      * The Constant DARKEN.
      */
     public static final String DARKEN = "darken";
