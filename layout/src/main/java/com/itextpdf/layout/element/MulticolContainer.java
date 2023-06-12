@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.layout.renderer.ColumnContainerRenderer;
+import com.itextpdf.layout.renderer.MulticolRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.Map;
@@ -30,17 +30,17 @@ import java.util.Map;
 /**
  * represents a container of the column objects.
  */
-public class ColumnContainer extends Div {
+public class MulticolContainer extends Div {
 
     /**
-     * Creates new {@link ColumnContainer} instance.
+     * Creates new {@link MulticolContainer} instance.
      */
-    public ColumnContainer() {
+    public MulticolContainer() {
         super();
     }
 
     /**
-     * Copies all properties of {@link ColumnContainer} to its child elements.
+     * Copies all properties of {@link MulticolContainer} to its child elements.
      */
     public void copyAllPropertiesToChildren() {
         for (final IElement child : this.getChildren()) {
@@ -52,7 +52,7 @@ public class ColumnContainer extends Div {
 
     @Override
     protected IRenderer makeNewRenderer() {
-        return new ColumnContainerRenderer(this);
+        return new MulticolRenderer(this);
     }
 
 }

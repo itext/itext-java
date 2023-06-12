@@ -23,21 +23,15 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.element.ColumnContainer;
+import com.itextpdf.layout.element.MulticolContainer;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.properties.LineHeight;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.splitting.DefaultSplitCharacters;
@@ -50,11 +44,11 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 
 @Category(UnitTest.class)
-public class ColumnContainerRendererUnitTest extends ExtendedITextTest {
+public class MulticolRendererUnitTest extends ExtendedITextTest {
 
     @Test
     public void simpleTest() throws IOException {
-        Div columnContainer = new ColumnContainer();
+        Div columnContainer = new MulticolContainer();
         Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                 "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
                 "ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
@@ -64,16 +58,16 @@ public class ColumnContainerRendererUnitTest extends ExtendedITextTest {
         columnContainer.add(fillTextProperties(paragraph));
         columnContainer.setProperty(Property.COLUMN_COUNT, 3);
 
-        ColumnContainerRenderer renderer = (ColumnContainerRenderer) columnContainer.createRendererSubTree();
+        MulticolRenderer renderer = (MulticolRenderer) columnContainer.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(600f, 200.0f))));
-        Assert.assertTrue(result.getSplitRenderer() instanceof ColumnContainerRenderer);
+        Assert.assertTrue(result.getSplitRenderer() instanceof MulticolRenderer);
         Assert.assertEquals(3, result.getSplitRenderer().getChildRenderers().size());
         Assert.assertEquals(9, result.getSplitRenderer().getChildRenderers().get(0).getChildRenderers().size());
     }
 
     @Test
     public void keepTogetherParagraphTest() throws IOException {
-        Div columnContainer = new ColumnContainer();
+        Div columnContainer = new MulticolContainer();
         Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                 "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
                 "ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
@@ -84,13 +78,17 @@ public class ColumnContainerRendererUnitTest extends ExtendedITextTest {
 
         columnContainer.setProperty(Property.COLUMN_COUNT, 3);
 
-        ColumnContainerRenderer renderer = (ColumnContainerRenderer) columnContainer.createRendererSubTree();
-        Assert.assertThrows(IllegalStateException.class, () -> renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(200f, 20f)))));
+        MulticolRenderer renderer = (MulticolRenderer) columnContainer.createRendererSubTree();
+        LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(200f, 20f))));
+        Assert.assertEquals(1, result.getSplitRenderer().getChildRenderers().size());
+        Assert.assertEquals(1236.7692f,
+                result.getSplitRenderer().getChildRenderers().get(0).getOccupiedArea().getBBox().getHeight(), 0.0001f);
+        System.out.println(result);
     }
 
     @Test
     public void divWithNoHeightTest() throws IOException {
-        Div div = new ColumnContainer();
+        Div div = new MulticolContainer();
         Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                 "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
                 "ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
@@ -100,14 +98,14 @@ public class ColumnContainerRendererUnitTest extends ExtendedITextTest {
 
         div.setProperty(Property.COLUMN_COUNT, 3);
 
-        ColumnContainerRenderer renderer = (ColumnContainerRenderer) div.createRendererSubTree();
+        MulticolRenderer renderer = (MulticolRenderer) div.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(20.0f, 20.0f))));
         Assert.assertEquals(LayoutResult.NOTHING, result.getStatus());
     }
 
     @Test
     public void multipleParagraphsTest() throws IOException {
-        Div div = new ColumnContainer();
+        Div div = new MulticolContainer();
         Div child = new Div();
         Paragraph firstParagraph = new Paragraph("Lorem ipsum dolor sit");
         Paragraph secondParagraph = new Paragraph("consectetur adipiscing elit");
@@ -119,9 +117,9 @@ public class ColumnContainerRendererUnitTest extends ExtendedITextTest {
         div.add(child);
         div.setProperty(Property.COLUMN_COUNT, 3);
 
-        ColumnContainerRenderer renderer = (ColumnContainerRenderer) div.createRendererSubTree();
+        MulticolRenderer renderer = (MulticolRenderer) div.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(600f, 30.0f))));
-        Assert.assertTrue(result.getSplitRenderer() instanceof ColumnContainerRenderer);
+        Assert.assertTrue(result.getSplitRenderer() instanceof MulticolRenderer);
         Assert.assertEquals(3, result.getSplitRenderer().getChildRenderers().size());
         Assert.assertEquals(1, result.getSplitRenderer().getChildRenderers().get(0).getChildRenderers().size());
         Assert.assertEquals(2, ((ParagraphRenderer)result.getSplitRenderer().getChildRenderers().get(0)

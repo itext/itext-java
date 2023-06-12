@@ -30,7 +30,6 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.ColumnContainer;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.List;
@@ -44,7 +43,6 @@ import java.io.IOException;
 import java.util.function.Consumer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -402,167 +400,6 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBorder(DEFAULT_BORDER);
             final int amountOfWords = 1000;
             ctx.add(generateLongString(amountOfWords));
-        });
-    }
-
-    @Test
-    public void continuousColumContainerParagraphMarginTopBottom() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphMarginTopBottom", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 2);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            ctx.setMarginTop(DEFAULT_MARGIN * 1.25F);
-            ctx.setMarginBottom(DEFAULT_MARGIN);
-            ctx.add(new Paragraph(generateLongString(400)));
-        });
-    }
-
-    @Test
-    public void continuousColumContainerParagraphPaddingTopBottom() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerPaddingTopBottom", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            ctx.setPaddingTop(DEFAULT_PADDING);
-            ctx.setPaddingBottom(DEFAULT_PADDING * 2F);
-            ctx.add(new Paragraph(generateLongString(400)));
-        });
-    }
-
-    @Test
-    public void continuousColumContainerParagraphBorder() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphBorder", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            ctx.setBorder(DEFAULT_BORDER);
-            ctx.add(new Paragraph(generateLongString(400)));
-        });
-    }
-
-
-    @Test
-    public void continuousColumContainerParagraphAll() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphAll", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            ctx.setBorder(DEFAULT_BORDER);
-            ctx.setMarginTop(DEFAULT_MARGIN);
-            ctx.setPaddingTop(DEFAULT_PADDING);
-            ctx.setMarginBottom(DEFAULT_MARGIN);
-            ctx.setPaddingBottom(DEFAULT_PADDING);
-            ctx.add(new Paragraph(generateLongString(300)));
-        });
-    }
-
-    @Test
-    @Ignore("DEVSIX-7584")
-    public void continuousColumContainerParagraphOverflowShouldShow() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphAll", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            ctx.setBorder(DEFAULT_BORDER);
-            ctx.setMarginTop(DEFAULT_MARGIN);
-            ctx.setPaddingTop(DEFAULT_PADDING);
-            ctx.setMarginBottom(DEFAULT_MARGIN);
-            ctx.setPaddingBottom(DEFAULT_PADDING);
-            ctx.add(new Paragraph(generateLongString(8000)));
-        });
-    }
-
-    @Test
-    public void continuousColumContainerMultipleElementsMarginTop() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerMultipleElementsMarginTop", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            Div pseudoContainer = new Div();
-            for (int i = 0; i < 30; i++) {
-                pseudoContainer.add(new Paragraph("" + i));
-            }
-            ctx.setMarginTop(DEFAULT_MARGIN);
-            ctx.add(pseudoContainer);
-        });
-    }
-
-    @Test
-    public void continuousColumContainerMultipleElementsMarginBottom() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerMultipleElementsMarginBottom", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            Div pseudoContainer = new Div();
-            pseudoContainer.setBackgroundColor(ColorConstants.YELLOW);
-            for (int i = 0; i < 30; i++) {
-                pseudoContainer.add(new Paragraph("" + i));
-            }
-            ctx.setMarginBottom(30);
-            ctx.add(pseudoContainer);
-        });
-    }
-
-    @Test
-    @Ignore("DEVSIX-7587")
-    public void continuousColumContainerInnerBackgroundColorAndBorder() throws IOException, InterruptedException {
-        //TODO DEVSIX-7587 To solve background color doesn't behave in the same way as in html
-        //TODO DEVSIX-7587 Specified 3 columns only renders text in 2 columns
-        //TODO DEVSIX-7587 Borders don't get correctly applied as in html 2pdf
-        //TODO DEVSIX-7587 Height property doesnt work as in html 2pdf
-        //TODO DEVSIX-7587 Bbox should be extended so the columns resid on the same line
-        executeTest("continuousColumContainerInnerBackgroundColor", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            ctx.add(new Paragraph(generateLongString(400))
-                    .setBackgroundColor(ColorConstants.YELLOW)
-                    .setMarginTop(DEFAULT_MARGIN)
-                    .setBorder(new SolidBorder(ColorConstants.RED, 2))
-            );
-            ctx.setMarginBottom(DEFAULT_MARGIN);
-        });
-    }
-
-
-    @Test
-    @Ignore("DEVSIX-7587")
-    public void continuousColumContainerMultipleElementsPaddingTop() throws IOException, InterruptedException {
-        //TODO DEVSIX-7587 throws exception because padding and border are not taken into account
-        executeTest("continuousColumContainerMultipleElementsPaddingTop", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            Div pseudoContainer = new Div();
-            for (int i = 0; i < 30; i++) {
-                pseudoContainer.add(new Paragraph("" + i));
-            }
-            ctx.setPaddingTop(DEFAULT_PADDING);
-            ctx.add(pseudoContainer);
-        });
-    }
-
-    @Test
-    @Ignore("DEVSIX-7587")
-    public void continuousColumContainerMultipleElementsPaddingBottom() throws IOException, InterruptedException {
-        //TODO DEVSIX-7587 throws exception because padding and border are not taken into account
-        executeTest("continuousColumContainerMultipleElementsPaddingBottom", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            Div pseudoContainer = new Div();
-            for (int i = 0; i < 30; i++) {
-                pseudoContainer.add(new Paragraph("" + i));
-            }
-            ctx.setPaddingBottom(DEFAULT_PADDING);
-            ctx.add(pseudoContainer);
-        });
-    }
-
-    @Test
-    @Ignore("DEVSIX-7587")
-    public void continuousColumContainerMultipleElementsBorder() throws IOException, InterruptedException {
-        //TODO DEVSIX-7587 throws exception because padding and border are not taken into account
-        executeTest("continuousColumContainerMultipleElementsBorder", new ColumnContainer(), ctx -> {
-            ctx.setProperty(Property.COLUMN_COUNT, 3);
-            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            Div pseudoContainer = new Div();
-            for (int i = 0; i < 30; i++) {
-                pseudoContainer.add(new Paragraph("" + i));
-            }
-            ctx.setBorder(DEFAULT_BORDER);
-            ctx.add(pseudoContainer);
         });
     }
 
