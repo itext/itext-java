@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
 import com.itextpdf.layout.properties.JustifyContent;
 
 import java.util.List;
@@ -52,5 +53,6 @@ interface IFlexItemMainDirector {
      * @param justifyContent alignment to apply.
      * @param freeSpace precalculated free space to distribute between flex items in a line.
      */
-    void applyAlignment(List<FlexUtil.FlexItemCalculationInfo> line, JustifyContent justifyContent, float freeSpace);
+    void applyJustifyContent(List<FlexUtil.FlexItemCalculationInfo> line, JustifyContent justifyContent,
+            float freeSpace);
 }

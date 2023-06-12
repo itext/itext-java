@@ -30,7 +30,9 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
 import com.itextpdf.layout.properties.FlexWrapPropertyValue;
+import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
 import com.itextpdf.layout.properties.JustifyContent;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -69,8 +71,6 @@ final class FlexUtil {
             FlexContainerRenderer flexContainerRenderer) {
         Rectangle layoutBox = flexContainerBBox.clone();
         flexContainerRenderer.applyMarginsBordersPaddings(layoutBox, false);
-        // Currently only width is used in this method
-        final float layoutBoxWidth = layoutBox.getWidth();
 
         // 9.2. Line Length Determination
 
@@ -80,14 +80,13 @@ final class FlexUtil {
         // if that dimension of the flex container is being sized under a min or max-content constraint,
         // the available space in that dimension is that constraint;
 
-        Float mainSize = flexContainerRenderer.retrieveWidth(layoutBoxWidth);
-        if (mainSize == null) {
-            mainSize = layoutBoxWidth;
-        }
+        final float mainSize = getMainSize(flexContainerRenderer, layoutBox);
+
         // We need to have crossSize only if its value is definite.
-        Float crossSize = flexContainerRenderer.retrieveHeight();
-        Float minCrossSize = flexContainerRenderer.retrieveMinHeight();
-        Float maxCrossSize = flexContainerRenderer.retrieveMaxHeight();
+        Float[] crossSizes = getCrossSizes(flexContainerRenderer, layoutBox);
+        Float crossSize = crossSizes[0];
+        Float minCrossSize = crossSizes[1];
+        Float maxCrossSize = crossSizes[2];
 
         List<FlexItemCalculationInfo> flexItemCalculationInfos =
                 createFlexItemCalculationInfos(flexContainerRenderer, (float) mainSize);
@@ -114,7 +113,7 @@ final class FlexUtil {
 
         // 7. Determine the hypothetical cross size of each item by
         // performing layout with the used main size and the available space, treating auto as fit-content.
-        determineHypotheticalCrossSizeForFlexItems(lines);
+        determineHypotheticalCrossSizeForFlexItems(lines, isColumnDirection(flexContainerRenderer));
 
         // 8. Calculate the cross size of each flex line.
         List<Float> lineCrossSizes =
@@ -137,7 +136,7 @@ final class FlexUtil {
         // 10. Collapse visibility:collapse items.
 
         // 11. Determine the used cross size of each flex item.
-        determineUsedCrossSizeOfEachFlexItem(lines, lineCrossSizes, flexContainerRenderer);
+        determineUsedCrossSizeOfEachFlexItem(lines, lineCrossSizes, flexContainerRenderer, mainSize);
 
         // 9.5. Main-Axis Alignment
         // 12. Align the items along the main-axis per justify-content.
@@ -166,6 +165,40 @@ final class FlexUtil {
         }
 
         return layoutTable;
+    }
+
+    static boolean isColumnDirection(FlexContainerRenderer renderer) {
+        return renderer.hasProperty(Property.FLEX_DIRECTION)
+                && FlexDirectionPropertyValue.COLUMN == renderer.<FlexDirectionPropertyValue>getProperty(
+                Property.FLEX_DIRECTION);
+    }
+
+    private static float getMainSize(FlexContainerRenderer renderer, Rectangle layoutBox) {
+        final boolean isColumnDirection = isColumnDirection(renderer);
+        
+        final float layoutBoxMainSize = isColumnDirection ? layoutBox.getHeight() : layoutBox.getWidth();
+
+        // TODO DEVSIX-5001 min-content and max-content as width are not supported
+        // if that dimension of the flex container is being sized under a min or max-content constraint,
+        // the available space in that dimension is that constraint;
+
+        Float mainSize = isColumnDirection ? renderer.retrieveHeight() :
+                renderer.retrieveWidth(layoutBoxMainSize);
+        if (mainSize == null) {
+            mainSize = layoutBoxMainSize;
+        }
+
+        return (float) mainSize;
+    }
+
+    private static Float[] getCrossSizes(FlexContainerRenderer renderer, Rectangle layoutBox) {
+        final boolean isColumnDirection = isColumnDirection(renderer);
+
+        return new Float[] {
+                isColumnDirection ? renderer.retrieveWidth(layoutBox.getWidth()) : renderer.retrieveHeight(),
+                isColumnDirection ? renderer.retrieveMinWidth(layoutBox.getWidth()) : renderer.retrieveMinHeight(),
+                isColumnDirection ? renderer.retrieveMaxWidth(layoutBox.getWidth()) : renderer.retrieveMaxHeight()
+        };
     }
 
     static void determineFlexBasisAndHypotheticalMainSizeForFlexItems(
@@ -387,28 +420,38 @@ final class FlexUtil {
         }
     }
 
-    static void determineHypotheticalCrossSizeForFlexItems(List<List<FlexItemCalculationInfo>> lines) {
+    static void determineHypotheticalCrossSizeForFlexItems(List<List<FlexItemCalculationInfo>> lines,
+            boolean isColumnDirection) {
         for (List<FlexItemCalculationInfo> line : lines) {
             for (FlexItemCalculationInfo info : line) {
-                determineHypotheticalCrossSizeForFlexItem(info);
+                determineHypotheticalCrossSizeForFlexItem(info, isColumnDirection);
             }
         }
     }
 
-    private static void determineHypotheticalCrossSizeForFlexItem(FlexItemCalculationInfo info) {
+    private static void determineHypotheticalCrossSizeForFlexItem(FlexItemCalculationInfo info,
+            boolean isColumnDirection) {
         if (info.renderer instanceof FlexContainerRenderer &&
                 ((FlexContainerRenderer) info.renderer).getHypotheticalCrossSize(info.mainSize) != null) {
             // Take from cache
             info.hypotheticalCrossSize = ((FlexContainerRenderer) info.renderer)
                     .getHypotheticalCrossSize(info.mainSize).floatValue();
+        } else if (isColumnDirection) {
+            info.hypotheticalCrossSize = info.getInnerCrossSize(info.renderer.getMinMaxWidth().getMinWidth());
+            // Cache hypotheticalCrossSize for FlexContainerRenderer
+            if (info.renderer instanceof FlexContainerRenderer) {
+                ((FlexContainerRenderer) info.renderer).setHypotheticalCrossSize(info.mainSize,
+                        info.hypotheticalCrossSize);
+            }
         } else {
-            UnitValue prevWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.WIDTH,
+            UnitValue prevMainSize = info.renderer.<UnitValue>replaceOwnProperty(Property.WIDTH,
                     UnitValue.createPointValue(info.mainSize));
-            UnitValue prevMinWidth = info.renderer.<UnitValue>replaceOwnProperty(Property.MIN_WIDTH, null);
+            UnitValue prevMinMainSize = info.renderer.<UnitValue>replaceOwnProperty(Property.MIN_WIDTH, null);
+            info.renderer.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, InlineVerticalAlignmentType.BOTTOM);
             LayoutResult result = info.renderer.layout(new LayoutContext(
                     new LayoutArea(0, new Rectangle(AbstractRenderer.INF, AbstractRenderer.INF))));
-            info.renderer.returnBackOwnProperty(Property.MIN_WIDTH, prevMinWidth);
-            info.renderer.returnBackOwnProperty(Property.WIDTH, prevWidth);
+            info.renderer.returnBackOwnProperty(Property.MIN_WIDTH, prevMinMainSize);
+            info.renderer.returnBackOwnProperty(Property.WIDTH, prevMainSize);
             // Since main size is clamped with min-width, we do expect the result to be full
             if (result.getStatus() == LayoutResult.FULL) {
                 info.hypotheticalCrossSize = info.getInnerCrossSize(result.getOccupiedArea().getBBox().getHeight());
@@ -484,8 +527,8 @@ final class FlexUtil {
     }
 
     static void determineUsedCrossSizeOfEachFlexItem(List<List<FlexItemCalculationInfo>> lines,
-                                                     List<Float> lineCrossSizes,
-                                                     FlexContainerRenderer flexContainerRenderer) {
+            List<Float> lineCrossSizes, FlexContainerRenderer flexContainerRenderer, float mainSize) {
+        final boolean isColumnDirection = isColumnDirection(flexContainerRenderer);
         AlignmentPropertyValue alignItems =
                 (AlignmentPropertyValue) flexContainerRenderer.<AlignmentPropertyValue>getProperty(
                         Property.ALIGN_ITEMS, AlignmentPropertyValue.STRETCH);
@@ -508,16 +551,20 @@ final class FlexUtil {
                         (AlignmentPropertyValue) infoRenderer.<AlignmentPropertyValue>getProperty(
                                 Property.ALIGN_SELF, alignItems);
                 // TODO DEVSIX-5002 Stretch value shall be ignored if margin auto for cross axis is set
-                if ((alignSelf == AlignmentPropertyValue.STRETCH || alignSelf == AlignmentPropertyValue.NORMAL) &&
-                        info.renderer.<UnitValue>getProperty(Property.HEIGHT) == null) {
+                boolean definiteCrossSize = isColumnDirection ?
+                        info.renderer.hasProperty(Property.WIDTH) : info.renderer.hasProperty(Property.HEIGHT);
+                if ((alignSelf == AlignmentPropertyValue.STRETCH || alignSelf == AlignmentPropertyValue.NORMAL)
+                        && !definiteCrossSize) {
                     info.crossSize = info.getInnerCrossSize(lineCrossSizes.get(i));
-                    Float maxHeight = infoRenderer.retrieveMaxHeight();
-                    if (maxHeight != null) {
-                        info.crossSize = Math.min((float) maxHeight, info.crossSize);
+                    Float maxCrossSize = isColumnDirection ?
+                            infoRenderer.retrieveMaxWidth(mainSize) : infoRenderer.retrieveMaxHeight();
+                    if (maxCrossSize != null) {
+                        info.crossSize = Math.min((float) maxCrossSize, info.crossSize);
                     }
-                    Float minHeight = infoRenderer.retrieveMinHeight();
-                    if (minHeight != null) {
-                        info.crossSize = Math.max((float) minHeight, info.crossSize);
+                    Float minCrossSize = isColumnDirection ?
+                            infoRenderer.retrieveMinWidth(mainSize) : infoRenderer.retrieveMinHeight();
+                    if (minCrossSize != null) {
+                        info.crossSize = Math.max((float) minCrossSize, info.crossSize);
                     }
                 } else {
                     info.crossSize = info.hypotheticalCrossSize;
@@ -525,9 +572,20 @@ final class FlexUtil {
             }
         }
     }
+    
+    private static Float retrieveMaxHeightForMainDirection(AbstractRenderer renderer) {
+        Float maxHeight = renderer.retrieveMaxHeight();
+        return renderer.hasProperty(Property.MAX_HEIGHT) ? maxHeight : null;
+    }
+
+    private static Float retrieveMinHeightForMainDirection(AbstractRenderer renderer) {
+        Float minHeight = renderer.retrieveMinHeight();
+        return renderer.hasProperty(Property.MIN_HEIGHT) ? minHeight : null;
+    }
 
     private static void applyAlignItemsAndAlignSelf(List<List<FlexItemCalculationInfo>> lines,
                                                     FlexContainerRenderer renderer, List<Float> lineCrossSizes) {
+        final boolean isColumnDirection = isColumnDirection(renderer);
         AlignmentPropertyValue itemsAlignment = (AlignmentPropertyValue) renderer.<AlignmentPropertyValue>getProperty(
                 Property.ALIGN_ITEMS, AlignmentPropertyValue.STRETCH);
 
@@ -549,15 +607,27 @@ final class FlexUtil {
                         break;
                     case FLEX_END:
                         if (!renderer.isWrapReverse()) {
-                            itemInfo.yShift = freeSpace;
+                            if (isColumnDirection) {
+                                itemInfo.xShift = freeSpace;
+                            } else {
+                                itemInfo.yShift = freeSpace;
+                            }
                         }
                         break;
                     case CENTER:
-                        itemInfo.yShift = freeSpace / 2;
+                        if (isColumnDirection) {
+                            itemInfo.xShift = freeSpace / 2;
+                        } else {
+                            itemInfo.yShift = freeSpace / 2;
+                        }
                         break;
                     case FLEX_START:
                         if (renderer.isWrapReverse()) {
-                            itemInfo.yShift = freeSpace;
+                            if (isColumnDirection) {
+                                itemInfo.xShift = freeSpace;
+                            } else {
+                                itemInfo.yShift = freeSpace;
+                            }
                         }
                         break;
                     case START:
@@ -578,12 +648,12 @@ final class FlexUtil {
                 Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
 
         for (List<FlexItemCalculationInfo> line : lines) {
-            float childrenWidth = 0;
+            float childrenMainSize = 0;
             for (FlexItemCalculationInfo itemInfo : line) {
-                childrenWidth += itemInfo.getOuterMainSize(itemInfo.mainSize);
+                childrenMainSize += itemInfo.getOuterMainSize(itemInfo.mainSize);
             }
-            final float freeSpace = mainSize - childrenWidth;
-            renderer.getFlexItemMainDirector().applyAlignment(line, justifyContent, freeSpace);
+            final float freeSpace = mainSize - childrenMainSize;
+            renderer.getFlexItemMainDirector().applyJustifyContent(line, justifyContent, freeSpace);
         }
     }
 
@@ -613,7 +683,7 @@ final class FlexUtil {
     }
 
     private static List<FlexItemCalculationInfo> createFlexItemCalculationInfos(
-            FlexContainerRenderer flexContainerRenderer, float flexContainerWidth) {
+            FlexContainerRenderer flexContainerRenderer, float flexContainerMainSize) {
         final List<IRenderer> childRenderers = flexContainerRenderer.getChildRenderers();
         final List<FlexItemCalculationInfo> flexItems = new ArrayList<>();
         for (final IRenderer renderer : childRenderers) {
@@ -621,14 +691,15 @@ final class FlexUtil {
                 AbstractRenderer abstractRenderer = (AbstractRenderer) renderer;
 
                 // TODO DEVSIX-5091 improve determining of the flex base size when flex-basis: content
-                float maxWidth = calculateMaxWidth(abstractRenderer, flexContainerWidth);
+                float maxMainSize = calculateMaxMainSize(abstractRenderer, flexContainerMainSize,
+                        isColumnDirection(flexContainerRenderer));
                 float flexBasis;
                 boolean flexBasisContent = false;
                 if (renderer.<UnitValue>getProperty(Property.FLEX_BASIS) == null) {
-                    flexBasis = maxWidth;
+                    flexBasis = maxMainSize;
                     flexBasisContent = true;
                 } else {
-                    flexBasis = (float) abstractRenderer.retrieveUnitValue(flexContainerWidth, Property.FLEX_BASIS);
+                    flexBasis = (float) abstractRenderer.retrieveUnitValue(flexContainerMainSize, Property.FLEX_BASIS);
                     if (AbstractRenderer.isBorderBoxSizing(abstractRenderer)) {
                         flexBasis -= AbstractRenderer.calculatePaddingBorderWidth(abstractRenderer);
                     }
@@ -640,7 +711,8 @@ final class FlexUtil {
                 float flexShrink = (float) renderer.<Float>getProperty(Property.FLEX_SHRINK, FLEX_SHRINK_INITIAL_VALUE);
 
                 final FlexItemCalculationInfo flexItemInfo = new FlexItemCalculationInfo((AbstractRenderer) renderer,
-                        flexBasis, flexGrow, flexShrink, flexContainerWidth, flexBasisContent);
+                        flexBasis, flexGrow, flexShrink, flexContainerMainSize, flexBasisContent,
+                        isColumnDirection(flexContainerRenderer));
 
                 flexItems.add(flexItemInfo);
             }
@@ -648,30 +720,55 @@ final class FlexUtil {
         return flexItems;
     }
 
-    private static float calculateMaxWidth(AbstractRenderer flexItemRenderer, float flexContainerWidth) {
-        Float maxWidth;
+    private static float calculateMaxMainSize(AbstractRenderer flexItemRenderer, float flexContainerMainSize,
+            boolean isColumnDirection) {
+        Float maxMainSize;
         if (flexItemRenderer instanceof TableRenderer) {
             // TODO DEVSIX-5214 we can't call TableRenderer#retrieveWidth method as far as it can throw NPE
-            maxWidth = flexItemRenderer.getMinMaxWidth().getMaxWidth();
-            maxWidth = flexItemRenderer.applyMarginsBordersPaddings(
-                    new Rectangle((float) maxWidth, 0), false).getWidth();
+            maxMainSize = isColumnDirection ?
+                    flexItemRenderer.retrieveMaxHeight() : flexItemRenderer.getMinMaxWidth().getMaxWidth();
+            if (isColumnDirection) {
+                maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
+                        new Rectangle(0, (float) maxMainSize), false).getHeight();
+            } else {
+                maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
+                        new Rectangle((float) maxMainSize, 0), false).getWidth();
+            }
         } else {
             // We need to retrieve width and max-width manually because this methods take into account box-sizing
-            maxWidth = flexItemRenderer.retrieveWidth(flexContainerWidth);
-            if (maxWidth == null) {
-                maxWidth = flexItemRenderer.retrieveMaxWidth(flexContainerWidth);
+            maxMainSize = isColumnDirection ?
+                    flexItemRenderer.retrieveHeight() : flexItemRenderer.retrieveWidth(flexContainerMainSize);
+            if (maxMainSize == null) {
+                maxMainSize = isColumnDirection ? retrieveMaxHeightForMainDirection(flexItemRenderer) :
+                        flexItemRenderer.retrieveMaxWidth(flexContainerMainSize);
             }
-            if (maxWidth == null) {
+            if (maxMainSize == null) {
                 if (flexItemRenderer instanceof ImageRenderer) {
                     // TODO DEVSIX-5269 getMinMaxWidth doesn't always return the original image width
-                    maxWidth = ((ImageRenderer) flexItemRenderer).getImageWidth();
+                    maxMainSize = isColumnDirection ? ((ImageRenderer) flexItemRenderer).getImageHeight()
+                            : ((ImageRenderer) flexItemRenderer).getImageWidth();
                 } else {
-                    maxWidth = flexItemRenderer.applyMarginsBordersPaddings(
-                            new Rectangle(flexItemRenderer.getMinMaxWidth().getMaxWidth(), 0), false).getWidth();
+                    if (isColumnDirection) {
+                        Float height = retrieveMaxHeightForMainDirection(flexItemRenderer);
+                        if (height == null) {
+                            height = calculateHeight(flexItemRenderer, flexItemRenderer.getMinMaxWidth().getMinWidth());
+                        }
+                        maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
+                                new Rectangle(0, (float) height), false).getHeight();
+                    } else {
+                        maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
+                                new Rectangle(flexItemRenderer.getMinMaxWidth().getMaxWidth(), 0), false).getWidth();
+                    }
                 }
             }
         }
-        return (float) maxWidth;
+        return (float) maxMainSize;
+    }
+
+    private static float calculateHeight(AbstractRenderer flexItemRenderer, float width) {
+        LayoutResult result = flexItemRenderer.layout(new LayoutContext(
+                new LayoutArea(1, new Rectangle(width, AbstractRenderer.INF))));
+        return result.getStatus() == LayoutResult.NOTHING ? 0 : result.getOccupiedArea().getBBox().getHeight();
     }
 
     static class FlexItemCalculationInfo {
@@ -698,9 +795,12 @@ final class FlexUtil {
         float hypotheticalMainSize;
         float hypotheticalCrossSize;
         boolean flexBasisContent;
+        boolean isColumnDirection;
 
         public FlexItemCalculationInfo(AbstractRenderer renderer, float flexBasis,
-                                       float flexGrow, float flexShrink, float areaWidth, boolean flexBasisContent) {
+                                       float flexGrow, float flexShrink, float areaMainSize, boolean flexBasisContent,
+                                       boolean isColumnDirection) {
+            this.isColumnDirection = isColumnDirection;
             this.flexBasisContent = flexBasisContent;
             this.renderer = renderer;
             this.flexBasis = flexBasis;
@@ -712,44 +812,56 @@ final class FlexUtil {
                 throw new IllegalArgumentException(LayoutExceptionMessageConstant.FLEX_GROW_CANNOT_BE_NEGATIVE);
             }
             this.flexGrow = flexGrow;
-            Float definiteMinContent = renderer.retrieveMinWidth(areaWidth);
+            Float definiteMinContent = isColumnDirection ?
+                    retrieveMinHeightForMainDirection(renderer) : renderer.retrieveMinWidth(areaMainSize);
             // null means that min-width property is not set or has auto value. In both cases we should calculate it
             this.minContent =
-                    definiteMinContent == null ? calculateMinContentAuto(areaWidth) : (float) definiteMinContent;
-            Float maxWidth = this.renderer.retrieveMaxWidth(areaWidth);
+                    definiteMinContent == null ? calculateMinContentAuto(areaMainSize) : (float) definiteMinContent;
+            Float maxMainSize = isColumnDirection ?
+                    retrieveMaxHeightForMainDirection(this.renderer) : this.renderer.retrieveMaxWidth(areaMainSize);
             // As for now we assume that max width should be calculated so
-            this.maxContent = maxWidth == null ? AbstractRenderer.INF : (float) maxWidth;
+            this.maxContent = maxMainSize == null ? AbstractRenderer.INF : (float) maxMainSize;
         }
 
         public Rectangle toRectangle() {
-            return new Rectangle(xShift, yShift, getOuterMainSize(mainSize), getOuterCrossSize(crossSize));
+            return isColumnDirection ?
+                    new Rectangle(xShift, yShift, getOuterCrossSize(crossSize), getOuterMainSize(mainSize)) :
+                    new Rectangle(xShift, yShift, getOuterMainSize(mainSize), getOuterCrossSize(crossSize));
         }
 
         float getOuterMainSize(float size) {
-            return renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), true).getWidth();
+            return isColumnDirection ?
+                    renderer.applyMarginsBordersPaddings(new Rectangle(0, size), true).getHeight() :
+                    renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), true).getWidth();
         }
 
         float getInnerMainSize(float size) {
-            return renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), false).getWidth();
+            return isColumnDirection ?
+                    renderer.applyMarginsBordersPaddings(new Rectangle(0, size), false).getHeight() :
+                    renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), false).getWidth();
         }
 
         float getOuterCrossSize(float size) {
-            return renderer.applyMarginsBordersPaddings(new Rectangle(0, size), true).getHeight();
+            return isColumnDirection ?
+                    renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), true).getWidth() :
+                    renderer.applyMarginsBordersPaddings(new Rectangle(0, size), true).getHeight();
         }
 
         float getInnerCrossSize(float size) {
-            return renderer.applyMarginsBordersPaddings(new Rectangle(0, size), false).getHeight();
+            return isColumnDirection ?
+                    renderer.applyMarginsBordersPaddings(new Rectangle(size, 0), false).getWidth() :
+                    renderer.applyMarginsBordersPaddings(new Rectangle(0, size), false).getHeight();
         }
 
-        private float calculateMinContentAuto(float flexContainerWidth) {
+        private float calculateMinContentAuto(float flexContainerMainSize) {
             // Automatic Minimum Size of Flex Items https://www.w3.org/TR/css-flexbox-1/#content-based-minimum-size
-            Float specifiedSizeSuggestion = calculateSpecifiedSizeSuggestion(flexContainerWidth);
-            float contentSizeSuggestion = calculateContentSizeSuggestion(flexContainerWidth);
+            Float specifiedSizeSuggestion = calculateSpecifiedSizeSuggestion(flexContainerMainSize);
+            float contentSizeSuggestion = calculateContentSizeSuggestion(flexContainerMainSize);
             if (renderer.hasAspectRatio() && specifiedSizeSuggestion == null) {
                 // However, if the box has an aspect ratio and no specified size,
                 // its content-based minimum size is the smaller of its content size suggestion
                 // and its transferred size suggestion
-                Float transferredSizeSuggestion = calculateTransferredSizeSuggestion();
+                Float transferredSizeSuggestion = calculateTransferredSizeSuggestion(flexContainerMainSize);
                 if (transferredSizeSuggestion == null) {
                     return contentSizeSuggestion;
                 } else {
@@ -773,14 +885,15 @@ final class FlexUtil {
          *
          * @return transferred size suggestion if it can be calculated, null otherwise
          */
-        private Float calculateTransferredSizeSuggestion() {
+        private Float calculateTransferredSizeSuggestion(float flexContainerMainSize) {
             Float transferredSizeSuggestion = null;
-            Float height = renderer.retrieveHeight();
-            if (renderer.hasAspectRatio() && height != null) {
-                transferredSizeSuggestion = height * renderer.getAspectRatio();
+            Float crossSize = isColumnDirection ?
+                    renderer.retrieveWidth(flexContainerMainSize) : renderer.retrieveHeight();
+            if (renderer.hasAspectRatio() && crossSize != null) {
+                transferredSizeSuggestion = crossSize * renderer.getAspectRatio();
 
-                transferredSizeSuggestion =
-                        clampValueByCrossSizesConvertedThroughAspectRatio((float) transferredSizeSuggestion);
+                transferredSizeSuggestion = clampValueByCrossSizesConvertedThroughAspectRatio(
+                        (float) transferredSizeSuggestion, flexContainerMainSize);
             }
             return transferredSizeSuggestion;
         }
@@ -790,15 +903,22 @@ final class FlexUtil {
          * then the specified size suggestion is that size (clamped by its max main size property if it’s definite).
          * It is otherwise undefined.
          *
-         * @param flexContainerWidth the width of the flex container
+         * @param flexContainerMainSize the width of the flex container
          * @return specified size suggestion if it's definite, null otherwise
          */
-        private Float calculateSpecifiedSizeSuggestion(float flexContainerWidth) {
-            if (renderer.hasProperty(Property.WIDTH)) {
-                return renderer.retrieveWidth(flexContainerWidth);
+        private Float calculateSpecifiedSizeSuggestion(float flexContainerMainSize) {
+            Float mainSizeSuggestion = null;
+            if (isColumnDirection) {
+                if (renderer.hasProperty(Property.HEIGHT)) {
+                    mainSizeSuggestion = renderer.retrieveHeight();
+                }
             } else {
-                return null;
+                if (renderer.hasProperty(Property.WIDTH)) {
+                    mainSizeSuggestion = renderer.retrieveWidth(flexContainerMainSize);
+                }
             }
+
+            return mainSizeSuggestion;
         }
 
         /**
@@ -806,41 +926,56 @@ final class FlexUtil {
          * by any definite min and max cross size properties converted through the aspect ratio,
          * and then further clamped by the max main size property if that is definite.
          *
-         * @param flexContainerWidth the width of the flex container
+         * @param flexContainerMainSize the width of the flex container
          * @return content size suggestion
          */
-        private float calculateContentSizeSuggestion(float flexContainerWidth) {
+        private float calculateContentSizeSuggestion(float flexContainerMainSize) {
             final UnitValue rendererWidth = renderer.<UnitValue>replaceOwnProperty(Property.WIDTH, null);
             final UnitValue rendererHeight = renderer.<UnitValue>replaceOwnProperty(Property.HEIGHT, null);
-            MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
-            float minContentSize = getInnerMainSize(minMaxWidth.getMinWidth());
+            float minContentSize;
+            if (isColumnDirection) {
+                Float height = retrieveMaxHeightForMainDirection(renderer);
+                if (height == null) {
+                    height = calculateHeight(renderer, renderer.getMinMaxWidth().getMinWidth());
+                }
+                minContentSize = getInnerMainSize((float) height);
+            } else {
+                MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
+                minContentSize = getInnerMainSize(minMaxWidth.getMinWidth());
+            }
             renderer.returnBackOwnProperty(Property.HEIGHT, rendererHeight);
             renderer.returnBackOwnProperty(Property.WIDTH, rendererWidth);
 
             if (renderer.hasAspectRatio()) {
-                minContentSize = clampValueByCrossSizesConvertedThroughAspectRatio(minContentSize);
+                minContentSize =
+                        clampValueByCrossSizesConvertedThroughAspectRatio(minContentSize, flexContainerMainSize);
             }
-            Float maxWidth = renderer.retrieveMaxWidth(flexContainerWidth);
-            if (maxWidth == null) {
-                maxWidth = AbstractRenderer.INF;
+            Float maxMainSize = isColumnDirection ? retrieveMaxHeightForMainDirection(renderer)
+                    : renderer.retrieveMaxWidth(flexContainerMainSize);
+            if (maxMainSize == null) {
+                maxMainSize = AbstractRenderer.INF;
             }
 
-            return Math.min(minContentSize, (float) maxWidth);
+            return Math.min(minContentSize, (float) maxMainSize);
         }
 
-        private float clampValueByCrossSizesConvertedThroughAspectRatio(float value) {
-            Float maxHeight = renderer.retrieveMaxHeight();
-            if (maxHeight == null || !renderer.hasProperty(Property.MAX_HEIGHT)) {
-                maxHeight = AbstractRenderer.INF;
+        private float clampValueByCrossSizesConvertedThroughAspectRatio(float value, float flexContainerMainSize) {
+            Float maxCrossSize = isColumnDirection ?
+                    renderer.retrieveMaxWidth(flexContainerMainSize) : renderer.retrieveMaxHeight();
+            if (maxCrossSize == null ||
+                    !renderer.hasProperty(isColumnDirection ? Property.MAX_WIDTH : Property.MAX_HEIGHT)) {
+                maxCrossSize = AbstractRenderer.INF;
             }
-            Float minHeight = renderer.retrieveMinHeight();
-            if (minHeight == null || !renderer.hasProperty(Property.MIN_HEIGHT)) {
-                minHeight = 0F;
+            Float minCrossSize = isColumnDirection
+                    ? renderer.retrieveMinWidth(flexContainerMainSize) : renderer.retrieveMinHeight();
+            if (minCrossSize == null
+                    || !renderer.hasProperty(isColumnDirection ? Property.MIN_WIDTH : Property.MIN_HEIGHT)) {
+                minCrossSize = 0F;
             }
 
             return Math.min(
-                    Math.max((float) (minHeight * renderer.getAspectRatio()), value),
-                    (float) (maxHeight * renderer.getAspectRatio()));
+                    Math.max((float) (minCrossSize * renderer.getAspectRatio()), value),
+                    (float) (maxCrossSize * renderer.getAspectRatio()));
         }
     }
 }

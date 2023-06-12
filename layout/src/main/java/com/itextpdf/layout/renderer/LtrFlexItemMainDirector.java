@@ -22,7 +22,9 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
 import com.itextpdf.layout.properties.JustifyContent;
+import com.itextpdf.layout.renderer.FlexUtil.FlexItemCalculationInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +60,7 @@ class LtrFlexItemMainDirector implements IFlexItemMainDirector {
      * {@inheritDoc}
      */
     @Override
-    public void applyAlignment(List<FlexUtil.FlexItemCalculationInfo> line, JustifyContent justifyContent,
+    public void applyJustifyContent(List<FlexUtil.FlexItemCalculationInfo> line, JustifyContent justifyContent,
                                float freeSpace) {
         switch (justifyContent) {
             case RIGHT:

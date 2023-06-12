@@ -40,6 +40,7 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
 import com.itextpdf.layout.properties.FlexWrapPropertyValue;
 import com.itextpdf.layout.properties.JustifyContent;
 import com.itextpdf.layout.properties.Property;
@@ -67,6 +68,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
     private static final Style DEFAULT_STYLE;
     private static final Style WRAP_STYLE;
+    private static final Style COLUMN_STYLE;
 
     private static final List<UnitValue> NULL_FLEX_BASIS_LIST;
 
@@ -77,6 +79,9 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         WRAP_STYLE = new Style().setWidth(400).setHeight(100);
         WRAP_STYLE.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+
+        COLUMN_STYLE = new Style().setWidth(100).setHeight(400);
+        COLUMN_STYLE.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
 
         NULL_FLEX_BASIS_LIST = new ArrayList<UnitValue>();
         for (int i = 0; i < 3; i++) {
@@ -201,6 +206,579 @@ public class FlexUtilTest extends ExtendedITextTest {
                 Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
+    }
+    
+    @Test
+    public void basis100Grow0Shrink0ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis100Grow1Shrink0ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.3333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis100Grow01Shrink0ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(0.1f, 0.1f, 0.1f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(110.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis200Grow0Shrink1ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(200f), UnitValue.createPointValue(200f), UnitValue.createPointValue(200f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(1f, 1f, 1f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+    
+    @Test
+    public void basis100Grow0CustomShrinkContainerHeight50ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                new Style(COLUMN_STYLE).setHeight(50),
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(0f, 0f),
+                Arrays.asList(1f, 3f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+            }
+        }
+
+        // Expected because content of the element cannot be less than this value
+        Assert.assertEquals(25.9375f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(25.9375f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+    }
+
+    @Test
+    public void basis200Grow0CustomShrinkColumnTest1() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(200f), UnitValue.createPointValue(200f), UnitValue.createPointValue(200f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 1f, 3f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+            }
+        }
+
+        Assert.assertEquals(200f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(150f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(50f, rectangleTable.get(0).get(2).getRectangle().getHeight(), EPS);
+    }
+
+    @Test
+    public void basis200Grow0Shrink01ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(200f), UnitValue.createPointValue(200f), UnitValue.createPointValue(200f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0.1f, 0.1f, 0.1f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(180f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis200Height150Grow0Shrink1ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(200f), UnitValue.createPointValue(200f), UnitValue.createPointValue(200f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(1f, 1f, 1f),
+                new Style().setHeight(UnitValue.createPointValue(150))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.3333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis100Height150Grow1Shrink0ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setHeight(UnitValue.createPointValue(150))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.3333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis100Height50Grow1Shrink0ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setHeight(UnitValue.createPointValue(50))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.3333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis100MaxHeight100Grow1Shrink0ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setMaxHeight(UnitValue.createPointValue(100))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void basis200MinHeight150Grow0Shrink1ColumnTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(200f), UnitValue.createPointValue(200f), UnitValue.createPointValue(200f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(1f, 1f, 1f),
+                new Style().setMinHeight(UnitValue.createPointValue(150))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(150f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void usualDirectionColumnWithDefiniteWidthTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(50))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.3333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void usualDirectionColumnWithDefiniteMaxWidthTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setMaxWidth(UnitValue.createPointValue(50))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(50.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.3333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void usualDirectionColumnWithDefiniteMinWidthTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f), UnitValue.createPointValue(100f), UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setMinWidth(UnitValue.createPointValue(150))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(150.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.3333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithoutBasisWithDefiniteHeightTest() {
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                COLUMN_STYLE,
+                NULL_FLEX_BASIS_LIST,
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setHeight(UnitValue.createPointValue(50))
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithWrapElementsToGrowTest() {
+        Style columnWrapStyle = new Style(WRAP_STYLE);
+        columnWrapStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(75f), UnitValue.createPointValue(75f), UnitValue.createPointValue(75f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+        
+        // after checks
+        Assert.assertEquals(3, rectangleTable.size());
+
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithWrapElementsNotToGrowTest() {
+        Style columnWrapStyle = new Style(WRAP_STYLE);
+        columnWrapStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(75f), UnitValue.createPointValue(75f), UnitValue.createPointValue(75f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertEquals(3, rectangleTable.size());
+        
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(75.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithWrapElementsToShrinkTest() {
+        Style columnWrapStyle = new Style(WRAP_STYLE);
+        columnWrapStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(120f), UnitValue.createPointValue(120f), UnitValue.createPointValue(120f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(1f, 1f, 1f)
+        );
+
+        // after checks
+        Assert.assertEquals(3, rectangleTable.size());
+        
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithWrapElementsNotToShrinkTest() {
+        Style columnWrapStyle = new Style(WRAP_STYLE);
+        columnWrapStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(120f), UnitValue.createPointValue(120f), UnitValue.createPointValue(120f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertEquals(3, rectangleTable.size());
+        
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(120.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithWrapDefiniteWidthAndHeightTest() {
+        Style columnWrapStyle = new Style(WRAP_STYLE);
+        columnWrapStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(75f), UnitValue.createPointValue(75f), UnitValue.createPointValue(75f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(100f).setHeight(120f)
+        );
+
+        // after checks
+        Assert.assertEquals(3, rectangleTable.size());
+        
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(75.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithWrapWithAlignItemsAndJustifyContentTest() {
+        Style columnWrapStyle = new Style(WRAP_STYLE);
+        columnWrapStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        columnWrapStyle.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
+        columnWrapStyle.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_END);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(75f), UnitValue.createPointValue(75f), UnitValue.createPointValue(75f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertEquals(3, rectangleTable.size());
+        
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(6.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(75.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(0.0f, flexItemInfo.getRectangle().getX(), EPS);
+                Assert.assertEquals(25.0f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithAlignItemsAndJustifyContentTest1() {
+        Style columnWrapStyle = new Style(COLUMN_STYLE);
+        columnWrapStyle.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_START);
+        columnWrapStyle.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_END);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(75f), UnitValue.createPointValue(75f), UnitValue.createPointValue(75f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(6.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(75.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(0.0f, flexItemInfo.getRectangle().getX(), EPS);
+            }
+            Assert.assertEquals(175.0f, line.get(0).getRectangle().getY(), EPS);
+        }
+    }
+
+    @Test
+    public void directionColumnWithAlignItemsAndJustifyContentTest2() {
+        Style columnWrapStyle = new Style(COLUMN_STYLE);
+        columnWrapStyle.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.CENTER);
+        columnWrapStyle.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(75f), UnitValue.createPointValue(75f), UnitValue.createPointValue(75f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(6.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(75.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(47.0f, flexItemInfo.getRectangle().getX(), EPS);
+                Assert.assertEquals(0.0f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void directionColumnWithAlignItemsAndJustifyContentTest3() {
+        Style columnWrapStyle = new Style(COLUMN_STYLE);
+        columnWrapStyle.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.FLEX_END);
+        columnWrapStyle.setProperty(Property.JUSTIFY_CONTENT, JustifyContent.CENTER);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                columnWrapStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(75f), UnitValue.createPointValue(75f), UnitValue.createPointValue(75f)),
+                Arrays.asList(0f, 0f, 0f),
+                Arrays.asList(0f, 0f, 0f)
+        );
+
+        // after checks
+        Assert.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assert.assertEquals(6.0f, flexItemInfo.getRectangle().getWidth(), EPS);
+                Assert.assertEquals(75.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+                Assert.assertEquals(94.0f, flexItemInfo.getRectangle().getX(), EPS);
+            }
+            Assert.assertEquals(87.5f, line.get(0).getRectangle().getY(), EPS);
+        }
+    }
+
+    @Test
+    public void imgAsFlexItemTest01() throws MalformedURLException {
+        Rectangle bBox = new Rectangle(575, 842);
+        List<UnitValue> flexBasisValues = Arrays.<UnitValue>asList(
+                UnitValue.createPointValue(50f),
+                UnitValue.createPointValue(30f)
+        );
+
+        Div div = new Div().setWidth(100).setHeight(100);
+
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+        
+        flexContainerRenderer.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+
+        for (int i = 0; i < flexBasisValues.size(); i++) {
+            IElement flexItem = (i == 0)
+                    ? (IElement) new Image(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"))
+                    : (IElement) new Div().add(new Paragraph(Integer.toString(i)));
+            flexItem.setProperty(Property.FLEX_GROW, 0f);
+            flexItem.setProperty(Property.FLEX_SHRINK, 0f);
+            flexItem.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            if (i == 0) {
+                flexItem.setProperty(Property.MAX_HEIGHT, UnitValue.createPointValue(40));
+                div.add((Image) flexItem);
+            } else {
+                div.add((IBlockElement) flexItem);
+            }
+            AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree().setParent(flexContainerRenderer);
+            flexContainerRenderer.addChild(flexItemRenderer);
+        }
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+        Assert.assertEquals(100f, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(100f, rectangleTable.get(0).get(1).getRectangle().getWidth(), EPS);
+        Assert.assertEquals(40f, rectangleTable.get(0).get(0).getRectangle().getHeight(), EPS);
+        Assert.assertEquals(30f, rectangleTable.get(0).get(1).getRectangle().getHeight(), EPS);
     }
 
     @Test
@@ -2411,7 +2989,7 @@ public class FlexUtilTest extends ExtendedITextTest {
     }
 
     private static FlexUtil.FlexItemCalculationInfo createFlexItemCalculationInfo(AbstractRenderer renderer) {
-        return new FlexUtil.FlexItemCalculationInfo(renderer, 0, 0, 0, 0, false);
+        return new FlexUtil.FlexItemCalculationInfo(renderer, 0, 0, 0, 0, false, false);
     }
 
     private static List<List<FlexItemInfo>> testFlex(List<UnitValue> flexBasisValues, List<Float> flexGrowValues,
@@ -2422,6 +3000,12 @@ public class FlexUtilTest extends ExtendedITextTest {
     private static List<List<FlexItemInfo>> testFlex(Style containerStyle, List<UnitValue> flexBasisValues,
             List<Float> flexGrowValues,
             List<Float> flexShrinkValues) {
+        return testFlex(containerStyle, flexBasisValues, flexGrowValues, flexShrinkValues, null);
+    }
+
+    private static List<List<FlexItemInfo>> testFlex(Style containerStyle, List<UnitValue> flexBasisValues,
+            List<Float> flexGrowValues,
+            List<Float> flexShrinkValues, Style elementStyle) {
         assert flexBasisValues.size() == flexGrowValues.size();
         assert flexBasisValues.size() == flexShrinkValues.size();
 
@@ -2440,6 +3024,9 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
             Div flexItem = new Div().add(new Paragraph("x"));
+            if (elementStyle != null) {
+                flexItem.addStyle(elementStyle);
+            }
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
                     .setParent(flexContainerRenderer);
 

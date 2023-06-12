@@ -580,10 +580,15 @@ public class FlexContainerRenderer extends DivRenderer {
     }
 
     private IFlexItemMainDirector createMainDirector() {
-        final boolean isRtlDirection = BaseDirection.RIGHT_TO_LEFT ==
-                this.<BaseDirection>getProperty(Property.BASE_DIRECTION, null);
-        flexItemMainDirector = isRowReverse() ^ isRtlDirection
-                ? (IFlexItemMainDirector) new RtlFlexItemMainDirector() : new LtrFlexItemMainDirector();
-        return flexItemMainDirector;
+        if (FlexDirectionPropertyValue.COLUMN ==
+                this.<FlexDirectionPropertyValue>getProperty(Property.FLEX_DIRECTION)) {
+            return new TopToBottomFlexItemMainDirector();
+        } else {
+            final boolean isRtlDirection = BaseDirection.RIGHT_TO_LEFT ==
+                    this.<BaseDirection>getProperty(Property.BASE_DIRECTION, null);
+            flexItemMainDirector = isRowReverse() ^ isRtlDirection
+                    ? (IFlexItemMainDirector) new RtlFlexItemMainDirector() : new LtrFlexItemMainDirector();
+            return flexItemMainDirector;
+        }
     }
 }
