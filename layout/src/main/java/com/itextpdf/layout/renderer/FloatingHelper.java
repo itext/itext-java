@@ -224,7 +224,15 @@ class FloatingHelper {
     }
 
     static LayoutArea adjustResultOccupiedAreaForFloatAndClear(IRenderer renderer, List<Rectangle> floatRendererAreas,
-                                                               Rectangle parentBBox, float clearHeightCorrection, boolean marginsCollapsingEnabled) {
+                                                               Rectangle parentBBox, float clearHeightCorrection,
+                                                               boolean marginsCollapsingEnabled) {
+        return  adjustResultOccupiedAreaForFloatAndClear(renderer, floatRendererAreas, parentBBox,
+                clearHeightCorrection, 0, marginsCollapsingEnabled);
+    }
+
+    static LayoutArea adjustResultOccupiedAreaForFloatAndClear(IRenderer renderer, List<Rectangle> floatRendererAreas,
+                                                               Rectangle parentBBox, float clearHeightCorrection,
+                                                               float bfcHeightCorrection, boolean marginsCollapsingEnabled) {
         LayoutArea occupiedArea = renderer.getOccupiedArea();
         LayoutArea editedArea = occupiedArea;
         if (isRendererFloating(renderer)) {
@@ -234,9 +242,12 @@ class FloatingHelper {
             }
             editedArea.getBBox().setY(parentBBox.getTop());
             editedArea.getBBox().setHeight(0);
-        } else if (clearHeightCorrection > 0 && !marginsCollapsingEnabled) {
+        } else if (clearHeightCorrection > AbstractRenderer.EPS && !marginsCollapsingEnabled) {
             editedArea = occupiedArea.clone();
             editedArea.getBBox().increaseHeight(clearHeightCorrection);
+        } else if (bfcHeightCorrection > AbstractRenderer.EPS) {
+            editedArea = occupiedArea.clone();
+            editedArea.getBBox().increaseHeight(bfcHeightCorrection);
         }
 
         return editedArea;
@@ -278,36 +289,53 @@ class FloatingHelper {
             return clearHeightCorrection;
         }
 
-        float currY;
-        if (floatRendererAreas.get(floatRendererAreas.size() - 1).getTop() < parentBBox.getTop()) {
-            currY = floatRendererAreas.get(floatRendererAreas.size() - 1).getTop();
-        } else {
-            currY = parentBBox.getTop();
-        }
+        float currY = Math.min(floatRendererAreas.get(floatRendererAreas.size() - 1).getTop(), parentBBox.getTop());
 
         List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, currY);
         Rectangle[] lastLeftAndRightBoxes = findLastLeftAndRightBoxes(parentBBox, boxesAtYLevel);
-        float lowestFloatBottom = Float.MAX_VALUE;
         boolean isBoth = clearPropertyValue.equals(ClearPropertyValue.BOTH);
-        if ((clearPropertyValue.equals(ClearPropertyValue.LEFT) || isBoth) && lastLeftAndRightBoxes[0] != null) {
-            for (Rectangle floatBox : floatRendererAreas) {
-                if (floatBox.getBottom() < lowestFloatBottom && floatBox.getLeft() <= lastLeftAndRightBoxes[0].getLeft()) {
-                    lowestFloatBottom = floatBox.getBottom();
-                }
-            }
-        }
-        if ((clearPropertyValue.equals(ClearPropertyValue.RIGHT) || isBoth) && lastLeftAndRightBoxes[1] != null) {
-            for (Rectangle floatBox : floatRendererAreas) {
-                if (floatBox.getBottom() < lowestFloatBottom && floatBox.getRight() >= lastLeftAndRightBoxes[1].getRight()) {
-                    lowestFloatBottom = floatBox.getBottom();
-                }
-            }
-        }
+        float lowestFloatBottom = calculateLowestFloatBottom(
+                clearPropertyValue.equals(ClearPropertyValue.LEFT) || isBoth,
+                clearPropertyValue.equals(ClearPropertyValue.RIGHT) || isBoth,
+                Float.MAX_VALUE, lastLeftAndRightBoxes, floatRendererAreas);
         if (lowestFloatBottom < Float.MAX_VALUE) {
             clearHeightCorrection = parentBBox.getTop() - lowestFloatBottom + AbstractRenderer.EPS;
         }
 
         return clearHeightCorrection;
+    }
+
+    static float adjustBlockFormattingContextLayoutBox(BlockRenderer renderer, List<Rectangle> floatRendererAreas,
+                                                  Rectangle parentBBox, float blockWidth, float clearHeightCorrection) {
+        if (floatRendererAreas.isEmpty() || !BlockFormattingContextUtil.isRendererCreateBfc(renderer) &&
+                !(renderer instanceof FlexContainerRenderer)) {
+            return 0;
+        }
+        final float currY = Math.min(floatRendererAreas.get(floatRendererAreas.size() - 1).getTop(),
+                parentBBox.getTop() - clearHeightCorrection);
+        List<Rectangle> boxesAtYLevel = getBoxesAtYLevel(floatRendererAreas, currY);
+        Rectangle[] lastLeftAndRightBoxes = findLastLeftAndRightBoxes(parentBBox, boxesAtYLevel);
+        if (lastLeftAndRightBoxes[0] == null && lastLeftAndRightBoxes[1] == null) {
+            return 0;
+        }
+
+        final float leftX = lastLeftAndRightBoxes[0] == null ? parentBBox.getLeft() : lastLeftAndRightBoxes[0].getRight();
+        final float rightX = lastLeftAndRightBoxes[1] == null ? parentBBox.getRight() : lastLeftAndRightBoxes[1].getLeft();
+        if (Math.max(blockWidth, renderer.getMinMaxWidth().getMinWidth()) <= rightX - leftX) {
+            float width = Math.max(0, leftX - parentBBox.getLeft()) + Math.max(0, parentBBox.getRight() - rightX);
+            parentBBox.setX(Math.max(parentBBox.getX(), leftX));
+            parentBBox.decreaseWidth(width);
+            return 0;
+        }
+
+        final float lowestFloatBottom = calculateLowestFloatBottom(true, true, Float.MAX_VALUE,
+                lastLeftAndRightBoxes, floatRendererAreas);
+        if (lowestFloatBottom < Float.MAX_VALUE) {
+            float adjustedHeightDelta = parentBBox.getTop() - lowestFloatBottom + AbstractRenderer.EPS;
+            parentBBox.decreaseHeight(adjustedHeightDelta);
+            return adjustedHeightDelta;
+        }
+        return 0;
     }
 
     static void applyClearance(Rectangle layoutBox, MarginsCollapseHandler marginsCollapseHandler, float clearHeightAdjustment, boolean isFloat) {
@@ -405,4 +433,27 @@ class FloatingHelper {
         }
         return yLevelBoxes;
     }
+
+    private static float calculateLowestFloatBottom(boolean isLeftOrBoth, boolean isRightOrBoth,
+                                                    float lowestFloatBottom, Rectangle[] lastLeftAndRightBoxes,
+                                                    List<Rectangle>floatRendererAreas) {
+        if (isLeftOrBoth && lastLeftAndRightBoxes[0] != null) {
+            for (Rectangle floatBox : floatRendererAreas) {
+                if (floatBox.getBottom() < lowestFloatBottom
+                        && floatBox.getLeft() <= lastLeftAndRightBoxes[0].getLeft()) {
+                    lowestFloatBottom = floatBox.getBottom();
+                }
+            }
+        }
+        if (isRightOrBoth && lastLeftAndRightBoxes[1] != null) {
+            for (Rectangle floatBox : floatRendererAreas) {
+                if (floatBox.getBottom() < lowestFloatBottom
+                        && floatBox.getRight() >= lastLeftAndRightBoxes[1].getRight()) {
+                    lowestFloatBottom = floatBox.getBottom();
+                }
+            }
+        }
+        return lowestFloatBottom;
+    }
+
 }

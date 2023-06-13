@@ -120,7 +120,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     floatPropertyValue, overflowX);
             floatRendererAreas = new ArrayList<>();
         }
-
+        boolean wasHeightDecreased = clearHeightCorrection > 0 &&
+                (marginsCollapseHandler == null || FloatingHelper.isRendererFloating(this));
+        float bfcHeightCorrection = FloatingHelper.adjustBlockFormattingContextLayoutBox(this, floatRendererAreas, parentBBox,
+                blockWidth == null ? 0 : (float) blockWidth, wasHeightDecreased ? 0 : clearHeightCorrection);
         boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
@@ -219,11 +222,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 applyMargins(occupiedArea.getBBox(), true);
 
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
-                    LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+                    LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, bfcHeightCorrection, marginsCollapsingEnabled);
                     return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null, null);
                 } else {
                     if (layoutResult != LayoutResult.NOTHING) {
-                        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+                        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, bfcHeightCorrection, marginsCollapsingEnabled);
                         return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                     } else {
                         floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
@@ -467,7 +470,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
 
         if (layoutResult != LayoutResult.NOTHING) {
-            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, bfcHeightCorrection, marginsCollapsingEnabled);
             return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
         } else {
             if (positionedRenderers.size() > 0) {

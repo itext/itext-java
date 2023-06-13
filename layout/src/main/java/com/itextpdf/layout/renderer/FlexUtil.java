@@ -603,7 +603,11 @@ final class FlexUtil {
                 switch (selfAlignment) {
                     case SELF_END:
                     case END:
-                        itemInfo.yShift = freeSpace;
+                        if (isColumnDirection) {
+                            itemInfo.xShift = freeSpace;
+                        } else {
+                            itemInfo.yShift = freeSpace;
+                        }
                         break;
                     case FLEX_END:
                         if (!renderer.isWrapReverse()) {
