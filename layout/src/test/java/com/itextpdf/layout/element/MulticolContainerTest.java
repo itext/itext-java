@@ -36,13 +36,12 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.IOException;
 
 @Category(IntegrationTest.class)
 public class MulticolContainerTest extends ExtendedITextTest {
@@ -169,6 +168,45 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.add(new Paragraph(generateLongString(300)));
         });
     }
+
+    @Test
+    public void continuousColumContainerParagraphAllChildStart() throws IOException, InterruptedException {
+        executeTest("continuousColumContainerParagraphAllChildStart", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMarginTop(DEFAULT_MARGIN);
+            ctx.setPaddingTop(DEFAULT_PADDING);
+            ctx.setMarginBottom(DEFAULT_MARGIN);
+            ctx.setPaddingBottom(DEFAULT_PADDING);
+            Paragraph paragraph = new Paragraph(generateLongString(300));
+            paragraph.setBorder(new SolidBorder(ColorConstants.RED, 2));
+            paragraph.setMarginTop(200);
+            paragraph.setPaddingTop(40);
+            paragraph.setBackgroundColor(ColorConstants.PINK);
+            ctx.add(paragraph);
+        });
+    }
+
+    @Test
+    public void continuousColumContainerParagraphAllChildEnd() throws IOException, InterruptedException {
+        executeTest("continuousColumContainerParagraphAllChildEnd", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMarginTop(DEFAULT_MARGIN);
+            ctx.setPaddingTop(DEFAULT_PADDING);
+            ctx.setMarginBottom(DEFAULT_MARGIN);
+            ctx.setPaddingBottom(DEFAULT_PADDING);
+            Paragraph paragraph = new Paragraph(generateLongString(300));
+            paragraph.setBorder(new SolidBorder(ColorConstants.RED, 2));
+            paragraph.setMarginBottom(200);
+            paragraph.setPaddingBottom(40);
+            paragraph.setBackgroundColor(ColorConstants.PINK);
+            ctx.add(paragraph);
+        });
+    }
+
 
     @Test
     public void continuousColumContainerParagraphOverflowShouldShow() throws IOException, InterruptedException {

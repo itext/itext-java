@@ -23,11 +23,13 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.MulticolContainer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,7 @@ import java.util.List;
 public class MulticolRenderer extends AbstractRenderer {
 
     private static final int MAX_RELAYOUT_COUNT = 4;
-    private static final float ZERO_DELTA = 0.0001f;
+    private static final float ZERO_DELTA = 0.0001F;
 
     private BlockRenderer elementRenderer;
     private int columnCount;
@@ -54,22 +56,19 @@ public class MulticolRenderer extends AbstractRenderer {
         super(modelElement);
     }
 
-    @Override
-    public IRenderer getNextRenderer() {
-        logWarningIfGetNextRendererNotOverridden(MulticolRenderer.class, this.getClass());
-        return new MulticolRenderer((MulticolContainer) modelElement);
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
-        ((MulticolContainer) this.getModelElement()).copyAllPropertiesToChildren();
         this.setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER, Boolean.TRUE);
-        final Rectangle initialBBox = layoutContext.getArea().getBBox();
+        final Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
+        applyPaddings(actualBBox, false);
+        applyBorderBox(actualBBox, false);
+        applyMargins(actualBBox, false);
+
         columnCount = (int) this.<Integer>getProperty(Property.COLUMN_COUNT);
-        columnWidth = initialBBox.getWidth() / columnCount;
+        columnWidth = actualBBox.getWidth() / columnCount;
         if (this.elementRenderer == null) {
             // initialize elementRenderer on first layout when first child represents renderer of element which
             // should be layouted in multicol, because on the next layouts this can have multiple children
@@ -85,7 +84,7 @@ public class MulticolRenderer extends AbstractRenderer {
 
         approximateHeight = prelayoutResult.getOccupiedArea().getBBox().getHeight() / columnCount;
 
-        List<IRenderer> container = balanceContentAndLayoutColumns(layoutContext);
+        List<IRenderer> container = balanceContentAndLayoutColumns(layoutContext, actualBBox);
 
         this.occupiedArea = calculateContainerOccupiedArea(layoutContext);
         this.setChildRenderers(container);
@@ -97,19 +96,38 @@ public class MulticolRenderer extends AbstractRenderer {
         return result;
     }
 
-    private List<IRenderer> balanceContentAndLayoutColumns(LayoutContext prelayoutContext) {
+    @Override
+    public IRenderer getNextRenderer() {
+        logWarningIfGetNextRendererNotOverridden(MulticolRenderer.class, this.getClass());
+        return new MulticolRenderer((MulticolContainer) modelElement);
+    }
+
+    private float safelyRetrieveFloatProperty(int property) {
+        final Object value = this.<Object>getProperty(property);
+        if (value instanceof UnitValue) {
+            return ((UnitValue) value).getValue();
+        }
+        if (value instanceof Border) {
+            return ((Border) value).getWidth();
+        }
+        return 0F;
+    }
+
+    private List<IRenderer> balanceContentAndLayoutColumns(LayoutContext prelayoutContext, Rectangle actualBBox) {
         Float additionalHeightPerIteration = null;
-        List<IRenderer> container = new ArrayList<>();
+        final List<IRenderer> container = new ArrayList<>();
         int counter = MAX_RELAYOUT_COUNT;
         while (counter-- > 0) {
-            IRenderer overflowRenderer = layoutColumnsAndReturnOverflowRenderer(prelayoutContext, container);
+            final IRenderer overflowRenderer = layoutColumnsAndReturnOverflowRenderer(prelayoutContext, container,
+                    actualBBox);
             if (overflowRenderer == null) {
                 return container;
             }
             if (additionalHeightPerIteration == null) {
                 LayoutResult overflowResult = overflowRenderer.layout(
                         new LayoutContext(new LayoutArea(1, new Rectangle(columnWidth, INF))));
-                additionalHeightPerIteration = overflowResult.getOccupiedArea().getBBox().getHeight() / MAX_RELAYOUT_COUNT;
+                additionalHeightPerIteration =
+                        overflowResult.getOccupiedArea().getBBox().getHeight() / MAX_RELAYOUT_COUNT;
             }
             if (Math.abs(additionalHeightPerIteration.floatValue()) <= ZERO_DELTA) {
                 return container;
@@ -119,10 +137,22 @@ public class MulticolRenderer extends AbstractRenderer {
         return container;
     }
 
+
     private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext) {
         LayoutArea area = layoutContext.getArea().clone();
-        area.getBBox().setHeight(approximateHeight);
-        Rectangle initialBBox = layoutContext.getArea().getBBox();
+        float totalHeight = approximateHeight;
+
+        totalHeight += safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
+        totalHeight += safelyRetrieveFloatProperty(Property.PADDING_TOP);
+        totalHeight += safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM);
+        totalHeight += safelyRetrieveFloatProperty(Property.MARGIN_TOP);
+        totalHeight += safelyRetrieveFloatProperty(Property.BORDER_BOTTOM);
+        totalHeight += safelyRetrieveFloatProperty(Property.BORDER_TOP);
+        final float TOP_AND_BOTTOM = 2;
+        totalHeight += safelyRetrieveFloatProperty(Property.BORDER) * TOP_AND_BOTTOM;
+
+        area.getBBox().setHeight(totalHeight);
+        final Rectangle initialBBox = layoutContext.getArea().getBBox();
         area.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - area.getBBox().getHeight());
         return area;
     }
@@ -134,16 +164,20 @@ public class MulticolRenderer extends AbstractRenderer {
         return (BlockRenderer) getChildRenderers().get(0);
     }
 
-    private IRenderer layoutColumnsAndReturnOverflowRenderer(LayoutContext preLayoutContext, List<IRenderer> container) {
+    private IRenderer layoutColumnsAndReturnOverflowRenderer(LayoutContext preLayoutContext,
+            List<IRenderer> container, Rectangle actualBBox) {
         container.clear();
-        Rectangle initialBBox = preLayoutContext.getArea().getBBox();
+
+        final Rectangle initialBBox = actualBBox.clone();
         IRenderer renderer = elementRenderer;
         for (int i = 0; i < columnCount && renderer != null; i++) {
             LayoutArea tempArea = preLayoutContext.getArea().clone();
             tempArea.getBBox().setWidth(columnWidth);
             tempArea.getBBox().setHeight(approximateHeight);
             tempArea.getBBox().setX(initialBBox.getX() + columnWidth * i);
-            tempArea.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - tempArea.getBBox().getHeight());
+            tempArea.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - tempArea.getBBox()
+                    .getHeight());
+
             LayoutContext columnContext = new LayoutContext(tempArea, preLayoutContext.getMarginsCollapseInfo(),
                     preLayoutContext.getFloatRendererAreas(), preLayoutContext.isClippedHeight());
 
