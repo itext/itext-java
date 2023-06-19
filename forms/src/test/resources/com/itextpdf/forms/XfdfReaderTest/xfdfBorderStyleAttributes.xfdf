@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf>
+    <annots>
+        <circle page="1" color="#25D2D1" date="D:20190531130641+03'00'" flags="print"
+                name="39a3d2cd-f335-4a76-a818-20b053b1c70c" rect="400,400,500,500" title="Circle"
+                creationdate="D:20190531130641+03'00'" subject="Oval"
+                style="solid" interior-color="#6AD926" fringe="0.5,0.5,0.5,0.5">
+        </circle>
+        <square page="1" color="#25D2D1" date="D:20190531130641+03'00'" flags="print"
+                name="39a3d2cd-f335-4a76-a818-90b053b1c70c" rect="200,500,300,600" title="Square"
+                creationdate="D:20190531130641+03'00'" subject="Rectangle" width="10" intensity="1"
+                dashes="4,3,2,3" style="dash" interior-color="#40AA55" fringe="2.000000,2.000000,2.000000,2.000000">
+        </square>
+        <polygon page="1" color="#25D2D1" date="D:20230517093440-07'00'" flags="print"
+                 name="79bf79bc-817a-3ec8-f7e3-335ac52cef7b" rect="300,500,400,600" title="Polygon"
+                 subject="Polygon" creationdate="D:20230517092205-07'00'" style="solid"
+                 intensity="1" interior-color="#40AA55" intent="PolygonCloud">
+            <vertices>
+                305,550;315,570;325,560;350,590;375,560;385,570;395,550;370,510;350,530;330,510
+            </vertices>
+        </polygon>
+        <polyline page="1" color="#25D2D1" date="D:20230517093440-07'00'" flags="print"
+                  name="79bf79bc-817a-3ec8-f7e3-335ac52cef8b" rect="400,500,500,600" title="Polyline"
+                  subject="Polygonal Line" creationdate="D:20230517092205-07'00'" width="3"
+                  interior-color="#40AA55" intent="polyline-dimension" head="Diamond">
+            <contents>Comment Here</contents>
+            <vertices>
+                400,550;420;590;440,520;460,560;480,530;500,570
+            </vertices>
+        </polyline>
+    </annots>
+</xfdf>

@@ -337,7 +337,7 @@ public class AnnotObject {
     }
 
     void addAttribute(String name, float value) {
-        attributes.add(new AttributeObject(name, String.valueOf(value)));
+        attributes.add(new AttributeObject(name, XfdfObjectUtils.convertFloatToString(value)));
     }
 
     void addAttribute(String name, Rectangle value) {
@@ -364,7 +364,7 @@ public class AnnotObject {
         } else if (valueObject.getType() == PdfObject.NAME) {
             valueString = ((PdfName)(valueObject)).getValue();
         } else if (valueObject.getType() == PdfObject.NUMBER) {
-            valueString = String.valueOf(((PdfNumber)(valueObject)).getValue());
+            valueString = XfdfObjectUtils.convertFloatToString((float)((PdfNumber)(valueObject)).getValue());
         } else if (valueObject.getType() == PdfObject.STRING) {
             valueString = ((PdfString)(valueObject)).getValue();
         }

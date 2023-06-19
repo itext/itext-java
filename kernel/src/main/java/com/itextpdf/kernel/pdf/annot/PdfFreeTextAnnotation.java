@@ -48,7 +48,9 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
      */
     public PdfFreeTextAnnotation(Rectangle rect, PdfString contents) {
         super(rect);
-        setContents(contents);
+        if (contents != null) {
+            setContents(contents);
+        }
     }
 
     /**
@@ -123,7 +125,7 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
      */
     public int getJustification() {
         PdfNumber q = getPdfObject().getAsNumber(PdfName.Q);
-        return q == null ? 0 : q.intValue();
+        return q == null ? PdfFreeTextAnnotation.LEFT_JUSTIFIED : q.intValue();
     }
 
     /**
@@ -233,5 +235,25 @@ public class PdfFreeTextAnnotation extends PdfMarkupAnnotation {
      */
     public PdfFreeTextAnnotation setBorderEffect(PdfDictionary borderEffect) {
         return (PdfFreeTextAnnotation) put(PdfName.BE, borderEffect);
+    }
+
+    /**
+     * Gets the rotation angle in degrees.
+     *
+     * @return {@link PdfNumber} representing the clockwise rotation in degrees.
+     */
+    public PdfNumber getRotation() {
+        return getPdfObject().getAsNumber(PdfName.Rotate);
+    }
+
+    /**
+     * Sets the rotation angle in degrees.
+     * @param degAngle an integer representing the clockwise rotation in degrees.
+     *
+     * @return this {@link PdfFreeTextAnnotation} instance.
+     */
+    public PdfFreeTextAnnotation setRotation(int degAngle) {
+        put(PdfName.Rotate, new PdfNumber(degAngle));
+        return this;
     }
 }

@@ -118,10 +118,10 @@
 ></contents-richtext
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,-20.000000,792.000000,100.000000"
 /></text
-><strikeout color="#0000FF" creationdate="D:20190606124238+03'00'" flags="print" inreplyto="ec78a421-c73d-4f72-a50e-a313a362d231" IT="StrikeOutTextEdit" date="D:20190606124238+03'00'" name="f5baa7ee-35da-4f47-bfc2-0704f11f2c81" page="1" coords="95.769000,705.810000,162.225000,705.810000,95.769000,689.622000,162.225000,689.622000" replyType="group" rect="90.941700,688.610000,167.052000,706.822000" subject="Cross-Out" title="Alex"
+><strikeout color="#0000FF" creationdate="D:20190606124238+03'00'" flags="print" inreplyto="ec78a421-c73d-4f72-a50e-a313a362d231" intent="StrikeOutTextEdit" date="D:20190606124238+03'00'" name="f5baa7ee-35da-4f47-bfc2-0704f11f2c81" page="1" coords="95.769000,705.810000,162.225000,705.810000,95.769000,689.622000,162.225000,689.622000" replyType="group" rect="90.941700,688.610000,167.052000,706.822000" subject="Cross-Out" title="Alex"
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,585.810000,792.000000,705.810000"
 /></strikeout
-><caret color="#0000FF" creationdate="D:20190606124238+03'00'" flags="print" IT="Replace" date="D:20190606124250+03'00'" name="ec78a421-c73d-4f72-a50e-a313a362d231" page="1" fringe="0.890320,0.890320,0.890320,0.890320" rect="155.669000,688.732000,168.781000,699.416000" subject="Inserted Text" title="Alex"
+><caret color="#0000FF" creationdate="D:20190606124238+03'00'" flags="print" intent="Replace" date="D:20190606124250+03'00'" name="ec78a421-c73d-4f72-a50e-a313a362d231" page="1" fringe="0.890320,0.890320,0.890320,0.890320" rect="155.669000,688.732000,168.781000,699.416000" subject="Inserted Text" title="Alex"
 ><contents-richtext
 ><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2"
 ><p dir="ltr"

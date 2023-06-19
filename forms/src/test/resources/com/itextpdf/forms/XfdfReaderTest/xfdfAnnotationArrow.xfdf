@@ -118,7 +118,7 @@
 ></contents-richtext
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,-20.000000,792.000000,100.000000"
 /></text
-><line color="#E52237" creationdate="D:20190606131953+03'00'" flags="print" IT="LineArrow" start="519.246000,632.499000" end="173.371000,693.178000" head="None" tail="OpenArrow" date="D:20190606131953+03'00'" name="051e0672-0a3b-4e10-9de5-d90fbdbb8ea3" page="1" rect="167.871000,626.999000,524.746000,701.423000" subject="Line" title="Alex"
+><line color="#E52237" creationdate="D:20190606131953+03'00'" flags="print" intent="LineArrow" start="519.246000,632.499000" end="173.371000,693.178000" head="None" tail="OpenArrow" date="D:20190606131953+03'00'" name="051e0672-0a3b-4e10-9de5-d90fbdbb8ea3" page="1" rect="167.871000,626.999000,524.746000,701.423000" subject="Line" title="Alex"
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,542.839000,792.000000,662.839000"
 /></line
 ></annots

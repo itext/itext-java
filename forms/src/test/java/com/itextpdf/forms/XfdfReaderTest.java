@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -167,7 +168,6 @@ public class XfdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE)})
     public void xfdfAnnotationHighlightedText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationHighlightedText.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationHighlightedText.pdf")));
@@ -485,8 +485,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT)
     })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationReplaceText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
@@ -504,7 +503,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 5),
+            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 2),
             @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED)
     })
     public void xfdfAnnotationArrow() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
@@ -521,7 +520,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
-    //TODO DEVSIX-3215 Support annots
+    //TODO DEVSIX-7600 Support callout annotations
     public void xfdfAnnotationCallout() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(new FileInputStream(sourceFolder + "xfdfAnnotationCallout.pdf")),
                 new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationCallout.pdf")));
@@ -536,8 +535,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 3)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT)
     })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloud() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
@@ -555,7 +553,6 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 3)
     })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloudNested() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
@@ -645,8 +642,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE, count = 4)
+            @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT)
     })
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationAttrTitle() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
@@ -796,4 +792,73 @@ public class XfdfReaderTest extends ExtendedITextTest {
                 sourceFolder + "cmp_xfdfDropDown.pdf", destinationFolder, "diff_"));
     }
 
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
+    public void xfdfBorderStyleAttributesTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(sourceFolder + "xfdfAnnotationsTemplate.pdf"),
+                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfBorderStyleAttributes.pdf")))) {
+
+            String xfdfFilename = sourceFolder + "xfdfBorderStyleAttributes.xfdf";
+            XfdfObjectFactory factory = new XfdfObjectFactory();
+            XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
+            xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationsTemplate.pdf");
+        }
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfBorderStyleAttributes.pdf",
+                sourceFolder + "cmp_xfdfBorderStyleAttributes.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
+    //TODO DEVSIX-7600 update xfdf and cmp files after supporting all the annotation types mentioned in xfdf spec
+    public void xfdfAnnotationAttributesTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(sourceFolder + "xfdfAnnotationsTemplate.pdf"),
+                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfAnnotationAttributes.pdf")))) {
+
+            String xfdfFilename = sourceFolder + "xfdfAnnotationAttributes.xfdf";
+            XfdfObjectFactory factory = new XfdfObjectFactory();
+            XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
+            xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationsTemplate.pdf");
+        }
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "xfdfAnnotationAttributes.pdf",
+                sourceFolder + "cmp_xfdfAnnotationAttributes.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
+    //TODO DEVSIX-7600 update xfdf and src files after supporting all the annotation types mentioned in xfdf spec
+    public void xfdfOnlyRequiredAnnotationAttributesTest() throws IOException, ParserConfigurationException,
+            SAXException, InterruptedException {
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(sourceFolder + "xfdfAnnotationsTemplate.pdf"),
+                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.pdf")))) {
+
+            String xfdfFilename = sourceFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf";
+            XfdfObjectFactory factory = new XfdfObjectFactory();
+            XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
+            xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationsTemplate.pdf");
+        }
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.pdf",
+                sourceFolder + "cmp_xfdfOnlyRequiredAnnotationAttributes.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
+    public void xfdfInReplyToTest() throws IOException, ParserConfigurationException,
+            SAXException, InterruptedException {
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(sourceFolder + "xfdfAnnotationHighlightedText.pdf"),
+                new PdfWriter(new FileOutputStream(destinationFolder + "xfdfInReplyTo.pdf")))) {
+
+            String xfdfFilename = sourceFolder + "xfdfInReplyTo.xfdf";
+            XfdfObjectFactory factory = new XfdfObjectFactory();
+            XfdfObject xfdfObject = factory.createXfdfObject(new FileInputStream(xfdfFilename));
+            xfdfObject.mergeToPdf(document, sourceFolder + "xfdfAnnotationHighlightedText.pdf");
+        }
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + "xfdfInReplyTo.pdf",
+                sourceFolder + "cmp_xfdfInReplyTo.pdf", destinationFolder, "diff_"));
+    }
 }
