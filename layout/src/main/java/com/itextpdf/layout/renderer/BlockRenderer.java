@@ -82,7 +82,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         this.isLastRendererForModelElement = true;
-
         Map<Integer, IRenderer> waitingFloatsSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> waitingOverflowFloatRenderers = new ArrayList<>();
         boolean floatOverflowedCompletely = false;
@@ -113,8 +112,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
             blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
         }
         boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
-        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
-        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas,
+                parentBBox);
+        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection,
+                FloatingHelper.isRendererFloating(this));
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
             blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas,
                     floatPropertyValue, overflowX);
@@ -122,16 +123,15 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         boolean wasHeightDecreased = clearHeightCorrection > 0 &&
                 (marginsCollapseHandler == null || FloatingHelper.isRendererFloating(this));
-        float bfcHeightCorrection = FloatingHelper.adjustBlockFormattingContextLayoutBox(this, floatRendererAreas, parentBBox,
+        float bfcHeightCorrection = FloatingHelper.adjustBlockFormattingContextLayoutBox(this, floatRendererAreas,
+                parentBBox,
                 blockWidth == null ? 0 : (float) blockWidth, wasHeightDecreased ? 0 : clearHeightCorrection);
         boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
 
-        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
-            ContinuousContainer.setupContinuousContainer(this);
-        }
+        ContinuousContainer.setupContinuousContainerIfNeeded(this);
 
         Border[] borders = getBorders();
         UnitValue[] paddings = getPaddings();
@@ -440,7 +440,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
                 Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
-        if (continuousContainer != null) {
+        if (continuousContainer != null && overflowRenderer == null) {
             continuousContainer.reApplyProperties(this);
             paddings = getPaddings();
             borders = getBorders();
@@ -469,14 +469,19 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
 
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
+
         if (layoutResult != LayoutResult.NOTHING) {
-            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, bfcHeightCorrection, marginsCollapsingEnabled);
+            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this,
+                    layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection,
+                    bfcHeightCorrection, marginsCollapsingEnabled);
             return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
         } else {
             if (positionedRenderers.size() > 0) {
                 overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
             }
             floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
+
             return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer, causeOfNothing);
         }
     }
@@ -666,9 +671,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
-        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
-            ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
-        }
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
 
         if (childResult.getStatus() == LayoutResult.PARTIAL) {
             // Apply forced placement only on split renderer

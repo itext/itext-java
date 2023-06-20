@@ -105,9 +105,7 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
-        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
-            ContinuousContainer.setupContinuousContainer(this);
-        }
+        ContinuousContainer.setupContinuousContainerIfNeeded(this);
 
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
@@ -473,13 +471,14 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         AbstractRenderer overflowRenderer = applyMinHeight(overflowY, layoutBox);
+
         if (overflowRenderer != null && isKeepTogether()) {
             floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
         }
         final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
                 Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
-        if (continuousContainer != null) {
+        if (continuousContainer != null && overflowRenderer == null) {
             continuousContainer.reApplyProperties(this);
             paddings = getPaddings();
             borders = getBorders();
@@ -496,7 +495,7 @@ public class ParagraphRenderer extends BlockRenderer {
         if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
-                if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
+                if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
                     LoggerFactory.getLogger(getClass())
                             .warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                                     "It fits by height so it will be forced placed"));
@@ -510,13 +509,17 @@ public class ParagraphRenderer extends BlockRenderer {
         applyVerticalAlignment();
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
-        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this,
+                layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection,
+                marginsCollapsingEnabled);
 
-
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
         if (null == overflowRenderer) {
-            return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);
+            return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(
+                    minMaxWidth);
         } else {
-            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, null).setMinMaxWidth(minMaxWidth);
+            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer,
+                    null).setMinMaxWidth(minMaxWidth);
         }
     }
 
@@ -647,9 +650,7 @@ public class ParagraphRenderer extends BlockRenderer {
         overflowRenderer.parent = parent;
         fixOverflowRenderer(overflowRenderer);
         overflowRenderer.addAllProperties(getOwnProperties());
-        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
-            ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
-        }
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
         return overflowRenderer;
     }
 
@@ -707,7 +708,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);
 
-        return new ParagraphRenderer[]{splitRenderer, overflowRenderer};
+        return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
     }
 
     private void fixOverflowRenderer(ParagraphRenderer overflowRenderer) {

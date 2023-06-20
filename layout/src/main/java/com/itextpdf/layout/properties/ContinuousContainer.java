@@ -24,6 +24,7 @@ package com.itextpdf.layout.properties;
 
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
@@ -34,16 +35,17 @@ import java.util.HashMap;
  * THis is used for processing continuous container property.
  * This behavior is used when we want to simulate a continuous appearance over multiple pages.
  * This means that only for the first and last page the margins, paddings and borders are applied.
- * On the fist page the top properties are applied and on the last page the bottom properties are applied.
+ * On the first page the top properties are applied and on the last page the bottom properties are applied.
  */
 public final class ContinuousContainer {
 
     /**
      * Properties needed to be removed/added for continuous container.
      */
-    static final int[] PROPERTIES_NEEDED_FOR_CONTINUOUS_CONTAINER = {Property.MARGIN_BOTTOM, Property.BORDER_BOTTOM,
+    private static final int[] PROPERTIES_NEEDED_FOR_CONTINUOUS_CONTAINER = {Property.MARGIN_BOTTOM,
+            Property.BORDER_BOTTOM,
             Property.PADDING_BOTTOM, Property.BORDER};
-    final HashMap<Integer, Object> properties = new HashMap<>();
+    private final HashMap<Integer, Object> properties = new HashMap<>();
 
 
     /**
@@ -63,10 +65,14 @@ public final class ContinuousContainer {
      * @param overFlowRenderer the renderer that is used to remove properties from.
      */
     public static void clearPropertiesFromOverFlowRenderer(IPropertyContainer overFlowRenderer) {
-        overFlowRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(0));
-        overFlowRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0));
-        overFlowRenderer.setProperty(Property.BORDER_TOP, null);
-
+        if (overFlowRenderer == null) {
+            return;
+        }
+        if (Boolean.TRUE.equals(overFlowRenderer.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
+            overFlowRenderer.setProperty(Property.PADDING_TOP, UnitValue.createPointValue(0));
+            overFlowRenderer.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(0));
+            overFlowRenderer.setProperty(Property.BORDER_TOP, null);
+        }
     }
 
     /**
@@ -74,13 +80,25 @@ public final class ContinuousContainer {
      *
      * @param blockRenderer the renderer that is used to set up continuous container.
      */
-    public static void setupContinuousContainer(BlockRenderer blockRenderer) {
-        if (!blockRenderer.hasProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT)) {
-            final ContinuousContainer continuousContainer = new ContinuousContainer(blockRenderer);
-            blockRenderer
-                    .setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT, continuousContainer);
+    public static void setupContinuousContainerIfNeeded(BlockRenderer blockRenderer) {
+        if (Boolean.TRUE.equals(blockRenderer.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
+            if (!blockRenderer.hasProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT)) {
+                final ContinuousContainer continuousContainer = new ContinuousContainer(blockRenderer);
+                blockRenderer
+                        .setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT, continuousContainer);
+            }
+            clearPropertiesFromSplitRenderer(blockRenderer);
         }
-        clearProperties(blockRenderer);
+    }
+
+    private static void clearPropertiesFromSplitRenderer(AbstractRenderer blockRenderer) {
+        if (blockRenderer == null) {
+            return;
+        }
+        blockRenderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0));
+        blockRenderer.setProperty(Property.BORDER_BOTTOM, null);
+        blockRenderer.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(0));
+
     }
 
     /**
@@ -97,11 +115,5 @@ public final class ContinuousContainer {
         if (allBorders != null && bottomBorder == null) {
             blockRenderer.setProperty(Property.BORDER_BOTTOM, allBorders);
         }
-    }
-
-    private static void clearProperties(BlockRenderer blockRenderer) {
-        blockRenderer.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(0));
-        blockRenderer.setProperty(Property.BORDER_BOTTOM, null);
-        blockRenderer.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(0));
     }
 }

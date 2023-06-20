@@ -180,7 +180,7 @@ public class MulticolRenderer extends AbstractRenderer {
 
             LayoutContext columnContext = new LayoutContext(tempArea, preLayoutContext.getMarginsCollapseInfo(),
                     preLayoutContext.getFloatRendererAreas(), preLayoutContext.isClippedHeight());
-
+            renderer.setProperty(Property.COLLAPSING_MARGINS, false);
             LayoutResult tempResultColumn = renderer.layout(columnContext);
             if (tempResultColumn.getSplitRenderer() == null) {
                 container.add(renderer);
