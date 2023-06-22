@@ -126,6 +126,10 @@ final class EncryptionUtils {
                         }
                     }
                 } catch (Exception f) {
+                    // First check if the feature is supported, it will throw if not
+                    // Exact algorithm doesn't matter currently
+                    BouncyCastleFactoryCreator.getFactory().isEncryptionFeatureSupported(0, true);
+                    // Throw the original exception if the feature is supported
                     throw new PdfException(KernelExceptionMessageConstant.PDF_DECRYPTION, f);
                 }
             }

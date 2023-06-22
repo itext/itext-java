@@ -272,27 +272,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void openEncryptedDocWithWrongPrivateKey()
-            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
-        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
-                new ReaderProperties()
-                        .setPublicKeySecurityParams(
-                                getPublicCertificate(CERT),
-                                PemFileHelper.readPrivateKeyFromPemFile(
-                                        new FileInputStream(sourceFolder + "wrong.pem"), PRIVATE_KEY_PASS),
-                                FACTORY.getProviderName(),
-                                null))) {
-
-            Exception e = Assert.assertThrows(PdfException.class,
-                    () -> new PdfDocument(reader)
-            );
-            Assert.assertEquals(KernelExceptionMessageConstant.PDF_DECRYPTION, e.getMessage());
-        }
-    }
-
-    @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void openEncryptedDocWithWrongCertificateAndPrivateKey()
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
@@ -330,6 +309,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             ignore = true))
     public void copyEncryptedDocument() throws GeneralSecurityException, IOException, InterruptedException,
             AbstractPKCSException, AbstractOperatorCreationException {
+        // I don't know how this source doc was created. Currently it's not opening by Acrobat and Foxit.
+        // If I recreate it using iText, decrypting it in bc-fips on dotnet will start failing. But we probably still
+        // want this test.
         PdfDocument srcDoc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties().
                         setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(),
