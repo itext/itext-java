@@ -80,7 +80,7 @@ public final class ContinuousContainer {
      *
      * @param blockRenderer the renderer that is used to set up continuous container.
      */
-    public static void setupContinuousContainerIfNeeded(BlockRenderer blockRenderer) {
+    public static void setupContinuousContainerIfNeeded(AbstractRenderer blockRenderer) {
         if (Boolean.TRUE.equals(blockRenderer.<Boolean>getProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER))) {
             if (!blockRenderer.hasProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT)) {
                 final ContinuousContainer continuousContainer = new ContinuousContainer(blockRenderer);

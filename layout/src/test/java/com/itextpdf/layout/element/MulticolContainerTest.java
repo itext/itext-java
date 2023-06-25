@@ -22,18 +22,25 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
@@ -207,7 +214,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
-
+    //TODO: DEVSIX-7626
     @Test
     public void continuousColumContainerParagraphOverflowShouldShow() throws IOException, InterruptedException {
         executeTest("continuousColumContainerParagraphOverflowShouldShow", new MulticolContainer(), ctx -> {
@@ -218,6 +225,56 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             ctx.setPaddingBottom(DEFAULT_PADDING);
+            ctx.add(new Paragraph(generateLongString(8000)));
+        });
+    }
+
+    //TODO: DEVSIX-7626
+    @Test
+    public void extraLargeColumnParagraphTest() throws IOException, InterruptedException {
+        executeTest("extraLargeColumnParagraphTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMarginTop(DEFAULT_MARGIN);
+            ctx.setPaddingTop(DEFAULT_PADDING);
+            ctx.setMarginBottom(DEFAULT_MARGIN);
+            ctx.setPaddingBottom(DEFAULT_PADDING);
+            ctx.add(new Paragraph(generateLongString(15000)));
+        });
+    }
+
+    //TODO: DEVSIX-7626
+    @Test
+    public void largeColumnParagraphWithMarginTest() throws IOException, InterruptedException {
+        executeTest("largeColumnParagraphWithMarginTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setMarginTop(DEFAULT_MARGIN);
+            ctx.setMarginBottom(DEFAULT_MARGIN);
+            ctx.add(new Paragraph(generateLongString(8000)));
+        });
+    }
+
+    //TODO: DEVSIX-7626
+    @Test
+    public void largeColumnParagraphWithPaddingTest() throws IOException, InterruptedException {
+        executeTest("largeColumnParagraphWithPaddingTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setPaddingTop(DEFAULT_PADDING);
+            ctx.setPaddingBottom(DEFAULT_PADDING);
+            ctx.add(new Paragraph(generateLongString(8000)));
+        });
+    }
+
+    //TODO: DEVSIX-7626
+    @Test
+    public void largeColumnParagraphWithBorderTest() throws IOException, InterruptedException {
+        executeTest("largeColumnParagraphWithBorderTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 50));
             ctx.add(new Paragraph(generateLongString(8000)));
         });
     }
@@ -309,6 +366,301 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
+    @Test
+    public void singleParagraphMultiPageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "singleParagraphMultiPageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_singleParagraphMultiPageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+                    "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
+                    "irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim " +
+                    "id est laborum.");
+
+            columnContainer.add(paragraph);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void singleParagraphWithBorderMultiPageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "singleParagraphWithBorderMultiPageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_singleParagraphWithBorderMultiPageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+                    "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
+                    "irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim " +
+                    "id est laborum.");
+            paragraph.setBorder(new SolidBorder(2));
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            columnContainer.add(paragraph);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void paragraphWithImagesMultiPageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithImagesMultiPageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithImagesMultiPageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            PdfImageXObject xObject = new PdfImageXObject(
+                    ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "placeholder_100x100.png")));
+            Image image1 = new Image(xObject, 20);
+            Image image2 = new Image(xObject, 150);
+            Image image3 = new Image(xObject, 100).setHorizontalAlignment(HorizontalAlignment.RIGHT);
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(paragraph);
+            div.add(image1);
+            div.add(image2);
+            div.add(image3);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    //TODO: DEVSIX-7621
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void paragraphWithOverflowingImageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithOverflowingImageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithOverflowingImageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            PdfImageXObject xObject = new PdfImageXObject(
+                    ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "placeholder_100x100.png")));
+            Image image = new Image(xObject, 200);
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(paragraph);
+            div.add(image);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    //TODO: DEVSIX-7621
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void overflowingImageWithParagraphTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "overflowingImageWithParagraphMultipageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_overflowingImageWithParagraphMultipageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            PdfImageXObject xObject = new PdfImageXObject(
+                    ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "placeholder_100x100.png")));
+            Image image = new Image(xObject, 200);
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(image);
+            div.add(paragraph);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void imageBiggerThanPageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "imageBiggerThanPageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_imageBiggerThanPageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            PdfImageXObject xObject = new PdfImageXObject(
+                    ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "placeholder_100x100.png")));
+            Image image = new Image(xObject, 800);
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(image);
+            div.add(paragraph);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void overflowingDivWithParagraphMultipageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "overflowingDivWithParagraphMultipageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_overflowingDivWithParagraphMultipageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            Div columnDiv = new Div();
+            columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
+            columnDiv.setProperty(Property.KEEP_TOGETHER, true);
+            columnDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
+            columnDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(150));
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(paragraph);
+            div.add(columnDiv);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void marginCantFitCurrentPageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "marginCantFitCurrentPageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_marginCantFitCurrentPageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            Div columnDiv = new Div();
+            columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
+            columnDiv.setProperty(Property.KEEP_TOGETHER, true);
+            columnDiv.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(40));
+            columnDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(60));
+            columnDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(60));
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(columnDiv);
+            div.add(paragraph);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void paddingCantFitCurrentPageTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paddingCantFitCurrentPageTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paddingCantFitCurrentPageTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            Div columnDiv = new Div();
+            columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
+            columnDiv.setProperty(Property.KEEP_TOGETHER, true);
+            columnDiv.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(40));
+            columnDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(60));
+            columnDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(60));
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(columnDiv);
+            div.add(paragraph);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void keepTogetherBlockingLayoutTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "keepTogetherBlockingLayoutTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherBlockingLayoutTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(createFirstPageFiller());
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+                    "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
+                    "irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim " +
+                    "id est laborum.");
+            paragraph.setBorder(new SolidBorder(2));
+            paragraph.setFontSize(20);
+            paragraph.setProperty(Property.KEEP_TOGETHER, true);
+
+            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(paragraph);
+            columnContainer.add(div);
+
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
     private <T extends IBlockElement> void executeTest(String testName, T container, Consumer<T> executor)
             throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + testName + ".pdf";
@@ -345,5 +697,16 @@ public class MulticolContainerTest extends ExtendedITextTest {
         final int second = 1929;
         final int max = 7;
         return (prev * first + second) % max;
+    }
+
+    private static Div createFirstPageFiller() {
+        Div firstPageFiller = new Div();
+        firstPageFiller.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
+        firstPageFiller.setProperty(Property.BORDER, new SolidBorder(1));
+        firstPageFiller.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(20));
+        firstPageFiller.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
+        firstPageFiller.setProperty(Property.WIDTH, UnitValue.createPointValue(450));
+        firstPageFiller.setProperty(Property.HEIGHT, UnitValue.createPointValue(650));
+        return firstPageFiller;
     }
 }

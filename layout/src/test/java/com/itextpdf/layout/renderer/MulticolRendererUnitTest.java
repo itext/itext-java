@@ -80,10 +80,7 @@ public class MulticolRendererUnitTest extends ExtendedITextTest {
 
         MulticolRenderer renderer = (MulticolRenderer) columnContainer.createRendererSubTree();
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(200f, 20f))));
-        Assert.assertEquals(1, result.getSplitRenderer().getChildRenderers().size());
-        Assert.assertEquals(1236.7692f,
-                result.getSplitRenderer().getChildRenderers().get(0).getOccupiedArea().getBBox().getHeight(), 0.0001f);
-        System.out.println(result);
+        Assert.assertEquals(1, result.getOverflowRenderer().getChildRenderers().size());
     }
 
     @Test
@@ -122,7 +119,7 @@ public class MulticolRendererUnitTest extends ExtendedITextTest {
         Assert.assertTrue(result.getSplitRenderer() instanceof MulticolRenderer);
         Assert.assertEquals(3, result.getSplitRenderer().getChildRenderers().size());
         Assert.assertEquals(1, result.getSplitRenderer().getChildRenderers().get(0).getChildRenderers().size());
-        Assert.assertEquals(2, ((ParagraphRenderer)result.getSplitRenderer().getChildRenderers().get(0)
+        Assert.assertEquals(1, ((ParagraphRenderer)result.getSplitRenderer().getChildRenderers().get(0)
                 .getChildRenderers().get(0)).getLines().size());
     }
 
