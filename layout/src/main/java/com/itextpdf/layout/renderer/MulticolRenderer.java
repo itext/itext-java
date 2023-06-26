@@ -46,6 +46,7 @@ public class MulticolRenderer extends AbstractRenderer {
     private int columnCount;
     private float columnWidth;
     private float approximateHeight;
+    private Float heightFromProperties;
 
     /**
      * Creates a DivRenderer from its corresponding layout object.
@@ -72,11 +73,14 @@ public class MulticolRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         this.setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER, Boolean.TRUE);
-        final Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
+
+        Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
+        float originalWidth = actualBBox.getWidth();
+        applyWidth(actualBBox, originalWidth);
         applyPaddings(actualBBox, false);
         applyBorderBox(actualBBox, false);
         applyMargins(actualBBox, false);
-
+        heightFromProperties = determineHeight(actualBBox);
         columnCount = (int) this.<Integer>getProperty(Property.COLUMN_COUNT);
         columnWidth = actualBBox.getWidth() / columnCount;
         if (this.elementRenderer == null) {
@@ -164,6 +168,45 @@ public class MulticolRenderer extends AbstractRenderer {
         return overflowRenderer;
     }
 
+    private void applyWidth(Rectangle parentBbox, float originalWidth) {
+        final Float blockWidth = retrieveWidth(originalWidth);
+        if (blockWidth != null) {
+            parentBbox.setWidth((float) blockWidth);
+        } else {
+            final Float minWidth = retrieveMinWidth(parentBbox.getWidth());
+            if (minWidth != null && minWidth > parentBbox.getWidth()) {
+                parentBbox.setWidth((float) minWidth);
+            }
+        }
+    }
+
+    private Float determineHeight(Rectangle parentBBox) {
+        Float height = retrieveHeight();
+        final Float minHeight = retrieveMinHeight();
+        final Float maxHeight = retrieveMaxHeight();
+        if (height == null || (minHeight != null && height < minHeight)) {
+            if ((minHeight != null) && parentBBox.getHeight() < minHeight) {
+                height = minHeight;
+            }
+        }
+        if (height != null && maxHeight != null && height > maxHeight) {
+            height = maxHeight;
+        }
+        return height;
+    }
+
+
+    private void recalculateHeightWidthAfterLayouting(Rectangle parentBBox) {
+        Float height = determineHeight(parentBBox);
+        if (height != null) {
+            float heightDelta = parentBBox.getHeight() - (float) height;
+            parentBBox.moveUp(heightDelta);
+            parentBBox.setHeight((float) height);
+        }
+        applyWidth(parentBBox, parentBBox.getWidth());
+    }
+
+
     private float safelyRetrieveFloatProperty(int property) {
         final Object value = this.<Object>getProperty(property);
         if (value instanceof UnitValue) {
@@ -187,18 +230,43 @@ public class MulticolRenderer extends AbstractRenderer {
                 isLastLayout = true;
                 approximateHeight = maxHeight;
             }
-            result = layoutColumnsAndReturnOverflowRenderer(prelayoutContext, actualBbox);
+            // height calcultion
+            float workingHeight = approximateHeight;
+            if (heightFromProperties != null) {
+                workingHeight = Math.min((float) heightFromProperties, (float) approximateHeight);
+                workingHeight -= safelyRetrieveFloatProperty(Property.PADDING_TOP);
+                workingHeight -= safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
+                workingHeight -= safelyRetrieveFloatProperty(Property.BORDER_TOP);
+                workingHeight -= safelyRetrieveFloatProperty(Property.BORDER_BOTTOM);
+                workingHeight -= safelyRetrieveFloatProperty(Property.BORDER) * 2;
+                workingHeight -= safelyRetrieveFloatProperty(Property.MARGIN_TOP);
+                workingHeight -= safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM);
+            }
+            result = layoutColumnsAndReturnOverflowRenderer(prelayoutContext, actualBbox, workingHeight);
+
             if (result.getOverflowRenderer() == null || isLastLayout) {
+                clearOverFlowRendererIfNeeded(result);
                 return result;
             }
             additionalHeightPerIteration = heightCalculator.getAdditionalHeightOfEachColumn(this, result).floatValue();
             if (Math.abs(additionalHeightPerIteration) <= ZERO_DELTA) {
+                clearOverFlowRendererIfNeeded(result);
                 return result;
             }
             approximateHeight += additionalHeightPerIteration;
+            clearOverFlowRendererIfNeeded(result);
         }
         return result;
     }
+
+    private void clearOverFlowRendererIfNeeded(MulticolLayoutResult result) {
+        //When we have a height set on the element but the content doesn't fit in the given height
+        //we don't want to render the overflow renderer as it would be rendered in the next area
+        if (heightFromProperties != null && heightFromProperties < approximateHeight) {
+            result.setOverflowRenderer(null);
+        }
+    }
+
 
     private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, boolean isFull) {
         LayoutArea area = layoutContext.getArea().clone();
@@ -221,6 +289,7 @@ public class MulticolRenderer extends AbstractRenderer {
         area.getBBox().setHeight(totalHeight);
         final Rectangle initialBBox = layoutContext.getArea().getBBox();
         area.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - area.getBBox().getHeight());
+        recalculateHeightWidthAfterLayouting(area.getBBox());
         return area;
     }
 
@@ -232,16 +301,16 @@ public class MulticolRenderer extends AbstractRenderer {
     }
 
     private MulticolLayoutResult layoutColumnsAndReturnOverflowRenderer(LayoutContext preLayoutContext,
-            Rectangle actualBBox) {
+            Rectangle actualBBox, float workingHeight) {
         MulticolLayoutResult result = new MulticolLayoutResult();
         IRenderer renderer = elementRenderer;
+
         for (int i = 0; i < columnCount && renderer != null; i++) {
             LayoutArea tempArea = preLayoutContext.getArea().clone();
             tempArea.getBBox().setWidth(columnWidth);
-            tempArea.getBBox().setHeight(approximateHeight);
+            tempArea.getBBox().setHeight(workingHeight);
             tempArea.getBBox().setX(actualBBox.getX() + columnWidth * i);
-            tempArea.getBBox().setY(actualBBox.getY() + actualBBox.getHeight() - tempArea.getBBox()
-                    .getHeight());
+            tempArea.getBBox().setY(actualBBox.getY() + actualBBox.getHeight() - tempArea.getBBox().getHeight());
 
             LayoutContext columnContext = new LayoutContext(tempArea, preLayoutContext.getMarginsCollapseInfo(),
                     preLayoutContext.getFloatRendererAreas(), preLayoutContext.isClippedHeight());
@@ -252,6 +321,7 @@ public class MulticolRenderer extends AbstractRenderer {
                 result.setCauseOfNothing(tempResultColumn.getCauseOfNothing());
                 return result;
             }
+
             if (tempResultColumn.getSplitRenderer() == null) {
                 result.getSplitRenderers().add(renderer);
             } else {

@@ -22,6 +22,8 @@
  */
 package com.itextpdf.layout.properties;
 
+import com.itextpdf.commons.utils.PlaceHolderTextUtil;
+import com.itextpdf.commons.utils.PlaceHolderTextUtil.PlaceHolderTextBy;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -69,7 +71,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginTop(DEFAULT_MARGIN);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -80,7 +82,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -91,7 +93,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMargin(100);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -102,7 +104,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingTop(DEFAULT_PADDING);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -113,7 +115,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingBottom(DEFAULT_PADDING);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -124,7 +126,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPadding(DEFAULT_PADDING);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -135,7 +137,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorderTop(DEFAULT_BORDER);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -146,7 +148,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorderBottom(DEFAULT_BORDER);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -157,7 +159,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -168,7 +170,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 50F));
             for (int i = 0; i < 30; i++) {
-                ctx.add(new Paragraph(generateLongString(5)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 5)));
             }
         });
     }
@@ -184,7 +186,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setPaddingBottom(DEFAULT_PADDING);
             for (int i = 0; i < 100; i++) {
-                ctx.add(new Paragraph(generateLongString(10)));
+                ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 10)));
             }
         });
     }
@@ -255,7 +257,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
         executeTest("paragraphRendererMarginTop", new Paragraph(), ctx -> {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginTop(DEFAULT_MARGIN);
-            ctx.add(generateLongString(1500));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 1500));
         });
     }
 
@@ -265,7 +267,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -275,7 +277,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMargin(DEFAULT_MARGIN);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -288,7 +290,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             final int amountOfWords = 900;
             //trigger overflow
             ctx.setMarginTop(20);
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -302,7 +304,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             final int amountOfWords = 900;
             //trigger overflow with small padding
             ctx.setPaddingTop(20);
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -316,7 +318,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             final int amountOfWords = 900;
             //trigger overflow
             ctx.setBorder(new SolidBorder(ColorConstants.RED, 8));
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -326,7 +328,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingTop(DEFAULT_PADDING);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -336,7 +338,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingBottom(DEFAULT_PADDING);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -346,7 +348,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPadding(DEFAULT_PADDING);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -356,7 +358,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorderTop(DEFAULT_BORDER);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -366,7 +368,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorderBottom(DEFAULT_BORDER);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -376,7 +378,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -387,7 +389,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 25));
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -399,7 +401,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
             ctx.setMargin(DEFAULT_MARGIN);
             ctx.setBorder(DEFAULT_BORDER);
             final int amountOfWords = 1000;
-            ctx.add(generateLongString(amountOfWords));
+            ctx.add(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords));
         });
     }
 
@@ -420,26 +422,5 @@ public class ContinuousContainerTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
     }
-
-    private static String generateLongString(int amountOfWords) {
-        StringBuilder sb = new StringBuilder();
-        int random = 1;
-        for (int i = 0; i < amountOfWords; i++) {
-            random = getPseudoRandomInt(i + random);
-            for (int j = 1; j <= random; j++) {
-                sb.append('a');
-            }
-            sb.append(' ');
-        }
-        return sb.toString();
-    }
-
-    private static int getPseudoRandomInt(int prev) {
-        final int first = 93840;
-        final int second = 1929;
-        final int max = 7;
-        return (prev * first + second) % max;
-    }
-
 
 }

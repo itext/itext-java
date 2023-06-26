@@ -22,6 +22,8 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.commons.utils.PlaceHolderTextUtil;
+import com.itextpdf.commons.utils.PlaceHolderTextUtil.PlaceHolderTextBy;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.Color;
@@ -48,6 +50,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -137,7 +140,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginTop(DEFAULT_MARGIN * 1.25F);
             ctx.setMarginBottom(DEFAULT_MARGIN);
-            ctx.add(new Paragraph(generateLongString(400)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
         });
     }
 
@@ -148,7 +151,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setPaddingBottom(DEFAULT_PADDING * 2F);
-            ctx.add(new Paragraph(generateLongString(400)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
         });
     }
 
@@ -158,7 +161,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
-            ctx.add(new Paragraph(generateLongString(400)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
         });
     }
 
@@ -173,7 +176,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             ctx.setPaddingBottom(DEFAULT_PADDING);
-            ctx.add(new Paragraph(generateLongString(300)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 300)));
         });
     }
 
@@ -187,7 +190,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             ctx.setPaddingBottom(DEFAULT_PADDING);
-            Paragraph paragraph = new Paragraph(generateLongString(300));
+            Paragraph paragraph = new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 300));
             paragraph.setBorder(new SolidBorder(ColorConstants.RED, 2));
             paragraph.setMarginTop(200);
             paragraph.setPaddingTop(40);
@@ -206,7 +209,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             ctx.setPaddingBottom(DEFAULT_PADDING);
-            Paragraph paragraph = new Paragraph(generateLongString(300));
+            Paragraph paragraph = new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 300));
             paragraph.setBorder(new SolidBorder(ColorConstants.RED, 2));
             paragraph.setMarginBottom(200);
             paragraph.setPaddingBottom(40);
@@ -226,7 +229,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             ctx.setPaddingBottom(DEFAULT_PADDING);
-            ctx.add(new Paragraph(generateLongString(8000)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 8000)));
         });
     }
 
@@ -241,7 +244,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setMarginBottom(DEFAULT_MARGIN);
             ctx.setPaddingBottom(DEFAULT_PADDING);
-            ctx.add(new Paragraph(generateLongString(15000)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 15000)));
         });
     }
 
@@ -253,7 +256,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginTop(DEFAULT_MARGIN);
             ctx.setMarginBottom(DEFAULT_MARGIN);
-            ctx.add(new Paragraph(generateLongString(8000)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 8000)));
         });
     }
 
@@ -265,7 +268,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingTop(DEFAULT_PADDING);
             ctx.setPaddingBottom(DEFAULT_PADDING);
-            ctx.add(new Paragraph(generateLongString(8000)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 8000)));
         });
     }
 
@@ -276,7 +279,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 50));
-            ctx.add(new Paragraph(generateLongString(8000)));
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 8000)));
         });
     }
 
@@ -315,7 +318,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-            ctx.add(new Paragraph(generateLongString(400))
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400))
                     .setBackgroundColor(ColorConstants.YELLOW)
                     .setMarginTop(DEFAULT_MARGIN)
                     .setBorder(new SolidBorder(ColorConstants.RED, 2))
@@ -369,8 +372,8 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
-    })
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel =
+                    LogLevelConstants.WARN)})
     public void multicolElementWithKeepTogetherTest() throws IOException, InterruptedException {
         executeTest("multicolElementWithKeepTogether", new MulticolContainer(), ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
@@ -386,8 +389,8 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
-    })
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel =
+                    LogLevelConstants.WARN)})
     public void allChildrenOfMulticolElementWithKeepTogetherTest() throws IOException, InterruptedException {
         executeTest("allChildrenOfMulticolElementWithKeepTogether", new MulticolContainer(), ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
@@ -760,7 +763,239 @@ public class MulticolContainerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    private void executeTest(String testName, MulticolContainer container, Consumer<MulticolContainer> executor)
+    @Test
+    public void continuousColumContainerSetWidth() throws IOException, InterruptedException {
+        executeTest("continuousColumContainerSetWidth", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setWidth(300);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            Div pseudoContainer = new Div();
+            for (int i = 0; i < 30; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.add(pseudoContainer);
+        });
+    }
+
+    @Test
+    public void continuousColumContainerSetHeightBigger() throws IOException, InterruptedException {
+        executeTest("continuousColumContainerSetHeightBigger", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setHeight(600);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
+            ctx.setBorder(DEFAULT_BORDER);
+        });
+    }
+
+    @Test
+    public void widthBorderTest() throws IOException, InterruptedException {
+        executeTest("widthBorderTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(new SolidBorder(ColorConstants.RED, 20));
+            ctx.setWidth(300);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 100)));
+        });
+    }
+
+    @Test
+    public void heightBorderTest() throws IOException, InterruptedException {
+        executeTest("heightBorderTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            //content should be clipped
+            ctx.setHeight(150);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
+            ctx.setBorder(new SolidBorder(ColorConstants.RED, 20));
+        });
+    }
+
+    @Test
+    public void widthPaddingTest() throws IOException, InterruptedException {
+        executeTest("widthPaddingTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setPadding(DEFAULT_PADDING);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setWidth(400);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 100)));
+        });
+    }
+
+    @Test
+    public void heightPaddingTest() throws IOException, InterruptedException {
+        executeTest("heightPaddingTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            //content should be clipped
+            ctx.setHeight(200);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
+            ctx.setPadding(DEFAULT_PADDING);
+            ctx.setBorder(DEFAULT_BORDER);
+        });
+    }
+
+
+    @Test
+    public void heightMarginTest() throws IOException, InterruptedException {
+        executeTest("heightMarginTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            //content should be clipped
+            ctx.setHeight(200);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
+            ctx.setMargin(40);
+            ctx.setBorder(DEFAULT_BORDER);
+        });
+    }
+
+
+    @Test
+    public void widthMarginTest() throws IOException, InterruptedException {
+        executeTest("widthMarginTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setMargin(40);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setWidth(400);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 100)));
+        });
+    }
+
+
+    @Test
+    public void widthHeightMarginTest() throws IOException, InterruptedException {
+        executeTest("widthHeightMarginTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setMargin(60);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setWidth(400);
+            ctx.setHeight(400);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 100)));
+        });
+    }
+
+    @Test
+    public void minHeightTest() throws IOException, InterruptedException {
+        executeTest("minHeightTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setMargin(60);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMinHeight(200);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 10)));
+        });
+    }
+
+
+    @Test
+    public void maxHeightTest() throws IOException, InterruptedException {
+        executeTest("maxHeightTest", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setMargin(60);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMaxHeight(200);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 10)));
+        });
+    }
+
+    @Test
+    public void minWidth() throws IOException, InterruptedException {
+        executeTest("minWidth", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMinWidth(200);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 200)));
+        });
+    }
+
+    @Test
+    public void minWidthBiggerThenPage() throws IOException, InterruptedException {
+        executeTest("minWidthBiggerThenPage", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMinWidth(2000);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 200)));
+        });
+    }
+
+    @Test
+    public void maxWidth() throws IOException, InterruptedException {
+        executeTest("maxWidth", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.setBorder(DEFAULT_BORDER);
+            ctx.setMaxWidth(200);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 200)));
+        });
+    }
+
+
+    @Test
+    public void widthMultiPage() throws IOException, InterruptedException {
+        String testName = "widthMultiPage";
+        String filename = DESTINATION_FOLDER + testName + ".pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new com.itextpdf.kernel.pdf.PdfWriter(filename))) {
+            Document doc = new Document(pdfDoc);
+
+            MulticolContainer container = new MulticolContainer();
+            container.setProperty(Property.COLUMN_COUNT, 3);
+            container.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            container.setBorder(DEFAULT_BORDER);
+            container.setWidth(400);
+            container.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 150)));
+            doc.add(new Paragraph("ELEMENT ABOVE").setHeight(600).setBackgroundColor(ColorConstants.YELLOW));
+            doc.add(container);
+            doc.add(new Paragraph("ELEMENT BELOW").setBackgroundColor(ColorConstants.YELLOW));
+        }
+        CompareTool compareTool = new CompareTool();
+        Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    @Ignore("DEVSIX-7630")
+    public void heightMultiPage() throws IOException, InterruptedException {
+        String testName = "heightMultiPage";
+        String filename = DESTINATION_FOLDER + testName + ".pdf";
+        String cmpName = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new com.itextpdf.kernel.pdf.PdfWriter(filename))) {
+            Document doc = new Document(pdfDoc);
+
+            MulticolContainer container = new MulticolContainer();
+            container.setProperty(Property.COLUMN_COUNT, 3);
+            container.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            container.setBorder(DEFAULT_BORDER);
+            container.setHeight(600);
+            container.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 150)));
+            doc.add(new Paragraph("ELEMENT ABOVE").setHeight(600).setBackgroundColor(ColorConstants.YELLOW));
+            doc.add(container);
+            doc.add(new Paragraph("ELEMENT BELOW").setBackgroundColor(ColorConstants.YELLOW));
+        }
+        CompareTool compareTool = new CompareTool();
+        Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void continuousColumContainerSetHeightSmaller() throws IOException, InterruptedException {
+        executeTest("continuousColumContainerSetHeightSmaller", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            //content should be clipped
+            ctx.setHeight(50);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            ctx.add(new Paragraph(PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, 400)));
+            ctx.setBorder(DEFAULT_BORDER);
+        });
+    }
+
+
+    private <T extends IBlockElement> void executeTest(String testName, T container, Consumer<T> executor)
             throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + testName + ".pdf";
         String cmpName = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
@@ -775,26 +1010,6 @@ public class MulticolContainerTest extends ExtendedITextTest {
         }
         CompareTool compareTool = new CompareTool();
         Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
-    }
-
-    private static String generateLongString(int amountOfWords) {
-        StringBuilder sb = new StringBuilder();
-        int random = 1;
-        for (int i = 0; i < amountOfWords; i++) {
-            random = getPseudoRandomInt(i + random);
-            for (int j = 1; j <= random; j++) {
-                sb.append('a');
-            }
-            sb.append(' ');
-        }
-        return sb.toString();
-    }
-
-    private static int getPseudoRandomInt(int prev) {
-        final int first = 93840;
-        final int second = 1929;
-        final int max = 7;
-        return (prev * first + second) % max;
     }
 
     private static Div createFirstPageFiller() {
