@@ -43,6 +43,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class ListItemRenderer extends DivRenderer {
 
     /**
      * Creates a ListItemRenderer from its corresponding layout object.
+     *
      * @param modelElement the {@link com.itextpdf.layout.element.ListItem} which this object should manage
      */
     public ListItemRenderer(ListItem modelElement) {
@@ -182,7 +184,7 @@ public class ListItemRenderer extends DivRenderer {
             applyBorderBox(occupiedArea.getBBox(), true);
             applyMargins(occupiedArea.getBBox(), true);
 
-            ListSymbolAlignment listSymbolAlignment = (ListSymbolAlignment)parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT,
+            ListSymbolAlignment listSymbolAlignment = (ListSymbolAlignment) parent.<ListSymbolAlignment>getProperty(Property.LIST_SYMBOL_ALIGNMENT,
                     isRtl ? ListSymbolAlignment.LEFT : ListSymbolAlignment.RIGHT);
             float dxPosition = x - symbolRenderer.getOccupiedArea().getBBox().getX();
             if (listSymbolAlignment == ListSymbolAlignment.RIGHT) {
@@ -210,7 +212,7 @@ public class ListItemRenderer extends DivRenderer {
 
             // symbols are not drawn here, because they are in page margins
             if (!isRtl && symbolRenderer.getOccupiedArea().getBBox().getRight() > effectiveArea.getLeft()
-                || isRtl && symbolRenderer.getOccupiedArea().getBBox().getLeft() < effectiveArea.getRight()) {
+                    || isRtl && symbolRenderer.getOccupiedArea().getBBox().getLeft() < effectiveArea.getRight()) {
                 beginElementOpacityApplying(drawContext);
                 symbolRenderer.draw(drawContext);
                 endElementOpacityApplying(drawContext);
@@ -261,20 +263,23 @@ public class ListItemRenderer extends DivRenderer {
                     ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
                     // TODO DEVSIX-6876 LIST_SYMBOL_INDENT is not inherited
                     Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-
-                        if (symbolRenderer instanceof LineRenderer) {
-                            if (symbolIndent != null) {
-                                symbolRenderer.getChildRenderers().get(1).setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                            }
-                            for (IRenderer childRenderer: symbolRenderer.getChildRenderers()) {
+                    if (symbolRenderer instanceof LineRenderer) {
+                        if (symbolIndent != null) {
+                            symbolRenderer.getChildRenderers().get(1).setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
+                        }
+                        if (!paragraphRenderer.childRenderers.contains(symbolRenderer.getChildRenderers().get(1))) {
+                            for (IRenderer childRenderer : symbolRenderer.getChildRenderers()) {
                                 paragraphRenderer.childRenderers.add(0, childRenderer);
                             }
-                        } else {
-                            if (symbolIndent != null) {
-                                symbolRenderer.setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                            }
+                        }
+                    } else {
+                        if (symbolIndent != null) {
+                            symbolRenderer.setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
+                        }
+                        if (!paragraphRenderer.childRenderers.contains(symbolRenderer)) {
                             paragraphRenderer.childRenderers.add(0, symbolRenderer);
                         }
+                    }
                     symbolAddedInside = true;
                 } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
                     IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
@@ -322,11 +327,11 @@ public class ListItemRenderer extends DivRenderer {
                         Property.FONT_SIZE));
             }
             float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);
-            return new float[] {
+            return new float[]{
                     fontSize.getValue() * FontProgram.convertTextSpaceToGlyphSpace(ascenderDescender[0]),
                     fontSize.getValue() * FontProgram.convertTextSpaceToGlyphSpace(ascenderDescender[1])
             };
         }
-        return new float[] {0, 0};
+        return new float[]{0, 0};
     }
 }
