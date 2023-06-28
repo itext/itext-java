@@ -34,7 +34,6 @@ import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 /**
  * Represents a renderer for columns.
@@ -135,6 +134,8 @@ public class MulticolRenderer extends AbstractRenderer {
 
     /**
      * Creates an overflow renderer.
+     *
+     * @param overflowedContentRenderer an overflowed content renderer
      *
      * @return a new {@link AbstractRenderer} instance
      */

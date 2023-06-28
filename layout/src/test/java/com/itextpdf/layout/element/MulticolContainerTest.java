@@ -39,6 +39,7 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -367,6 +368,104 @@ public class MulticolContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
+    })
+    public void multicolElementWithKeepTogetherTest() throws IOException, InterruptedException {
+        executeTest("multicolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            Div pseudoContainer = new Div();
+            for (int i = 0; i < 30; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            ctx.setProperty(Property.KEEP_TOGETHER, true);
+            ctx.add(pseudoContainer);
+        });
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
+    })
+    public void allChildrenOfMulticolElementWithKeepTogetherTest() throws IOException, InterruptedException {
+        executeTest("allChildrenOfMulticolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            Div pseudoContainer = new Div();
+            for (int i = 0; i < 30; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            pseudoContainer.setProperty(Property.KEEP_TOGETHER, true);
+            ctx.add(pseudoContainer);
+        });
+    }
+
+    @Test
+    public void childOfMulticolElementWithKeepTogetherTest() throws IOException, InterruptedException {
+        executeTest("childOfMulticolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            Div pseudoContainer = new Div();
+            for (int i = 0; i < 7; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            Div temp = new Div();
+            temp.add(new Paragraph("7 keep"));
+            temp.add(new Paragraph("8 keep"));
+            temp.add(new Paragraph("9 keep"));
+            temp.add(new Paragraph("10 keep"));
+            temp.add(new Paragraph("11 keep"));
+            temp.setProperty(Property.KEEP_TOGETHER, true);
+            pseudoContainer.add(temp);
+
+            for (int i = 12; i < 30; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            ctx.add(pseudoContainer);
+        });
+    }
+
+    @Test
+    public void childrenOfMulticolElementWithKeepTogetherTest() throws IOException, InterruptedException {
+        executeTest("childrenOfMulticolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+            ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            Div pseudoContainer = new Div();
+            for (int i = 0; i < 7; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            Div temp = new Div();
+            temp.add(new Paragraph("7 keep"));
+            temp.add(new Paragraph("8 keep"));
+            temp.add(new Paragraph("9 keep"));
+            temp.add(new Paragraph("10 keep"));
+            temp.add(new Paragraph("11 keep"));
+            temp.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
+            pseudoContainer.add(temp);
+
+            for (int i = 12; i < 19; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            temp = new Div();
+            temp.add(new Paragraph("19 keep"));
+            temp.add(new Paragraph("20 keep"));
+            temp.add(new Paragraph("21 keep"));
+            temp.add(new Paragraph("22 keep"));
+            temp.add(new Paragraph("23 keep"));
+            temp.add(new Paragraph("24 keep"));
+            temp.add(new Paragraph("25 keep"));
+            temp.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
+            pseudoContainer.add(temp);
+
+            for (int i = 26; i < 30; i++) {
+                pseudoContainer.add(new Paragraph("" + i));
+            }
+            ctx.add(pseudoContainer);
+        });
+    }
+
+    @Test
     public void singleParagraphMultiPageTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "singleParagraphMultiPageTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_singleParagraphMultiPageTest.pdf";
@@ -551,7 +650,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             Div columnDiv = new Div();
             columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
             columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
-            columnDiv.setProperty(Property.KEEP_TOGETHER, true);
+            columnDiv.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
             columnDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
             columnDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(150));
 
@@ -582,7 +681,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             Div columnDiv = new Div();
             columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
             columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
-            columnDiv.setProperty(Property.KEEP_TOGETHER, true);
+            columnDiv.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
             columnDiv.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(40));
             columnDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(60));
             columnDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(60));
@@ -614,7 +713,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             Div columnDiv = new Div();
             columnDiv.setProperty(Property.BORDER, new SolidBorder(1));
             columnDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.BLUE));
-            columnDiv.setProperty(Property.KEEP_TOGETHER, true);
+            columnDiv.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
             columnDiv.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(40));
             columnDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(60));
             columnDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(60));
@@ -649,7 +748,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
                     "id est laborum.");
             paragraph.setBorder(new SolidBorder(2));
             paragraph.setFontSize(20);
-            paragraph.setProperty(Property.KEEP_TOGETHER, true);
+            paragraph.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);
 
             columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
             Div div = new Div();
@@ -661,14 +760,13 @@ public class MulticolContainerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    private <T extends IBlockElement> void executeTest(String testName, T container, Consumer<T> executor)
+    private void executeTest(String testName, MulticolContainer container, Consumer<MulticolContainer> executor)
             throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + testName + ".pdf";
         String cmpName = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new com.itextpdf.kernel.pdf.PdfWriter(filename))) {
             Document doc = new Document(pdfDoc);
 
-            container.setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER, true);
             executor.accept(container);
 
             doc.add(new Paragraph("ELEMENT ABOVE").setBackgroundColor(ColorConstants.YELLOW));
