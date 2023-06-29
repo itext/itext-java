@@ -92,7 +92,8 @@ public class MulticolRenderer extends AbstractRenderer {
         if (layoutResult.getSplitRenderers().isEmpty()) {
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, layoutResult.getCauseOfNothing());
         } else if (layoutResult.getOverflowRenderer() == null) {
-            this.setChildRenderers(layoutResult.getSplitRenderers());
+            this.childRenderers.clear();
+            addAllChildRenderers(layoutResult.getSplitRenderers());
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, true);
             return new LayoutResult(LayoutResult.FULL, this.occupiedArea, this, null);
         } else {
