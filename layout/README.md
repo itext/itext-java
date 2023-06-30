@@ -1,5 +1,17 @@
 # Layout module overview
 
+### Contents
+1. [Overview](#overview)
+2. [Rendering Engine](#rendering-engine)
+   1. [Property Containers & Layout Objects](#property-containers--layout-objects)
+   2. [Renderers](#renderers)
+3. [Continuous container layouting](#continuous-container-layouting)
+4. [Multicol layouting](#multicol-layouting)
+   1. [MulticolContainer element](#multicolcontainer-element)
+   2. [MulticolRenderer](#multicolrenderer)
+
+### Overview
+
 Layout is a basic iText module that performs the operations of transforming abstract elements 
 (like Paragraph, Table, List) into low-level PDF syntax on actual document pages.
 
@@ -103,7 +115,7 @@ renderers.
 
 Briefly, the layout mechanism is shown in the figure:
 
-![Layout mechanism](Layout mechanism.png)
+![Layout mechanism](Layout%20mechanism.png)
 
 The next step is to call the `Draw()` method. It uses layout-result from `Layout()` step and generates PDF syntax, 
 written to the PDF document: drawing instructions based on the rendering result.
@@ -112,3 +124,51 @@ Specific Renderers contain the following instructions:
 - `TextRenderer`: text instructions to `PdfCanvas`
 - `ImageRenderer`: creating and adding `XObject`
 - `TableRenderer`: borders, etc.
+
+### Continuous container layouting
+Property `TREAT_AS_CONTINUOUS_CONTAINER` is responsible for enabling continuous container layouting, which means that
+margins, padding, borders won't be applied for bottom of split renderer and top of overflow renderer to achieve "continuous"
+layouting between areas (e.g. pages).
+
+All logic of continuous containers are placed in `ContinuousContainer` class, which used in BlockRenderer and ParagraphRenderer. 
+
+### Multicol layouting
+Multicol layouting is horizontal content layouting in fixed height, as in newspapers. To get such layouting it is 
+necessary to use `MulticolContainer`, see paragraph below for more information.
+
+#### MulticolContainer element
+Multicol layouting starts form `MulticolContainer` class, representing container whose child will be layouted in columns.
+The role of the instance of the class consists of the following:
+- Be an aggregator for content which should be layouted in columns.
+- Store multicol related properties e.g. `Property#COLUMN_COUNT` or `PROPERTY#COLUMN_WIDTH`
+- Define `MulticolRenderer` as a renderer.
+
+There is one limitation of `MulticolContainer` which was added to simplify the layouting implementation: 
+`MulticolContainer` instance always should have only one child, which presents all content which should be layouted in columns.
+
+#### MulticolRenderer
+Layouting content in columns is performed by `MulticolRenderer` in the `layout` method and consists of the following main steps:
+1. Calculate the number of columns and their width based on available area and properties which are stored in model element of renderer (`MulticolContainer`).
+2. Calculate the approximate height of the columns:
+   1. Temp layout all content in one column with infinity height.
+   2. Divide result height by number of columns.
+3. Balance the columns by adjusting their height:
+   1. Layout content in columns with height set to approximate height.
+   2. If some content doesn't fit to columns (there is overflow renderer):
+      1. (performed only in first time) Layout left over content in one infinity height column to get the left height.
+      2. (performed only in first time) Divide left over height by fixed number of maximum iterations `MulticolRenderer#MAX_RELAYOUT_COUNT`
+      3. (performed only in first time) Store this value in `additionalHeightPerIteration` field.
+      4. Increase approximate height by `additionalHeightPerIteration`
+   3. Repeat balancing until all content will fit into columns or the max number of iterations is exceeded.
+4. Create split and overflow renderer, adjust occupied area and return the result.
+
+Such approach has 2 drawbacks:
+1. Too expensive in the performance meaning, because always at least 2-3 full layouts needed to draw all content. 
+2. There will always be a case where number of iterations isn't enough and during the iterations too much height was added. 
+
+Another way is performing temp layout, go through renderer tree and try to find where column break can be placed, after 
+that perform one more layout which will be returned as a result. But for that it is necessary in each renderer store 
+some additional info about where element can be divided. This way is too complicated to implement.
+
+`MulticolRenderer` is responsible for enabling property `TREAT_AS_CONTINUOUS_CONTAINER` to achieve continuous 
+layouting between columns (see [Continuous container layouting](#continuous-container-layouting) paragraph).
