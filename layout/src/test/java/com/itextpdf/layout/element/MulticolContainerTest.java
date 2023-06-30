@@ -25,6 +25,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.commons.utils.PlaceHolderTextUtil;
 import com.itextpdf.commons.utils.PlaceHolderTextUtil.PlaceHolderTextBy;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -35,6 +36,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.HorizontalAlignment;
@@ -994,8 +996,89 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
+    @Test
+    public void paragraphWithColumnWidthTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithColumnWidthTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnWidthTest.pdf";
 
-    private <T extends IBlockElement> void executeTest(String testName, T container, Consumer<T> executor)
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_WIDTH, 200.0f);
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        //expecting 2 columns with ~260px width each
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void paragraphWithColumnWidthAndColumnCountTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithColumnWidthAndColumnCountTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnWidthAndColumnCountTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            //column width is ignored in this case, because column-count requires higher width
+            columnContainer.setProperty(Property.COLUMN_WIDTH, 100.0f);
+            columnContainer.setProperty(Property.COLUMN_COUNT, 2);
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void paragraphWithInvalidColumnValuesTest() {
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
+            Div columnContainer = new MulticolContainer();
+            //column width is ignored in this case, because column-count requires higher width
+            columnContainer.setProperty(Property.COLUMN_WIDTH, -30.0f);
+            columnContainer.setProperty(Property.COLUMN_COUNT, -2);
+            columnContainer.setProperty(Property.COLUMN_GAP, -20.0f);
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            Throwable exception = Assert.assertThrows(IllegalStateException.class, () -> document.add(columnContainer));
+            Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_COLUMN_PROPERTIES, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void paragraphWithColumnWidthAndGapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithColumnWidthAndGapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnWidthAndGapTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_WIDTH, 100.0f);
+            columnContainer.setProperty(Property.COLUMN_GAP, 100.0f);
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void paragraphWithColumnCountAndGapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithColumnCountAndGapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnCountAndGapTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 5);
+            columnContainer.setProperty(Property.COLUMN_GAP, 50.0f);
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+
+    private void executeTest(String testName, MulticolContainer container, Consumer<MulticolContainer> executor)
             throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + testName + ".pdf";
         String cmpName = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
@@ -1010,6 +1093,35 @@ public class MulticolContainerTest extends ExtendedITextTest {
         }
         CompareTool compareTool = new CompareTool();
         Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    private static Paragraph createDummyParagraph() {
+        return new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
+                "irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim " +
+                "id est laborum.");
+    }
+
+    private static String generateLongString(int amountOfWords) {
+        StringBuilder sb = new StringBuilder();
+        int random = 1;
+        for (int i = 0; i < amountOfWords; i++) {
+            random = getPseudoRandomInt(i + random);
+            for (int j = 1; j <= random; j++) {
+                sb.append('a');
+            }
+            sb.append(' ');
+        }
+        return sb.toString();
+    }
+
+    private static int getPseudoRandomInt(int prev) {
+        final int first = 93840;
+        final int second = 1929;
+        final int max = 7;
+        return (prev * first + second) % max;
     }
 
     private static Div createFirstPageFiller() {

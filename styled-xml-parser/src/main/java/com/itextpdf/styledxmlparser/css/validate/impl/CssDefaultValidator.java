@@ -111,6 +111,12 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
         defaultValidators.put(CommonCssConstants.COLUMN_GAP, new MultiTypeDeclarationValidator(
                 new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
                 inheritInitialUnsetValidator));
+        defaultValidators.put(CommonCssConstants.COLUMN_WIDTH, new MultiTypeDeclarationValidator(
+                new CssLengthValueValidator(false), new CssPercentageValueValidator(false),
+                new CssEnumValidator(CommonCssConstants.AUTO), inheritInitialUnsetValidator));
+        defaultValidators.put(CommonCssConstants.COLUMN_COUNT, new MultiTypeDeclarationValidator(
+                new CssNumberValueValidator(false), new CssEnumValidator(CommonCssConstants.AUTO),
+                inheritInitialUnsetValidator));
         defaultValidators.put(CommonCssConstants.ROW_GAP, new MultiTypeDeclarationValidator(
                 new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
                 inheritInitialUnsetValidator));

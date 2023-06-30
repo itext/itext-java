@@ -25,6 +25,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.MulticolContainer;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -47,6 +48,7 @@ public class MulticolRenderer extends AbstractRenderer {
     private float columnWidth;
     private float approximateHeight;
     private Float heightFromProperties;
+    private float columnGap;
 
     /**
      * Creates a DivRenderer from its corresponding layout object.
@@ -80,9 +82,9 @@ public class MulticolRenderer extends AbstractRenderer {
         applyPaddings(actualBBox, false);
         applyBorderBox(actualBBox, false);
         applyMargins(actualBBox, false);
+        calculateColumnCountAndWidth(actualBBox.getWidth());
+
         heightFromProperties = determineHeight(actualBBox);
-        columnCount = (int) this.<Integer>getProperty(Property.COLUMN_COUNT);
-        columnWidth = actualBBox.getWidth() / columnCount;
         if (this.elementRenderer == null) {
             // initialize elementRenderer on first layout when first child represents renderer of element which
             // should be layouted in multicol, because on the next layouts this can have multiple children
@@ -259,6 +261,30 @@ public class MulticolRenderer extends AbstractRenderer {
         return result;
     }
 
+    //algorithm is based on pseudo algorithm from https://www.w3.org/TR/css-multicol-1/#propdef-column-span
+    private void calculateColumnCountAndWidth(float initialWidth) {
+        final Integer columnCount = (Integer)this.<Integer>getProperty(Property.COLUMN_COUNT);
+        final Float columnWidth = (Float)this.<Float>getProperty(Property.COLUMN_WIDTH);
+        final Float columnGap = (Float)this.<Float>getProperty(Property.COLUMN_GAP);
+        this.columnGap = columnGap != null ? columnGap.floatValue() : 0;
+        if ((columnCount == null && columnWidth == null)
+            || (columnCount != null && columnCount.intValue() < 0)
+            || (columnWidth != null && columnWidth.floatValue() < 0)) {
+            throw new IllegalStateException(LayoutExceptionMessageConstant.INVALID_COLUMN_PROPERTIES);
+        }
+        if (columnWidth == null) {
+            this.columnCount = columnCount.intValue();
+        } else if (columnCount == null) {
+            this.columnCount = Math.max(1, (int) Math.floor((double)((initialWidth + this.columnGap)
+                    / (columnWidth.floatValue() + this.columnGap))));
+        } else {
+            this.columnCount = Math.min((int) columnCount,
+                    Math.max(1, (int) Math.floor((double) ((initialWidth + this.columnGap)
+                            / (columnWidth.floatValue() + this.columnGap)))));
+        }
+        this.columnWidth = Math.max(0.0f, ((initialWidth + this.columnGap)/this.columnCount - this.columnGap));
+    }
+
     private void clearOverFlowRendererIfNeeded(MulticolLayoutResult result) {
         //When we have a height set on the element but the content doesn't fit in the given height
         //we don't want to render the overflow renderer as it would be rendered in the next area
@@ -309,7 +335,7 @@ public class MulticolRenderer extends AbstractRenderer {
             LayoutArea tempArea = preLayoutContext.getArea().clone();
             tempArea.getBBox().setWidth(columnWidth);
             tempArea.getBBox().setHeight(workingHeight);
-            tempArea.getBBox().setX(actualBBox.getX() + columnWidth * i);
+            tempArea.getBBox().setX(actualBBox.getX() + (columnWidth + columnGap) * i);
             tempArea.getBBox().setY(actualBBox.getY() + actualBBox.getHeight() - tempArea.getBBox().getHeight());
 
             LayoutContext columnContext = new LayoutContext(tempArea, preLayoutContext.getMarginsCollapseInfo(),

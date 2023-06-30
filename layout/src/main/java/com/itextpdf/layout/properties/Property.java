@@ -68,6 +68,8 @@ public final class Property {
     public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
     public static final int COLUMN_COUNT = 138;
+    public static final int COLUMN_WIDTH = 142;
+    public static final int COLUMN_GAP = 143;
     public static final int DESTINATION = 17;
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
@@ -216,7 +218,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 140;
+    private static final int MAX_INHERITED_PROPERTY_ID = 143;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
