@@ -40,11 +40,9 @@ import java.util.List;
  */
 public class MulticolRenderer extends AbstractRenderer {
 
-    private static final int MAX_RELAYOUT_COUNT = 4;
     private static final float ZERO_DELTA = 0.0001F;
-
+    private ColumnHeightCalculator heightCalculator;
     private BlockRenderer elementRenderer;
-    private final HeightEnhancer heightCalculator = new HeightEnhancer();
     private int columnCount;
     private float columnWidth;
     private float approximateHeight;
@@ -56,6 +54,16 @@ public class MulticolRenderer extends AbstractRenderer {
      */
     public MulticolRenderer(MulticolContainer modelElement) {
         super(modelElement);
+        setHeightCalculator(new LayoutInInfiniteHeightCalculator());
+    }
+
+    /**
+     * Sets the height calculator to be used by this renderer.
+     *
+     * @param heightCalculator the height calculator to be used by this renderer.
+     */
+    public final void setHeightCalculator(ColumnHeightCalculator heightCalculator) {
+        this.heightCalculator = heightCalculator;
     }
 
     /**
@@ -78,15 +86,8 @@ public class MulticolRenderer extends AbstractRenderer {
         }
         //It is necessary to set parent, because during relayout elementRenderer's parent gets cleaned up
         elementRenderer.setParent(this);
-        LayoutResult prelayoutResult = elementRenderer.layout(
-                new LayoutContext(new LayoutArea(1, new Rectangle(columnWidth, INF))));
-        if (prelayoutResult.getStatus() != LayoutResult.FULL) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, this, prelayoutResult.getCauseOfNothing());
-        }
 
-        approximateHeight = prelayoutResult.getOccupiedArea().getBBox().getHeight() / columnCount;
-
-        MulticolLayoutResult layoutResult = balanceContentAndLayoutColumns(layoutContext, actualBBox);
+        final MulticolLayoutResult layoutResult = layoutInColumns(layoutContext, actualBBox);
 
         if (layoutResult.getSplitRenderers().isEmpty()) {
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, layoutResult.getCauseOfNothing());
@@ -112,6 +113,18 @@ public class MulticolRenderer extends AbstractRenderer {
         return new MulticolRenderer((MulticolContainer) modelElement);
     }
 
+    protected MulticolLayoutResult layoutInColumns(LayoutContext layoutContext, Rectangle actualBBox) {
+        LayoutResult inifiniteHeighOneColumnLayoutResult = elementRenderer.layout(
+                new LayoutContext(new LayoutArea(1, new Rectangle(columnWidth, INF))));
+        if (inifiniteHeighOneColumnLayoutResult.getStatus() != LayoutResult.FULL) {
+            final MulticolLayoutResult result = new MulticolLayoutResult();
+            result.setCauseOfNothing(inifiniteHeighOneColumnLayoutResult.getCauseOfNothing());
+            return result;
+        }
+
+        approximateHeight = inifiniteHeighOneColumnLayoutResult.getOccupiedArea().getBBox().getHeight() / columnCount;
+        return balanceContentAndLayoutColumns(layoutContext, actualBBox);
+    }
 
     /**
      * Creates a split renderer.
@@ -162,10 +175,11 @@ public class MulticolRenderer extends AbstractRenderer {
         return 0F;
     }
 
-    private MulticolLayoutResult balanceContentAndLayoutColumns(LayoutContext prelayoutContext, Rectangle actualBbox) {
+    private MulticolLayoutResult balanceContentAndLayoutColumns(LayoutContext prelayoutContext,
+            Rectangle actualBbox) {
         float additionalHeightPerIteration;
         MulticolLayoutResult result = new MulticolLayoutResult();
-        int counter = MAX_RELAYOUT_COUNT + 1;
+        int counter = heightCalculator.maxAmountOfRelayouts() + 1;
         float maxHeight = actualBbox.getHeight();
         boolean isLastLayout = false;
         while (counter-- > 0) {
@@ -177,7 +191,7 @@ public class MulticolRenderer extends AbstractRenderer {
             if (result.getOverflowRenderer() == null || isLastLayout) {
                 return result;
             }
-            additionalHeightPerIteration = heightCalculator.apply(this, result).floatValue();
+            additionalHeightPerIteration = heightCalculator.getAdditionalHeightOfEachColumn(this, result).floatValue();
             if (Math.abs(additionalHeightPerIteration) <= ZERO_DELTA) {
                 return result;
             }
@@ -217,7 +231,8 @@ public class MulticolRenderer extends AbstractRenderer {
         return (BlockRenderer) getChildRenderers().get(0);
     }
 
-    private MulticolLayoutResult layoutColumnsAndReturnOverflowRenderer(LayoutContext preLayoutContext, Rectangle actualBBox) {
+    private MulticolLayoutResult layoutColumnsAndReturnOverflowRenderer(LayoutContext preLayoutContext,
+            Rectangle actualBBox) {
         MulticolLayoutResult result = new MulticolLayoutResult();
         IRenderer renderer = elementRenderer;
         for (int i = 0; i < columnCount && renderer != null; i++) {
@@ -244,17 +259,37 @@ public class MulticolRenderer extends AbstractRenderer {
             }
             renderer = tempResultColumn.getOverflowRenderer();
         }
-        result.setOverflowRenderer((AbstractRenderer)renderer);
+        result.setOverflowRenderer((AbstractRenderer) renderer);
         return result;
     }
 
+
+    /**
+     * Interface which used for additional height calculation
+     */
+    public interface ColumnHeightCalculator {
+
+
+        /**
+         * Calculate height, by which current height of given {@code MulticolRenderer} should be increased so
+         * {@code MulticolLayoutResult#getOverflowRenderer} could be lauded
+         *
+         * @param renderer multicol renderer for which height needs to be increased
+         * @param result   result of one iteration of {@code MulticolRenderer} layouting
+         *
+         * @return height by which current height of given multicol renderer should be increased
+         */
+        Float getAdditionalHeightOfEachColumn(MulticolRenderer renderer, MulticolLayoutResult result);
+
+        int maxAmountOfRelayouts();
+    }
 
     /**
      * Represents result of one iteration of MulticolRenderer layouting
      * It contains split renderers which were lauded on a given height and overflow renderer
      * for which height should be increased, so it can be lauded.
      */
-    private static class MulticolLayoutResult {
+    public static class MulticolLayoutResult {
         private List<IRenderer> splitRenderers = new ArrayList<>();
         private AbstractRenderer overflowRenderer;
         private IRenderer causeOfNothing;
@@ -267,12 +302,12 @@ public class MulticolRenderer extends AbstractRenderer {
             return overflowRenderer;
         }
 
-        public IRenderer getCauseOfNothing() {
-            return causeOfNothing;
-        }
-
         public void setOverflowRenderer(AbstractRenderer overflowRenderer) {
             this.overflowRenderer = overflowRenderer;
+        }
+
+        public IRenderer getCauseOfNothing() {
+            return causeOfNothing;
         }
 
         public void setCauseOfNothing(IRenderer causeOfNothing) {
@@ -280,21 +315,12 @@ public class MulticolRenderer extends AbstractRenderer {
         }
     }
 
-    /**
-     * Class which used for additional height calculation
-     */
-    private static class HeightEnhancer {
+    public static class LayoutInInfiniteHeightCalculator implements ColumnHeightCalculator {
+
+        protected int maxRelayoutCount = 4;
         private Float height = null;
 
-        /**
-         * Calculate height, by which current height of given {@code MulticolRenderer} should be increased so
-         * {@code MulticolLayoutResult#getOverflowRenderer} could be lauded
-         *
-         * @param renderer multicol renderer for which height needs to be increased
-         * @param result result of one iteration of {@code MulticolRenderer} layouting
-         * @return height by which current height of given multicol renderer should be increased
-         */
-        public Float apply(MulticolRenderer renderer, MulticolLayoutResult result) {
+        public Float getAdditionalHeightOfEachColumn(MulticolRenderer renderer, MulticolLayoutResult result) {
             if (height != null) {
                 return height;
             }
@@ -303,8 +329,16 @@ public class MulticolRenderer extends AbstractRenderer {
             }
             LayoutResult overflowResult = result.getOverflowRenderer().layout(
                     new LayoutContext(new LayoutArea(1, new Rectangle(renderer.columnWidth, INF))));
-            height = overflowResult.getOccupiedArea().getBBox().getHeight() / MAX_RELAYOUT_COUNT;
+            height = overflowResult.getOccupiedArea().getBBox().getHeight() / maxRelayoutCount;
             return height;
+        }
+
+        /**
+         * @return maximum amount of relayouts which can be done by this height enhancer
+         */
+        @Override
+        public int maxAmountOfRelayouts() {
+            return maxRelayoutCount;
         }
     }
 }
