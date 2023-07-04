@@ -309,6 +309,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -333,6 +335,27 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     public BouncyCastleFactory() {
         // Empty constructor.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAlgorithmOid(String name) {
+        try {
+            AlgorithmIdentifier algorithmIdentifier = new DefaultSignatureAlgorithmIdentifierFinder().find(name);
+            return algorithmIdentifier.getAlgorithm().getId();
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAlgorithmName(String oid) {
+        return new DefaultAlgorithmNameFinder().getAlgorithmName(new ASN1ObjectIdentifier(oid));
     }
 
     /**

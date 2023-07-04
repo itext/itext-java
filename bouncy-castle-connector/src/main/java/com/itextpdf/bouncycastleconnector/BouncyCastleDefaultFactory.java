@@ -153,6 +153,16 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
     BouncyCastleDefaultFactory() {
         // Empty constructor
     }
+
+    @Override
+    public String getAlgorithmOid(String name) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public String getAlgorithmName(String oid) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
     
     @Override
     public IASN1ObjectIdentifier createASN1ObjectIdentifier(IASN1Encodable encodable) {

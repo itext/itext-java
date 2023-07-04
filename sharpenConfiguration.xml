@@ -467,7 +467,7 @@
                 <file path="com/itextpdf/signatures/PdfPKCS7ManuallyPortedTest.java"/>
             </fileset>
             <fileset reason="Different implementation on .NET and java">
-                <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTests.java"/>
+                <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>

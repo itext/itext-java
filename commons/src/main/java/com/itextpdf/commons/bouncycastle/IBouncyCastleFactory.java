@@ -152,6 +152,25 @@ import java.util.Set;
  * selected depending on a bouncy-castle dependency specified by the user.
  */
 public interface IBouncyCastleFactory {
+
+    /**
+     * Get signing algorithm oid from its name.
+     * 
+     * @param name name of the algorithm
+     * 
+     * @return algorithm oid
+     */
+    String getAlgorithmOid(String name);
+
+    /**
+     * Get signing algorithm name from its oid.
+     * 
+     * @param oid oid of the algorithm
+     * 
+     * @return algorithm name
+     */
+    String getAlgorithmName(String oid);
+    
     /**
      * Cast ASN1 encodable wrapper to the ASN1 object identifier wrapper.
      *

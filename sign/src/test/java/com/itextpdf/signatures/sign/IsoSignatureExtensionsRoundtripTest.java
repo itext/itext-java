@@ -41,8 +41,11 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
@@ -67,6 +70,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bsi.BSIObjectIdentifiers;
+import org.bouncycastle.asn1.eac.EACObjectIdentifiers;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
@@ -77,7 +82,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleIntegrationTest.class)
-public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
+public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER =
@@ -114,6 +119,34 @@ public class IsoSignatureExtensionsRoundtripTests extends ITextTest {
     @Test
     public void testBrainpoolP384r1WithSha384() throws Exception {
         doRoundTrip("brainpoolP384r1", DigestAlgorithms.SHA384, X9ObjectIdentifiers.ecdsa_with_SHA384);
+    }
+    
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
+    public void testPlainBrainpoolP384r1WithSha384() throws Exception {
+        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            doRoundTrip("plainBrainpoolP384r1", DigestAlgorithms.SHA384, "PLAIN-ECDSA",
+                    BSIObjectIdentifiers.ecdsa_plain_SHA384);
+        } else {
+            // PLAIN_ECDSA is currently not supported in BCFIPS
+            Assert.assertThrows(PdfException.class,
+                    () -> doRoundTrip("plainBrainpoolP384r1", DigestAlgorithms.SHA384,
+                            "PLAIN-ECDSA", BSIObjectIdentifiers.ecdsa_plain_SHA384));
+        }
+    }
+    
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, count = 3), ignore = true)
+    public void testCvcBrainpoolP384r1WithSha384() throws Exception {
+        if ("BC".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
+            doRoundTrip("cvcBrainpoolP384r1", DigestAlgorithms.SHA384, "CVC-ECDSA",
+                    EACObjectIdentifiers.id_TA_ECDSA_SHA_384);
+        } else {
+            // CVC_ECDSA is currently not supported in BCFIPS
+            Assert.assertThrows(PdfException.class,
+                    () -> doRoundTrip("cvcBrainpoolP384r1", DigestAlgorithms.SHA384,
+                            "CVC-ECDSA", EACObjectIdentifiers.id_TA_ECDSA_SHA_384));
+        }
     }
 
     @Test
