@@ -30,6 +30,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.ContinuousContainer;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
@@ -75,7 +76,7 @@ public class MulticolRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         this.setProperty(Property.TREAT_AS_CONTINUOUS_CONTAINER, Boolean.TRUE);
-
+        setOverflowForAllChildren(this);
         Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
         float originalWidth = actualBBox.getWidth();
         applyWidth(actualBBox, originalWidth);
@@ -168,6 +169,16 @@ public class MulticolRenderer extends AbstractRenderer {
         overflowRenderer.setChildRenderers(children);
         ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
         return overflowRenderer;
+    }
+
+    private void setOverflowForAllChildren(IRenderer renderer) {
+        if (renderer == null) {
+            return;
+        }
+        renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        for (IRenderer child : renderer.getChildRenderers()) {
+            setOverflowForAllChildren(child);
+        }
     }
 
     private void applyWidth(Rectangle parentBbox, float originalWidth) {
@@ -425,7 +436,14 @@ public class MulticolRenderer extends AbstractRenderer {
             }
             LayoutResult overflowResult = result.getOverflowRenderer().layout(
                     new LayoutContext(new LayoutArea(1, new Rectangle(renderer.columnWidth, INF))));
-            height = overflowResult.getOccupiedArea().getBBox().getHeight() / maxRelayoutCount;
+            float overflowHeight = overflowResult.getOccupiedArea().getBBox().getHeight();
+            if (result.getSplitRenderers().isEmpty()) {
+                // In case when first child of content bigger or wider than column and in first layout NOTHING is
+                // returned. In that case content again layouted in infinity area without keeping in mind that some
+                // approximateHeight already exist.
+                overflowHeight -= renderer.approximateHeight;
+            }
+            height = overflowHeight / maxRelayoutCount;
             return height;
         }
 

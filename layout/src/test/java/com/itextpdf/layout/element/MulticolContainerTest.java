@@ -49,6 +49,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.function.Consumer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -73,32 +74,22 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void paragraphColumnContainerTest() throws IOException, InterruptedException {
-        String outFileName = DESTINATION_FOLDER + "paragraphColumnContainerTest.pdf";
-        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphColumnContainerTest.pdf";
-
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
-            Div columnContainer = new MulticolContainer();
-            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+        executeTest("paragraphColumnContainerTest", ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
             Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
                     "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
                     "irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
                     "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim " +
                     "id est laborum.");
-            columnContainer.add(paragraph);
-            document.add(columnContainer);
-        }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+            ctx.add(paragraph);
+        }, false);
     }
 
     @Test
     public void divColumnContainerTest() throws IOException, InterruptedException {
-        String outFileName = DESTINATION_FOLDER + "divColumnContainerTest.pdf";
-        String cmpFileName = SOURCE_FOLDER + "cmp_divColumnContainerTest.pdf";
-
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
-            Div columnContainer = new MulticolContainer();
-            columnContainer.setProperty(Property.COLUMN_COUNT, 2);
+        executeTest("divColumnContainerTest", ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 2);
             Div div = new Div();
             div.setProperty(Property.MARGIN_TOP, UnitValue.createPointValue(50));
             div.setProperty(Property.BORDER, new SolidBorder(2));
@@ -106,10 +97,8 @@ public class MulticolContainerTest extends ExtendedITextTest {
             div.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
             div.setProperty(Property.WIDTH, UnitValue.createPointValue(450));
             div.setProperty(Property.HEIGHT, UnitValue.createPointValue(500));
-            columnContainer.add(div);
-            document.add(columnContainer);
-        }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+            ctx.add(div);
+        }, false);
     }
 
     @Test
@@ -137,7 +126,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerParagraphMarginTopBottom() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphMarginTopBottom", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerParagraphMarginTopBottom", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 2);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginTop(DEFAULT_MARGIN * 1.25F);
@@ -148,7 +137,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerParagraphPaddingTopBottom() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerPaddingTopBottom", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerPaddingTopBottom", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingTop(DEFAULT_PADDING);
@@ -159,7 +148,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerParagraphBorder() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphBorder", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerParagraphBorder", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -170,7 +159,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerParagraphAll() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphAll", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerParagraphAll", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -184,7 +173,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerParagraphAllChildStart() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphAllChildStart", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerParagraphAllChildStart", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -203,7 +192,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerParagraphAllChildEnd() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphAllChildEnd", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerParagraphAllChildEnd", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -223,7 +212,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     //TODO: DEVSIX-7626
     @Test
     public void continuousColumContainerParagraphOverflowShouldShow() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerParagraphOverflowShouldShow", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerParagraphOverflowShouldShow", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -238,7 +227,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     //TODO: DEVSIX-7626
     @Test
     public void extraLargeColumnParagraphTest() throws IOException, InterruptedException {
-        executeTest("extraLargeColumnParagraphTest", new MulticolContainer(), ctx -> {
+        executeTest("extraLargeColumnParagraphTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -253,7 +242,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     //TODO: DEVSIX-7626
     @Test
     public void largeColumnParagraphWithMarginTest() throws IOException, InterruptedException {
-        executeTest("largeColumnParagraphWithMarginTest", new MulticolContainer(), ctx -> {
+        executeTest("largeColumnParagraphWithMarginTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMarginTop(DEFAULT_MARGIN);
@@ -265,7 +254,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     //TODO: DEVSIX-7626
     @Test
     public void largeColumnParagraphWithPaddingTest() throws IOException, InterruptedException {
-        executeTest("largeColumnParagraphWithPaddingTest", new MulticolContainer(), ctx -> {
+        executeTest("largeColumnParagraphWithPaddingTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPaddingTop(DEFAULT_PADDING);
@@ -277,7 +266,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     //TODO: DEVSIX-7626
     @Test
     public void largeColumnParagraphWithBorderTest() throws IOException, InterruptedException {
-        executeTest("largeColumnParagraphWithBorderTest", new MulticolContainer(), ctx -> {
+        executeTest("largeColumnParagraphWithBorderTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 50));
@@ -287,7 +276,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerMultipleElementsMarginTop() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerMultipleElementsMarginTop", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerMultipleElementsMarginTop", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -301,7 +290,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerMultipleElementsMarginBottom() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerMultipleElementsMarginBottom", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerMultipleElementsMarginBottom", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -316,7 +305,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerInnerBackgroundColorAndBorder() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerInnerBackgroundColor", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerInnerBackgroundColor", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
@@ -332,7 +321,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerMultipleElementsPaddingTop() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerMultipleElementsPaddingTop", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerMultipleElementsPaddingTop", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -346,7 +335,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerMultipleElementsPaddingBottom() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerMultipleElementsPaddingBottom", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerMultipleElementsPaddingBottom", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -360,7 +349,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerMultipleElementsBorder() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerMultipleElementsBorder", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerMultipleElementsBorder", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -377,7 +366,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel =
                     LogLevelConstants.WARN)})
     public void multicolElementWithKeepTogetherTest() throws IOException, InterruptedException {
-        executeTest("multicolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+        executeTest("multicolElementWithKeepTogether", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -394,7 +383,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel =
                     LogLevelConstants.WARN)})
     public void allChildrenOfMulticolElementWithKeepTogetherTest() throws IOException, InterruptedException {
-        executeTest("allChildrenOfMulticolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+        executeTest("allChildrenOfMulticolElementWithKeepTogether", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -408,7 +397,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void childOfMulticolElementWithKeepTogetherTest() throws IOException, InterruptedException {
-        executeTest("childOfMulticolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+        executeTest("childOfMulticolElementWithKeepTogether", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -433,7 +422,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void childrenOfMulticolElementWithKeepTogetherTest() throws IOException, InterruptedException {
-        executeTest("childrenOfMulticolElementWithKeepTogether", new MulticolContainer(), ctx -> {
+        executeTest("childrenOfMulticolElementWithKeepTogether", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             Div pseudoContainer = new Div();
@@ -552,91 +541,114 @@ public class MulticolContainerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    //TODO: DEVSIX-7621
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
-    public void paragraphWithOverflowingImageTest() throws IOException, InterruptedException {
-        String outFileName = DESTINATION_FOLDER + "paragraphWithOverflowingImageTest.pdf";
-        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithOverflowingImageTest.pdf";
-
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
-            document.add(createFirstPageFiller());
-            Div columnContainer = new MulticolContainer();
-            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+    public void overflowImageBetweenParagraphsTest() throws IOException, InterruptedException {
+        executeTest("overflowImageBetweenParagraphsTest", ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
 
             Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
             paragraph.setBorder(new SolidBorder(2));
-            PdfImageXObject xObject = new PdfImageXObject(
-                    ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "placeholder_100x100.png")));
-            Image image = new Image(xObject, 200);
+            Image image = createImage(SOURCE_FOLDER + "placeholder_100x100.png", 200);
+            Paragraph paragraph2 = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph2.setBorder(new SolidBorder(ColorConstants.BLUE, 2));
 
-            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            ctx.setBorder(new SolidBorder(ColorConstants.RED, 3));
             Div div = new Div();
             div.add(paragraph);
             div.add(image);
-            columnContainer.add(div);
-
-            document.add(columnContainer);
-        }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+            div.add(paragraph2);
+            ctx.add(div);
+        }, false);
     }
 
-    //TODO: DEVSIX-7621
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void overflowingImageWithParagraphTest() throws IOException, InterruptedException {
-        String outFileName = DESTINATION_FOLDER + "overflowingImageWithParagraphMultipageTest.pdf";
-        String cmpFileName = SOURCE_FOLDER + "cmp_overflowingImageWithParagraphMultipageTest.pdf";
-
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
-            Div columnContainer = new MulticolContainer();
-            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+        executeTest("overflowingImageWithParagraphMultipageTest", ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
 
             Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
             paragraph.setBorder(new SolidBorder(2));
-            PdfImageXObject xObject = new PdfImageXObject(
-                    ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "placeholder_100x100.png")));
-            Image image = new Image(xObject, 200);
+            Image image = createImage(SOURCE_FOLDER + "placeholder_100x100.png", 200);
 
-            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            ctx.setBorder(new SolidBorder(ColorConstants.RED, 3));
             Div div = new Div();
             div.add(image);
             div.add(paragraph);
-            columnContainer.add(div);
+            ctx.add(div);
+        }, false);
+    }
 
-            document.add(columnContainer);
-        }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    @Test
+    public void overflowImageWithForcedPlacementTest() throws IOException, InterruptedException {
+        executeTest("overflowImageWithForcedPlacementTest", ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(2));
+            Image image = createImage(SOURCE_FOLDER + "placeholder_100x100.png", 200);
+            image.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
+            Paragraph paragraph2 = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph2.setBorder(new SolidBorder(ColorConstants.BLUE, 2));
+
+            ctx.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(paragraph);
+            div.add(image);
+            div.add(paragraph2);
+            ctx.add(div);
+        }, false);
+    }
+
+    @Test
+    public void imageForcedPlacementAndKeepTogetherTest() throws IOException, InterruptedException {
+        executeTest("imageForcedPlacementAndKeepTogetherTest", ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
+
+            Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph.setBorder(new SolidBorder(ColorConstants.GREEN, 2));
+
+            Image image = createImage(SOURCE_FOLDER + "placeholder_100x100.png", 200);
+            image.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
+            Paragraph paragraph2 = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                    "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
+            paragraph2.setBorder(new SolidBorder(ColorConstants.BLUE, 2));
+            Div child = new Div();
+            child.setBorder(new SolidBorder(ColorConstants.BLACK, 2));
+            child.setKeepTogether(true);
+            child.add(image);
+            child.add(paragraph2);
+
+            ctx.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            Div div = new Div();
+            div.add(paragraph);
+            div.add(child);
+            ctx.add(div);
+        }, false);
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void imageBiggerThanPageTest() throws IOException, InterruptedException {
-        String outFileName = DESTINATION_FOLDER + "imageBiggerThanPageTest.pdf";
-        String cmpFileName = SOURCE_FOLDER + "cmp_imageBiggerThanPageTest.pdf";
-
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
-            Div columnContainer = new MulticolContainer();
-            columnContainer.setProperty(Property.COLUMN_COUNT, 3);
+        executeTest("imageBiggerThanPageTest", ctx -> {
+            ctx.setProperty(Property.COLUMN_COUNT, 3);
 
             Paragraph paragraph = new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ");
             paragraph.setBorder(new SolidBorder(2));
-            PdfImageXObject xObject = new PdfImageXObject(
-                    ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "placeholder_100x100.png")));
-            Image image = new Image(xObject, 800);
+            Image image = createImage(SOURCE_FOLDER + "placeholder_100x100.png", 800);
 
-            columnContainer.setBorder(new SolidBorder(ColorConstants.RED, 3));
+            ctx.setBorder(new SolidBorder(ColorConstants.RED, 3));
             Div div = new Div();
             div.add(image);
             div.add(paragraph);
-            columnContainer.add(div);
-
-            document.add(columnContainer);
-        }
-        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+            ctx.add(div);
+        }, false);
     }
 
     @Test
@@ -767,7 +779,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerSetWidth() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerSetWidth", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerSetWidth", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setWidth(300);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
@@ -782,7 +794,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerSetHeightBigger() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerSetHeightBigger", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerSetHeightBigger", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setHeight(600);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
@@ -793,7 +805,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void widthBorderTest() throws IOException, InterruptedException {
-        executeTest("widthBorderTest", new MulticolContainer(), ctx -> {
+        executeTest("widthBorderTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(new SolidBorder(ColorConstants.RED, 20));
@@ -804,7 +816,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void heightBorderTest() throws IOException, InterruptedException {
-        executeTest("heightBorderTest", new MulticolContainer(), ctx -> {
+        executeTest("heightBorderTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             //content should be clipped
             ctx.setHeight(150);
@@ -816,7 +828,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void widthPaddingTest() throws IOException, InterruptedException {
-        executeTest("widthPaddingTest", new MulticolContainer(), ctx -> {
+        executeTest("widthPaddingTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setPadding(DEFAULT_PADDING);
@@ -828,7 +840,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void heightPaddingTest() throws IOException, InterruptedException {
-        executeTest("heightPaddingTest", new MulticolContainer(), ctx -> {
+        executeTest("heightPaddingTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             //content should be clipped
             ctx.setHeight(200);
@@ -842,7 +854,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void heightMarginTest() throws IOException, InterruptedException {
-        executeTest("heightMarginTest", new MulticolContainer(), ctx -> {
+        executeTest("heightMarginTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             //content should be clipped
             ctx.setHeight(200);
@@ -856,7 +868,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void widthMarginTest() throws IOException, InterruptedException {
-        executeTest("widthMarginTest", new MulticolContainer(), ctx -> {
+        executeTest("widthMarginTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMargin(40);
@@ -869,7 +881,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void widthHeightMarginTest() throws IOException, InterruptedException {
-        executeTest("widthHeightMarginTest", new MulticolContainer(), ctx -> {
+        executeTest("widthHeightMarginTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMargin(60);
@@ -882,7 +894,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void minHeightTest() throws IOException, InterruptedException {
-        executeTest("minHeightTest", new MulticolContainer(), ctx -> {
+        executeTest("minHeightTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMargin(60);
@@ -895,7 +907,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void maxHeightTest() throws IOException, InterruptedException {
-        executeTest("maxHeightTest", new MulticolContainer(), ctx -> {
+        executeTest("maxHeightTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setMargin(60);
@@ -907,7 +919,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void minWidth() throws IOException, InterruptedException {
-        executeTest("minWidth", new MulticolContainer(), ctx -> {
+        executeTest("minWidth", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -918,7 +930,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void minWidthBiggerThenPage() throws IOException, InterruptedException {
-        executeTest("minWidthBiggerThenPage", new MulticolContainer(), ctx -> {
+        executeTest("minWidthBiggerThenPage", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -929,7 +941,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void maxWidth() throws IOException, InterruptedException {
-        executeTest("maxWidth", new MulticolContainer(), ctx -> {
+        executeTest("maxWidth", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             ctx.setBorder(DEFAULT_BORDER);
@@ -986,7 +998,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
 
     @Test
     public void continuousColumContainerSetHeightSmaller() throws IOException, InterruptedException {
-        executeTest("continuousColumContainerSetHeightSmaller", new MulticolContainer(), ctx -> {
+        executeTest("continuousColumContainerSetHeightSmaller", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
             //content should be clipped
             ctx.setHeight(50);
@@ -1078,21 +1090,40 @@ public class MulticolContainerTest extends ExtendedITextTest {
     }
 
 
-    private void executeTest(String testName, MulticolContainer container, Consumer<MulticolContainer> executor)
+    private void executeTest(String testName, Consumer<MulticolContainer> executor, boolean wrapByP)
             throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + testName + ".pdf";
         String cmpName = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new com.itextpdf.kernel.pdf.PdfWriter(filename))) {
             Document doc = new Document(pdfDoc);
 
+            MulticolContainer container = new MulticolContainer();
             executor.accept(container);
 
-            doc.add(new Paragraph("ELEMENT ABOVE").setBackgroundColor(ColorConstants.YELLOW));
+            if (wrapByP) {
+                doc.add(new Paragraph("ELEMENT ABOVE").setBackgroundColor(ColorConstants.YELLOW));
+            }
             doc.add(container);
-            doc.add(new Paragraph("ELEMENT BELOW").setBackgroundColor(ColorConstants.YELLOW));
+            if (wrapByP) {
+                doc.add(new Paragraph("ELEMENT BELOW").setBackgroundColor(ColorConstants.YELLOW));
+            }
         }
         CompareTool compareTool = new CompareTool();
         Assert.assertNull(compareTool.compareByContent(filename, cmpName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    private void executeTest(String testName, Consumer<MulticolContainer> executor) throws IOException, InterruptedException {
+       executeTest(testName, executor, true);
+    }
+
+    private Image createImage(String path, float width) {
+        PdfImageXObject xObject = null;
+        try {
+            xObject = new PdfImageXObject(ImageDataFactory.create(path));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return new Image(xObject, width);
     }
 
     private static Paragraph createDummyParagraph() {
@@ -1102,26 +1133,6 @@ public class MulticolContainerTest extends ExtendedITextTest {
                 "irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
                 "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim " +
                 "id est laborum.");
-    }
-
-    private static String generateLongString(int amountOfWords) {
-        StringBuilder sb = new StringBuilder();
-        int random = 1;
-        for (int i = 0; i < amountOfWords; i++) {
-            random = getPseudoRandomInt(i + random);
-            for (int j = 1; j <= random; j++) {
-                sb.append('a');
-            }
-            sb.append(' ');
-        }
-        return sb.toString();
-    }
-
-    private static int getPseudoRandomInt(int prev) {
-        final int first = 93840;
-        final int second = 1929;
-        final int max = 7;
-        return (prev * first + second) % max;
     }
 
     private static Div createFirstPageFiller() {
