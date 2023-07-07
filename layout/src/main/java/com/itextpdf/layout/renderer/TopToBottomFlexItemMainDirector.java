@@ -27,21 +27,21 @@ import com.itextpdf.layout.renderer.FlexUtil.FlexItemCalculationInfo;
 
 import java.util.List;
 
-class TopToBottomFlexItemMainDirector implements IFlexItemMainDirector {
+class TopToBottomFlexItemMainDirector extends FlexColumnItemMainDirector {
     TopToBottomFlexItemMainDirector() {
     }
-    
-    @Override
-    public List<IRenderer> applyDirection(List<List<FlexItemInfo>> lines) {
-        // TODO DEVSIX-7595 Shall be implemented in the scope of this ticket
-        return null;
-    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> void applyDirectionForLine(List<T> renderers) {
-        // TODO DEVSIX-7595 Shall be implemented in the scope of this ticket
+        // Do nothing
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void applyJustifyContent(List<FlexItemCalculationInfo> line, JustifyContent justifyContent,
             float freeSpace) {

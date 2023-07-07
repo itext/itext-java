@@ -108,7 +108,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (rotation != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+        if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue) &&
+                !(this instanceof FlexContainerRenderer)) {
             blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
         }
         boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);

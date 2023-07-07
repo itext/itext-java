@@ -43,6 +43,7 @@ class LtrFlexItemMainDirector implements IFlexItemMainDirector {
     public List<IRenderer> applyDirection(List<List<FlexItemInfo>> lines) {
         List<IRenderer> renderers = new ArrayList<>();
         for (List<FlexItemInfo> line : lines) {
+            applyDirectionForLine(line);
             for (FlexItemInfo itemInfo : line) {
                 renderers.add(itemInfo.getRenderer());
             }

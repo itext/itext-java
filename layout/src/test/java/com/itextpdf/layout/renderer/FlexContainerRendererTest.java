@@ -287,7 +287,7 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRendererChild.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(150));
 
         DivRenderer divRenderer = new DivRenderer(new Div());
-        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(125));
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(150));
 
         flexRendererChild.addChild(divRenderer);
         flexRenderer.addChild(flexRendererChild);
@@ -295,6 +295,7 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         // In general, it's possible that we might call layout more than once for 1 renderer
         flexRenderer.layout(new LayoutContext(
                 new LayoutArea(0, new Rectangle(100, 0))));
+        flexRendererChild.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(125));
         flexRenderer.layout(new LayoutContext(
                 new LayoutArea(0, new Rectangle(200, 0))));
 

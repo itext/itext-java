@@ -654,11 +654,12 @@ public class FlexUtilTest extends ExtendedITextTest {
         // after checks
         Assert.assertEquals(3, rectangleTable.size());
         
-        for (List<FlexItemInfo> line : rectangleTable) {
+        for (int i = 0; i < rectangleTable.size(); ++i) {
+            List<FlexItemInfo> line = rectangleTable.get(i);
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(6.0f, flexItemInfo.getRectangle().getWidth(), EPS);
                 Assert.assertEquals(75.0f, flexItemInfo.getRectangle().getHeight(), EPS);
-                Assert.assertEquals(0.0f, flexItemInfo.getRectangle().getX(), EPS);
+                Assert.assertEquals(i == 0 ? 0.0f : 127.33334, flexItemInfo.getRectangle().getX(), EPS);
                 Assert.assertEquals(25.0f, flexItemInfo.getRectangle().getY(), EPS);
             }
         }
@@ -1200,7 +1201,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         Assert.assertEquals(83.046875f, rectangleTable.get(0).get(0).getRectangle().getY(), EPS);
         Assert.assertEquals(41.015625f, rectangleTable.get(0).get(1).getRectangle().getY(), EPS);
-        Assert.assertEquals(41.015625f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
+        Assert.assertEquals(82.03125f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
     }
 
     @Test
@@ -1272,7 +1273,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
             Assert.assertEquals(0f, rectangleTable.get(0).get(0).getRectangle().getY(), EPS);
             Assert.assertEquals(0f, rectangleTable.get(0).get(1).getRectangle().getY(), EPS);
-            Assert.assertEquals(0f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
+            Assert.assertEquals(82.03125f, rectangleTable.get(1).get(0).getRectangle().getY(), EPS);
         }
     }
 
@@ -2989,7 +2990,7 @@ public class FlexUtilTest extends ExtendedITextTest {
     }
 
     private static FlexUtil.FlexItemCalculationInfo createFlexItemCalculationInfo(AbstractRenderer renderer) {
-        return new FlexUtil.FlexItemCalculationInfo(renderer, 0, 0, 0, 0, false, false);
+        return new FlexUtil.FlexItemCalculationInfo(renderer, 0, 0, 0, 0, false, false, 0);
     }
 
     private static List<List<FlexItemInfo>> testFlex(List<UnitValue> flexBasisValues, List<Float> flexGrowValues,

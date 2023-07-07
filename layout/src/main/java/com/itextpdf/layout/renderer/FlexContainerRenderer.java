@@ -212,14 +212,15 @@ public class FlexContainerRenderer extends DivRenderer {
             metChildRenderer = metChildRenderer || isSplitLine;
 
             // If the renderer to split is in the current line
-            if (isSplitLine && !forcedPlacement && layoutStatus == LayoutResult.PARTIAL) {
+            if (isSplitLine && !forcedPlacement && layoutStatus == LayoutResult.PARTIAL &&
+                    !FlexUtil.isColumnDirection(this)) {
                 // It has sense to call it also for LayoutResult.NOTHING. And then try to layout remaining renderers
                 // in line inside fillSplitOverflowRenderersForPartialResult to see if some of them can be left or
                 // partially left on the first page (in split renderer). But it's not that easy.
                 // So currently, if the 1st not fully layouted renderer is layouted with LayoutResult.NOTHING,
                 // the whole line is moved to the next page (overflow renderer).
-                fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
-                        childResult);
+                    fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
+                            childResult);
                 getFlexItemMainDirector().applyDirectionForLine(overflowRenderer.getChildRenderers());
             } else {
                 List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
@@ -339,6 +340,15 @@ public class FlexContainerRenderer extends DivRenderer {
 
     @Override
     void decreaseLayoutBoxAfterChildPlacement(Rectangle layoutBox, LayoutResult result, IRenderer childRenderer) {
+        if (FlexUtil.isColumnDirection(this)) {
+            decreaseLayoutBoxAfterChildPlacementColumnLayout(layoutBox, childRenderer);
+        } else {
+            decreaseLayoutBoxAfterChildPlacementRowLayout(layoutBox,result, childRenderer);
+        }
+    }
+
+    void decreaseLayoutBoxAfterChildPlacementRowLayout(Rectangle layoutBox, LayoutResult result,
+                                                       IRenderer childRenderer) {
         layoutBox.decreaseWidth(result.getOccupiedArea().getBBox().getRight() - layoutBox.getLeft());
         layoutBox.setX(result.getOccupiedArea().getBBox().getRight());
 
@@ -359,6 +369,28 @@ public class FlexContainerRenderer extends DivRenderer {
             layoutBox.setX(minLeft);
             layoutBox.increaseWidth(commonWidth);
             layoutBox.decreaseHeight(layoutBox.getTop() - minBottom);
+        }
+    }
+
+    void decreaseLayoutBoxAfterChildPlacementColumnLayout(Rectangle layoutBox, IRenderer childRenderer) {
+        FlexItemInfo childFlexItemInfo = findFlexItemInfo((AbstractRenderer) childRenderer);
+        layoutBox.decreaseHeight(childFlexItemInfo.getRenderer().getOccupiedArea().getBBox().getHeight() +
+                childFlexItemInfo.getRectangle().getY());
+
+        List<FlexItemInfo> line = findLine(childRenderer);
+        final boolean isLastInLine = childRenderer.equals(line.get(line.size() - 1).getRenderer());
+        // If it was the last renderer in line we have to go to the next line (row)
+        if (isLastInLine) {
+            float maxWidth = 0;
+            float commonHeight = 0;
+            for (FlexItemInfo item : line) {
+                maxWidth = Math.max(maxWidth, item.getRenderer().getOccupiedArea().getBBox().getWidth()
+                        + item.getRectangle().getX());
+                commonHeight += item.getRectangle().getY() + item.getRenderer().getOccupiedArea().getBBox().getHeight();
+            }
+            layoutBox.increaseHeight(commonHeight);
+            layoutBox.decreaseWidth(maxWidth);
+            layoutBox.moveRight(maxWidth);
         }
     }
 
@@ -459,8 +491,8 @@ public class FlexContainerRenderer extends DivRenderer {
     }
 
     private void fillSplitOverflowRenderersForPartialResult(AbstractRenderer splitRenderer,
-            AbstractRenderer overflowRenderer, List<FlexItemInfo> line, IRenderer childRenderer,
-            LayoutResult childResult) {
+                    AbstractRenderer overflowRenderer, List<FlexItemInfo> line, IRenderer childRenderer,
+                    LayoutResult childResult) {
         float occupiedSpace = 0;
         float maxHeightInLine = 0;
         boolean metChildRendererInLine = false;
@@ -562,8 +594,13 @@ public class FlexContainerRenderer extends DivRenderer {
             } else {
                 childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer);
             }
-            maxWidth += childMinMaxWidth.getMaxWidth();
-            minWidth += childMinMaxWidth.getMinWidth();
+            if (FlexUtil.isColumnDirection(this)) {
+                maxWidth = Math.max(maxWidth, childMinMaxWidth.getMaxWidth());
+                minWidth = Math.max(minWidth, childMinMaxWidth.getMinWidth());
+            } else {
+                maxWidth += childMinMaxWidth.getMaxWidth();
+                minWidth += childMinMaxWidth.getMinWidth();
+            }
         }
         minMaxWidthHandler.updateMaxChildWidth(maxWidth);
         minMaxWidthHandler.updateMinChildWidth(minWidth);
@@ -579,10 +616,16 @@ public class FlexContainerRenderer extends DivRenderer {
                 this.<FlexDirectionPropertyValue>getProperty(Property.FLEX_DIRECTION, null);
     }
 
+    private boolean isColumnReverse() {
+        return FlexDirectionPropertyValue.COLUMN_REVERSE ==
+                this.<FlexDirectionPropertyValue>getProperty(Property.FLEX_DIRECTION, null);
+    }
+
     private IFlexItemMainDirector createMainDirector() {
-        if (FlexDirectionPropertyValue.COLUMN ==
-                this.<FlexDirectionPropertyValue>getProperty(Property.FLEX_DIRECTION)) {
-            return new TopToBottomFlexItemMainDirector();
+        if (FlexUtil.isColumnDirection(this)) {
+            return isColumnReverse()
+                    ? (IFlexItemMainDirector) new BottomToTopFlexItemMainDirector() :
+                    new TopToBottomFlexItemMainDirector();
         } else {
             final boolean isRtlDirection = BaseDirection.RIGHT_TO_LEFT ==
                     this.<BaseDirection>getProperty(Property.BASE_DIRECTION, null);

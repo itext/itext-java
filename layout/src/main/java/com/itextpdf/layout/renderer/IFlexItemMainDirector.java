@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.properties.AlignmentPropertyValue;
 import com.itextpdf.layout.properties.JustifyContent;
 
 import java.util.List;
