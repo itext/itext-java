@@ -49,6 +49,7 @@
     <module>hyph</module>
     <module>io</module>
     <module>itextcore</module>
+    <module>itext7core</module>
     <module>kernel</module>
     <module>layout</module>
     <module>pdfa</module>
