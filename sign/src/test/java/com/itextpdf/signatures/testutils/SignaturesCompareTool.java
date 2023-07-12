@@ -101,8 +101,8 @@ public class SignaturesCompareTool {
                     isFailed = true;
                 }
 
-                ASN1Sequence outContent = (ASN1Sequence) ((ASN1TaggedObject) outSignedData.getObjectAt(1)).getObject();
-                ASN1Sequence cmpContent = (ASN1Sequence) ((ASN1TaggedObject) cmpSignedData.getObjectAt(1)).getObject();
+                ASN1Sequence outContent = (ASN1Sequence) ((ASN1TaggedObject) outSignedData.getObjectAt(1)).getBaseObject().toASN1Primitive();
+                ASN1Sequence cmpContent = (ASN1Sequence) ((ASN1TaggedObject) cmpSignedData.getObjectAt(1)).getBaseObject().toASN1Primitive();
                 if (outContent.size() != cmpContent.size()) {
                     addError(errorText, "Signatures base elements counts are different",
                             String.valueOf(outContent.size()),
@@ -221,8 +221,8 @@ public class SignaturesCompareTool {
             if (cmp instanceof ASN1TaggedObject) {
                 ASN1TaggedObject cmpTag = (ASN1TaggedObject) cmp;
                 ASN1TaggedObject outTag = (ASN1TaggedObject) out;
-                if (!(cmpTag.getObject() instanceof ASN1Sequence)) {
-                    if (!cmpTag.getObject().equals(outTag.getObject())) {
+                if (!(cmpTag.getBaseObject().toASN1Primitive() instanceof ASN1Sequence)) {
+                    if (!cmpTag.getBaseObject().toASN1Primitive().equals(outTag.getBaseObject().toASN1Primitive())) {
                         addError(errorText, "ASN1 objects are different", ASN1Dump.dumpAsString(outTag, true),
                                 ASN1Dump.dumpAsString(cmpTag, true));
                         isFailed = true;
@@ -231,8 +231,8 @@ public class SignaturesCompareTool {
                     return isFailed;
                 }
 
-                cmpObject = (ASN1Sequence) (cmpTag).getObject();
-                outObject = (ASN1Sequence) (outTag).getObject();
+                cmpObject = (ASN1Sequence) (cmpTag).getBaseObject().toASN1Primitive();
+                outObject = (ASN1Sequence) (outTag).getBaseObject().toASN1Primitive();
             } else {
                 cmpObject = (ASN1Sequence) cmp;
                 outObject = (ASN1Sequence) out;
