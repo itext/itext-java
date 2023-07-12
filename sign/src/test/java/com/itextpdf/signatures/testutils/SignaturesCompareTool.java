@@ -268,8 +268,8 @@ public class SignaturesCompareTool {
             return false;
         }
 
-        ASN1Sequence outContent = (ASN1Sequence) ((ASN1TaggedObject) outSignedData.getObjectAt(1)).getObject();
-        ASN1Sequence cmpContent = (ASN1Sequence) ((ASN1TaggedObject) cmpSignedData.getObjectAt(1)).getObject();
+        ASN1Sequence outContent = (ASN1Sequence) ((ASN1TaggedObject) outSignedData.getObjectAt(1)).getBaseObject().toASN1Primitive();
+        ASN1Sequence cmpContent = (ASN1Sequence) ((ASN1TaggedObject) cmpSignedData.getObjectAt(1)).getBaseObject().toASN1Primitive();
         if (outContent.size() != cmpContent.size()) {
             addError(errorText, "Signatures base elements counts are different",
                     String.valueOf(outContent.size()),
@@ -359,7 +359,7 @@ public class SignaturesCompareTool {
 
         if (cmp instanceof ASN1TaggedObject) {
             return compareAsn1Structures(
-                    ((ASN1TaggedObject) out).getObject(), ((ASN1TaggedObject) cmp).getObject(), errorText);
+                    ((ASN1TaggedObject) out).getBaseObject().toASN1Primitive(), ((ASN1TaggedObject) cmp).getBaseObject().toASN1Primitive(), errorText);
         } else if (cmp instanceof ASN1Sequence) {
             if (!compareContainers(((ASN1Sequence) out).toArray(), ((ASN1Sequence) cmp).toArray(), errorText)) {
                 addError(errorText, "ASN1Sequence objects are different");
@@ -464,8 +464,8 @@ public class SignaturesCompareTool {
                 return false;
             }
 
-            if (!(outTaggedObject.getObject() instanceof ASN1Sequence)
-                    || !(cmpTaggedObject.getObject() instanceof ASN1Sequence)) {
+            if (!(outTaggedObject.getBaseObject().toASN1Primitive() instanceof ASN1Sequence)
+                    || !(cmpTaggedObject.getBaseObject().toASN1Primitive() instanceof ASN1Sequence)) {
                 addError(errorText, structureIsInvalidError,
                         String.join("", Arrays.stream(out).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())),
                         String.join("", Arrays.stream(cmp).map(e -> ASN1Dump.dumpAsString(e)).collect(Collectors.toList())));
@@ -473,8 +473,8 @@ public class SignaturesCompareTool {
             }
 
             // revocation entries can be either CRLs or OCSPs in most cases
-            ASN1Sequence outRevocationEntries = (ASN1Sequence) outTaggedObject.getObject();
-            ASN1Sequence cmpRevocationEntries = (ASN1Sequence) cmpTaggedObject.getObject();
+            ASN1Sequence outRevocationEntries = (ASN1Sequence) outTaggedObject.getBaseObject().toASN1Primitive();
+            ASN1Sequence cmpRevocationEntries = (ASN1Sequence) cmpTaggedObject.getBaseObject().toASN1Primitive();
             if (outRevocationEntries.size() != cmpRevocationEntries.size()) {
                 addError(errorText,
                         "Signature revocation info archival attributes have different number of entries",

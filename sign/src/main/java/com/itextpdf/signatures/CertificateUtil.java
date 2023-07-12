@@ -116,7 +116,7 @@ public class CertificateUtil {
                 if (name.getTagNo() != GeneralName.uniformResourceIdentifier) {
                     continue;
                 }
-                DERIA5String derStr = DERIA5String.getInstance((ASN1TaggedObject)name.toASN1Primitive(), false);
+                DERIA5String derStr = (DERIA5String)DERIA5String.getInstance((ASN1TaggedObject)name.toASN1Primitive(), false);
                 return derStr.getString();
             }
         }
