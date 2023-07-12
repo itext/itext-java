@@ -54,7 +54,7 @@ public class ASN1TaggedObjectBC extends ASN1PrimitiveBC implements IASN1TaggedOb
      */
     @Override
     public IASN1Primitive getObject() {
-        return new ASN1PrimitiveBC(getASN1TaggedObject().getObject());
+        return new ASN1PrimitiveBC(getASN1TaggedObject().getBaseObject().toASN1Primitive());
     }
 
     /**

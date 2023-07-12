@@ -1115,7 +1115,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
         return new DERIA5StringBC(
-                DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getASN1TaggedObject(), b));
+                (DERIA5String)DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getASN1TaggedObject(), b));
     }
 
     /**
