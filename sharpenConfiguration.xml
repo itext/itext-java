@@ -37,6 +37,10 @@
             <fileset reason="DEVSIX-3221 - The way of working with processes in c# is very different from Java. So it can'not be ported manually">
                 <file path="com/itextpdf/commons/utils/SystemUtil.java"/>
             </fileset>
+            <fileset reason="Dictionaries are different in java and .net therefor manual porting is required">
+                <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMap.java" />
+                <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMapTest.java" />
+            </fileset>
             <fileset reason="SystemUtil is a manual class, and the methods of this class can have input and output other than java despite similar names.
         Therefore, the test for this class also cannot be ported automatically">
                 <file path="com/itextpdf/commons/utils/SystemUtilTest.java"/>
