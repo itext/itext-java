@@ -23,7 +23,10 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.Border.Side;
 import com.itextpdf.layout.element.MulticolContainer;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -36,6 +39,7 @@ import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Represents a renderer for columns.
@@ -120,6 +124,43 @@ public class MulticolRenderer extends AbstractRenderer {
         return new MulticolRenderer((MulticolContainer) modelElement);
     }
 
+
+    /**
+     * Performs the drawing operation for the border of this renderer, if
+     * defined by any of the {@link Property#BORDER} values in either the layout
+     * element or this {@link IRenderer} itself.
+     *
+     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     */
+    @Override
+    public void drawBorder(DrawContext drawContext) {
+        super.drawBorder(drawContext);
+
+        Rectangle borderRect = applyMargins(occupiedArea.getBBox().clone(), getMargins(), false);
+        boolean isAreaClipped = clipBorderArea(drawContext, borderRect);
+        Border gap = this.<Border>getProperty(Property.COLUMN_GAP_BORDER);
+        if (getChildRenderers().isEmpty() || gap == null || gap.getWidth() <= ZERO_DELTA) {
+            return;
+        }
+
+        drawTaggedWhenNeeded(drawContext, canvas -> {
+            for (int i = 0; i < getChildRenderers().size() - 1; ++i) {
+                Rectangle columnBBox = getChildRenderers().get(i).getOccupiedArea().getBBox();
+                Rectangle columnSpaceBBox = new Rectangle(columnBBox.getX() + columnBBox.getWidth(), columnBBox.getY(),
+                        columnGap, columnBBox.getHeight());
+                float x1 = columnSpaceBBox.getX() + columnSpaceBBox.getWidth() / 2 + gap.getWidth() / 2;
+                float y1 = columnSpaceBBox.getY();
+                float y2 = columnSpaceBBox.getY() + columnSpaceBBox.getHeight();
+                gap.draw(canvas, x1, y1, x1, y2, Side.RIGHT, 0, 0);
+            }
+            if (isAreaClipped) {
+                drawContext.getCanvas().restoreState();
+            }
+        });
+
+
+    }
+
     protected MulticolLayoutResult layoutInColumns(LayoutContext layoutContext, Rectangle actualBBox) {
         LayoutResult inifiniteHeighOneColumnLayoutResult = elementRenderer.layout(
                 new LayoutContext(new LayoutArea(1, new Rectangle(columnWidth, INF))));
@@ -178,6 +219,16 @@ public class MulticolRenderer extends AbstractRenderer {
         renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
         for (IRenderer child : renderer.getChildRenderers()) {
             setOverflowForAllChildren(child);
+        }
+    }
+    private void drawTaggedWhenNeeded(DrawContext drawContext, Consumer<PdfCanvas> action) {
+        PdfCanvas canvas = drawContext.getCanvas();
+        if (drawContext.isTaggingEnabled()) {
+            canvas.openTag(new CanvasArtifact());
+        }
+        action.accept(canvas);
+        if (drawContext.isTaggingEnabled()) {
+            canvas.closeTag();
         }
     }
 
@@ -306,7 +357,7 @@ public class MulticolRenderer extends AbstractRenderer {
                 this.columnCount = 1;
             }
         }
-        this.columnWidth = Math.max(0.0f, ((initialWidth + this.columnGap)/this.columnCount - this.columnGap));
+        this.columnWidth = Math.max(0.0f, ((initialWidth + this.columnGap) / this.columnCount - this.columnGap));
     }
 
     private void clearOverFlowRendererIfNeeded(MulticolLayoutResult result) {

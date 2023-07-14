@@ -305,6 +305,20 @@ public class CommonCssConstants {
     public static final String COLUMN_GAP = "column-gap";
 
     /**
+     * The Constant COLUMN_RULE_WIDTH.
+     */
+    public static final String COLUMN_RULE_WIDTH = "column-rule-width";
+
+    /**
+     * The Constant COLUMN_RULE_STYLE.
+     */
+    public static final String COLUMN_RULE_STYLE = "column-rule-style";
+
+    /**
+     * The Constant COLUMN_RULE_COLOR.
+     */
+    public static final String COLUMN_RULE_COLOR = "column-rule-color";
+    /**
      * The Constant COLUMNS
      */
     public static final String COLUMNS = "columns";

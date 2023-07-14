@@ -42,6 +42,7 @@ import com.itextpdf.styledxmlparser.css.validate.impl.declaration.SingleTypeDecl
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import static com.itextpdf.styledxmlparser.css.CommonCssConstants.BORDER_WIDTH_VALUES;
 
 /**
  * Class that bundles all the CSS declaration validators.
@@ -53,11 +54,12 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
      */
     protected final Map<String, ICssDeclarationValidator> defaultValidators;
 
+    private static final ICssDeclarationValidator colorCommonValidator = new MultiTypeDeclarationValidator(
+            new CssEnumValidator(CommonCssConstants.TRANSPARENT, CommonCssConstants.INITIAL,
+                    CommonCssConstants.INHERIT, CommonCssConstants.CURRENTCOLOR),
+            new CssColorValidator());
+
     public CssDefaultValidator() {
-        ICssDeclarationValidator colorCommonValidator = new MultiTypeDeclarationValidator(
-                new CssEnumValidator(CommonCssConstants.TRANSPARENT, CommonCssConstants.INITIAL,
-                        CommonCssConstants.INHERIT, CommonCssConstants.CURRENTCOLOR),
-                new CssColorValidator());
         final CssEnumValidator normalValidator = new CssEnumValidator(CommonCssConstants.NORMAL);
         final CssEnumValidator relativeSizeValidator =
                 new CssEnumValidator(CommonCssConstants.LARGER, CommonCssConstants.SMALLER);
@@ -97,23 +99,26 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
         defaultValidators.put(CommonCssConstants.FONT_SIZE, new MultiTypeDeclarationValidator(
                 new CssLengthValueValidator(false), new CssPercentageValueValidator(false), relativeSizeValidator,
                 absoluteSizeValidator));
-        defaultValidators.put(CommonCssConstants.WORD_SPACING, new MultiTypeDeclarationValidator(
-                new CssLengthValueValidator(true), normalValidator));
-        defaultValidators.put(CommonCssConstants.LETTER_SPACING, new MultiTypeDeclarationValidator(
-                new CssLengthValueValidator(true), normalValidator));
-        defaultValidators.put(CommonCssConstants.TEXT_INDENT, new MultiTypeDeclarationValidator(
-                new CssLengthValueValidator(true), new CssPercentageValueValidator(true),
-                new CssEnumValidator(CommonCssConstants.EACH_LINE, CommonCssConstants.HANGING,
-                        CommonCssConstants.HANGING + " " + CommonCssConstants.EACH_LINE)));
-        defaultValidators.put(CommonCssConstants.LINE_HEIGHT, new MultiTypeDeclarationValidator(
-                new CssNumberValueValidator(false), new CssLengthValueValidator(false),
-                new CssPercentageValueValidator(false),
-                normalValidator, inheritInitialUnsetValidator));
-        defaultValidators.put(CommonCssConstants.COLUMN_GAP, new MultiTypeDeclarationValidator(
-                new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator));
-        defaultValidators.put(CommonCssConstants.COLUMN_WIDTH, new MultiTypeDeclarationValidator(
-                new CssLengthValueValidator(false), new CssPercentageValueValidator(false),
-                new CssEnumValidator(CommonCssConstants.AUTO)));
+        defaultValidators.put(CommonCssConstants.WORD_SPACING,
+                new MultiTypeDeclarationValidator(new CssLengthValueValidator(true), normalValidator));
+        defaultValidators.put(CommonCssConstants.LETTER_SPACING,
+                new MultiTypeDeclarationValidator(new CssLengthValueValidator(true), normalValidator));
+        defaultValidators.put(CommonCssConstants.TEXT_INDENT,
+                new MultiTypeDeclarationValidator(new CssLengthValueValidator(true),
+                        new CssPercentageValueValidator(true),
+                        new CssEnumValidator(CommonCssConstants.EACH_LINE, CommonCssConstants.HANGING,
+                                CommonCssConstants.HANGING + " " + CommonCssConstants.EACH_LINE)));
+        addColumnRuleValidation(defaultValidators);
+        defaultValidators.put(CommonCssConstants.LINE_HEIGHT,
+                new MultiTypeDeclarationValidator(new CssNumberValueValidator(false),
+                        new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
+                        inheritInitialUnsetValidator));
+        defaultValidators.put(CommonCssConstants.COLUMN_GAP,
+                new MultiTypeDeclarationValidator(new CssLengthValueValidator(false),
+                        new CssPercentageValueValidator(false), normalValidator));
+        defaultValidators.put(CommonCssConstants.COLUMN_WIDTH,
+                new MultiTypeDeclarationValidator(new CssLengthValueValidator(false),
+                        new CssPercentageValueValidator(false), new CssEnumValidator(CommonCssConstants.AUTO)));
         defaultValidators.put(CommonCssConstants.COLUMN_COUNT, new MultiTypeDeclarationValidator(
                 new CssIntegerNumberValueValidator(false, false), new CssEnumValidator(CommonCssConstants.AUTO)));
         defaultValidators.put(CommonCssConstants.ROW_GAP, new MultiTypeDeclarationValidator(
@@ -203,11 +208,27 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
      * Validates a CSS declaration.
      *
      * @param declaration the CSS declaration
+     *
      * @return true, if the validation was successful
      */
     @Override
     public boolean isValid(CssDeclaration declaration) {
         ICssDeclarationValidator validator = defaultValidators.get(declaration.getProperty());
         return validator == null || validator.isValid(declaration);
+    }
+
+    private static void addColumnRuleValidation(Map<String, ICssDeclarationValidator> container) {
+        container.put(CommonCssConstants.COLUMN_RULE_COLOR, colorCommonValidator);
+        container.put(CommonCssConstants.COLUMN_RULE_WIDTH,
+                new MultiTypeDeclarationValidator(
+                        new CssNumberValueValidator(false),
+                        new CssLengthValueValidator(false),
+                        new CssEnumValidator(BORDER_WIDTH_VALUES),
+                        new CssEnumValidator(CommonCssConstants.AUTO)));
+        container.put(CommonCssConstants.COLUMN_RULE_STYLE,
+                new MultiTypeDeclarationValidator(
+                        new CssEnumValidator(CommonCssConstants.BORDER_STYLE_VALUES)
+                ));
+
     }
 }

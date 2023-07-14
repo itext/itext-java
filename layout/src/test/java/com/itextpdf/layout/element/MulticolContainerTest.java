@@ -1089,7 +1089,93 @@ public class MulticolContainerTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
+    @Test
+    public void paragraphWithSimpleSolidColumnGapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithSimpleStyledColumnGapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithSimpleStyledColumnGapTest.pdf";
 
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 5);
+            columnContainer.setProperty(Property.COLUMN_GAP, 50.0f);
+            columnContainer.setProperty(Property.COLUMN_GAP_BORDER, new SolidBorder(50));
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+
+    @Test
+    public void divWithSimpleSolidColumnGapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "divWithSimpleStyledColumnGapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_divWithSimpleStyledColumnGapTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 5);
+            columnContainer.setProperty(Property.COLUMN_GAP, 50.0f);
+            columnContainer.setProperty(Property.COLUMN_GAP_BORDER, new SolidBorder(50));
+            Div div = new Div();
+            for (int i = 0; i < 20; i++) {
+                Paragraph paragraph = new Paragraph("Hello world! " + i);
+                div.add(paragraph);
+            }
+            columnContainer.add(div);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void paragraphWithNegativeValueSolidColumnGapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithNegativeValueSolidColumnGapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithNegativeValueSolidColumnGapTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 5);
+            columnContainer.setProperty(Property.COLUMN_GAP_BORDER, new SolidBorder(0));
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void paragraphWithBiggerValueSolidColumnGapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithBiggerValueSolidColumnGapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithBiggerValueSolidColumnGapTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 5);
+            columnContainer.setProperty(Property.COLUMN_GAP_BORDER, new SolidBorder(600));
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+
+    @Test
+    public void paragraphWithNullValueSolidColumnGapTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "paragraphWithNullValueSolidColumnGapTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithNullValueSolidColumnGapTest.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div columnContainer = new MulticolContainer();
+            columnContainer.setProperty(Property.COLUMN_COUNT, 5);
+            columnContainer.setProperty(Property.COLUMN_GAP_BORDER, null);
+            Paragraph paragraph = createDummyParagraph();
+            columnContainer.add(paragraph);
+            document.add(columnContainer);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
     private void executeTest(String testName, Consumer<MulticolContainer> executor, boolean wrapByP)
             throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + testName + ".pdf";
