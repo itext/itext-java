@@ -272,26 +272,39 @@ public class MulticolRenderer extends AbstractRenderer {
         return result;
     }
 
-    //algorithm is based on pseudo algorithm from https://www.w3.org/TR/css-multicol-1/#propdef-column-span
+    // Algorithm is based on pseudo algorithm from https://www.w3.org/TR/css-multicol-1/#propdef-column-span
     private void calculateColumnCountAndWidth(float initialWidth) {
-        final Integer columnCount = (Integer)this.<Integer>getProperty(Property.COLUMN_COUNT);
-        final Float columnWidth = (Float)this.<Float>getProperty(Property.COLUMN_WIDTH);
-        final Float columnGap = (Float)this.<Float>getProperty(Property.COLUMN_GAP);
-        this.columnGap = columnGap != null ? columnGap.floatValue() : 0;
-        if ((columnCount == null && columnWidth == null)
-            || (columnCount != null && columnCount.intValue() < 0)
-            || (columnWidth != null && columnWidth.floatValue() < 0)) {
+        final Integer columnCountTemp = (Integer)this.<Integer>getProperty(Property.COLUMN_COUNT);
+        final Float columnWidthTemp = (Float)this.<Float>getProperty(Property.COLUMN_WIDTH);
+
+        final Float columnGapTemp = (Float)this.<Float>getProperty(Property.COLUMN_GAP);
+        this.columnGap = columnGapTemp == null ? 0f : columnGapTemp.floatValue();
+        if ((columnCountTemp == null && columnWidthTemp == null)
+                || (columnCountTemp != null && columnCountTemp.intValue() < 0)
+                || (columnWidthTemp != null && columnWidthTemp.floatValue() < 0)
+                || (this.columnGap < 0)) {
+
             throw new IllegalStateException(LayoutExceptionMessageConstant.INVALID_COLUMN_PROPERTIES);
         }
-        if (columnWidth == null) {
-            this.columnCount = columnCount.intValue();
-        } else if (columnCount == null) {
-            this.columnCount = Math.max(1, (int) Math.floor((double)((initialWidth + this.columnGap)
-                    / (columnWidth.floatValue() + this.columnGap))));
+
+        if (columnWidthTemp == null) {
+            this.columnCount = columnCountTemp.intValue();
+        } else if (columnCountTemp == null) {
+            final float columnWidthPlusGap = columnWidthTemp.floatValue() + this.columnGap;
+            if (columnWidthPlusGap > ZERO_DELTA) {
+                this.columnCount = Math.max(1,
+                        (int) Math.floor((double) ((initialWidth + this.columnGap) / columnWidthPlusGap)));
+            } else {
+                this.columnCount = 1;
+            }
         } else {
-            this.columnCount = Math.min((int) columnCount,
-                    Math.max(1, (int) Math.floor((double) ((initialWidth + this.columnGap)
-                            / (columnWidth.floatValue() + this.columnGap)))));
+            final float columnWidthPlusGap = columnWidthTemp.floatValue() + this.columnGap;
+            if (columnWidthPlusGap > ZERO_DELTA) {
+                this.columnCount = Math.min((int) columnCountTemp,
+                        Math.max(1, (int) Math.floor((double) ((initialWidth + this.columnGap) / columnWidthPlusGap))));
+            } else {
+                this.columnCount = 1;
+            }
         }
         this.columnWidth = Math.max(0.0f, ((initialWidth + this.columnGap)/this.columnCount - this.columnGap));
     }

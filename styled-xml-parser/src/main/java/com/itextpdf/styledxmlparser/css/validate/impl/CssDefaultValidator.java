@@ -30,6 +30,7 @@ import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBackgroundVali
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssBlendModeValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssColorValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssEnumValidator;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssIntegerNumberValueValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssLengthValueValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssNumberValueValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssPercentageValueValidator;
@@ -109,14 +110,12 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
                 new CssPercentageValueValidator(false),
                 normalValidator, inheritInitialUnsetValidator));
         defaultValidators.put(CommonCssConstants.COLUMN_GAP, new MultiTypeDeclarationValidator(
-                new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
-                inheritInitialUnsetValidator));
+                new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator));
         defaultValidators.put(CommonCssConstants.COLUMN_WIDTH, new MultiTypeDeclarationValidator(
                 new CssLengthValueValidator(false), new CssPercentageValueValidator(false),
-                new CssEnumValidator(CommonCssConstants.AUTO), inheritInitialUnsetValidator));
+                new CssEnumValidator(CommonCssConstants.AUTO)));
         defaultValidators.put(CommonCssConstants.COLUMN_COUNT, new MultiTypeDeclarationValidator(
-                new CssNumberValueValidator(false), new CssEnumValidator(CommonCssConstants.AUTO),
-                inheritInitialUnsetValidator));
+                new CssIntegerNumberValueValidator(false, false), new CssEnumValidator(CommonCssConstants.AUTO)));
         defaultValidators.put(CommonCssConstants.ROW_GAP, new MultiTypeDeclarationValidator(
                 new CssLengthValueValidator(false), new CssPercentageValueValidator(false), normalValidator,
                 inheritInitialUnsetValidator));
