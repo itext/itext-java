@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.List;
@@ -30,7 +31,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class EnumUtilTest {
+public class EnumUtilTest extends ExtendedITextTest {
     @Test
     public void testEnumUtilSameAmount() {
         Assert.assertEquals(3, EnumUtil.getAllValuesOfEnum(TestEnum1.class).size());
