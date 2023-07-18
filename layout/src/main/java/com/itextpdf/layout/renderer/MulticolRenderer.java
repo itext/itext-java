@@ -55,6 +55,8 @@ public class MulticolRenderer extends AbstractRenderer {
     private Float heightFromProperties;
     private float columnGap;
 
+    private boolean isFirstLayout = true;
+
     /**
      * Creates a DivRenderer from its corresponding layout object.
      *
@@ -84,6 +86,8 @@ public class MulticolRenderer extends AbstractRenderer {
         Rectangle actualBBox = layoutContext.getArea().getBBox().clone();
         float originalWidth = actualBBox.getWidth();
         applyWidth(actualBBox, originalWidth);
+
+        ContinuousContainer.setupContinuousContainerIfNeeded(this);
         applyPaddings(actualBBox, false);
         applyBorderBox(actualBBox, false);
         applyMargins(actualBBox, false);
@@ -103,6 +107,12 @@ public class MulticolRenderer extends AbstractRenderer {
         if (layoutResult.getSplitRenderers().isEmpty()) {
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, layoutResult.getCauseOfNothing());
         } else if (layoutResult.getOverflowRenderer() == null) {
+            final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
+                    Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
+            if (continuousContainer != null) {
+                continuousContainer.reApplyProperties(this);
+            }
+
             this.childRenderers.clear();
             addAllChildRenderers(layoutResult.getSplitRenderers());
             this.occupiedArea = calculateContainerOccupiedArea(layoutContext, true);
@@ -201,7 +211,8 @@ public class MulticolRenderer extends AbstractRenderer {
      * @return a new {@link AbstractRenderer} instance
      */
     protected AbstractRenderer createOverflowRenderer(IRenderer overflowedContentRenderer) {
-        AbstractRenderer overflowRenderer = (AbstractRenderer) getNextRenderer();
+        MulticolRenderer overflowRenderer = (MulticolRenderer) getNextRenderer();
+        overflowRenderer.isFirstLayout = false;
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -260,9 +271,10 @@ public class MulticolRenderer extends AbstractRenderer {
     }
 
 
-    private void recalculateHeightWidthAfterLayouting(Rectangle parentBBox) {
+    private void recalculateHeightWidthAfterLayouting(Rectangle parentBBox, boolean isFull) {
         Float height = determineHeight(parentBBox);
         if (height != null) {
+            height = updateOccupiedHeight((float) height, isFull);
             float heightDelta = parentBBox.getHeight() - (float) height;
             parentBBox.moveUp(heightDelta);
             parentBBox.setHeight((float) height);
@@ -298,13 +310,6 @@ public class MulticolRenderer extends AbstractRenderer {
             float workingHeight = approximateHeight;
             if (heightFromProperties != null) {
                 workingHeight = Math.min((float) heightFromProperties, (float) approximateHeight);
-                workingHeight -= safelyRetrieveFloatProperty(Property.PADDING_TOP);
-                workingHeight -= safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
-                workingHeight -= safelyRetrieveFloatProperty(Property.BORDER_TOP);
-                workingHeight -= safelyRetrieveFloatProperty(Property.BORDER_BOTTOM);
-                workingHeight -= safelyRetrieveFloatProperty(Property.BORDER) * 2;
-                workingHeight -= safelyRetrieveFloatProperty(Property.MARGIN_TOP);
-                workingHeight -= safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM);
             }
             result = layoutColumnsAndReturnOverflowRenderer(prelayoutContext, actualBbox, workingHeight);
 
@@ -371,27 +376,41 @@ public class MulticolRenderer extends AbstractRenderer {
 
     private LayoutArea calculateContainerOccupiedArea(LayoutContext layoutContext, boolean isFull) {
         LayoutArea area = layoutContext.getArea().clone();
-        float totalHeight = approximateHeight;
 
-        if (isFull) {
-            totalHeight += safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
-            totalHeight += safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM);
-            totalHeight += safelyRetrieveFloatProperty(Property.BORDER_BOTTOM);
-        }
-        totalHeight += safelyRetrieveFloatProperty(Property.PADDING_TOP);
-
-        totalHeight += safelyRetrieveFloatProperty(Property.MARGIN_TOP);
-
-        totalHeight += safelyRetrieveFloatProperty(Property.BORDER_TOP);
-        final float TOP_AND_BOTTOM = isFull ? 2 : 1;
-
-        totalHeight += safelyRetrieveFloatProperty(Property.BORDER) * TOP_AND_BOTTOM;
+        final float totalHeight = updateOccupiedHeight(approximateHeight, isFull);
 
         area.getBBox().setHeight(totalHeight);
         final Rectangle initialBBox = layoutContext.getArea().getBBox();
         area.getBBox().setY(initialBBox.getY() + initialBBox.getHeight() - area.getBBox().getHeight());
-        recalculateHeightWidthAfterLayouting(area.getBBox());
+        recalculateHeightWidthAfterLayouting(area.getBBox(), isFull);
         return area;
+    }
+
+    private float updateOccupiedHeight(float initialHeight, boolean isFull) {
+        if (isFull) {
+            initialHeight += safelyRetrieveFloatProperty(Property.PADDING_BOTTOM);
+            initialHeight += safelyRetrieveFloatProperty(Property.MARGIN_BOTTOM);
+            if (!this.hasOwnProperty(Property.BORDER) || this.<Border>getProperty(Property.BORDER) == null) {
+                initialHeight += safelyRetrieveFloatProperty(Property.BORDER_BOTTOM);
+            }
+        }
+        initialHeight += safelyRetrieveFloatProperty(Property.PADDING_TOP);
+
+        initialHeight += safelyRetrieveFloatProperty(Property.MARGIN_TOP);
+
+        if (!this.hasOwnProperty(Property.BORDER) || this.<Border>getProperty(Property.BORDER) == null) {
+            initialHeight += safelyRetrieveFloatProperty(Property.BORDER_TOP);
+        }
+
+        // isFirstLayout is necessary to handle the case when multicol container layouted in more
+        // than 2 pages, and on the last page layout result is full, but there is no bottom border
+        float TOP_AND_BOTTOM = isFull && isFirstLayout ? 2 : 1;
+        // Multicol container layouted in more than 3 pages, and there is a page where there are no bottom and top borders
+        if (!isFull && !isFirstLayout) {
+            TOP_AND_BOTTOM = 0;
+        }
+        initialHeight += safelyRetrieveFloatProperty(Property.BORDER) * TOP_AND_BOTTOM;
+        return initialHeight;
     }
 
     private BlockRenderer getElementsRenderer() {

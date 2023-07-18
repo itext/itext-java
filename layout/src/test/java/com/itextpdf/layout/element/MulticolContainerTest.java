@@ -209,7 +209,6 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
-    //TODO: DEVSIX-7626
     @Test
     public void continuousColumContainerParagraphOverflowShouldShow() throws IOException, InterruptedException {
         executeTest("continuousColumContainerParagraphOverflowShouldShow", ctx -> {
@@ -224,7 +223,6 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
-    //TODO: DEVSIX-7626
     @Test
     public void extraLargeColumnParagraphTest() throws IOException, InterruptedException {
         executeTest("extraLargeColumnParagraphTest", ctx -> {
@@ -239,7 +237,6 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
-    //TODO: DEVSIX-7626
     @Test
     public void largeColumnParagraphWithMarginTest() throws IOException, InterruptedException {
         executeTest("largeColumnParagraphWithMarginTest", ctx -> {
@@ -251,7 +248,6 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
-    //TODO: DEVSIX-7626
     @Test
     public void largeColumnParagraphWithPaddingTest() throws IOException, InterruptedException {
         executeTest("largeColumnParagraphWithPaddingTest", ctx -> {
@@ -263,7 +259,6 @@ public class MulticolContainerTest extends ExtendedITextTest {
         });
     }
 
-    //TODO: DEVSIX-7626
     @Test
     public void largeColumnParagraphWithBorderTest() throws IOException, InterruptedException {
         executeTest("largeColumnParagraphWithBorderTest", ctx -> {
@@ -856,6 +851,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
     public void heightMarginTest() throws IOException, InterruptedException {
         executeTest("heightMarginTest", ctx -> {
             ctx.setProperty(Property.COLUMN_COUNT, 3);
+
             //content should be clipped
             ctx.setHeight(200);
             ctx.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);

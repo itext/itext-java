@@ -25,7 +25,6 @@ package com.itextpdf.layout.properties;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.renderer.AbstractRenderer;
-import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.HashMap;
@@ -106,7 +105,7 @@ public final class ContinuousContainer {
      *
      * @param blockRenderer the renderer that is used to reapply properties.
      */
-    public void reApplyProperties(BlockRenderer blockRenderer) {
+    public void reApplyProperties(AbstractRenderer blockRenderer) {
         for (int property : PROPERTIES_NEEDED_FOR_CONTINUOUS_CONTAINER) {
             blockRenderer.setProperty(property, properties.get(property));
         }
