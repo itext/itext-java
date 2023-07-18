@@ -28,6 +28,7 @@ import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssEnumValidator;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
 import java.util.ArrayList;
@@ -38,70 +39,80 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Shorthand resolver for the column property.
- * This property is a shorthand for the column-count and column-width properties.
+ * Shorthand resolver for the column-rule property.
+ * This property is a shorthand for the column-rule-width, column-rule-style, and column-rule-color  properties.
  */
-public class ColumnsShorthandResolver implements IShorthandResolver {
+public class ColumnRuleShortHandResolver implements IShorthandResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ColumnsShorthandResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ColumnRuleShortHandResolver.class);
+    private final CssEnumValidator borderStyleValidators = new CssEnumValidator(CommonCssConstants.BORDER_STYLE_VALUES);
+    private final CssEnumValidator borderWithValidators = new CssEnumValidator(CommonCssConstants.BORDER_WIDTH_VALUES);
 
     /**
      * Creates a new {@link ColumnsShorthandResolver} instance.
      */
-    public ColumnsShorthandResolver() {
+    public ColumnRuleShortHandResolver() {
         //empty constructor
     }
 
     /**
-     * {@inheritDoc}
+     * Resolves a shorthand expression.
+     *
+     * @param shorthandExpression the shorthand expression
+     *
+     * @return a list of CSS declaration
      */
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
         shorthandExpression = shorthandExpression.trim();
         if (CssTypesValidationUtils.isInitialOrInheritOrUnset(shorthandExpression)) {
             return Arrays.asList(
-                    new CssDeclaration(CommonCssConstants.COLUMN_COUNT, shorthandExpression),
-                    new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, shorthandExpression)
+                    new CssDeclaration(CommonCssConstants.COLUMN_RULE_COLOR, shorthandExpression),
+                    new CssDeclaration(CommonCssConstants.COLUMN_RULE_WIDTH, shorthandExpression),
+                    new CssDeclaration(CommonCssConstants.COLUMN_RULE_STYLE, shorthandExpression)
             );
         }
         if (CssTypesValidationUtils.containsInitialOrInheritOrUnset(shorthandExpression)) {
             return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                    CommonCssConstants.COLUMNS, shorthandExpression);
+                    CommonCssConstants.COLUMN_RULE, shorthandExpression);
         }
         if (shorthandExpression.isEmpty()) {
             return handleExpressionError(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
-                    CommonCssConstants.COLUMNS, shorthandExpression);
+                    CommonCssConstants.COLUMN_RULE, shorthandExpression);
         }
 
-        final List<String> properties = CssUtils.extractShorthandProperties(shorthandExpression).get(0);
-        if (properties.size() > 2) {
+        final int maxProperties = 3;
+        List<String> properties = CssUtils.extractShorthandProperties(shorthandExpression).get(0);
+        if (properties.size() > maxProperties) {
             return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                    CommonCssConstants.COLUMNS, shorthandExpression);
+                    CommonCssConstants.COLUMN_RULE, shorthandExpression);
         }
-        List<CssDeclaration> result = new ArrayList<>(2);
+        List<CssDeclaration> result = new ArrayList<>(maxProperties);
         for (String property : properties) {
-            CssDeclaration declaration = processProperty(property);
+            String cleanProperty = property.trim();
+            CssDeclaration declaration = processProperty(cleanProperty);
             if (declaration != null) {
                 result.add(declaration);
             }
-            if (declaration == null && !CommonCssConstants.AUTO.equals(property)) {
+            if (declaration == null) {
                 return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                        CommonCssConstants.COLUMNS, shorthandExpression);
+                        CommonCssConstants.COLUMN_RULE_STYLE, shorthandExpression);
             }
         }
-        if (result.size() == 2 && result.get(0).getProperty().equals(result.get(1).getProperty())) {
-            return handleExpressionError(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                    CommonCssConstants.COLUMNS, shorthandExpression);
-        }
+
         return result;
     }
 
-    private static CssDeclaration processProperty(String value) {
-        if (CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isRelativeValue(value)) {
-            return new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, value);
+    private CssDeclaration processProperty(String value) {
+        if (CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isRelativeValue(value)
+                || borderWithValidators.isValid(value)) {
+            return new CssDeclaration(CommonCssConstants.COLUMN_RULE_WIDTH, value);
         }
-        if (CssTypesValidationUtils.isNumber(value)) {
-            return new CssDeclaration(CommonCssConstants.COLUMN_COUNT, value);
+        if (CssTypesValidationUtils.isColorProperty(value)) {
+            return new CssDeclaration(CommonCssConstants.COLUMN_RULE_COLOR, value);
+        }
+        if (borderStyleValidators.isValid(value)) {
+            return new CssDeclaration(CommonCssConstants.COLUMN_RULE_STYLE, value);
         }
         return null;
     }

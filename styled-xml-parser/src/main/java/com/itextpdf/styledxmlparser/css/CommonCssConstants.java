@@ -324,6 +324,12 @@ public class CommonCssConstants {
     public static final String COLUMNS = "columns";
 
     /**
+     * The Constant COLUMNS
+     */
+    public static final String COLUMN_RULE = "column-rule";
+
+
+    /**
      * The Constant DARKEN.
      */
     public static final String DARKEN = "darken";
