@@ -1793,6 +1793,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Returns margins of the renderer
+     * [0] - top; [1] - right; [2] - bottom; [3] - left
      *
      * @return a {@code float[]} margins of the renderer
      */
@@ -1802,6 +1803,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Returns paddings of the renderer
+     * [0] - top; [1] - right; [2] - bottom; [3] - left
      *
      * @return a {@code float[]} paddings of the renderer
      */
@@ -1815,7 +1817,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param rect     a rectangle paddings will be applied on.
      * @param paddings the paddings to be applied on the given rectangle
      * @param reverse  indicates whether paddings will be applied
-     *                 inside (in case of false) or outside (in case of false) the rectangle.
+     *                 inside (in case of false) or outside (in case of true) the rectangle.
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {

@@ -24,6 +24,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.cmap.CMapCidUni;
+import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.IntHashtable;
 
@@ -115,15 +116,15 @@ public class CidFont extends FontProgram {
         String uniMap = getCompatibleUniMap(registry);
         if (uniMap != null) {
             IntHashtable metrics = (IntHashtable) fontDesc.get("W");
-            CMapCidUni cid2Uni = FontCache.getCid2UniCmap(uniMap);
+            CMapUniCid uni2cid = FontCache.getUni2CidCmap(uniMap);
             avgWidth = 0;
-            for (int cid : cid2Uni.getCids()) {
-                int uni = cid2Uni.lookup(cid);
+            for (int cp: uni2cid.getCodePoints()) {
+                int cid = uni2cid.lookup(cp);
                 int width = metrics.containsKey(cid) ? metrics.get(cid) : DEFAULT_WIDTH;
-                Glyph glyph = new Glyph(cid, width, uni);
+                Glyph glyph = new Glyph(cid, width, cp);
                 avgWidth += glyph.getWidth();
                 codeToGlyph.put(cid, glyph);
-                unicodeToGlyph.put(uni, glyph);
+                unicodeToGlyph.put(cp, glyph);
             }
             fixSpaceIssue();
             if (codeToGlyph.size() != 0) {

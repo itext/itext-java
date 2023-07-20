@@ -111,6 +111,7 @@ import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
+import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
@@ -151,6 +152,25 @@ import java.util.Set;
  * selected depending on a bouncy-castle dependency specified by the user.
  */
 public interface IBouncyCastleFactory {
+
+    /**
+     * Get signing algorithm oid from its name.
+     * 
+     * @param name name of the algorithm
+     * 
+     * @return algorithm oid
+     */
+    String getAlgorithmOid(String name);
+
+    /**
+     * Get signing algorithm name from its oid.
+     * 
+     * @param oid oid of the algorithm
+     * 
+     * @return algorithm name
+     */
+    String getAlgorithmName(String oid);
+    
     /**
      * Cast ASN1 encodable wrapper to the ASN1 object identifier wrapper.
      *
@@ -648,6 +668,15 @@ public interface IBouncyCastleFactory {
      * @return created Jce Key trans enveloped recipient wrapper
      */
     IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey);
+
+    /**
+     * Create Jce Key agree enveloped recipient wrapper from {@link PrivateKey}.
+     *
+     * @param privateKey {@link PrivateKey} to create Jce Key agree enveloped recipient wrapper from
+     *
+     * @return created Jce Key agree enveloped recipient wrapper
+     */
+    IJceKeyAgreeEnvelopedRecipient createJceKeyAgreeEnvelopedRecipient(PrivateKey privateKey);
 
     /**
      * Create Jca Content verifier provider builder wrapper without parameters.

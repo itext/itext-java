@@ -28,13 +28,19 @@ import java.util.List;
 
 /**
  * Interface for shorthand resolvers.
+ * <p>
+ * CSS shorthand is a group of CSS properties that allow values of multiple properties to be set simultaneously. These
+ * values are separated by spaces. For example, the border property is shorthand for the border-width, border-style, and
+ * border-color properties. So in CSS, border: 5px solid red; would specify a border that’s five px wide, solid, and
+ * red.
  */
 public interface IShorthandResolver {
-    
+
     /**
      * Resolves a shorthand expression.
      *
      * @param shorthandExpression the shorthand expression
+     *
      * @return a list of CSS declaration
      */
     List<CssDeclaration> resolveShorthand(String shorthandExpression);

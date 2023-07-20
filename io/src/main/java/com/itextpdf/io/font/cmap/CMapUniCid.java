@@ -62,4 +62,14 @@ public class CMapUniCid extends AbstractCMap {
         }
         return uni;
     }
+
+    /**
+     * Returns all mapped code points.
+     *
+     * @return an array containing all mapped code points
+     */
+    public int[] getCodePoints() {
+        return map.getKeys();
+
+    }
 }

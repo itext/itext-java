@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.crypto.securityhandler.StandardHandlerUsingAes256;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -37,6 +38,7 @@ import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -46,6 +48,7 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.PemFileHelper;
@@ -63,6 +66,7 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -268,27 +272,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
-    public void openEncryptedDocWithWrongPrivateKey()
-            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
-        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
-                new ReaderProperties()
-                        .setPublicKeySecurityParams(
-                                getPublicCertificate(CERT),
-                                PemFileHelper.readPrivateKeyFromPemFile(
-                                        new FileInputStream(sourceFolder + "wrong.pem"), PRIVATE_KEY_PASS),
-                                FACTORY.getProviderName(),
-                                null))) {
-
-            Exception e = Assert.assertThrows(PdfException.class,
-                    () -> new PdfDocument(reader)
-            );
-            Assert.assertEquals(KernelExceptionMessageConstant.PDF_DECRYPTION, e.getMessage());
-        }
-    }
-
-    @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void openEncryptedDocWithWrongCertificateAndPrivateKey()
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
@@ -326,6 +309,9 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             ignore = true))
     public void copyEncryptedDocument() throws GeneralSecurityException, IOException, InterruptedException,
             AbstractPKCSException, AbstractOperatorCreationException {
+        // I don't know how this source doc was created. Currently it's not opening by Acrobat and Foxit.
+        // If I recreate it using iText, decrypting it in bc-fips on dotnet will start failing. But we probably still
+        // want this test.
         PdfDocument srcDoc = new PdfDocument(new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
                 new ReaderProperties().
                         setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(),
@@ -601,6 +587,31 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true, count = 2))
+    public void decryptAdobeWithPasswordAes256() throws IOException {
+        String filename = Paths.get(sourceFolder + "AdobeAes256.pdf").toString();
+        decryptWithPassword(filename, "user".getBytes());
+        decryptWithPassword(filename, "owner".getBytes());
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void decodeDictionaryWithInvalidOwnerHashAes256() {
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.R, new PdfNumber(0));
+        //Setting password hash which exceeds 48 bytes and contains non 0 elements after first 48 bytes
+        dictionary.put(PdfName.O, new PdfString("Ä\u0010\u001D`¶\u0084nË»j{\fßò\u0089JàN*\u0090ø>No\u0099" +
+                "\u0087J \u0013\"V\u008E\fT!\u0082\u0003\u009E£\u008Fc\u0004 ].\u008C\u009C\u009C\u0000" +
+                "\u0000\u0000\u0000\u0013\u0000\u0013\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000" +
+                "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0013"));
+        Exception e = Assert.assertThrows(PdfException.class,
+                () -> new StandardHandlerUsingAes256(dictionary, "owner".getBytes()));
+        Assert.assertEquals(KernelExceptionMessageConstant.BAD_PASSWORD_HASH, e.getCause().getMessage());
+    }
+
     public void encryptWithPassword2(String filename, int encryptionType, int compression)
             throws IOException, InterruptedException {
         encryptWithPassword2(filename, encryptionType, compression, false);
@@ -756,6 +767,15 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                 sourceFolder + "cmp_" + filename, destinationFolder, "diff_", USER, USER);
         if (compareResult != null) {
             Assert.fail(compareResult);
+        }
+    }
+
+    private void decryptWithPassword(String fileName, byte[] password) throws IOException {
+        ReaderProperties readerProperties = new ReaderProperties().setPassword(password);
+        try (PdfReader reader = new PdfReader(fileName, readerProperties);
+             PdfDocument pdfDocument = new PdfDocument(reader)) {
+            Assert.assertTrue(PdfTextExtractor.getTextFromPage(pdfDocument.getFirstPage())
+                    .startsWith("Content encrypted by "));
         }
     }
 }

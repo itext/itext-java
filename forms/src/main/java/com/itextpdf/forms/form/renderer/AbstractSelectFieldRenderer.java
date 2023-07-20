@@ -22,11 +22,16 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -36,8 +41,6 @@ import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,12 +57,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     protected AbstractSelectFieldRenderer(AbstractSelectField modelElement) {
         super(modelElement);
         addChild(createFlatRenderer());
-        if (!isFlatten()) {
-            // TODO DEVSIX-1901
-            Logger logger = LoggerFactory.getLogger(AbstractSelectFieldRenderer.class);
-            logger.warn(FormsLogMessageConstants.ACROFORM_NOT_SUPPORTED_FOR_SELECT);
-            setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
-        }
     }
 
     @Override
@@ -68,18 +65,21 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         // If it's inline-block context, relative width is already resolved.
         Float width = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
         if (width != null) {
-            updateWidth(UnitValue.createPointValue((float)width));
+            updateWidth(UnitValue.createPointValue((float) width));
         }
 
         float childrenMaxWidth = getMinMaxWidth().getMaxWidth();
 
         LayoutArea area = layoutContext.getArea().clone();
         area.getBBox().moveDown(INF - area.getBBox().getHeight()).setHeight(INF).setWidth(childrenMaxWidth + EPS);
+        // A workaround for the issue that super.layout clears Property.FORCED_PLACEMENT,
+        // but we need it later in this function
+        final boolean isForcedPlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
         LayoutResult layoutResult = super.layout(new LayoutContext(area, layoutContext.getMarginsCollapseInfo(),
                 layoutContext.getFloatRendererAreas(), layoutContext.isClippedHeight()));
 
         if (layoutResult.getStatus() != LayoutResult.FULL) {
-            if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
+            if (isForcedPlacement) {
                 layoutResult = makeLayoutResultFull(layoutContext.getArea(), layoutResult);
             } else {
                 return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -112,6 +112,17 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         return layoutResult;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void draw(DrawContext drawContext) {
+        if (isFlatten()) {
+            super.draw(drawContext);
+        } else {
+            drawChildren(drawContext);
+        }
+    }
 
     @Override
     public void drawChildren(DrawContext drawContext) {
@@ -129,6 +140,20 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     protected String getLang() {
         return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+    }
+
+    protected void writeAcroFormFieldLangAttribute(PdfDocument pdfDoc) {
+        if (pdfDoc.isTagged()) {
+            TagTreePointer formParentPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            List<String> kidsRoles = formParentPointer.getKidsRoles();
+            int lastFormIndex = kidsRoles.lastIndexOf(StandardRoles.FORM);
+            TagTreePointer formPointer = formParentPointer.moveToKid(lastFormIndex);
+
+            if (getLang() != null) {
+                formPointer.getProperties().setLanguage(getLang());
+            }
+            formParentPointer.moveToParent();
+        }
     }
 
     protected abstract IRenderer createFlatRenderer();
@@ -151,6 +176,43 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      */
     protected String getModelId() {
         return ((IFormField) getModelElement()).getId();
+    }
+
+    /**
+     * Retrieve the options from select field (can be combo box or list box field) and set them
+     * to the form field builder.
+     *
+     * @param builder {@link ChoiceFormFieldBuilder} to set options to.
+     * @param field {@link AbstractSelectField} to retrieve the options from.
+     */
+    protected void setupBuilderValues(ChoiceFormFieldBuilder builder, AbstractSelectField field) {
+        List<SelectFieldItem> options = field.getItems();
+        if (options.isEmpty()) {
+            builder.setOptions(new String[0]);
+            return;
+        }
+
+        final boolean supportExportValueAndDisplayValue = field.hasExportAndDisplayValues();
+        // If one element has export value and display value, then all elements must have export value and display value
+        if (supportExportValueAndDisplayValue) {
+            String[][] exportValuesAndDisplayValues = new String[options.size()][];
+            for (int i = 0; i < options.size(); i++) {
+                SelectFieldItem option = options.get(i);
+                String[] exportValues = new String[2];
+                exportValues[0] = option.getExportValue();
+                exportValues[1] = option.getDisplayValue();
+                exportValuesAndDisplayValues[i] = exportValues;
+            }
+            builder.setOptions(exportValuesAndDisplayValues);
+        } else {
+            // In normal case we just use display values as this will correctly give the one value that we need
+            String[] displayValues = new String[options.size()];
+            for (int i = 0; i < options.size(); i++) {
+                SelectFieldItem option = options.get(i);
+                displayValues[i] = option.getDisplayValue();
+            }
+            builder.setOptions(displayValues);
+        }
     }
 
     protected float getFinalSelectFieldHeight(float availableHeight, float actualHeight, boolean isClippedHeight) {
@@ -179,6 +241,15 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         return selectedOptions;
     }
 
+    static boolean isOptGroupRenderer(IRenderer renderer) {
+        return renderer.hasProperty(FormProperty.FORM_FIELD_LABEL) &&
+                !renderer.hasProperty(FormProperty.FORM_FIELD_SELECTED);
+    }
+
+    static boolean isOptionRenderer(IRenderer child) {
+        return child.hasProperty(FormProperty.FORM_FIELD_SELECTED);
+    }
+
     private LayoutResult makeLayoutResultFull(LayoutArea layoutArea, LayoutResult layoutResult) {
         IRenderer splitRenderer = layoutResult.getSplitRenderer() == null ? this : layoutResult.getSplitRenderer();
         if (occupiedArea == null) {
@@ -187,14 +258,5 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         }
         layoutResult = new LayoutResult(LayoutResult.FULL, occupiedArea, splitRenderer, null);
         return layoutResult;
-    }
-
-    static boolean isOptGroupRenderer(IRenderer renderer) {
-        return renderer.hasProperty(FormProperty.FORM_FIELD_LABEL) &&
-                !renderer.hasProperty(FormProperty.FORM_FIELD_SELECTED);
-    }
-
-    static boolean isOptionRenderer(IRenderer child) {
-        return child.hasProperty(FormProperty.FORM_FIELD_SELECTED);
     }
 }

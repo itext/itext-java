@@ -23,6 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.Color;
@@ -820,7 +821,7 @@ public class PdfSignatureAppearance {
             topLayer.makeIndirect(document);
 
             if (reuseAppearance) {
-                PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
+                PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
                 PdfFormField field = acroForm.getField(fieldName);
                 PdfStream stream = field.getWidgets().get(0).getAppearanceDictionary().getAsStream(PdfName.N);
                 PdfFormXObject xobj = new PdfFormXObject(stream);

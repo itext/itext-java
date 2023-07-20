@@ -24,10 +24,10 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
+import com.itextpdf.io.util.PdfNameUtil;
 import com.itextpdf.kernel.utils.ICopyFilter;
 
 import java.nio.charset.StandardCharsets;
-
 import java.util.Map;
 
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
@@ -1001,22 +1001,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     }
 
     protected void generateValue() {
-        StringBuilder buf = new StringBuilder();
-        try {
-            for (int k = 0; k < content.length; ++k) {
-                char c = (char) content[k];
-                if (c == '#') {
-                    byte c1 = content[k + 1];
-                    byte c2 = content[k + 2];
-                    c = (char) ((ByteBuffer.getHex(c1) << 4) + ByteBuffer.getHex(c2));
-                    k += 2;
-                }
-                buf.append(c);
-            }
-        } catch (IndexOutOfBoundsException e) {
-            // empty on purpose
-        }
-        value = buf.toString();
+        value = PdfNameUtil.decodeName(content);
     }
 
     @Override

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf>
+    <annots>
+        <text page="1" color="#FFFF00" date="D:20190530143352+03'00'" flags="hidden,print,nozoom,norotate"
+              name="64f8ca28-6105-466d-ba80-6c3b9383950d" rect="200,300,300,400" title="Text"
+              creationdate="D:20190530143346+03'00'" opacity="1.0" subject="Sticky Note"
+              icon="Paragraph" state="Marked" statemodel="Marked" inreplyto="fbaaf2f6-7b43-4b5e-9c46-313b93b7fbb5"
+              replyType="group">
+        </text>
+        <highlight page="1" color="#FFFF00" date="D:20190530144404+03'00'" flags="print"
+                   name="fbaaf2f6-7b43-4b5e-9c46-313b93b7fbb5" rect="300,300,400,400" title="Highlight"
+                   creationdate="D:20190530144353+03'00'" opacity="0.75" subject="Comment on Text"
+                   coords="310,360,390,360,310,340,390,340">
+        </highlight>
+        <underline page="1" color="#6AD926" date="D:20190530153101+03'00'" flags="print"
+                   name="391ec4fe-86b6-4a46-8f56-c60d141fd589" rect="400,300,500,400" title="Underline"
+                   creationdate="D:20190530153101+03'00'" opacity="0.5" subject="Underline"
+                   coords="410,350,490,350,410,335,490,335" intent="HighlightNote">
+        </underline>
+        <strikeout page="1" color="#E52237" date="D:20190530171350+03'00'" flags="print"
+                   name="10899e9a-360e-4a15-8feb-c4aca89018b1" rect="200,400,300,500" title="Strikeout"
+                   creationdate="D:20190530171350+03'00'" opacity="0.35" subject="Cross-Out"
+                   coords="210,460,290,460,210,440,290,440">
+        </strikeout>
+        <squiggly page="1" color="#0000FF" date="D:20190530185355+03'00'" flags="print"
+                  name="B63F8E19CFB06D886EF917CAAC953572" rect="300,400,400,500" title="Squiggly"
+                  creationdate="D:20190530185355+03'00'" opacity="1.0" subject="Squiggly Underline Text"
+                  coords="310,460,390,460,310,440,390,440">
+        </squiggly>
+        <circle page="1" color="#25D2D1" date="D:20190531130641+03'00'" flags="print"
+                name="39a3d2cd-f335-4a76-a818-20b053b1c70c" rect="400,400,500,500" title="Circle"
+                creationdate="D:20190531130641+03'00'" opacity="0.3" subject="Oval" width="3" dashes="3,2"
+                style="cloudy" intensity="2.000000" interior-color="#6AD926"
+                fringe="0.500000,0.500000,0.500000,0.500000">
+        </circle>
+        <square page="1" color="#25D2D1" date="D:20190531130641+03'00'" flags="print"
+                name="39a3d2cd-f335-4a76-a818-90b053b1c70c" rect="200,500,300,600" title="Square"
+                creationdate="D:20190531130641+03'00'" opacity="0.5" subject="Rectangle" width="10"
+                dashes="4,3,2,3" style="dash" intensity="0" interior-color="#40AA55"
+                fringe="2.000000,2.000000,2.000000,2.000000">
+        </square>
+        <polygon page="1" color="#25D2D1" date="D:20230517093440-07'00'" flags="print"
+                 name="79bf79bc-817a-3ec8-f7e3-335ac52cef7b" rect="300,500,400,600" title="Polygon"
+                 subject="Polygon" opacity="0.7" creationdate="D:20230517092205-07'00'" width="5" dashes="4,3,2,3"
+                 style="underline" intensity="0" interior-color="#40AA55" intent="polygon-dimension">
+            <vertices>
+                305,550;315,570;325,560;350,590;375,560;385,570;395,550;370,510;350,530;330,510
+            </vertices>
+        </polygon>
+        <polyline page="1" color="#25D2D1" date="D:20230517093440-07'00'" flags="print"
+                  name="79bf79bc-817a-3ec8-f7e3-335ac52cef8b" rect="400,500,500,600" title="Polyline"
+                  subject="Polygonal Line" opacity="0.9" creationdate="D:20230517092205-07'00'" width="3" dashes="4,3"
+                  style="bevelled" intensity="0" interior-color="#40AA55" intent="polyline-dimension"
+                  head="Square" tail="Circle">
+            <contents>Comment Here</contents>
+            <vertices>
+                400,550;420;590;440,520;460,560;480,530;500,570
+            </vertices>
+        </polyline>
+        <stamp page="1" color="#25D2D1" date="D:20190531165339+03'00'" flags="print"
+               name="ef7b5270-9b1c-42ce-bc32-2d7077d291cb" rect="200,600,300,700" title="Stamp" subject="Approved"
+               opacity="0.2" creationdate="D:20190531165339+03'00'" icon="SBApproved" rotation="45">
+            <appearance>&lt;&lt;/BBox [200 600 300 700] /Filter /FlateDecode /Length 88 /Resources &lt;&lt;&gt;&gt;
+                /Subtype /Form /Type /XObject &gt;&gt;
+            </appearance>
+        </stamp>
+        <freetext page="1" color="#25D2D1" date="D:20230517093440-07'00'" flags="print"
+                  name="79bf79bc-817a-3ec8-f7e3-335ac52cef6g" rect="300,600,400,700" title="FreeText"
+                  subject="Typewritten Text" opacity="0.2" creationdate="D:20230517092205-07'00'" width="10"
+                  dashes="2,3" style="inset" rotation="90" justification="centered" intent="FreeTextTypewriter">
+            <contents>FreeText</contents>
+        </freetext>
+
+        <!--        TODO DEVSIX-7600 Support all the annotation types mentioned in xfdf spec-->
+        <!--        <line page="1" color="#25D2D1" date="D:20230517093440-07'00'" flags="print"-->
+        <!--                  name="79bf79bc-817a-3ec8-f7e3-335ac52cef8a" rect="400,600,500,700" title="Line" subject="Line"-->
+        <!--              opacity="0.9" creationdate="D:20230517092205-07'00'" width="3" dashes="3,3" style="dash"-->
+        <!--              start="405,605" end="495,695" head="ClosedArrow" tail="OpenArrow" interior-color="#40AA55"-->
+        <!--              leaderLength="5" leaderExtended="10" caption="yes" intent="LineArrow"-->
+        <!--              leader-offset="5" caption-style="Top" caption-offset-h="10" caption-offset-v="25">-->
+        <!--            <contents>Line</contents>-->
+        <!--        </line>-->
+        <!--        caret 200,700,300,800-->
+        <!--        ink 300,700,400,800-->
+        <!--        fileattachment 400,700,500,800-->
+        <!--        sound 100,600,200,700-->
+        <!--        link 100,500,200,600-->
+        <!--        redact 100,400,200,500-->
+        <!--        projection 100,300,200,400-->
+    </annots>
+</xfdf>

@@ -32,11 +32,10 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.properties.OverflowPropertyValue;
-import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +51,8 @@ public class FlexContainerRenderer extends DivRenderer {
     private final Map<Float, Float> hypotheticalCrossSizes = new HashMap<>();
 
     private List<List<FlexItemInfo>> lines;
+
+    private IFlexItemMainDirector flexItemMainDirector = null;
 
     /**
      * Creates a FlexContainerRenderer from its corresponding layout object.
@@ -86,6 +87,11 @@ public class FlexContainerRenderer extends DivRenderer {
         Rectangle layoutContextRectangle = layoutContext.getArea().getBBox();
         setThisAsParent(getChildRenderers());
         lines = FlexUtil.calculateChildrenRectangles(layoutContextRectangle, this);
+        applyWrapReverse();
+        List<IRenderer> renderers = getFlexItemMainDirector().applyDirection(lines);
+        removeAllChildRenderers(getChildRenderers());
+        addAllChildRenderers(renderers);
+
         final List<UnitValue> previousWidths = new ArrayList<>();
         final List<UnitValue> previousHeights = new ArrayList<>();
         final List<UnitValue> previousMinHeights = new ArrayList<>();
@@ -113,6 +119,10 @@ public class FlexContainerRenderer extends DivRenderer {
                 // it is extended to the height predicted by the algo
                 itemInfo.getRenderer().setProperty(Property.MIN_HEIGHT,
                         UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
+
+                // Property.HORIZONTAL_ALIGNMENT mustn't play, in flex container items are aligned
+                // using justify-content and align-items
+                itemInfo.getRenderer().setProperty(Property.HORIZONTAL_ALIGNMENT, null);
             }
         }
 
@@ -166,6 +176,24 @@ public class FlexContainerRenderer extends DivRenderer {
         return minMaxWidth;
     }
 
+    IFlexItemMainDirector getFlexItemMainDirector() {
+        if (flexItemMainDirector == null) {
+            flexItemMainDirector = createMainDirector();
+        }
+
+        return flexItemMainDirector;
+    }
+
+    /**
+     * Check if flex container is wrapped reversely.
+     *
+     * @return {@code true} if flex-wrap property is set to wrap-reverse, {@code false} otherwise.
+     */
+    boolean isWrapReverse() {
+        return FlexWrapPropertyValue.WRAP_REVERSE ==
+                this.<FlexWrapPropertyValue>getProperty(Property.FLEX_WRAP, null);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -184,16 +212,33 @@ public class FlexContainerRenderer extends DivRenderer {
             metChildRenderer = metChildRenderer || isSplitLine;
 
             // If the renderer to split is in the current line
-            if (isSplitLine && !forcedPlacement && layoutStatus == LayoutResult.PARTIAL) {
-                fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
-                        childResult);
+            if (isSplitLine && !forcedPlacement && layoutStatus == LayoutResult.PARTIAL &&
+                    !FlexUtil.isColumnDirection(this)) {
+                // It has sense to call it also for LayoutResult.NOTHING. And then try to layout remaining renderers
+                // in line inside fillSplitOverflowRenderersForPartialResult to see if some of them can be left or
+                // partially left on the first page (in split renderer). But it's not that easy.
+                // So currently, if the 1st not fully layouted renderer is layouted with LayoutResult.NOTHING,
+                // the whole line is moved to the next page (overflow renderer).
+                    fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
+                            childResult);
+                getFlexItemMainDirector().applyDirectionForLine(overflowRenderer.getChildRenderers());
             } else {
+                List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
                 for (final FlexItemInfo itemInfo : line) {
                     if (metChildRenderer && !forcedPlacement) {
-                        overflowRenderer.addChildRenderer(itemInfo.getRenderer());
+                        overflowRendererChildren.add(itemInfo.getRenderer());
                     } else {
                         splitRenderer.addChildRenderer(itemInfo.getRenderer());
                     }
+                }
+                getFlexItemMainDirector().applyDirectionForLine(overflowRendererChildren);
+
+                // If wrapped reversely we should add a line into beginning to correctly recalculate
+                // and inverse lines while layouting overflowRenderer.
+                if (isWrapReverse()) {
+                    overflowRenderer.addAllChildRenderers(0, overflowRendererChildren);
+                } else {
+                    overflowRenderer.addAllChildRenderers(overflowRendererChildren);
                 }
             }
         }
@@ -235,7 +280,6 @@ public class FlexContainerRenderer extends DivRenderer {
             overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
         }
 
-        // TODO DEVSIX-5086 When flex-wrap will be fully supported we'll need to update height on split
         if (keepTogether) {
             splitRenderer = null;
             overflowRenderer.setChildRenderers(getChildRenderers());
@@ -296,10 +340,58 @@ public class FlexContainerRenderer extends DivRenderer {
 
     @Override
     void decreaseLayoutBoxAfterChildPlacement(Rectangle layoutBox, LayoutResult result, IRenderer childRenderer) {
-        // TODO DEVSIX-5086 When flex-wrap will be fully supported
-        //  we'll need to decrease layout box with respect to the lines
+        if (FlexUtil.isColumnDirection(this)) {
+            decreaseLayoutBoxAfterChildPlacementColumnLayout(layoutBox, childRenderer);
+        } else {
+            decreaseLayoutBoxAfterChildPlacementRowLayout(layoutBox,result, childRenderer);
+        }
+    }
+
+    void decreaseLayoutBoxAfterChildPlacementRowLayout(Rectangle layoutBox, LayoutResult result,
+                                                       IRenderer childRenderer) {
         layoutBox.decreaseWidth(result.getOccupiedArea().getBBox().getRight() - layoutBox.getLeft());
         layoutBox.setX(result.getOccupiedArea().getBBox().getRight());
+
+        List<FlexItemInfo> line = findLine(childRenderer);
+        final boolean isLastInLine = childRenderer.equals(line.get(line.size() - 1).getRenderer());
+        // If it was the last renderer in line we have to go to the next line (row)
+        if (isLastInLine) {
+            float minBottom = layoutBox.getTop();
+            float minLeft = layoutBox.getLeft();
+            float commonWidth = 0;
+            for (FlexItemInfo item : line) {
+                minLeft = Math.min(minLeft,
+                        item.getRenderer().getOccupiedArea().getBBox().getLeft() - item.getRectangle().getLeft());
+                minBottom = Math.min(minBottom, item.getRenderer().getOccupiedArea().getBBox().getBottom());
+                commonWidth += item.getRectangle().getLeft() + item.getRenderer().getOccupiedArea().getBBox().getWidth();
+            }
+
+            layoutBox.setX(minLeft);
+            layoutBox.increaseWidth(commonWidth);
+            layoutBox.decreaseHeight(layoutBox.getTop() - minBottom);
+        }
+    }
+
+    void decreaseLayoutBoxAfterChildPlacementColumnLayout(Rectangle layoutBox, IRenderer childRenderer) {
+        FlexItemInfo childFlexItemInfo = findFlexItemInfo((AbstractRenderer) childRenderer);
+        layoutBox.decreaseHeight(childFlexItemInfo.getRenderer().getOccupiedArea().getBBox().getHeight() +
+                childFlexItemInfo.getRectangle().getY());
+
+        List<FlexItemInfo> line = findLine(childRenderer);
+        final boolean isLastInLine = childRenderer.equals(line.get(line.size() - 1).getRenderer());
+        // If it was the last renderer in line we have to go to the next line (row)
+        if (isLastInLine) {
+            float maxWidth = 0;
+            float commonHeight = 0;
+            for (FlexItemInfo item : line) {
+                maxWidth = Math.max(maxWidth, item.getRenderer().getOccupiedArea().getBBox().getWidth()
+                        + item.getRectangle().getX());
+                commonHeight += item.getRectangle().getY() + item.getRenderer().getOccupiedArea().getBBox().getHeight();
+            }
+            layoutBox.increaseHeight(commonHeight);
+            layoutBox.decreaseWidth(maxWidth);
+            layoutBox.moveRight(maxWidth);
+        }
     }
 
     @Override
@@ -332,6 +424,26 @@ public class FlexContainerRenderer extends DivRenderer {
         return hypotheticalCrossSizes.get(mainSize.floatValue());
     }
 
+    /**
+     * Apply wrap-reverse property.
+     */
+    private void applyWrapReverse() {
+        if (!isWrapReverse()) {
+            return;
+        }
+
+        Collections.reverse(lines);
+        List<IRenderer> reorderedRendererList = new ArrayList<>();
+        for (List<FlexItemInfo> line : lines) {
+            for (FlexItemInfo itemInfo : line) {
+                reorderedRendererList.add(itemInfo.getRenderer());
+            }
+        }
+
+        removeAllChildRenderers(getChildRenderers());
+        addAllChildRenderers(reorderedRendererList);
+    }
+
     private FlexItemInfo findFlexItemInfo(AbstractRenderer renderer) {
         for (List<FlexItemInfo> line : lines) {
             for (FlexItemInfo itemInfo : line) {
@@ -342,7 +454,18 @@ public class FlexContainerRenderer extends DivRenderer {
         }
         return null;
     }
-    
+
+    private List<FlexItemInfo> findLine(IRenderer renderer) {
+        for (List<FlexItemInfo> line : lines) {
+            for (FlexItemInfo itemInfo : line) {
+                if (itemInfo.getRenderer().equals(renderer)) {
+                    return line;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     void fixOccupiedAreaIfOverflowedX(OverflowPropertyValue overflowX, Rectangle layoutBox) {
         // TODO DEVSIX-5087 Support overflow visible/hidden property correctly
@@ -361,16 +484,17 @@ public class FlexContainerRenderer extends DivRenderer {
         super.addChild(renderer);
     }
 
-    private void fillSplitOverflowRenderersForPartialResult(AbstractRenderer splitRenderer,
-            AbstractRenderer overflowRenderer, List<FlexItemInfo> line, IRenderer childRenderer,
-            LayoutResult childResult) {
-        // If we split, we remove (override) Property.ALIGN_ITEMS for the overflow renderer.
-        // because we have to layout the remaining part at the top of the layout context.
-        // TODO DEVSIX-5086 When flex-wrap will be fully supported we'll need to reconsider this.
-        // The question is what should be set/calculated for the next line
-        overflowRenderer.setProperty(Property.ALIGN_ITEMS, null);
+    private static void addSimulateDiv(AbstractRenderer overflowRenderer, float width) {
+        final IRenderer fakeOverflowRenderer = new DivRenderer(
+                new Div().setMinWidth(width).setMaxWidth(width));
+        overflowRenderer.addChildRenderer(fakeOverflowRenderer);
+    }
 
+    private void fillSplitOverflowRenderersForPartialResult(AbstractRenderer splitRenderer,
+                    AbstractRenderer overflowRenderer, List<FlexItemInfo> line, IRenderer childRenderer,
+                    LayoutResult childResult) {
         float occupiedSpace = 0;
+        float maxHeightInLine = 0;
         boolean metChildRendererInLine = false;
         for (final FlexItemInfo itemInfo : line) {
             // Split the line
@@ -381,19 +505,25 @@ public class FlexContainerRenderer extends DivRenderer {
                 }
 
                 if (childResult.getOverflowRenderer() != null) {
+                    // Get rid of cross alignment for item with partial result
+                    childResult.getOverflowRenderer().setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
                     overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
                 }
+
+                // Count the height allowed for the items after the one which was partially layouted
+                maxHeightInLine = Math.max(maxHeightInLine,
+                        itemInfo.getRectangle().getY() + itemInfo.getRenderer().getOccupiedAreaBBox().getHeight());
             } else if (metChildRendererInLine) {
                 // Process all following renderers in the current line
                 // We have to layout them to understand what goes where
-                final Rectangle neighbourBbox = getOccupiedAreaBBox().clone();
-                // Move bbox by occupied space
-                neighbourBbox.setX(neighbourBbox.getX() + occupiedSpace);
-                neighbourBbox.setWidth(itemInfo.getRectangle().getWidth());
-
-                // Y of the renderer has been already calculated, move bbox accordingly
-                neighbourBbox.setY(neighbourBbox.getY() - itemInfo.getRectangle().getY());
-
+                // x - space occupied by all preceding items
+                // y - y of current occupied area
+                // width - item width
+                // height - allowed height for the item
+                final Rectangle neighbourBbox = new Rectangle(getOccupiedAreaBBox().getX() + occupiedSpace,
+                        getOccupiedAreaBBox().getY(),
+                        itemInfo.getRectangle().getWidth(),
+                        maxHeightInLine - itemInfo.getRectangle().getY());
                 final LayoutResult neighbourLayoutResult = itemInfo.getRenderer().layout(new LayoutContext(
                         new LayoutArea(childResult.getOccupiedArea().getPageNumber(), neighbourBbox)));
                 // Handle result
@@ -407,6 +537,11 @@ public class FlexContainerRenderer extends DivRenderer {
                 }
 
                 if (neighbourLayoutResult.getOverflowRenderer() != null) {
+                    if (neighbourLayoutResult.getStatus() == LayoutResult.PARTIAL) {
+                        // Get rid of cross alignment for item with partial result
+                        neighbourLayoutResult.getOverflowRenderer()
+                                .setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
+                    }
                     overflowRenderer.addChildRenderer(neighbourLayoutResult.getOverflowRenderer());
                 } else {
                     // Here we might need to still occupy the space on overflow renderer
@@ -419,6 +554,10 @@ public class FlexContainerRenderer extends DivRenderer {
 
                 // But we also need to occupy the space on overflow renderer
                 addSimulateDiv(overflowRenderer, itemInfo.getRectangle().getWidth());
+
+                // Count the height allowed for the items after the one which was partially layouted
+                maxHeightInLine = Math.max(maxHeightInLine,
+                        itemInfo.getRectangle().getY() + itemInfo.getRenderer().getOccupiedAreaBBox().getHeight());
             }
 
             // X is nonzero only for the 1st renderer in line serving for alignment adjustments
@@ -428,9 +567,26 @@ public class FlexContainerRenderer extends DivRenderer {
 
     private void findMinMaxWidthIfCorrespondingPropertiesAreNotSet(MinMaxWidth minMaxWidth,
                                                                    AbstractWidthHandler minMaxWidthHandler) {
-        // TODO DEVSIX-5086 When flex-wrap will be fully supported we'll find min/max width with respect to the lines
-        setThisAsParent(getChildRenderers());
-        for (final IRenderer childRenderer : getChildRenderers()) {
+        float initialMinWidth = minMaxWidth.getChildrenMinWidth();
+        float initialMaxWidth = minMaxWidth.getChildrenMaxWidth();
+        if (lines == null || lines.size() == 1) {
+            findMinMaxWidth(initialMinWidth, initialMaxWidth, minMaxWidthHandler, getChildRenderers());
+        } else {
+            for (List<FlexItemInfo> line : lines) {
+                List<IRenderer> childRenderers = new ArrayList<>();
+                for (FlexItemInfo itemInfo : line) {
+                    childRenderers.add(itemInfo.getRenderer());
+                }
+                findMinMaxWidth(initialMinWidth, initialMaxWidth, minMaxWidthHandler, childRenderers);
+            }
+        }
+    }
+
+    private void findMinMaxWidth(float initialMinWidth, float initialMaxWidth, AbstractWidthHandler minMaxWidthHandler,
+                                 List<IRenderer> childRenderers) {
+        float maxWidth = initialMaxWidth;
+        float minWidth = initialMinWidth;
+        for (final IRenderer childRenderer : childRenderers) {
             MinMaxWidth childMinMaxWidth;
             childRenderer.setParent(this);
             if (childRenderer instanceof AbstractRenderer) {
@@ -438,14 +594,44 @@ public class FlexContainerRenderer extends DivRenderer {
             } else {
                 childMinMaxWidth = MinMaxWidthUtils.countDefaultMinMaxWidth(childRenderer);
             }
-            minMaxWidthHandler.updateMaxChildWidth(childMinMaxWidth.getMaxWidth() + minMaxWidth.getMaxWidth());
-            minMaxWidthHandler.updateMinChildWidth(childMinMaxWidth.getMinWidth() + minMaxWidth.getMinWidth());
+            if (FlexUtil.isColumnDirection(this)) {
+                maxWidth = Math.max(maxWidth, childMinMaxWidth.getMaxWidth());
+                minWidth = Math.max(minWidth, childMinMaxWidth.getMinWidth());
+            } else {
+                maxWidth += childMinMaxWidth.getMaxWidth();
+                minWidth += childMinMaxWidth.getMinWidth();
+            }
         }
+        minMaxWidthHandler.updateMaxChildWidth(maxWidth);
+        minMaxWidthHandler.updateMinChildWidth(minWidth);
     }
 
-    private static void addSimulateDiv(AbstractRenderer overflowRenderer, float width) {
-        final IRenderer fakeOverflowRenderer = new DivRenderer(
-                new Div().setMinWidth(width).setMaxWidth(width));
-        overflowRenderer.addChildRenderer(fakeOverflowRenderer);
+    /**
+     * Check if flex container direction is row reverse.
+     *
+     * @return {@code true} if flex-direction property is set to row-reverse, {@code false} otherwise.
+     */
+    private boolean isRowReverse() {
+        return FlexDirectionPropertyValue.ROW_REVERSE ==
+                this.<FlexDirectionPropertyValue>getProperty(Property.FLEX_DIRECTION, null);
+    }
+
+    private boolean isColumnReverse() {
+        return FlexDirectionPropertyValue.COLUMN_REVERSE ==
+                this.<FlexDirectionPropertyValue>getProperty(Property.FLEX_DIRECTION, null);
+    }
+
+    private IFlexItemMainDirector createMainDirector() {
+        if (FlexUtil.isColumnDirection(this)) {
+            return isColumnReverse()
+                    ? (IFlexItemMainDirector) new BottomToTopFlexItemMainDirector() :
+                    new TopToBottomFlexItemMainDirector();
+        } else {
+            final boolean isRtlDirection = BaseDirection.RIGHT_TO_LEFT ==
+                    this.<BaseDirection>getProperty(Property.BASE_DIRECTION, null);
+            flexItemMainDirector = isRowReverse() ^ isRtlDirection
+                    ? (IFlexItemMainDirector) new RtlFlexItemMainDirector() : new LtrFlexItemMainDirector();
+            return flexItemMainDirector;
+        }
     }
 }

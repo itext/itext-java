@@ -22,18 +22,19 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.pdf.IPdfPageExtraCopier;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.IPdfPageFormCopier;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
@@ -55,7 +56,7 @@ import java.util.Map;
  * it is still worth to know that PdfPageFormCopier uses some caching logic which can potentially improve performance
  * in case of the reusing of the same instance.
  */
-public class PdfPageFormCopier implements IPdfPageExtraCopier {
+public class PdfPageFormCopier implements IPdfPageFormCopier {
 
     private PdfAcroForm formFrom;
     private PdfAcroForm formTo;
@@ -70,7 +71,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
     public void copy(PdfPage fromPage, PdfPage toPage) {
         if (documentFrom != fromPage.getDocument()) {
             documentFrom = fromPage.getDocument();
-            formFrom = PdfAcroForm.getAcroForm(documentFrom, false);
+            formFrom = PdfFormCreator.getAcroForm(documentFrom, false);
         }
         if (documentTo != toPage.getDocument()) {
             documentTo = toPage.getDocument();
@@ -78,7 +79,7 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
         // We should always regenerate the acroform if we expect the same result when the old or new
         // PdfPageFormCopier instance is used because getAcroForm changes the fields structure,
         // e.g. removes wrong field keys from the pure widget annotations dictionaries.
-        formTo = PdfAcroForm.getAcroForm(documentTo, true);
+        formTo = PdfFormCreator.getAcroForm(documentTo, true);
 
         if (formFrom == null) {
             return;
@@ -107,24 +108,24 @@ public class PdfPageFormCopier implements IPdfPageExtraCopier {
                 }
                 copyField(fieldsFrom, fieldsTo, annot);
             }
-            for (PdfObject fieldObject : collectedFieldObjects) {
-                PdfFormField field = PdfFormField.makeFormField(fieldObject, documentTo);
-                String fieldName = field.getFieldName().toUnicodeString();
-                if (field.equals(fieldsTo.get(fieldName))) {
-                    // Here the 'field' might wrap the same pdfObject as fieldsTo.get(fieldName).
-                    // But fieldsTo.get(fieldName) might have less childFields attached
-                    // (and the same amount of Kids in pdf object it wraps, see createParentFieldCopy
-                    // where we work with the Kids array directly). Our merge logic doesn't work
-                    // with such not synchronised fields. So that we replace it with newly created field
-                    // which contains all childFields.
-                    formTo.replaceField(fieldName, field);
-                } else {
-                    formTo.addField(field, toPage, false);
-                }
+            // Add collected field objects to the acroform PDF object.
+            PdfArray fieldsArray = formTo.getFields();
+            fieldsArray.addAll(collectedFieldObjects);
+            fieldsArray.setModified();
+            if (!documentFrom.isTagged() || !documentTo.isTagged()) {
+                // It makes sense to create the Acroform only after copying the tag structure,
+                // so fields with the same names will be merged ang tag structure will be correct,
+                // but when the document is not tagged we can re-create Acroform with added fields right away.
+                PdfFormCreator.getAcroForm(documentTo, true);
             }
         } finally {
             collectedFieldObjects.clear();
         }
+    }
+
+    @Override
+    public void recreateAcroformToProcessCopiedFields(PdfDocument documentTo) {
+        PdfFormCreator.getAcroForm(documentTo, true);
     }
 
     private AbstractPdfFormField makeFormField(PdfObject fieldDict) {

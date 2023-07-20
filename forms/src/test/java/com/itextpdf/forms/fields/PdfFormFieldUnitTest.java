@@ -46,7 +46,7 @@ public class PdfFormFieldUnitTest extends ExtendedITextTest {
     @Test
     public void cannotGetRectangleIfKidsIsNullTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        PdfFormField pdfFormField = new PdfFormField(pdfDocument);
+        PdfFormField pdfFormField = PdfFormCreator.createFormField(pdfDocument);
         Assert.assertNull(pdfFormField.getFirstFormAnnotation());
     }
 

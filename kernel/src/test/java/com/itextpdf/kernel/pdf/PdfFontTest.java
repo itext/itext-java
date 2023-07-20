@@ -2008,7 +2008,6 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-3348
     public void mSungLightFontRanges() throws IOException, InterruptedException {
         String filename = destinationFolder + "mSungLightFontRanges.pdf";
         String cmpFilename = sourceFolder + "cmp_mSungLightFontRanges.pdf";

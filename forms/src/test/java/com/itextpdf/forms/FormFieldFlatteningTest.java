@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfTextFormField;
@@ -62,7 +63,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"),
                 new PdfWriter(outPdfName));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
 
         Assert.assertEquals(0, form.getFieldsForFlattening().size());
 
@@ -80,7 +81,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         pdfDoc.close();
 
         PdfDocument outPdfDoc = new PdfDocument(new PdfReader(outPdfName));
-        PdfAcroForm outPdfForm = PdfAcroForm.getAcroForm(outPdfDoc, false);
+        PdfAcroForm outPdfForm = PdfFormCreator.getAcroForm(outPdfDoc, false);
 
         Assert.assertEquals(2, outPdfForm.getAllFormFields().size());
 
@@ -110,7 +111,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp_multiLineFormFieldClippingTest_flattened.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         form.getField("Text1").setValue("Tall letters: T I J L R E F");
         form.flattenFields();
         doc.close();
@@ -163,7 +164,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + srcFile);
         PdfWriter writer = new PdfWriter(destinationFolder + outFile);
         PdfDocument document = new PdfDocument(reader, writer);
-        PdfAcroForm.getAcroForm(document, false).flattenFields();
+        PdfFormCreator.getAcroForm(document, false).flattenFields();
 
         document.close();
 
@@ -196,7 +197,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         for (PdfFormField field : form.getAllFormFields().values()) {
             if (field instanceof PdfTextFormField) {
                 String newValue;
@@ -250,7 +251,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         pdfInnerDoc = new PdfDocument(reader);
         pdfInnerDoc.copyPagesTo(1, pdfInnerDoc.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
         pdfInnerDoc.close();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         boolean isReadOnly = true;
         for (PdfFormField field : form.getAllFormFields().values()) {
             isReadOnly = (isReadOnly && field.isReadOnly());

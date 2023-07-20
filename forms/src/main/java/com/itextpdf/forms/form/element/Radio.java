@@ -75,6 +75,19 @@ public class Radio extends FormField<Radio> {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T1> T1 getProperty(int property) {
+        // Paddings do not make sense for radio buttons
+        if (property == Property.PADDING_LEFT || property == Property.PADDING_RIGHT ||
+                property == Property.PADDING_TOP || property == Property.PADDING_BOTTOM) {
+            return (T1)(Object)UnitValue.createPointValue(0);
+        }
+        return super.<T1>getProperty(property);
+    }
+
     /* (non-Javadoc)
      * @see com.itextpdf.layout.element.AbstractElement#makeNewRenderer()
      */

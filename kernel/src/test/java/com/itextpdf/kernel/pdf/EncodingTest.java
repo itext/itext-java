@@ -37,6 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -71,7 +72,6 @@ public class EncodingTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
     }
-
 
     @Test
     public void customSimpleEncodingTimesRomanTest() throws IOException, InterruptedException {

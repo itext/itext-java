@@ -102,6 +102,19 @@ public class CssTypesValidationUtilsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void validateIntegerNumericValue() {
+        Assert.assertTrue(CssTypesValidationUtils.isIntegerNumber("1"));
+        Assert.assertTrue(CssTypesValidationUtils.isIntegerNumber("+12"));
+        Assert.assertTrue(CssTypesValidationUtils.isIntegerNumber("-12"));
+        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber(".12"));
+        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("1.2"));
+        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("1,2"));
+        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("12f"));
+        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber("f1.2"));
+        Assert.assertFalse(CssTypesValidationUtils.isIntegerNumber(".12f"));
+    }
+
+    @Test
     public void testSpacesBeforeUnitTypes() {
         Assert.assertFalse(CssTypesValidationUtils.isAngleValue("10 deg"));
         Assert.assertFalse(CssTypesValidationUtils.isEmValue("10 em"));

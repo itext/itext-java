@@ -1271,7 +1271,6 @@ public class CFFFontSubset extends CFFFont {
         int minor = getCard8();
         int hdrSize = getCard8();
         int offSize = getCard8();
-        nextIndexOffset = hdrSize;
         OutputList.addLast(new RangeItem(buf, 0, hdrSize));
     }
 

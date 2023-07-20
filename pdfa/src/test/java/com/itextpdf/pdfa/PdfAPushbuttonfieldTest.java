@@ -24,6 +24,7 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.kernel.font.PdfFont;
@@ -74,7 +75,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
         Rectangle rect = new Rectangle(36, 626, 100, 40);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
@@ -107,7 +108,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
         Rectangle rect = new Rectangle(36, 626, 100, 40);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
@@ -141,7 +142,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         doc.setTagged();
         doc.getCatalog().setLang(new PdfString("en-US"));
         doc.addNewPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
         Rectangle rect = new Rectangle(36, 626, 100, 40);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",

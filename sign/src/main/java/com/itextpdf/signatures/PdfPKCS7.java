@@ -657,7 +657,7 @@ public class PdfPKCS7 {
                 // there's no need to duplicate that information in the algorithm name.
                 return "RSASSA-PSS";
             default:
-                return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();
+                return SignatureMechanisms.getMechanism(signatureMechanismOid, getDigestAlgorithmName());
         }
     }
 

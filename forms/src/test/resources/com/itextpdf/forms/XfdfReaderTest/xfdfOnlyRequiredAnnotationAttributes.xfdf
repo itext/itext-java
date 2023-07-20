@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf>
+    <annots>
+        <text page="1" rect="200,300,300,400"/>
+        <highlight page="1" rect="300,300,400,400" coords="310,360,390,360,310,340,390,340"/>
+        <underline page="1" rect="400,300,500,400" coords="410,350,490,350,410,335,490,335"/>
+        <strikeout page="1" rect="200,400,300,500" coords="210,460,290,460,210,440,290,440"/>
+        <squiggly page="1" rect="300,400,400,500" coords="310,460,390,460,310,440,390,440"/>
+        <circle page="1" rect="400,400,500,500"/>
+        <square page="1" rect="200,500,300,600"/>
+        <polygon page="1" rect="300,500,400,600">
+            <vertices>
+                305,550;315,570;325,560;350,590;375,560;385,570;395,550;370,510;350,530;330,510
+            </vertices>
+        </polygon>
+        <polyline page="1" rect="400,500,500,600">
+            <vertices>
+                400,550;420;590;440,520;460,560;480,530;500,570
+            </vertices>
+        </polyline>
+        <stamp page="1" rect="200,600,300,700"/>
+    </annots>
+</xfdf>

@@ -29,6 +29,8 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.FlexWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
@@ -285,19 +287,62 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
         flexRendererChild.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(150));
 
         DivRenderer divRenderer = new DivRenderer(new Div());
-        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(125));
+        divRenderer.setProperty(Property.WIDTH, UnitValue.createPointValue(150));
 
         flexRendererChild.addChild(divRenderer);
         flexRenderer.addChild(flexRendererChild);
 
-        // In general it's possible that we might call layout more than once for 1 renderer
+        // In general, it's possible that we might call layout more than once for 1 renderer
         flexRenderer.layout(new LayoutContext(
                 new LayoutArea(0, new Rectangle(100, 0))));
+        flexRendererChild.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(125));
         flexRenderer.layout(new LayoutContext(
                 new LayoutArea(0, new Rectangle(200, 0))));
 
         // Test that hypotheticalCrossSizes can contain more than 1 value
         Assert.assertNotNull(flexRendererChild.getHypotheticalCrossSize(125F));
         Assert.assertNotNull(flexRendererChild.getHypotheticalCrossSize(150F));
+    }
+
+    @Test
+    public void minMaxWidthForFlexRendererWithWrapTest() {
+        FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
+        flexRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
+        flexRenderer.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(100));
+        flexRenderer.setProperty(Property.BORDER, new SolidBorder(5));
+
+        // line 1
+        DivRenderer divRenderer1 = new DivRenderer(new Div());
+        divRenderer1.setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(30));
+        divRenderer1.setProperty(Property.MAX_WIDTH, UnitValue.createPointValue(50));
+        DivRenderer divRenderer2 = new DivRenderer(new Div());
+        divRenderer2.setProperty(Property.WIDTH, UnitValue.createPointValue(40));
+        // line 2
+        DivRenderer divRenderer3 = new DivRenderer(new Div());
+        divRenderer3.setProperty(Property.WIDTH, UnitValue.createPointValue(30));
+        DivRenderer divRenderer4 = new DivRenderer(new Div());
+        divRenderer4.setProperty(Property.WIDTH, UnitValue.createPointValue(5));
+        // line 3
+        DivRenderer divRenderer5 = new DivRenderer(new Div());
+        divRenderer5.setProperty(Property.WIDTH, UnitValue.createPointValue(75));
+
+        flexRenderer.addChild(divRenderer1);
+        flexRenderer.addChild(divRenderer2);
+        flexRenderer.addChild(divRenderer3);
+        flexRenderer.addChild(divRenderer4);
+        flexRenderer.addChild(divRenderer5);
+
+        flexRenderer.layout(new LayoutContext(new LayoutArea(0, new Rectangle(100, 100))));
+
+        MinMaxWidth minMaxWidth = flexRenderer.getMinMaxWidth();
+        Assert.assertEquals(75F, minMaxWidth.getChildrenMinWidth(), EPS);
+        Assert.assertEquals(85F, minMaxWidth.getMinWidth(), EPS);
+        Assert.assertEquals(100F, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assert.assertEquals(110F, minMaxWidth.getMaxWidth(), EPS);
+
+        flexRenderer.deleteOwnProperty(Property.MAX_WIDTH);
+        minMaxWidth = flexRenderer.getMinMaxWidth();
+        Assert.assertEquals(90F, minMaxWidth.getChildrenMaxWidth(), EPS);
+        Assert.assertEquals(100F, minMaxWidth.getMaxWidth(), EPS);
     }
 }

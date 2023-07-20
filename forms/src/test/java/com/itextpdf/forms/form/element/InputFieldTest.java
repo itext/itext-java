@@ -341,7 +341,7 @@ public class InputFieldTest extends ExtendedITextTest {
                     .setBorder(new SolidBorder(ColorConstants.PINK, 10));
             flattenInputField.setWidth(200);
             flattenInputField.setInteractive(false);
-            flattenInputField.setValue("content box");
+            flattenInputField.setValue("border box");
             flattenInputField.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
             document.add(flattenInputField);
 

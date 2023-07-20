@@ -90,6 +90,11 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
     protected PdfFormField parent;
 
     /**
+     * Indicates if the form field appearance stream regeneration is enabled.
+     */
+    private boolean enableFieldRegeneration = true;
+
+    /**
      * Creates a form field as a wrapper object around a {@link PdfDictionary}.
      * This {@link PdfDictionary} must be an indirect object.
      *
@@ -234,6 +239,64 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
      * @return whether or not the regeneration was successful.
      */
     public abstract boolean regenerateField();
+
+    /**
+     * This method disables regeneration of the field and its children appearance stream. So all of its children
+     * in the hierarchy will also not be regenerated.
+     *
+     * <p>
+     * Note that after this method is called field will be regenerated
+     * only during {@link AbstractPdfFormField#enableFieldRegeneration()} call.
+     */
+    public void disableFieldRegeneration() {
+        this.enableFieldRegeneration = false;
+        if (this instanceof PdfFormField) {
+            for (AbstractPdfFormField child : ((PdfFormField) this).getChildFields()) {
+                child.disableFieldRegeneration();
+            }
+        }
+    }
+
+    /**
+     * This method enables regeneration of the field appearance stream. Please note that this method enables
+     * regeneration for the children of the field. Also, appearance will be regenerated during this method call.
+     *
+     * <p>
+     * Should be called after {@link AbstractPdfFormField#disableFieldRegeneration()} method call.
+     */
+    public void enableFieldRegeneration() {
+        this.enableFieldRegeneration = true;
+        if (this instanceof PdfFormField) {
+            for (AbstractPdfFormField child : ((PdfFormField) this).getAllChildFields()) {
+                child.enableFieldRegeneration = true;
+            }
+        }
+        regenerateField();
+    }
+
+    /**
+     * This method disables regeneration of the current field appearance stream.
+     */
+    public void disableCurrentFieldRegeneration() {
+        this.enableFieldRegeneration = false;
+    }
+
+    /**
+     * This method enables regeneration of the current field appearance stream and regenerates it.
+     */
+    public void enableCurrentFieldRegeneration() {
+        this.enableFieldRegeneration = true;
+        regenerateField();
+    }
+
+    /**
+     * This method checks if field appearance stream regeneration is enabled.
+     *
+     * @return true if regeneration is enabled for this field (and all of its ancestors), false otherwise.
+     */
+    public boolean isFieldRegenerationEnabled() {
+        return this.enableFieldRegeneration;
+    }
 
     /**
      * Sets the text color and does not regenerate appearance stream.

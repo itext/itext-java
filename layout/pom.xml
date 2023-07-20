@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>8.0.0</version>
+    <version>8.0.1</version>
   </parent>
   <artifactId>layout</artifactId>
   <name>iText - layout</name>
@@ -14,6 +14,12 @@
       <groupId>com.itextpdf</groupId>
       <artifactId>kernel</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>font-asian</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>

@@ -22,8 +22,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -43,15 +43,14 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.AreaBreakType;
+import com.itextpdf.layout.properties.ClearPropertyValue;
+import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
-import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +59,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a renderer for block elements.
@@ -81,7 +82,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         this.isLastRendererForModelElement = true;
-
         Map<Integer, IRenderer> waitingFloatsSplitRenderers = new LinkedHashMap<>();
         List<IRenderer> waitingOverflowFloatRenderers = new ArrayList<>();
         boolean floatOverflowedCompletely = false;
@@ -108,21 +108,31 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (rotation != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
+        if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue) &&
+                !(this instanceof FlexContainerRenderer)) {
             blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
         }
         boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
-        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
-        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas,
+                parentBBox);
+        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection,
+                FloatingHelper.isRendererFloating(this));
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue, overflowX);
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas,
+                    floatPropertyValue, overflowX);
             floatRendererAreas = new ArrayList<>();
         }
-
+        boolean wasHeightDecreased = clearHeightCorrection > 0 &&
+                (marginsCollapseHandler == null || FloatingHelper.isRendererFloating(this));
+        float bfcHeightCorrection = FloatingHelper.adjustBlockFormattingContextLayoutBox(this, floatRendererAreas,
+                parentBBox,
+                blockWidth == null ? 0 : (float) blockWidth, wasHeightDecreased ? 0 : clearHeightCorrection);
         boolean isCellRenderer = this instanceof CellRenderer;
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
         }
+
+        ContinuousContainer.setupContinuousContainerIfNeeded(this);
 
         Border[] borders = getBorders();
         UnitValue[] paddings = getPaddings();
@@ -213,11 +223,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 applyMargins(occupiedArea.getBBox(), true);
 
                 if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
-                    LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+                    LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, bfcHeightCorrection, marginsCollapsingEnabled);
                     return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null, null);
                 } else {
                     if (layoutResult != LayoutResult.NOTHING) {
-                        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+                        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, bfcHeightCorrection, marginsCollapsingEnabled);
                         return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
                     } else {
                         floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
@@ -341,6 +351,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
 
+
+
         if (includeFloatsInOccupiedArea) {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
             fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
@@ -410,19 +422,29 @@ public abstract class BlockRenderer extends AbstractRenderer {
             for (IRenderer childPositionedRenderer : positionedRenderers) {
                 Rectangle fullBbox = occupiedArea.getBBox().clone();
 
-                // Use that value so that layout is independent of whether we are in the bottom of the page or in the top of the page
+                // Use that value so that layout is independent of whether we are in the bottom of the page or in the
+                // top of the page
                 float layoutMinHeight = 1000;
                 fullBbox.moveDown(layoutMinHeight).setHeight(layoutMinHeight + fullBbox.getHeight());
                 LayoutArea parentArea = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
                 applyPaddings(parentArea.getBBox(), paddings, true);
 
                 preparePositionedRendererAndAreaForLayout(childPositionedRenderer, fullBbox, parentArea.getBBox());
-                childPositionedRenderer.layout(new PositionedLayoutContext(new LayoutArea(occupiedArea.getPageNumber(), fullBbox), parentArea));
+                childPositionedRenderer.layout(
+                        new PositionedLayoutContext(new LayoutArea(occupiedArea.getPageNumber(), fullBbox),
+                                parentArea));
             }
         }
 
         if (isPositioned) {
             correctFixedLayout(layoutBox);
+        }
+        final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
+                Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
+        if (continuousContainer != null && overflowRenderer == null) {
+            continuousContainer.reApplyProperties(this);
+            paddings = getPaddings();
+            borders = getBorders();
         }
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
@@ -448,14 +470,19 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
 
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
+
         if (layoutResult != LayoutResult.NOTHING) {
-            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+            LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this,
+                    layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection,
+                    bfcHeightCorrection, marginsCollapsingEnabled);
             return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
         } else {
             if (positionedRenderers.size() > 0) {
                 overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
             }
             floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
+
             return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer, causeOfNothing);
         }
     }
@@ -645,12 +672,14 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
         overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
+
         if (childResult.getStatus() == LayoutResult.PARTIAL) {
             // Apply forced placement only on split renderer
             overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
         }
 
-        return new AbstractRenderer[]{splitRenderer, overflowRenderer};
+        return new AbstractRenderer[] {splitRenderer, overflowRenderer};
     }
 
     /**

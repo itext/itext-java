@@ -110,6 +110,7 @@ import com.itextpdf.bouncycastlefips.cms.CMSEnvelopedDataBCFips;
 import com.itextpdf.bouncycastlefips.cms.CMSExceptionBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSignerInfoGeneratorBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBCFips;
+import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyAgreeEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.openssl.PEMParserBCFips;
 import com.itextpdf.bouncycastlefips.openssl.jcajce.JcaPEMKeyConverterBCFips;
@@ -214,6 +215,7 @@ import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
+import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
@@ -304,12 +306,15 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -334,6 +339,23 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     public BouncyCastleFipsFactory() {
         // Empty constructor.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAlgorithmOid(String name) {
+        AlgorithmIdentifier algorithmIdentifier = new DefaultSignatureAlgorithmIdentifierFinder().find(name);
+        return algorithmIdentifier.getAlgorithm().getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAlgorithmName(String oid) {
+        return new DefaultAlgorithmNameFinder().getAlgorithmName(new ASN1ObjectIdentifier(oid));
     }
 
     /**
@@ -854,6 +876,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBCFips(new JceKeyTransEnvelopedRecipient(privateKey));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IJceKeyAgreeEnvelopedRecipient createJceKeyAgreeEnvelopedRecipient(PrivateKey privateKey) {
+        return new JceKeyAgreeEnvelopedRecipientBCFips(new JceKeyAgreeEnvelopedRecipient(privateKey));
     }
 
     /**

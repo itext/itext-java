@@ -26,6 +26,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
@@ -63,7 +64,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     @Test
     public void setSignatureFlagsTest() {
         try(PdfDocument outputDoc = createDocument()) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             acroForm.setSignatureFlags(65);
 
             boolean isModified = acroForm.getPdfObject().isModified();
@@ -80,7 +81,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     @Test
     public void addChildToFormFieldTest() {
         try (PdfDocument outputDoc = createDocument()) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
             acroForm.addField(field);
@@ -99,7 +100,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     @Test
     public void addChildToWidgetTest() {
         try (PdfDocument outputDoc = createDocument()) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfArray options = new PdfArray();
             options.add(new PdfString("1"));
             options.add(new PdfString("2"));
@@ -118,7 +119,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     @Test
     public void getFormFieldChildTest() {
         try(PdfDocument outputDoc = createDocument()) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
             acroForm.addField(field);
@@ -137,7 +138,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     @Test
     public void getFormFieldWithEqualChildNamesTest() {
         try(PdfDocument outputDoc = createDocument()) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
             acroForm.addField(field);
@@ -162,7 +163,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     @Test
     public void changeFieldNameTest() {
         try(PdfDocument outputDoc = createDocument()) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
             acroForm.addField(field);
@@ -174,7 +175,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             root.addKid(child);
             acroForm.addField(root);
             acroForm.getField("root").setFieldName("diff");
-            PdfFormField childField = PdfAcroForm.getAcroForm(outputDoc, true).getField("diff.child");
+            PdfFormField childField = PdfFormCreator.getAcroForm(outputDoc, true).getField("diff.child");
             Assert.assertEquals("diff.child", childField.getFieldName().toString());
         }
     }
@@ -183,7 +184,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void removeChildFromFormFieldTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText().setValue("text1");
             acroForm.addField(field);
@@ -210,7 +211,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void getChildFromFormFieldWithDifferentAmountOfChildrenTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText().setValue("text1");
             acroForm.addField(field);
@@ -248,7 +249,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void checkFormFieldsSizeTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             Assert.assertEquals(0, acroForm.getAllFormFields().size());
             Assert.assertEquals(0, acroForm.getAllFormFieldsAndAnnotations().size());
 
@@ -272,7 +273,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void fieldKidsWithTheSameNamesTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField root = new TextFormFieldBuilder(outputDoc, "root").createText().setValue("root");
             PdfFormField child = new TextFormFieldBuilder(outputDoc, "child").createText()
@@ -308,7 +309,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void namelessFieldTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfDictionary fieldDict = new PdfDictionary();
             fieldDict.put(PdfName.FT, PdfName.Tx);
             PdfFormField field = PdfFormField.makeFormField(fieldDict.makeIndirect(outputDoc), outputDoc);
@@ -330,7 +331,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void addRootFieldsWithTheSameNamesTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField root = new TextFormFieldBuilder(outputDoc, "root").createText().setValue("root");
             PdfFormField sameRoot = new TextFormFieldBuilder(outputDoc, "root").createText().setValue("root");
@@ -356,7 +357,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void addMergedRootFieldsWithTheSameNamesTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
                     .setWidgetRectangle(new Rectangle(100, 400, 200, 20))
@@ -378,7 +379,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void addFieldsWithTheSameNamesButDifferentValuesTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
                     .createText().setValue("first");
@@ -397,7 +398,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void addRootFieldWithMergedFieldKidTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
                     .createText().setValue("root");
@@ -422,7 +423,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void addRootFieldWithDirtyNamedAnnotationsTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField rootField = new TextFormFieldBuilder(outputDoc, "root")
                     .createText().setValue("root");
@@ -456,7 +457,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void addRootFieldWithDirtyUnnamedAnnotationsTest() {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField rootField = new TextFormFieldBuilder(outputDoc, "root")
                     .createText().setValue("root");
@@ -497,7 +498,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
         try (PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField firstField = new TextFormFieldBuilder(outputDoc, "root")
                     .setWidgetRectangle(new Rectangle(100, 400, 200, 20)).setPage(1)
@@ -516,7 +517,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             outputDoc.getPage(1).flush();
 
             // recreate acroform and add field
-            acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             acroForm.addField(thirdField);
 
             Assert.assertEquals(1, acroForm.getFields().size());
@@ -529,7 +530,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void addMergedRootFieldTest() {
         try (PdfDocument outputDoc = createDocument()) {
             PdfPage page = outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfFormField mergedField = new TextFormFieldBuilder(outputDoc, "root").setPage(page)
                     .setWidgetRectangle(new Rectangle(100, 500, 200, 30))
@@ -551,7 +552,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setCalculationOrderTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfArray calculationOrderArray = new PdfArray(new int[] {1, 0});
             acroForm.setCalculationOrder(calculationOrderArray);
 
@@ -570,7 +571,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setDefaultAppearanceTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             acroForm.setDefaultAppearance("default appearance");
 
             boolean isModified = acroForm.getPdfObject().isModified();
@@ -588,7 +589,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setDefaultJustificationTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             acroForm.setDefaultJustification(14);
 
             boolean isModified = acroForm.getPdfObject().isModified();
@@ -606,10 +607,10 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setDefaultResourcesTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
             PdfDictionary dictionary = new PdfDictionary();
-            PdfAcroForm.getAcroForm(outputDoc, true).setDefaultResources(dictionary);
+            PdfFormCreator.getAcroForm(outputDoc, true).setDefaultResources(dictionary);
 
             boolean isModified = acroForm.getPdfObject().isModified();
             boolean isReleaseForbidden = acroForm.getPdfObject().isReleaseForbidden();
@@ -626,7 +627,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setNeedAppearancesTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             acroForm.setNeedAppearances(false);
 
             boolean isModified = acroForm.getPdfObject().isModified();
@@ -649,7 +650,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
                         PdfVersion.PDF_2_0)));
         outputDoc.addNewPage();
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
         acroForm.setNeedAppearances(false);
 
         boolean isModified = acroForm.getPdfObject().isModified();
@@ -667,7 +668,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setGenerateAppearanceTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             acroForm.setNeedAppearances(false);
             acroForm.setGenerateAppearance(true);
 
@@ -688,7 +689,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setXFAResourcePdfArrayTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfArray array = new PdfArray();
             acroForm.setXFAResource(array);
 
@@ -707,7 +708,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void setXFAResourcePdfStreamTest() {
         try (PdfDocument outputDoc = createDocument()) {
 
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfStream stream = new PdfStream();
             acroForm.setXFAResource(stream);
 
@@ -726,7 +727,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public  void replaceFormFieldRootLevelReplacesExistingFieldTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfDictionary fieldDict = new PdfDictionary();
             fieldDict.put(PdfName.FT, PdfName.Tx);
             fieldDict.put(PdfName.T, new PdfString("field1"));
@@ -754,7 +755,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public void replaceWithNullNameLogsErrorTest(){
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfDictionary fieldDict = new PdfDictionary();
             fieldDict.put(PdfName.FT, PdfName.Tx);
             fieldDict.put(PdfName.T, new PdfString("field1"));
@@ -780,7 +781,7 @@ public class PdfAcroFormTest extends ExtendedITextTest {
     public  void replaceFormFieldOneDeepReplacesExistingFieldTest() {
         try(PdfDocument outputDoc = createDocument()) {
             outputDoc.addNewPage();
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfDictionary fieldDict = new PdfDictionary();
             fieldDict.put(PdfName.FT, PdfName.Tx);
             fieldDict.put(PdfName.T, new PdfString("field1"));

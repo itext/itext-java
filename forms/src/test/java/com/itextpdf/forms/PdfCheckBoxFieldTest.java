@@ -25,23 +25,30 @@ package com.itextpdf.forms;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -180,7 +187,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_checkBoxToggleTest01.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField checkBox = form.getField("cb_fs_6_7_7");
         checkBox.setValue("Off");
 
@@ -200,7 +207,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_checkBoxToggleTest02.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField checkBox = form.getField("cb_fs_6_7_7");
         checkBox.setValue("Off", false);
 
@@ -220,7 +227,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_keepCheckTypeTest.pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(srcPdf))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfButtonFormField checkField = new CheckBoxFormFieldBuilder(pdfDoc, "checkField")
                     .setWidgetRectangle(new Rectangle(100, 600, 100, 100))
@@ -232,7 +239,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         }
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.getField("checkField").setValue("Yes");
         }
 
@@ -245,7 +252,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_appearanceRegenerationTest.pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfButtonFormField checkBox1 = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox1")
                     .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
@@ -271,6 +278,158 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 
+    @Test
+    public void setValueForMutuallyExclusiveCheckBoxTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "setValueForMutuallyExclusiveCheckBox.pdf";
+        String cmpPdf = sourceFolder + "cmp_setValueForMutuallyExclusiveCheckBox.pdf";
+        String srcPdf = sourceFolder + "mutuallyExclusiveCheckBox.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
+            PdfFormField radioGroupField = acroForm.getField("group");
+            radioGroupField.setValue("1");
+            radioGroupField.setValue("2");
+            radioGroupField.regenerateField();
+            PdfFormField checkBoxField = acroForm.getField("check");
+            checkBoxField.setValue("1");
+            checkBoxField.setValue("2");
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void changeOnStateAppearanceNameForCheckBoxWidgetTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "changeOnStateAppearanceNameForCheckBoxWidget.pdf";
+        String cmpPdf = sourceFolder + "cmp_changeOnStateAppearanceNameForCheckBoxWidget.pdf";
+        String srcPdf = sourceFolder + "mutuallyExclusiveCheckBox.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
+            PdfFormField checkBoxField = acroForm.getField("check");
+            checkBoxField.setValue("3");
+            checkBoxField.getFirstFormAnnotation().setCheckBoxAppearanceOnStateName("3");
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void changeOnStateAppearanceNameSeveralTimesTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "changeOnStateAppearanceNameSeveralTimes.pdf";
+        String cmpPdf = sourceFolder + "cmp_changeOnStateAppearanceNameSeveralTimes.pdf";
+        String srcPdf = sourceFolder + "mutuallyExclusiveCheckBox.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
+            PdfFormField checkBoxField = acroForm.getField("check");
+            checkBoxField.setValue("3");
+            checkBoxField.getFirstFormAnnotation().setCheckBoxAppearanceOnStateName("3");
+            checkBoxField.getFirstFormAnnotation().setCheckBoxAppearanceOnStateName("1");
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void checkBoxWidgetAppearanceTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "checkBoxWidgetAppearance.pdf";
+        String cmpPdf = sourceFolder + "cmp_checkBoxWidgetAppearance.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
+
+            PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")
+                    .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
+            PdfFormAnnotation widget = checkBox.getFirstFormAnnotation();
+
+            // Default case
+            widget.setCheckBoxAppearanceOnStateName("initial");
+            Assert.assertTrue(Arrays.asList(widget.getAppearanceStates()).contains("initial"));
+            Assert.assertEquals("Off", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+
+            // Setting value changes on state name and appearance state for widget
+            checkBox.setValue("value");
+            Assert.assertTrue(Arrays.asList(widget.getAppearanceStates()).contains("value"));
+            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+
+            // Setting value generates normal appearance and changes appearance state for widget
+            widget.getWidget().setNormalAppearance(new PdfDictionary());
+            checkBox.setValue("new_value");
+            List<String> appearanceStates = Arrays.asList(widget.getAppearanceStates());
+            Assert.assertTrue(appearanceStates.contains("new_value"));
+            Assert.assertTrue(appearanceStates.contains("Off"));
+            Assert.assertEquals("new_value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+
+            acroForm.addField(checkBox);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void setInvalidCheckBoxOnAppearanceTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "setInvalidCheckBoxOnAppearance.pdf";
+        String cmpPdf = sourceFolder + "cmp_setInvalidCheckBoxOnAppearance.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
+
+            PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")
+                    .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
+            PdfFormAnnotation widget = checkBox.getFirstFormAnnotation();
+            checkBox.setValue("value");
+            List<String> appearanceStates = Arrays.asList(widget.getAppearanceStates());
+            Assert.assertTrue(appearanceStates.contains("value"));
+            Assert.assertTrue(appearanceStates.contains("Off"));
+            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+
+            // Setting invalid appearance name for on state does nothing
+            widget.setCheckBoxAppearanceOnStateName("Off");
+            appearanceStates = Arrays.asList(widget.getAppearanceStates());
+            Assert.assertTrue(appearanceStates.contains("value"));
+            Assert.assertTrue(appearanceStates.contains("Off"));
+            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+
+            widget.setCheckBoxAppearanceOnStateName("");
+            appearanceStates = Arrays.asList(widget.getAppearanceStates());
+            Assert.assertTrue(appearanceStates.contains("value"));
+            Assert.assertTrue(appearanceStates.contains("Off"));
+            Assert.assertEquals("value", widget.getPdfObject().getAsName(PdfName.AS).getValue());
+
+            acroForm.addField(checkBox);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createMutuallyExclusiveCheckBoxesTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "createMutuallyExclusiveCheckBoxes.pdf";
+        String cmpPdf = sourceFolder + "cmp_createMutuallyExclusiveCheckBoxes.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
+
+            PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")
+                    .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
+            checkBox.addKid(new PdfWidgetAnnotation(new Rectangle(60, 650, 40, 20)));
+            checkBox.addKid(new PdfWidgetAnnotation(new Rectangle(110, 650, 40, 20)));
+            checkBox.setValue("3");
+            checkBox.getFirstFormAnnotation().setCheckBoxAppearanceOnStateName("1");
+            checkBox.getChildFormAnnotations().get(1).setCheckBoxAppearanceOnStateName("2");
+            acroForm.addField(checkBox);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void createNotMutuallyExclusiveCheckBoxTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "createNotMutuallyExclusiveCheckBox.pdf";
+        String cmpPdf = sourceFolder + "cmp_createNotMutuallyExclusiveCheckBox.pdf";
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
+
+            PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")
+                    .setWidgetRectangle(new Rectangle(10, 650, 40, 20)).createCheckBox();
+            checkBox.setValue("1");
+            checkBox.addKid(new PdfWidgetAnnotation(new Rectangle(60, 650, 40, 20)));
+            Assert.assertNull(checkBox.getWidgets().get(1).getNormalAppearanceObject());
+            checkBox.setValue("2");
+            acroForm.addField(checkBox);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
+
     private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, float checkBoxH)
             throws IOException {
         Rectangle rect = new Rectangle(50, yPos, checkBoxW, checkBoxH);
@@ -283,7 +442,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
     private void addCheckBox(PdfDocument pdfDoc, float fontSize, float yPos, float checkBoxW, PdfFormField checkBox)
             throws IOException {
         PdfPage page = pdfDoc.getFirstPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         if (fontSize >= 0) {
             checkBox.setFontSize(fontSize);
         }

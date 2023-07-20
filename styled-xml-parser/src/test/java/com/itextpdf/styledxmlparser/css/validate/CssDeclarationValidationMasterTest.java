@@ -374,6 +374,44 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
     }
 
     @Test
+    public void multicolValidationTest() {
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_COUNT, "auto")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_COUNT, "3")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_COUNT, "-3")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, "auto")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, "30px")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, "20%")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, "5em")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, "5rem")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, "-5rem")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_WIDTH, "10")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_GAP, "normal")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_GAP, "30px")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_GAP, "15%")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_GAP, "2em")));
+        Assert.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_GAP, "3rem")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_GAP, "-5em")));
+        Assert.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.COLUMN_GAP, "10")));
+    }
+
+    @Test
     public void changeValidatorTest() {
         try {
             CssDeclarationValidationMaster.setValidator(new CssDeviceCmykAwareValidator());

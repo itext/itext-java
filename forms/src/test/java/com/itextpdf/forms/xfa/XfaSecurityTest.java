@@ -23,6 +23,7 @@
 package com.itextpdf.forms.xfa;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -84,7 +85,7 @@ public class XfaSecurityTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inFileName),
                 new PdfWriter(new ByteArrayOutputStream()))) {
             Exception e = Assert.assertThrows(PdfException.class,
-                    () -> PdfAcroForm.getAcroForm(pdfDoc, true)
+                    () -> PdfFormCreator.getAcroForm(pdfDoc, true)
             );
             Assert.assertEquals(ExceptionTestUtil.getXxeTestMessage(), e.getMessage());
         }
@@ -120,7 +121,7 @@ public class XfaSecurityTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFileName),
                 new PdfWriter(new ByteArrayOutputStream()))) {
             Exception e = Assert.assertThrows(PdfException.class,
-                    () -> PdfAcroForm.getAcroForm(pdfDoc, true)
+                    () -> PdfFormCreator.getAcroForm(pdfDoc, true)
             );
             Assert.assertEquals(DTD_EXCEPTION_MESSAGE, e.getMessage());
         }

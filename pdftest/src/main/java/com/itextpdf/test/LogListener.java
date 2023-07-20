@@ -33,10 +33,9 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.read.ListAppender;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.ILoggerFactory;
@@ -103,10 +102,10 @@ public class LogListener extends TestWatcher {
 
         LogMessages logMessages = LoggerHelper.getTestAnnotation(description, LogMessages.class);
         if (logMessages != null) {
-            Set<String> expectedTemplates = new HashSet<>();
+            Map<String, Boolean> expectedTemplates = new HashMap<>();
             LogMessage[] messages = logMessages.messages();
             for (LogMessage logMessage : messages) {
-                expectedTemplates.add(logMessage.messageTemplate());
+                expectedTemplates.put(logMessage.messageTemplate(), logMessage.quietMode());
             }
             listAppender.setExpectedTemplates(expectedTemplates);
         }
@@ -162,11 +161,11 @@ public class LogListener extends TestWatcher {
 
     private class CustomListAppender<E> extends ListAppender<ILoggingEvent> {
 
-        private Set<String> expectedTemplates = new HashSet<>();
+        private Map<String, Boolean> expectedTemplates = new HashMap<>();
 
-        public void setExpectedTemplates(Set<String> expectedTemplates) {
+        public void setExpectedTemplates(Map<String, Boolean> expectedTemplates) {
             this.expectedTemplates.clear();
-            this.expectedTemplates.addAll(expectedTemplates);
+            this.expectedTemplates.putAll(expectedTemplates);
         }
 
         public void clear() {
@@ -175,7 +174,9 @@ public class LogListener extends TestWatcher {
         }
 
         protected void append(ILoggingEvent e) {
-            System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
+            if(!isExpectedMessageQuiet(e.getMessage())){
+                System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
+            }
             printStackTraceIfAny(e);
             if (e.getLevel().isGreaterOrEqual(Level.WARN) || isExpectedMessage(e.getMessage())) {
                 this.list.add(e);
@@ -184,8 +185,19 @@ public class LogListener extends TestWatcher {
 
         private boolean isExpectedMessage(String message) {
             if (message != null) {
-                for (String template : expectedTemplates) {
+                for (String template : expectedTemplates.keySet()) {
                     if (LoggerHelper.equalsMessageByTemplate(message, template)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private boolean isExpectedMessageQuiet(String message) {
+            if (message != null) {
+                for (String template : expectedTemplates.keySet()) {
+                    if (LoggerHelper.equalsMessageByTemplate(message, template) && expectedTemplates.get(template)) {
                         return true;
                     }
                 }
@@ -203,5 +215,4 @@ public class LogListener extends TestWatcher {
             }
         }
     }
-
 }

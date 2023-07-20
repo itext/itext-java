@@ -55,7 +55,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
     public void init() {
         outputDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         outputDoc.addNewPage();
-        acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+        acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
     }
 
     @After
@@ -558,7 +558,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         ByteArrayOutputStream f = new ByteArrayOutputStream();
         PdfDocument originalDoc = new PdfDocument(new PdfWriter(f));
         originalDoc.addNewPage();
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
         PdfFormField root = addDefaultTextFormField(outputDoc, "root");
         PdfFormField child1 = addDefaultTextFormField(outputDoc, "");
@@ -573,7 +573,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         try (PdfDocument newDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
             loaded.copyPagesTo(1, 1, newDoc, pdfPageFormCopier);
-            PdfAcroForm form = PdfAcroForm.getAcroForm(outputDoc, false);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(outputDoc, false);
             Assert.assertNotNull(form);
             Assert.assertEquals(2, form.getAllFormFields().size());
             Assert.assertNotNull(form.getField("root."));
@@ -587,7 +587,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         ByteArrayOutputStream f = new ByteArrayOutputStream();
         PdfDocument originalDoc = new PdfDocument(new PdfWriter(f));
         originalDoc.addNewPage();
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
         PdfFormField root = addDefaultTextFormField(outputDoc, "");
         PdfFormField child1 = addDefaultTextFormField(outputDoc, "");
@@ -603,7 +603,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         try (PdfDocument newDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
             loaded.copyPagesTo(1, 1, newDoc, pdfPageFormCopier);
-            PdfAcroForm form = PdfAcroForm.getAcroForm(outputDoc, false);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(outputDoc, false);
             Assert.assertNotNull(form);
             Assert.assertEquals(2, form.getAllFormFields().size());
             Assert.assertNotNull(form.getField("."));
@@ -617,7 +617,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         ByteArrayOutputStream f = new ByteArrayOutputStream();
         PdfDocument originalDoc = new PdfDocument(new PdfWriter(f));
         originalDoc.addNewPage();
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
         PdfFormField root = addDefaultTextFormField(outputDoc, "root");
         PdfFormField child1 = addDefaultTextFormField(outputDoc, "");
@@ -636,7 +636,7 @@ public class PdfFormFieldNameTest extends ExtendedITextTest {
         try (PdfDocument newDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
             loaded.copyPagesTo(1, 1, newDoc, pdfPageFormCopier);
-            PdfAcroForm form = PdfAcroForm.getAcroForm(outputDoc, false);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(outputDoc, false);
             Assert.assertNotNull(form);
             Assert.assertEquals(2, form.getAllFormFields().size());
             Assert.assertNotNull(form.getField("root."));

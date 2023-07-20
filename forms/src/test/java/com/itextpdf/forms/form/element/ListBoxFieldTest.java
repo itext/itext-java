@@ -22,27 +22,37 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.form.FormProperty;
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.logs.LayoutLogMessageConstant;
-import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -77,41 +87,33 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.ACROFORM_NOT_SUPPORTED_FOR_SELECT))
     public void basicListBoxFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicListBoxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicListBoxField.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             ListBoxField formListBoxField = new ListBoxField("form list box field", 2, false);
-            formListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
-
-            Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
-            formListBoxField.addOption(option1);
-
-            Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
-            option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
-            formListBoxField.addOption(option2);
-            
+            formListBoxField.setInteractive(true);
+            formListBoxField.addOption("option 1", false);
+            formListBoxField.addOption("option 2", true);
             document.add(formListBoxField);
 
             ListBoxField flattenListBoxField = new ListBoxField("flatten list box field", 2, false);
             flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
+            flattenListBoxField.addOption("option 1", false);
+            flattenListBoxField.addOption("option 2", true);
             document.add(flattenListBoxField);
 
             Paragraph option3 = new Paragraph("option 3");
             option3.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
-            option3.setProperty(FormProperty.FORM_FIELD_LABEL, "option 3");
+            option3.setMargin(0);
+            option3.setMultipliedLeading(2);
 
             ListBoxField flattenListBoxFieldWithMultipleSelection =
                     new ListBoxField("flatten list box field with multiple selection", 3, true);
-            flattenListBoxFieldWithMultipleSelection.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxFieldWithMultipleSelection.addOption(option1);
-            flattenListBoxFieldWithMultipleSelection.addOption(option2);
+            flattenListBoxFieldWithMultipleSelection.setInteractive(false);
+            flattenListBoxFieldWithMultipleSelection.addOption("option 1", false);
+            flattenListBoxFieldWithMultipleSelection.addOption("option 2", true);
             flattenListBoxFieldWithMultipleSelection.addOption(option3);
             document.add(flattenListBoxFieldWithMultipleSelection);
         }
@@ -122,31 +124,41 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(
             messageTemplate = IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, count = 22))
-    public void listBoxFieldWithoutSelectionTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "listBoxFieldWithoutSelection.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithoutSelection.pdf";
+    public void listBoxFieldWithFontSizeTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "listBoxFieldWithFontSize.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithFontSize.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
+            ListBoxField formListBoxFieldWithFont = new ListBoxField("flatten list box field with font", 0, false);
+            formListBoxFieldWithFont.setInteractive(true);
+            formListBoxFieldWithFont.setBackgroundColor(ColorConstants.RED);
+            formListBoxFieldWithFont.addOption("option 1");
+            formListBoxFieldWithFont.addOption("option 2");
+            formListBoxFieldWithFont.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
+            formListBoxFieldWithFont.setFontSize(6);
+            document.add(formListBoxFieldWithFont);
 
-            Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
+            document.add(new Paragraph("line break"));
 
             ListBoxField flattenListBoxFieldWithFont = new ListBoxField("flatten list box field with font", 0, false);
-            flattenListBoxFieldWithFont.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenListBoxFieldWithFont.setInteractive(false);
             flattenListBoxFieldWithFont.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxFieldWithFont.addOption(option1);
-            flattenListBoxFieldWithFont.addOption(option2);
+            flattenListBoxFieldWithFont.addOption("option 1");
+            flattenListBoxFieldWithFont.addOption("option 2");
+            flattenListBoxFieldWithFont.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
+            flattenListBoxFieldWithFont.setFontSize(6);
             document.add(flattenListBoxFieldWithFont);
+
+            document.add(new Paragraph("line break"));
 
             ListBoxField flattenListBoxFieldWithPercentFont =
                     new ListBoxField("flatten list box field with percent font", 0, false);
-            flattenListBoxFieldWithPercentFont.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenListBoxFieldWithFont.setInteractive(false);
             flattenListBoxFieldWithPercentFont.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxFieldWithPercentFont.addOption(option1);
-            flattenListBoxFieldWithPercentFont.addOption(option2);
-            flattenListBoxFieldWithPercentFont.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(10));
+            flattenListBoxFieldWithPercentFont.addOption("option 1");
+            flattenListBoxFieldWithPercentFont.addOption("option 2");
+            flattenListBoxFieldWithPercentFont.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
+            flattenListBoxFieldWithPercentFont.setProperty(Property.FONT_SIZE, UnitValue.createPercentValue(6));
             document.add(flattenListBoxFieldWithPercentFont);
         }
 
@@ -154,25 +166,34 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void listBoxFieldWithOverflowTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "listBoxFieldWithOverflow.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithOverflow.pdf";
+    public void listBoxFieldWithMarginsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "listBoxFieldWithMargins.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithMargins.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             Paragraph option1 = new Paragraph("option 1");
             option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
+            option1.setMargin(4);
 
             Paragraph option2 = new Paragraph("option 2");
             option2.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
             option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
+            option2.setMargin(4);
 
-            ListBoxField flattenListBoxField = new ListBoxField("flatten list box field with overflow", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
-            flattenListBoxField.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
-            document.add(flattenListBoxField);
+            ListBoxField listBoxField = new ListBoxField("list box field with margins", 1, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.addOption(option1);
+            listBoxField.addOption(option2);
+            document.add(listBoxField);
+
+            document.add(new Paragraph("line break"));
+
+            document.add(listBoxField);
+
+            document.add(new Paragraph("line break"));
+
+            document.add(listBoxField.setInteractive(true));
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
@@ -184,20 +205,17 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithHeight.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
+            ListBoxField listBoxField = new ListBoxField("list box field with height", 0, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.addOption("option 1");
+            listBoxField.addOption("option 2", true);
+            listBoxField.setHeight(100);
+            document.add(listBoxField);
 
-            Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
-            option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
-            
-            ListBoxField flattenListBoxField = new ListBoxField("flatten list box field with height", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
-            flattenListBoxField.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
-            document.add(flattenListBoxField);
+            document.add(new Paragraph("line break"));
+
+            document.add(listBoxField.setInteractive(true));
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
@@ -209,46 +227,40 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithMinHeight.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
+            ListBoxField listBoxField = new ListBoxField("list box field with height", 0, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.addOption("option 1");
+            listBoxField.addOption("option 2", true);
+            listBoxField.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(100));
+            document.add(listBoxField);
 
-            Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
-            option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
+            document.add(new Paragraph("line break"));
 
-            ListBoxField flattenListBoxField = new ListBoxField("flatten list box field with min height", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
-            flattenListBoxField.setProperty(Property.MIN_HEIGHT, UnitValue.createPointValue(100));
-            document.add(flattenListBoxField);
+            document.add(listBoxField.setInteractive(true));
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2))
     public void listBoxFieldWithMaxHeightTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldWithMaxHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithMaxHeight.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
-            option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
+            ListBoxField listBoxField = new ListBoxField("list box field with height", 0, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.addOption("option 1", false);
+            listBoxField.addOption("option 2", true);
+            listBoxField.setProperty(Property.MAX_HEIGHT, UnitValue.createPointValue(25));
+            document.add(listBoxField);
 
-            Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
+            document.add(new Paragraph("line break"));
 
-            ListBoxField flattenListBoxField = new ListBoxField("flatten list box field with max height", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
-            flattenListBoxField.setProperty(Property.MAX_HEIGHT, UnitValue.createPointValue(40));
-            document.add(flattenListBoxField);
+            document.add(listBoxField.setInteractive(true));
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
@@ -266,19 +278,12 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             div.setBackgroundColor(ColorConstants.PINK);
             document.add(div);
             
-            Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
-            option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
-
-            Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
-
-            ListBoxField flattenListBoxField = new ListBoxField("flatten list box field cannot fit", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
-            document.add(flattenListBoxField);
+            ListBoxField listBoxField = new ListBoxField("list box field cannot fit", 0, false);
+            listBoxField.setInteractive(true);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.addOption("option 1", true);
+            listBoxField.addOption("option 2");
+            document.add(listBoxField);
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
@@ -297,14 +302,18 @@ public class ListBoxFieldTest extends ExtendedITextTest {
             Paragraph option2 = new Paragraph("option 2");
             option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
 
-            ListBoxField flattenListBoxField = new ListBoxField("flatten list box field cannot fit by width", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxField.setProperty(Property.WIDTH, UnitValue.createPointValue(600));
-            flattenListBoxField.setBorder(new SolidBorder(20));
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
-            document.add(flattenListBoxField);
+            ListBoxField listBoxField = new ListBoxField("list box field cannot fit by width", 0, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.setProperty(Property.WIDTH, UnitValue.createPointValue(600));
+            listBoxField.setBorder(new SolidBorder(20));
+            listBoxField.addOption(option1);
+            listBoxField.addOption(option2);
+            document.add(listBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(listBoxField.setInteractive(true));
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
@@ -316,22 +325,209 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithLang.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            Paragraph option1 = new Paragraph("option 1");
-            option1.setProperty(FormProperty.FORM_FIELD_SELECTED, true);
-            option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
+            document.getPdfDocument().setTagged();
+            ListBoxField listBoxField = new ListBoxField("list box field with lang", 0, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.addOption("option 1");
+            listBoxField.addOption("option 2");
+            listBoxField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
+            document.add(listBoxField);
 
-            Paragraph option2 = new Paragraph("option 2");
-            option2.setProperty(FormProperty.FORM_FIELD_LABEL, "option 2");
+            document.add(new Paragraph("Line break"));
 
-            ListBoxField flattenListBoxField = new ListBoxField("flatten list box field with lang", 0, false);
-            flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
-            flattenListBoxField.setBackgroundColor(ColorConstants.RED);
-            flattenListBoxField.addOption(option1);
-            flattenListBoxField.addOption(option2);
-            flattenListBoxField.setProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE, "random_lang");
-            document.add(flattenListBoxField);
+            document.add(listBoxField.setInteractive(true));
         }
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void colorsBordersTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "colorsBorders.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_colorsBorders.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            ListBoxField listBoxField = new ListBoxField("coloured list box field with borders", 0, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setBackgroundColor(ColorConstants.RED);
+            listBoxField.addOption("option 1");
+            listBoxField.addOption("option 2", true);
+            listBoxField.setBorder(new DashedBorder(ColorConstants.BLUE, 3));
+            listBoxField.setFontColor(ColorConstants.GREEN);
+            document.add(listBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(listBoxField.setInteractive(true));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void longListTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "longList.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_longList.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            ListBoxField listBoxField = new ListBoxField("long list box field", 4, true);
+            listBoxField.setInteractive(false);
+            listBoxField.addOption("option 1");
+            listBoxField.addOption("option 2");
+            listBoxField.addOption("option 3");
+            listBoxField.addOption("option 4");
+            listBoxField.addOption("option 5");
+            listBoxField.addOption("option 6", true);
+            listBoxField.addOption("option 7");
+            listBoxField.addOption("option 8");
+            listBoxField.addOption("option 9");
+            listBoxField.addOption("very very very long long long option 10", true);
+            listBoxField.addOption("option 11");
+
+            document.add(listBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(listBoxField.setInteractive(true));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void justificationTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "justification.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_justification.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            ListBoxField listBoxField = new ListBoxField("left box field", 0, false);
+            listBoxField.setInteractive(false);
+            listBoxField.setWidth(200);
+            listBoxField.setTextAlignment(TextAlignment.LEFT);
+            listBoxField.addOption("option 1");
+            listBoxField.addOption("option 2", true);
+            document.add(listBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(listBoxField.setInteractive(true));
+
+            ListBoxField centerListBoxField = new ListBoxField("center box field", 0, false);
+            centerListBoxField.setInteractive(false);
+            centerListBoxField.setWidth(200);
+            centerListBoxField.setTextAlignment(TextAlignment.CENTER);
+            centerListBoxField.addOption("option 1");
+            centerListBoxField.addOption("option 2", true);
+            document.add(centerListBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(centerListBoxField.setInteractive(true));
+
+            ListBoxField rightListBoxField = new ListBoxField("right box field", 0, false);
+            rightListBoxField.setInteractive(false);
+            rightListBoxField.setWidth(200);
+            rightListBoxField.setTextAlignment(TextAlignment.RIGHT);
+            rightListBoxField.addOption("option 1");
+            rightListBoxField.addOption("option 2", true);
+            document.add(rightListBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(rightListBoxField.setInteractive(true));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void exportValueTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "exportValue.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_exportValue.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            ListBoxField listBoxField = new ListBoxField("export value field", 0, true);
+            listBoxField.setInteractive(false);
+            listBoxField.setWidth(200);
+            listBoxField.addOption(new SelectFieldItem("English"));
+            listBoxField.addOption(new SelectFieldItem("German", "Deutch"), true);
+            listBoxField.addOption(new SelectFieldItem("Italian", "Italiano"), true);
+            document.add(listBoxField);
+
+            document.add(new Paragraph("Line break"));
+
+            document.add(listBoxField.setInteractive(true));
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void invalidOptionsTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "invalidOptions.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_invalidOptions.pdf";
+
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+            ListBoxField listBoxField = new ListBoxField("invalid", 0, true);
+            listBoxField.setInteractive(true);
+            listBoxField.setWidth(200);
+
+            // Invalid options array here
+            PdfArray option1 = new PdfArray();
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English3"));
+            PdfArray option2 = new PdfArray();
+            option2.add(new PdfString("German"));
+            option2.add(new PdfString("Deutch"));
+            PdfArray option3 = new PdfArray();
+            option3.add(new PdfString("Italian"));
+            PdfArray options = new PdfArray();
+            options.add(option1);
+            options.add(option2);
+            options.add(option3);
+            options.add(new PdfArray());
+
+            PdfChoiceFormField field = new ChoiceFormFieldBuilder(doc, "invalid")
+                    .setWidgetRectangle(new Rectangle(100, 500, 100, 100))
+                    .createList();
+            field.setOptions(options);
+            field.getFirstFormAnnotation().setFormFieldElement(listBoxField);
+
+            PdfAcroForm.getAcroForm(doc, true).addField(field);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void invalidOptionsExceptionTest() throws IOException, InterruptedException {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, "invalid")
+                    .setWidgetRectangle(new Rectangle(100, 500, 100, 100));
+
+            PdfArray option1 = new PdfArray();
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English"));
+            option1.add(new PdfString("English3"));
+            PdfArray options = new PdfArray();
+            options.add(option1);
+            Exception e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
+            Assert.assertEquals(FormsExceptionMessageConstant.INNER_ARRAY_SHALL_HAVE_TWO_ELEMENTS, e.getMessage());
+            options.clear();
+
+            option1 = new PdfArray();
+            option1.add(new PdfString("English"));
+            option1.add(new PdfNumber(1));
+            options.add(option1);
+            e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options));
+            Assert.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
+
+            PdfArray options2 = new PdfArray();
+            options2.add(new PdfNumber(1));
+            e = Assert.assertThrows(IllegalArgumentException.class,  () -> builder.setOptions(options2));
+            Assert.assertEquals(FormsExceptionMessageConstant.OPTION_ELEMENT_MUST_BE_STRING_OR_ARRAY, e.getMessage());
+        }
     }
 }

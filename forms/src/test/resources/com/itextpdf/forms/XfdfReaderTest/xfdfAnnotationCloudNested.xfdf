@@ -119,15 +119,15 @@
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,-20.000000,792.000000,100.000000"
 /></text>
 
-<polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135116+03'00'" flags="print" IT="PolygonCloud" date="D:20190606135116+03'00'" name="b958b991-6819-4a29-a604-d1d36ccd349a" page="1" rect="63.029100,476.839000,423.299000,677.564000" subject="Polygon" title="Alex">
+<polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135116+03'00'" flags="print" intent="PolygonCloud" date="D:20190606135116+03'00'" name="b958b991-6819-4a29-a604-d1d36ccd349a" page="1" rect="63.029100,476.839000,423.299000,677.564000" subject="Polygon" title="Alex">
 <popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,547.923000,792.000000,667.923000"/>
 <vertices>149.211000,667.923000;396.566000,665.131000;413.722000,486.396000;72.610800,508.339000;149.211000,667.923000</vertices>
 
-<polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135919+03'00'" flags="print" IT="PolygonCloud" date="D:20190606135919+03'00'" name="cf0ce81b-b2c2-4dc0-9cbb-5e52961e0db9" page="1" rect="88.550800,484.798000,401.412000,668.727000" subject="Polygon" title="Alex">
+<polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135919+03'00'" flags="print" intent="PolygonCloud" date="D:20190606135919+03'00'" name="cf0ce81b-b2c2-4dc0-9cbb-5e52961e0db9" page="1" rect="88.550800,484.798000,401.412000,668.727000" subject="Polygon" title="Alex">
 <popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,409.883000,792.000000,529.883000"/>
 <vertices>106.522000,529.883000;157.190000,659.146000;383.800000,653.162000;391.779000,494.376000;99.341100,525.894000;103.730000,525.894000;98.144200,531.878000;106.522000,529.883000</vertices>
 </polygon>
-<polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135938+03'00'" flags="print" IT="PolygonCloud" date="D:20190606135938+03'00'" name="62bd036b-e812-4fcf-b6cc-9922b8dff4f3" page="1" rect="119.295000,491.597000,383.963000,661.298000" subject="Polygon" title="Alex">
+<polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135938+03'00'" flags="print" intent="PolygonCloud" date="D:20190606135938+03'00'" name="62bd036b-e812-4fcf-b6cc-9922b8dff4f3" page="1" rect="119.295000,491.597000,383.963000,661.298000" subject="Polygon" title="Alex">
 <popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,417.463000,792.000000,537.463000"/>
 <vertices>128.864000,537.463000;169.159000,651.566000;372.629000,644.385000;374.225000,501.158000;128.864000,537.463000</vertices>
 </polygon>

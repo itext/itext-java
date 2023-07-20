@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"
 ><annots
-><stamp color="#E52237" creationdate="D:20190531165339+03'00'" flags="print" date="D:20190531165339+03'00'" name="ef7b5270-9b1c-42ce-bc32-2d7077d291cb" icon="SBApproved" page="0" rect="192.734894,666.312805,356.234406,715.813293" subject="Approved" title="Alex"
+><stamp color="#E52237" creationdate="D:20190531165339+03'00'" flags="print" date="D:20190531165339+03'00'" name="ef7b5270-9b1c-42ce-bc32-2d7077d291cb" icon="SBApproved" page="1" rect="192.734894,666.312805,356.234406,715.813293" subject="Approved" title="Alex"
 ><appearance
 >PERJQ1QgS0VZPSJBUCI+CjxTVFJFQU0gS0VZPSJOIiBERUZJTkU9IiI+CjxBUlJBWSBLRVk9IkJC
 b3giPgo8RklYRUQgVkFMPSIxNTcuNTUxMjcwIi8+CjxGSVhFRCBWQUw9IjM3MC41NDY4NzUiLz4K
@@ -155,7 +155,7 @@ OTUxMiAzOTYuNDU4NSBjCjMwMi40OTUxMiAzOTkuODI4NjEgMzAwLjgyMjc1IDQwMS44MTM0OCAy
 OTcuNDQ5MjIgNDAxLjgxMzQ4IGMKMjk2Ljc0MDIzIDQwMS44MTM0OCAyOTYuMTQ1MDIgNDAxLjc1
 MDQ5IDI5NS43MTkyNCA0MDEuNjU1NzYgYwoyOTMuMzEwMDYgMzg3LjY2OTkyIGwKaApmCkVNQwpR
 CjwvREFUQT4KPC9TVFJFQU0+CjwvRElDVD4=</appearance
-><popup flags="print,nozoom,norotate" open="no" page="0" rect="612.000000,595.813293,792.000000,715.813293"
+><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,595.813293,792.000000,715.813293"
 /></stamp
 ></annots
 ><f href="xfdfAnnotationStamp.pdf"

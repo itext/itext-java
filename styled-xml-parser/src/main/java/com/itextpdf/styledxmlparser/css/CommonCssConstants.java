@@ -305,6 +305,31 @@ public class CommonCssConstants {
     public static final String COLUMN_GAP = "column-gap";
 
     /**
+     * The Constant COLUMN_RULE_WIDTH.
+     */
+    public static final String COLUMN_RULE_WIDTH = "column-rule-width";
+
+    /**
+     * The Constant COLUMN_RULE_STYLE.
+     */
+    public static final String COLUMN_RULE_STYLE = "column-rule-style";
+
+    /**
+     * The Constant COLUMN_RULE_COLOR.
+     */
+    public static final String COLUMN_RULE_COLOR = "column-rule-color";
+    /**
+     * The Constant COLUMNS
+     */
+    public static final String COLUMNS = "columns";
+
+    /**
+     * The Constant COLUMNS
+     */
+    public static final String COLUMN_RULE = "column-rule";
+
+
+    /**
      * The Constant DARKEN.
      */
     public static final String DARKEN = "darken";
@@ -891,6 +916,16 @@ public class CommonCssConstants {
      * The Constant COLUMN_REVERSE.
      */
     public static final String COLUMN_REVERSE = "column-reverse";
+
+    /**
+     * The Constant COLUMN_COUNT.
+     */
+    public static final String COLUMN_COUNT = "column-count";
+
+    /**
+     * The Constant COLUMN_WIDTH.
+     */
+    public static final String COLUMN_WIDTH = "column-width";
 
     /**
      * The Constant CONTAIN.

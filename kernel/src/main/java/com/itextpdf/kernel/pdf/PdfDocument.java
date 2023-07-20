@@ -49,7 +49,6 @@ import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.collection.PdfCollection;
@@ -1310,6 +1309,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                             KernelExceptionMessageConstant.
                                     TAG_STRUCTURE_COPYING_FAILED_IT_MIGHT_BE_CORRUPTED_IN_ONE_OF_THE_DOCUMENTS,
                             ex);
+                }
+                if (copier instanceof IPdfPageFormCopier) {
+                    ((IPdfPageFormCopier) copier).recreateAcroformToProcessCopiedFields(toDocument);
                 }
             } else {
                 Logger logger = LoggerFactory.getLogger(PdfDocument.class);

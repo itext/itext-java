@@ -23,7 +23,6 @@
 package com.itextpdf.styledxmlparser.css.resolve.shorthand;
 
 
-
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BackgroundPositionShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BackgroundShorthandResolver;
@@ -36,6 +35,8 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderShorthandRe
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderStyleShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderTopShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.BorderWidthShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.ColumnRuleShortHandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.ColumnsShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexFlowShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FlexShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.FontShorthandResolver;
@@ -80,6 +81,8 @@ public class ShorthandResolverFactory {
         shorthandResolvers.put(CommonCssConstants.FLEX_FLOW, new FlexFlowShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.GAP, new GapShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.PLACE_ITEMS, new PlaceItemsShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.COLUMNS, new ColumnsShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.COLUMN_RULE, new ColumnRuleShortHandResolver());
     }
 
     /**

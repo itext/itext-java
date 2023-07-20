@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
@@ -54,6 +55,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Canvas;
@@ -93,7 +95,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @LogMessages(messages = {@LogMessage(messageTemplate = FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD, count = 2)})
     public void nullFormFieldTest() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "nullFormField.pdf"));
-        PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfFormCreator.getAcroForm(pdfDoc, true);
         pdfDoc.close();
     }
 
@@ -101,7 +103,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void formFieldTest01() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
 
         Map<String, PdfFormField> fields = form.getAllFormFields();
         PdfFormField field = fields.get("Text1");
@@ -116,7 +118,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "formFieldTest02.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         Rectangle rect = new Rectangle(210, 490, 150, 22);
         PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "fieldName")
                 .setWidgetRectangle(rect).createText();
@@ -137,7 +139,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "formFieldTest03.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"), new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
@@ -162,7 +164,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "formFieldTest04.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"), new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 150, 22);
@@ -189,7 +191,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         // In this test it's important to open the document in the acrobat and make sure that border width
         // does not change after clicking on the field. Acrobat doesn't support float border width therefore we round it
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, true);
 
             PdfTextFormField textFormField = new TextFormFieldBuilder(pdfDocument, "text field")
                     .setWidgetRectangle(new Rectangle(100, 600, 100, 100)).createText();
@@ -209,7 +211,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
         pdfDoc.addNewPage();
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfPage page = pdfDoc.getFirstPage();
         Rectangle rect = new Rectangle(210, 490, 300, 22);
@@ -234,7 +236,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void unicodeFormFieldTest() throws IOException {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         Map<String, PdfFormField> formFields = form.getAllFormFields();
         // 帐号1: account number 1
         String fieldName = "\u5E10\u53F71";
@@ -245,7 +247,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void unicodeFormFieldTest2() throws IOException {
         String filename = sourceFolder + "unicodeFormFieldFile.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         // 帐号1: account number 1
         String fieldName = "\u5E10\u53F71";
         Assert.assertNotNull(form.getField(fieldName));
@@ -255,7 +257,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void textFieldValueInStreamTest() throws IOException {
         String filename = sourceFolder + "textFieldValueInStream.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(filename));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         String fieldValue = form.getField("fieldName").getValueAsString();
         // Trailing newline is not trimmed which seems to match Acrobat's behavior on copy-paste
         Assert.assertEquals("some value\n", fieldValue);
@@ -266,7 +268,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "choiceFieldTest01.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         Rectangle rect = new Rectangle(210, 490, 150, 20);
 
@@ -299,7 +301,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "buttonFieldTest01.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);
@@ -344,7 +346,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
@@ -371,7 +373,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
@@ -407,7 +409,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         Rectangle rect1 = new Rectangle(36, 700, 20, 20);
         Rectangle rect2 = new Rectangle(36, 680, 20, 20);
@@ -445,7 +447,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         String itext = "itextpdf";
 
         PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
@@ -472,7 +474,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         String itext = "itextpdf";
 
         PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
@@ -499,7 +501,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + file;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         String text = "toolongtext";
 
         PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, text)
@@ -524,7 +526,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "buttonFieldTest02.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "buttonFieldTest02_input.pdf"), new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         ((PdfButtonFormField) form.getField("push")).setImage(sourceFolder + "Desert.jpg");
 
@@ -543,7 +545,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "realFontSizeRegenerateAppearance.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFilename), new PdfWriter(destFilename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         form.getField("fieldName").regenerateField();
 
@@ -560,7 +562,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     public void addFieldWithKidsTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfFormField root = new NonTerminalFormFieldBuilder(pdfDoc, "root").createNonTerminalFormField();
 
@@ -586,7 +588,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "formWithDefaultResources.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
 
         Map<String, PdfFormField> fields = form.getAllFormFields();
@@ -611,7 +613,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "formWithoutResources.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
 
         Map<String, PdfFormField> fields = form.getAllFormFields();
@@ -635,7 +637,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfFormField field = new TextFormFieldBuilder(pdfDoc, "name").setWidgetRectangle(new Rectangle(36, 786, 80, 20))
                 .createText().setValue("TestValueAndALittleMore");
@@ -661,7 +663,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "acroFieldDictionaryNoFields.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfFormCreator.getAcroForm(pdfDoc, true);
         pdfDoc.close();
 
         CompareTool compareTool = new CompareTool();
@@ -679,7 +681,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input),
                 new PdfWriter(destinationFolder + output),
                 new StampingProperties().useAppendMode());
-        PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
+        PdfAcroForm acro = PdfFormCreator.getAcroForm(document, false);
         int i = 1;
         for (Map.Entry<String, PdfFormField> entry : acro.getAllFormFields().entrySet()) {
             if (entry.getKey().contains("field")) {
@@ -699,7 +701,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + input),
                 new PdfWriter(destinationFolder + output),
                 new StampingProperties().useAppendMode());
-        PdfAcroForm acro = PdfAcroForm.getAcroForm(document, false);
+        PdfAcroForm acro = PdfFormCreator.getAcroForm(document, false);
         acro.setNeedAppearances(true);
         PdfFormField field = acro.getField("number");
         field.setValue("20150044DR");
@@ -721,7 +723,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "name")
                 .setWidgetRectangle(new Rectangle(100, 100, 300, 20)).createText();
         field.setValue("");
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         form.addField(field);
 
         pdfDoc.close();
@@ -742,7 +744,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "formWithDefaultResources.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
 
         Map<String, PdfFormField> fields = form.getAllFormFields();
@@ -774,7 +776,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(srcPdf);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("Text1").setValue("New field value");
@@ -807,7 +809,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         String text = "שלום וברכה";
         createAcroForm(pdfDoc, form, hebrew, text, 0);
@@ -841,7 +843,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         createAcroForm(pdfDoc, form, hebrew, null, 0);
         createAcroForm(pdfDoc, form, sileot, null, 3);
@@ -877,7 +879,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         String text = "שלום וברכה";
         createAcroForm(pdfDoc, form, hebrew, text, 0);
@@ -907,7 +909,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         createAcroForm(pdfDoc, form, hebrew, null, 0);
         createAcroForm(pdfDoc, form, sileot, null, 3);
@@ -933,7 +935,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "fillFormWithSameEmptyObjsForAppearance.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
 
         acroForm.getField("text_1").setValue("Text 1!");
         acroForm.getField("text_2").setValue("Text 2!");
@@ -957,7 +959,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfTextFormField[] fields = new PdfTextFormField[3];
         String[] names = new String[]{"fieldNoPattern", "fieldEmptyPattern", "fieldSingleEntryPattern"};
         float y = 830;
@@ -996,7 +998,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfTextFormField textField = new TextFormFieldBuilder(pdfDoc, "text")
                 .setWidgetRectangle(new Rectangle(100, 500, 200, 200)).createText();
@@ -1026,7 +1028,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
 
         form.getField("text1").setValue("123");
         form.getField("text2").setJustification(TextAlignment.CENTER).setValue("123");
@@ -1049,7 +1051,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "preserveFontPropsTest.pdf";
         String cmpPdf = sourceFolder + "cmp_preserveFontPropsTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         PdfFormField field1 = form.getField("emptyField");
         field1.setValue("Do fields on the left look the same?", field1.getFont(), field1.getFontSize());
         PdfFormField field2 = form.getField("emptyField2");
@@ -1068,7 +1070,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "fontAutoSizeButtonFieldTest.pdf";
         String cmpPdf = sourceFolder + "cmp_fontAutoSizeButtonFieldTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         String itext = "itextpdf";
 
         PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
@@ -1091,7 +1093,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         form.getField("text").setValue("iText!");
 
         pdfDoc.close();
@@ -1111,7 +1113,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         PdfDocument destDoc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(destFilename));
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(destDoc, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(destDoc, false);
         acroForm.getField("text.1.").setColor(ColorConstants.RED);
 
         destDoc.close();
@@ -1127,7 +1129,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_maxLenColoredTest.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         form.getField("magenta").setColor(ColorConstants.MAGENTA);
 
         pdfDoc.close();
@@ -1147,7 +1149,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_regenerateMaxLenCombTest.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         for (int i = 0; i < 12; i++) {
             PdfTextFormField field = (PdfTextFormField) form.getField("field " + i);
@@ -1173,7 +1175,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         canvas.setFillColor(ColorConstants.MAGENTA);
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfTextFormField[] fields = new PdfTextFormField[4];
         for (int i = 0; i < 4; i++) {
             fields[i] = new TextFormFieldBuilder(pdfDoc, "black" + i)
@@ -1205,7 +1207,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String fileName = destinationFolder + "pdfWithDifferentFieldsTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         pdfDoc.addNewPage();
         PdfFormField emptyField = new NonTerminalFormFieldBuilder(pdfDoc, "empty").createNonTerminalFormField();
         form.addField(emptyField);
@@ -1262,7 +1264,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = "textFieldWithWideUnicodeRange.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         pdfDoc.addNewPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         form.addField(new TextFormFieldBuilder(pdfDoc, "text_helvetica").setWidgetRectangle(
                 new Rectangle(36, 400, 100, 40))
@@ -1310,7 +1312,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         int objectNumber;
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf),
                 new StampingProperties().useAppendMode())) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
             PdfFormField field = form.getField("magenta");
             field.setFontSize(35);
             field.updateDefaultAppearance();
@@ -1335,7 +1337,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         String fieldName = "field1";
         int pageNum = 2;
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfTextFormField field1 = new TextFormFieldBuilder(pdfDoc, fieldName)
                 .setWidgetRectangle(new Rectangle(90, 700, 150, 22)).createText();
         field1.setValue("new field");
@@ -1382,7 +1384,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     private void fillAcroForm(PdfDocument pdfDocument, String text) {
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, false);
         for (PdfFormField field : acroForm.getAllFormFields().values()) {
             field.setValue(text);
         }
@@ -1395,7 +1397,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String testString = "Don't cry over spilt milk";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, true);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
 
@@ -1430,7 +1432,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + inputFile),
                 new PdfWriter(destinationFolder + outputFile),
                 new StampingProperties().useAppendMode());
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, false);
         form.setNeedAppearances(true);
 
         PdfFormField field;
@@ -1464,7 +1466,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "choiceFieldAutoSize01Test.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         String[] options = new String[]{"First Item", "Second Item", "Third Item", "Fourth Item"};
 
         PdfFormField[] fields = new PdfFormField[]{
@@ -1495,7 +1497,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "choiceFieldAutoSize02Test.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfArray options = new PdfArray();
         options.add(new PdfString("First Item", PdfEncodings.UNICODE_BIG));
         options.add(new PdfString("Second Item", PdfEncodings.UNICODE_BIG));
@@ -1520,7 +1522,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String filename = destinationFolder + "borderWidthIndentSingleLineTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "single")
                 .setWidgetRectangle(new Rectangle(50, 700, 500, 120)).createText();
@@ -1555,14 +1557,14 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String outStampingRelease = destinationFolder + "formFieldFileStampingRelease.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outPureStamping));
-        PdfAcroForm.getAcroForm(doc, false);
+        PdfFormCreator.getAcroForm(doc, false);
         // We open/close document to make sure that the results of release logic and simple overwriting coincide.
         doc.close();
 
         try (PdfDocument stamperRelease = new PdfDocument(new PdfReader(srcFile),
                 new PdfWriter(outStampingRelease))) {
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(stamperRelease, false);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(stamperRelease, false);
             form.release();
         }
 
@@ -1574,7 +1576,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "addChildToFormFieldTest.pdf";
         String cmpPdf = sourceFolder + "cmp_addChildToFormFieldTest.pdf";
         try (PdfDocument outputDoc = new PdfDocument(new PdfWriter(outPdf))) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(outputDoc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
             PdfFormField field = new TextFormFieldBuilder(outputDoc, "text1")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
             acroForm.addField(field);
@@ -1609,7 +1611,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())),
                 new PdfWriter(outPdf));
-        PdfAcroForm pdfAcroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        PdfAcroForm pdfAcroForm = PdfFormCreator.getAcroForm(pdfDocument, false);
         pdfAcroForm.getField("checkbox").setValue("Off");
         pdfDocument.close();
 
@@ -1622,7 +1624,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_getValueTest.pdf";
         String srcPdf = sourceFolder + "getValueTest.pdf";
         try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, false);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, false);
             for (AbstractPdfFormField field : acroForm.getAllFormFieldsAndAnnotations()) {
                 if (field instanceof PdfFormField && "child".equals(field.getPdfObject().get(PdfName.V).toString())) {
                     // Child has value "root" still because it doesn't contain T entry
@@ -1641,7 +1643,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "setValueWithDisplayTest.pdf";
         String cmpPdf = sourceFolder + "cmp_setValueWithDisplayTest.pdf";
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField textField = new TextFormFieldBuilder(doc, "text")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
             textField.setValue("some text", "*****");
@@ -1701,7 +1703,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "setNullValueTest.pdf";
         String cmpPdf = sourceFolder + "cmp_setNullValueTest.pdf";
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
-            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField textField = new TextFormFieldBuilder(doc, "text")
                     .setWidgetRectangle(new Rectangle(100, 700, 200, 20)).createText();
             textField.setValue(null);
@@ -1715,9 +1717,183 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     @Test
     public void getSigFlagsTest() {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             form.setSignatureFlag(1);
             Assert.assertEquals(1, form.getSignatureFlags());
+        }
+    }
+
+    @Test
+    public void disableRegenerationForTheRootFieldTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "disableRegenerationForTheRootField.pdf";
+        String cmpPdf = sourceFolder + "cmp_regenerationEnabled.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
+            CustomButtonFormField root = new CustomButtonFormField(document.getPdfDocument(), "root");
+            CustomButtonFormField parent = new CustomButtonFormField(document.getPdfDocument(), "parent");
+            CustomButtonFormField child = new CustomButtonFormField(new PdfWidgetAnnotation(
+                    new Rectangle(200, 550, 150, 100)), document.getPdfDocument(), "child");
+            parent.addKid(child);
+            root.addKid(parent);
+
+            // Disable all fields regeneration
+            root.disableFieldRegeneration();
+            child.getFirstFormAnnotation().setCaption("regenerated button")
+                    .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
+                    .setVisibility(PdfFormAnnotation.VISIBLE);
+
+            Assert.assertEquals(0, root.getCounter());
+            Assert.assertEquals(0, parent.getCounter());
+            Assert.assertEquals(0, child.getCounter());
+
+            root.enableFieldRegeneration();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            // Disable only root field regeneration
+            root.disableCurrentFieldRegeneration();
+            root.regenerateField();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(2, parent.getCounter());
+            Assert.assertEquals(2, child.getCounter());
+
+            root.enableCurrentFieldRegeneration();
+
+            Assert.assertEquals(2, root.getCounter());
+            Assert.assertEquals(3, parent.getCounter());
+            Assert.assertEquals(3, child.getCounter());
+
+            form.addField(root);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void disableRegenerationForTheMiddleFieldTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "disableRegenerationForTheMiddleField.pdf";
+        String cmpPdf = sourceFolder + "cmp_regenerationEnabled.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
+            CustomButtonFormField root = new CustomButtonFormField(document.getPdfDocument(), "root");
+            CustomButtonFormField parent = new CustomButtonFormField(document.getPdfDocument(), "parent");
+            CustomButtonFormField child = new CustomButtonFormField(new PdfWidgetAnnotation(
+                    new Rectangle(200, 550, 150, 100)), document.getPdfDocument(), "child");
+            parent.addKid(child);
+            root.addKid(parent);
+
+            // Disable parent field level regeneration
+            parent.disableFieldRegeneration();
+            child.getFirstFormAnnotation().setCaption("regenerated button")
+                    .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
+                    .setVisibility(PdfFormAnnotation.VISIBLE);
+            root.regenerateField();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(0, parent.getCounter());
+            Assert.assertEquals(0, child.getCounter());
+
+            parent.enableFieldRegeneration();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            // Disable only parent field regeneration
+            parent.disableCurrentFieldRegeneration();
+            root.regenerateField();
+
+            Assert.assertEquals(2, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(2, child.getCounter());
+
+            parent.enableCurrentFieldRegeneration();
+
+            Assert.assertEquals(2, root.getCounter());
+            Assert.assertEquals(2, parent.getCounter());
+            Assert.assertEquals(3, child.getCounter());
+
+            form.addField(root);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void disableChildRegenerationTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "disableChildRegeneration.pdf";
+        String cmpPdf = sourceFolder + "cmp_regenerationEnabled.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
+            CustomButtonFormField root = new CustomButtonFormField(document.getPdfDocument(), "root");
+            CustomButtonFormField parent = new CustomButtonFormField(document.getPdfDocument(), "parent");
+            CustomButtonFormField child = new CustomButtonFormField(new PdfWidgetAnnotation(
+                    new Rectangle(200, 550, 150, 100)), document.getPdfDocument(), "child");
+            parent.addKid(child);
+            root.addKid(parent);
+
+            // Disable child field regeneration
+            child.disableFieldRegeneration();
+            child.getFirstFormAnnotation().setBorderWidth(10).setBorderColor(ColorConstants.PINK)
+                    .setBackgroundColor(ColorConstants.BLUE);
+            root.regenerateField();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(0, child.getCounter());
+
+            child.enableFieldRegeneration();
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            // Disable only child field regeneration (so widget should be regenerated)
+            child.disableCurrentFieldRegeneration();
+
+            child.getFirstFormAnnotation().setCaption("regenerated button")
+                    .setBorderWidth(3).setBorderColor(ColorConstants.DARK_GRAY).setBackgroundColor(ColorConstants.PINK)
+                    .setVisibility(PdfFormAnnotation.VISIBLE);
+
+            Assert.assertEquals(1, root.getCounter());
+            Assert.assertEquals(1, parent.getCounter());
+            Assert.assertEquals(1, child.getCounter());
+
+            form.addField(root);
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    static class CustomButtonFormField extends PdfButtonFormField {
+        private int counter = 0;
+
+        CustomButtonFormField(PdfDocument pdfDocument, String formFieldName) {
+            super(pdfDocument);
+            setPushButton(true);
+            setFieldName(formFieldName);
+        }
+
+        CustomButtonFormField(PdfWidgetAnnotation annotation, PdfDocument pdfDocument, String formFieldName) {
+            super(annotation, pdfDocument);
+            setPushButton(true);
+            setFieldName(formFieldName);
+        }
+
+        public int getCounter() {
+            return counter;
+        }
+
+        @Override
+        public boolean regenerateField() {
+            boolean isRegenerated = super.regenerateField();
+            if (isRegenerated) {
+                counter++;
+            }
+            return isRegenerated;
         }
     }
 }

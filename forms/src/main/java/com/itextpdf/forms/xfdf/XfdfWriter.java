@@ -178,17 +178,24 @@ class XfdfWriter {
             annot.appendChild(contents);
         }
 
+        if (annotObject.getVertices() != null) {
+            Element contents = document.createElement("vertices");
+            contents.setTextContent(annotObject.getVertices());
+            annot.appendChild(contents);
+        }
+
         if(annotObject.getAppearance() != null) {
             Element appearance = document.createElement("appearance");
             appearance.setTextContent(annotObject.getAppearance());
             annot.appendChild(appearance);
         }
-//
-//        if (annotObject.getContentsRichText() != null) {
-//            Element contentsRichText = document.createElement("contents-richtext");
-//            contentsRichText.setNodeValue(annotObject.getContents().getValue());
-//            annot.appendChild(contentsRichText);
-//        }
+
+        if (annotObject.getContentsRichText() != null) {
+            // TODO: DEVSIX-7600 - add tests for this code. contentsRichText#setTextContent might be wrong here.
+            Element contentsRichText = document.createElement("contents-richtext");
+            contentsRichText.setTextContent(annotObject.getContentsRichText().getValue());
+            annot.appendChild(contentsRichText);
+        }
 
         if (XfdfConstants.LINK.equalsIgnoreCase(annotObject.getName())) {
             if (annotObject.getDestination() != null) {

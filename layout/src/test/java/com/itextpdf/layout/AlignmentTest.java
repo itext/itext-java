@@ -36,25 +36,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.AreaBreak;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.properties.FloatPropertyValue;
-import com.itextpdf.layout.properties.HorizontalAlignment;
-import com.itextpdf.layout.properties.InlineVerticalAlignment;
-import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
-import com.itextpdf.layout.properties.LineHeight;
-import com.itextpdf.layout.properties.ListNumberingType;
-import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.RenderingMode;
-import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.layout.properties.VerticalAlignment;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.properties.*;
+import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import org.junit.Assert;
@@ -592,6 +581,34 @@ public class AlignmentTest extends ExtendedITextTest {
 
         doc.close();
         doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void flexItemHorizontalAlignmentTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "flexItemHorizontalAlignmentTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexItemHorizontalAlignmentTest.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            Document doc = new Document(pdfDoc);
+            DocumentRenderer documentRenderer = new DocumentRenderer(doc);
+
+            Div div = new Div();
+            FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+            flexContainerRenderer.setParent(documentRenderer);
+            div.setNextRenderer(flexContainerRenderer);
+
+            Div innerDiv = new Div();
+            innerDiv.setProperty(Property.BORDER, new SolidBorder(1));
+            innerDiv.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
+            innerDiv.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
+            innerDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));
+            innerDiv.setHorizontalAlignment(HorizontalAlignment.RIGHT);
+            div.add(innerDiv).add(innerDiv);
+
+            doc.add(div);
+        }
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }

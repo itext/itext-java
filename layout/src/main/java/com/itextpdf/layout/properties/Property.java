@@ -67,6 +67,10 @@ public final class Property {
     public static final int CLEAR = 100;
     public static final int COLLAPSING_MARGINS = 89;
     public static final int COLSPAN = 16;
+    public static final int COLUMN_COUNT = 138;
+    public static final int COLUMN_WIDTH = 142;
+    public static final int COLUMN_GAP = 143;
+    public static final int COLUMN_GAP_BORDER = 144;
     public static final int DESTINATION = 17;
     public static final int FILL_AVAILABLE_AREA = 86;
     public static final int FILL_AVAILABLE_AREA_ON_SPLIT = 87;
@@ -75,6 +79,8 @@ public final class Property {
     public static final int FLEX_GROW = 132;
     public static final int FLEX_SHRINK = 127;
     public static final int FLEX_WRAP = 128;
+    public static final int FLEX_DIRECTION = 139;
+
     public static final int FLOAT = 99;
     public static final int FLUSH_ON_DRAW = 19;
 
@@ -204,6 +210,8 @@ public final class Property {
     public static final int WIDTH = 77;
     public static final int WORD_SPACING = 78;
     public static final int ADD_MARKED_CONTENT_TEXT = 137;
+    public static final int TREAT_AS_CONTINUOUS_CONTAINER = 140;
+    public static final int TREAT_AS_CONTINUOUS_CONTAINER_RESULT = 141;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
@@ -211,7 +219,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 137;
+    private static final int MAX_INHERITED_PROPERTY_ID = 144;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -256,6 +264,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.OVERFLOW_WRAP] = true;
         INHERITED_PROPERTIES[Property.META_INFO] = true;
         INHERITED_PROPERTIES[Property.ADD_MARKED_CONTENT_TEXT] = true;
+        INHERITED_PROPERTIES[Property.TREAT_AS_CONTINUOUS_CONTAINER] = true;
     }
 
     private Property() {

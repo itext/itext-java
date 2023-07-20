@@ -30,6 +30,7 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
@@ -117,7 +118,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         signer.cryptoDictionary = new PdfSignature();
         signer.appearance.setPageRect(new Rectangle(100, 100, 0, 0));
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(signer.document, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
         signer.createNewSignatureFormField(acroForm, signer.fieldName);
         PdfFormField formField = acroForm.getField(signer.fieldName);
 
@@ -138,7 +139,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
         signer.fieldLock = fieldLock;
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(signer.document, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
         Assert.assertEquals(fieldLock, signer.createNewSignatureFormField(acroForm, signer.fieldName));
         PdfFormField formField = acroForm.getField(signer.fieldName);
 
@@ -210,7 +211,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         signer.appearance.setPageRect(new Rectangle(100, 100, 0, 0));
 
         widgetAnnotation = (PdfWidgetAnnotation) signer.document.getPage(1).getAnnotations().get(0);
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(signer.document, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
         PdfFormField formField = new ExtendedPdfSignatureFormField(widgetAnnotation, signer.document);
         formField.setFieldName(signer.fieldName);
         acroForm.addField(formField);
@@ -242,7 +243,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         signer.appearance.setPageRect(new Rectangle(100, 100, 10, 10));
 
         widgetAnnotation = (PdfWidgetAnnotation) signer.document.getPage(1).getAnnotations().get(0);
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(signer.document, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
         PdfFormField formField = new ExtendedPdfSignatureFormField(widgetAnnotation, signer.document);
         formField.setFieldName(signer.fieldName);
         acroForm.addField(formField);
@@ -448,7 +449,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
         PdfFormField formField = new NonTerminalFormFieldBuilder(pdfDocument, "test_field").createNonTerminalFormField();
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, true);
         acroForm.addField(formField);
         pdfDocument.close();
         return outputStream.toByteArray();
@@ -459,7 +460,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
         PdfFormField formField = new SignatureFormFieldBuilder(pdfDocument, fieldName).createSignature()
                 .setValue(fieldValue);
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, true);
         acroForm.addField(formField);
         pdfDocument.close();
         return outputStream.toByteArray();
@@ -469,7 +470,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputStream));
         PdfFormField formField = new SignatureFormFieldBuilder(pdfDocument, fieldName).createSignature();
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, true);
         acroForm.addField(formField);
         pdfDocument.close();
         return outputStream.toByteArray();

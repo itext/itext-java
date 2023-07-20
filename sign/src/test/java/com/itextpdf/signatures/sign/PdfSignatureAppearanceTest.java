@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -516,10 +517,10 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         ITextTest.printOutCmpPdfNameAndDir(outPdf, cmpPdf);
         try (PdfDocument outDoc = new PdfDocument(new PdfReader(outPdf))) {
             try (PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpPdf))) {
-                PdfDictionary outN = (PdfDictionary) PdfAcroForm.getAcroForm(outDoc, false)
+                PdfDictionary outN = (PdfDictionary) PdfFormCreator.getAcroForm(outDoc, false)
                         .getField("Signature1").getPdfObject()
                         .getAsDictionary(PdfName.AP).get(PdfName.N).getIndirectReference().getRefersTo();
-                PdfDictionary cmpN = (PdfDictionary) PdfAcroForm.getAcroForm(cmpDoc, false)
+                PdfDictionary cmpN = (PdfDictionary) PdfFormCreator.getAcroForm(cmpDoc, false)
                         .getField("Signature1").getPdfObject()
                         .getAsDictionary(PdfName.AP).get(PdfName.N).getIndirectReference().getRefersTo();
                 Assert.assertNull(new CompareTool().compareDictionariesStructure(outN, cmpN));
@@ -589,7 +590,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
 
     private static void assertAppearanceFontSize(String filename, float expectedFontSize) throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(filename));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, false);
         PdfStream stream = acroForm.getField("Signature1").getWidgets().get(0).getNormalAppearanceObject().
                 getAsDictionary(PdfName.Resources).getAsDictionary(PdfName.XObject)
                 .getAsStream(new PdfName("FRM")).getAsDictionary(PdfName.Resources)

@@ -328,7 +328,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
 
             if (c == '.') {
                 fractionalPartAfterDecimalPoint = true;
-            } else if (c == 'e') {
+            } else if (Character.toLowerCase(c) == 'e') {
                 exponentSignMagnitude = true;
             }
 

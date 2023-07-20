@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -59,7 +60,7 @@ public class FlatteningTest extends ExtendedITextTest {
 
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
-        PdfAcroForm.getAcroForm(doc, false).flattenFields();
+        PdfFormCreator.getAcroForm(doc, false).flattenFields();
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
@@ -74,7 +75,7 @@ public class FlatteningTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
-        PdfAcroForm.getAcroForm(doc, false).flattenFields();
+        PdfFormCreator.getAcroForm(doc, false).flattenFields();
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));
@@ -87,7 +88,7 @@ public class FlatteningTest extends ExtendedITextTest {
         String src = sourceFolder + filename + ".pdf";
         String dest = destinationFolder + filename + "_flattened.pdf";
         final PdfDocument document = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(document, true);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
         acroForm.getField("hiddenField").getPdfObject().put(PdfName.F, new PdfNumber(2));
         acroForm.flattenFields();
         String textAfterFlatten = PdfTextExtractor.getTextFromPage(document.getPage(1));

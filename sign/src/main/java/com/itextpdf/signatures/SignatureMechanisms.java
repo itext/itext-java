@@ -22,8 +22,14 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
+
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that contains OID mappings to extract a signature algorithm name
@@ -31,6 +37,10 @@ import java.util.Map;
  * signature mechanism OID given a signature algorithm and a digest function.
  */
 public class SignatureMechanisms {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SignatureMechanisms.class);
+    
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     /** Maps IDs of signature algorithms with its human-readable name. */
     static final Map<String, String> algorithmNames = new HashMap<>();
@@ -141,23 +151,40 @@ public class SignatureMechanisms {
      * @return an OID string, or {@code null} if none was found.
      */
     public static String getSignatureMechanismOid(String signatureAlgorithmName, String digestAlgorithmName) {
+        String resultingOId;
         switch (signatureAlgorithmName) {
             case "RSA":
                 final String oId = rsaOidsByDigest.get(digestAlgorithmName);
-                return oId == null ? SecurityIDs.ID_RSA : oId;
+                resultingOId = oId == null ? SecurityIDs.ID_RSA : oId;
+                break;
             case "DSA":
-                return dsaOidsByDigest.get(digestAlgorithmName);
+                resultingOId = dsaOidsByDigest.get(digestAlgorithmName);
+                break;
             case "ECDSA":
-                return ecdsaOidsByDigest.get(digestAlgorithmName);
+                resultingOId = ecdsaOidsByDigest.get(digestAlgorithmName);
+                break;
             case "Ed25519":
-                return SecurityIDs.ID_ED25519;
+                resultingOId = SecurityIDs.ID_ED25519;
+                break;
             case "Ed448":
-                return SecurityIDs.ID_ED448;
+                resultingOId = SecurityIDs.ID_ED448;
+                break;
             case "RSASSA-PSS":
             case "RSA/PSS":
-                return SecurityIDs.ID_RSASSA_PSS;
+                resultingOId = SecurityIDs.ID_RSASSA_PSS;
+                break;
             default:
-                return null;
+                resultingOId = null;
+        }
+        if (resultingOId != null) {
+            return resultingOId;
+        }
+        LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+        resultingOId = BOUNCY_CASTLE_FACTORY.getAlgorithmOid(digestAlgorithmName + "with" + signatureAlgorithmName);
+        if (resultingOId == null) {
+            return BOUNCY_CASTLE_FACTORY.getAlgorithmOid(signatureAlgorithmName);
+        } else {
+            return resultingOId;
         }
     }
 
@@ -173,5 +200,22 @@ public class SignatureMechanisms {
         } else {
             return ret;
         }
+    }
+
+    /**
+     * Get the signing mechanism name for a certain id and digest.
+     * 
+     * @param oid an id of an algorithm
+     * @param digest digest of an algorithm
+     * 
+     * @return name of the mechanism
+     */
+    public static String getMechanism(String oid, String digest) {
+        String algorithm = getAlgorithm(oid);
+        if (!algorithm.equals(oid)) {
+            return digest + "with" + algorithm;
+        }
+        LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+        return BOUNCY_CASTLE_FACTORY.getAlgorithmName(oid);
     }
 }
