@@ -265,4 +265,12 @@ public class PdfStringTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8ActualText.pdf", sourceFolder + "cmp_writeUtf8ActualText.pdf", destinationFolder, "diffActualText_"));
     }
+
+    @Test
+    public void emptyHexWriting() {
+        PdfString string = new PdfString("");
+        Assert.assertEquals("", string.toUnicodeString());
+        string.setHexWriting(true);
+        Assert.assertEquals("", string.toUnicodeString());
+    }
 }

@@ -278,6 +278,9 @@ public class PdfString extends PdfPrimitiveObject {
      * @return Hexadecimal string or string with escaped symbols in byte array view.
      */
     protected byte[] encodeBytes(byte[] bytes) {
+        if (bytes.length == 0) {
+            return bytes;
+        }
         if (hexWriting) {
             ByteBuffer buf = new ByteBuffer(bytes.length * 2);
             for (byte b : bytes) {
