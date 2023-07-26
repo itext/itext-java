@@ -41,6 +41,10 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
+  <scm>
+    <connection>git@github.com:itext/itext7.git</connection>
+    <url>git@github.com:itext/itext7.git</url>
+  </scm>
   <repositories>
     <repository>
       <releases>
