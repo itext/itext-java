@@ -27,6 +27,24 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- In Open JDK Xerces library is embedded as the default implementation used for JAXP implementation.
+    In Android versions that we've tested Android JRE contained its own JAXP implementation. For consistency
+    of code and behavior between vanilla and Android versions, we decided to explicitly add dependency on
+    Xerces in android-version of itext library.-->
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.2</version>
+    </dependency>
+    <!-- Android as an implementation of HTTP URL connection uses OkHttp library which requires some
+    Cryptographic Service Provider (CSP). So add dependency to BouncyCastle provider. -->
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk18on</artifactId>
+      <version>${bouncycastle.version}</version>
+      <optional>true</optional>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <resources>
