@@ -116,7 +116,6 @@ class SmartModePdfObjectsSerializer {
         } else if (obj.isArray()) {
             serArray((PdfArray) obj, bb, level - 1, serializedCache);
         } else if (obj.isString()) {
-            // TODO specify length for strings, streams, may be names?
             bb.append("$S").append(obj.toString());
         } else if (obj.isName()) {
             bb.append("$N").append(obj.toString());
@@ -159,7 +158,6 @@ class SmartModePdfObjectsSerializer {
     }
 
     private boolean isKeyRefersBack(PdfDictionary dic, PdfName key) {
-        // TODO review this method?
         // ignore recursive call
         return key.equals(PdfName.P) && (dic.get(key).isIndirectReference() || dic.get(key).isDictionary())
                 || key.equals(PdfName.Parent);
