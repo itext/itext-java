@@ -3,25 +3,25 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>8.0.4</version>
   </parent>
 
-  <artifactId>barcodes</artifactId>
+  <artifactId>barcodes-android</artifactId>
 
   <name>iText - barcodes</name>
   <url>https://itextpdf.com/</url>
 
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>kernel-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

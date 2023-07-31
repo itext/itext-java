@@ -3,36 +3,36 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>8.0.4</version>
   </parent>
 
-  <artifactId>forms</artifactId>
+  <artifactId>forms-android</artifactId>
 
   <name>iText - forms</name>
   <url>https://itextpdf.com/</url>
 
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>kernel-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>layout</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>layout-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>font-asian</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>font-asian-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -57,8 +57,8 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>bouncy-castle-adapter</artifactId>
+          <groupId>com.itextpdf.android</groupId>
+          <artifactId>bouncy-castle-adapter-android</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>
         </dependency>
@@ -68,8 +68,8 @@
       <id>bouncy-castle-fips-test</id>
       <dependencies>
         <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>bouncy-castle-adapter</artifactId>
+          <groupId>com.itextpdf.android</groupId>
+          <artifactId>bouncy-castle-adapter-android</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>
         </dependency>
