@@ -278,7 +278,15 @@ public class TagTreePointer {
     public TagTreePointer addAnnotationTag(PdfAnnotation annotation) {
         throwExceptionIfCurrentPageIsNotInited();
 
-        PdfObjRef kid = new PdfObjRef(annotation, getCurrentStructElem(), getDocument().getNextStructParentIndex());
+        // Sometimes the merged field is split into a form field and an annotation, so we should add the annotation
+        // instead of the merged field in the tag structure. So the annotation already contains the merged field's
+        // StructParent in its dictionary, which we need to take into account. Otherwise, getNextStructParentIndex()
+        // will increment the structParentIndex counter and the annotation will be added to the end, but the merged
+        // field's StructParent index will disappear from the number tree of the tag structure.
+        PdfNumber structParentIndex = annotation.getPdfObject().getAsNumber(PdfName.StructParent);
+        PdfObjRef kid = new PdfObjRef(annotation, getCurrentStructElem(),
+                structParentIndex != null ? structParentIndex.intValue() :
+                        getDocument().getNextStructParentIndex());
         if (!ensureElementPageEqualsKidPage(getCurrentStructElem(), currentPage.getPdfObject())) {
             // Explicitly using object indirect reference here in order to correctly process released objects.
             ((PdfDictionary) kid.getPdfObject()).put(PdfName.Pg, currentPage.getPdfObject().getIndirectReference());

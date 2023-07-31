@@ -23,6 +23,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -55,7 +56,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ import java.util.StringTokenizer;
 
 public class XfdfObjectFactory {
 
-    private static Logger logger = LoggerFactory.getLogger(XfdfObjectFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(XfdfObjectFactory.class);
 
     /**
      * Extracts data from pdf document acroform and annotations into XfdfObject.
@@ -73,7 +73,7 @@ public class XfdfObjectFactory {
      * @return XfdfObject containing data from pdf forms and annotations.
      */
     public XfdfObject createXfdfObject(PdfDocument document, String filename) {
-        PdfAcroForm form = PdfAcroForm.getAcroForm(document, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(document, false);
 
         XfdfObject resultXfdf = new XfdfObject();
         FieldsObject xfdfFields = new FieldsObject();
@@ -123,10 +123,9 @@ public class XfdfObjectFactory {
      * @return XfdfObject containing original xfdf data.
      * @throws ParserConfigurationException if a XfdfObject cannot be created which satisfies the configuration
      *                                      requested.
-     * @throws IOException                  if any I/O issue occurs.
      * @throws SAXException                 if any parse errors occurs.
      */
-     public XfdfObject createXfdfObject(InputStream xfdfInputStream) throws ParserConfigurationException, IOException, SAXException {
+     public XfdfObject createXfdfObject(InputStream xfdfInputStream) throws ParserConfigurationException, SAXException {
         XfdfObject xfdfObject = new XfdfObject();
 
         Document document = XfdfFileUtils.createXfdfDocumentFromStream(xfdfInputStream);
@@ -208,6 +207,8 @@ public class XfdfObjectFactory {
                XfdfConstants.SQUARE.equalsIgnoreCase(nodeName) ||
                XfdfConstants.POLYLINE.equalsIgnoreCase(nodeName) ||
                XfdfConstants.POLYGON.equalsIgnoreCase(nodeName) ||
+               XfdfConstants.STAMP.equalsIgnoreCase(nodeName) ||
+//               XfdfConstants.FREETEXT.equalsIgnoreCase(nodeName) ||
                XfdfConstants.LINE.equalsIgnoreCase(nodeName);
     }
 
@@ -232,12 +233,12 @@ public class XfdfObjectFactory {
             for (int i = 0; i < attributes.getLength(); i++) {
                 addAnnotObjectAttribute(annotObject, attributes.item(i));
             }
-            visitAnnotationInnerNodes(annotObject, currentNode);
+            visitAnnotationInnerNodes(annotObject, currentNode, annotsObject);
             annotsObject.addAnnot(annotObject);
         }
     }
 
-    private void visitAnnotationInnerNodes(AnnotObject annotObject, Node annotNode) {
+    private void visitAnnotationInnerNodes(AnnotObject annotObject, Node annotNode, AnnotsObject annotsObject) {
         NodeList children = annotNode.getChildNodes();
 
         for (int temp = 0; temp < children.getLength(); temp++) {
@@ -254,6 +255,10 @@ public class XfdfObjectFactory {
                 }
                 if (XfdfConstants.VERTICES.equalsIgnoreCase(node.getNodeName())) {
                     visitVerticesSubelement(node, annotObject);
+                }
+                if (isAnnotationSubtype(node.getNodeName()) &&
+                        isAnnotSupported(node.getNodeName())) {
+                    visitAnnotationNode(node, annotsObject);
                 }
             }
         }
@@ -329,7 +334,18 @@ public class XfdfObjectFactory {
                 case XfdfConstants.REPLY_TYPE:
                 case XfdfConstants.OPEN:
                 case XfdfConstants.COORDS:
+                case XfdfConstants.INTENT:
+                case XfdfConstants.INTERIOR_COLOR:
+                case XfdfConstants.HEAD:
+                case XfdfConstants.TAIL:
                 case XfdfConstants.FRINGE:
+                case XfdfConstants.ROTATION:
+                case XfdfConstants.JUSTIFICATION:
+
+                case XfdfConstants.WIDTH:
+                case XfdfConstants.DASHES:
+                case XfdfConstants.STYLE:
+                case XfdfConstants.INTENSITY:
                     annotObject.addAttribute(new AttributeObject(attributeName, attributeNode.getNodeValue()));
                     break;
                 default: logger.warn(IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
@@ -510,18 +526,25 @@ public class XfdfObjectFactory {
     }
 
     private static void addBorderStyleAttributes(AnnotObject annotObject, PdfNumber width,
-            PdfString dashes, PdfString style) {
+            PdfArray dashes, PdfName style) {
         annotObject.addAttribute(XfdfConstants.WIDTH, width);
-        annotObject.addAttribute(XfdfConstants.DASHES, dashes);
-        annotObject.addAttribute(XfdfConstants.STYLE, style);
+        annotObject.addAttribute(XfdfConstants.DASHES, XfdfObjectUtils.convertDashesFromArray(dashes));
+        annotObject.addAttribute(XfdfConstants.STYLE, XfdfObjectUtils.getStyleFullValue(style));
     }
 
     private static void createTextMarkupAnnotation(PdfAnnotation pdfAnnotation, AnnotObject annot, int pageNumber) {
         PdfTextMarkupAnnotation pdfTextMarkupAnnotation = (PdfTextMarkupAnnotation) pdfAnnotation;
 
-        annot.addAttribute(new AttributeObject(XfdfConstants.COORDS,
-                XfdfObjectUtils.convertQuadPointsToCoordsString(pdfTextMarkupAnnotation.getQuadPoints().toFloatArray())));
+        if (pdfTextMarkupAnnotation.getQuadPoints() != null) {
+            annot.addAttribute(new AttributeObject(XfdfConstants.COORDS, XfdfObjectUtils
+                    .convertQuadPointsToCoordsString(pdfTextMarkupAnnotation.getQuadPoints().toFloatArray())));
+        }
 
+        if (PdfTextMarkupAnnotation.MarkupUnderline.equals(pdfTextMarkupAnnotation.getSubtype()) &&
+                pdfTextMarkupAnnotation.getIntent() != null) {
+            annot.addAttribute(new AttributeObject(XfdfConstants.INTENT,
+                    pdfTextMarkupAnnotation.getIntent().getValue()));
+        }
 
         if (pdfTextMarkupAnnotation.getContents() != null) {
             annot.setContents(pdfTextMarkupAnnotation.getContents());
@@ -558,14 +581,15 @@ public class XfdfObjectFactory {
         PdfDictionary bs = pdfCircleAnnotation.getBorderStyle();
         if (bs != null) {
             addBorderStyleAttributes(annot, bs.getAsNumber(PdfName.W),
-                    bs.getAsString(PdfName.Dashed), bs.getAsString(PdfName.Style));
+                    bs.getAsArray(PdfName.D), bs.getAsName(PdfName.S));
         }
 
         if (pdfCircleAnnotation.getBorderEffect() != null) {
-            //TODO DEVSIX-4133 map intensity to border effect dictionary's I key
-            //annot.addAttribute(new AttributeObject("intensity", pdfCircleAnnotation.getBorderEffect().getAsString()));
-            annot.addAttribute(XfdfConstants.STYLE, pdfCircleAnnotation.getBorderEffect().getAsString(PdfName.Style));
-
+            annot.addAttribute(XfdfConstants.INTENSITY, pdfCircleAnnotation.getBorderEffect().getAsNumber(PdfName.I));
+            if (annot.getAttribute(XfdfConstants.STYLE) == null) {
+                annot.addAttribute(XfdfConstants.STYLE, XfdfObjectUtils.getStyleFullValue(
+                        pdfCircleAnnotation.getBorderEffect().getAsName(PdfName.S)));
+            }
         }
 
         if (pdfCircleAnnotation.getInteriorColor() != null && pdfCircleAnnotation.getInteriorColor().getColorValue() != null) {
@@ -573,7 +597,8 @@ public class XfdfObjectFactory {
         }
 
         if(pdfCircleAnnotation.getRectangleDifferences() != null) {
-            annot.addAttribute(new AttributeObject("fringe", XfdfObjectUtils.convertFringeToString(pdfCircleAnnotation.getRectangleDifferences().toFloatArray())));
+            annot.addAttribute(new AttributeObject(XfdfConstants.FRINGE, XfdfObjectUtils.convertFringeToString(
+                    pdfCircleAnnotation.getRectangleDifferences().toFloatArray())));
         }
 
         annot.setContents(pdfAnnotation.getContents());
@@ -588,20 +613,23 @@ public class XfdfObjectFactory {
         PdfDictionary bs = pdfSquareAnnotation.getBorderStyle();
         if (bs != null) {
             addBorderStyleAttributes(annot, bs.getAsNumber(PdfName.W),
-                    bs.getAsString(PdfName.Dashed), bs.getAsString(PdfName.Style));
+                    bs.getAsArray(PdfName.D), bs.getAsName(PdfName.S));
         }
 
         if (pdfSquareAnnotation.getBorderEffect() != null) {
-            //TODO DEVSIX-4133 map intensity to border effect dictionary's I key
-            //annot.addAttribute(new AttributeObject("intensity", pdfCircleAnnotation.getBorderEffect().getAsString()));
-            annot.addAttribute(XfdfConstants.STYLE, pdfSquareAnnotation.getBorderEffect().getAsString(PdfName.Style));
+            annot.addAttribute(XfdfConstants.INTENSITY, pdfSquareAnnotation.getBorderEffect().getAsNumber(PdfName.I));
+            if (annot.getAttribute(XfdfConstants.STYLE) == null) {
+                annot.addAttribute(XfdfConstants.STYLE, XfdfObjectUtils.getStyleFullValue(
+                        pdfSquareAnnotation.getBorderEffect().getAsName(PdfName.S)));
+            }
         }
 
         if (pdfSquareAnnotation.getInteriorColor() != null && pdfSquareAnnotation.getInteriorColor().getColorValue() != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.INTERIOR_COLOR, XfdfObjectUtils.convertColorToString(pdfSquareAnnotation.getInteriorColor().getColorValue())));
         }
         if(pdfSquareAnnotation.getRectangleDifferences() != null) {
-            annot.addAttribute(new AttributeObject("fringe", XfdfObjectUtils.convertFringeToString(pdfSquareAnnotation.getRectangleDifferences().toFloatArray())));
+            annot.addAttribute(new AttributeObject(XfdfConstants.FRINGE, XfdfObjectUtils.convertFringeToString(
+                    pdfSquareAnnotation.getRectangleDifferences().toFloatArray())));
         }
 
         annot.setContents(pdfAnnotation.getContents());
@@ -614,7 +642,9 @@ public class XfdfObjectFactory {
         PdfStampAnnotation pdfStampAnnotation = (PdfStampAnnotation) pdfAnnotation;
 
         annot.addAttribute(XfdfConstants.ICON, pdfStampAnnotation.getIconName());
-        //How to add rotation? iText doesn't support ratotion attribute in PdfStampAnnotation
+        if (pdfStampAnnotation.getRotation() != null) {
+            annot.addAttribute(XfdfConstants.ROTATION, pdfStampAnnotation.getRotation().intValue());
+        }
 
         if (pdfStampAnnotation.getContents() != null) {
             annot.setContents(pdfStampAnnotation.getContents());
@@ -639,12 +669,14 @@ public class XfdfObjectFactory {
         PdfDictionary bs = pdfFreeTextAnnotation.getBorderStyle();
         if (bs != null) {
             addBorderStyleAttributes(annot, bs.getAsNumber(PdfName.W),
-                    bs.getAsString(PdfName.Dashed), bs.getAsString(PdfName.Style));
+                    bs.getAsArray(PdfName.D), bs.getAsName(PdfName.S));
         }
 
-        //TODO DEVSIX-4134 add rotation optional attribute
-        //annot.addAttribute(new AttributeObject("rotation", pdfFreeTextAnnotation.));
-        annot.addAttribute(new AttributeObject(XfdfConstants.JUSTIFICATION, String.valueOf(pdfFreeTextAnnotation.getJustification())));
+        if (pdfFreeTextAnnotation.getRotation() != null) {
+            annot.addAttribute(XfdfConstants.ROTATION, pdfFreeTextAnnotation.getRotation().intValue());
+        }
+        annot.addAttribute(new AttributeObject(XfdfConstants.JUSTIFICATION,
+                XfdfObjectUtils.convertJustificationFromIntegerToString((pdfFreeTextAnnotation.getJustification()))));
         if (pdfFreeTextAnnotation.getIntent() != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.INTENT, pdfFreeTextAnnotation.getIntent().getValue()));
         }
@@ -702,7 +734,7 @@ public class XfdfObjectFactory {
         PdfDictionary bs = pdfLineAnnotation.getBorderStyle();
         if (bs != null) {
             addBorderStyleAttributes(annot, bs.getAsNumber(PdfName.W),
-                    bs.getAsString(PdfName.Dashed), bs.getAsString(PdfName.Style));
+                    bs.getAsArray(PdfName.D), bs.getAsName(PdfName.S));
         }
 
         annot.setContents(pdfAnnotation.getContents());
@@ -713,6 +745,18 @@ public class XfdfObjectFactory {
 
     private static void createLinkAnnotation(PdfAnnotation pdfAnnotation, AnnotObject annot) {
         PdfLinkAnnotation pdfLinkAnnotation = (PdfLinkAnnotation) pdfAnnotation;
+
+        if (pdfLinkAnnotation.getBorderStyle() != null) {
+            annot.addAttribute(XfdfConstants.STYLE, pdfLinkAnnotation.getBorderStyle().getAsString(PdfName.S));
+        }
+        if (pdfLinkAnnotation.getHighlightMode() != null) {
+            annot.addAttribute(XfdfConstants.HIGHLIGHT,
+                    XfdfObjectUtils.getHighlightFullValue(pdfLinkAnnotation.getHighlightMode()));
+        }
+        if (pdfLinkAnnotation.getQuadPoints() != null) {
+            annot.addAttribute(new AttributeObject(XfdfConstants.COORDS,
+                    XfdfObjectUtils.convertQuadPointsToCoordsString(pdfLinkAnnotation.getQuadPoints().toFloatArray())));
+        }
 
         if (pdfLinkAnnotation.getContents() != null) {
             annot.setContents(pdfLinkAnnotation.getContents());
@@ -795,17 +839,20 @@ public class XfdfObjectFactory {
         PdfDictionary bs = pdfPolyGeomAnnotation.getBorderStyle();
         if (bs != null) {
             addBorderStyleAttributes(annot, bs.getAsNumber(PdfName.W),
-                    bs.getAsString(PdfName.Dashed), bs.getAsString(PdfName.Style));
+                    bs.getAsArray(PdfName.D), bs.getAsName(PdfName.S));
         }
 
         if (pdfPolyGeomAnnotation.getBorderEffect() != null) {
-            //TODO DEVSIX-4133 map intensity to border effect dictionary's I key
-            //annot.addAttribute(new AttributeObject("intensity", pdfCircleAnnotation.getBorderEffect().getAsString()));
-            annot.addAttribute(XfdfConstants.STYLE, pdfPolyGeomAnnotation.getBorderEffect().getAsString(PdfName.Style));
+            annot.addAttribute(XfdfConstants.INTENSITY, pdfPolyGeomAnnotation.getBorderEffect().getAsNumber(PdfName.I));
+            if (annot.getAttribute(XfdfConstants.STYLE) == null) {
+                annot.addAttribute(XfdfConstants.STYLE, XfdfObjectUtils.getStyleFullValue(
+                        pdfPolyGeomAnnotation.getBorderEffect().getAsName(PdfName.S)));
+            }
         }
 
         if (pdfPolyGeomAnnotation.getInteriorColor() != null) {
-            annot.addAttribute(new AttributeObject(XfdfConstants.INTERIOR_COLOR, XfdfObjectUtils.convertColorToString(pdfPolyGeomAnnotation.getInteriorColor())));
+            annot.addAttribute(new AttributeObject(XfdfConstants.INTERIOR_COLOR,
+                    XfdfObjectUtils.convertColorToString(pdfPolyGeomAnnotation.getInteriorColor())));
         }
         if (pdfPolyGeomAnnotation.getIntent() != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.INTENT, pdfPolyGeomAnnotation.getIntent().getValue()));

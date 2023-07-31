@@ -59,4 +59,13 @@ public @interface LogMessage {
      * @return whether to ignore the {@link LogListener} algorithm for a particular log message
      */
     boolean ignore() default false;
+
+    /**
+     * Defines whether the {@link LogListener} logs should be suppressed in console output.
+     *
+     * Defaults to {@code false}.
+     *
+     * @return whether to suppress the {@link LogListener} console output
+     */
+    boolean quietMode() default false;
 }

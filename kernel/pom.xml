@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>8.0.0</version>
+    <version>8.0.1</version>
   </parent>
   <artifactId>kernel-android</artifactId>
   <name>iText - kernel</name>
@@ -56,8 +56,6 @@
       <dependencies>
         <dependency>
           <groupId>com.itextpdf.android</groupId>
-          <!-- iText doesn't provide bc-fips functionality on Android, so to
-           get green build on CI override this profile for using usual bc -->
           <artifactId>bouncy-castle-adapter-android</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>

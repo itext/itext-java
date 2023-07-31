@@ -118,7 +118,7 @@
 ></contents-richtext
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,-20.000000,792.000000,100.000000"
 /></text
-><polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135116+03'00'" flags="print" IT="PolygonCloud" date="D:20190606135116+03'00'" name="b958b991-6819-4a29-a604-d1d36ccd349a" page="1" rect="63.029100,476.839000,423.299000,677.564000" subject="Polygon" title="Alex"
+><polygon intensity="2.000000" style="cloudy" color="#E52237" creationdate="D:20190606135116+03'00'" flags="print" intent="PolygonCloud" date="D:20190606135116+03'00'" name="b958b991-6819-4a29-a604-d1d36ccd349a" page="1" rect="63.029100,476.839000,423.299000,677.564000" subject="Polygon" title="Alex"
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,547.923000,792.000000,667.923000"
 /><vertices
 >149.211000,667.923000;396.566000,665.131000;413.722000,486.396000;72.610800,508.339000;149.211000,667.923000</vertices

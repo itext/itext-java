@@ -28,6 +28,7 @@ import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormFieldMergeUtil;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -901,7 +902,8 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
     public PdfFormField copyField(String name) {
         PdfFormField oldField = getField(name);
         if (oldField != null) {
-            return new PdfFormField((PdfDictionary) oldField.getPdfObject().clone().makeIndirect(document));
+            return PdfFormCreator.createFormField(
+                    (PdfDictionary) oldField.getPdfObject().clone().makeIndirect(document));
         }
         return null;
     }
@@ -930,6 +932,25 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             addField(field);
         } else {
             parent.addKid(field);
+        }
+    }
+
+    /**
+     * Disables appearance stream regeneration for all the root fields in the Acroform, so all of its children
+     * in the hierarchy will also not be regenerated.
+     */
+    public void disableRegenerationForAllFields() {
+        for (PdfFormField rootField : getRootFormFields().values()) {
+            rootField.disableFieldRegeneration();
+        }
+    }
+
+    /**
+     * Enables appearance stream regeneration for all the fields in the Acroform and regenerates them.
+     */
+    public void enableRegenerationForAllFields() {
+        for (PdfFormField rootField : getRootFormFields().values()) {
+            rootField.enableFieldRegeneration();
         }
     }
 

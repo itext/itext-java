@@ -23,6 +23,7 @@
 package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.fields.AbstractPdfFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -203,13 +204,16 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         // Default html2pdf text area appearance differs from the default one for form fields.
         // That's why we got rid of several properties we set by default during TextArea instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
-        final PdfFormField inputField = new TextFormFieldBuilder(doc, name)
-                .setWidgetRectangle(area).createMultilineText().setValue(value);
+        final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                    .createMultilineText();
+        inputField.disableFieldRegeneration();
+        inputField.setValue(value);
         inputField.setFont(font).setFontSize(fontSizeValue);
         inputField.setDefaultValue(defaultValue);
         applyDefaultFieldProperties(inputField);
         inputField.getFirstFormAnnotation().setFormFieldElement((TextArea) modelElement);
-        PdfAcroForm.getAcroForm(doc, true).addField(inputField, page);
+        inputField.enableFieldRegeneration();
+        PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);
     }

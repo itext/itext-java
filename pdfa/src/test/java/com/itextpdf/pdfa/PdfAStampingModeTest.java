@@ -23,6 +23,7 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -50,7 +51,7 @@ public class PdfAStampingModeTest extends ExtendedITextTest {
     public void pdfA1FieldStampingModeTest01() throws IOException, InterruptedException {
         String fileName = "pdfA1FieldStampingModeTest01.pdf";
         PdfADocument pdfDoc = new PdfADocument(new PdfReader(sourceFolder + "pdfs/pdfA1DocumentWithPdfA1Fields01.pdf"), new PdfWriter(destinationFolder + fileName));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         form.getField("checkBox").setValue("0");
         pdfDoc.close();
 
@@ -63,7 +64,7 @@ public class PdfAStampingModeTest extends ExtendedITextTest {
     public void pdfA2FieldStampingModeTest01() throws IOException, InterruptedException {
         String fileName = "pdfA2FieldStampingModeTest01.pdf";
         PdfADocument pdfDoc = new PdfADocument(new PdfReader(sourceFolder + "pdfs/pdfA2DocumentWithPdfA2Fields01.pdf"), new PdfWriter(destinationFolder + fileName));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         form.getField("checkBox").setValue("0");
         pdfDoc.close();
 

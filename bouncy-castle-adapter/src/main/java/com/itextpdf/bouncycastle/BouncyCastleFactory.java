@@ -110,6 +110,7 @@ import com.itextpdf.bouncycastle.cms.CMSEnvelopedDataBC;
 import com.itextpdf.bouncycastle.cms.CMSExceptionBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilderBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBC;
+import com.itextpdf.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipientBC;
 import com.itextpdf.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipientBC;
 import com.itextpdf.bouncycastle.openssl.PEMParserBC;
 import com.itextpdf.bouncycastle.openssl.jcajce.JcaPEMKeyConverterBC;
@@ -214,6 +215,7 @@ import com.itextpdf.commons.bouncycastle.cms.ICMSEnvelopedData;
 import com.itextpdf.commons.bouncycastle.cms.ISignerInfoGenerator;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSignerInfoGeneratorBuilder;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJcaSimpleSignerInfoVerifierBuilder;
+import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyAgreeEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.cms.jcajce.IJceKeyTransEnvelopedRecipient;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
@@ -301,11 +303,14 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -330,6 +335,27 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     public BouncyCastleFactory() {
         // Empty constructor.
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAlgorithmOid(String name) {
+        try {
+            AlgorithmIdentifier algorithmIdentifier = new DefaultSignatureAlgorithmIdentifierFinder().find(name);
+            return algorithmIdentifier.getAlgorithm().getId();
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getAlgorithmName(String oid) {
+        return new DefaultAlgorithmNameFinder().getAlgorithmName(new ASN1ObjectIdentifier(oid));
     }
 
     /**
@@ -848,6 +874,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IJceKeyAgreeEnvelopedRecipient createJceKeyAgreeEnvelopedRecipient(PrivateKey privateKey) {
+        return new JceKeyAgreeEnvelopedRecipientBC(new JceKeyAgreeEnvelopedRecipient(privateKey));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IJcaContentVerifierProviderBuilder createJcaContentVerifierProviderBuilder() {
         return new JcaContentVerifierProviderBuilderBC(new JcaContentVerifierProviderBuilder());
     }
@@ -1104,7 +1138,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
         return new DERIA5StringBC(
-                DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getASN1TaggedObject(), b));
+                (DERIA5String)DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getASN1TaggedObject(), b));
     }
 
     /**

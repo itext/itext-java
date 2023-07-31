@@ -57,7 +57,7 @@ public class PdfFormFieldIntegrationTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "addFormXObjectToPushButton.pdf"),
                 new PdfWriter(outPdf));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfPage page = pdfDoc.getPage(2);
         PdfFormXObject xObject = page.copyAsFormXObject(pdfDoc);

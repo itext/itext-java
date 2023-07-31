@@ -144,6 +144,7 @@ public final class XfdfConstants {
     public static final String NAME_CAPITAL = "Name";
     public static final String DEFAULT_APPEARANCE = "defaultappearance";
     public static final String DEFAULT_STYLE = "defaultstyle";
+    public static final String INTENSITY = "intensity";
 
     private XfdfConstants() {
     }

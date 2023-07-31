@@ -23,6 +23,7 @@
 package com.itextpdf.forms.widget;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -63,7 +64,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_formFieldBorders.pdf";
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
             PdfFormField simpleField = new TextFormFieldBuilder(doc, "simpleField")
                     .setWidgetRectangle(new Rectangle(300, 300, 200, 100)).createText();
@@ -111,7 +112,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_beveledBorderWithBackground.pdf";
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField formField = new TextFormFieldBuilder(doc, "formField")
                     .setWidgetRectangle(new Rectangle(100, 600, 200, 100)).createText();
             formField.getWidgets().get(0).setBorderStyle(PdfName.B);
@@ -129,7 +130,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_dashedBorderWithBackground.pdf";
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField formField = new TextFormFieldBuilder(doc, "formField")
                     .setWidgetRectangle(new Rectangle(100, 600, 200, 100)).createText();
             formField.getWidgets().get(0).setBorderStyle(PdfName.D);
@@ -147,7 +148,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_textStartsAfterFieldBorderTest.pdf";
 
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
             PdfFormField insetFormField = new TextFormFieldBuilder(doc, "insetFormField")
                     .setWidgetRectangle(new Rectangle(90, 600, 200, 100)).createText();
@@ -188,7 +189,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         try (PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "pdfWithRotatedField.pdf"),
                 new PdfWriter(outPdf))) {
 
-            PdfAcroForm form1 = PdfAcroForm.getAcroForm(doc, false);
+            PdfAcroForm form1 = PdfFormCreator.getAcroForm(doc, false);
             form1.getField("First field").setValue("We filled this field").getFirstFormAnnotation()
                     .setBorderColor(ColorConstants.BLACK);
         }
@@ -206,7 +207,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
         try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
             PdfFormField formField1 = new TextFormFieldBuilder(doc, "firstField").setWidgetRectangle(new Rectangle(100, 600, 100, 50))
                     .createText().setValue("Hello, iText!");
@@ -240,7 +241,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
         try (PdfDocument doc = new PdfDocument(new PdfReader(inputPdf), new PdfWriter(outPdf))) {
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(doc, false);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(doc, false);
 
             Map<String, PdfFormField> fields = form.getAllFormFields();
             fields.get("firstField").setValue("New Value 1");

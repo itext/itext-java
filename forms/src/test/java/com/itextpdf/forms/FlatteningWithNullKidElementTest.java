@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -56,7 +57,7 @@ public class FlatteningWithNullKidElementTest extends ExtendedITextTest {
 
         boolean fail = false;
         try {
-            PdfAcroForm.getAcroForm(doc, true).flattenFields();
+            PdfFormCreator.getAcroForm(doc, true).flattenFields();
 
             doc.close();
         }catch(Exception e){

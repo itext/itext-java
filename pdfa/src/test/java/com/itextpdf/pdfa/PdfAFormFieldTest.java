@@ -30,6 +30,7 @@ import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.NonTerminalFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
@@ -146,7 +147,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         doc.add(p2);
         //set generateAppearance param to false to retain custom appearance
         group.setValue("v1", false);
-        PdfAcroForm.getAcroForm(pdf, true).addField(group);
+        PdfFormCreator.getAcroForm(pdf, true).addField(group);
 
         pdf.close();
         Assert.assertNull(
@@ -169,7 +170,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
             int pageNumber = getOccupiedArea().getPageNumber();
             Rectangle bbox = getInnerAreaBBox();
             PdfDocument pdf = context.getDocument();
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdf, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdf, true);
             PdfFormAnnotation chk = new RadioFormFieldBuilder(pdf, "")
                     .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createRadioButton( _value, bbox);
             _group.addKid(chk);
@@ -218,7 +219,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField emptyField = new NonTerminalFormFieldBuilder(pdfDoc, "empty")
                 .setConformanceLevel(conformanceLevel).createNonTerminalFormField();
         emptyField.addKid(new PushButtonFormFieldBuilder(pdfDoc, "button")
@@ -247,7 +248,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         form.addField(new CheckBoxFormFieldBuilder(pdfDoc, "checkBox").setWidgetRectangle(new Rectangle(36, 726, 20, 20))
                 .setCheckType(CheckBoxType.STAR).setConformanceLevel(conformanceLevel)
                 .createCheckBox().setValue("1"));
@@ -271,7 +272,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_1B;
         PdfADocument pdfDoc = new PdfADocument(new PdfWriter(fileName), conformanceLevel,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfArray options = new PdfArray();
         options.add(new PdfString("Name"));
         options.add(new PdfString("Surname"));
@@ -305,7 +306,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "combo")
                 .setWidgetRectangle(new Rectangle(156, 616, 70, 70)).setOptions(new String[]{"用", "规", "表"})
                 .setConformanceLevel(conformanceLevel).createComboBox()
@@ -338,7 +339,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         PdfChoiceFormField f = new ChoiceFormFieldBuilder(pdfDoc, "list")
                 .setWidgetRectangle(new Rectangle(86, 556, 50, 200)).setOptions(new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"})
@@ -373,7 +374,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField pushButtonFormField = new PushButtonFormFieldBuilder(pdfDoc, "push button").setWidgetRectangle(new Rectangle(36, 526, 100, 20))
                 .setCaption("Push").setConformanceLevel(conformanceLevel)
                 .createPushButton();
@@ -400,7 +401,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         String pdfFormFieldName = "radio group";
         RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, pdfFormFieldName).setConformanceLevel(conformanceLevel);
@@ -442,7 +443,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField textFormField = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(36, 466, 90, 20))
                 .setConformanceLevel(conformanceLevel).createText().setValue("textField").setValue("iText");
         textFormField.setFont(fontFreeSans).setFontSize(12);
@@ -472,7 +473,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                 new PdfOutputIntent("Custom", "",
                         "http://www.color.org", "sRGB IEC61966-2.1", is));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField signFormField = new SignatureFormFieldBuilder(pdfDoc, "signature")
                 .setConformanceLevel(conformanceLevel).createSignature();
         signFormField.setFont(fontFreeSans).setFontSize(20);
@@ -499,7 +500,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
             doc.add(new Paragraph(new Text("Some text").setFont(font).setFontSize(10)));
 
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfFormField field = new TextFormFieldBuilder(pdfDoc, "text").setWidgetRectangle(new Rectangle(150, 100, 100, 20))
                     .setConformanceLevel(PdfAConformanceLevel.PDF_A_1B).createText()
                     .setValue("textField").setFieldName("text");

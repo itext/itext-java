@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <!-- itextcore modules should be named by there short names e.g. "io" /> "kernel" /> etc -->
+    <ignored>
+        <java>
+            <!-- commons -->
+            <fileset reason="Namespaces differs in Java an .NET, so it can't be ported automatically">
+                <file path="com/itextpdf/commons/actions/NamespaceConstant.java"/>
+            </fileset>
+            <fileset reason="Underlying implementation classes not autoportable (e.g. java.text.MessageFormat, java.util.Locale">
+                <file path="com/itextpdf/commons/utils/MessageFormatUtil.java"/>
+            </fileset>
+            <fileset reason="Underlying implementation classes not autoportable (e.g. java.nio.charset.Charset,
+        java.nio.charset.CharsetEncoder, java.nio.ByteBuffer">
+                <file path="com/itextpdf/commons/utils/EncodingUtil.java"/>
+            </fileset>
+            <fileset reason="Underlying implementation classes not autoportable (e.g. java.util.GregorianCalendar, java.util.Date,
+        java.util.Calendar">
+                <file path="com/itextpdf/commons/utils/DateTimeUtil.java"/>
+            </fileset>
+            <fileset reason="Poor java.io.File autoporting possibilities (e.g. File#IsDirectory, File#ListFiles, etc.)">
+                <file path="com/itextpdf/commons/utils/FileUtil.java"/>
+            </fileset>
+            <fileset reason="Differences in string split">
+                <file path="com/itextpdf/commons/utils/StringSplitUtil.java"/>
+            </fileset>
+            <file path="com/itextpdf/commons/utils/Base64.java"/>
+            <fileset reason="The way java and .NET works with such data types is different. So right now they can be ported only manually.">
+                <file path="com/itextpdf/commons/utils/JsonUtil.java"/>
+                <file path="com/itextpdf/commons/utils/ZipFileReader.java"/>
+                <file path="com/itextpdf/commons/utils/ZipFileWriter.java"/>
+            </fileset>
+            <fileset reason="DEVSIX-3221 - Ignored because built-in Convert class functionality is used in .NET
+        and the Java test is specific to the Java implementation.">
+                <file path="com/itextpdf/commons/utils/Base64Test.java"/>
+            </fileset>
+            <fileset reason="DEVSIX-3221 - The way of working with processes in c# is very different from Java. So it can'not be ported manually">
+                <file path="com/itextpdf/commons/utils/SystemUtil.java"/>
+            </fileset>
+            <fileset reason="Dictionaries are different in java and .net therefor manual porting is required">
+                <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMap.java" />
+                <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMapTest.java" />
+            </fileset>
+            <fileset reason="SystemUtil is a manual class, and the methods of this class can have input and output other than java despite similar names.
+        Therefore, the test for this class also cannot be ported automatically">
+                <file path="com/itextpdf/commons/utils/SystemUtilTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/commons/utils/DateTimeUtilTest.java"/>
+            <fileset reason="Ignored because of different work with standard output on Java and .NET">
+                <file path="com/itextpdf/commons/actions/ProductEventHandlerIntegrationTest.java"/>
+            </fileset>
+            <!-- io -->
+            <fileset reason="This class seems to be specific for java and used for getting an instance of an Image from java.awt.Image.
+        In .Net it looks not trivial to port automatically as it needs java.awt.BufferedImage and java.awt.PixelGrabber alternative in .Net.
+        Currently we do not have this functionality in .Net">
+                <file path="com/itextpdf/io/image/AwtImageDataFactory.java"/>
+            </fileset>
+            <fileset reason="Class summary is not ported correctly.
+        In this class java.text.DecimalFormat cannot be easily ported.
+        Instead System.Double.ToString method is used to cover the same functionality.">
+                <file path="com/itextpdf/io/util/DecimalFormatUtil.java"/>
+            </fileset>
+            <fileset reason="Dispose method without parameters cannot be overriden, instead override base.Dispose method with boolean paramter.
+        '(T) this' expression should be ported into 'this as T'. Poblem with porting nullable types (unable to bool? to bool and vice versa.
+        Write method cannot be overriden as the base class doesn't contain such method (keyword virtual should be used instead).
+        There are additional inherited abstract methods that should be implemented (but in java version there is no such implementations)">
+                <file path="com/itextpdf/io/source/OutputStream.java"/>
+            </fileset>
+            <fileset reason="java.io.ByteArrayOutputStream cannot be trivially ported into MemoryStream">
+                <file path="com/itextpdf/io/source/ByteArrayOutputStream.java"/>
+            </fileset>
+            <fileset reason="java.nio.channels.FileChannel is not supported in dotnet">
+                <file path="com/itextpdf/io/source/RandomAccessSourceFactory.java"/>
+            </fileset>
+            <fileset reason="java.nio.channels.FileChannel is not supported in dotnet">
+                <file path="com/itextpdf/io/source/MappedChannelRandomAccessSource.java"/>
+                <file path="com/itextpdf/io/source/PagedChannelRandomAccessSource.java"/>
+                <file path="com/itextpdf/io/source/FileChannelRandomAccessSource.java"/>
+            </fileset>
+            <fileset reason="Read method with parameters is mapped to JRead which cannot be overriden (should be mapped to the Read with parameters).
+        Read method without parameters cannot be overriden and not necessary in dotnet.
+        There are additional inherited abstract methods that should be implemented (but in java version there is no such implementations)">
+                <file path="com/itextpdf/io/source/RASInputStream.java"/>
+            </fileset>
+            <fileset reason="java.util.zip.DeflatorOutputStream should be mapped into System.util.zlib.ZDeflatorOutputStream.
+        Method signatures are not mapped correctly (override issue)">
+                <file path="com/itextpdf/io/source/DeflaterOutputStream.java"/>
+            </fileset>
+            <fileset reason="System.Collections needs to be added by addCustomUsingDeclaration">
+                <file path="com/itextpdf/io/font/otf/ActualTextIterator.java"/>
+            </fileset>
+            <fileset reason="Underlying implementation classes not autoportable (e.g. java.nio.charset.Charset, java.nio.charset.CharsetEncoder, java.nio.ByteBuffer">
+                <file path="com/itextpdf/io/font/cmap/CMapCharsetEncoder.java" />
+            </fileset>
+            <fileset reason="Java specific class that uses java.nio.ByteBuffer and has no alternative in .Net.">
+                <file path="com/itextpdf/io/source/ByteBufferRandomAccessSource.java"/>
+                <file path="com/itextpdf/io/source/ByteBufferRandomAccessSourceTest.java"/>
+            </fileset>
+            <fileset reason="Java very specific class for java.nio.Buffer that uses reflection API">
+                <file path="com/itextpdf/io/source/BufferCleaner.java"/>
+            </fileset>
+            <file path="com/itextpdf/io/util/NumberUtil.java"/>
+            <file path="com/itextpdf/io/util/ResourceUtil.java"/>
+            <file path="com/itextpdf/io/util/UrlUtilTest.java"/>
+            <file path="com/itextpdf/io/util/GenericArray.java"/>
+            <file path="com/itextpdf/io/util/ExceptionUtil.java"/>
+            <file path="com/itextpdf/io/exceptions/ExceptionUtil.java"/>
+            <file path="com/itextpdf/io/util/TextUtil.java"/>
+            <file path="com/itextpdf/io/util/FilterUtil.java"/>
+            <file path="com/itextpdf/io/util/UrlUtil.java"/>
+            <fileset reason="Logic for xml parsers creation is not required in .net">
+                <file path="com/itextpdf/io/util/XmlUtil.java"/>
+                <file path="com/itextpdf/io/util/XmlUtilTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/io/util/EnumUtil.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/BitReader.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/BrotliInputStream.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/BrotliRuntimeException.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/Context.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/Decode.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/Dictionary.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/DictionaryData.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/files.txt"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/Huffman.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/HuffmanTreeGroup.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/IntReader.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/Prefix.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/RunningState.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/State.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/Transform.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/Utils.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/WordTransformType.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/BitReaderTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/DecodeTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/DictionaryTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/EnumTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/files"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/SynthTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/TransformTest.java"/>
+            <fileset reason="OutputStream is a manual class, and some tests for this class cannot be ported automatically">
+                <file path="com/itextpdf/io/source/OutputStreamTest.java"/>
+            </fileset>
+            <!-- barcodes -->
+            <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>
+            <!-- bouncy-castle -->
+            <fileset reason="Logic of some methods in BC and BCFips differs at Java and .NET.">
+                <file path="com/itextpdf/bouncycastleconnector/BouncyCastleDefaultFactory.java"/>
+                <file path="com/itextpdf/bouncycastle/BouncyCastleFactory.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ASN1IntegerBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ASN1OctetStringBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ASN1TaggedObjectBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ocsp/BasicOCSPResponseBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ocsp/OCSPResponseBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/pcks/PrivateKeyInfoBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/pkcs/PrivateKeyInfoBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/pcks/RSASSAPSSParamsBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/pkcs/RSASSAPSSParamsBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/x500/X500NameBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/x509/ExtensionBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/x509/ExtensionsBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/X509CertificateHolderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/X509ExtensionUtilsBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/X509CRLHolderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/X509v2CRLBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/CertIOExceptionBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/jcajce/JcaX509v3CertificateBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/jcajce/JcaX509CertificateConverterBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/jcajce/JcaX509CertificateHolderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/jcajce/JcaCertStoreBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/BasicOCSPRespBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/BasicOCSPRespBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/CertificateIDBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/CertificateStatusBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPReqBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPReqBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPRespBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/OCSPRespBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/ReqBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/RevokedStatusBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/SingleRespBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/ocsp/UnknownStatusBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/CMSEnvelopedDataBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/RecipientIdBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/RecipientInformationBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/RecipientInformationStoreBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/SignerInformationVerifierBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/jcajce/JceKeyTransEnvelopedRecipientBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/jcajce/JceKeyAgreeEnvelopedRecipientBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/jcajce/JcaSignerInfoGeneratorBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/jcajce/JcaSimpleSignerInfoVerifierBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/openssl/PEMParserBC.java"/>
+                <file path="com/itextpdf/bouncycastle/openssl/PEMExceptionBC.java"/>
+                <file path="com/itextpdf/bouncycastle/openssl/jcajce/JcaPEMKeyConverterBC.java"/>
+                <file path="com/itextpdf/bouncycastle/openssl/jcajce/JceOpenSSLPKCS8DecryptorProviderBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/operator/InputDecryptorProviderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/operator/ContentVerifierProviderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/operator/DigestCalculatorProviderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/operator/OperatorCreationExceptionBC.java"/>
+                <file path="com/itextpdf/bouncycastle/operator/jcajce/JcaContentSignerBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/operator/jcajce/JcaContentVerifierProviderBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/operator/jcajce/JcaDigestCalculatorProviderBuilderBC.java"/>
+                <file path="com/itextpdf/bouncycastle/pkcs/PKCS8EncryptedPrivateKeyInfoBC.java"/>
+                <file path="com/itextpdf/bouncycastle/pkcs/PKCSExceptionBC.java"/>
+                <file path="com/itextpdf/bouncycastle/tsp/TimeStampResponseGeneratorBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cms/RecipientBC.java"/>
+                <file path="com/itextpdf/bouncycastle/tsp/TimeStampRequestGeneratorBC.java"/>
+                <file path="com/itextpdf/bouncycastle/tsp/TimeStampRequestBC.java"/>
+                <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenGeneratorBC.java"/>
+                <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenBC.java"/>
+                <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsFactory.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/ASN1IntegerBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/ASN1OctetStringBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/ASN1SequenceBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/ocsp/BasicOCSPResponseBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/ocsp/OCSPResponseBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/pcks/PrivateKeyInfoBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/pkcs/PrivateKeyInfoBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/x500/X500NameBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/x509/ExtensionBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/x509/ExtensionsBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/x509/AlgorithmIdentifierBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/X509CertificateHolderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/X509ExtensionUtilsBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/X509CRLHolderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/X509v2CRLBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/CertIOExceptionBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/jcajce/JcaX509CertificateConverterBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/jcajce/JcaX509v3CertificateBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/jcajce/JcaX509CertificateHolderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/jcajce/JcaCertStoreBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/BasicOCSPRespBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/BasicOCSPRespBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/CertificateIDBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/CertificateStatusBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/OCSPExceptionBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/OCSPRespBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/OCSPRespBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/OCSPReqBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/OCSPReqBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/RespIDBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/ReqBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/RevokedStatusBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/SingleRespBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cert/ocsp/UnknownStatusBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/CMSEnvelopedDataBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/RecipientIdBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/RecipientBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/RecipientInformationBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/RecipientInformationStoreBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/SignerInformationVerifierBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JceKeyTransEnvelopedRecipientBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JceKeyAgreeEnvelopedRecipientBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JcaSignerInfoGeneratorBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/cms/jcajce/JcaSimpleSignerInfoVerifierBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/openssl/PEMParserBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/openssl/PEMExceptionBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/openssl/jcajce/JcaPEMKeyConverterBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/openssl/jcajce/JceOpenSSLPKCS8DecryptorProviderBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/ContentSignerBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/InputDecryptorProviderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/ContentVerifierProviderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/DigestCalculatorBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/DigestCalculatorProviderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/OperatorCreationExceptionBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/jcajce/JcaContentSignerBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/jcajce/JcaContentVerifierProviderBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/operator/jcajce/JcaDigestCalculatorProviderBuilderBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/pkcs/PKCS8EncryptedPrivateKeyInfoBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/pkcs/PKCSExceptionBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/pcks/RSASSAPSSParamsBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/pkcs/RSASSAPSSParamsBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampResponseGeneratorBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampRequestGeneratorBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampResponseBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampRequestBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampTokenGeneratorBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampTokenBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampTokenInfoBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/tsp/TSPExceptionBCFips.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/IBouncyCastleFactory.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1InputStream.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1Integer.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1OctetString.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1OutputStream.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/pkcs/IRSASSAPSSParams.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/ocsp/IBasicOCSPResponse.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/ocsp/IOCSPResponse.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/pkcs/IPrivateKeyInfo.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/x509/IExtension.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/asn1/x509/IExtensions.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/IX509CertificateHolder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/IX509ExtensionUtils.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/IX509CRLHolder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/AbstractCertIOException.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/jcajce/IJcaX509CertificateConverter.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/jcajce/IJcaX509CertificateHolder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/jcajce/IJcaCertStore.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/jcajce/IJcaX509v3CertificateBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/IBasicOCSPResp.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/ICertificateID.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/ICertificateStatus.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/IOCSPReq.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/IOCSPResp.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/IOCSPRespBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/IRevokedStatus.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/ISingleResp.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cert/ocsp/IUnknownStatus.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/IRecipient.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/IRecipientId.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/IRecipientInformation.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/IRecipientInformationStore.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/ISignerInformationVerifier.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJceKeyTransEnvelopedRecipient.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJceKeyAgreeEnvelopedRecipient.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJcaSignerInfoGeneratorBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/cms/jcajce/IJcaSimpleSignerInfoVerifierBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/openssl/IPEMParser.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/openssl/AbstractPEMException.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/openssl/jcajce/IJcaPEMKeyConverter.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/openssl/jcajce/IJceOpenSSLPKCS8DecryptorProviderBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/operator/IInputDecryptorProvider.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/operator/IContentVerifierProvider.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/operator/IDigestCalculatorProvider.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/operator/jcajce/IJcaContentSignerBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/operator/jcajce/IJcaContentVerifierProviderBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/operator/jcajce/IJcaDigestCalculatorProviderBuilder.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/pkcs/IPKCS8EncryptedPrivateKeyInfo.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/pkcs/AbstractPKCSException.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampToken.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampTokenGenerator.java"/>
+            </fileset>
+            <!-- kernel -->
+            <file path="com/itextpdf/kernel/pdf/CountOutputStream.java"/>
+            <file path="com/itextpdf/kernel/crypto/securityhandler/EncryptionUtils.java"/>
+            <file path="com/itextpdf/kernel/crypto/AESCipher.java"/>
+            <file path="com/itextpdf/kernel/crypto/AESCipherCBCnoPad.java"/>
+            <file path="com/itextpdf/kernel/crypto/OutputStreamEncryption.java"/>
+            <file path="com/itextpdf/kernel/crypto/CryptoUtil.java"/>
+            <fileset reason="Encrypting and decrypting works differently in fips mode">
+                <file path="com/itextpdf/kernel/crypto/PdfDecryptingTest.java" />
+                <file path="com/itextpdf/kernel/crypto/PdfEncryptingTest.java" />
+            </fileset>
+            <fileset reason="This test is affected by FIPS Mode, where some encryption features are not supported">
+                <file path="com/itextpdf/kernel/crypto/PdfEncryptionManuallyPortedTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/kernel/utils/PemFileHelper.java"/>
+            <file path="com/itextpdf/kernel/pdf/CompressionConstants.java"/>
+            <file path="com/itextpdf/kernel/pdf/PdfNameLoader.java"/>
+            <file path="com/itextpdf/kernel/pdf/PdfArrayDirectIterator.java"/>
+            <file path="com/itextpdf/kernel/pdf/PdfDictionaryValues.java"/>
+            <fileset reason="This test is ignored as it is not applicable for .net. It is not allowed to mutate a value collection
+        derived from a dictionary in .net.">
+                <file path="com/itextpdf/kernel/pdf/PdfDictionaryDictionaryValuesModificationTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/kernel/pdf/PdfDictionaryEntrySet.java"/>
+            <file path="com/itextpdf/kernel/pdf/PdfDate.java"/>
+            <file path="com/itextpdf/kernel/pdf/MemoryLimitsAwareOutputStream.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/ClipperBase.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/ClipperOffset.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/DefaultClipper.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/Edge.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/IClipper.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/LongRect.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/Path.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/Paths.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/Point.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/PolyNode.java"/>
+            <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/PolyTree.java"/>
+            <fileset reason="The structure of covered class differ in Java and .Net">
+                <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/PolyTreeTest.java"/>
+                <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/PolyNodeTest.java"/>
+                <file path="com/itextpdf/kernel/pdf/canvas/parser/clipper/PointTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/kernel/utils/XmlUtils.java"/>
+            <file path="com/itextpdf/kernel/utils/XmlProcessorCreator.java"/>
+            <file path="com/itextpdf/kernel/security/IExternalDecryptionProcess.java"/>
+            <file path="com/itextpdf/kernel/utils/IdleOutputStream.java"/>
+            <fileset reason="Classes that work with XML parsers that have different implementation in .NET and Java">
+                <file path="com/itextpdf/kernel/utils/DefaultSafeXmlParserFactory.java"/>
+                <file path="com/itextpdf/kernel/utils/IXmlParserFactory.java"/>
+                <file path="com/itextpdf/kernel/utils/SecurityTestXmlParserFactory.java"/>
+                <file path="com/itextpdf/kernel/xmp/impl/SecurityTestXmlParserFactory.java"/>
+                <file path="com/itextpdf/kernel/utils/XmlProcessorCreatorSecurityTest.java"/>
+            </fileset>
+            <!-- xmp -->
+            <file path="com/itextpdf/kernel/xmp/impl/CountOutputStream.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/ISO8601Converter.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/ParseRDF.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPDateTimeImpl.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPIteratorImpl.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPMetaParser.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPNode.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPNodeUtils.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPMetaImpl.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPUtilsImpl.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPNormalizer.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPSchemaRegistryImpl.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPSerializerHelper.java"/>
+            <file path="com/itextpdf/kernel/xmp/impl/XMPSerializerRDF.java"/>
+            <file path="com/itextpdf/kernel/xmp/XmlDomWriter.java"/>
+            <file path="com/itextpdf/kernel/xmp/XMPDateTime.java"/>
+            <file path="com/itextpdf/kernel/xmp/XMPDateTimeFactory.java"/>
+            <!-- layout -->
+            <fileset reason="XMLReader has different implementation in .NET and Java">
+                <file path="com/itextpdf/layout/hyphenation/PatternParser.java"/>
+            </fileset>
+            <fileset reason="The Iterator pattern in Java is equivalent to IEnumerable in .NET, but we cannot map them on each other.">
+                <file path="com/itextpdf/layout/font/FontSetCollection.java"/>
+            </fileset>
+            <!-- forms -->
+            <fileset reason="Node instances should be handled differently in .NET. We already map org.w3c.dom classes to
+        System.Xml. But in XfaForm we use System.Xml.Linq, also in API. Making XfaForm autoportable requires API changes
+        and a lot of time if possible at all">
+                <file path="com/itextpdf/forms/xfa/XfaForm.java"/>
+                <file path="com/itextpdf/forms/xfa/XFAFormTest.java"/>
+                <file path="com/itextpdf/forms/xfa/Xml2Som.java"/>
+                <file path="com/itextpdf/forms/xfa/Xml2SomDatasets.java"/>
+                <file path="com/itextpdf/forms/xfdf/XfdfFileUtils.java"/>
+            </fileset>
+            <fileset reason="Test classes for testing xml security. They create the XML parser instance and xml parsers
+          have different implementation in .NET and Java">
+                <file path="com/itextpdf/forms/xfa/SecurityTestXmlParserFactory.java"/>
+                <file path="com/itextpdf/forms/xfdf/SecurityTestXmlParserFactory.java"/>
+                <file path="com/itextpdf/forms/xfdf/ExceptionTestXmlParserFactory.java"/>
+            </fileset>
+            <!-- sign -->
+            <file path="com/itextpdf/signatures/IExternalDigest.java"/>
+            <file path="com/itextpdf/signatures/ProviderDigest.java"/>
+            <fileset reason="ProviderDigest class exists only on Java.">
+                <file path="com/itextpdf/signatures/ProviderDigestUnitTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/signatures/BouncyCastleDigest.java"/>
+            <fileset reason="BouncyCastleDigest class exists only on Java.">
+                <file path="com/itextpdf/signatures/BouncyCastleDigestUnitTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/signatures/CertificateSupportedCriticalExtensionsTest.java"/>
+            <file path="com/itextpdf/signatures/KeyStoreUtil.java"/>
+            <fileset reason="KeyStoreUtil class exists only on Java.">
+                <file path="com/itextpdf/signatures/KeyStoreUtilUnitTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/signatures/SignUtils.java"/>
+            <fileset reason="Logic of some methods in SignUtils differs at Java and .NET. See SignUtils#getCertificates.">
+                <file path="com/itextpdf/signatures/SignUtilsManualTest.java"/>
+            </fileset>
+            <fileset reason="Java.Security does not exist in .net">
+                <file path="com/itextpdf/signatures/RSASSAPSSMechanismParams.java"/>
+                <file path="com/itextpdf/signatures/sign/RSASSAPSSTest.java"/>
+            </fileset>
+            <file path="com/itextpdf/signatures/testutils/SignTestPortUtil.java"/>
+            <file path="com/itextpdf/signatures/testutils/X509MockCertificate.java"/>
+            <file path="com/itextpdf/signatures/testutils/builder/TestCrlBuilder.java"/>
+            <file path="com/itextpdf/signatures/testutils/builder/TestOcspResponseBuilder.java"/>
+            <file path="com/itextpdf/signatures/testutils/builder/TestTimestampTokenBuilder.java"/>
+            <fileset reason="Some bouncycastle related objects creation is differ in Java and .NET">
+                <file path="com/itextpdf/signatures/testutils/cert/TestCertificateBuilder.java"/>
+            </fileset>
+            <fileset reason="UNDEFINED_TIMESTAMP_DATE has a different type in Java and .NET">
+                <file path="com/itextpdf/signatures/TimestampConstants.java"/>
+            </fileset>
+            <fileset reason="DigestAlgorithms#digest return different results on Java and .NET. On .NET byte can be only positive value.">
+                <file path="com/itextpdf/signatures/DigestAlgorithmsManualTest.java"/>
+            </fileset>
+            <fileset reason="SignatureMechanisms.getAlgorithm works differently for passed oid = null">
+                <file path="com/itextpdf/signatures/SignatureMechanismsManualTest.java"/>
+            </fileset>
+            <fileset reason="Some of the algorithms are not supported on .NET and the result is thus different. The tests with the identical result are in PdfPKCS7Test.">
+                <file path="com/itextpdf/signatures/PdfPKCS7ManuallyPortedTest.java"/>
+            </fileset>
+            <fileset reason="Different implementation on .NET and java">
+                <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
+            </fileset>
+            <fileset reason=".pem files reading logic is different in java and .net">
+                <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
+            </fileset>
+            <!-- jsoup -->
+            <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
+            <file path="com/itextpdf/styledxmlparser/jsoup/helper/DataUtil.java" />
+            <fileset reason="Ignored because in .Net we need to have inner List rather than extending from one">
+                <file path="com/itextpdf/styledxmlparser/jsoup/helper/ChangeNotifyingArrayList.java" />
+            </fileset>
+            <file path="com/itextpdf/styledxmlparser/jsoup/nodes/Attributes.java" />
+            <file path="com/itextpdf/styledxmlparser/jsoup/nodes/Attribute.java" />
+            <fileset reason="Ignored because in .Net we need to use usual search instead of binary">
+                <file path="com/itextpdf/styledxmlparser/jsoup/nodes/Entities.java" />
+            </fileset>
+            <file path="com/itextpdf/styledxmlparser/jsoup/select/Elements.java" />
+            <fileset reason="Ignored because in .Net we need to have inner Stream rather than extending from one">
+                <file path="com/itextpdf/styledxmlparser/jsoup/internal/ConstrainableInputStream.java" />
+            </fileset>
+            <file path="com/itextpdf/styledxmlparser/jsoup/internal/StringUtil.java" />
+            <fileset reason="Ignored because in .Net we need to use custom BufferedReader">
+                <file path="com/itextpdf/styledxmlparser/jsoup/parser/CharacterReader.java" />
+            </fileset>
+
+            <!-- jsoup tests -->
+            <fileset reason="Ignored due to differences in Iterator / Enumerator logic">
+                <file path="com/itextpdf/styledxmlparser/jsoup/nodes/AttributesTest.java" />
+                <file path="com/itextpdf/styledxmlparser/jsoup/nodes/AttributeTest.java" />
+            </fileset>
+            <file path="com/itextpdf/styledxmlparser/jsoup/parser/CharacterReaderTest.java" />
+            <file path="com/itextpdf/styledxmlparser/jsoup/parser/HtmlTreeBuilderStateTest.java" />
+            <file path="com/itextpdf/styledxmlparser/jsoup/integration/ParseTest.java" />
+            <file path="com/itextpdf/styledxmlparser/jsoup/safety/MultiLocaleTest.java" />
+            <file path="com/itextpdf/styledxmlparser/jsoup/select/ElementsTest.java" />
+            <fileset reason="Ignored due to differences in Pattern / Regex logic">
+                <file path="com/itextpdf/styledxmlparser/jsoup/TextUtil.java" />
+            </fileset>
+
+            <!-- styled-xml-parser -->
+            <file path="com/itextpdf/styledxmlparser/PortUtil.java" />
+            <file path="com/itextpdf/styledxmlparser/resolver/resource/UriResolver.java" />
+            <file path="com/itextpdf/styledxmlparser/resolver/resource/UriEncodeUtil.java" />
+            <fileset reason="LimitedInputStream extends InputStream, which has different interfaces in Java and .NET">
+                <file path="com/itextpdf/styledxmlparser/resolver/resource/LimitedInputStream.java" />
+            </fileset>
+            <file path="com/itextpdf/styledxmlparser/node/impl/jsoup/node/JsoupAttributes.java" />
+
+            <!-- styled-xml-parser tests -->
+            <fileset reason="The ignore is added here because the work with absolute path and URI is not autoportable.">
+                <file path="com/itextpdf/styledxmlparser/resolver/resource/UriResolverTest.java" />
+                <file path="com/itextpdf/styledxmlparser/resolver/resource/ResourceResolverTest.java" />
+            </fileset>
+
+            <!-- svg -->
+            <fileset reason="InputStream has different interfaces in Java and .NET">
+                <file path="com/itextpdf/svg/dummy/sdk/ExceptionInputStream.java"/>
+            </fileset>
+            <!-- io-tests -->
+            <fileset reason="Default types of standard output, e.g. Console.Out and System.out, differ between Java and .NET">
+                <file path="com/itextpdf/io/util/StandardOutUtil.java"/>
+            </fileset>
+
+            <!-- kernel-tests -->
+            <fileset reason="The ignore is added here due to java.awt is not expected to be ported">
+                <file path="com/itextpdf/kernel/pdf/xobject/ImageFromLanguageStandardLibraryTest.java"/>
+            </fileset>
+            <fileset reason="There's no serialization functionality in .Net, so there's no sense in this test class in .Net version">
+                <file path="com/itextpdf/kernel/pdf/DocumentSerializationTest.java"/>
+            </fileset>
+        </java>
+    </ignored>
+     <resource>
+        <fileset reason="There's no serialization functionality in .Net, so there's no sense in this test class in .Net version">
+            <file path="com/itextpdf/kernel/pdf/DocumentSerializationTest/cmp_Listing_06_19_FillDataSheet.pdf" />
+        </fileset>
+        <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/ASCII85_RunLengthDecode.png" />
+        <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/ccittfaxdecode.png" />
+        <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/flatedecode_runlengthdecode.png" />
+        <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/img_calrgb.png" />
+        <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createEmptyXFAFormTest02.pdf" />
+        <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createXFAFormTest.pdf" />
+                <!-- TODO: Remove this files from ignored after completing DEVSIX-6115 -->
+        <fileset reason="Files related to timestamp signatures comparing shall be ignored since they are different in java and .Net">
+            <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledTsTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_secondLtvOriginalHasNoVriTs01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledSingleSignatureNoOcspDataTest.pdf"/>
+            <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledSingleSignatureNoCrlDataTest.pdf"/>
+            <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledSingleSignatureTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelTTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelLTATest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/TimestampSigTest/cmp_timestampTest01.pdf"/>
+        </fileset>
+                <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
+            <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />
+        </fileset>
+        
+    </resource>
+    <src>
+        <module name="pdftest" />
+        <module name="font-asian" />
+        <module name="hyph" />
+    </src>
+
+    <test>
+        <!-- non-existent modules -->
+        <module name="font-asian" />
+        <module name="hyph" />
+    </test>
+    <overwritten>
+        <module name="html2pdf">
+            <resources>
+                <file source="com/itextpdf/html2pdf/default.css" destination="resources/default.css" />
+            </resources>
+        </module>
+        <module name="svg">
+            <resources>
+                <file source="com/itextpdf/svg/default.css" destination="resources/default.css" />
+            </resources>
+        </module>
+    </overwritten>
+</configuration>

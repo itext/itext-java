@@ -192,7 +192,7 @@ public class PdfTextFormField extends PdfFormField {
             PdfDictionary parent = getParent();
             // MaxLen is an inherited form field property, therefore we try to recursively extract it from the ancestors
             if (parent != null) {
-                return new PdfTextFormField(parent).getMaxLen();
+                return PdfFormCreator.createTextFormField(parent).getMaxLen();
             } else {
                 return 0;
             }

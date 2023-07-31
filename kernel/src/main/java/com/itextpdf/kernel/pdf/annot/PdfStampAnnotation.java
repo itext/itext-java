@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf.annot;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 
 public class PdfStampAnnotation extends  PdfMarkupAnnotation {
@@ -69,6 +70,15 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
     }
 
     /**
+     * Gets the rotation angle in degrees.
+     *
+     * @return {@link PdfNumber} representing the clockwise rotation in degrees.
+     */
+    public PdfNumber getRotation() {
+        return getPdfObject().getAsNumber(PdfName.Rotate);
+    }
+
+    /**
      * The name of an icon that is used in displaying the annotation.
      * @param name a {@link PdfName} that specifies the icon for displaying annotation. Possible values are:
      *             <ul>
@@ -91,5 +101,16 @@ public class PdfStampAnnotation extends  PdfMarkupAnnotation {
      */
     public PdfStampAnnotation setIconName(PdfName name) {
         return (PdfStampAnnotation) put(PdfName.Name, name);
+    }
+
+    /**
+     * Sets the rotation angle in degrees.
+     * @param degAngle an integer representing the clockwise rotation in degrees.
+     *
+     * @return this {@link PdfStampAnnotation} instance.
+     */
+    public PdfStampAnnotation setRotation(int degAngle) {
+        put(PdfName.Rotate, new PdfNumber(degAngle));
+        return this;
     }
 }

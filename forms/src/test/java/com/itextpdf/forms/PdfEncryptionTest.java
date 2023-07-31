@@ -24,6 +24,7 @@ package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
@@ -82,7 +83,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                 new ReaderProperties().setPassword("12345".getBytes(StandardCharsets.ISO_8859_1)));
         PdfDocument pdfDocument = new PdfDocument(reader);
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, false);
 
         acroForm.getField("personal.name").getPdfObject();
         pdfDocument.close();
@@ -100,7 +101,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                                 .setPdfVersion(PdfVersion.PDF_2_0)
                                 .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
         pdfDoc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfTextFormField textField1 = new TextFormFieldBuilder(pdfDoc, "Name")
                 .setWidgetRectangle(new Rectangle(100, 600, 200, 30)).createText();
         textField1.setValue("Enter your name");
@@ -146,7 +147,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                                 .setPdfVersion(PdfVersion.PDF_2_0)
                                 .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
         pdfDoc.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfTextFormField textField1 = new TextFormFieldBuilder(pdfDoc, "Name")
                 .setWidgetRectangle(new Rectangle(100, 600, 200, 30)).createText();
         textField1.setValue("Enter your name");

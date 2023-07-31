@@ -38,6 +38,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
@@ -48,14 +49,13 @@ import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
@@ -105,6 +105,8 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
 
+        ContinuousContainer.setupContinuousContainerIfNeeded(this);
+
         OverflowPropertyValue overflowX = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_X);
 
         Boolean nowrapProp = this.getPropertyAsBoolean(Property.NO_SOFT_WRAP_INLINE);
@@ -113,11 +115,14 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean notAllKidsAreFloats = false;
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
         FloatPropertyValue floatPropertyValue = this.<FloatPropertyValue>getProperty(Property.FLOAT);
-        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas, parentBBox);
-        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection, FloatingHelper.isRendererFloating(this));
+        float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas,
+                parentBBox);
+        FloatingHelper.applyClearance(parentBBox, marginsCollapseHandler, clearHeightCorrection,
+                FloatingHelper.isRendererFloating(this));
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
         if (FloatingHelper.isRendererFloating(this, floatPropertyValue)) {
-            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas, floatPropertyValue, overflowX);
+            blockWidth = FloatingHelper.adjustFloatedBlockLayoutBox(this, parentBBox, blockWidth, floatRendererAreas,
+                    floatPropertyValue, overflowX);
             floatRendererAreas = new ArrayList<>();
         }
 
@@ -466,9 +471,17 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         AbstractRenderer overflowRenderer = applyMinHeight(overflowY, layoutBox);
+
         if (overflowRenderer != null && isKeepTogether()) {
             floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, this);
+        }
+        final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
+                Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
+        if (continuousContainer != null && overflowRenderer == null) {
+            continuousContainer.reApplyProperties(this);
+            paddings = getPaddings();
+            borders = getBorders();
         }
 
         correctFixedLayout(layoutBox);
@@ -482,7 +495,7 @@ public class ParagraphRenderer extends BlockRenderer {
         if (rotation != null) {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
-                if(isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
+                if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
                     LoggerFactory.getLogger(getClass())
                             .warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                                     "It fits by height so it will be forced placed"));
@@ -496,13 +509,17 @@ public class ParagraphRenderer extends BlockRenderer {
         applyVerticalAlignment();
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
-        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
+        LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this,
+                layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection,
+                marginsCollapsingEnabled);
 
-
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
         if (null == overflowRenderer) {
-            return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(minMaxWidth);
+            return new MinMaxWidthLayoutResult(LayoutResult.FULL, editedArea, null, null, null).setMinMaxWidth(
+                    minMaxWidth);
         } else {
-            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer, null).setMinMaxWidth(minMaxWidth);
+            return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, this, overflowRenderer,
+                    null).setMinMaxWidth(minMaxWidth);
         }
     }
 
@@ -633,6 +650,7 @@ public class ParagraphRenderer extends BlockRenderer {
         overflowRenderer.parent = parent;
         fixOverflowRenderer(overflowRenderer);
         overflowRenderer.addAllProperties(getOwnProperties());
+        ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
         return overflowRenderer;
     }
 
@@ -690,7 +708,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
         ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);
 
-        return new ParagraphRenderer[]{splitRenderer, overflowRenderer};
+        return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
     }
 
     private void fixOverflowRenderer(ParagraphRenderer overflowRenderer) {

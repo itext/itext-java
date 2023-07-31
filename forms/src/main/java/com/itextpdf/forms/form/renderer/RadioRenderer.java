@@ -26,6 +26,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.form.FormProperty;
@@ -165,7 +166,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
     @Override
     protected void applyAcroField(DrawContext drawContext) {
         PdfDocument doc = drawContext.getDocument();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
         deleteMargins();
 
@@ -179,15 +180,19 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         boolean addNew = false;
         if (null == radioGroup) {
             radioGroup = new RadioFormFieldBuilder(doc, groupName).createRadioGroup();
+            radioGroup.disableFieldRegeneration();
             radioGroup.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
             addNew = true;
+        } else {
+            radioGroup.disableFieldRegeneration();
         }
         if (isBoxChecked()) {
             radioGroup.setValue(getModelId());
         }
 
-        PdfFormAnnotation radio =
-                new RadioFormFieldBuilder(doc, null).createRadioButton(getModelId(), area);
+        PdfFormAnnotation radio = new RadioFormFieldBuilder(doc, null)
+                .createRadioButton(getModelId(), area);
+        radio.disableFieldRegeneration();
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {
@@ -197,6 +202,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         radio.setFormFieldElement((Radio) modelElement);
 
         radioGroup.addKid(radio);
+        radioGroup.enableFieldRegeneration();
 
         if (addNew) {
             form.addField(radioGroup, page);

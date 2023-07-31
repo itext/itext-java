@@ -23,6 +23,7 @@
 package com.itextpdf.forms.xfdf;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -48,7 +49,7 @@ public class XfdfReaderUnitTest extends ExtendedITextTest {
     public void xfdfSquareAnnotationWithoutFringe(){
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDocument.addNewPage();
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, true);
 
         AnnotObject annotObject = new AnnotObject();
         annotObject.setName(XfdfConstants.SQUARE);

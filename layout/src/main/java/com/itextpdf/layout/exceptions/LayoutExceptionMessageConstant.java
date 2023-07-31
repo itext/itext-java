@@ -51,5 +51,8 @@ public final class LayoutExceptionMessageConstant {
     public static final String INLINE_VERTICAL_ALIGNMENT_DOESN_T_NEED_A_VALUE =
             "Inline vertical alignment \"{0}\" doesn't need a value";
 
+    public static final String INVALID_COLUMN_PROPERTIES =
+            "Invalid column-count/column-width/column-gap properties, they're absent or have negative value";
+
     private LayoutExceptionMessageConstant(){}
 }

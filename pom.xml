@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.android</groupId>
   <artifactId>root-android</artifactId>
-  <version>8.0.0</version>
+  <version>8.0.1</version>
   <packaging>pom</packaging>
   <name>iText</name>
   <description>A Free Java-PDF library</description>
@@ -49,6 +49,7 @@
     <module>hyph</module>
     <module>io</module>
     <module>itextcore</module>
+    <module>itext7core</module>
     <module>kernel</module>
     <module>layout</module>
     <module>pdfa</module>
@@ -74,7 +75,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.70</bouncycastle.version>
+    <bouncycastle.version>1.75</bouncycastle.version>
     <bouncycastleintegrationtests>com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest</bouncycastleintegrationtests>
     <bouncycastleunittests>com.itextpdf.test.annotations.type.BouncyCastleUnitTest</bouncycastleunittests>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
@@ -482,6 +483,7 @@
               <skip>true</skip>
             </configuration>
           </plugin>
+          <!-- Compares current version to the latest released version to prevent breaking changes -->
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
@@ -499,9 +501,14 @@
                 <onlyModified>true</onlyModified>
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
+                <excludes>
+                  <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                </excludes>
+                <excludeModules>
+                  <excludeModule>bouncy-castle-adapter</excludeModule>
+                  <excludeModule>bouncy-castle-connector</excludeModule>
+                </excludeModules>
               </parameter>
-              <!-- TODO: DEVSIX-7229. Remove this skip=true during 8.0.0 release -->
-              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>

@@ -208,8 +208,10 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
             isPdf2 = encryptionDictionary.getAsNumber(PdfName.R).getValue() == 6;
 
-            byte[] oValue = getIsoBytes(encryptionDictionary.getAsString(PdfName.O));
-            byte[] uValue = getIsoBytes(encryptionDictionary.getAsString(PdfName.U));
+            //truncate user and owner passwords to 48 bytes where the first 32 bytes
+            //are a hash value, next 8 bytes are validation salt and final 8 bytes are the key salt
+            byte[] oValue = truncateArray(getIsoBytes(encryptionDictionary.getAsString(PdfName.O)));
+            byte[] uValue = truncateArray(getIsoBytes(encryptionDictionary.getAsString(PdfName.U)));
             byte[] oeValue = getIsoBytes(encryptionDictionary.getAsString(PdfName.OE));
             byte[] ueValue = getIsoBytes(encryptionDictionary.getAsString(PdfName.UE));
             byte[] perms = getIsoBytes(encryptionDictionary.getAsString(PdfName.Perms));
@@ -345,5 +347,19 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             }
         }
         return true;
+    }
+
+    private byte[] truncateArray(byte[] array) {
+        if (array.length == 48) {
+            return array;
+        }
+        for (int i = 48; i < array.length; ++i) {
+            if (array[i] != 0) {
+                throw new PdfException(KernelExceptionMessageConstant.BAD_PASSWORD_HASH);
+            }
+        }
+        byte[] truncated = new byte[48];
+        System.arraycopy(array, 0, truncated, 0, 48);
+        return truncated;
     }
 }

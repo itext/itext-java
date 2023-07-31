@@ -242,16 +242,16 @@ public class PdfFormField extends AbstractPdfFormField {
         PdfFormField field;
         PdfName formType = dictionary.getAsName(PdfName.FT);
         if (PdfName.Tx.equals(formType)) {
-            field = new PdfTextFormField(dictionary);
+            field = PdfFormCreator.createTextFormField(dictionary);
         } else if (PdfName.Btn.equals(formType)) {
-            field = new PdfButtonFormField(dictionary);
+            field = PdfFormCreator.createButtonFormField(dictionary);
         } else if (PdfName.Ch.equals(formType)) {
-            field = new PdfChoiceFormField(dictionary);
+            field = PdfFormCreator.createChoiceFormField(dictionary);
         } else if (PdfName.Sig.equals(formType)) {
-            field = new PdfSignatureFormField(dictionary);
+            field = PdfFormCreator.createSignatureFormField(dictionary);
         } else {
             // No form type but still a form field
-            field = new PdfFormField(dictionary);
+            field = PdfFormCreator.createFormField(dictionary);
         }
         field.makeIndirect(document);
 
@@ -577,7 +577,7 @@ public class PdfFormField extends AbstractPdfFormField {
         kid.setParent(getPdfObject());
         PdfDictionary pdfObject = kid.getPdfObject();
         pdfObject.makeIndirect(this.getDocument());
-        AbstractPdfFormField field = new PdfFormAnnotation(pdfObject);
+        AbstractPdfFormField field = PdfFormCreator.createFormAnnotation(pdfObject);
         return addKid(field);
     }
 
@@ -730,8 +730,8 @@ public class PdfFormField extends AbstractPdfFormField {
     public PdfFormField setFieldFlags(int flags) {
         int oldFlags = getFieldFlags();
         put(PdfName.Ff, new PdfNumber(flags));
-        if (((oldFlags ^ flags) & PdfTextFormField.FF_COMB) != 0
-                && PdfName.Tx.equals(getFormType()) && new PdfTextFormField(getPdfObject()).getMaxLen() != 0)
+        if (((oldFlags ^ flags) & PdfTextFormField.FF_COMB) != 0 && PdfName.Tx.equals(getFormType())
+                && PdfFormCreator.createTextFormField(getPdfObject()).getMaxLen() != 0)
             regenerateField();
         return this;
     }
@@ -1086,7 +1086,11 @@ public class PdfFormField extends AbstractPdfFormField {
     @Override
     public boolean regenerateField() {
         boolean result = true;
-        updateDefaultAppearance();
+        if (isFieldRegenerationEnabled()) {
+            updateDefaultAppearance();
+        } else {
+            result = false;
+        }
         for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormAnnotation) {
                 PdfFormAnnotation annotation = (PdfFormAnnotation) child;
@@ -1246,8 +1250,8 @@ public class PdfFormField extends AbstractPdfFormField {
             if (obj.isString()) {
                 sb.append(((PdfString) obj).toUnicodeString()).append('\n');
             } else if (obj.isArray()) {
-                PdfObject element = ((PdfArray) obj).get(1);
-                if (element.isString()) {
+                PdfObject element = ((PdfArray) obj).size() > 1 ? ((PdfArray) obj).get(1) : null;
+                if (element != null && element.isString()) {
                     sb.append(((PdfString) element).toUnicodeString()).append('\n');
                 }
             } else {
@@ -1376,13 +1380,25 @@ public class PdfFormField extends AbstractPdfFormField {
                 try {
                     img = ImageDataFactory.create(Base64.decode(value));
                 } catch (Exception e) {
-                    text = value;
+                    if (generateAppearance) {
+                        // Display value.
+                        for (PdfFormAnnotation annot : getChildFormAnnotations()) {
+                            annot.setCaption(value, false);
+                        }
+                    } else {
+                        text = value;
+                    }
                 }
             } else {
                 // We expect that radio buttons should have only widget children,
                 // so we need to get rid of the form fields kids
                 PdfFormFieldMergeUtil.processDirtyAnnotations(this, true);
                 put(PdfName.V, new PdfName(value));
+                if (generateAppearance && !getFieldFlag(PdfButtonFormField.FF_RADIO)) {
+                    if (tryGenerateCheckboxAppearance(value)) {
+                        return this;
+                    }
+                }
                 for (PdfWidgetAnnotation widget : getWidgets()) {
                     List<String> states = Arrays.asList(PdfFormAnnotation
                             .makeFormAnnotation(widget.getPdfObject(), getDocument()).getAppearanceStates());
@@ -1398,7 +1414,7 @@ public class PdfFormField extends AbstractPdfFormField {
                 if (this instanceof PdfChoiceFormField) {
                     ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
                 } else {
-                    PdfChoiceFormField choice = new PdfChoiceFormField(this.getPdfObject());
+                    PdfChoiceFormField choice = PdfFormCreator.createChoiceFormField(this.getPdfObject());
                     choice.setListSelected(new String[] {value}, false);
                 }
             } else {
@@ -1412,6 +1428,36 @@ public class PdfFormField extends AbstractPdfFormField {
 
         this.setModified();
         return this;
+    }
+
+    /**
+     * Distinguish mutually exclusive and regular checkboxes: check all the on states of the widgets, if they are
+     * not all equal, then consider that this checkbox is mutually exclusive and do nothing, otherwise regenerate
+     * normal appearance with value as on appearance state for all the widgets.
+     *
+     * @param value not empty value different from "Off".
+     */
+    private boolean tryGenerateCheckboxAppearance(String value) {
+        if (value == null || value.isEmpty() || PdfFormAnnotation.OFF_STATE_VALUE.equals(value)) {
+            return false;
+        }
+        Set<String> allStates = new HashSet<>();
+        for (PdfFormAnnotation annotation : getChildFormAnnotations()) {
+            allStates.addAll(Arrays.asList(annotation.getAppearanceStates()));
+            if (allStates.size() > 2) {
+                return false;
+            }
+        }
+        allStates.remove(PdfFormAnnotation.OFF_STATE_VALUE);
+        if (allStates.isEmpty() || allStates.size() == 1 &&
+                !value.equals(allStates.toArray(new String[allStates.size()])[0])) {
+            for (PdfFormAnnotation annotation : getChildFormAnnotations()) {
+                annotation.setCheckBoxAppearanceOnStateName(value);
+            }
+            updateDefaultAppearance();
+            return true;
+        }
+        return false;
     }
 
     private boolean mergeKidsIfKidWithSuchNameExists(AbstractPdfFormField newKid, boolean throwExceptionOnError) {

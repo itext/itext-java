@@ -109,7 +109,8 @@ final class RotationUtils {
             backup.<UnitValue>storeProperty(Property.MAX_HEIGHT);
             backup.storeBoolProperty(Property.FORCED_PLACEMENT);
             MinMaxWidth minMaxWidth = renderer.getMinMaxWidth();
-            //Using this width for initial layout helps in case of small elements. They may have more free spaces but it's more likely they fit.
+            // Using this width for initial layout helps in case of small elements. They may have more free spaces,
+            // but it's more likely they fit.
             float length = (minMaxWidth.getMaxWidth() + minMaxWidth.getMinWidth()) / 2 + MinMaxWidthUtils.getEps();
             LayoutResult layoutResult = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(length, AbstractRenderer.INF))));
             backup.restoreProperty(Property.HEIGHT);

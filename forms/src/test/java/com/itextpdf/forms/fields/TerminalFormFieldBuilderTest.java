@@ -83,7 +83,7 @@ public class TerminalFormFieldBuilderTest extends ExtendedITextTest {
                 return this;
             }
         };
-        PdfFormField formField = new PdfFormField(DUMMY_DOCUMENT).addKid(formFieldAnnot);
+        PdfFormField formField = PdfFormCreator.createFormField(DUMMY_DOCUMENT).addKid(formFieldAnnot);
         builder.setPageToField(formField);
     }
 

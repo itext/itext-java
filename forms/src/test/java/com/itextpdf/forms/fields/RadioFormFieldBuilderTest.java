@@ -209,7 +209,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createRadioButtonShouldNotContainTerminalFieldKeys() {
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document, true);
             PdfButtonFormField radioGroup = new RadioFormFieldBuilder(document, DUMMY_NAME).createRadioGroup();
             PdfFormAnnotation radioAnnotation = new RadioFormFieldBuilder(document, DUMMY_NAME)
 
@@ -222,7 +222,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createRadioButtonButDontAddToGroupGroupContainsNoRadioButton() {
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document, true);
             PdfButtonFormField radioGroup = new RadioFormFieldBuilder(document, DUMMY_NAME).createRadioGroup();
             new RadioFormFieldBuilder(document, DUMMY_NAME)
 
@@ -237,7 +237,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createRadioButtonAddToGroupGroupContainsOneRadioButton() {
         try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
-            PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document, true);
             PdfButtonFormField radioGroup = new RadioFormFieldBuilder(document, DUMMY_NAME).createRadioGroup();
             PdfFormAnnotation radioAnnotation = new RadioFormFieldBuilder(document, DUMMY_NAME)
 

@@ -1043,4 +1043,38 @@ public class XfdfWriterTest extends ExtendedITextTest {
         );
         Assert.assertEquals(XfdfException.ATTRIBUTE_NAME_OR_VALUE_MISSING, e2.getMessage());
     }
+
+    @Test
+    //TODO DEVSIX-7600 update xfdf and src files after supporting all the annotation types mentioned in xfdf spec
+    public void xfdfAnnotationAttributesTest() throws IOException, ParserConfigurationException, SAXException,
+            TransformerException {
+        String pdfDocumentName = "xfdfAnnotationAttributes.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(new FileInputStream(sourceFolder + pdfDocumentName)))) {
+            String xfdfFilename = destinationFolder + "xfdfAnnotationAttributes.xfdf";
+            XfdfObjectFactory factory = new XfdfObjectFactory();
+            XfdfObject xfdfObject = factory.createXfdfObject(pdfDocument, pdfDocumentName);
+            xfdfObject.writeToFile(xfdfFilename);
+        }
+        if (!new CompareTool().compareXmls(destinationFolder + "xfdfAnnotationAttributes.xfdf",
+                sourceFolder + "xfdfAnnotationAttributes.xfdf"))
+            Assert.fail("Xfdf files are not equal");
+    }
+
+    @Test
+    //TODO DEVSIX-7600 update xfdf and src files after supporting all the annotation types mentioned in xfdf spec
+    public void xfdfOnlyRequiredAnnotationAttributesTest() throws IOException, ParserConfigurationException, SAXException,
+            TransformerException {
+        String pdfDocumentName = "xfdfOnlyRequiredAnnotationAttributes.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfReader(new FileInputStream(sourceFolder + pdfDocumentName)))) {
+            String xfdfFilename = destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf";
+            XfdfObjectFactory factory = new XfdfObjectFactory();
+            XfdfObject xfdfObject = factory.createXfdfObject(pdfDocument, pdfDocumentName);
+            xfdfObject.writeToFile(xfdfFilename);
+        }
+        if (!new CompareTool().compareXmls(destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf",
+                sourceFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf"))
+            Assert.fail("Xfdf files are not equal");
+    }
 }

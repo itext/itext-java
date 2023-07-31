@@ -25,6 +25,7 @@ package com.itextpdf.forms.form.element;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -129,7 +130,7 @@ public class InputButtonTest extends ExtendedITextTest {
             document.add(formInputButton);
 
             // Create push button using form field
-            PdfAcroForm form = PdfAcroForm.getAcroForm(document.getPdfDocument(), true);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
             PdfButtonFormField button = new PushButtonFormFieldBuilder(document.getPdfDocument(), "push")
                     .setWidgetRectangle(new Rectangle(36, 700, 94, 40))
                     .setCaption("form input button").createPushButton();

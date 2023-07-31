@@ -190,7 +190,6 @@ public class CFFFont {
     int getPosition() {
         return (int)buf.getPosition();
     }
-    int nextIndexOffset;
     // read the offsets in the next index
     // data structure, convert to global
     // offsets, and return them.
@@ -202,22 +201,20 @@ public class CFFFont {
         count = getCard16();
         int[] offsets = new int[count+1];
 
-        if (count==0) {
+        if (count == 0) {
             offsets[0] = -1;
-            // TODO death store to local var .. should this be this.nextIndexOffset ?
-            nextIndexOffset += 2;
             return offsets;
         }
 
         indexOffSize = getCard8();
 
-        for (int j=0; j<=count; j++) {
+        for (int j = 0; j <= count; j++) {
             //nextIndexOffset = ofset to relative segment
             offsets[j] = nextIndexOffset
                     //2-> count in the index header. 1->offset size in index header
-                    + 2+1
+                    + 2 + 1
                     //offset array size * offset size
-                    + (count+1)*indexOffSize
+                    + (count + 1) * indexOffSize
                     //???zero <-> one base
                     - 1
                     // read object offset relative to object array base
@@ -668,7 +665,6 @@ public class CFFFont {
         int minor = getCard8();
         int hdrSize = getCard8();
         int offSize = getCard8();
-        nextIndexOffset = hdrSize;
 
         l.addLast(new RangeItem(buf,0,hdrSize));
 

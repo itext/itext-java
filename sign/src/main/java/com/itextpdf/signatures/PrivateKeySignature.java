@@ -22,10 +22,12 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 
@@ -164,24 +166,38 @@ public class PrivateKeySignature implements IExternalSignature {
     @Override
     public byte[] sign(byte[] message) throws GeneralSecurityException {
         String algorithm = getSignatureMechanismName();
-        Signature sig = SignUtils.getSignatureHelper(algorithm, provider);
-        if (parameters != null) {
-            parameters.apply(sig);
+        Signature sig;
+        try {
+            sig = SignUtils.getSignatureHelper(algorithm, provider);
+            if (parameters != null) {
+                parameters.apply(sig);
+            }
+            sig.initSign(pk);
+            sig.update(message);
+            return sig.sign();
+        } catch (Exception ignored) {
+            try {
+                sig = SignUtils.getSignatureHelper(getSignatureAlgorithmName(), provider);
+                if (parameters != null) {
+                    parameters.apply(sig);
+                }
+                sig.initSign(pk);
+                sig.update(message);
+                return sig.sign();
+            } catch (Exception e) {
+                throw new PdfException(MessageFormatUtil.format(
+                        SignExceptionMessageConstant.ALGORITHMS_NOT_SUPPORTED, algorithm, getSignatureAlgorithmName()),
+                        e);
+            }
         }
-        sig.initSign(pk);
-        sig.update(message);
-        return sig.sign();
     }
 
     private String getSignatureMechanismName() {
         final String signatureAlgo = this.getSignatureAlgorithmName();
-        // Ed25519 and Ed448 do not involve a choice of hashing algorithm
-        // and RSASSA-PSS is parameterised
-        if ("Ed25519".equals(signatureAlgo) || "Ed448".equals(signatureAlgo)
-                || "RSASSA-PSS".equals(signatureAlgo)) {
+        // RSASSA-PSS is parameterised
+        if ("RSASSA-PSS".equals(signatureAlgo)) {
             return signatureAlgo;
-        } else {
-            return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();
-        }
+        } 
+        return getDigestAlgorithmName() + "with" + getSignatureAlgorithmName();
     }
 }

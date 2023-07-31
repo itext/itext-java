@@ -37,9 +37,11 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -674,6 +676,109 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void floatPositioningOutsideBlocksTest() throws IOException, InterruptedException {
+        String testName = "floatPositioningOutsideBlocks";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div floatLeft = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.GREEN, 3))
+                    .setBackgroundColor(ColorConstants.GREEN, 0.3f)
+                    .setWidth(100).setHeight(100);
+            floatLeft.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            floatLeft.add(new Paragraph("float left"));
+
+            Div floatRight = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 3))
+                    .setBackgroundColor(ColorConstants.YELLOW, 0.3f)
+                    .setWidth(100).setHeight(100);
+            floatRight.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+            floatRight.add(new Paragraph("float right"));
+
+            Div divWithBfc = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.BLUE, 3))
+                    .setBackgroundColor(ColorConstants.BLUE, 0.3f)
+                    .setHeight(100);
+            divWithBfc.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
+            divWithBfc.add(new Paragraph("div with own block formatting context"));
+
+            Div wideDivWithBfc = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.CYAN, 3))
+                    .setBackgroundColor(ColorConstants.CYAN, 0.3f)
+                    .setWidth(UnitValue.createPercentValue(100));
+            wideDivWithBfc.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
+            wideDivWithBfc.add(new Paragraph("wide div with own block formatting context"));
+
+            Div divWithoutBfc = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 3))
+                    .setBackgroundColor(ColorConstants.PINK, 0.3f)
+                    .setHeight(100);
+            divWithoutBfc.add(new Paragraph("div without own block formatting context"));
+
+            document.add(floatLeft);
+            document.add(divWithBfc);
+            document.add(floatRight);
+            document.add(divWithBfc);
+            document.add(floatLeft);
+            document.add(floatRight);
+            document.add(divWithBfc);
+            document.add(floatLeft);
+            document.add(floatRight);
+            document.add(divWithoutBfc);
+            document.add(floatLeft);
+            document.add(floatRight);
+            document.add(wideDivWithBfc);
+            document.add(new Paragraph("Plain text after wide div"));
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
+    }
+
+    @Test
+    public void floatPositioningOutsideFlexContainerTest() throws IOException, InterruptedException {
+        String testName = "floatPositioningOutsideFlexContainer";
+        String outFileName = destinationFolder + testName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div floatLeft = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.GREEN, 1))
+                    .setBackgroundColor(ColorConstants.GREEN, 0.3f)
+                    .setWidth(100).setHeight(100);
+            floatLeft.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            floatLeft.add(new Paragraph("float left"));
+
+            Div floatRight = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 1))
+                    .setBackgroundColor(ColorConstants.YELLOW, 0.3f)
+                    .setWidth(100).setHeight(100);
+            floatRight.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+            floatRight.add(new Paragraph("float right"));
+
+            Div flexContainer = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.BLUE, 1))
+                    .setBackgroundColor(ColorConstants.BLUE, 0.3f);
+            flexContainer.setNextRenderer(new FlexContainerRenderer(flexContainer));
+            flexContainer.add(new Paragraph("flex container"));
+
+            Div flexContainer2 = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 1))
+                    .setBackgroundColor(ColorConstants.PINK, 0.1f)
+                    .setWidth(UnitValue.createPercentValue(100));
+            flexContainer2.setNextRenderer(new FlexContainerRenderer(flexContainer2));
+            flexContainer2.add(new Paragraph("flex container with 100% width"));
+
+            document.add(flexContainer);
+            document.add(floatLeft);
+            document.add(floatRight);
+            document.add(flexContainer);
+            document.add(floatLeft);
+            document.add(floatRight);
+            document.add(flexContainer2);
+            document.add(new Paragraph("Plain text after wide flex container"));
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
     }
 
     private Div createParentDiv(HorizontalAlignment horizontalAlignment, ClearPropertyValue clearPropertyValue, UnitValue width) {

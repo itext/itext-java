@@ -138,11 +138,11 @@ public class PdfChoiceFormField extends PdfFormField {
 
     /**
      * Highlights the options. If this method is used for Combo box, the first value in input array
-     * will be the field value
+     * will be the field value.
      *
-     * @param optionValues Array of options to be highlighted
+     * @param optionValues Array of display values to be highlighted.
      *
-     * @return current {@link PdfChoiceFormField}
+     * @return current {@link PdfChoiceFormField}.
      */
     public PdfChoiceFormField setListSelected(String[] optionValues) {
         return setListSelected(optionValues, true);
@@ -389,7 +389,7 @@ public class PdfChoiceFormField extends PdfFormField {
             PdfString value = null;
             if (option.isString()) {
                 value = (PdfString) option;
-            } else if (option.isArray()) {
+            } else if (option.isArray() && ((PdfArray) option).size() > 1) {
                 value = (PdfString) ((PdfArray) option).get(1);
             }
             optionsToUnicodeNames.add(value != null ? value.toUnicodeString() : null);

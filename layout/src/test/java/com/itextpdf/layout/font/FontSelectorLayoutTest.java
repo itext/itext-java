@@ -24,11 +24,13 @@ package com.itextpdf.layout.font;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -36,6 +38,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
@@ -81,5 +84,17 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
         Paragraph p = new Paragraph(textParagraph + text).setFontFamily(font);
 
         return p;
+    }
+
+
+    @Test
+    public void utfToGlyphToUtfRountripTest() throws IOException {
+        // See DEVSIX-4945
+        // this should not throw a null pointer exception
+        try(PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+            Document doc = new Document(pdfDoc)) {
+            doc.setFont(PdfFontFactory.createFont("HeiseiMin-W3", "UniJIS-UCS2-H"));
+            AssertUtil.doesNotThrow(() -> doc.add(new Paragraph("\u9F9C")));
+        }
     }
 }

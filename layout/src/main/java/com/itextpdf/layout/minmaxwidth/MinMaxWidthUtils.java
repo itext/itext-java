@@ -49,7 +49,7 @@ public final class MinMaxWidthUtils {
         return max;
     }
 
-    private static float getInfHeight() { return 1e6f; }
+    public static float getInfHeight() { return 1e6f; }
 
     public static boolean isEqual(double x, double y) {
         return Math.abs(x - y) < eps;

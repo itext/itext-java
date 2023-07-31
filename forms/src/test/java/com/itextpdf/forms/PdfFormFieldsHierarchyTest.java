@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -57,7 +58,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
 
-        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDocument, false);
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, false);
 
         Map<String, PdfFormField> formFields = acroForm.getAllFormFields();
 
@@ -82,7 +83,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "autosizeInheritedDAFormFields.pdf"),
                 new PdfWriter(inPdf));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         Map<String, PdfFormField> fields = form.getAllFormFields();
 
@@ -104,7 +105,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
                 new PdfReader(sourceFolder + "autosizeInheritedDAFormFieldsWithKids.pdf"),
                 new PdfWriter(inPdf));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         form.getField("root.child.text1").setValue("surname surname surname surname surname");
         form.getField("root.child.text2").setValue("surname surname surname surname surname");
@@ -123,7 +124,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + name + ".pdf"),
                 new PdfWriter(fileName));
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         form.setGenerateAppearance(false);
 
         Map<String, PdfFormField> fields = form.getAllFormFields();

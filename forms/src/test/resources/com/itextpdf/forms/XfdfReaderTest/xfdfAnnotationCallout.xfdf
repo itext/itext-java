@@ -118,7 +118,7 @@
 ></contents-richtext
 ><popup flags="print,nozoom,norotate" open="no" page="1" rect="612.000000,-20.000000,792.000000,100.000000"
 /></text
-><freetext color="#FFFFFF" callout="89.367100,699.441000,76.201400,683.139000,76.201400,671.139000" creationdate="D:20190606134211+03'00'" flags="print" IT="FreeTextCallout" head="OpenArrow" date="D:20190606134225+03'00'" name="4ec51e69-3e4e-4ce0-ace4-0bcfa455e8ec" page="1" fringe="0.500000,0.500000,0.500015,28.524300" rect="21.701400,654.629000,130.701000,699.663000" subject="Callout" title="Alex"
+><freetext color="#FFFFFF" callout="89.367100,699.441000,76.201400,683.139000,76.201400,671.139000" creationdate="D:20190606134211+03'00'" flags="print" intent="FreeTextCallout" head="OpenArrow" date="D:20190606134225+03'00'" name="4ec51e69-3e4e-4ce0-ace4-0bcfa455e8ec" page="1" fringe="0.500000,0.500000,0.500015,28.524300" rect="21.701400,654.629000,130.701000,699.663000" subject="Callout" title="Alex"
 ><contents-richtext
 ><body xmlns="http://www.w3.org/1999/xhtml" xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" xfa:APIVersion="Acrobat:15.6.0" xfa:spec="2.0.2" style="font-size:12.0pt;text-align:left;color:#FF0000;font-weight:normal;font-style:normal;font-family:Helvetica,sans-serif;font-stretch:normal"
 ><p dir="ltr"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xfdf>
+    <annots>
+        <text page="1" color="#FFFF00" date="D:20190530143352+03'00'" flags="hidden,print,nozoom,norotate"
+              name="64f8ca28-6105-466d-ba80-6c3b9383950d" rect="200,300,300,400" title="Text"
+              creationdate="D:20190530143346+03'00'" opacity="1.0" subject="Sticky Note"
+              icon="Paragraph" state="Marked" statemodel="Marked" inreplyto="fbaaf2f6-7b43-4b5e-9c46-313b93b7fbb5"
+              replyType="reply">
+        </text>
+    </annots>
+</xfdf>

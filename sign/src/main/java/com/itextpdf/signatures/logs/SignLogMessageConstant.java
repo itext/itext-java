@@ -29,6 +29,9 @@ public final class SignLogMessageConstant {
 
     public static final String EXCEPTION_WITHOUT_MESSAGE =
             "Unexpected exception without message was thrown during keystore processing";
+    
+    public static final String ALGORITHM_NOT_FROM_SPEC =
+            "Requested algorithm might not be supported by the pdf specification.";
 
     private SignLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 PdfName.Contents));
         XOBJECT_EXCLUDED_KEYS.addAll(PAGE_EXCLUDED_KEYS);
     }
-
 
     /**
      * Automatically rotate new content if the page has a rotation ( is disabled by default )
@@ -386,6 +386,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * Copies page and adds it to the specified document to the end or by index if the corresponding parameter is true.
      * <br><br>
      * NOTE: Works only for pages from the document opened in reading mode, otherwise an exception is thrown.
+     * NOTE: If both documents (from which and to which the copy is made) are tagged, you must additionally call the
+     * {@link IPdfPageFormCopier#recreateAcroformToProcessCopiedFields(PdfDocument)} method after copying the
+     * tag structure to process copied fields, like add them to the document and merge fields with the same names.
      *
      * @param toDocument a document to copy page to.
      * @param copier     a copier which bears a special copy logic. May be null.

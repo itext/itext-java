@@ -95,12 +95,11 @@ public class ListRendererUnitTest extends RendererUnitTest {
     }
 
     @Test
-    // TODO: DEVSIX-6982 update this test after the ticket will be resolved
-    public void symbolPositioningInsideAfterPagebreakTest() {
+    public void symbolPositioningInsideAfterPageBreakTest() {
         List modelElement = new List();
         modelElement.setNextRenderer(new ListRenderer(modelElement));
 
-        for (int i = 0; i <25 ; i++) {
+        for (int i = 0; i < 25; i++) {
             String s = "listitem " + i;
             ListItem listItem = (ListItem) new ListItem().add(new Paragraph(s));
             modelElement.add(listItem);
@@ -121,8 +120,8 @@ public class ListRendererUnitTest extends RendererUnitTest {
         Pattern regex = Pattern.compile("^.-.*?-.*$");
         java.util.List<IRenderer> childRenderers = listRenderer.getChildRenderers();
 
-        // Assertion needs to be changed to assertEquals after fix.
-        Assert.assertNotEquals(childRenderers.stream().filter(listitem -> regex.matcher(listitem.toString()).matches()).collect(Collectors.toList()).size(), 0);
+        Assert.assertEquals(0, childRenderers.stream()
+                .filter(listitem -> regex.matcher(listitem.toString()).matches()).count());
     }
 
     private static class ListRendererCreatingNotifyingListSymbols extends ListRenderer {

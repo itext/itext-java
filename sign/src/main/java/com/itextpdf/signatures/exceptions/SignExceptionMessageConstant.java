@@ -26,6 +26,8 @@ package com.itextpdf.signatures.exceptions;
  * Class that bundles all the error message templates as constants.
  */
 public final class SignExceptionMessageConstant {
+    public static final String ALGORITHMS_NOT_SUPPORTED = "Signing algorithms {0} and {1} are not supported.";
+    
     public static final String AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST = "Authenticated attribute is missing "
             + "the digest.";
     public static final String AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE = "Available space is not enough for "

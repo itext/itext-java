@@ -23,6 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.IRandomAccessSource;
@@ -72,7 +73,7 @@ public class SignatureUtil {
     public SignatureUtil(PdfDocument document) {
         this.document = document;
         // Only create new AcroForm if there is a writer
-        this.acroForm = PdfAcroForm.getAcroForm(document, document.getWriter() != null);
+        this.acroForm = PdfFormCreator.getAcroForm(document, document.getWriter() != null);
     }
 
     /**

@@ -77,15 +77,14 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
         PdfButtonFormField field;
         PdfWidgetAnnotation annotation = null;
         if (getWidgetRectangle() == null) {
-            field = new PdfButtonFormField(getDocument());
+            field = PdfFormCreator.createButtonFormField(getDocument());
         } else {
             annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            field = new PdfButtonFormField(annotation, getDocument());
+            field = PdfFormCreator.createButtonFormField(annotation, getDocument());
             if (null != getConformanceLevel()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
         }
-
         field.pdfAConformanceLevel = getConformanceLevel();
         field.setPushButton(true);
         field.setFieldName(getFormFieldName());
@@ -94,7 +93,6 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
         if (annotation != null) {
             field.getFirstFormAnnotation().backgroundColor = ColorConstants.LIGHT_GRAY;
             field.getFirstFormAnnotation().drawPushButtonFieldAndSaveAppearance();
-
             PdfDictionary mk = new PdfDictionary();
             mk.put(PdfName.CA, new PdfString(caption));
             mk.put(PdfName.BG, new PdfArray(field.getFirstFormAnnotation().backgroundColor.getColorValue()));

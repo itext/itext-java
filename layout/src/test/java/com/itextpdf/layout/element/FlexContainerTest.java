@@ -32,14 +32,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
-import com.itextpdf.layout.properties.AlignmentPropertyValue;
-import com.itextpdf.layout.properties.Background;
-import com.itextpdf.layout.properties.BoxSizingPropertyValue;
-import com.itextpdf.layout.properties.JustifyContent;
-import com.itextpdf.layout.properties.ListNumberingType;
-import com.itextpdf.layout.properties.OverflowPropertyValue;
-import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.*;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -62,6 +55,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
     private AlignmentPropertyValue alignItemsValue;
     private JustifyContent justifyContentValue;
+    private FlexWrapPropertyValue wrapValue;
+    private FlexDirectionPropertyValue directionValue;
     private Integer comparisonPdfId;
 
     @BeforeClass
@@ -69,19 +64,42 @@ public class FlexContainerTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
-    public FlexContainerTest(Object alignItemsValue, Object justifyContentValue, Object comparisonPdfId) {
+    public FlexContainerTest(Object alignItemsValue, Object justifyContentValue, Object wrapValue,
+                             Object directionValue, Object comparisonPdfId) {
         this.alignItemsValue = (AlignmentPropertyValue) alignItemsValue;
         this.justifyContentValue = (JustifyContent) justifyContentValue;
+        this.wrapValue = (FlexWrapPropertyValue) wrapValue;
+        this.directionValue = (FlexDirectionPropertyValue) directionValue;
         this.comparisonPdfId = (Integer) comparisonPdfId;
     }
 
-    @Parameterized.Parameters(name = "{index}: align-items: {0}; justify-content: {1}")
+    @Parameterized.Parameters(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
         return Arrays.asList(new Object[][]{
-                {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, 1},
-                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, 2},
-                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, 3},
-                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, 4}
+                {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, FlexWrapPropertyValue.NOWRAP,
+                        FlexDirectionPropertyValue.ROW, 1},
+                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, FlexWrapPropertyValue.NOWRAP,
+                        FlexDirectionPropertyValue.ROW, 2},
+                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, FlexWrapPropertyValue.NOWRAP,
+                        FlexDirectionPropertyValue.ROW, 3},
+                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, FlexWrapPropertyValue.NOWRAP,
+                        FlexDirectionPropertyValue.ROW, 4},
+                {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, FlexWrapPropertyValue.WRAP,
+                        FlexDirectionPropertyValue.ROW, 5},
+                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, FlexWrapPropertyValue.WRAP,
+                        FlexDirectionPropertyValue.ROW_REVERSE, 6},
+                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, FlexWrapPropertyValue.WRAP,
+                        FlexDirectionPropertyValue.ROW, 7},
+                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, FlexWrapPropertyValue.WRAP,
+                        FlexDirectionPropertyValue.ROW_REVERSE, 8},
+                {AlignmentPropertyValue.FLEX_START, JustifyContent.FLEX_START, FlexWrapPropertyValue.WRAP_REVERSE,
+                        FlexDirectionPropertyValue.ROW_REVERSE, 9},
+                {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, FlexWrapPropertyValue.WRAP_REVERSE,
+                        FlexDirectionPropertyValue.ROW, 10},
+                {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, FlexWrapPropertyValue.WRAP_REVERSE,
+                        FlexDirectionPropertyValue.ROW_REVERSE, 11},
+                {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, FlexWrapPropertyValue.WRAP_REVERSE,
+                        FlexDirectionPropertyValue.ROW, 12},
         });
     }
 
@@ -148,11 +166,8 @@ public class FlexContainerTest extends ExtendedITextTest {
         Document document = new Document(pdfDocument);
 
         Div flexContainer = createFlexContainer();
-        flexContainer.setProperty(Property.ALIGN_ITEMS, alignItemsValue);
-        flexContainer.setProperty(Property.JUSTIFY_CONTENT, justifyContentValue);
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
-        flexContainer.setProperty(Property.WIDTH, UnitValue.createPointValue(500));
 
         Div innerDiv = new Div();
         innerDiv.add(createNewDiv()).add(createNewDiv()).add(createNewDiv());
@@ -177,6 +192,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     }
 
     @Test
+    // If height is clipped the behavior strongly depends on the child renderers
+    // and the results are not expected sometimes
     public void flexContainerHeightClippedTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
         String cmpFileName = sourceFolder + "cmp_flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
@@ -187,7 +204,6 @@ public class FlexContainerTest extends ExtendedITextTest {
         Div flexContainer = createFlexContainer();
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
-        flexContainer.setProperty(Property.WIDTH, UnitValue.createPointValue(500));
         flexContainer.setHeight(250);
 
         Div innerDiv = new Div();
@@ -295,9 +311,7 @@ public class FlexContainerTest extends ExtendedITextTest {
         Div flexContainer = createFlexContainer();
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
-        flexContainer.setProperty(Property.WIDTH, UnitValue.createPointValue(500));
-        flexContainer.setHeight(400);
-
+        flexContainer.setHeight(500);
         Div innerDiv = new Div();
         innerDiv.add(createNewDiv()).add(createNewDiv()).add(createNewDiv());
         innerDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));
@@ -373,7 +387,6 @@ public class FlexContainerTest extends ExtendedITextTest {
         Div flexContainer = createFlexContainer();
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
-        flexContainer.setWidth(500);
 
         Div innerDiv = new Div();
         innerDiv.add(createNewDiv()).add(createNewDiv()).add(createNewDiv());
@@ -414,7 +427,6 @@ public class FlexContainerTest extends ExtendedITextTest {
         Div flexContainer = createFlexContainer();
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
-        flexContainer.setWidth(500);
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {50, 50}));
         for (int i = 0; i < 2; i++) {
@@ -450,7 +462,6 @@ public class FlexContainerTest extends ExtendedITextTest {
         Div flexContainer = createFlexContainer();
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
-        flexContainer.setWidth(500);
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {50, 50}));
         for (int i = 0; i < 2; i++) {
@@ -771,7 +782,6 @@ public class FlexContainerTest extends ExtendedITextTest {
         Div flexContainer = createFlexContainer();
         flexContainer.setProperty(Property.BORDER, new SolidBorder(2));
         flexContainer.setProperty(Property.BACKGROUND, new Background(ColorConstants.LIGHT_GRAY));
-        flexContainer.setProperty(Property.WIDTH, UnitValue.createPointValue(400));
         flexContainer.setProperty(Property.ROTATION_ANGLE, 20f);
 
         Table table = new Table(UnitValue.createPercentArray(new float[] {10, 10, 10}));
@@ -876,8 +886,8 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         Div flexContainer = createFlexContainer();
 
-        flexContainer.add(new Div().setWidth(100).setBackgroundColor(ColorConstants.BLUE).setHeight(100));
-        flexContainer.add(new Div().setWidth(100).setBackgroundColor(ColorConstants.YELLOW).setMinHeight(20));
+        flexContainer.add(new Div().setWidth(110).setBackgroundColor(ColorConstants.BLUE).setHeight(100));
+        flexContainer.add(new Div().setWidth(110).setBackgroundColor(ColorConstants.YELLOW).setMinHeight(20));
         document.add(flexContainer);
 
         document.close();
@@ -896,8 +906,8 @@ public class FlexContainerTest extends ExtendedITextTest {
         Div flexContainer = createFlexContainer();
         flexContainer.setMinHeight(100);
 
-        Div child = new Div().setWidth(100).setBackgroundColor(ColorConstants.BLUE);
-        child.add(new Paragraph().setWidth(100).setBackgroundColor(ColorConstants.YELLOW));
+        Div child = new Div().setWidth(110).setBackgroundColor(ColorConstants.BLUE);
+        child.add(new Paragraph().setWidth(110).setBackgroundColor(ColorConstants.YELLOW));
         flexContainer.add(child);
 
         document.add(flexContainer);
@@ -1076,6 +1086,11 @@ public class FlexContainerTest extends ExtendedITextTest {
         FlexContainer flexContainer = new FlexContainer();
         flexContainer.setProperty(Property.ALIGN_ITEMS, alignItemsValue);
         flexContainer.setProperty(Property.JUSTIFY_CONTENT, justifyContentValue);
+        flexContainer.setProperty(Property.FLEX_WRAP, wrapValue);
+        flexContainer.setProperty(Property.FLEX_DIRECTION, directionValue);
+        if (FlexWrapPropertyValue.NOWRAP != wrapValue) {
+            flexContainer.setWidth(200);
+        }
         return flexContainer;
     }
 

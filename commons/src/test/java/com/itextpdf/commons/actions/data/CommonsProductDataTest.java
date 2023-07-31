@@ -38,6 +38,8 @@ public class CommonsProductDataTest extends ExtendedITextTest {
         Assert.assertEquals(CommonsProductData.COMMONS_PUBLIC_PRODUCT_NAME, commonsProductData.getPublicProductName());
         Assert.assertEquals(CommonsProductData.COMMONS_PRODUCT_NAME, commonsProductData.getProductName());
         Assert.assertEquals(CommonsProductData.COMMONS_VERSION, commonsProductData.getVersion());
+        Assert.assertEquals(CommonsProductData.MINIMAL_COMPATIBLE_LICENSEKEY_VERSION,
+                commonsProductData.getMinCompatibleLicensingModuleVersion());
         Assert.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_SINCE, commonsProductData.getSinceCopyrightYear());
         Assert.assertEquals(CommonsProductData.COMMONS_COPYRIGHT_TO, commonsProductData.getToCopyrightYear());
     }

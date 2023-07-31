@@ -27,6 +27,8 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.CompressionConstants;
@@ -82,6 +84,8 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptionManuallyPortedTest/";
 
     public static final char[] PRIVATE_KEY_PASS = "testpassphrase".toCharArray();
+    // There is also test.pfx to add to Acrobat to be able to open result pdf files. Password for it is also
+    // testpassphrase
     public static final String CERT = sourceFolder + "test.cer";
     public static final String PRIVATE_KEY = sourceFolder + "test.pem";
 
@@ -178,6 +182,27 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         String filename = "encryptWithCertificateAes256NoCompression.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256;
         encryptWithCertificate(filename, encryptionType, CompressionConstants.NO_COMPRESSION);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void openEncryptedDocWithWrongPrivateKey()
+            throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateAes128.pdf",
+                new ReaderProperties()
+                        .setPublicKeySecurityParams(
+                                getPublicCertificate(CERT),
+                                PemFileHelper.readPrivateKeyFromPemFile(
+                                        new FileInputStream(sourceFolder + "wrong.pem"), PRIVATE_KEY_PASS),
+                                FACTORY.getProviderName(),
+                                null))) {
+
+            Exception e = Assert.assertThrows(PdfException.class,
+                    () -> new PdfDocument(reader)
+            );
+            Assert.assertEquals(KernelExceptionMessageConstant.PDF_DECRYPTION, e.getMessage());
+        }
     }
 
     public void encryptWithCertificate(String filename, int encryptionType, int compression) throws IOException,

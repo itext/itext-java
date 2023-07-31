@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+  <groupId>com.itextpdf.android</groupId>
+  <artifactId>itext7-core-android</artifactId>
+  <version>8.0.1</version>
+  <packaging>pom</packaging>
+  <name>iText 7 Core</name>
+  <description>A Free Java-PDF library</description>
+  <url>https://itextpdf.com/</url>
+  <inceptionYear>1998</inceptionYear>
+  <organization>
+    <name>Apryse Group NV</name>
+    <url>https://itextpdf.com/</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU Affero General Public License v3</name>
+      <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>itext</id>
+      <name>iText Software</name>
+      <email>info@itextpdf.com</email>
+      <url>https://www.itextpdf.com</url>
+    </developer>
+  </developers>
+  <mailingLists>
+    <mailingList>
+      <name>iText on StackOverflow</name>
+      <subscribe>https://stackoverflow.com/questions/tagged/itext</subscribe>
+      <archive>https://stackoverflow.com/questions/tagged/itext</archive>
+      <otherArchives>
+        <otherArchive>http://news.gmane.org/gmane.comp.java.lib.itext.general</otherArchive>
+        <otherArchive>http://itext-general.2136553.n4.nabble.com/</otherArchive>
+        <otherArchive>http://www.junlu.com/2.html</otherArchive>
+        <otherArchive>http://sourceforge.net/mailarchive/forum.php?forum_id=3273</otherArchive>
+        <otherArchive>http://www.mail-archive.com/itext-questions%40lists.sourceforge.net/</otherArchive>
+      </otherArchives>
+    </mailingList>
+  </mailingLists>
+  <scm>
+    <connection>git@github.com:itext/itext7.git</connection>
+    <url>git@github.com:itext/itext7.git</url>
+  </scm>
+  <distributionManagement>
+    <relocation>
+      <artifactId>itext-core</artifactId>
+    </relocation>
+  </distributionManagement>
+</project>

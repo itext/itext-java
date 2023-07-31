@@ -31,6 +31,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -294,7 +295,7 @@ public class LtvVerifier extends RootStoreVerifier {
             signatureName = names.get(names.size() - 2);
             try (PdfReader readerTmp = new PdfReader(sgnUtil.extractRevision(signatureName))) {
                 document = new PdfDocument(readerTmp, new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                this.acroForm = PdfAcroForm.getAcroForm(document, true);
+                this.acroForm = PdfFormCreator.getAcroForm(document, true);
                 this.sgnUtil = new SignatureUtil(document);
                 names = sgnUtil.getSignatureNames();
                 signatureName = names.get(names.size() - 1);
@@ -371,7 +372,7 @@ public class LtvVerifier extends RootStoreVerifier {
 
     protected void initLtvVerifier(PdfDocument document) throws GeneralSecurityException {
         this.document = document;
-        this.acroForm = PdfAcroForm.getAcroForm(document, true);
+        this.acroForm = PdfFormCreator.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
         List<String> names = sgnUtil.getSignatureNames();
         signatureName = names.get(names.size() - 1);
