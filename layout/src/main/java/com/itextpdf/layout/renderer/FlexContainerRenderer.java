@@ -32,7 +32,13 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.properties.*;
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
+import com.itextpdf.layout.properties.FlexWrapPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +62,7 @@ public class FlexContainerRenderer extends DivRenderer {
 
     /**
      * Creates a FlexContainerRenderer from its corresponding layout object.
+     *
      * @param modelElement the {@link com.itextpdf.layout.element.Div} which this object should manage
      */
     public FlexContainerRenderer(Div modelElement) {
@@ -71,6 +78,7 @@ public class FlexContainerRenderer extends DivRenderer {
      * for the overflow part. So if one wants to extend {@link FlexContainerRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
      * renderer will be created.
+     *
      * @return new renderer instance
      */
     @Override
@@ -91,6 +99,8 @@ public class FlexContainerRenderer extends DivRenderer {
         List<IRenderer> renderers = getFlexItemMainDirector().applyDirection(lines);
         removeAllChildRenderers(getChildRenderers());
         addAllChildRenderers(renderers);
+
+        List<IRenderer> renderersToOverflow = retrieveRenderersToOverflow(layoutContextRectangle);
 
         final List<UnitValue> previousWidths = new ArrayList<>();
         final List<UnitValue> previousHeights = new ArrayList<>();
@@ -126,7 +136,10 @@ public class FlexContainerRenderer extends DivRenderer {
             }
         }
 
-        final LayoutResult result = super.layout(layoutContext);
+        LayoutResult result = super.layout(layoutContext);
+        if (!renderersToOverflow.isEmpty()) {
+            adjustLayoutResultToHandleOverflowRenderers(result, renderersToOverflow);
+        }
 
         // We must set back widths of the children because multiple layouts are possible
         // If flex-grow is less than 1, layout algorithm increases the width of the element based on the initial width
@@ -207,25 +220,30 @@ public class FlexContainerRenderer extends DivRenderer {
         final IRenderer childRenderer = getChildRenderers().get(childPos);
         final boolean forcedPlacement = Boolean.TRUE.equals(this.<Boolean>getProperty(Property.FORCED_PLACEMENT));
         boolean metChildRenderer = false;
-        for (final List<FlexItemInfo> line : lines) {
+        for (int i = 0; i < lines.size(); ++i) {
+            List<FlexItemInfo> line = lines.get(i);
             final boolean isSplitLine = line.stream().anyMatch(flexItem -> flexItem.getRenderer() == childRenderer);
             metChildRenderer = metChildRenderer || isSplitLine;
 
             // If the renderer to split is in the current line
             if (isSplitLine && !forcedPlacement && layoutStatus == LayoutResult.PARTIAL &&
-                    !FlexUtil.isColumnDirection(this)) {
+                    (!FlexUtil.isColumnDirection(this) ||
+                            (i == 0 && line.get(0).getRenderer() == childRenderer))) {
                 // It has sense to call it also for LayoutResult.NOTHING. And then try to layout remaining renderers
                 // in line inside fillSplitOverflowRenderersForPartialResult to see if some of them can be left or
                 // partially left on the first page (in split renderer). But it's not that easy.
                 // So currently, if the 1st not fully layouted renderer is layouted with LayoutResult.NOTHING,
                 // the whole line is moved to the next page (overflow renderer).
-                    fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
-                            childResult);
+                fillSplitOverflowRenderersForPartialResult(splitRenderer, overflowRenderer, line, childRenderer,
+                        childResult);
                 getFlexItemMainDirector().applyDirectionForLine(overflowRenderer.getChildRenderers());
             } else {
                 List<IRenderer> overflowRendererChildren = new ArrayList<IRenderer>();
+                boolean isSingleColumn = lines.size() == 1 && FlexUtil.isColumnDirection(this);
+                boolean metChildRendererInLine = false;
                 for (final FlexItemInfo itemInfo : line) {
-                    if (metChildRenderer && !forcedPlacement) {
+                    metChildRendererInLine = metChildRendererInLine || itemInfo.getRenderer() == childRenderer;
+                    if ((!isSingleColumn && metChildRenderer || metChildRendererInLine) && !forcedPlacement) {
                         overflowRendererChildren.add(itemInfo.getRenderer());
                     } else {
                         splitRenderer.addChildRenderer(itemInfo.getRenderer());
@@ -343,7 +361,7 @@ public class FlexContainerRenderer extends DivRenderer {
         if (FlexUtil.isColumnDirection(this)) {
             decreaseLayoutBoxAfterChildPlacementColumnLayout(layoutBox, childRenderer);
         } else {
-            decreaseLayoutBoxAfterChildPlacementRowLayout(layoutBox,result, childRenderer);
+            decreaseLayoutBoxAfterChildPlacementRowLayout(layoutBox, result, childRenderer);
         }
     }
 
@@ -491,8 +509,8 @@ public class FlexContainerRenderer extends DivRenderer {
     }
 
     private void fillSplitOverflowRenderersForPartialResult(AbstractRenderer splitRenderer,
-                    AbstractRenderer overflowRenderer, List<FlexItemInfo> line, IRenderer childRenderer,
-                    LayoutResult childResult) {
+                                                            AbstractRenderer overflowRenderer, List<FlexItemInfo> line, IRenderer childRenderer,
+                                                            LayoutResult childResult) {
         float occupiedSpace = 0;
         float maxHeightInLine = 0;
         boolean metChildRendererInLine = false;
@@ -505,8 +523,11 @@ public class FlexContainerRenderer extends DivRenderer {
                 }
 
                 if (childResult.getOverflowRenderer() != null) {
-                    // Get rid of cross alignment for item with partial result
-                    childResult.getOverflowRenderer().setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
+                    // Get rid of vertical alignment for item with partial result. For column direction, justify-content
+                    // is applied to the entire line, not the single item, so there is no point in getting rid of it
+                    if (!FlexUtil.isColumnDirection(this)) {
+                        childResult.getOverflowRenderer().setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
+                    }
                     overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
                 }
 
@@ -514,6 +535,10 @@ public class FlexContainerRenderer extends DivRenderer {
                 maxHeightInLine = Math.max(maxHeightInLine,
                         itemInfo.getRectangle().getY() + itemInfo.getRenderer().getOccupiedAreaBBox().getHeight());
             } else if (metChildRendererInLine) {
+                if (FlexUtil.isColumnDirection(this)) {
+                    overflowRenderer.addChildRenderer(itemInfo.getRenderer());
+                    continue;
+                }
                 // Process all following renderers in the current line
                 // We have to layout them to understand what goes where
                 // x - space occupied by all preceding items
@@ -632,6 +657,65 @@ public class FlexContainerRenderer extends DivRenderer {
             flexItemMainDirector = isRowReverse() ^ isRtlDirection
                     ? (IFlexItemMainDirector) new RtlFlexItemMainDirector() : new LtrFlexItemMainDirector();
             return flexItemMainDirector;
+        }
+    }
+
+    private List<IRenderer> retrieveRenderersToOverflow(Rectangle flexContainerBBox) {
+        List<IRenderer> renderersToOverflow = new ArrayList<>();
+        Rectangle layoutContextRectangle = flexContainerBBox.clone();
+        applyMarginsBordersPaddings(layoutContextRectangle, false);
+        if (FlexUtil.isColumnDirection(this) &&
+                FlexUtil.getMainSize(this, layoutContextRectangle) >= layoutContextRectangle.getHeight()) {
+            float commonLineCrossSize = 0;
+            List<Float> lineCrossSizes = FlexUtil.calculateColumnDirectionCrossSizes(lines);
+            for (int i = 0; i < lines.size(); ++i) {
+                commonLineCrossSize += lineCrossSizes.get(i);
+                if (i > 0 && commonLineCrossSize > layoutContextRectangle.getWidth()) {
+                    List<IRenderer> lineRenderersToOverflow = new ArrayList<>();
+                    for (final FlexItemInfo itemInfo : lines.get(i)) {
+                        lineRenderersToOverflow.add(itemInfo.getRenderer());
+                    }
+                    getFlexItemMainDirector().applyDirectionForLine(lineRenderersToOverflow);
+                    if (isWrapReverse()) {
+                        renderersToOverflow.addAll(0, lineRenderersToOverflow);
+                    } else {
+                        renderersToOverflow.addAll(lineRenderersToOverflow);
+                    }
+                    // Those renderers will be handled in adjustLayoutResultToHandleOverflowRenderers method.
+                    // If we leave these children in multi-page fixed-height flex container, renderers
+                    // will be drawn to the right outside the container's bounds on the first page
+                    // (this logic is expected, but needed for the last page only)
+                    for (IRenderer renderer : renderersToOverflow) {
+                        childRenderers.remove(renderer);
+                    }
+                }
+            }
+        }
+        return renderersToOverflow;
+    }
+
+    private void adjustLayoutResultToHandleOverflowRenderers(LayoutResult result, List<IRenderer> renderersToOverflow) {
+        if (LayoutResult.FULL == result.getStatus()) {
+            IRenderer splitRenderer = createSplitRenderer(LayoutResult.PARTIAL);
+            IRenderer overflowRenderer = createOverflowRenderer(LayoutResult.PARTIAL);
+            for (IRenderer childRenderer : renderersToOverflow) {
+                overflowRenderer.addChild(childRenderer);
+            }
+            for (IRenderer childRenderer : getChildRenderers()) {
+                splitRenderer.addChild(childRenderer);
+            }
+
+            result.setStatus(LayoutResult.PARTIAL);
+            result.setSplitRenderer(splitRenderer);
+            result.setOverflowRenderer(overflowRenderer);
+        }
+        if (LayoutResult.PARTIAL == result.getStatus()) {
+            IRenderer overflowRenderer = result.getOverflowRenderer();
+            for (IRenderer childRenderer : renderersToOverflow) {
+                if (!overflowRenderer.getChildRenderers().contains(childRenderer)) {
+                    overflowRenderer.addChild(childRenderer);
+                }
+            }
         }
     }
 }
