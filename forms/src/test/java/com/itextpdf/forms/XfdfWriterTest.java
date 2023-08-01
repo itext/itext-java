@@ -75,7 +75,6 @@ public class XfdfWriterTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-7264: Investigate 3 failed forms tests from 7.3/develop on .NET")
     public void simpleFormWithMultipleFieldsTest()
             throws IOException, TransformerException, ParserConfigurationException, SAXException {
         String pdfDocumentName = "simpleFormWithMultipleFields.pdf";

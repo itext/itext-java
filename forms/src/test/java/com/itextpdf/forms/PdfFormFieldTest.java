@@ -674,7 +674,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-7264: Investigate 3 failed forms tests from 7.3/develop on .NET")
     public void regenerateAppearance() throws IOException, InterruptedException {
         String input = "regenerateAppearance.pdf";
         String output = "regenerateAppearance.pdf";
