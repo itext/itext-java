@@ -27,6 +27,7 @@ import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.utils.DIContainer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
@@ -179,6 +180,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     private PdfString modifiedDocumentId;
     private PdfFont defaultFont = null;
     private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
+
+    private final DIContainer diContainer = new DIContainer();
+
 
     /**
      * Open PDF document in reading mode.
@@ -360,6 +364,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             return reference.getRefersTo();
         }
     }
+
 
     /**
      * Get number of indirect objects in the document.
@@ -640,6 +645,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         }
 
         catalog.getPageTree().removePage(pageNum);
+    }
+
+
+    /**
+     * Gets the container containing all available dependencies.
+     *
+     * @return the container containing all available dependencies.
+     */
+    public DIContainer getDiContainer() {
+        return diContainer;
     }
 
     /**

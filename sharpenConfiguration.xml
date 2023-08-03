@@ -7,6 +7,9 @@
             <fileset reason="Namespaces differs in Java an .NET, so it can't be ported automatically">
                 <file path="com/itextpdf/commons/actions/NamespaceConstant.java"/>
             </fileset>
+        	<fileset reason="Class loading has different behaviour on dotnet">
+                <file path="com/itextpdf/commons/utils/DIContainerConfigurations.java"/>
+            </fileset>
             <fileset reason="Underlying implementation classes not autoportable (e.g. java.text.MessageFormat, java.util.Locale">
                 <file path="com/itextpdf/commons/utils/MessageFormatUtil.java"/>
             </fileset>

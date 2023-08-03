@@ -22,17 +22,10 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.forms.fields.merging.OnDuplicateFormFieldNameStrategy;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -74,7 +67,7 @@ public final class PdfFormFieldMergeUtil {
                 String kidName = getPartialName(kid);
                 if (!addedKids.containsKey(kidName) || !mergeTwoFieldsWithTheSameNames(
                         (PdfFormField) addedKids.get(kidName), (PdfFormField) kid, throwExceptionOnError)) {
-                    addedKids.put(kidName, kid);
+                    addedKids.put(getPartialName(kid), kid);
                     newKids.add(kid);
                 }
             } else {
@@ -97,29 +90,11 @@ public final class PdfFormFieldMergeUtil {
      * @return true if fields is successfully merged, false otherwise.
      */
     public static boolean mergeTwoFieldsWithTheSameNames(PdfFormField firstField, PdfFormField secondField,
-                                                         boolean throwExceptionOnError) {
-        PdfName firstFieldFormType = firstField.getFormType();
-        PdfObject firstFieldValue = firstField.getValue();
-        PdfObject secondFieldValue = secondField.getValue();
-        PdfObject firstFieldDefaultValue = firstField.getDefaultValue();
-        PdfObject secondFieldDefaultValue = secondField.getDefaultValue();
-        if ((firstFieldFormType == null || firstFieldFormType.equals(secondField.getFormType())) &&
-                (firstFieldValue == null || secondFieldValue == null || firstFieldValue.equals(secondFieldValue)) &&
-                (firstFieldDefaultValue == null || secondFieldDefaultValue == null ||
-                        firstFieldDefaultValue.equals(secondFieldDefaultValue))) {
-            mergeFormFields(firstField, secondField, throwExceptionOnError);
-        } else {
-            if (throwExceptionOnError) {
-                throw new PdfException(MessageFormatUtil.format(FormsExceptionMessageConstant.CANNOT_MERGE_FORMFIELDS,
-                        firstField.getPartialFieldName()));
-            } else {
-                Logger logger = LoggerFactory.getLogger(PdfFormFieldMergeUtil.class);
-                logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_MERGE_FORMFIELDS,
-                        firstField.getPartialFieldName()));
-                return false;
-            }
-        }
-        return true;
+            boolean throwExceptionOnError) {
+        final OnDuplicateFormFieldNameStrategy onDuplicateFormFieldNameStrategy = firstField.getDocument()
+                .getDiContainer()
+                .getInstance(OnDuplicateFormFieldNameStrategy.class);
+        return onDuplicateFormFieldNameStrategy.execute(firstField, secondField, throwExceptionOnError);
     }
 
     /**
@@ -188,7 +163,8 @@ public final class PdfFormFieldMergeUtil {
         }
     }
 
-    private static void mergeFormFields(PdfFormField firstField, PdfFormField secondField, boolean throwExceptionOnError) {
+    public static void mergeFormFields(PdfFormField firstField, PdfFormField secondField,
+            boolean throwExceptionOnError) {
         PdfFormAnnotationUtil.separateWidgetAndField(firstField);
         PdfFormAnnotationUtil.separateWidgetAndField(secondField);
         PdfDictionary firstFieldDict = firstField.getPdfObject();
