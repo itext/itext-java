@@ -370,12 +370,12 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         doStroke = true;
                     }
                 }
-                // dashed store
+                // dashed stroke
                 {
                     String dashRawValue = getAttributeOrDefault(SvgConstants.Attributes.STROKE_DASHARRAY, "none");
                     if (!SvgConstants.Values.NONE.equalsIgnoreCase(dashRawValue)){
 
-                        currentCanvas.setLineDash(2);
+                        currentCanvas.setLineDash(5,5);
                     }
 
                 }

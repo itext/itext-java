@@ -73,6 +73,35 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         lineProperties.put("y2", "800");
         lineProperties.put("stroke", "green");
         lineProperties.put("stroke-width", "25");
+        
+
+        LineSvgNodeRenderer root = new LineSvgNodeRenderer();
+        root.setAttributesAndStyles(lineProperties);
+
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+
+        root.draw(context);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void dashlineRendererTest() throws IOException, InterruptedException {
+        String filename = "dashLineSvgRendererTest.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        doc.addNewPage();
+
+        Map<String, String> lineProperties = new HashMap<>();
+
+        lineProperties.put("x1", "100");
+        lineProperties.put("y1", "800");
+        lineProperties.put("x2", "300");
+        lineProperties.put("y2", "800");
+        lineProperties.put("stroke", "green");
+        lineProperties.put("stroke-width", "25");
+        lineProperties.put("stroke-dasharray","2");
 
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
         root.setAttributesAndStyles(lineProperties);
@@ -88,7 +117,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
     @Test
     public void lineWithEmpyAttributesTest() throws IOException, InterruptedException {
-        String filename = "lineWithEmpyAttributesTest.pdf";
+        String filename = "dashlineWithEmpyAttributesTest.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
 
