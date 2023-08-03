@@ -600,7 +600,6 @@ public class TableRenderer extends AbstractRenderer {
                         rowMoves.put(col, currentCellInfo.finishRowInd);
                     }
                 } else {
-//                    if (cellResult.getStatus() != LayoutResult.FULL || Boolean.TRUE.equals(this.<Boolean>getOwnProperty(Property.FORCED_PLACEMENT))) { TODO DEVSIX-1735
                     if (cellResult.getStatus() != LayoutResult.FULL) {
                         // first time split occurs
                         if (!split) {
@@ -1576,7 +1575,7 @@ public class TableRenderer extends AbstractRenderer {
                                                    Float blockMinHeight, Rectangle layoutBox,
                                                    List<Boolean> rowsHasCellWithSetHeight, boolean isLastRenderer,
                                                    boolean processBigRowspan, boolean skip) {
-        // correct last height
+        // Correct last height
         int finish = bordersHandler.getFinishRow();
         bordersHandler.setFinishRow(rowRange.getFinishRow());
 
@@ -1596,11 +1595,11 @@ public class TableRenderer extends AbstractRenderer {
                 : 0;
         if (0 != heights.size()) {
             heights.set(heights.size() - 1, heights.get(heights.size() - 1) + (realBottomIndent - currentBottomIndent) / 2);
-            // correct occupied area and layoutbox
+            // Correct occupied area and layoutbox
             occupiedArea.getBBox().increaseHeight((realBottomIndent - currentBottomIndent) / 2).moveDown((realBottomIndent - currentBottomIndent) / 2);
             layoutBox.decreaseHeight((realBottomIndent - currentBottomIndent) / 2);
             if (processBigRowspan) {
-                // process the last row and correct its height
+                // Process the last row and correct either its height or height of the cell with rowspan
                 CellRenderer[] currentRow = rows.get(heights.size());
                 for (int col = 0; col < currentRow.length; col++) {
                     CellRenderer cell = null == splits[col] ? currentRow[col] : (CellRenderer) splits[col].getSplitRenderer();
@@ -1610,6 +1609,7 @@ public class TableRenderer extends AbstractRenderer {
                     float height = 0;
                     int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
                     int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
+                    // Sum the heights of the rows included into the rowspan, except for the last one
                     for (int l = heights.size() - 1 - 1; l > targetOverflowRowIndex[col] - rowspan && l >= 0; l--) {
                         height += (float) heights.get(l);
                     }
@@ -1619,12 +1619,20 @@ public class TableRenderer extends AbstractRenderer {
                     cellHeightInLastRow = cell.getOccupiedArea().getBBox().getHeight() - height
                             + indents[0] / 2 + indents[2] / 2;
                     if (heights.get(heights.size() - 1) < cellHeightInLastRow) {
+                        // Height of the cell with rowspan is greater than height of the rows included into rowspan
                         if (bordersHandler instanceof SeparatedTableBorders) {
                             float differenceToConsider = cellHeightInLastRow - heights.get(heights.size() - 1);
                             occupiedArea.getBBox().moveDown(differenceToConsider);
                             occupiedArea.getBBox().increaseHeight(differenceToConsider);
                         }
                         heights.set(heights.size() - 1, cellHeightInLastRow);
+                    } else {
+                        // Height of the cell with rowspan is less than height of all the rows included into rowspan
+                        final float shift = heights.get(heights.size() - 1) - cellHeightInLastRow;
+                        final Rectangle bBox = cell.getOccupiedArea().getBBox();
+                        bBox.moveDown(shift);
+                        bBox.setHeight(height + heights.get(heights.size() - 1));
+                        cell.applyVerticalAlignment();
                     }
                 }
             }

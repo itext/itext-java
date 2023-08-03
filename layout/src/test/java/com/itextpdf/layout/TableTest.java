@@ -3149,7 +3149,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-3716
     public void cellWithBigRowspanCompletedRowTooTest() throws IOException, InterruptedException {
         String testName = "cellWithBigRowspanCompletedRowTooTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -3189,7 +3188,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-3716
     public void cellWithBigRowspanCompletedRowNotTest() throws IOException, InterruptedException {
         String testName = "cellWithBigRowspanCompletedRowNotTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -3327,7 +3325,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarFullTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarFullTest.pdf";
 
@@ -3362,7 +3359,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-5250 The first column should be fully red, but on page 2 it is not
     public void bigRowSpanTooFarPartialTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarPartialTest.pdf";
 
@@ -3401,7 +3397,6 @@ public class TableTest extends AbstractTableTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
-    // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarNothingTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarNothingTest.pdf";
 
