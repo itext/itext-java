@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
     <version>8.0.2-SNAPSHOT</version>
   </parent>
+
   <artifactId>kernel</artifactId>
+
   <name>iText - kernel</name>
   <url>https://itextpdf.com/</url>
+
   <properties>
     <sonar.exclusions>**/com/itextpdf/kernel/xmp/**</sonar.exclusions>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>io</artifactId>
+      <artifactId>bouncy-castle-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>bouncy-castle-connector</artifactId>
+      <artifactId>io</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -36,6 +41,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <profiles>
     <profile>
       <id>bouncy-castle-test</id>

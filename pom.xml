@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
   <version>8.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
+
   <name>iText</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
@@ -19,6 +21,7 @@
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <id>itext</id>
@@ -27,6 +30,7 @@
       <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
+
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -41,15 +45,19 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
+
   <modules>
-    <module>commons</module>
     <module>barcodes</module>
+    <module>bouncy-castle-adapter</module>
+    <module>bouncy-castle-connector</module>
+    <module>bouncy-castle-fips-adapter</module>
+    <module>commons</module>
     <module>font-asian</module>
     <module>forms</module>
     <module>hyph</module>
     <module>io</module>
-    <module>itextcore</module>
     <module>itext7core</module>
+    <module>itextcore</module>
     <module>kernel</module>
     <module>layout</module>
     <module>pdfa</module>
@@ -57,10 +65,8 @@
     <module>sign</module>
     <module>styled-xml-parser</module>
     <module>svg</module>
-    <module>bouncy-castle-fips-adapter</module>
-    <module>bouncy-castle-adapter</module>
-    <module>bouncy-castle-connector</module>
   </modules>
+
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
     <url>https://git.itextsupport.com/projects/I7J/repos/itextcore</url>
@@ -107,30 +113,6 @@
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
 
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>itext-snapshot</id>
-      <name>iText Repository - snapshots</name>
-      <url>https://repo.itextsupport.com/snapshot</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>itext-releases</id>
-      <name>iText Repository - releases</name>
-      <url>https://repo.itextsupport.com/releases</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -156,6 +138,31 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>itext-snapshot</id>
+      <name>iText Repository - snapshots</name>
+      <url>https://repo.itextsupport.com/snapshot</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>itext-releases</id>
+      <name>iText Repository - releases</name>
+      <url>https://repo.itextsupport.com/releases</url>
+    </repository>
+  </repositories>
 
   <build>
     <finalName>itext-${project.artifactId}-${project.version}</finalName>
@@ -560,11 +567,18 @@
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
             <version>${dependencyCheck.version}</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
             <dependencies>
               <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.22</version>
+                <version>8.0.30</version>
               </dependency>
             </dependencies>
             <configuration>
@@ -575,13 +589,6 @@
               <databaseUser />
               <format>ALL</format>
             </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
@@ -708,12 +715,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
-            <configuration>
-              <includes>
-                <include>**/*.java</include>
-              </includes>
-              <groups>${bouncycastleintegrationtests}</groups>
-            </configuration>
             <executions>
               <execution>
                 <id>general-mode</id>
@@ -722,32 +723,35 @@
                   <goal>verify</goal>
                 </goals>
               </execution>
-            <execution>
-              <id>approved-mode</id>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-              <configuration>
-                <systemPropertyVariables>
-                  <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
-                </systemPropertyVariables>
-              </configuration>
-            </execution>
-          </executions>
+              <execution>
+                <id>approved-mode</id>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+            <configuration>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+              <groups>${bouncycastleintegrationtests}</groups>
+            </configuration>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <groups>${bouncycastleunittests}</groups>
-            </configuration>
             <executions>
               <execution>
+                <id>general-mode</id>
                 <goals>
                   <goal>test</goal>
                 </goals>
-                <id>general-mode</id>
               </execution>
               <execution>
                 <id>approved-mode</id>
@@ -761,6 +765,9 @@
                 </configuration>
               </execution>
             </executions>
+            <configuration>
+              <groups>${bouncycastleunittests}</groups>
+            </configuration>
           </plugin>
         </plugins>
       </build>
