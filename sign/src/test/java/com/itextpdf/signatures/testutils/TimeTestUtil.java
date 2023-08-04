@@ -22,14 +22,21 @@
  */
 package com.itextpdf.signatures.testutils;
 
+import java.util.Date;
+
 public class TimeTestUtil {
     private static final int MILLIS_IN_DAY = 86_400_000;
 
     // This method is used to trim the hours of the day, so that two dates could be compared
     // with a day accuracy. We need such a method since in .NET the signing DateTime extracted
     // from the signature depends on the current time zone set on the machine.
-    // TODO DEVSIX-5812 Remove the method alongside the utility class once the issue is fixed
+    // TODO DEVSIX-5812 Remove the method
     public static long getFullDaysMillis(double millis) {
         return (long) millis / MILLIS_IN_DAY;
     }
+
+    /**
+     * A date time value to be used in test instead of current date time to get consistent results
+     */
+    public static Date TEST_DATE_TIME = new Date(950537642000L); // Feb 14, 2000 14:14:02 UTC
 }

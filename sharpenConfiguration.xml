@@ -152,12 +152,14 @@
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1IntegerBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1OctetStringBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1TaggedObjectBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/ASN1OutputStreamBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/BasicOCSPResponseBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/OCSPResponseBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/pcks/PrivateKeyInfoBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/pkcs/PrivateKeyInfoBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/pcks/RSASSAPSSParamsBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/pkcs/RSASSAPSSParamsBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/util/ASN1DumpBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/x500/X500NameBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/x509/ExtensionBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/x509/ExtensionsBC.java"/>
@@ -214,6 +216,7 @@
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1IntegerBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1OctetStringBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1SequenceBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/ASN1OutputStreamBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ocsp/BasicOCSPResponseBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ocsp/OCSPResponseBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/pcks/PrivateKeyInfoBCFips.java"/>
@@ -449,6 +452,9 @@
                 <file path="com/itextpdf/signatures/RSASSAPSSMechanismParams.java"/>
                 <file path="com/itextpdf/signatures/sign/RSASSAPSSTest.java"/>
             </fileset>
+            <fileset reason="Date and DateTime UTC time constructors difference in Java and .NET">
+                <file path="com/itextpdf/signatures/testutils/TimeTestUtil.java"/>
+            </fileset>
             <file path="com/itextpdf/signatures/testutils/SignTestPortUtil.java"/>
             <file path="com/itextpdf/signatures/testutils/X509MockCertificate.java"/>
             <file path="com/itextpdf/signatures/testutils/builder/TestCrlBuilder.java"/>
@@ -472,6 +478,10 @@
             <fileset reason="Different implementation on .NET and java">
                 <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
+                <file path="com/itextpdf/signatures/sign/LtvSigTest.java"/>
+                <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
+                <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest.java"/>
+                <file path="com/itextpdf/signatures/sign/TimestampSigTest.java"/>
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
@@ -562,6 +572,22 @@
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledSingleSignatureTest01.pdf"/>
             <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelTTest01.pdf"/>
             <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelLTATest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSigTest/cmp_padesEccSigTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSigTest/cmp_padesEpesProfileTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSigTest/cmp_padesRsaSigTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSigTest/cmp_padesRsaSigTestWithChain01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSigTest/cmp_signaturePolicyInfoUnavailableUrl_signed.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSigTest/helloWorldDoc.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSigTest/templateForSignDeferred.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelBTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelLTTest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/helloWorldDoc.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/signedPAdES-LT.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/signedPAdES-T.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest3.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest1.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest2.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest3.pdf"/>

@@ -25,6 +25,7 @@ package com.itextpdf.signatures.testutils.client;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.ICrlClient;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 
 import java.io.IOException;
@@ -52,7 +53,7 @@ public class TestCrlClient implements ICrlClient {
 
     public TestCrlClient addBuilderForCertIssuer(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
             throws CertificateEncodingException, IOException {
-        Date yesterday = DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1);
+        Date yesterday = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1);
         crlBuilders.add(new TestCrlBuilder(issuerCert, issuerPrivateKey, yesterday));
         return this;
     }

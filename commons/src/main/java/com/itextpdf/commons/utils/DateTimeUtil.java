@@ -154,6 +154,22 @@ public final class DateTimeUtil {
     }
 
     /**
+     * Adds the specified amount of years to the given date.
+     *
+     * @param date the specified date to add
+     * @param years the amount of years to be added
+     *
+     * @return a {@link Date} object representing the calendar's time value (millisecond
+     * offset from the Epoch)
+     */
+    public static Date addYearsToDate(Date date, int years) {
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, years);
+        return cal.getTime();
+    }
+
+    /**
      * Parses passing date with default yyyy-MM-dd pattern.
      *
      * @param date is date to be parse

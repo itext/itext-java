@@ -32,6 +32,7 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.cert.TestCertificateBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
@@ -81,7 +82,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
     public void validOcspWithoutOcspResponseBuilderTest() throws IOException, GeneralSecurityException {
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem")[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
-        Date checkDate = DateTimeUtil.getCurrentTimeDate();
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, null);
         Assert.assertTrue(ocspVerifier.verify(caCert, rootCert, checkDate).isEmpty());
@@ -95,7 +96,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
         builder.setCertificateStatus(FACTORY.createRevokedStatus(
-                DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -20),
+                DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -20),
                 FACTORY.createCRLReason().getKeyCompromise()));
         Assert.assertFalse(verifyTest(builder));
     }
@@ -118,8 +119,8 @@ public class OcspVerifierTest extends ExtendedITextTest {
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
 
-        Calendar thisUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCurrentTimeCalendar(), -30);
-        Calendar nextUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCurrentTimeCalendar(), -15);
+        Calendar thisUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME), -30);
+        Calendar nextUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME), -15);
         builder.setThisUpdate(thisUpdate);
         builder.setNextUpdate(nextUpdate);
         Assert.assertFalse(verifyTest(builder));
@@ -131,16 +132,19 @@ public class OcspVerifierTest extends ExtendedITextTest {
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(certsSrc + "intermediateExpiredCert.pem")[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(certsSrc + "intermediateExpiredCert.pem", password);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
-
+        Calendar thisUpdate = DateTimeUtil.addDaysToCalendar(DateTimeUtil.getCurrentTimeCalendar(), 30);
+        Calendar nextUpdate = DateTimeUtil.getCurrentTimeCalendar();
+        builder.setThisUpdate(thisUpdate);
+        builder.setNextUpdate(nextUpdate);
         Assert.assertTrue(verifyTest(builder, certsSrc + "signCertRsaWithExpiredChain.pem", caCert.getNotBefore()));
     }
 
     @Test
     public void authorizedOCSPResponderTest() throws GeneralSecurityException, IOException,
             AbstractPKCSException, AbstractOperatorCreationException {
-        Date ocspResponderCertStartDate = DateTimeUtil.getCurrentTimeDate();
+        Date ocspResponderCertStartDate = TimeTestUtil.TEST_DATE_TIME;
         Date ocspResponderCertEndDate = DateTimeUtil.addDaysToDate(ocspResponderCertStartDate, 365 * 100);
-        Date checkDate = DateTimeUtil.getCurrentTimeDate();
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         boolean verifyRes = verifyAuthorizedOCSPResponderTest(ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate);
         Assert.assertTrue(verifyRes);
@@ -149,9 +153,9 @@ public class OcspVerifierTest extends ExtendedITextTest {
     @Test
     public void expiredAuthorizedOCSPResponderTest_atValidPeriod() throws GeneralSecurityException, IOException,
             AbstractPKCSException, AbstractOperatorCreationException {
-        Date ocspResponderCertStartDate = DateTimeUtil.parse("15/10/2005", "dd/MM/yyyy");
-        Date ocspResponderCertEndDate = DateTimeUtil.parse("15/10/2010", "dd/MM/yyyy");
-        Date checkDate = DateTimeUtil.parse("15/10/2008", "dd/MM/yyyy");
+        Date ocspResponderCertStartDate = DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, -4);
+        Date ocspResponderCertEndDate = DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 1);
+        Date checkDate =TimeTestUtil.TEST_DATE_TIME;
 
         boolean verifyRes = verifyAuthorizedOCSPResponderTest(ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate);
         Assert.assertTrue(verifyRes);
@@ -159,9 +163,9 @@ public class OcspVerifierTest extends ExtendedITextTest {
 
     @Test
     public void expiredAuthorizedOCSPResponderTest_now() {
-        Date ocspResponderCertStartDate = DateTimeUtil.parse("15/10/2005", "dd/MM/yyyy");
-        Date ocspResponderCertEndDate = DateTimeUtil.parse("15/10/2010", "dd/MM/yyyy");
-        Date checkDate = DateTimeUtil.getCurrentTimeDate();
+        Date ocspResponderCertStartDate = DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, -5);
+        Date ocspResponderCertEndDate = DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, -1);
+        Date checkDate =TimeTestUtil.TEST_DATE_TIME;
 
         Assert.assertThrows(CertificateExpiredException.class,
                 () -> verifyAuthorizedOCSPResponderTest(ocspResponderCertStartDate, ocspResponderCertEndDate, checkDate)
@@ -177,7 +181,7 @@ public class OcspVerifierTest extends ExtendedITextTest {
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder) throws IOException, GeneralSecurityException {
-        return verifyTest(rootRsaOcspBuilder, certsSrc + "signCertRsa01.pem", DateTimeUtil.getCurrentTimeDate());
+        return verifyTest(rootRsaOcspBuilder, certsSrc + "signCertRsa01.pem", TimeTestUtil.TEST_DATE_TIME);
     }
 
     private boolean verifyTest(TestOcspResponseBuilder rootRsaOcspBuilder, String checkCertFileName, Date checkDate) throws IOException, GeneralSecurityException {
