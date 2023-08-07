@@ -61,6 +61,14 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         Assert.assertEquals(1588636800000d - offset, millisFromEpochTo2020_05_05, ZERO_DELTA);
     }
+    
+    @Test
+    public void addMillisToDateTest() {
+        Date almostCurrentTime = new Date(new Date().getTime() - 2000);
+        long twoSeconds = 2000;
+        Assert.assertEquals(new Date().getTime(),
+                DateTimeUtil.addMillisToDate(almostCurrentTime, twoSeconds).getTime(), ONE_SECOND_DELTA);
+    }
 
     @Test
     public void compareUtcMillisFromEpochWithNullParamAndCurrentTimeTest() {

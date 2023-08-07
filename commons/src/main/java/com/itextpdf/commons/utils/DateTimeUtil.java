@@ -126,6 +126,18 @@ public final class DateTimeUtil {
     }
 
     /**
+     * Adds provided number of milliseconds to the Date.
+     * 
+     * @param date {@link Date} date to increase
+     * @param millis number of milliseconds to add
+     * 
+     * @return updated {@link Date}
+     */
+    public static Date addMillisToDate(Date date, long millis) {
+        return new Date(DateTimeUtil.getRelativeTime(date) + millis);
+    }
+
+    /**
      * Adds the specified amount of days to the given date.
      *
      * @param date the specified date to add
