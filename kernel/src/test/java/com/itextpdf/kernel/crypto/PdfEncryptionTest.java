@@ -301,7 +301,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         XMPProperty creatorToolXmp = xmpMeta.getProperty(XMPConst.NS_XMP, "CreatorTool");
         doc.close();
         Assert.assertNotNull(creatorToolXmp);
-        Assert.assertEquals("iText 7", creatorToolXmp.getValue());
+        Assert.assertEquals("iText", creatorToolXmp.getValue());
     }
 
     @Test
