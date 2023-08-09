@@ -116,6 +116,63 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
     }
 
     @Test
+    public void dashlineRendererTwoParamtersTest() throws IOException, InterruptedException {
+        String filename = "dashLineSvgRendererTwoTest.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        doc.addNewPage();
+
+        Map<String, String> lineProperties = new HashMap<>();
+
+        lineProperties.put("x1", "100");
+        lineProperties.put("y1", "800");
+        lineProperties.put("x2", "500");
+        lineProperties.put("y2", "800");
+        lineProperties.put("stroke", "green");
+        lineProperties.put("stroke-width", "25");
+        lineProperties.put("stroke-dasharray","5 10");
+
+        LineSvgNodeRenderer root = new LineSvgNodeRenderer();
+        root.setAttributesAndStyles(lineProperties);
+
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+
+        root.draw(context);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void dashlineRendererThreeParamtersTest() throws IOException, InterruptedException {
+        String filename = "dashLineSvgRendererThreeTest.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        doc.addNewPage();
+
+        Map<String, String> lineProperties = new HashMap<>();
+
+        lineProperties.put("x1", "100");
+        lineProperties.put("y1", "800");
+        lineProperties.put("x2", "500");
+        lineProperties.put("y2", "800");
+        lineProperties.put("stroke", "green");
+        lineProperties.put("stroke-width", "25");
+        lineProperties.put("stroke-dasharray","4pt 2pt 4pt 5pt 8pt");
+
+        LineSvgNodeRenderer root = new LineSvgNodeRenderer();
+        root.setAttributesAndStyles(lineProperties);
+
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        PdfCanvas cv = new PdfCanvas(doc, 1);
+        context.pushCanvas(cv);
+
+        root.draw(context);
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+    }
+
+
+    @Test
     public void lineWithEmpyAttributesTest() throws IOException, InterruptedException {
         String filename = "dashlineWithEmpyAttributesTest.pdf";
         PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));

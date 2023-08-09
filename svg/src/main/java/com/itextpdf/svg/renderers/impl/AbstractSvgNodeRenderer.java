@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.utils.StringSplitUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -373,9 +374,48 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 // dashed stroke
                 {
                     String dashRawValue = getAttributeOrDefault(SvgConstants.Attributes.STROKE_DASHARRAY, "none");
-                    if (!SvgConstants.Values.NONE.equalsIgnoreCase(dashRawValue)){
+                    if (!SvgConstants.Values.NONE.equalsIgnoreCase(dashRawValue)) {
+                        float defaultDashLine = 0.75f;
+                        float fstDashLine = 0.75f; // default value
+                        float secDashLine = 0.75f;
+                        float trdDashline = 0.75f;
 
-                        currentCanvas.setLineDash(5,5);
+                        // split paramater without units
+                        String[] parameters = StringSplitUtil.splitKeepTrailingWhiteSpace(dashRawValue, ' ');
+                        
+                        // when the parameter of arguments is only one
+                        if (parameters.length == 1) {
+                            fstDashLine = CssDimensionParsingUtils.parseAbsoluteLength(dashRawValue);
+                            currentCanvas.setLineDash(fstDashLine);
+
+                        } else if (parameters.length == 2) {
+                            // when the parameter of arguments is a mutiple of 2
+                            fstDashLine = CssDimensionParsingUtils.parseAbsoluteLength(parameters[0]);
+                            secDashLine = CssDimensionParsingUtils.parseAbsoluteLength(parameters[1]);
+
+                            currentCanvas.setLineDash(fstDashLine, secDashLine);
+
+                        } else if (parameters.length == 3) {
+                            // when the parameter of arguments is a mutiple of 3
+                            fstDashLine = CssDimensionParsingUtils.parseAbsoluteLength(parameters[0]);
+                            secDashLine = CssDimensionParsingUtils.parseAbsoluteLength(parameters[1]);
+                            trdDashline = CssDimensionParsingUtils.parseAbsoluteLength(parameters[2]);
+
+                            currentCanvas.setLineDash(fstDashLine, secDashLine, trdDashline);
+
+                        } else if (parameters.length > 3) {
+                            // if paramter is more than 3, add all parameters to array
+                            // and set last parameter as phase
+
+                            float[] arry = new float[parameters.length];
+
+                            for (int i = 0; i < parameters.length; i++) {
+                                defaultDashLine = CssDimensionParsingUtils.parseAbsoluteLength(parameters[i]);
+                                arry[i] = defaultDashLine;
+                            }
+
+                            currentCanvas.setLineDash(arry, defaultDashLine);
+                        }
                     }
 
                 }
