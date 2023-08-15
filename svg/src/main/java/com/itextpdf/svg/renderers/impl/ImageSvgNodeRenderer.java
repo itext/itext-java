@@ -28,7 +28,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -63,6 +62,7 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
         if (xObject == null) {
             return;
         }
+
         PdfCanvas currentCanvas = context.getCurrentCanvas();
 
         float x = 0;
@@ -100,7 +100,7 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
         if (!SvgConstants.Values.NONE.equals(preserveAspectRatio) && !(width == 0 || height == 0)) {
             float normalizedWidth;
             float normalizedHeight;
-            if (xObject.getWidth() / width >  xObject.getHeight() / height) {
+            if (xObject.getWidth() / width > xObject.getHeight() / height) {
                 normalizedWidth = width;
                 normalizedHeight = xObject.getHeight() / xObject.getWidth() * width;
             } else {
