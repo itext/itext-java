@@ -84,6 +84,8 @@ public final class KernelLogMessageConstant {
     public static final String UNCONFIRMED_EVENT =
             "Event for the product {0} with type {1} was reported but was not confirmed. Probably appropriate process "
                     + "fail";
+    public static final String FLATTENING_IS_NOT_YET_SUPPORTED =
+            "Flattening annotation type {0} is not yet supported, it will not be removed from the page";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

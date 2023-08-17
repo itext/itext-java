@@ -428,6 +428,6 @@ public final class KernelExceptionMessageConstant {
     public static final String UNSUPPORTED_SECURITY_HANDLER =
             "Failed to open the document. Security handler {0} is not supported";
 
-
+    public static final String ARG_SHOULD_NOT_BE_NULL = "{0} should not be null.";
     private KernelExceptionMessageConstant(){}
 }
