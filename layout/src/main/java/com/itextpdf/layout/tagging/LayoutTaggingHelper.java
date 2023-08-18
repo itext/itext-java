@@ -142,14 +142,13 @@ public class LayoutTaggingHelper {
     }
 
     public void setRoleHint(IPropertyContainer hintOwner, String role) {
-        // TODO
         // It's unclear whether a role of already created tag should be changed
         // in this case. Also concerning rules, they won't be called for the new role
         // if this overriding role is set after some rule applying event. Already applied
         // rules won't be cancelled either.
         // Restricting this call on whether the finished state is set doesn't really
         // solve anything.
-        // TODO probably this also should affect whether the hint is considered non-accessible
+        // Probably this also should affect whether the hint is considered non-accessible
         getOrCreateHintKey(hintOwner).setOverriddenRole(role);
     }
 
@@ -311,14 +310,14 @@ public class LayoutTaggingHelper {
         }
 
         for (TaggingHintKey hint : hangingHints) {
-            // TODO in some situations we need to remove tagging hints of renderers that are thrown away for reasons like:
+            // In some situations we need to remove tagging hints of renderers that are thrown away for reasons like:
             // - fixed height clipping
             // - forced placement
             // - some other cases?
-//            if (!hint.isFinished()) {
-//                Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-//                logger.warn(LogMessageConstant.TAGGING_HINT_NOT_FINISHED_BEFORE_CLOSE);
-//            }
+            // if (!hint.isFinished()) {
+            //      Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
+            //      logger.warn(LogMessageConstant.TAGGING_HINT_NOT_FINISHED_BEFORE_CLOSE);
+            // }
             releaseHint(hint, null, false);
         }
 
@@ -510,9 +509,9 @@ public class LayoutTaggingHelper {
 
             TaggingHintKey prevParent = getParentHint(kidKey);
             if (prevParent != null) {
-                // TODO seems to be a legit use case to re-add hints to just ensure that hints are added
-//                Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-//                logger.error(LogMessageConstant.CANNOT_ADD_KID_HINT_WHICH_IS_ALREADY_ADDED_TO_ANOTHER_PARENT);
+                // Seems to be a legit use case to re-add hints to just ensure that hints are added
+                // Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
+                // logger.error(LogMessageConstant.CANNOT_ADD_KID_HINT_WHICH_IS_ALREADY_ADDED_TO_ANOTHER_PARENT);
                 continue;
             }
             if (!skipFinishedChecks && kidKey.isFinished()) {
