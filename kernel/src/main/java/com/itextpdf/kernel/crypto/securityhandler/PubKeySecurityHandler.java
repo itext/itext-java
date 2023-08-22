@@ -59,9 +59,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Aiken Sam (aikensam@ieee.org)
- */
 public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();

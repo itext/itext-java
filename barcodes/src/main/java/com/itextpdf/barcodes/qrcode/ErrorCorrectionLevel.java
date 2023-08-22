@@ -25,8 +25,6 @@ package com.itextpdf.barcodes.qrcode;
 /**
  * See ISO 18004:2006, 6.5.1. This enum encapsulates the four error correction levels
  * defined by the QR code standard.
- *
- * @author Sean Owen
  */
 public final class ErrorCorrectionLevel {
 

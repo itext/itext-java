@@ -30,8 +30,6 @@ import org.junit.experimental.categories.Category;
 
 /**
  * Tests for the Selector Query Parser.
- *
- * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
 public class QueryParserTest extends ExtendedITextTest {

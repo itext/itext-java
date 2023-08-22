@@ -33,9 +33,6 @@ package com.itextpdf.test.annotations.type;
  * then it is <strong>not</strong> a unit test.
  * <p>
  * Typically a unit test will run very fast.
- * 
- * @author Amedee Van Gasse
- *
  */
 public interface UnitTest {
 }

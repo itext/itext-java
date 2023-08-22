@@ -35,8 +35,7 @@ import java.util.List;
 
 /**
  Test TextNodes
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 @Category(UnitTest.class)
 public class TextNodeTest extends ExtendedITextTest {
     @Test public void testBlank() {

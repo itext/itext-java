@@ -32,12 +32,6 @@ import java.util.Arrays;
  * Note that this class is for internal optimization purposes only, and may
  * not be supported in future releases of Jakarta Commons Lang.  Utilities of
  * this sort may be included in future releases of Jakarta Commons Collections.
- *
- * @author Justin Couch
- * @author Alex Chaffee (alex@apache.org)
- * @author Stephen Colebourne
- * @author Bruno Lowagie (change Objects as keys into int values)
- * @author Paulo Soares (added extra methods)
  */
 public class IntHashtable implements Cloneable {
 

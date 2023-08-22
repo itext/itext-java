@@ -28,8 +28,6 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 /**
  * Dictionary that stores signature build properties.
- *
- * @author Kwinten Pisman
  */
 public class PdfSignatureBuildProperties extends PdfObjectWrapper<PdfDictionary> {
 

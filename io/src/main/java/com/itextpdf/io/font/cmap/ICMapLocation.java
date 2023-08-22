@@ -24,9 +24,6 @@ package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.source.PdfTokenizer;
 
-/**
- * @author psoares
- */
 public interface ICMapLocation {
     PdfTokenizer getLocation(String location) throws java.io.IOException;
 }

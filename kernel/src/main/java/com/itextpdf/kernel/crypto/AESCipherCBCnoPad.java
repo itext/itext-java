@@ -37,8 +37,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Creates an AES Cipher with CBC and no padding.
- *
- * @author Paulo Soares
  */
 public class AESCipherCBCnoPad {
     

@@ -27,9 +27,6 @@ import java.util.List;
 
 /**
  * Implements Reed-Solomon encoding, as the name implies.
- *
- * @author Sean Owen
- * @author William Rucklidge
  */
 final class ReedSolomonEncoder {
 

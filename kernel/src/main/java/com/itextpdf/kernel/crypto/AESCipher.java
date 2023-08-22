@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Creates an AES Cipher with CBC and padding PKCS5/7.
- *
- * @author Paulo Soares
  */
 public class AESCipher {
     

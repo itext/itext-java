@@ -29,8 +29,6 @@ package com.itextpdf.barcodes.qrcode;
  * Throughout this package, elements of GF(256) are represented as an <code>int</code>
  * for convenience and speed (but at the cost of memory).
  * Only the bottom 8 bits are really used.
- *
- * @author Sean Owen
  */
 final class GF256 {
 

@@ -36,8 +36,6 @@ import java.util.Set;
 
 /**
  * Subsets a True Type font by removing the unneeded glyphs from the font.
- *
- * @author Paulo Soares
  */
 class TrueTypeFontSubset {
 

@@ -42,8 +42,6 @@ import java.util.Set;
  * A list of {@link Element}s, with methods that act on every element in the list.
  * <p>
  * To get an {@code Elements} object, use the {@link Element#select(String)} method.
- *
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 public class Elements extends ArrayList<Element> {
     public Elements() {

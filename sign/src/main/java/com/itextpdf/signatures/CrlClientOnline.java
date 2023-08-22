@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
  * from an URL.
- *
- * @author Paulo Soares
  */
 public class CrlClientOnline implements ICrlClient {
 

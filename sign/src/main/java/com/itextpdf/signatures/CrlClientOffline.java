@@ -33,8 +33,6 @@ import java.util.List;
 /**
  * An implementation of the CrlClient that handles offline
  * Certificate Revocation Lists.
- *
- * @author Paulo Soares
  */
 public class CrlClientOffline implements ICrlClient {
 

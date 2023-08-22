@@ -26,9 +26,6 @@ package com.itextpdf.barcodes.qrcode;
  * JAVAPORT: This should be combined with BitArray in the future, although that class is not yet
  * dynamically resizeable. This implementation is reasonable but there is a lot of function calling
  * in loops I'd like to get rid of.
- *
- * @author satorux@google.com (Satoru Takabayashi) - creator
- * @author dswitkin@google.com (Daniel Switkin) - ported from C++
  */
 final class BitVector {
 

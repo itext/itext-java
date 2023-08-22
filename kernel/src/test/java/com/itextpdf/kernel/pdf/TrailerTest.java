@@ -45,9 +45,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-/**
- * @author Michael Demey
- */
 @Category(IntegrationTest.class)
 public class TrailerTest extends ExtendedITextTest {
 

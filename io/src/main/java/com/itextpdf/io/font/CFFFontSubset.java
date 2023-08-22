@@ -42,8 +42,6 @@ import java.util.Set;
  * For Non CID the Lsubroutines are subsetted. On both types the Gsubroutines is subsetted.
  * A font which was not of CID type is transformed into CID as a part of the subset process.
  * The CID synthetic creation was written by Sivan Toledo (sivan@math.tau.ac.il)
- *
- * @author Oren Manor (manorore@post.tau.ac.il) and Ygal Blum (blumygal@post.tau.ac.il)
  */
 public class CFFFontSubset extends CFFFont {
 

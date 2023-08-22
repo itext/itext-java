@@ -25,7 +25,6 @@ package com.itextpdf.io.font;
 /**
  * Classes implementing this interface can create custom encodings or
  * replace existing ones. It is used in the context of <code>PdfEncoding</code>.
- * @author Paulo Soares
  */
 public interface IExtraEncoding {
 

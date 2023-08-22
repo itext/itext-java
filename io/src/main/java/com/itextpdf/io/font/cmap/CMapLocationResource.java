@@ -32,9 +32,6 @@ import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
 
-/**
- * @author psoares
- */
 public class CMapLocationResource implements ICMapLocation {
 
     @Override

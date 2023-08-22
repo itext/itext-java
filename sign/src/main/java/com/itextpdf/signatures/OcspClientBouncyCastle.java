@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * OcspClient implementation using BouncyCastle.
- *
- * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements IOcspClient {
 

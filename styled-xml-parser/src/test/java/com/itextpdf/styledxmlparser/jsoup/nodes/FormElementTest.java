@@ -34,8 +34,6 @@ import java.util.List;
 
 /**
  * Tests for FormElement
- *
- * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
 public class FormElementTest extends ExtendedITextTest {

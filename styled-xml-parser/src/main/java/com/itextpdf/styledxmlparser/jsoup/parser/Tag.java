@@ -30,8 +30,6 @@ import java.util.Map;
 
 /**
  * HTML Tag capabilities.
- *
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 public class Tag implements Cloneable {
     private static final Map<String, Tag> tags = new HashMap<>(); // map of known tags

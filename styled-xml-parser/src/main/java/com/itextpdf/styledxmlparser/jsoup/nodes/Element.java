@@ -56,8 +56,6 @@ import java.util.regex.PatternSyntaxException;
  * other elements).
  * 
  * From an Element, you can extract data, traverse the node graph, and manipulate the HTML.
- * 
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 public class Element extends Node {
     private static final List<Element> EmptyChildren = Collections.<Element>emptyList();

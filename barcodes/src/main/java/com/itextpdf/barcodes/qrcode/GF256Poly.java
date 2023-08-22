@@ -28,8 +28,6 @@ package com.itextpdf.barcodes.qrcode;
  * <p>
  * Much credit is due to William Rucklidge since portions of this code are an indirect
  * port of his C++ Reed-Solomon implementation.
- *
- * @author Sean Owen
  */
 final class GF256Poly {
 

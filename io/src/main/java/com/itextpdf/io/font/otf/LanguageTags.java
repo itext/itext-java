@@ -28,8 +28,6 @@ package com.itextpdf.io.font.otf;
  * <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/languagetags">here</a>.
  * Note that tags in OTF always consist of exactly 4 bytes. Shorter
  * identifiers are padded with spaces as necessary.
- *
- * @author <a href="mailto:matthias.valvekens@itextpdf.com">Matthias Valvekens</a>
  */
 public final class LanguageTags {
     public static final String ABAZA = "ABA ";

@@ -47,8 +47,6 @@ import java.util.Set;
  * Attribute name and value comparisons are  generally <b>case sensitive</b>. By default for HTML, attribute names are
  * normalized to lower-case on parsing. That means you should use lower-case strings when referring to attributes by
  * name.
- *
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 public class Attributes implements Iterable<Attribute>, Cloneable {
     // The Attributes object is only created on the first use of an attribute; the Element will just have a null

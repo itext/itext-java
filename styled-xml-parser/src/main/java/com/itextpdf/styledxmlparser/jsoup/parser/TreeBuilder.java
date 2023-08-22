@@ -32,9 +32,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Jonathan Hedley
- */
 public abstract class TreeBuilder {
     protected Parser parser;
     CharacterReader reader;

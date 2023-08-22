@@ -33,9 +33,6 @@ package com.itextpdf.barcodes.qrcode;
  * <p>
  * The ordering of bits is row-major. Within each int, the least significant bits are used first,
  * meaning they represent lower x values. This is compatible with BitArray's implementation.
- *
- * @author Sean Owen
- * @author dswitkin@google.com (Daniel Switkin)
  */
 final class BitMatrix {
 

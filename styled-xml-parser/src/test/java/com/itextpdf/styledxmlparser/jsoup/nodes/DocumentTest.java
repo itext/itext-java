@@ -42,8 +42,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  Tests for Document.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 @Category(UnitTest.class)
 public class DocumentTest extends ExtendedITextTest {
     private static final String charsetUtf8 = "UTF-8";

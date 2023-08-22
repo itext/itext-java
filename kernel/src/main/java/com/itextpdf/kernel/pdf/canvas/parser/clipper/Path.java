@@ -37,9 +37,6 @@ import java.util.Collections;
 
 /**
  * A pure convenience class to avoid writing {@code List<IntPoint>} everywhere.
- *
- * @author Tobias Mahlmann
- *
  */
 public class Path extends ArrayList<Point.LongPoint> {
     static class Join {

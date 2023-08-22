@@ -29,7 +29,6 @@ import java.util.Map;
 
 /**
  * LookupType 4: Ligature Substitution Subtable
- * @author psoares
  */
 public class GsubLookupType4 extends OpenTableLookup {
     /**

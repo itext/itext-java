@@ -48,8 +48,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  Tests for Element (DOM stuff mostly).
-
- @author Jonathan Hedley */
+*/
 @Category(UnitTest.class)
 public class ElementTest extends ExtendedITextTest {
     private String reference = "<div id=div1><p>Hello</p><p>Another <b>element</b></p><div id=div2><img src=foo.png></div></div>";

@@ -38,8 +38,7 @@ import java.util.List;
 
 /**
  A HTML Document.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 public class Document extends Element {
     private OutputSettings outputSettings = new OutputSettings();
     private Parser parser; // the parser used to parse this document

@@ -28,8 +28,6 @@ import java.security.MessageDigest;
 /**
  * This class will return the {@link java.security.MessageDigest} associated with
  * a certain hashing algorithm returned by the specified provider.
- *
- * @author psoares
  */
 public class ProviderDigest implements IExternalDigest {
     private String provider;
