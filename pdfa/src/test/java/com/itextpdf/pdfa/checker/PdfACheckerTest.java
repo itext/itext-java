@@ -28,6 +28,7 @@ import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -286,6 +287,11 @@ public class PdfACheckerTest extends ExtendedITextTest {
 
         @Override
         protected void checkTrailer(PdfDictionary trailer) {
+
+        }
+
+        @Override
+        protected void checkCatalog(PdfCatalog catalog) {
 
         }
 

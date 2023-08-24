@@ -37,5 +37,6 @@ public enum IsoKey {
     TAG_STRUCTURE_ELEMENT,
     FONT_GLYPHS,
     XREF_TABLE,
-    SIGNATURE
+    SIGNATURE,
+    CRYPTO
 }

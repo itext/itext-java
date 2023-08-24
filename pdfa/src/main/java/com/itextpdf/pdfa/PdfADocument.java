@@ -51,8 +51,10 @@ import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
+import com.itextpdf.pdfa.checker.PdfA4Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
 import org.slf4j.Logger;
@@ -209,6 +211,9 @@ public class PdfADocument extends PdfDocument {
             case SIGNATURE:
                 checker.checkSignature((PdfDictionary) obj);
                 break;
+            case CRYPTO:
+                checker.checkCrypto((PdfObject) obj);
+                break;
         }
     }
 
@@ -264,8 +269,13 @@ public class PdfADocument extends PdfDocument {
         try {
             XMPMeta xmpMeta = updateDefaultXmpMetadata();
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
-            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE,
-                    checker.getConformanceLevel().getConformance());
+            if (checker.getConformanceLevel().getConformance() != null) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE,
+                        checker.getConformanceLevel().getConformance());
+            }
+            if ("4".equals(checker.getConformanceLevel().getPart())) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.REV, PdfAConformanceLevel.PDF_A_4_REVISION);
+            }
             addCustomMetadataExtensions(xmpMeta);
             setXmpMetadata(xmpMeta);
         } catch (XMPException e) {
@@ -333,6 +343,12 @@ public class PdfADocument extends PdfDocument {
             case "3":
                 checker = new PdfA3Checker(conformanceLevel);
                 break;
+            case "4":
+                checker = new PdfA4Checker(conformanceLevel);
+                break;
+            default:
+                throw new IllegalArgumentException(PdfaExceptionMessageConstant
+                        .CANNOT_FIND_PDFA_CHECKER_FOR_SPECIFIED_NAME);
         }
     }
 
@@ -354,6 +370,22 @@ public class PdfADocument extends PdfDocument {
             return pdfAPageFactory;
         } else {
             return super.getPageFactory();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param appendMode {@inheritDoc}
+     */
+    @Override
+    protected void flushInfoDictionary(boolean appendMode) {
+        if (!isPdfADocument || (!"4".equals(checker.getConformanceLevel().getPart()))) {
+            super.flushInfoDictionary(appendMode);
+        } else if (getCatalog().getPdfObject().get(PdfName.PieceInfo) != null) {
+            // Leave only ModDate as required by 6.1.3 File trailer of pdf/a-4 spec
+            getDocumentInfo().removeCreationDate();
+            super.flushInfoDictionary(appendMode);
         }
     }
 

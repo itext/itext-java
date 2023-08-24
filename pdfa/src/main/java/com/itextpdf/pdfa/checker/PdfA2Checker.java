@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
 import java.util.ArrayList;
@@ -114,6 +115,41 @@ public class PdfA2Checker extends PdfA1Checker {
                     PdfName.Color,
                     PdfName.Luminosity)));
 
+    protected static final Set<PdfName> allowedFilters = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.ASCIIHexDecode,
+                    PdfName.ASCII85Decode,
+                    PdfName.RunLengthDecode,
+                    PdfName.FlateDecode,
+                    PdfName.CCITTFaxDecode,
+                    PdfName.JBIG2Decode,
+                    PdfName.DCTDecode,
+                    PdfName.JPXDecode,
+                    PdfName.Crypt)));
+
+    protected static final Set<PdfName> allowedInlineImageFilters = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.DeviceGray,
+                    PdfName.DeviceRGB,
+                    PdfName.DeviceCMYK,
+                    PdfName.Indexed,
+                    PdfName.ASCIIHexDecode,
+                    PdfName.ASCII85Decode,
+                    PdfName.FlateDecode,
+                    PdfName.RunLengthDecode,
+                    PdfName.CCITTFaxDecode,
+                    PdfName.DCTDecode,
+                    PdfName.G,
+                    PdfName.RGB,
+                    PdfName.CMYK,
+                    PdfName.I,
+                    PdfName.AHx,
+                    PdfName.A85,
+                    PdfName.Fl,
+                    PdfName.RL,
+                    PdfName.CCF,
+                    PdfName.DCT)));
+
     static final int MAX_PAGE_SIZE = 14400;
     static final int MIN_PAGE_SIZE = 3;
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 32;
@@ -139,10 +175,14 @@ public class PdfA2Checker extends PdfA1Checker {
     public void checkInlineImage(PdfStream inlineImage, PdfDictionary currentColorSpaces) {
         PdfObject filter = inlineImage.get(PdfName.Filter);
         if (filter instanceof PdfName) {
-            if (filter.equals(PdfName.LZWDecode))
+            if (filter.equals(PdfName.LZWDecode)) {
                 throw new PdfAConformanceException(PdfAConformanceException.LZWDECODE_FILTER_IS_NOT_PERMITTED);
+            }
             if (filter.equals(PdfName.Crypt)) {
                 throw new PdfAConformanceException(PdfAConformanceException.CRYPT_FILTER_IS_NOT_PERMITTED_INLINE_IMAGE);
+            }
+            if (!allowedInlineImageFilters.contains((PdfName) filter)) {
+                throw new PdfAConformanceException(PdfaExceptionMessageConstant.INVALID_INLINE_IMAGE_FILTER_USAGE);
             }
         } else if (filter instanceof PdfArray) {
             for (int i = 0; i < ((PdfArray) filter).size(); i++) {
@@ -151,6 +191,9 @@ public class PdfA2Checker extends PdfA1Checker {
                     throw new PdfAConformanceException(PdfAConformanceException.LZWDECODE_FILTER_IS_NOT_PERMITTED);
                 if (f.equals(PdfName.Crypt)) {
                     throw new PdfAConformanceException(PdfAConformanceException.CRYPT_FILTER_IS_NOT_PERMITTED_INLINE_IMAGE);
+                }
+                if (!allowedInlineImageFilters.contains((PdfName) f)) {
+                    throw new PdfAConformanceException(PdfaExceptionMessageConstant.INVALID_INLINE_IMAGE_FILTER_USAGE);
                 }
             }
         }
@@ -198,11 +241,7 @@ public class PdfA2Checker extends PdfA1Checker {
         } else if (colorSpace instanceof PdfSpecialCs.DeviceN) {
 
             PdfSpecialCs.DeviceN deviceN = (PdfSpecialCs.DeviceN) colorSpace;
-            if (deviceN.getNumberOfComponents() > MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS) {
-                throw new PdfAConformanceException(PdfAConformanceException.
-                        THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
-                        MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS);
-            }
+            checkNumberOfDeviceNComponents(deviceN);
             //TODO DEVSIX-4203 Fix IndexOutOfBounds exception being thrown for DeviceN (not NChannel) colorspace without
             // attributes. According to the spec PdfAConformanceException should be thrown.
             PdfDictionary attributes = ((PdfArray) deviceN.getPdfObject()).getAsDictionary(4);
@@ -336,6 +375,14 @@ public class PdfA2Checker extends PdfA1Checker {
                             PdfAConformanceException.SIGNATURE_REFERENCES_DICTIONARY_SHALL_NOT_CONTAIN_DIGESTLOCATION_DIGESTMETHOD_DIGESTVALUE);
                 }
             }
+        }
+    }
+
+    protected void checkNumberOfDeviceNComponents(PdfSpecialCs.DeviceN deviceN) {
+        if (deviceN.getNumberOfComponents() > MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS) {
+            throw new PdfAConformanceException(PdfAConformanceException.
+                    THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED,
+                    MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS);
         }
     }
 
@@ -604,6 +651,9 @@ public class PdfA2Checker extends PdfA1Checker {
                     }
                 }
             }
+            if (!allowedFilters.contains((PdfName) filter)) {
+                throw new PdfAConformanceException(PdfaExceptionMessageConstant.INVALID_STREAM_FILTER_USAGE);
+            }
         } else if (filter instanceof PdfArray) {
             for (int i = 0; i < ((PdfArray) filter).size(); i++) {
                 PdfName f = ((PdfArray) filter).getAsName(i);
@@ -618,6 +668,9 @@ public class PdfA2Checker extends PdfA1Checker {
                             throw new PdfAConformanceException(PdfAConformanceException.NOT_IDENTITY_CRYPT_FILTER_IS_NOT_PERMITTED);
                         }
                     }
+                }
+                if (!allowedFilters.contains((PdfName) f)) {
+                    throw new PdfAConformanceException(PdfaExceptionMessageConstant.INVALID_STREAM_FILTER_USAGE);
                 }
             }
         }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
@@ -36,6 +37,7 @@ import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
+import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -303,6 +305,19 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param crypto {@inheritDoc}
+     */
+    @Override
+    public void checkCrypto(PdfObject crypto) {
+        if (crypto != null) {
+            throw new PdfAConformanceException(
+                    PdfAConformanceException.KEYWORD_ENCRYPT_SHALL_NOT_BE_USED_IN_THE_TRAILER_DICTIONARY);
+        }
+    }
+
     @Override
     protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
         // This check is irrelevant for the PdfA1 checker, so the body of the method is empty
@@ -326,40 +341,6 @@ public class PdfA1Checker extends PdfAChecker {
             } catch (IOException e) {
                 throw new PdfException(PdfaExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
             }
-        }
-    }
-
-    @Override
-    protected void checkContentStreamObject(PdfObject object) {
-        byte type = object.getType();
-        switch (type) {
-            case PdfObject.NAME:
-                checkPdfName((PdfName) object);
-                break;
-            case PdfObject.STRING:
-                checkPdfString((PdfString) object);
-                break;
-            case PdfObject.NUMBER:
-                checkPdfNumber((PdfNumber) object);
-                break;
-            case PdfObject.ARRAY:
-                PdfArray array = (PdfArray) object;
-                checkPdfArray(array);
-                for (PdfObject obj : array) {
-                    checkContentStreamObject(obj);
-                }
-                break;
-            case PdfObject.DICTIONARY:
-                PdfDictionary dictionary = (PdfDictionary) object;
-                checkPdfDictionary(dictionary);
-                for (final PdfName name: dictionary.keySet()) {
-                    checkPdfName(name);
-                    checkPdfObject(dictionary.get(name, false));
-                }
-                for (final PdfObject obj : dictionary.values()) {
-                    checkContentStreamObject(obj);
-                }
-                break;
         }
     }
 
@@ -705,6 +686,18 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkCatalog(PdfCatalog catalog) {
+        String pdfVersion = catalog.getDocument().getPdfVersion().toString();
+        if ('1' != pdfVersion.charAt(4) || ('1' > pdfVersion.charAt(6) || '7' < pdfVersion.charAt(6))) {
+            throw new PdfAConformanceException(
+                    MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION, "1"));
+        }
+    }
+
     @Override
     protected void checkCatalogValidEntries(PdfDictionary catalogDict) {
         if (catalogDict.containsKey(PdfName.AA)) {
@@ -736,9 +729,6 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkTrailer(PdfDictionary trailer) {
-        if (trailer.containsKey(PdfName.Encrypt)) {
-            throw new PdfAConformanceException(PdfAConformanceException.KEYWORD_ENCRYPT_SHALL_NOT_BE_USED_IN_THE_TRAILER_DICTIONARY);
-        }
     }
 
     /**

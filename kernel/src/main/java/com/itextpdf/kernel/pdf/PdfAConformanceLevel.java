@@ -41,6 +41,8 @@ public class PdfAConformanceLevel {
     public static final PdfAConformanceLevel PDF_A_3A = new PdfAConformanceLevel("3", "A");
     public static final PdfAConformanceLevel PDF_A_3B = new PdfAConformanceLevel("3", "B");
     public static final PdfAConformanceLevel PDF_A_3U = new PdfAConformanceLevel("3", "U");
+    public static final PdfAConformanceLevel PDF_A_4 = new PdfAConformanceLevel("4", null);
+    public static final String PDF_A_4_REVISION = "2020";
 
     private final String conformance;
     private final String part;
@@ -59,7 +61,7 @@ public class PdfAConformanceLevel {
     }
 
     public static PdfAConformanceLevel getConformanceLevel(String part, String conformance) {
-        String lowLetter = conformance.toUpperCase();
+        String lowLetter = conformance == null ? null : conformance.toUpperCase();
         boolean aLevel = "A".equals(lowLetter);
         boolean bLevel = "B".equals(lowLetter);
         boolean uLevel = "U".equals(lowLetter);
@@ -87,6 +89,8 @@ public class PdfAConformanceLevel {
                 if (uLevel)
                     return PdfAConformanceLevel.PDF_A_3U;
                 break;
+            case "4":
+                return PdfAConformanceLevel.PDF_A_4;
         }
         return null;
     }
@@ -99,12 +103,11 @@ public class PdfAConformanceLevel {
             partXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
         } catch (XMPException ignored) {
         }
-        if (conformanceXmpProperty == null || partXmpProperty == null) {
+        if (partXmpProperty == null || (conformanceXmpProperty == null && !"4".equals(partXmpProperty.getValue()))) {
             return null;
         } else {
-            String conformance = conformanceXmpProperty.getValue();
-            String part = partXmpProperty.getValue();
-            return getConformanceLevel(part, conformance);
+            return getConformanceLevel(partXmpProperty.getValue(),
+                    conformanceXmpProperty == null ? null : conformanceXmpProperty.getValue());
         }
     }
 }

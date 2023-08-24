@@ -904,13 +904,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
 
                     PdfObject pageRoot = catalog.getPageTree().generateTree();
+                    flushInfoDictionary(properties.appendMode);
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
-                    }
-
-                    if (getDocumentInfo().getPdfObject().isModified()) {
-                        getDocumentInfo().getPdfObject().flush(false);
                     }
                     flushFonts();
 
@@ -960,8 +957,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(false);
                     }
+                    flushInfoDictionary(properties.appendMode);
                     catalog.getPdfObject().flush(false);
-                    getDocumentInfo().getPdfObject().flush(false);
                     flushFonts();
 
                     if (writer.crypto != null) {
@@ -990,17 +987,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
                 // NOTE. No need in reverting, because it is the last operation with the document.
                 writer.crypto = null;
+                checkIsoConformance(crypto, IsoKey.CRYPTO);
 
                 if (!properties.appendMode && crypto != null) {
                     // no need to flush crypto in append mode, it shall not have changed in this case
                     crypto.flush(false);
                 }
 
-                // The following two operators prevents the possible inconsistency between root and info
+                // The following operator prevents the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
                 // may appear when user gets trailer and explicitly sets new root or info dictionaries.
                 trailer.put(PdfName.Root, catalog.getPdfObject());
-                trailer.put(PdfName.Info, getDocumentInfo().getPdfObject());
 
                 //By this time original and modified document ids should always be not null due to initializing in
                 // either writer properties, or in the writer init section on document open or from pdfreader. So we
@@ -2070,7 +2067,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
 
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
-                trailer.put(PdfName.Info, getDocumentInfo().getPdfObject().getIndirectReference());
 
                 if (reader != null) {
                     // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
@@ -2181,6 +2177,23 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @param xmpMeta {@link XMPMeta} to add custom metadata to.
      */
     protected void addCustomMetadataExtensions(XMPMeta xmpMeta) {
+    }
+
+    /**
+     * Flush info dictionary if needed.
+     *
+     * @param appendMode <code>true</code> if the document is edited in append mode.
+     */
+    protected void flushInfoDictionary(boolean appendMode) {
+        PdfObject infoDictObj = getDocumentInfo().getPdfObject();
+        if (!appendMode || infoDictObj.isModified()) {
+            infoDictObj.flush(false);
+        }
+
+        // The following operator prevents the possible inconsistency between root and info
+        // entries existing in the trailer object and corresponding fields. This inconsistency
+        // may appear when user gets trailer and explicitly sets new root or info dictionaries.
+        trailer.put(PdfName.Info, infoDictObj);
     }
 
     /**

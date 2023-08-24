@@ -322,6 +322,10 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         PdfDictionary srcInfo = srcDoc.getTrailer().getAsDictionary(PdfName.Info);
         PdfDictionary destInfo = destDoc.getTrailer().getAsDictionary(PdfName.Info);
+        if (destInfo == null) {
+            destInfo = new PdfDictionary();
+            destDoc.getTrailer().put(PdfName.Info, destInfo);
+        }
         for (PdfName srcInfoKey : srcInfo.keySet()) {
             destInfo.put((PdfName) srcInfoKey.copyTo(destDoc), srcInfo.get(srcInfoKey).copyTo(destDoc));
         }

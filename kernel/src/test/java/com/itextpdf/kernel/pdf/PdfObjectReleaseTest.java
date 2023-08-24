@@ -135,7 +135,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
         String srcFile = SOURCE_FOLDER + "releaseObjectsInSimpleDoc.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFile),
-                new PdfWriter(SOURCE_FOLDER + "addingReleasedObjectToDocument.pdf"));
+                new PdfWriter(DESTINATION_FOLDER + "addingReleasedObjectToDocument.pdf"));
         try {
             PdfObject releasedObj = doc.getPdfObject(1);
             releasedObj.release();

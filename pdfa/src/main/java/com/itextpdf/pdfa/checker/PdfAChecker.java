@@ -153,6 +153,7 @@ public abstract class PdfAChecker {
         checkMetaData(catalogDict);
         checkCatalogValidEntries(catalogDict);
         checkTrailer(catalog.getDocument().getTrailer());
+        checkCatalog(catalog);
         checkLogicalStructure(catalogDict);
         checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
         checkOutlines(catalogDict);
@@ -359,6 +360,17 @@ public abstract class PdfAChecker {
     public abstract void checkXrefTable(PdfXrefTable xrefTable);
 
     /**
+     * Verify the conformity of encryption usage.
+     *
+     * @param crypto Encryption object to verify.
+     *
+     * @deprecated Will become an abstract in the next major release.
+     */
+    @Deprecated
+    public void checkCrypto(PdfObject crypto) {
+    }
+
+    /**
      * Attest content stream conformance with appropriate specification.
      * Throws PdfAConformanceException if any discrepancy was found
      *
@@ -372,7 +384,38 @@ public abstract class PdfAChecker {
      *
      * @param object is an operand of content stream to validate
      */
-    protected abstract void checkContentStreamObject(PdfObject object);
+    protected void checkContentStreamObject(PdfObject object) {
+        byte type = object.getType();
+        switch (type) {
+            case PdfObject.NAME:
+                checkPdfName((PdfName) object);
+                break;
+            case PdfObject.STRING:
+                checkPdfString((PdfString) object);
+                break;
+            case PdfObject.NUMBER:
+                checkPdfNumber((PdfNumber) object);
+                break;
+            case PdfObject.ARRAY:
+                PdfArray array = (PdfArray) object;
+                checkPdfArray(array);
+                for (PdfObject obj : array) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+            case PdfObject.DICTIONARY:
+                PdfDictionary dictionary = (PdfDictionary) object;
+                checkPdfDictionary(dictionary);
+                for (final PdfName name: dictionary.keySet()) {
+                    checkPdfName(name);
+                    checkPdfObject(dictionary.get(name, false));
+                }
+                for (final PdfObject obj : dictionary.values()) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+        }
+    }
 
     /**
      * Retrieve maximum allowed number of indirect objects in conforming document.
@@ -548,6 +591,18 @@ public abstract class PdfAChecker {
      * @param trailer the {@link PdfDictionary} of trailer to check
      */
     protected abstract void checkTrailer(PdfDictionary trailer);
+
+    /**
+     * Verify the conformity of the pdf catalog.
+     *
+     * @param catalog the {@link PdfCatalog} of trailer to check.
+     *
+     * @deprecated Will become an abstract in the next major release.
+     */
+    @Deprecated
+    protected void checkCatalog(PdfCatalog catalog) {
+
+    }
 
     /**
      * Verify the conformity of the page transparency.
