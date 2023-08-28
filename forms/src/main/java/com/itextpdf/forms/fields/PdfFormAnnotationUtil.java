@@ -54,6 +54,9 @@ public final class PdfFormAnnotationUtil {
      * @return true if passed dictionary is a widget or merged field, false otherwise.
      */
     public static boolean isPureWidgetOrMergedField(PdfDictionary fieldDict) {
+        if (fieldDict.isFlushed()) {
+            return false;
+        }
         PdfName subtype = fieldDict.getAsName(PdfName.Subtype);
         return PdfName.Widget.equals(subtype);
     }

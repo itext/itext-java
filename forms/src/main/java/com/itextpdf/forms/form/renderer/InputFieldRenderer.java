@@ -22,14 +22,13 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.InputField;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -49,9 +48,9 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
 /**
  * The {@link AbstractOneLineTextFieldRenderer} implementation for input fields.

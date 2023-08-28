@@ -692,6 +692,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         // flushes TagTreePointer that will be used later, so set null to the corresponding property.
         canvas.setProperty(Property.TAGGING_HELPER, null);
         canvas.close();
+        formFieldElement.setInteractive(true);
     }
 
     /**
@@ -733,6 +734,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
 
         getWidget().setNormalAppearance(normalAppearance);
+        formFieldElement.setInteractive(true);
     }
 
     /**
@@ -800,6 +802,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         canvas.getPdfCanvas().restoreState().endVariableText();
 
         getWidget().setNormalAppearance(xObject.getPdfObject());
+        formFieldElement.setInteractive(true);
     }
 
     /**
@@ -831,7 +834,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         formFieldElement.setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
         formFieldElement.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, getParentField().isPassword());
         formFieldElement.setProperty(Property.ADD_MARKED_CONTENT_TEXT, Boolean.TRUE);
-
         if (getColor() != null) {
             formFieldElement.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
         }
@@ -858,6 +860,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
         canvas.add(formFieldElement);
 
+        formFieldElement.setInteractive(true);
         getWidget().setNormalAppearance(xObject.getPdfObject());
     }
 
@@ -904,7 +907,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         canvas.add(comboBoxField);
         canvas.getPdfCanvas().restoreState().endVariableText();
         getWidget().setNormalAppearance(xObject.getPdfObject());
-
+        formFieldElement.setInteractive(true);
     }
 
     private void prepareComboBoxFieldWithCorrectOptionsAndValues(ComboBoxField comboBoxField) {
@@ -977,6 +980,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                 new PdfString(PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(
                         parent.checkType.getValue())));
         getWidget().put(PdfName.MK, mk);
+        formFieldElement.setInteractive(true);
     }
 
     static void setMetaInfoToCanvas(Canvas canvas) {
