@@ -27,13 +27,21 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfPageFormCopier;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfFormCreator;
+import com.itextpdf.forms.fields.PdfFormFactory;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
+import com.itextpdf.forms.form.element.CheckBox;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -42,12 +50,20 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
 
+    private final static String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/merging/";
+    private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/merging/";
+
+    @Before
+    public void setUp() {
+        createDestinationFolder(DESTINATION_FOLDER);
+    }
 
     @Test
     public void alwaysThrowExceptionOnDuplicateFormFieldName01() {
@@ -77,51 +93,93 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     }
 
     @Test
-    public void incrementFieldNameEven() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
+    public void incrementFieldNameEven() throws IOException, InterruptedException {
+        String destination = DESTINATION_FOLDER + "incrementFieldNameEven.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new AddIndexStrategy());
+            for (int i = 1; i < 3; i++) {
+                Rectangle rect = new Rectangle(20, 20);
+                rect.setY(100 * i);
+                rect.setX(100);
+                PdfButtonFormField field1 = new CheckBoxFormFieldBuilder(pdfDocument, "test").setWidgetRectangle(rect)
+                        .createCheckBox();
+                form.addField(field1);
+                Rectangle rect2 = new Rectangle(20, 20);
+                rect2.setY(100 * i);
+                rect2.setX(200);
+                PdfButtonFormField field2 = new CheckBoxFormFieldBuilder(pdfDocument, "bingbong")
+                        .setWidgetRectangle(rect2)
+                        .createCheckBox();
+                form.addField(field2);
+            }
+            PdfFormField field1 = form.getField("test");
+            PdfFormField field2 = form.getField("bingbong");
+            PdfFormField field3 = form.getField("test_1");
+            PdfFormField field4 = form.getField("bingbong_1");
 
-        PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new AddIndexStrategy());
-        for (int i = 0; i < 2; i++) {
-            PdfButtonFormField field1 = new CheckBoxFormFieldBuilder(pdfDocument, "test").createCheckBox();
-            form.addField(field1);
-            PdfButtonFormField field2 = new CheckBoxFormFieldBuilder(pdfDocument, "bingbong").createCheckBox();
-            form.addField(field2);
+            Assert.assertNotNull(field1);
+            Assert.assertNotNull(field2);
+            Assert.assertNotNull(field3);
+            Assert.assertNotNull(field4);
         }
-        PdfFormField field1 = form.getField("test");
-        PdfFormField field2 = form.getField("bingbong");
-        PdfFormField field3 = form.getField("test_1");
-        PdfFormField field4 = form.getField("bingbong_1");
 
-        Assert.assertNotNull(field1);
-        Assert.assertNotNull(field2);
-        Assert.assertNotNull(field3);
-        Assert.assertNotNull(field4);
+        Assert.assertNull(new CompareTool().compareByContent(destination,
+                SOURCE_FOLDER + "cmp_incrementalFieldNameEven.pdf", DESTINATION_FOLDER, "diff_"));
+
     }
 
     @Test
-    public void testAddFormFieldWithoutConfiguration() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));) {
-            PdfFormField field1 = new TextFormFieldBuilder(pdfDocument, "parent").createText();
-            PdfFormField child1 = new TextFormFieldBuilder(pdfDocument, "child").createText();
-            PdfFormField child2 = new TextFormFieldBuilder(pdfDocument, "child").createText();
+    public void testAddFormFieldWithoutConfiguration() throws IOException, InterruptedException {
+        String destination = DESTINATION_FOLDER + "testAddFormFieldWithoutConfiguration.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination));) {
+            Rectangle rect = new Rectangle(20, 20);
+            rect.setY(100);
+            rect.setX(100);
+            PdfFormField field1 = new TextFormFieldBuilder(pdfDocument, "parent")
+                    .setWidgetRectangle(rect)
+                    .createText();
+            Rectangle rect2 = new Rectangle(20, 20);
+            rect2.setY(100);
+            rect2.setX(200);
+            PdfFormField child1 = new TextFormFieldBuilder(pdfDocument, "child")
+                    .setWidgetRectangle(rect2)
+                    .createText();
+            Rectangle rect3 = new Rectangle(20, 20);
+            rect3.setY(100);
+            rect3.setX(300);
+            PdfFormField child2 = new TextFormFieldBuilder(pdfDocument, "child")
+                    .setWidgetRectangle(rect3)
+                    .createText();
             field1.addKid(child1);
             field1.addKid(child2);
-            Assert.assertEquals(1, field1.getKids().size());
+            PdfAcroForm.getAcroForm(pdfDocument, true).addField(field1);
+            Assert.assertEquals(2, field1.getKids().size());
         }
+
+        Assert.assertNull(new CompareTool().compareByContent(destination,
+                SOURCE_FOLDER + "cmp_testAddFormFieldWithoutConfiguration.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
-    public void incrementFieldNameUnEven() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
+    public void incrementFieldNameUnEven() throws IOException, InterruptedException {
+        String destination = DESTINATION_FOLDER + "incrementFieldNameUnEven.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new AddIndexStrategy());
-        for (int i = 0; i < 3; i++) {
-            PdfButtonFormField field1 = new CheckBoxFormFieldBuilder(pdfDocument, "test").createCheckBox();
+        for (int i = 1; i < 4; i++) {
+            Rectangle rect = new Rectangle(20, 20);
+            rect.setY(100 * i);
+            rect.setX(100);
+            PdfButtonFormField field1 = new CheckBoxFormFieldBuilder(pdfDocument, "test")
+                    .setWidgetRectangle(rect)
+                    .createCheckBox();
             form.addField(field1);
-            PdfButtonFormField field2 = new CheckBoxFormFieldBuilder(pdfDocument, "bingbong").createCheckBox();
+            Rectangle rect2 = new Rectangle(20, 20);
+            rect2.setY(100 * i);
+            rect2.setX(200);
+            PdfButtonFormField field2 = new CheckBoxFormFieldBuilder(pdfDocument, "bingbong")
+                    .setWidgetRectangle(rect2)
+                    .createCheckBox();
             form.addField(field2);
         }
 
@@ -140,6 +198,9 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
         Assert.assertNotNull(field6);
 
         pdfDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(destination,
+                SOURCE_FOLDER + "cmp_incrementFieldNameUnEven.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
 
@@ -173,9 +234,9 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, count = 4)
     })
-    public void flattenReadOnlyAddIndexTo() throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
+    public void flattenReadOnlyAddIndexTo() throws IOException, InterruptedException {
+        String destination = DESTINATION_FOLDER + "flattenReadOnlyAddIndexTo.pdf";
+        PdfWriter writer = new PdfWriter(destination);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldFlatteningTest/";
@@ -195,6 +256,39 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
         pdfDoc.close();
         Assert.assertTrue(isReadOnly);
         Assert.assertEquals(4, amount);
+
+        Assert.assertNull(new CompareTool().compareByContent(destination,
+                SOURCE_FOLDER + "cmp_flattenReadOnlyAddIndexTo.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
+
+    @Test
+    public void addIndexStrategySeparatesTheFields() throws IOException, InterruptedException {
+
+        try {
+            PdfFormCreator.setFactory(new PdfFormFactory() {
+                @Override
+                public PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist) {
+                    return PdfAcroForm.getAcroForm(document, createIfNotExist, new AddIndexStrategy());
+                }
+            });
+
+            try (PdfDocument pdfInnerDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "add_index.pdf"))) {
+                Document doc = new Document(pdfInnerDoc);
+
+                doc.add(new CheckBox("test1").setBorder(new SolidBorder(ColorConstants.RED, 1)));
+                doc.add(new CheckBox("test1").setBorder(new SolidBorder(ColorConstants.RED, 1)));
+
+                doc.add(new CheckBox("test").setInteractive(true));
+                doc.add(new CheckBox("test").setInteractive(true));
+            }
+
+            Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "add_index.pdf",
+                    SOURCE_FOLDER + "cmp_add_index.pdf", DESTINATION_FOLDER, "diff_"));
+
+        } finally {
+            PdfFormCreator.setFactory(new PdfFormFactory());
+        }
+
+    }
 }

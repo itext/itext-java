@@ -261,26 +261,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfFormFieldMergeUtil.mergeKidsWithSameNames(field, throwExceptionOnError);
 
-        PdfDictionary fieldDict = field.getPdfObject();
         // PdfPageFormCopier expects that we replace existed field by a new one in case they have the same names.
-        String fieldName = field.getFieldName().toUnicodeString();
-        if (!fields.containsKey(fieldName) ||
-                !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(fieldName), field,
-                        throwExceptionOnError)) {
-            fieldName = field.getFieldName().toUnicodeString();
-            fieldDict = field.getPdfObject();
+        if (needToAddToAcroform(field, throwExceptionOnError)) {
             PdfArray fieldsArray = getFields();
-            fieldsArray.add(fieldDict);
+            fieldsArray.add(field.getPdfObject());
             fieldsArray.setModified();
-            fields.put(fieldName, field);
+            fields.put(field.getFieldName().toUnicodeString(), field);
         }
-        final String newFieldName = field.getFieldName().toUnicodeString();
-        if (!fieldName.equals(newFieldName)) {
-            fields.put(newFieldName, fields.get(fieldName));
-        }
-        fieldName = newFieldName;
-        fieldDict = field.getPdfObject();
-        processKids(fields.get(fieldName), page);
+        PdfDictionary fieldDict = field.getPdfObject();
+        processKids(fields.get(field.getFieldName().toUnicodeString()), page);
 
         if (fieldDict.containsKey(PdfName.Subtype) && page != null) {
             defineWidgetPageAndAddToIt(page, fieldDict, false);
@@ -288,6 +277,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         setModified();
     }
+
 
     /**
      * This method merges field with its annotation and places it on the given
@@ -1273,5 +1263,18 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             allFields.addAll(kids);
         }
         return allFields;
+    }
+
+    private boolean needToAddToAcroform(PdfFormField field, boolean throwExceptionOnError) {
+        final String fieldNameBeforeMergeCall = field.getFieldName().toUnicodeString();
+        if (!fields.containsKey(fieldNameBeforeMergeCall)) {
+            return true;
+        }
+        if (!PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(fieldNameBeforeMergeCall), field,
+                throwExceptionOnError)) {
+            return true;
+        }
+        final boolean isFieldNameChanged = !fieldNameBeforeMergeCall.equals(field.getFieldName().toUnicodeString());
+        return isFieldNameChanged;
     }
 }
