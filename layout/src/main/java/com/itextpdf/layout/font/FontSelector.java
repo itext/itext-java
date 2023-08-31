@@ -117,8 +117,16 @@ public class FontSelector {
                     fc.setMonospaceFlag(true);
                 }
                 boolean isLastFontFamilyToBeProcessed = i == fontFamilies.size() - 1;
-                res = characteristicsSimilarity(fontFamily, fc, o2, isLastFontFamilyToBeProcessed) - characteristicsSimilarity(fontFamily, fc, o1, isLastFontFamilyToBeProcessed);
+                res = characteristicsSimilarity(fontFamily, fc, o2, isLastFontFamilyToBeProcessed) -
+                        characteristicsSimilarity(fontFamily, fc, o1, isLastFontFamilyToBeProcessed);
+                // This method is a fallback to compare family2 field if the main method wasn't able to prioritize
+                // the fonts. We don't want to add this into scoring in the main method (characteristicsSimilarity)
+                // not to break anything for existing solutions.
+                if (res == 0) {
+                    res = family2Similarity(fontFamily, fc, o2) - family2Similarity(fontFamily, fc, o1);
+                }
             }
+
             return res;
         }
 
@@ -226,6 +234,20 @@ public class FontSelector {
             }
 
             return score;
+        }
+
+        /**
+         * This method is a fallback to compare family2 field if the main method wasn't able to prioritize the fonts.
+         */
+        private static int family2Similarity(String fontFamily, FontCharacteristics fc, FontInfo fontInfo) {
+            FontProgramDescriptor fontDescriptor = fontInfo.getDescriptor();
+            if (!fc.isMonospace() && null == fontInfo.getAlias() &&
+                    null != fontDescriptor.getFamilyName2LowerCase() &&
+                    fontDescriptor.getFamilyName2LowerCase().equals(fontFamily)) {
+                return 1;
+            }
+
+            return 0;
         }
     }
 }
