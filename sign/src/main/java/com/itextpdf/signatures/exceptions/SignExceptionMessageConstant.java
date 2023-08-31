@@ -43,6 +43,8 @@ public final class SignExceptionMessageConstant {
     public static final String CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE = "Certificate {0} failed: {1}";
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
+    public static final String DOCUMENT_CANNOT_BE_SIGNED = "Document cannot be signed with this PaDES profile level, " 
+            + "because {0} is null. Please, provide {0} using corresponding setter method.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
     public static final String DOCUMENT_MUST_HAVE_READER = "Document must have reader.";
     public static final String FAILED_TO_GET_TSA_RESPONSE = "Failed to get TSA response from {0}.";
@@ -58,6 +60,10 @@ public final class SignExceptionMessageConstant {
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
             + "data.";
     public static final String NOT_ENOUGH_SPACE = "Not enough space.";
+    public static final String PATH_IS_NOT_DIRECTORY = "Provided path: {0} is not a directory. "
+            + "Please provide a directory path to store temporary pdf files which are required for signing.";
+    public static final String PROVIDED_TSA_CLIENT_IS_NULL =
+            "Provided TSA client is null. TSA client is required for timestamp signing.";
     public static final String SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT = "Signature "
             + "with name {0} is not the last. It doesn't cover the whole document.";
     public static final String THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL = "The name of the digest algorithm is null.";

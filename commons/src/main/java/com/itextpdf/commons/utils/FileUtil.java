@@ -234,6 +234,10 @@ public final class FileUtil {
         return Files.newInputStream(Paths.get(path));
     }
 
+    public static InputStream getInputStreamForFile(File file) throws IOException {
+        return Files.newInputStream(file.toPath());
+    }
+
     public static OutputStream getFileOutputStream(String path) throws IOException {
         return Files.newOutputStream(Paths.get(path));
     }

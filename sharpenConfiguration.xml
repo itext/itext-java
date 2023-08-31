@@ -561,6 +561,15 @@
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledSingleSignatureTest01.pdf"/>
             <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelTTest01.pdf"/>
             <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/cmp_padesSignatureLevelLTATest01.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest3.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTTest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTTest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTTest3.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest3.pdf"/>
             <file path="com/itextpdf/signatures/sign/TimestampSigTest/cmp_timestampTest01.pdf"/>
         </fileset>
                 <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
