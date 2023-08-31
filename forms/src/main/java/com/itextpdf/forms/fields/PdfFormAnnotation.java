@@ -710,6 +710,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             // Create it one time and re-set properties during each widget regeneration.
             formFieldElement = new Radio("");
         }
+        final boolean wasChecked = Boolean.TRUE.equals(
+                formFieldElement.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
         setModelElementProperties(getRect(getPdfObject()));
 
         // First draw off appearance
@@ -732,7 +734,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             canvas.add(formFieldElement);
             normalAppearance.put(new PdfName(value), xObject.getPdfObject());
         }
-
+        ((Radio) formFieldElement).setChecked(wasChecked);
         getWidget().setNormalAppearance(normalAppearance);
         formFieldElement.setInteractive(true);
     }
@@ -945,6 +947,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         reconstructCheckBoxType();
         createCheckBox();
+        final boolean wasChecked = Boolean.TRUE.equals(
+                formFieldElement.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
         final PdfDictionary normalAppearance = new PdfDictionary();
         ((CheckBox) formFieldElement).setChecked(false);
         final PdfFormXObject xObjectOff = new PdfFormXObject(
@@ -981,6 +985,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                         parent.checkType.getValue())));
         getWidget().put(PdfName.MK, mk);
         formFieldElement.setInteractive(true);
+        ((CheckBox) formFieldElement).setChecked(wasChecked);
     }
 
     static void setMetaInfoToCanvas(Canvas canvas) {

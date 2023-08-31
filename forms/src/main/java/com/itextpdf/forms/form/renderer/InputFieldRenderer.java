@@ -34,8 +34,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -49,6 +47,7 @@ import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +163,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = this.getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        deleteMargins();
+        final Map<Integer, Object> margins = deleteMargins();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
 
@@ -196,6 +195,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);
+        applyProperties(margins);
     }
 
     /**

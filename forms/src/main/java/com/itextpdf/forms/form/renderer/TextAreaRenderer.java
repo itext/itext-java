@@ -22,28 +22,25 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.TextArea;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
-import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DrawContext;
@@ -51,9 +48,10 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
 /**
  * The {@link AbstractTextFieldRenderer} implementation for text area fields.
@@ -196,7 +194,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        deleteMargins();
+        final Map<Integer, Object> margins = deleteMargins();
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
         final PdfString defaultValue = new PdfString(getDefaultValue());
@@ -216,6 +214,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);
+        applyProperties(margins);
     }
 
     /**

@@ -53,10 +53,10 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * The {@link AbstractTextFieldRenderer} implementation for buttons.
@@ -251,7 +251,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        deleteMargins();
+        final Map<Integer, Object> margins = deleteMargins();
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
@@ -282,6 +282,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         forms.addField(button, page);
 
         writeAcroFormFieldLangAttribute(doc);
+        applyProperties(margins);
     }
 
     /**

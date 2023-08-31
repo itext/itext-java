@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.form.renderer;
 
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
@@ -52,6 +51,8 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+
+import java.util.Map;
 
 
 /**
@@ -230,7 +231,8 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final String name = getModelId();
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
-        deleteMargins();
+
+        final Map<Integer, Object> margins = deleteMargins();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setConformanceLevel(this.<PdfAConformanceLevel>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL));
@@ -254,6 +256,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
 
         PdfFormCreator.getAcroForm(doc, true).addField(checkBox, page);
         writeAcroFormFieldLangAttribute(doc);
+        applyProperties(margins);
     }
 
     /**
