@@ -112,6 +112,7 @@ public final class KernelExceptionMessageConstant {
             + "encrypted payload to a document opened in read only mode.";
     public static final String CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT = "Cannot set encrypted payload "
             + "to an encrypted document.";
+
     public static final String CANNOT_SPLIT_DOCUMENT_THAT_IS_BEING_WRITTEN = "Cannot split document that is "
             + "being written.";
     public static final String CANNOT_WRITE_TO_PDF_STREAM = "Cannot write to PdfStream.";

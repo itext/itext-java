@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.kernel.pdf.IPdfPageExtraCopier;
 import com.itextpdf.kernel.pdf.PdfDocument;
 
 import java.util.ArrayList;
@@ -31,9 +32,7 @@ import java.util.List;
 public class PdfMerger {
 
     private PdfDocument pdfDocument;
-    private boolean closeSrcDocuments;
-    private boolean mergeTags;
-    private boolean mergeOutlines;
+    private PdfMergerProperties properties;
 
     /**
      * This class is used to merge a number of existing documents into one. By default, if source document
@@ -55,11 +54,25 @@ public class PdfMerger {
      * @param mergeOutlines if true, then outlines from the source document are copied even if in destination document
      *                      outlines are not initialized. Note, that if false, outlines are still could be copied if the
      *                      destination document outlines were explicitly initialized with {@link PdfDocument#initializeOutlines()}
+     *
+     * @deprecated use <code>PdfMerger(PdfDocument, PdfMergerProperties)</code> constructor
      */
+    @Deprecated
     public PdfMerger(PdfDocument pdfDocument, boolean mergeTags, boolean mergeOutlines) {
         this.pdfDocument = pdfDocument;
-        this.mergeTags = mergeTags;
-        this.mergeOutlines = mergeOutlines;
+        this.properties = new PdfMergerProperties();
+        this.properties.setMergeTags(mergeTags).setMergeOutlines(mergeOutlines);
+    }
+
+    /**
+     * This class is used to merge a number of existing documents into one.
+     *
+     * @param pdfDocument the document into which source documents will be merged
+     * @param properties properties for the created <code>PdfMerger</code>
+     */
+    public PdfMerger(PdfDocument pdfDocument, PdfMergerProperties properties) {
+        this.pdfDocument = pdfDocument;
+        this.properties = properties != null ? properties : new PdfMergerProperties();
     }
 
     /**
@@ -71,7 +84,7 @@ public class PdfMerger {
      * @return this {@code PdfMerger} instance
      */
     public PdfMerger setCloseSourceDocuments(boolean closeSourceDocuments) {
-        this.closeSrcDocuments = closeSourceDocuments;
+        this.properties.setCloseSrcDocuments(closeSourceDocuments);
         return this;
     }
 
@@ -109,15 +122,37 @@ public class PdfMerger {
      * @return this {@code PdfMerger} instance
      */
     public PdfMerger merge(PdfDocument from, List<Integer> pages) {
-        if (mergeTags && from.isTagged()) {
+        return merge(from, pages, null);
+    }
+
+    /**
+     * This method merges pages from the source document to the current one.
+     * <p>
+     * If <i>closeSourceDocuments</i> flag is set to <i>true</i> (see {@link #setCloseSourceDocuments(boolean)}),
+     * passed {@code PdfDocument} will be closed after pages are merged.
+     * <p>
+     * See also {@link com.itextpdf.kernel.pdf.PdfDocument#copyPagesTo}.
+     *
+     * @param from - document, from which pages will be copied
+     * @param pages - List of numbers of pages which will be copied
+     * @param copier - a copier which bears a special copy logic. May be null.
+     *                    It is recommended to use the same instance of {@link IPdfPageExtraCopier}
+     *                    for the same output document.
+     * @return this {@code PdfMerger} instance
+     */
+    public PdfMerger merge(PdfDocument from, List<Integer> pages, IPdfPageExtraCopier copier) {
+        if (properties.isMergeTags() && from.isTagged()) {
             pdfDocument.setTagged();
         }
-        if (mergeOutlines && from.hasOutlines()) {
+        if (properties.isMergeOutlines() && from.hasOutlines()) {
             pdfDocument.initializeOutlines();
         }
+        if (properties.isMergeScripts()) {
+            PdfScriptMerger.mergeScripts(from, this.pdfDocument);
+        }
 
-        from.copyPagesTo(pages, pdfDocument);
-        if (closeSrcDocuments) {
+        from.copyPagesTo(pages, pdfDocument, copier);
+        if (properties.isCloseSrcDocuments()) {
             from.close();
         }
         return this;

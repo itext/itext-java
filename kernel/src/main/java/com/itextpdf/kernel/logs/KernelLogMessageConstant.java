@@ -60,6 +60,7 @@ public final class KernelLogMessageConstant {
 
     public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE =
             "Unable to parse color {0} within {1} color space";
+    public static final String CANNOT_MERGE_ENTRY = "Cannot merge entry {0}, entry with such key already exists.";
 
     /**
      * Message warns about unexpected product name which was mentioned as involved into PDF
