@@ -33,6 +33,11 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * PdfA4Checker defines the requirements of the PDF/A-4 standard and contains a
@@ -42,6 +47,33 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
  * The specification implemented by this class is ISO 19005-4
  */
 public class PdfA4Checker extends PdfA3Checker {
+    protected static final Set<PdfName> forbiddenAnnotations4 = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName._3D,
+                    PdfName.RichMedia,
+                    PdfName.FileAttachment,
+                    PdfName.Sound,
+                    PdfName.Screen,
+                    PdfName.Movie)));
+
+    protected static final Set<PdfName> forbiddenAnnotations4E = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.FileAttachment,
+                    PdfName.Sound,
+                    PdfName.Screen,
+                    PdfName.Movie)));
+
+    protected static final Set<PdfName> forbiddenAnnotations4F = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName._3D,
+                    PdfName.RichMedia,
+                    PdfName.Sound,
+                    PdfName.Screen,
+                    PdfName.Movie)));
+
+    protected static final Set<PdfName> apLessAnnotations = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(PdfName.Popup, PdfName.Link, PdfName.Projection)));
+
     /**
      * Creates a PdfA4Checker with the required conformance level
      *
@@ -131,5 +163,40 @@ public class PdfA4Checker extends PdfA3Checker {
     @Override
     protected void checkNumberOfDeviceNComponents(PdfSpecialCs.DeviceN deviceN) {
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Set<PdfName> getForbiddenAnnotations() {
+        if ("E".equals(conformanceLevel.getConformance())) {
+            return forbiddenAnnotations4E;
+        } else if ("F".equals(conformanceLevel.getConformance())) {
+            return forbiddenAnnotations4F;
+        }
+        return forbiddenAnnotations4;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Set<PdfName> getAppearanceLessAnnotations() {
+        return apLessAnnotations;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkAnnotationAgainstActions(PdfDictionary annotDic) {
+        if (PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && annotDic.containsKey(PdfName.A)) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY);
+        }
+        if (!PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && annotDic.containsKey(PdfName.AA)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
+        }
     }
 }

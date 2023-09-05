@@ -82,6 +82,10 @@ public class PdfA2Checker extends PdfA1Checker {
                     PdfName.Sound,
                     PdfName.Screen,
                     PdfName.Movie)));
+
+    protected static final Set<PdfName> apLessAnnotations = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(PdfName.Popup, PdfName.Link)));
+
     protected static final Set<PdfName> forbiddenActions = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName.Launch,
@@ -423,7 +427,7 @@ public class PdfA2Checker extends PdfA1Checker {
         if (subtype == null) {
             throw new PdfAConformanceException(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED).setMessageParams("null");
         }
-        if (forbiddenAnnotations.contains(subtype)) {
+        if (getForbiddenAnnotations().contains(subtype)) {
             throw new PdfAConformanceException(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED).setMessageParams(subtype.getValue());
         }
 
@@ -447,13 +451,7 @@ public class PdfA2Checker extends PdfA1Checker {
             }
         }
 
-        if (PdfName.Widget.equals(subtype) && (annotDic.containsKey(PdfName.AA) || annotDic.containsKey(PdfName.A))) {
-            throw new PdfAConformanceException(PdfAConformanceException.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_OR_AA_ENTRY);
-        }
-
-        if (annotDic.containsKey(PdfName.AA)) {
-            throw new PdfAConformanceException(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
-        }
+        checkAnnotationAgainstActions(annotDic);
 
         if (checkStructure(conformanceLevel)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
@@ -488,11 +486,43 @@ public class PdfA2Checker extends PdfA1Checker {
                         index0.floatValue() == index2.floatValue() && index1.floatValue() == index3.floatValue())
                     isCorrectRect = true;
             }
-            if (!PdfName.Popup.equals(subtype) &&
-                    !PdfName.Link.equals(subtype) &&
-                    !isCorrectRect)
+            if (!getAppearanceLessAnnotations().contains(subtype) && !isCorrectRect)
                 throw new PdfAConformanceException(PdfAConformanceException.EVERY_ANNOTATION_SHALL_HAVE_AT_LEAST_ONE_APPEARANCE_DICTIONARY);
         }
+    }
+
+    /**
+     * Gets annotation types which are allowed not to have appearance stream.
+     *
+     * @return set of annotation names.
+     */
+    protected Set<PdfName> getAppearanceLessAnnotations() {
+        return apLessAnnotations;
+    }
+
+    /**
+     * Checked annotation against actions, exception will be thrown if either {@code A}
+     * or {@code AA} actions aren't allowed for specific type of annotation.
+     *
+     * @param annotDic an annotation PDF dictionary
+     */
+    protected void checkAnnotationAgainstActions(PdfDictionary annotDic) {
+        if (PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype))
+                && (annotDic.containsKey(PdfName.AA) || annotDic.containsKey(PdfName.A))) {
+
+            throw new PdfAConformanceException(PdfAConformanceException.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_OR_AA_ENTRY);
+        }
+        if (annotDic.containsKey(PdfName.AA)) {
+            throw new PdfAConformanceException(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Set<PdfName> getForbiddenAnnotations() {
+        return forbiddenAnnotations;
     }
 
     @Override

@@ -661,6 +661,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Private = createDirectName("Private");
     public static final PdfName ProcSet = createDirectName("ProcSet");
     public static final PdfName Producer = createDirectName("Producer");
+    public static final PdfName Projection = createDirectName("Projection");
     public static final PdfName PronunciationLexicon = createDirectName("PronunciationLexicon");
     public static final PdfName Prop_Build = createDirectName("Prop_Build");
     public static final PdfName Properties = createDirectName("Properties");

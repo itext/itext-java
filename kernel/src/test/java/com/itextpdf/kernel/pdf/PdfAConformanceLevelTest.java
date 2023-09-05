@@ -28,6 +28,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.impl.XMPMetaImpl;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -36,8 +37,9 @@ import org.junit.experimental.categories.Category;
 public class PdfAConformanceLevelTest extends ExtendedITextTest {
     @Test
     public void getConformanceTest() {
-        PdfAConformanceLevel level = PdfAConformanceLevel.getConformanceLevel("4", null);
-        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4, level);
+        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4, PdfAConformanceLevel.getConformanceLevel("4", null));
+        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4E, PdfAConformanceLevel.getConformanceLevel("4", "E"));
+        Assert.assertEquals(PdfAConformanceLevel.PDF_A_4F, PdfAConformanceLevel.getConformanceLevel("4", "F"));
     }
 
     @Test

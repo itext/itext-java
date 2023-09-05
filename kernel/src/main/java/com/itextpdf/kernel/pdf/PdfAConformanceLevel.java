@@ -42,6 +42,8 @@ public class PdfAConformanceLevel {
     public static final PdfAConformanceLevel PDF_A_3B = new PdfAConformanceLevel("3", "B");
     public static final PdfAConformanceLevel PDF_A_3U = new PdfAConformanceLevel("3", "U");
     public static final PdfAConformanceLevel PDF_A_4 = new PdfAConformanceLevel("4", null);
+    public static final PdfAConformanceLevel PDF_A_4E = new PdfAConformanceLevel("4", "E");
+    public static final PdfAConformanceLevel PDF_A_4F = new PdfAConformanceLevel("4", "F");
     public static final String PDF_A_4_REVISION = "2020";
 
     private final String conformance;
@@ -65,6 +67,8 @@ public class PdfAConformanceLevel {
         boolean aLevel = "A".equals(lowLetter);
         boolean bLevel = "B".equals(lowLetter);
         boolean uLevel = "U".equals(lowLetter);
+        boolean eLevel = "E".equals(lowLetter);
+        boolean fLevel = "F".equals(lowLetter);
 
         switch (part) {
             case "1":
@@ -90,6 +94,10 @@ public class PdfAConformanceLevel {
                     return PdfAConformanceLevel.PDF_A_3U;
                 break;
             case "4":
+                if (eLevel)
+                    return PdfAConformanceLevel.PDF_A_4E;
+                if (fLevel)
+                    return PdfAConformanceLevel.PDF_A_4F;
                 return PdfAConformanceLevel.PDF_A_4;
         }
         return null;

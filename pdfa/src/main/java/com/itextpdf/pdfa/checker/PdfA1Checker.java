@@ -584,7 +584,7 @@ public class PdfA1Checker extends PdfAChecker {
         if (subtype == null) {
             throw new PdfAConformanceException(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED).setMessageParams("null");
         }
-        if (forbiddenAnnotations.contains(subtype)) {
+        if (getForbiddenAnnotations().contains(subtype)) {
             throw new PdfAConformanceException(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED).setMessageParams(subtype.getValue());
         }
         PdfNumber ca = annotDic.getAsNumber(PdfName.CA);
@@ -640,6 +640,15 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(PdfAConformanceException.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY).setMessageParams(subtype.getValue());
             }
         }
+    }
+
+    /**
+     * Gets forbidden annotation types.
+     *
+     * @return a set of forbidden annotation types
+     */
+    protected Set<PdfName> getForbiddenAnnotations() {
+        return forbiddenAnnotations;
     }
 
     @Override

@@ -35,6 +35,7 @@ public final class PdfaExceptionMessageConstant {
     public static final String THE_CATALOG_VERSION_SHALL_CONTAIN_RIGHT_PDF_VERSION = "The catalog version key shall begin at byte zero and shall consist of “%PDF-{0}.n”";
     public static final String CANNOT_FIND_PDFA_CHECKER_FOR_SPECIFIED_NAME
             = "Can't find an appropriate checker for a specified name.";
+    public static final String WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY = "Widget annotation dictionary or field dictionary shall not include a entry";
 
     private PdfaExceptionMessageConstant(){}
 }
