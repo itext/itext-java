@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.CidFont;
@@ -1940,23 +1941,6 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void kozminNames() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
-        Assert.assertEquals(descriptor.getFontName(), "KozMinPro-Regular");
-        Assert.assertEquals(descriptor.getFullNameLowerCase(), "KozMinPro-Regular".toLowerCase());
-        Assert.assertEquals(descriptor.getFontWeight(), 400);
-    }
-
-    @Test
-    public void helveticaNames() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
-        Assert.assertEquals(descriptor.getFontName(), "Helvetica");
-        Assert.assertEquals(descriptor.getFullNameLowerCase(), "Helvetica".toLowerCase());
-        Assert.assertEquals(descriptor.getFullNameLowerCase(), "helvetica");
-        Assert.assertEquals(descriptor.getFontWeight(), 500);
-    }
-
-    @Test
     public void otfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
         Assert.assertEquals(descriptor.getFontName(), "Puritan2");
@@ -2030,6 +2014,84 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(filename, cmpFilename, destinationFolder));
+    }
+
+    @Test
+    public void halfWidthFontTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "halfWidthFont.pdf";
+        String cmpFileName = sourceFolder + "cmp_halfWidthFont.pdf";
+
+        String uniEncodings = "UniJIS-UCS2-HW-H UniJIS-UTF16-H UniJIS-UTF32-H "
+                + "UniJIS-UTF8-H UniJIS2004-UTF16-H UniJIS2004-UTF32-H UniJIS2004-UTF8-H "
+                + "UniJISX0213-UTF32-H UniJISX02132004-UTF32-H";
+        String jpFonts = "HeiseiMin-W3 HeiseiKakuGo-W5 KozMinPro-Regular";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            String msg = "あいうえおアイウエオ fufufufufuf 012345678917 更ッ一  平成20年12月31日";
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+
+            int y = 700;
+            for (String font : jpFonts.split(" ")) {
+                for (String uniEncoding : uniEncodings.split(" ")) {
+                    canvas.saveState()
+                            .beginText()
+                            .moveText(36, y)
+                            .setFontAndSize(PdfFontFactory.createFont(font, uniEncoding,
+                                    EmbeddingStrategy.PREFER_EMBEDDED, true), 12)
+                            .showText(msg)
+                            .endText()
+                            .restoreState();
+
+                    y -= 20;
+                }
+            }
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void utf16ToUcs2HWFontTest() throws IOException {
+        String outFileName = destinationFolder + "utf16ToUcs2HWFont.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            // Surrogate pair
+            String msg = "\ud83c\udd00 f";
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(PdfFontFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-HW-H",
+                            EmbeddingStrategy.PREFER_EMBEDDED, true), 12);
+            Exception e = Assert.assertThrows(ITextException.class, () -> canvas.showText(msg));
+            Assert.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
+        }
+    }
+
+    @Test
+    public void uniJIS2004UTF16FontTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "uniJIS2004UTF16Font.pdf";
+        String cmpFileName = sourceFolder + "cmp_uniJIS2004UTF16Font.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            // Surrogate pair
+            String msg = "\ud83c\udd00 fffff";
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+
+            canvas.saveState()
+                    .beginText()
+                    .moveText(36, 700)
+                    .setFontAndSize(PdfFontFactory.createFont("KozMinPro-Regular", "UniJIS2004-UTF16-H",
+                            EmbeddingStrategy.PREFER_EMBEDDED, true), 12)
+                    .showText(msg)
+                    .endText()
+                    .restoreState();
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
     private float getContentWidth(PdfType3Font type3, char glyph) {

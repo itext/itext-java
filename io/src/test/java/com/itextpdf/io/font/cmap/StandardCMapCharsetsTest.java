@@ -23,6 +23,7 @@
 package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.commons.exceptions.ITextException;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -65,7 +66,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         int cp = TextUtil.convertToUtf32(str)[0];
         Exception e = Assert.assertThrows(ITextException.class, () ->
                 encoder.encodeUnicodeCodePoint(cp));
-        Assert.assertEquals("This encoder only accepts BMP codepoints", e.getMessage());
+        Assert.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
     }
     @Test
     public void ucs2EncodingCodePointTest() {
@@ -103,7 +104,7 @@ public class StandardCMapCharsetsTest extends ExtendedITextTest {
         // It is U+10437 symbol (Deseret Small Letter Yee) outside BMP
         int codePoint = 66615;
         Exception e = Assert.assertThrows(ITextException.class, () -> encoder.encodeUnicodeCodePoint(codePoint));
-        Assert.assertEquals("This encoder only accepts BMP codepoints", e.getMessage());
+        Assert.assertEquals(IoExceptionMessageConstant.ONLY_BMP_ENCODING, e.getMessage());
     }
 
     @Test

@@ -225,7 +225,7 @@ public final class PdfFontFactory {
      */
     public static PdfFont createFont(String fontProgram, String encoding,
             EmbeddingStrategy embeddingStrategy, boolean cached) throws IOException {
-        FontProgram fp = FontProgramFactory.createFont(fontProgram, cached);
+        FontProgram fp = FontProgramFactory.createFont(fontProgram, encoding, cached);
         return createFont(fp, encoding, embeddingStrategy);
     }
 

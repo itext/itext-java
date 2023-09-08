@@ -22,7 +22,6 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
@@ -34,8 +33,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-// Android-Conversion-Skip-File (TODO DEVSIX-7376 investigate why FontCacheNoFontAsianTest is skipped on Android)
-public class FontCacheNoFontAsianTest extends ExtendedITextTest {
+public class FontCacheTest extends ExtendedITextTest {
 
     @Before
     public void before() {
@@ -94,62 +92,6 @@ public class FontCacheNoFontAsianTest extends ExtendedITextTest {
         Assert.assertNull(FontCache.getFont(ttc0));
         Assert.assertEquals(otherTtc0MockFontProgram, FontCache.getFont(otherTtc0));
         Assert.assertEquals(normalMockFontProgram, FontCache.getFont(normal));
-    }
-
-    @Test
-    public void getCompatibleCidFontNoFontAsian() {
-        // Without font-asian module in the class path
-        // any value passed into a method is expected to return null.
-        Assert.assertNull(FontCache.getCompatibleCidFont("78-RKSJ-V"));
-    }
-
-    @Test
-    public void isPredefinedCidFontNoFontAsian() {
-        // Without font-asian module in the class path
-        // any value passed into a method is expected to return false.
-        Assert.assertFalse(FontCache.isPredefinedCidFont("78-RKSJ-V"));
-    }
-
-    @Test
-    public void getCompatibleCmapsNoFontAsian() {
-        // Without font-asian module in the class path
-        // any value passed into a method is expected to return null.
-        Assert.assertNull(FontCache.getCompatibleCmaps("HeiseiKakuGo-W5"));
-    }
-
-    @Test
-    public void getRegistryNamesNoFontAsian() {
-        // Without font-asian module in the class path
-        // registry names collection is expected to be empty.
-        Assert.assertTrue(FontCache.getRegistryNames().isEmpty());
-    }
-
-    @Test
-    public void getCid2UniCMapNoFontAsian() {
-        // Without font-asian module in the class path
-        // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> FontCache.getCid2UniCmap("UniJIS-UTF16-H"));
-    }
-
-    @Test
-    public void getUni2CidCMapNoFontAsian() {
-        // Without font-asian module in the class path
-        // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> FontCache.getUni2CidCmap("UniJIS-UTF16-H"));
-    }
-
-    @Test
-    public void getByte2CidCMapNoFontAsian() {
-        // Without font-asian module in the class path
-        // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> FontCache.getByte2CidCmap("78ms-RKSJ-H"));
-    }
-
-    @Test
-    public void getCid2ByteCMapNoFontAsian() {
-        // Without font-asian module in the class path
-        // no CMap can be found.
-        Assert.assertThrows(IOException.class, () -> FontCache.getCidToCodepointCmap("78ms-RKSJ-H"));
     }
 
     private static class FontProgramMock extends FontProgram {

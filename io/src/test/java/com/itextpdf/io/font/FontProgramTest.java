@@ -25,6 +25,7 @@ package com.itextpdf.io.font;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -74,5 +75,26 @@ public class FontProgramTest extends ExtendedITextTest {
         FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
         Assert.assertNotNull(computerModern);
         Assert.assertNotNull(cmr10);
+    }
+
+    @Test
+    public void cidFontWithCmapTest() throws IOException {
+        char space = ' ';
+
+        FontProgram fp = FontProgramFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-HW-H", true);
+        Glyph glyph = fp.getGlyph(space);
+
+        Assert.assertArrayEquals(new char[] {space}, glyph.getUnicodeChars());
+        Assert.assertEquals(32, glyph.getUnicode());
+        Assert.assertEquals(231, glyph.getCode());
+        Assert.assertEquals(500, glyph.getWidth());
+
+        fp = FontProgramFactory.createFont("KozMinPro-Regular", null, true);
+        glyph = fp.getGlyph(space);
+
+        Assert.assertArrayEquals(new char[] {space}, glyph.getUnicodeChars());
+        Assert.assertEquals(32, glyph.getUnicode());
+        Assert.assertEquals(1, glyph.getCode());
+        Assert.assertEquals(278, glyph.getWidth());
     }
 }
