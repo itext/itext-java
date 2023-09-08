@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.font.FontEncoding;
@@ -157,6 +158,8 @@ public class PdfA2Checker extends PdfA1Checker {
     static final int MAX_PAGE_SIZE = 14400;
     static final int MIN_PAGE_SIZE = 3;
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 32;
+
+    private static final Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
 
     private boolean currentFillCsIsIccBasedCMYK = false;
     private boolean currentStrokeCsIsIccBasedCMYK = false;
@@ -455,7 +458,8 @@ public class PdfA2Checker extends PdfA1Checker {
 
         if (checkStructure(conformanceLevel)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
-                throw new PdfAConformanceException(PdfAConformanceException.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY).setMessageParams(subtype.getValue());
+                logger.warn(MessageFormatUtil.format(
+                        PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, subtype.getValue()));
             }
         }
 
@@ -645,7 +649,6 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
             }
             if (!fileSpec.containsKey(PdfName.Desc)) {
-                Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
                 logger.warn(PdfAConformanceLogMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHOULD_CONTAIN_DESC_KEY);
             }
 
@@ -655,7 +658,6 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfAConformanceException.EF_KEY_OF_FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_DICTIONARY_WITH_VALID_F_KEY);
             }
             // iText doesn't check whether provided file is compliant to PDF-A specs.
-            Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
             logger.warn(PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHALL_BE_COMPLIANT_WITH_SPEC);
         }
     }
@@ -1050,7 +1052,6 @@ public class PdfA2Checker extends PdfA1Checker {
     private void checkSeparationInsideDeviceN(PdfArray separation, PdfObject deviceNColorSpace, PdfObject deviceNTintTransform) {
         if (!isAltCSIsTheSame(separation.get(2), deviceNColorSpace) ||
                 !deviceNTintTransform.equals(separation.get(3))) {
-            Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
             logger.warn(PdfAConformanceLogMessageConstant.TINT_TRANSFORM_AND_ALTERNATE_SPACE_OF_SEPARATION_ARRAYS_IN_THE_COLORANTS_OF_DEVICE_N_SHOULD_BE_CONSISTENT_WITH_SAME_ATTRIBUTES_OF_DEVICE_N);
         }
         checkSeparationCS(separation);

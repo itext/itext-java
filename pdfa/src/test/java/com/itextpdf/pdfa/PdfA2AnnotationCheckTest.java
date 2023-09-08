@@ -23,7 +23,6 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -46,19 +45,22 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
@@ -290,8 +292,14 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void annotationCheckTest12() throws FileNotFoundException {
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, logLevel = LogLevelConstants.WARN)
+    })
+    public void annotationCheckTest12() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA1a_annotationCheckTest12.pdf";
+        String cmpPdf = cmpFolder + "cmp_pdfA1a_annotationCheckTest12.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_2A, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.setTagged();
@@ -301,12 +309,13 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(100, 650, 400, 100);
         PdfAnnotation annot = new PdfStampAnnotation(rect);
         annot.setFlags(PdfAnnotation.PRINT);
+        annot.setNormalAppearance(createAppearance(doc, new Rectangle(400, 100)));
 
         page.addAnnotation(annot);
 
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, PdfName.Stamp.getValue()),
-                e.getMessage());
+        doc.close();
+        compareResult(outPdf, cmpPdf);
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test

@@ -112,6 +112,8 @@ public class PdfA1Checker extends PdfAChecker {
                     PdfName.Saturation)));
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 8;
 
+    private static final Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
+
     /**
      * Creates a PdfA1Checker with the required conformance level
      *
@@ -429,7 +431,6 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(PdfAConformanceException.A_CATALOG_SHALL_INCLUDE_MARK_INFO_DICTIONARY_WITH_MARKED_TRUE_VALUE);
             }
             if (!catalog.containsKey(PdfName.Lang)) {
-                Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
                 logger.warn(PdfAConformanceLogMessageConstant.CATALOG_SHOULD_CONTAIN_LANG_ENTRY);
             }
         }
@@ -637,7 +638,8 @@ public class PdfA1Checker extends PdfAChecker {
 
         if (checkStructure(conformanceLevel)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
-                throw new PdfAConformanceException(PdfAConformanceException.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY).setMessageParams(subtype.getValue());
+                logger.warn(MessageFormatUtil.format(
+                        PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, subtype.getValue()));
             }
         }
     }

@@ -56,6 +56,8 @@ public class PdfAConformanceException extends PdfException {
     public static final String AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_TR_KEY = "An extgstate dictionary shall not contain the tr key";
     public static final String AN_IMAGE_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATES_KEY = "An image dictionary shall not contain alternates key";
     public static final String AN_IMAGE_DICTIONARY_SHALL_NOT_CONTAIN_OPI_KEY = "An image dictionary shall not contain opi key";
+    @Deprecated
+    // Was moved to PdfAConformanceLogMessageConstant
     public static final String ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY = "Annotation of type {0} should have contents key";
     public static final String ANNOTATION_TYPE_0_IS_NOT_PERMITTED = "Annotation type {0} is not permitted";
     public static final String APPEARANCE_DICTIONARY_OF_WIDGET_SUBTYPE_AND_BTN_FIELD_TYPE_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_DICTIONARY_VALUE = "Appearance dictionary of widget subtype and btn field type shall contain only the n key with dictionary value";
