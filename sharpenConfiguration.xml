@@ -471,6 +471,7 @@
             </fileset>
             <fileset reason="Different implementation on .NET and java">
                 <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
+                <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
@@ -570,6 +571,12 @@
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest1.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest2.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest3.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest3.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest1_FIPS.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest2_FIPS.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest3_FIPS.pdf"/>
             <file path="com/itextpdf/signatures/sign/TimestampSigTest/cmp_timestampTest01.pdf"/>
         </fileset>
                 <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">

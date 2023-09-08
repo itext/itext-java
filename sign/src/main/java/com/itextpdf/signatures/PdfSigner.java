@@ -199,12 +199,12 @@ public class PdfSigner {
     /**
      * Holds value of property signDate.
      */
-    protected Calendar signDate;
+    protected Calendar signDate = DateTimeUtil.getCurrentTimeCalendar();
 
     /**
      * Boolean to check if this PdfSigner instance has been closed already or not.
      */
-    protected boolean closed;
+    protected boolean closed = false;
 
     /**
      * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
@@ -241,12 +241,22 @@ public class PdfSigner {
         }
 
         originalOS = outputStream;
-        signDate = DateTimeUtil.getCurrentTimeCalendar();
         fieldName = getNewSigFieldName();
         appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
         appearance.setSignDate(signDate);
-
-        closed = false;
+    }
+    
+    PdfSigner(PdfDocument document, OutputStream outputStream, ByteArrayOutputStream temporaryOS, File tempFile) {
+        if (tempFile == null) {
+            this.temporaryOS = temporaryOS;
+        } else {
+            this.tempFile = tempFile;
+        }
+        this.document = document;
+        this.originalOS = outputStream;
+        this.fieldName = getNewSigFieldName();
+        this.appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
+        this.appearance.setSignDate(this.signDate);
     }
 
     protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {

@@ -41,10 +41,11 @@ public final class SignExceptionMessageConstant {
             + "signature creation failed. Document shall not contain any certification or approval signatures before "
             + "signing with certification signature.";
     public static final String CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE = "Certificate {0} failed: {1}";
+    public static final String DEFAULT_CLIENTS_CANNOT_BE_CREATED = "Default implementation of OCSP and CRL clients " 
+            + "cannot be created, because signing certificate doesn't contain revocation data sources. " 
+            + "Please try to explicitly add OCSP or CRL client.";
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
-    public static final String DOCUMENT_CANNOT_BE_SIGNED = "Document cannot be signed with this PaDES profile level, " 
-            + "because {0} is null. Please, provide {0} using corresponding setter method.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
     public static final String DOCUMENT_MUST_HAVE_READER = "Document must have reader.";
     public static final String FAILED_TO_GET_TSA_RESPONSE = "Failed to get TSA response from {0}.";
@@ -56,6 +57,7 @@ public final class SignExceptionMessageConstant {
             + "certificate chain.";
     public static final String INVALID_TSA_RESPONSE = "Invalid TSA {0} response code {1}.";
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
+    public static final String NO_SIGNATURES_TO_PROLONG = "Document doesn't contain any signatures to prolong.";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
             + "data.";

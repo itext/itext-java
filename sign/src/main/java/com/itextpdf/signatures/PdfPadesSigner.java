@@ -31,6 +31,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.signatures.LtvVerification.CertificateOption;
+import com.itextpdf.signatures.LtvVerification.Level;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
@@ -45,7 +47,9 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,94 +62,152 @@ public class PdfPadesSigner {
     private static final Object LOCK_OBJECT = new Object();
     private static long increment = 0;
     
-    private ITSAClient tsaClient;
-    private IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+    private IOcspClient ocspClient = null;
     private ICrlClient crlClient;
     private int estimatedSize = 0;
     private String timestampSignatureName;
     private String temporaryDirectoryPath = null;
     private IExternalDigest externalDigest = new BouncyCastleDigest();
-    private final PdfSigner pdfSigner;
-    private final IExternalSignature externalSignature;
 
     private ByteArrayOutputStream tempOutputStream;
     private File tempFile;
     private final Set<File> tempFiles = new HashSet<>();
 
     /**
-     * Creates PdfPadesSigner instance using provided {@link PdfSigner} and {@link PrivateKey} parameters.
-     * <p>
-     * {@link PdfSigner} instance shall be newly created and not closed.
-     * <p>
-     * Same instance of {@link PdfPadesSigner} shall not be used for more than one signing operation.
-     * 
-     * @param pdfSigner {@link PdfSigner} to be used for main signing operation
-     * @param privateKey {@link PrivateKey} private key to be used for main signing operation
+     * Create an instance of PdfPadesSigner class. One instance shall be used for one signing operation.
      */
-    public PdfPadesSigner(PdfSigner pdfSigner, PrivateKey privateKey) {
-        this.pdfSigner = pdfSigner;
-        this.externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
-    }
-
-    /**
-     * Creates PdfPadesSigner instance using provided {@link PdfSigner} and {@link IExternalSignature} parameters.
-     * <p>
-     * {@link PdfSigner} instance shall be newly created and not closed.
-     * <p>
-     * Same instance of {@link PdfPadesSigner} shall not be used for more than one signing operation.
-     *
-     * @param pdfSigner {@link PdfSigner} to be used for main signing operation
-     * @param externalSignature {@link IExternalSignature} external signature to be used for main signing operation
-     */
-    public PdfPadesSigner(PdfSigner pdfSigner, IExternalSignature externalSignature) {
-        this.pdfSigner = pdfSigner;
-        this.externalSignature = externalSignature;
+    public PdfPadesSigner() {
     }
 
     /**
      * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-B Profile.
      * 
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
+     * @param externalSignature {@link IExternalSignature} instance to be used for main signing operation
      * 
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
      */
-    public void signWithBaselineBProfile(Certificate[] chain)
+    public void signWithBaselineBProfile(PdfSigner pdfSigner, Certificate[] chain, IExternalSignature externalSignature)
             throws GeneralSecurityException, IOException {
-        performSignDetached(chain, null);
+        performSignDetached(pdfSigner, externalSignature, chain, null);
+    }
+
+    /**
+     * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-B Profile.
+     *
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
+     * @param chain the chain of certificates to be used for signing operation
+     * @param privateKey {@link PrivateKey} instance to be used for main signing operation
+     *
+     * @throws GeneralSecurityException in case of signing related exceptions
+     * @throws IOException in case of files related exceptions
+     */
+    public void signWithBaselineBProfile(PdfSigner pdfSigner, Certificate[] chain, PrivateKey privateKey)
+            throws GeneralSecurityException, IOException {
+        IExternalSignature externalSignature =
+                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+        signWithBaselineBProfile(pdfSigner, chain, externalSignature);
     }
 
     /**
      * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-T Profile.
      *
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
+     * @param externalSignature {@link IExternalSignature} instance to be used for main signing operation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
      */
-    public void signWithBaselineTProfile(Certificate[] chain)
-            throws GeneralSecurityException, IOException {
-        createTsaClient(chain);
-        performSignDetached(chain, tsaClient);
+    public void signWithBaselineTProfile(PdfSigner pdfSigner, Certificate[] chain,
+            IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
+        performSignDetached(pdfSigner, externalSignature, chain, tsaClient);
+    }
+
+    /**
+     * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-T Profile.
+     *
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
+     * @param chain the chain of certificates to be used for signing operation
+     * @param privateKey {@link PrivateKey} instance to be used for main signing operation
+     *
+     * @throws GeneralSecurityException in case of signing related exceptions
+     * @throws IOException in case of files related exceptions
+     */
+    public void signWithBaselineTProfile(PdfSigner pdfSigner, Certificate[] chain, PrivateKey privateKey,
+            ITSAClient tsaClient) throws GeneralSecurityException, IOException {
+        IExternalSignature externalSignature =
+                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+        signWithBaselineTProfile(pdfSigner, chain, externalSignature, tsaClient);
     }
 
     /**
      * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-LT Profile.
      *
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
+     * @param externalSignature {@link IExternalSignature} instance to be used for main signing operation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
      */
-    public void signWithBaselineLTProfile(Certificate[] chain)
-            throws GeneralSecurityException, IOException {
-        createTsaClient(chain);
-        createCrlClient(chain);
+    public void signWithBaselineLTProfile(PdfSigner pdfSigner, Certificate[] chain,
+            IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
+        createRevocationClients(chain, true);
         try {
-            OutputStream originalOS = substituteOutputStream();
-            performSignDetached(chain, tsaClient);
-            performLtvVerification(createInputStream(), originalOS);
+            OutputStream originalOS = substituteOutputStream(pdfSigner);
+            performSignDetached(pdfSigner, externalSignature, chain, tsaClient);
+            try (InputStream inputStream = createInputStream();
+                    PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
+                            new PdfWriter(originalOS), new StampingProperties().useAppendMode())) {
+                performLtvVerification(pdfDocument, Collections.singletonList(pdfSigner.getFieldName()));
+            }
+        } finally {
+            deleteTempFiles();
+        }
+    }
+
+    /**
+     * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-LT Profile.
+     *
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
+     * @param chain the chain of certificates to be used for signing operation
+     * @param privateKey {@link PrivateKey} instance to be used for main signing operation
+     *
+     * @throws GeneralSecurityException in case of signing related exceptions
+     * @throws IOException in case of files related exceptions
+     */
+    public void signWithBaselineLTProfile(PdfSigner pdfSigner, Certificate[] chain, PrivateKey privateKey,
+            ITSAClient tsaClient) throws GeneralSecurityException, IOException {
+        IExternalSignature externalSignature =
+                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+        signWithBaselineLTProfile(pdfSigner, chain, externalSignature, tsaClient);
+    }
+
+    /**
+     * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-LTA Profile.
+     *
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
+     * @param chain the chain of certificates to be used for signing operation
+     * @param externalSignature {@link IExternalSignature} instance to be used for main signing operation
+     *
+     * @throws GeneralSecurityException in case of signing related exceptions
+     * @throws IOException in case of files related exceptions
+     */
+    public void signWithBaselineLTAProfile(PdfSigner pdfSigner, Certificate[] chain,
+            IExternalSignature externalSignature, ITSAClient tsaClient) throws IOException, GeneralSecurityException {
+        createRevocationClients(chain, true);
+        try {
+            OutputStream originalOS = substituteOutputStream(pdfSigner);
+            performSignDetached(pdfSigner, externalSignature, chain, tsaClient);
+            try (InputStream inputStream = createInputStream();
+                    PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
+                            new PdfWriter(createOutputStream()), new StampingProperties().useAppendMode())) {
+                performLtvVerification(pdfDocument, Collections.singletonList(pdfSigner.getFieldName()));
+                performTimestamping(pdfDocument, originalOS, tsaClient);
+            }
         } finally {
             deleteTempFiles();
         }
@@ -154,23 +216,61 @@ public class PdfPadesSigner {
     /**
      * Sign the document provided in {@link PdfSigner} instance with PaDES Baseline-LTA Profile.
      *
+     * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
+     * @param privateKey {@link PrivateKey} instance to be used for main signing operation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
      */
-    public void signWithBaselineLTAProfile(Certificate[] chain)
+    public void signWithBaselineLTAProfile(PdfSigner pdfSigner, Certificate[] chain, PrivateKey privateKey,
+            ITSAClient tsaClient) throws GeneralSecurityException, IOException {
+        IExternalSignature externalSignature =
+                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+        signWithBaselineLTAProfile(pdfSigner, chain, externalSignature, tsaClient);
+    }
+
+    /**
+     * Add revocation information for all the signatures which could be found in the provided document.
+     * Also add timestamp signature on top of that.
+     * 
+     * @param reader {@link PdfReader} instance to read original PDF file
+     * @param outputStream {@link OutputStream} output stream to write the resulting PDF file into
+     * @param tsaClient {@link ITSAClient} TSA Client to be used for timestamp signature creation
+     * 
+     * @throws IOException in case of files related exceptions
+     * @throws GeneralSecurityException in case of signing related exceptions
+     */
+    public void prolongSignatures(PdfReader reader, OutputStream outputStream, ITSAClient tsaClient)
             throws IOException, GeneralSecurityException {
-        createTsaClient(chain);
-        createCrlClient(chain);
-        try {
-            OutputStream originalOS = substituteOutputStream();
-            performSignDetached(chain, tsaClient);
-            performLtvVerification(createInputStream(), createOutputStream());
-            performTimestamping(originalOS);
-        } finally {
-            deleteTempFiles();
+        OutputStream documentOutputStream = tsaClient == null ? outputStream : createOutputStream();
+        try (PdfDocument pdfDocument = new PdfDocument(reader, new PdfWriter(documentOutputStream),
+                new StampingProperties().useAppendMode())) {
+            SignatureUtil signatureUtil = new SignatureUtil(pdfDocument);
+            List<String> signatureNames = signatureUtil.getSignatureNames();
+            if (signatureNames.isEmpty()) {
+                throw new PdfException(SignExceptionMessageConstant.NO_SIGNATURES_TO_PROLONG);
+            }
+            createRevocationClients(new Certificate[0], false);
+            performLtvVerification(pdfDocument, signatureNames);
+            if (tsaClient != null) {
+                performTimestamping(pdfDocument, outputStream, tsaClient);
+            }
         }
+    }
+
+    /**
+     * Add revocation information for all the signatures which could be found in the provided document.
+     *
+     * @param reader {@link PdfReader} instance to read original PDF file
+     * @param outputStream {@link OutputStream} output stream to write the resulting PDF file into
+     *
+     * @throws IOException in case of files related exceptions
+     * @throws GeneralSecurityException in case of signing related exceptions
+     */
+    public void prolongSignatures(PdfReader reader, OutputStream outputStream)
+            throws IOException, GeneralSecurityException {
+        prolongSignatures(reader, outputStream, null);
     }
 
     /**
@@ -190,7 +290,8 @@ public class PdfPadesSigner {
     /**
      * Set the name to be used for timestamp signature creation.
      * <p>
-     * This setter is only relevant if {@link PdfPadesSigner#signWithBaselineLTAProfile(Certificate[])} method is used.
+     * This setter is only relevant if
+     * {@link PdfPadesSigner#signWithBaselineLTAProfile} or {@link PdfPadesSigner#prolongSignatures} methods are used.
      * <p>
      * If none is set, randomly generated signature name will be used.
      * 
@@ -216,22 +317,6 @@ public class PdfPadesSigner {
      */
     public PdfPadesSigner setEstimatedSize(int estimatedSize) {
         this.estimatedSize = estimatedSize;
-        return this;
-    }
-
-    /**
-     * Set {@link ITSAClient} to be used for both timestamp signature and usual signature.
-     * <p>
-     * This setter is only relevant if Baseline-T Profile level or higher is used.
-     * <p>
-     * If none is set, there will be an attempt to create default TSA Client instance using the certificate chain.
-     * 
-     * @param tsaClient {@link ITSAClient} instance to be used for timestamping
-     * 
-     * @return same instance of {@link PdfPadesSigner}
-     */
-    public PdfPadesSigner setTsaClient(ITSAClient tsaClient) {
-        this.tsaClient = tsaClient;
         return this;
     }
 
@@ -281,16 +366,14 @@ public class PdfPadesSigner {
         return this;
     }
 
-    private void performTimestamping(OutputStream outputStream)
+    private void performTimestamping(PdfDocument document, OutputStream outputStream, ITSAClient tsaClient)
             throws IOException, GeneralSecurityException {
-        try (InputStream tempInputStream = createInputStream()) {
-            PdfSigner timestampSigner = new PdfSigner(
-                    new PdfReader(tempInputStream), outputStream, new StampingProperties().useAppendMode());
-            timestampSigner.timestamp(tsaClient, timestampSignatureName);
-        }
+        PdfSigner timestampSigner = new PdfSigner(document, outputStream, tempOutputStream, tempFile);
+        timestampSigner.timestamp(tsaClient, timestampSignatureName);
     }
 
-    private void performSignDetached(Certificate[] chain, ITSAClient tsaClient)
+    private void performSignDetached(PdfSigner pdfSigner, IExternalSignature externalSignature,
+            Certificate[] chain, ITSAClient tsaClient)
             throws GeneralSecurityException, IOException {
         try {
             pdfSigner.signDetached(externalDigest, externalSignature, chain, null, null, tsaClient,
@@ -300,22 +383,18 @@ public class PdfPadesSigner {
         }
     }
 
-    private void performLtvVerification(InputStream inputStream, OutputStream outputStream)
+    private void performLtvVerification(PdfDocument pdfDocument, List<String> signatureNames)
             throws IOException, GeneralSecurityException {
-        PdfReader tempReader = new PdfReader(inputStream);
-        try (PdfDocument tempDocument = new PdfDocument(tempReader, new PdfWriter(outputStream),
-                new StampingProperties().useAppendMode())) {
-            LtvVerification ltvVerification = new LtvVerification(tempDocument);
-            ltvVerification.addVerification(pdfSigner.fieldName, ocspClient, crlClient,
-                    LtvVerification.CertificateOption.SIGNING_CERTIFICATE, LtvVerification.Level.OCSP_CRL,
+        LtvVerification ltvVerification = new LtvVerification(pdfDocument);
+        for (String signatureName : signatureNames) {
+            ltvVerification.addVerification(signatureName, ocspClient, crlClient,
+                    CertificateOption.WHOLE_CHAIN, Level.OCSP_OPTIONAL_CRL,
                     LtvVerification.CertificateInclusion.YES);
-            ltvVerification.merge();
-        } finally {
-            inputStream.close();
         }
+        ltvVerification.merge();
     }
 
-    private OutputStream substituteOutputStream() throws FileNotFoundException {
+    private OutputStream substituteOutputStream(PdfSigner pdfSigner) throws FileNotFoundException {
         OutputStream originalOS = pdfSigner.originalOS;
         pdfSigner.originalOS = createOutputStream();
         return originalOS;
@@ -356,37 +435,20 @@ public class PdfPadesSigner {
         }
         return tempFile;
     }
-
-    private void createTsaClient(Certificate[] chain) {
-        if (tsaClient == null) {
-            tsaClient = getTsaClientFromChain(chain);
-        }
-        if (tsaClient == null) {
-            throw new PdfException(MessageFormatUtil.format(
-                    SignExceptionMessageConstant.DOCUMENT_CANNOT_BE_SIGNED, "TSA Client"));
-        }
-    }
     
-    private void createCrlClient(Certificate[] chain) {
+    private void createRevocationClients(Certificate[] chain, boolean clientsRequired) {
+        if (crlClient == null && ocspClient == null && clientsRequired) {
+            X509Certificate signingCertificate = (X509Certificate) chain[0];
+            if (CertificateUtil.getOCSPURL(signingCertificate) == null &&
+                    CertificateUtil.getCRLURL(signingCertificate) == null) {
+                throw new PdfException(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED);
+            }
+        }
         if (crlClient == null) {
             crlClient = new CrlClientOnline(chain);
-            if (((CrlClientOnline) crlClient).urls.isEmpty()) {
-                throw new PdfException(MessageFormatUtil.format(
-                        SignExceptionMessageConstant.DOCUMENT_CANNOT_BE_SIGNED, "CRL Client"));
-            }
         }
-    }
-
-    private static ITSAClient getTsaClientFromChain(Certificate[] chain) {
-        for (Certificate certificate : chain) {
-            if (certificate instanceof X509Certificate) {
-                X509Certificate x509Certificate = (X509Certificate) certificate;
-                String tsaUrl = CertificateUtil.getTSAURL(x509Certificate);
-                if (tsaUrl != null) {
-                    return new TSAClientBouncyCastle(tsaUrl);
-                }
-            }
+        if (ocspClient == null) {
+            ocspClient = new OcspClientBouncyCastle(null);
         }
-        return null;
     }
 }
