@@ -31,6 +31,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -79,7 +80,7 @@ public class PdfALongStringTest extends ExtendedITextTest {
             // this document contain a string which is longer than it is allowed
             // per specification. That is why conformance exception should be thrown
             Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.close());
-            Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
+            Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
         }
     }
 }

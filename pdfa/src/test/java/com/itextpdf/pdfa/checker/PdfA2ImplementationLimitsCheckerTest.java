@@ -33,6 +33,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -66,7 +67,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfObject(longString)
         );
-        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -88,7 +89,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkContentStream(stream)
         );
-        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -128,7 +129,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfObject(largeNumber)
         );
-        Assert.assertEquals(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
@@ -136,7 +137,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> checkColorspace(buildDeviceNColorspace(34))
         );
-        Assert.assertEquals(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED, e.getMessage());
     }
 
     @Test

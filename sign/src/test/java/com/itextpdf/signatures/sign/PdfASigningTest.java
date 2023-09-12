@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
@@ -162,7 +163,7 @@ public class PdfASigningTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () ->
                 signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
                         0, PdfSigner.CryptoStandard.CADES));
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
                         "Helvetica"), e.getMessage());
     }
 

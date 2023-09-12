@@ -52,6 +52,7 @@ import com.itextpdf.kernel.pdf.function.PdfType0Function;
 import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -99,7 +100,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfAConformanceException.class,
                     () -> canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f))
             );
-            Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.COLOR_SPACE_0_SHALL_HAVE_1_COMPONENTS,
+            Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.COLOR_SPACE_0_SHALL_HAVE_1_COMPONENTS,
                     PdfName.DefaultCMYK.getValue(), 4), e.getMessage());
         }
     }
@@ -154,7 +155,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> doc.close()
         );
-        Assert.assertEquals(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
                 e.getMessage());
     }
 
@@ -183,7 +184,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.fill();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
                 e.getMessage());
     }
 
@@ -211,7 +212,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
                 e.getMessage());
     }
 
@@ -238,7 +239,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
                 e.getMessage());
     }
 
@@ -268,7 +269,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
                 e.getMessage());
     }
 
@@ -291,7 +292,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
                 .restoreState();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT),
                 e.getMessage());
     }
 
@@ -340,7 +341,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         // We set fill color but stroked so the exception should be thrown
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.IF_DEVICE_RGB_CMYK_GRAY_USED_IN_FILE_THAT_FILE_SHALL_CONTAIN_PDFA_OUTPUTINTENT_OR_DEFAULT_RGB_CMYK_GRAY_IN_USAGE_CONTEXT),
                 e.getMessage());
     }
 
@@ -357,7 +358,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> canvas.setExtGState(new PdfExtGState().put(PdfName.HTP, new PdfName("Test")))
         );
-        Assert.assertEquals(PdfAConformanceException.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_HTP_KEY, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.AN_EXTGSTATE_DICTIONARY_SHALL_NOT_CONTAIN_THE_HTP_KEY, e.getMessage());
         canvas.rectangle(30, 30, 100, 100).fill();
 
         doc.close();
@@ -381,7 +382,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfAConformanceException.class,
                     () -> canvas.setExtGState(new PdfExtGState().setHalftone(dict))
             );
-            Assert.assertEquals(PdfAConformanceException.HALFTONES_SHALL_NOT_CONTAIN_HALFTONENAME, e.getMessage());
+            Assert.assertEquals(PdfaExceptionMessageConstant.HALFTONES_SHALL_NOT_CONTAIN_HALFTONENAME, e.getMessage());
         }
     }
 
@@ -398,7 +399,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.addImageAt(ImageDataFactory.create(sourceFolder + "jpeg2000/p0_01.j2k"), 300, 300, false);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.ONLY_JPX_BASELINE_SET_OF_FEATURES_SHALL_BE_USED, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.ONLY_JPX_BASELINE_SET_OF_FEATURES_SHALL_BE_USED, e.getMessage());
     }
 
     @Test
@@ -414,7 +415,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.addImageAt(ImageDataFactory.create(sourceFolder + "jpeg2000/file5.jp2"), 300, 300, false);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD,
+        Assert.assertEquals(PdfaExceptionMessageConstant.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD,
                 e.getMessage());
     }
 
@@ -431,7 +432,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.addImageAt(ImageDataFactory.create(sourceFolder + "jpeg2000/file7.jp2"), 300, 300, false);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD,
+        Assert.assertEquals(PdfaExceptionMessageConstant.EXACTLY_ONE_COLOUR_SPACE_SPECIFICATION_SHALL_HAVE_THE_VALUE_0X01_IN_THE_APPROX_FIELD,
                 e.getMessage());
     }
 
@@ -489,7 +490,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         canvas.restoreState();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
                 e.getMessage());
     }
 
@@ -541,7 +542,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
                     () -> canvas.setExtGState(new PdfExtGState().setBlendMode(new PdfName("UnknownBlendMode")))
             );
             Assert.assertEquals(
-                    PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY,
+                    PdfaExceptionMessageConstant.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY,
                     e.getMessage());
         }
 

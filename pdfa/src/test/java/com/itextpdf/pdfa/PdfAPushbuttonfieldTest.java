@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import org.junit.Assert;
@@ -89,7 +90,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -123,7 +124,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -157,7 +158,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 }

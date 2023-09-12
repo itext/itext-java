@@ -146,7 +146,7 @@ public class PdfADocument extends PdfDocument {
                 isPdfADocument = false;
             } else {
                 throw new PdfAConformanceException(
-                        PdfAConformanceException.
+                        PdfaExceptionMessageConstant.
                                 DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
             }
         }

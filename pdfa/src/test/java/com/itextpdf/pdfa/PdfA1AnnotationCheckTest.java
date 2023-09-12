@@ -42,6 +42,7 @@ import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -84,7 +85,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.FileAttachment.getValue()), e.getMessage());
     }
 
@@ -103,7 +104,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_CA_KEY_WITH_A_VALUE_OTHER_THAN_1,
+        Assert.assertEquals(PdfaExceptionMessageConstant.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_CA_KEY_WITH_A_VALUE_OTHER_THAN_1,
                 e.getMessage());
     }
 
@@ -123,7 +124,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> doc.close()
         );
-        Assert.assertEquals(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0,
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0,
                 e.getMessage());
     }
 
@@ -142,7 +143,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0,
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0,
                 e.getMessage());
     }
 
@@ -164,7 +165,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE,
+        Assert.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE,
                 e.getMessage());
     }
 
@@ -184,7 +185,7 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE,
+        Assert.assertEquals(PdfaExceptionMessageConstant.APPEARANCE_DICTIONARY_SHALL_CONTAIN_ONLY_THE_N_KEY_WITH_STREAM_VALUE,
                 e.getMessage());
     }
 

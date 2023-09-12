@@ -30,7 +30,9 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
@@ -39,6 +41,7 @@ import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -289,6 +292,44 @@ public class PdfA4Checker extends PdfA3Checker {
 
     }
 
+    @Override
+    public void checkExtGState(CanvasGraphicsState extGState, PdfStream contentStream) {
+        super.checkExtGState(extGState, contentStream);
+        if (extGState.getHalftone() instanceof PdfDictionary) {
+            PdfDictionary halftoneDict = (PdfDictionary) extGState.getHalftone();
+            if (halftoneDict.containsKey(PdfName.TransferFunction)) {
+                throw new PdfAConformanceException(PdfaExceptionMessageConstant.ALL_HALFTONES_CONTAINING_TRANSFER_FUNCTION_SHALL_HAVE_HALFTONETYPE_5);
+            }
+            int halftoneType = halftoneDict.getAsInt(PdfName.HalftoneType).intValue();
+            if (halftoneType == 5) {
+                for (Map.Entry<PdfName, PdfObject> entry : halftoneDict.entrySet()) {
+                    //see ISO_32000_2;2020 table 132
+                    if (PdfName.Type.equals(entry.getKey()) || PdfName.HalftoneType.equals(entry.getKey()) || PdfName.HalftoneName.equals(entry.getKey())) {
+                        continue;
+                    }
+                    if (entry.getValue() instanceof PdfDictionary && isCMYKColorant(entry.getKey()) && entry.getValue() instanceof PdfDictionary && ((PdfDictionary)entry.getValue()).containsKey(PdfName.TransferFunction)) {
+                        throw new PdfAConformanceException(PdfaExceptionMessageConstant.ALL_HALFTONES_CONTAINING_TRANSFER_FUNCTION_SHALL_HAVE_HALFTONETYPE_5);
+                    }
+                }
+            }
+        }
+    }
+    @Override
+    protected void checkFormXObject(PdfStream form) {
+        if (isAlreadyChecked(form)) {
+            return;
+        }
+        if (form.containsKey(PdfName.OPI)) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_OPI_KEY);
+        }
+        if (form.containsKey(PdfName.Ref)) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_REF_KEY);
+        }
+        checkTransparencyGroup(form, null);
+        checkResources(form.getAsDictionary(PdfName.Resources));
+        checkContentStream(form);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -401,5 +442,10 @@ public class PdfA4Checker extends PdfA3Checker {
         if (!allowedBlendModes4.contains(blendMode)) {
             throw new PdfAConformanceException(PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
         }
+    }
+
+    private boolean isCMYKColorant(PdfName colourant) {
+        return PdfName.Cyan.equals(colourant) || PdfName.Magenta.equals(colourant)
+                || PdfName.Yellow.equals(colourant) || PdfName.Black.equals(colourant);
     }
 }

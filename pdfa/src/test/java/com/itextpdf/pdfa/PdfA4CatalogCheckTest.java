@@ -23,18 +23,26 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
@@ -46,6 +54,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,7 +115,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.KEYWORD_ENCRYPT_SHALL_NOT_BE_USED_IN_THE_TRAILER_DICTIONARY,
+        Assert.assertEquals(PdfaExceptionMessageConstant.KEYWORD_ENCRYPT_SHALL_NOT_BE_USED_IN_THE_TRAILER_DICTIONARY,
                 e.getMessage());
     }
 
@@ -124,7 +133,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         doc.addNewPage();
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.KEYWORD_ENCRYPT_SHALL_NOT_BE_USED_IN_THE_TRAILER_DICTIONARY,
+        Assert.assertEquals(PdfaExceptionMessageConstant.KEYWORD_ENCRYPT_SHALL_NOT_BE_USED_IN_THE_TRAILER_DICTIONARY,
                 e.getMessage());
     }
 
@@ -232,5 +241,69 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.close());
         Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION, 2),
                 e.getMessage());
+    }
+
+    @Test
+    public void checkReferenceXObject() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        doc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(100, 100));
+        xObject.put(PdfName.Ref, new PdfString("test.pdf"));
+        PdfCanvas xObjCanvas = new PdfCanvas(xObject, doc);
+        xObjCanvas.rectangle(30, 30, 10, 10).fill();
+        canvas.addXObjectFittedIntoRectangle(xObject, new Rectangle(300, 300));
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_REF_KEY,
+                e.getMessage());
+    }
+
+    @Test
+    public void checkOpiInXObject() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        doc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(100, 100));
+        xObject.put(PdfName.OPI, new PdfString("test.pdf"));
+        PdfCanvas xObjCanvas = new PdfCanvas(xObject, doc);
+        xObjCanvas.rectangle(30, 30, 10, 10).fill();
+        canvas.addXObjectFittedIntoRectangle(xObject, new Rectangle(300, 300));
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_OPI_KEY,
+                e.getMessage());
+    }
+
+    @Test
+    public void validFormXObjectTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "pdfA4_catalogCheck08.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfA4CatalogCheckTest/cmp_pdfA4_catalogCheck08.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        doc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(doc.getLastPage());
+
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(100, 100));
+        xObject.getPdfObject().put(PdfName.Subtype2, PdfName.PS);
+        PdfCanvas xObjCanvas = new PdfCanvas(xObject, doc);
+        xObjCanvas.rectangle(30, 30, 10, 10).fill();
+        canvas.addXObjectFittedIntoRectangle(xObject, new Rectangle(300, 300));
+
+        doc.close();
+
+       Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 }

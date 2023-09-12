@@ -244,6 +244,10 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName DefaultCMYK = createDirectName("DefaultCMYK");
 
     public static final PdfName CMYK = createDirectName("CMYK");
+    public static final PdfName Cyan = createDirectName("Cyan");
+    public static final PdfName Magenta = createDirectName("Magenta");
+    public static final PdfName Yellow = createDirectName("Yellow");
+    public static final PdfName Black = createDirectName("Black");
     public static final PdfName DefaultCryptFilter = createDirectName("DefaultCryptFilter");
     public static final PdfName DefaultGray = createDirectName("DefaultGray");
     public static final PdfName DefaultRGB = createDirectName("DefaultRGB");
@@ -833,6 +837,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName ToUnicode = createDirectName("ToUnicode");
     public static final PdfName TR = createDirectName("TR");
     public static final PdfName TR2 = createDirectName("TR2");
+    public static final PdfName TransferFunction = createDirectName("TransferFunction");
     public static final PdfName Trans = createDirectName("Trans");
     public static final PdfName TransformMethod = createDirectName("TransformMethod");
     public static final PdfName TransformParams = createDirectName("TransformParams");

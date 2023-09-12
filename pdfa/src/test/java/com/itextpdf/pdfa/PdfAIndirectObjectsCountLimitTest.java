@@ -35,6 +35,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -101,7 +102,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
             // limit per "mock specification" conformance exception should be thrown as the limit
             // is exceeded
             Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.close());
-            Assert.assertEquals(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
+            Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
         }
     }
 
@@ -125,7 +126,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
             // during closing of pdfa object exception will be thrown as new document will contain
             // 12 indirect objects and limit per "mock specification" conformance will be exceeded
             Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfa.close());
-            Assert.assertEquals(PdfAConformanceException.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
+            Assert.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_NUMBER_OF_INDIRECT_OBJECTS_EXCEEDED, e.getMessage());
         }
     }
 

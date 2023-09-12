@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
@@ -105,7 +106,7 @@ public class PdfAFontTest extends ExtendedITextTest {
                 .restoreState();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "FreeSans"),
                 e.getMessage());
     }
 
@@ -152,7 +153,7 @@ public class PdfAFontTest extends ExtendedITextTest {
                 .restoreState();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 e.getMessage());
     }
 
@@ -275,7 +276,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_1B)
         );
-        Assert.assertEquals(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY,
+        Assert.assertEquals(PdfaExceptionMessageConstant.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY,
                 e.getMessage());
     }
 
@@ -304,7 +305,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test02.pdf", "FreeSans.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_2B)
         );
-        Assert.assertEquals(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING,
+        Assert.assertEquals(PdfaExceptionMessageConstant.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING,
                 e.getMessage());
     }
 

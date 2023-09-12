@@ -83,7 +83,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.FileAttachment.getValue()), e.getMessage());
     }
 
@@ -97,7 +97,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.Sound.getValue()), e.getMessage());
     }
 
@@ -111,7 +111,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName._3D.getValue()), e.getMessage());
     }
 
@@ -142,7 +142,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.FileAttachment.getValue()), e.getMessage());
     }
 
@@ -156,7 +156,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.Sound.getValue()), e.getMessage());
     }
 
@@ -223,7 +223,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName.Sound.getValue()), e.getMessage());
     }
 
@@ -239,7 +239,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ANNOTATION_TYPE_0_IS_NOT_PERMITTED,
                 PdfName._3D.getValue()), e.getMessage());
     }
 
