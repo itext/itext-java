@@ -34,7 +34,6 @@ import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
-import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
@@ -130,7 +129,7 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
         }
     }
 
-    //The width based on cols of textarea and size of input doesn't affected by box sizing, so we emulate it here
+    // The width based on cols of textarea and size of input isn't affected by box sizing, so we emulate it here.
     float updateHtmlColsSizeBasedWidth(float width) {
         if (BoxSizingPropertyValue.BORDER_BOX == this.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING)) {
             Rectangle dummy = new Rectangle(width, 0);
@@ -168,6 +167,23 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
             int visibleLinesNumber = (int) Math.ceil(height / averageLineHeight);
             adjustNumberOfContentLines(lines, bBox, visibleLinesNumber, height);
         }
+    }
+
+    /**
+     * Gets the value of the lowest bottom coordinate for all field's children recursively.
+     *
+     * @return the lowest child bottom.
+     */
+    float getLowestChildBottom(IRenderer renderer, float value) {
+        float lowestChildBottom = value;
+        for (IRenderer child : renderer.getChildRenderers()) {
+            lowestChildBottom = getLowestChildBottom(child, lowestChildBottom);
+            if (child.getOccupiedArea() != null &&
+                    child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
+                lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
+            }
+        }
+        return lowestChildBottom;
     }
 
     private static void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox,

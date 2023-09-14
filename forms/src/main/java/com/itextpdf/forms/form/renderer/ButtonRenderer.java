@@ -315,21 +315,4 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         bBox.setHeight(height);
         flatRenderer.move(0, -dy);
     }
-
-    /**
-     * Gets the value of the lowest bottom coordinate for all button children recursively.
-     *
-     * @return the lowest child bottom.
-     */
-    private float getLowestChildBottom(IRenderer renderer, float value) {
-        float lowestChildBottom = value;
-        for (IRenderer child : renderer.getChildRenderers()) {
-            lowestChildBottom = getLowestChildBottom(child, lowestChildBottom);
-            if (child.getOccupiedArea() != null &&
-                    child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
-                lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
-            }
-        }
-        return lowestChildBottom;
-    }
 }

@@ -216,6 +216,17 @@ public final class DateTimeUtil {
         return tz.getOffset(date.getTime());
     }
 
+    /**
+     * Converts {@link Calendar} date to string of "yyyy.MM.dd HH:mm:ss z" format.
+     *
+     * @param date to convert.
+     *
+     * @return string date value.
+     */
+    public static String dateToString(Calendar date) {
+        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(date.getTime());
+    }
+
     private static DateFormat initParserSDF(String pattern) {
         final SimpleDateFormat parserSDF = new SimpleDateFormat(pattern);
         parserSDF.setCalendar(new GregorianCalendar());

@@ -404,8 +404,6 @@ public class PdfSigner {
                     throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_ALREADY_SIGNED);
                 }
 
-                appearance.setFieldName(fieldName);
-
                 List<PdfWidgetAnnotation> widgets = field.getWidgets();
                 if (widgets.size() > 0) {
                     PdfWidgetAnnotation widget = widgets.get(0);
@@ -420,6 +418,7 @@ public class PdfSigner {
                 }
             }
 
+            appearance.setFieldName(fieldName);
             this.fieldName = fieldName;
         }
     }
@@ -1002,14 +1001,8 @@ public class PdfSigner {
         flags |= PdfAnnotation.LOCKED;
         sigField.put(PdfName.F, new PdfNumber(flags));
 
-        if (appearance.isInvisible()) {
-            // According to the spec, appearance stream is not required if the width and height of the rectangle are 0
-            sigField.remove(PdfName.AP);
-        } else {
-            PdfDictionary ap = new PdfDictionary();
-            ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
-            sigField.put(PdfName.AP, ap);
-        }
+        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getModelElement());
+        sigField.regenerateField();
 
         sigField.setModified();
 
@@ -1044,18 +1037,8 @@ public class PdfSigner {
         int pagen = appearance.getPageNumber();
         widget.setPage(document.getPage(pagen));
 
-        if (appearance.isInvisible()) {
-            // According to the spec, appearance stream is not required if the width and height of the rectangle are 0
-            widget.remove(PdfName.AP);
-        } else {
-            PdfDictionary ap = widget.getAppearanceDictionary();
-            if (ap == null) {
-                ap = new PdfDictionary();
-                widget.put(PdfName.AP, ap);
-            }
-            ap.put(PdfName.N, appearance.getAppearance().getPdfObject());
-        }
-
+        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getModelElement());
+        sigField.regenerateField();
         acroForm.addField(sigField, document.getPage(pagen));
 
         if (acroForm.getPdfObject().isIndirect()) {

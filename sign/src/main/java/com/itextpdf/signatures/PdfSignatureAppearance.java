@@ -22,30 +22,21 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
-import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.form.element.SigField;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.layout.LayoutArea;
-import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.renderer.IRenderer;
 
-import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.Calendar;
 
 /**
  * Provides convenient methods to make a signature appearance. Use it in conjunction with {@link PdfSigner}.
@@ -53,19 +44,14 @@ import java.util.Calendar;
 public class PdfSignatureAppearance {
 
     /**
-     * Extra space at the top.
-     */
-    private static final float TOP_SECTION = 0.3f;
-
-    /**
-     * Margin for the content inside the signature rectangle.
-     */
-    private static final float MARGIN = 2;
-
-    /**
      * The document to be signed.
      */
-    private PdfDocument document;
+    private final PdfDocument document;
+
+    /**
+     * Signature model element.
+     */
+    private SigField modelElement = new SigField("");
 
     /**
      * The page where the signature will appear.
@@ -84,84 +70,14 @@ public class PdfSignatureAppearance {
     private Rectangle pageRect;
 
     /**
-     * Zero level of the signature appearance.
-     */
-    private PdfFormXObject n0;
-
-    /**
-     * Second level of the signature appearance.
-     */
-    private PdfFormXObject n2;
-
-    /**
-     * Form containing all layers drawn on top of each other.
-     */
-    private PdfFormXObject topLayer;
-
-    /**
      * The rendering mode chosen for visible signatures.
      */
     private RenderingMode renderingMode = RenderingMode.DESCRIPTION;
 
     /**
-     * The reason for signing.
-     */
-    private String reason = "";
-
-    /**
-     * The caption for the reason for signing.
-     */
-    private String reasonCaption = "Reason: ";
-
-    /**
-     * Holds value of property location.
-     */
-    private String location = "";
-
-    /**
-     * The caption for the location of signing.
-     */
-    private String locationCaption = "Location: ";
-
-    /**
-     * Holds value of the application that creates the signature.
-     */
-    private String signatureCreator = "";
-
-    /**
-     * The contact name of the signer.
-     */
-    private String contact = "";
-
-    /**
-     * Holds value of property signDate.
-     */
-    private Calendar signDate;
-
-    /**
      * The signing certificate.
      */
     private Certificate signCertificate;
-
-    /**
-     * The image that needs to be used for a visible signature.
-     */
-    private ImageData signatureGraphic = null;
-
-    /**
-     * A background image for the text in layer 2.
-     */
-    private ImageData image;
-
-    /**
-     * The scaling to be applied to the background image.
-     */
-    private float imageScale;
-
-    /**
-     * The text that goes in Layer 2 of the signature appearance.
-     */
-    private String layer2Text;
 
     /**
      * Font for the text in Layer 2.
@@ -179,15 +95,14 @@ public class PdfSignatureAppearance {
     private Color layer2FontColor;
 
     /**
-     * Indicates the field to be signed if it is already presented in the document
-     * (signing existing field). Required for {@link #reuseAppearance} option.
+     * Zero level of the signature appearance.
      */
-    private String fieldName;
+    private PdfFormXObject n0;
 
     /**
-     * Indicates if we need to reuse the existing appearance as layer 0.
+     * Second level of the signature appearance.
      */
-    private boolean reuseAppearance = false;
+    private PdfFormXObject n2;
 
     /**
      * Creates a PdfSignatureAppearance.
@@ -270,7 +185,6 @@ public class PdfSignatureAppearance {
             n0 = new PdfFormXObject(rect);
             n0.makeIndirect(document);
         }
-
         return n0;
     }
 
@@ -288,7 +202,6 @@ public class PdfSignatureAppearance {
             n2 = new PdfFormXObject(rect);
             n2.makeIndirect(document);
         }
-
         return n2;
     }
 
@@ -310,6 +223,20 @@ public class PdfSignatureAppearance {
      */
     public PdfSignatureAppearance setRenderingMode(RenderingMode renderingMode) {
         this.renderingMode = renderingMode;
+        switch (renderingMode) {
+            case NAME_AND_DESCRIPTION:
+                modelElement.setRenderingMode(SigField.RenderingMode.NAME_AND_DESCRIPTION);
+                break;
+            case GRAPHIC_AND_DESCRIPTION:
+                modelElement.setRenderingMode(SigField.RenderingMode.GRAPHIC_AND_DESCRIPTION);
+                break;
+            case GRAPHIC:
+                modelElement.setRenderingMode(SigField.RenderingMode.GRAPHIC);
+                break;
+            default:
+                modelElement.setRenderingMode(SigField.RenderingMode.DESCRIPTION);
+                break;
+        }
         return this;
     }
 
@@ -319,7 +246,7 @@ public class PdfSignatureAppearance {
      * @return reason for signing
      */
     public String getReason() {
-        return this.reason;
+        return modelElement.getReason();
     }
 
     /**
@@ -330,7 +257,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setReason(String reason) {
-        this.reason = reason;
+        modelElement.setReason(reason);
         return this;
     }
 
@@ -342,7 +269,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setReasonCaption(String reasonCaption) {
-        this.reasonCaption = reasonCaption;
+        modelElement.setReasonCaption(reasonCaption);
         return this;
     }
 
@@ -352,7 +279,7 @@ public class PdfSignatureAppearance {
      * @return signing location
      */
     public String getLocation() {
-        return this.location;
+        return modelElement.getLocation();
     }
 
     /**
@@ -363,7 +290,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLocation(String location) {
-        this.location = location;
+        modelElement.setLocation(location);
         return this;
     }
 
@@ -375,7 +302,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLocationCaption(String locationCaption) {
-        this.locationCaption = locationCaption;
+        modelElement.setLocationCaption(locationCaption);
         return this;
     }
 
@@ -385,7 +312,7 @@ public class PdfSignatureAppearance {
      * @return The signature creator
      */
     public String getSignatureCreator(){
-        return signatureCreator;
+        return modelElement.getSignatureCreator();
     }
 
     /**
@@ -395,8 +322,8 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
-    public PdfSignatureAppearance setSignatureCreator(String signatureCreator){
-        this.signatureCreator = signatureCreator;
+    public PdfSignatureAppearance setSignatureCreator(String signatureCreator) {
+        modelElement.setSignatureCreator(signatureCreator);
         return this;
     }
 
@@ -406,7 +333,7 @@ public class PdfSignatureAppearance {
      * @return The signing contact
      */
     public String getContact() {
-        return this.contact;
+        return modelElement.getContact();
     }
 
     /**
@@ -417,7 +344,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setContact(String contact) {
-        this.contact = contact;
+        modelElement.setContact(contact);
         return this;
     }
 
@@ -431,6 +358,17 @@ public class PdfSignatureAppearance {
      */
     public PdfSignatureAppearance setCertificate(Certificate signCertificate) {
         this.signCertificate = signCertificate;
+        String signedBy =
+                CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("CN");
+
+        if (signedBy == null) {
+            signedBy = CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("E");
+        }
+
+        if (signedBy == null) {
+            signedBy = "";
+        }
+        modelElement.setSignedBy(signedBy);
         return this;
     }
 
@@ -449,7 +387,7 @@ public class PdfSignatureAppearance {
      * @return the image
      */
     public ImageData getSignatureGraphic() {
-        return signatureGraphic;
+        return modelElement.getSignatureGraphic();
     }
 
     /**
@@ -460,7 +398,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setSignatureGraphic(ImageData signatureGraphic) {
-        this.signatureGraphic = signatureGraphic;
+        modelElement.setSignatureGraphic(signatureGraphic);
         return this;
     }
 
@@ -472,7 +410,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setReuseAppearance(boolean reuseAppearance) {
-        this.reuseAppearance = reuseAppearance;
+        modelElement.setReuseAppearance(reuseAppearance);
         return this;
     }
 
@@ -484,18 +422,18 @@ public class PdfSignatureAppearance {
      * @return the background image for the layer 2
      */
     public ImageData getImage() {
-        return this.image;
+        return modelElement.getImage();
     }
 
     /**
-     * Sets the background image for the layer 2.
+     * Sets the background image for the text in the layer 2.
      *
      * @param image the background image for the layer 2
      *
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setImage(ImageData image) {
-        this.image = image;
+        modelElement.setImage(image);
         return this;
     }
 
@@ -505,7 +443,7 @@ public class PdfSignatureAppearance {
      * @return the scaling to be applied to the background image
      */
     public float getImageScale() {
-        return this.imageScale;
+        return modelElement.getImageScale();
     }
 
     /**
@@ -519,7 +457,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setImageScale(float imageScale) {
-        this.imageScale = imageScale;
+        modelElement.setImageScale(imageScale);
         return this;
     }
 
@@ -532,7 +470,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     public PdfSignatureAppearance setLayer2Text(String text) {
-        layer2Text = text;
+        modelElement.setDescription(text);
         return this;
     }
 
@@ -542,7 +480,7 @@ public class PdfSignatureAppearance {
      * @return the signature text identifying the signer
      */
     public String getLayer2Text() {
-        return layer2Text;
+        return modelElement.getDescription(false);
     }
 
     /**
@@ -563,6 +501,7 @@ public class PdfSignatureAppearance {
      */
     public PdfSignatureAppearance setLayer2Font(PdfFont layer2Font) {
         this.layer2Font = layer2Font;
+        modelElement.setFont(layer2Font);
         return this;
     }
 
@@ -575,6 +514,7 @@ public class PdfSignatureAppearance {
      */
     public PdfSignatureAppearance setLayer2FontSize(float fontSize) {
         this.layer2FontSize = fontSize;
+        modelElement.setFontSize(fontSize);
         return this;
     }
 
@@ -596,6 +536,7 @@ public class PdfSignatureAppearance {
      */
     public PdfSignatureAppearance setLayer2FontColor(Color color) {
         this.layer2FontColor = color;
+        modelElement.setFontColor(color);
         return this;
     }
 
@@ -606,6 +547,26 @@ public class PdfSignatureAppearance {
      */
     public Color getLayer2FontColor() {
         return layer2FontColor;
+    }
+
+    /**
+     * Gets the signature layout element.
+     *
+     * @return the signature layout element.
+     */
+    public SigField getModelElement() {
+        modelElement.setBackgroundLayer(n0);
+        modelElement.setSignatureAppearanceLayer(n2);
+        return modelElement;
+    }
+
+    /**
+     * Sets the signature layout element.
+     *
+     * @param modelElement the signature layout element.
+     */
+    public void setModelElement(SigField modelElement) {
+        this.modelElement = modelElement;
     }
 
     /**
@@ -626,240 +587,20 @@ public class PdfSignatureAppearance {
      * Signature Appearances</a>
      */
     protected PdfFormXObject getAppearance() throws IOException {
-        PdfCanvas canvas;
-        if (isInvisible()) {
-            PdfFormXObject appearance = new PdfFormXObject(new Rectangle(0, 0));
-            appearance.makeIndirect(document);
-            return appearance;
+        SignatureUtil signatureUtil = new SignatureUtil(document);
+        String name = modelElement.getId();
+        boolean fieldExist = signatureUtil.doesSignatureFieldExist(name);
+        PdfSignatureFormField sigField;
+        if (fieldExist) {
+            sigField = (PdfSignatureFormField) PdfFormCreator.getAcroForm(document, true).getField(name);
+        } else {
+            sigField = new SignatureFormFieldBuilder(document, modelElement.getId())
+                    .setWidgetRectangle(rect).createSignature();
         }
-
-        if (n0 == null && !reuseAppearance) {
-            createBlankN0();
-        }
-
-        if (n2 == null) {
-            n2 = new PdfFormXObject(rect);
-            n2.makeIndirect(document);
-
-            canvas = new PdfCanvas(n2, document);
-            int rotation = document.getPage(page).getRotation();
-
-            if (rotation == 90) {
-                canvas.concatMatrix(0, 1, -1, 0, rect.getWidth(), 0);
-            } else if (rotation == 180) {
-                canvas.concatMatrix(-1, 0, 0, -1, rect.getWidth(), rect.getHeight());
-            } else if (rotation == 270) {
-                canvas.concatMatrix(0, -1, 1, 0, 0, rect.getHeight());
-            }
-
-            Rectangle rotatedRect = rotateRectangle(this.rect, document.getPage(page).getRotation());
-
-            String text = layer2Text;
-            if (null == text) {
-                text = generateLayer2Text();
-            }
-
-            if (image != null) {
-                if (imageScale == 0) {
-                    canvas = new PdfCanvas(n2, document);
-                    canvas.addImageWithTransformationMatrix(image, rotatedRect.getWidth(), 0, 0,
-                            rotatedRect.getHeight(), 0, 0);
-                } else {
-                    float usableScale = imageScale;
-
-                    if (imageScale < 0) {
-                        usableScale = Math.min(rotatedRect.getWidth() / image.getWidth(),
-                                rotatedRect.getHeight() / image.getHeight());
-                    }
-
-                    float w = image.getWidth() * usableScale;
-                    float h = image.getHeight() * usableScale;
-                    float x = (rotatedRect.getWidth() - w) / 2;
-                    float y = (rotatedRect.getHeight() - h) / 2;
-
-                    canvas = new PdfCanvas(n2, document);
-                    canvas.addImageWithTransformationMatrix(image, w, 0, 0, h, x, y);
-                }
-            }
-
-            PdfFont font;
-
-            if (layer2Font == null) {
-                font = PdfFontFactory.createFont();
-            } else {
-                font = layer2Font;
-            }
-
-            Rectangle dataRect = null;
-            Rectangle signatureRect = null;
-
-            if (renderingMode == RenderingMode.NAME_AND_DESCRIPTION ||
-                renderingMode == RenderingMode.GRAPHIC_AND_DESCRIPTION && this.signatureGraphic != null) {
-                if (rotatedRect.getHeight() > rotatedRect.getWidth()) {
-                    signatureRect = new Rectangle(
-                            MARGIN,
-                            rotatedRect.getHeight() / 2,
-                            rotatedRect.getWidth() - 2 * MARGIN,
-                            rotatedRect.getHeight() / 2);
-                    dataRect = new Rectangle(
-                            MARGIN,
-                            MARGIN,
-                            rotatedRect.getWidth() - 2 * MARGIN,
-                            rotatedRect.getHeight() / 2 - 2 * MARGIN);
-                } else {
-                    // origin is the bottom-left
-                    signatureRect = new Rectangle(
-                            MARGIN,
-                            MARGIN,
-                            rotatedRect.getWidth() / 2 - 2 * MARGIN,
-                            rotatedRect.getHeight() - 2 * MARGIN);
-                    dataRect = new Rectangle(
-                            rotatedRect.getWidth() / 2 + MARGIN / 2,
-                            MARGIN,
-                            rotatedRect.getWidth() / 2 - MARGIN,
-                            rotatedRect.getHeight() - 2 * MARGIN);
-                }
-            } else if (renderingMode == RenderingMode.GRAPHIC) {
-                if (signatureGraphic == null) {
-                    throw new IllegalStateException("A signature image must be present when rendering mode is graphic. Use setSignatureGraphic()");
-                }
-
-                signatureRect = new Rectangle(
-                        MARGIN,
-                        MARGIN,
-                        rotatedRect.getWidth() - 2 * MARGIN, // take all space available
-                        rotatedRect.getHeight() - 2 * MARGIN);
-            } else {
-                dataRect = new Rectangle(
-                        MARGIN,
-                        MARGIN,
-                        rotatedRect.getWidth() - 2 * MARGIN,
-                        rotatedRect.getHeight() * (1 - TOP_SECTION) - 2 * MARGIN);
-            }
-
-            switch (renderingMode) {
-                case NAME_AND_DESCRIPTION:
-                    String signedBy =
-                            CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("CN");
-
-                    if (signedBy == null) {
-                        signedBy = CertificateInfo.getSubjectFields((X509Certificate) signCertificate).getField("E");
-                    }
-
-                    if (signedBy == null) {
-                        signedBy = "";
-                    }
-
-                    addTextToCanvas(signedBy, font, signatureRect);
-                    break;
-                case GRAPHIC_AND_DESCRIPTION: {
-                    if (signatureGraphic == null) {
-                        throw new IllegalStateException("A signature image must be present when rendering mode is graphic and description. Use setSignatureGraphic()");
-                    }
-
-                    float imgWidth = signatureGraphic.getWidth();
-
-                    if (imgWidth == 0) {
-                        imgWidth = signatureRect.getWidth();
-                    }
-
-                    float imgHeight = signatureGraphic.getHeight();
-
-                    if (imgHeight == 0) {
-                        imgHeight = signatureRect.getHeight();
-                    }
-
-                    float multiplierH = signatureRect.getWidth() / signatureGraphic.getWidth();
-                    float multiplierW = signatureRect.getHeight() / signatureGraphic.getHeight();
-                    float multiplier = Math.min(multiplierH, multiplierW);
-                    imgWidth *= multiplier;
-                    imgHeight *= multiplier;
-
-                    float x = signatureRect.getRight() - imgWidth;
-                    float y = signatureRect.getBottom() + (signatureRect.getHeight() - imgHeight) / 2;
-
-                    canvas = new PdfCanvas(n2, document);
-                    canvas.addImageWithTransformationMatrix(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
-                    break;
-                }
-                case GRAPHIC:
-                    float imgWidth = signatureGraphic.getWidth();
-
-                    if (imgWidth == 0) {
-                        imgWidth = signatureRect.getWidth();
-                    }
-
-                    float imgHeight = signatureGraphic.getHeight();
-
-                    if (imgHeight == 0) {
-                        imgHeight = signatureRect.getHeight();
-                    }
-
-                    float multiplierH = signatureRect.getWidth() / signatureGraphic.getWidth();
-                    float multiplierW = signatureRect.getHeight() / signatureGraphic.getHeight();
-                    float multiplier = Math.min(multiplierH, multiplierW);
-                    imgWidth *= multiplier;
-                    imgHeight *= multiplier;
-
-                    float x = signatureRect.getLeft() + (signatureRect.getWidth() - imgWidth) / 2;
-                    float y = signatureRect.getBottom() + (signatureRect.getHeight() - imgHeight) / 2;
-
-                    canvas = new PdfCanvas(n2, document);
-                    canvas.addImageWithTransformationMatrix(signatureGraphic, imgWidth, 0, 0, imgHeight, x, y);
-                    break;
-            }
-
-            if (renderingMode != RenderingMode.GRAPHIC) {
-                addTextToCanvas(text, font, dataRect);
-            }
-        }
-
-        Rectangle rotated = new Rectangle(rect);
-
-        if (topLayer == null) {
-            topLayer = new PdfFormXObject(rotated);
-            topLayer.makeIndirect(document);
-
-            if (reuseAppearance) {
-                PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
-                PdfFormField field = acroForm.getField(fieldName);
-                PdfStream stream = field.getWidgets().get(0).getAppearanceDictionary().getAsStream(PdfName.N);
-                PdfFormXObject xobj = new PdfFormXObject(stream);
-
-                if (stream != null) {
-                    topLayer.getResources().addForm(xobj, new PdfName("n0"));
-                    PdfCanvas canvas1 = new PdfCanvas(topLayer, document);
-                    canvas1.addXObjectWithTransformationMatrix(xobj, 1, 0, 0, 1, 0, 0);
-                } else {
-                    reuseAppearance = false;
-
-                    if (n0 == null) {
-                        createBlankN0();
-                    }
-                }
-            }
-
-            if (!reuseAppearance) {
-                topLayer.getResources().addForm(n0, new PdfName("n0"));
-                PdfCanvas canvas1 = new PdfCanvas(topLayer, document);
-                canvas1.addXObjectWithTransformationMatrix(n0, 1, 0, 0, 1, 0, 0);
-            }
-
-            topLayer.getResources().addForm(n2, new PdfName("n2"));
-            PdfCanvas canvas1 = new PdfCanvas(topLayer, document);
-            canvas1.addXObjectWithTransformationMatrix(n2, 1, 0, 0, 1, 0, 0);
-        }
-
-        PdfFormXObject napp = new PdfFormXObject(rotated);
-        napp.makeIndirect(document);
-        napp.getResources().addForm(topLayer, new PdfName("FRM"));
-
-        canvas = new PdfCanvas(napp, document);
-        canvas.addXObjectAt(topLayer,
-                topLayer.getBBox().getAsNumber(0).floatValue(),
-                topLayer.getBBox().getAsNumber(1).floatValue());
-
-        return napp;
+        sigField.getFirstFormAnnotation().setFormFieldElement(modelElement);
+        sigField.regenerateField();
+        return new PdfFormXObject(sigField.getFirstFormAnnotation().getPdfObject()
+                .getAsDictionary(PdfName.AP).getAsStream(PdfName.N));
     }
 
     /**
@@ -868,7 +609,7 @@ public class PdfSignatureAppearance {
      * @return the signature date
      */
     protected java.util.Calendar getSignDate() {
-        return signDate;
+        return modelElement.getSignDate();
     }
 
     /**
@@ -879,94 +620,40 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     protected PdfSignatureAppearance setSignDate(java.util.Calendar signDate) {
-        this.signDate = signDate;
+        modelElement.setSignDate(signDate);
         return this;
     }
 
     /**
-     * Set the field name of the appearance.
+     * Set the field name of the appearance. Field name indicates the field to be signed if it is already presented
+     * in the document (signing existing field). Required for reuseAppearance option.
      *
      * @param fieldName name of the field
      *
      * @return this instance to support fluent interface
      */
     protected PdfSignatureAppearance setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+        SigField newModelElement = new SigField(fieldName);
+        newModelElement.setRenderingMode(modelElement.getRenderingMode());
+        newModelElement.setReason(modelElement.getReason());
+        newModelElement.setLocation(modelElement.getLocation());
+        newModelElement.setSignatureCreator(modelElement.getSignatureCreator());
+        newModelElement.setContact(modelElement.getContact());
+        newModelElement.setSignatureGraphic(modelElement.getSignatureGraphic());
+        newModelElement.setReuseAppearance(modelElement.isReuseAppearance());
+        newModelElement.setImage(modelElement.getImage());
+        newModelElement.setImageScale(modelElement.getImageScale());
+        newModelElement.setDescription(modelElement.getDescription(false));
+        newModelElement.setSignedBy(modelElement.getSignedBy());
+        newModelElement.setSignDate(modelElement.getSignDate());
+        newModelElement.setSignedBy(modelElement.getSignedBy());
+        newModelElement.setFont(layer2Font);
+        newModelElement.setFontSize(layer2FontSize);
+        newModelElement.setFontColor(layer2FontColor);
+        modelElement = newModelElement;
         return this;
     }
 
-    private static Rectangle rotateRectangle(Rectangle rect, int angle) {
-        if (0 == (angle / 90) % 2) {
-            return new Rectangle(rect.getWidth(), rect.getHeight());
-        } else {
-            return new Rectangle(rect.getHeight(), rect.getWidth());
-        }
-    }
-
-    private void createBlankN0() {
-        n0 = new PdfFormXObject(new Rectangle(100, 100));
-        n0.makeIndirect(document);
-
-        PdfCanvas canvas = new PdfCanvas(n0, document);
-        canvas.writeLiteral("% DSBlank\n");
-    }
-
-    private void addTextToCanvas(String text, PdfFont font, Rectangle dataRect) {
-        PdfCanvas canvas;
-        canvas = new PdfCanvas(n2, document);
-        Paragraph paragraph = new Paragraph(text).setFont(font).setMargin(0).setMultipliedLeading(0.9f);
-        Canvas layoutCanvas = new Canvas(canvas, dataRect);
-        paragraph.setFontColor(layer2FontColor);
-        if (layer2FontSize == 0) {
-            applyCopyFittingFontSize(paragraph, dataRect, layoutCanvas.getRenderer());
-        } else {
-            paragraph.setFontSize(layer2FontSize);
-        }
-        layoutCanvas.add(paragraph);
-    }
-
-    private void applyCopyFittingFontSize(Paragraph paragraph, Rectangle rect, IRenderer parentRenderer) {
-        IRenderer renderer = paragraph.createRendererSubTree().setParent(parentRenderer);
-        LayoutContext layoutContext = new LayoutContext(new LayoutArea(1, rect));
-        float lFontSize = 0.1f, rFontSize = 100;
-        int numberOfIterations = 15; // 15 iterations with lFontSize = 0.1 and rFontSize = 100 should result in ~0.003 precision
-        for (int i = 0; i < numberOfIterations; i++) {
-            float mFontSize = (lFontSize + rFontSize) / 2;
-            paragraph.setFontSize(mFontSize);
-            LayoutResult result = renderer.layout(layoutContext);
-            if (result.getStatus() == LayoutResult.FULL) {
-                lFontSize = mFontSize;
-            } else {
-                rFontSize = mFontSize;
-            }
-        }
-        paragraph.setFontSize(lFontSize);
-    }
-
-    String generateLayer2Text() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("Digitally signed by ");
-        String name = null;
-        CertificateInfo.X500Name x500name = CertificateInfo.getSubjectFields((X509Certificate)signCertificate);
-        if (x500name != null) {
-            name = x500name.getField("CN");
-            if (name == null) {
-                name = x500name.getField("E");
-            }
-        }
-        if (name == null) {
-            name = "";
-        }
-        buf.append(name).append('\n');
-        buf.append("Date: ").append(SignUtils.dateToString(signDate));
-        if (reason != null) {
-            buf.append('\n').append(reasonCaption).append(reason);
-        }
-        if (location != null) {
-            buf.append('\n').append(locationCaption).append(location);
-        }
-        return buf.toString();
-    }
     /**
      * Signature rendering modes.
      */

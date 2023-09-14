@@ -32,7 +32,9 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
@@ -86,12 +88,12 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         Assert.assertNull(signatureAppearance.getLayer2Text());
 
-        String layer2Text = signatureAppearance.generateLayer2Text();
+        String layer2Text = signatureAppearance.getModelElement().getDescription(true);
         // There is no text from new reason caption in the default layer 2 text
         Assert.assertFalse(layer2Text.contains(newReasonCaption));
 
         signatureAppearance.setReasonCaption(newReasonCaption);
-        layer2Text = signatureAppearance.generateLayer2Text();
+        layer2Text = signatureAppearance.getModelElement().getDescription(true);
         // Now layer 2 text contains text from new reason caption
         Assert.assertTrue(layer2Text.contains(newReasonCaption));
     }
@@ -104,12 +106,12 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         Assert.assertNull(signatureAppearance.getLayer2Text());
 
-        String layer2Text = signatureAppearance.generateLayer2Text();
+        String layer2Text = signatureAppearance.getModelElement().getDescription(true);
         // There is no text from new location caption in the default layer 2 text
         Assert.assertFalse(layer2Text.contains(newLocationCaption));
 
         signatureAppearance.setLocationCaption(newLocationCaption);
-        layer2Text = signatureAppearance.generateLayer2Text();
+        layer2Text = signatureAppearance.getModelElement().getDescription(true);
         // Now layer 2 text contains text from new location caption
         Assert.assertTrue(layer2Text.contains(newLocationCaption));
     }
@@ -227,8 +229,10 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getAppearanceInvisibleTest() throws IOException {
-        PdfSignatureAppearance appearance = new PdfSignatureAppearance(null, new Rectangle(0, 100), 1);
+    public void getAppearanceInvisibleTest() {
+        PdfSignatureAppearance appearance = new PdfSignatureAppearance(
+                new PdfDocument(new PdfWriter(new ByteArrayOutputStream())),
+                new Rectangle(0, 100), 1);
         PdfFormXObject xObject = appearance.getAppearance();
 
         Assert.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(xObject.getBBox().toRectangle()));

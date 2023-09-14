@@ -28,8 +28,11 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -37,10 +40,13 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
@@ -52,6 +58,8 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.FileOutputStream;
@@ -105,10 +113,12 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 648, 200, 100);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.DESCRIPTION);
 
-        assertAppearanceFontSize(dest, 13.94f);
+        assertAppearanceFontSize(dest, 13.72f);
     }
 
     @Test
+    // TODO DEVSIX-7787 Get rid of this logs
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void textAutoscaleTest02() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest02.pdf";
         String dest = DESTINATION_FOLDER + fileName;
@@ -116,7 +126,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 648, 150, 50);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.DESCRIPTION);
 
-        assertAppearanceFontSize(dest, 6.83f);
+        assertAppearanceFontSize(dest, 6.48f);
     }
 
     @Test
@@ -131,6 +141,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-7787 Get rid of this logs
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void textAutoscaleTest04() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest04.pdf";
         String dest = DESTINATION_FOLDER + fileName;
@@ -153,6 +165,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-7787 Get rid of this logs
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void textAutoscaleTest06() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest06.pdf";
         String dest = DESTINATION_FOLDER + fileName;
@@ -223,6 +237,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-7787 Get rid of this logs
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 24))
     public void signaturesOnRotatedPages() throws IOException, GeneralSecurityException, InterruptedException {
         StringBuilder assertionResults = new StringBuilder();
 
@@ -249,7 +265,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5162 (the signature is expected to have auto-generated appearance, but now it's empty)
     public void signExistingNotMergedFieldNotReusedAPTest() throws GeneralSecurityException,
             IOException, InterruptedException {
         // Field is not merged with widget and has /P key
@@ -279,7 +294,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5162 (signature appearance expected to be updated (reused appearance will be used as a background))
     public void signExistingNotMergedFieldReusedAPTest() throws GeneralSecurityException,
             IOException, InterruptedException {
         // Field is not merged with widget and has /P key
@@ -293,10 +307,12 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
         signer.getSignatureAppearance()
-                .setLayer2Text("Verified and signed by me.")
+                .setLayer2Text("SIGNED")
+                .setLayer2FontColor(ColorConstants.GREEN)
                 .setReason("Test 1")
                 .setLocation("TestCity")
-                .setReuseAppearance(true);
+                .setReuseAppearance(true)
+                .getModelElement().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
         signer.setFieldName("Signature1");
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
@@ -309,8 +325,8 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-5162 (remove expected exception after fix)
-    public void signExistingNotMergedFieldReusedAPEntryNDicTest() throws IOException {
+    public void signExistingNotMergedFieldReusedAPEntryNDicTest()
+            throws IOException, GeneralSecurityException, InterruptedException {
         // Field is not merged with widget and has /P key
         String src = SOURCE_FOLDER + "emptyFieldNotMergedEntryNDict.pdf";
         String fileName = "signExistingNotMergedFieldReusedAPEntryNDic.pdf";
@@ -331,8 +347,10 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());
 
-        Assert.assertThrows(NullPointerException.class, () -> signer.signDetached(new BouncyCastleDigest(),
-                pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES));
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(
+                dest, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -493,7 +511,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 .fillStroke()
                 .restoreState();
 
-        // Get the same layer once more, so that the logic when n0 is not null is triggered
+        // Get the same layer once more, so that the logic when n2 is not null is triggered
         layer2 = appearance.getLayer2();
 
         // Draw yellow circle with black border
@@ -508,6 +526,61 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
+    }
+
+    @Test
+    public void createAndSignSignatureFieldTest() throws IOException, GeneralSecurityException {
+        String src = SOURCE_FOLDER + "noSignatureField.pdf";
+        String dest = DESTINATION_FOLDER + "createdAndSignedSignatureField.pdf";
+
+        String unsignedDoc = DESTINATION_FOLDER + "unsignedSignatureField.pdf";
+        PdfDocument document = new PdfDocument(new PdfReader(src), new PdfWriter(unsignedDoc));
+
+        PdfSignatureFormField field = new SignatureFormFieldBuilder(document, "Signature1")
+                .setPage(1).setWidgetRectangle(new Rectangle(45, 509, 517, 179)).createSignature();
+        PdfFormCreator.getAcroForm(document, true).addField(field);
+        document.close();
+
+        PdfSigner signer = new PdfSigner(new PdfReader(unsignedDoc), new FileOutputStream(dest), new StampingProperties());
+        // Creating the appearance
+        signer.getSignatureAppearance()
+                .setReason("Appearance is tested")
+                .setLocation("TestCity")
+                .setLayer2Text("Test signature field appearance. Test signature field appearance. " +
+                        "Test signature field appearance. Test signature field appearance");
+
+        signer.setFieldName("Signature1");
+
+        // Signing
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_createdAndSignedSignatureField.pdf");
+    }
+
+    @Test
+    public void signExistedSignatureFieldTest() throws IOException, GeneralSecurityException {
+        String src = SOURCE_FOLDER + "unsignedSignatureField.pdf";
+        String fileName = "signedSignatureField.pdf";
+        String dest = DESTINATION_FOLDER + fileName;
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+
+        // Creating the appearance
+        signer.getSignatureAppearance()
+                .setReason("Appearance is tested")
+                .setLocation("TestCity")
+                .setReuseAppearance(true)
+                .setLayer2Text("Test signature field appearance. Test signature field appearance. " +
+                        "Test signature field appearance. Test signature field appearance");
+
+        signer.setFieldName("Signature1");
+
+        // Signing
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
         compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
@@ -604,7 +677,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
             }
         }
         float foundFontSize = Float.parseFloat(fontSize);
-        Assert.assertTrue(MessageFormatUtil.format("Font size: exptected {0}, found {1}",
+        Assert.assertTrue(MessageFormatUtil.format("Font size: expected {0}, found {1}",
                 expectedFontSize, fontSize), Math.abs(foundFontSize - expectedFontSize) < 0.1 * expectedFontSize);
     }
 

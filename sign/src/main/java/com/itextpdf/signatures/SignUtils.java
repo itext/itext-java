@@ -78,7 +78,6 @@ import java.security.cert.X509Certificate;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -246,10 +245,6 @@ final class SignUtils {
 
     static X500Principal getIssuerX500Principal(IASN1Sequence issuerAndSerialNumber) throws IOException {
         return new X500Principal(issuerAndSerialNumber.getObjectAt(0).toASN1Primitive().getEncoded());
-    }
-
-    public static String dateToString(Calendar signDate) {
-        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(signDate.getTime());
     }
 
     static class TsaResponse {
