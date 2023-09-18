@@ -221,7 +221,7 @@ public final class KernelExceptionMessageConstant {
     public static final String INVALID_TYPE_2_FUNCTION_DOMAIN =
             "Invalid PDF Type 2 Function object, \"Domain\" array shall consist of 2 numbers.";
     public static final String INVALID_TYPE_2_FUNCTION_N =
-            "Invalid PDF Type 2 Function object, \"N\" field should be existed and must be a number.";
+            "Invalid PDF Type 2 Function object, \"N\" field should exist and must be a number.";
     public static final String INVALID_TYPE_2_FUNCTION_N_NEGATIVE =
             "Invalid PDF Type 2 Function object, when \"N\" is negative, values of \"Domain\" shall "
             + "not allow zero as input value.";
@@ -242,13 +242,13 @@ public final class KernelExceptionMessageConstant {
     public static final String INVALID_TYPE_3_FUNCTION_FUNCTIONS_INPUT =
             "Invalid PDF Type 3 Function object, all functions shall have 1 input value.";
     public static final String INVALID_TYPE_3_FUNCTION_NULL_BOUNDS =
-            "Invalid PDF Type 3 Function object, \"Bounds\" array should be exist and it size should corresponds "
-            + "to the size of \"Functions\" array.";
+            "Invalid PDF Type 3 Function object, \"Bounds\" array should exist and its size should correspond "
+            + "to the size of the \"Functions\" array.";
     public static final String INVALID_TYPE_3_FUNCTION_NULL_ENCODE =
-            "Invalid PDF Type 3 Function object, \"Encode\" array should be exist and it size should be 2 times "
-            + "more than \"Functions\" array size.";
+            "Invalid PDF Type 3 Function object, \"Encode\" array should exist and its size should be 2 times "
+            + "more than the size of the \"Functions\" array.";
     public static final String INVALID_TYPE_3_FUNCTION_NULL_FUNCTIONS =
-            "Invalid PDF Type 3 Function object, \"Functions\" array should be exist and can't be empty.";
+            "Invalid PDF Type 3 Function object, \"Functions\" array should exist and can't be empty.";
     public static final String INVALID_RANGE_ARRAY = "Invalid range array.";
     public static final String INVALID_OFFSET_FOR_THIS_OBJECT = "Invalid offset for object {0}.";
     public static final String INVALID_XREF_STREAM = "Invalid xref stream.";
