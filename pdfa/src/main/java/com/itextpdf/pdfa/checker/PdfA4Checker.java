@@ -24,10 +24,12 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
@@ -47,7 +49,7 @@ import java.util.Set;
  * The specification implemented by this class is ISO 19005-4
  */
 public class PdfA4Checker extends PdfA3Checker {
-    protected static final Set<PdfName> forbiddenAnnotations4 = Collections
+    private static final Set<PdfName> forbiddenAnnotations4 = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName._3D,
                     PdfName.RichMedia,
@@ -56,14 +58,14 @@ public class PdfA4Checker extends PdfA3Checker {
                     PdfName.Screen,
                     PdfName.Movie)));
 
-    protected static final Set<PdfName> forbiddenAnnotations4E = Collections
+    private static final Set<PdfName> forbiddenAnnotations4E = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName.FileAttachment,
                     PdfName.Sound,
                     PdfName.Screen,
                     PdfName.Movie)));
 
-    protected static final Set<PdfName> forbiddenAnnotations4F = Collections
+    private static final Set<PdfName> forbiddenAnnotations4F = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName._3D,
                     PdfName.RichMedia,
@@ -71,8 +73,30 @@ public class PdfA4Checker extends PdfA3Checker {
                     PdfName.Screen,
                     PdfName.Movie)));
 
-    protected static final Set<PdfName> apLessAnnotations = Collections.unmodifiableSet(
+    private static final Set<PdfName> apLessAnnotations = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(PdfName.Popup, PdfName.Link, PdfName.Projection)));
+
+    private static final Set<PdfName> allowedBlendModes4 = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.Normal,
+                    PdfName.Multiply,
+                    PdfName.Screen,
+                    PdfName.Overlay,
+                    PdfName.Darken,
+                    PdfName.Lighten,
+                    PdfName.ColorDodge,
+                    PdfName.ColorBurn,
+                    PdfName.HardLight,
+                    PdfName.SoftLight,
+                    PdfName.Difference,
+                    PdfName.Exclusion,
+                    PdfName.Hue,
+                    PdfName.Saturation,
+                    PdfName.Color,
+                    PdfName.Luminosity)));
+
+    private static final String TRANSPARENCY_ERROR_MESSAGE =
+            PdfaExceptionMessageConstant.THE_DOCUMENT_AND_THE_PAGE_DO_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE;
 
     /**
      * Creates a PdfA4Checker with the required conformance level
@@ -129,6 +153,26 @@ public class PdfA4Checker extends PdfA3Checker {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
+        // Get page pdf/a output intent
+        PdfDictionary pdfAPageOutputIntent = null;
+        PdfArray outputIntents = pageDict.getAsArray(PdfName.OutputIntents);
+        if (outputIntents != null) {
+            pdfAPageOutputIntent = getPdfAOutputIntent(outputIntents);
+        }
+        if (pdfAOutputIntentColorSpace == null && pdfAPageOutputIntent == null
+                && transparencyObjects.size() > 0
+                && (pageDict.getAsDictionary(PdfName.Group) == null || pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS) == null)) {
+            checkContentsForTransparency(pageDict);
+            checkAnnotationsForTransparency(pageDict.getAsArray(PdfName.Annots));
+            checkResourcesForTransparency(pageResources, new HashSet<PdfObject>());
+        }
+    }
+
     //There are no limits for numbers in pdf-a/4
     /**
      * {@inheritDoc}
@@ -169,6 +213,25 @@ public class PdfA4Checker extends PdfA3Checker {
      * {@inheritDoc}
      */
     @Override
+    protected void checkAnnotation(PdfDictionary annotDic) {
+        super.checkAnnotation(annotDic);
+
+        // Extra check for blending mode
+        PdfName blendMode = annotDic.getAsName(PdfName.BM);
+        if (blendMode != null && !allowedBlendModes4.contains(blendMode)) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_A_GRAPHIC_STATE_AND_ANNOTATION_DICTIONARY);
+        }
+
+        // And then treat the annotation as an object with transparency
+        if (blendMode != null && !PdfName.Normal.equals(blendMode)) {
+            transparencyObjects.add(annotDic);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected Set<PdfName> getForbiddenAnnotations() {
         if ("E".equals(conformanceLevel.getConformance())) {
             return forbiddenAnnotations4E;
@@ -197,6 +260,24 @@ public class PdfA4Checker extends PdfA3Checker {
         }
         if (!PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && annotDic.containsKey(PdfName.AA)) {
             throw new PdfAConformanceException(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getTransparencyErrorMessage() {
+        return TRANSPARENCY_ERROR_MESSAGE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkBlendMode(PdfName blendMode) {
+        if (!allowedBlendModes4.contains(blendMode)) {
+            throw new PdfAConformanceException(PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
         }
     }
 }

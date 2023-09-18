@@ -578,6 +578,9 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void checkAnnotation(PdfDictionary annotDic) {
         PdfName subtype = annotDic.getAsName(PdfName.Subtype);

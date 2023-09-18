@@ -37,5 +37,15 @@ public final class PdfaExceptionMessageConstant {
             = "Can't find an appropriate checker for a specified name.";
     public static final String WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY = "Widget annotation dictionary or field dictionary shall not include a entry";
 
+    public static final String THE_DOCUMENT_AND_THE_PAGE_DO_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE =
+            "If the document does not contain a PDF/A output intent, then all pages that contain transparency shall"
+                    + " either have a page-level PDF/A output intent or the page dictionary shall include the"
+                    + " Group key, and the attribute dictionary that forms the value of that Group key shall include"
+                    + " a CS entry whose value shall be used as the default blending colour space.";
+
+    public static final String ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_A_GRAPHIC_STATE_AND_ANNOTATION_DICTIONARY =
+            "Only blend modes that are specified in ISO 32000-2:2020 shall be used for the value of the BM key in a"
+                    + " graphic state dictionary or an annotation dictionary.";
+
     private PdfaExceptionMessageConstant(){}
 }

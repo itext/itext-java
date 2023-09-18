@@ -735,6 +735,17 @@ public abstract class PdfAChecker {
         checkResources(appearanceStream.getAsDictionary(PdfName.Resources));
     }
 
+    PdfDictionary getPdfAOutputIntent(PdfArray outputIntents) {
+        for (int i = 0; i < outputIntents.size(); ++i) {
+            PdfName outputIntentSubtype = outputIntents.getAsDictionary(i).getAsName(PdfName.S);
+            if (PdfName.GTS_PDFA1.equals(outputIntentSubtype)) {
+                return outputIntents.getAsDictionary(i);
+            }
+        }
+
+        return null;
+    }
+
     private void checkResourcesOfAppearanceStreams(PdfDictionary appearanceStreamsDict, Set<PdfObject> checkedObjects) {
         if (checkedObjects.contains(appearanceStreamsDict)) {
             return;
@@ -853,17 +864,6 @@ public abstract class PdfAChecker {
 
         PdfDictionary pdfAOutputIntent = getPdfAOutputIntent(outputIntents);
         setCheckerOutputIntent(pdfAOutputIntent);
-    }
-
-    private PdfDictionary getPdfAOutputIntent(PdfArray outputIntents) {
-        for (int i = 0; i < outputIntents.size(); ++i) {
-            PdfName outputIntentSubtype = outputIntents.getAsDictionary(i).getAsName(PdfName.S);
-            if (PdfName.GTS_PDFA1.equals(outputIntentSubtype)) {
-                return outputIntents.getAsDictionary(i);
-            }
-        }
-
-        return null;
     }
 
     private void setCheckerOutputIntent(PdfDictionary outputIntent) {
