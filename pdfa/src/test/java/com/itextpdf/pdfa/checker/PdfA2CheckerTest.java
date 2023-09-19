@@ -73,6 +73,24 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void checkAsKeyInContentConfigDictTest() {
+        PdfDictionary ocProperties = new PdfDictionary();
+        PdfArray configs = new PdfArray();
+        PdfDictionary config = new PdfDictionary();
+        config.put(PdfName.Name, new PdfString("CustomName"));
+        config.put(PdfName.AS, new PdfArray());
+        configs.add(config);
+        ocProperties.put(PdfName.Configs, configs);
+
+        PdfDictionary catalog = new PdfDictionary();
+        catalog.put(PdfName.OCProperties, ocProperties);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfA2Checker.checkCatalogValidEntries(catalog));
+        Assert.assertEquals(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY,
+                e.getMessage());
+    }
+
+    @Test
     public void checkNameEntryShouldBeUniqueBetweenAdditionalConfigs() {
         PdfDictionary ocProperties = new PdfDictionary();
         PdfDictionary d = new PdfDictionary();

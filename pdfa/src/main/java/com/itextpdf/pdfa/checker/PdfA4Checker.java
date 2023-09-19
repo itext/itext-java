@@ -34,11 +34,14 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
+import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -98,6 +101,8 @@ public class PdfA4Checker extends PdfA3Checker {
     private static final String TRANSPARENCY_ERROR_MESSAGE =
             PdfaExceptionMessageConstant.THE_DOCUMENT_AND_THE_PAGE_DO_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfAChecker.class);
+
     /**
      * Creates a PdfA4Checker with the required conformance level
      *
@@ -137,6 +142,12 @@ public class PdfA4Checker extends PdfA3Checker {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DOCUMENT_SHALL_NOT_CONTAIN_INFO_UNLESS_THERE_IS_PIECE_INFO);
             }
         }
+
+        if ("F".equals(conformanceLevel.getConformance())) {
+            if (!catalog.nameTreeContainsKey(PdfName.EmbeddedFiles)) {
+                throw new PdfAConformanceException(PdfaExceptionMessageConstant.NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY);
+            }
+        }
     }
 
     /**
@@ -150,6 +161,22 @@ public class PdfA4Checker extends PdfA3Checker {
                 || version.toString().charAt(1) != '.' || !Character.isDigit(version.toString().charAt(2)))) {
             throw new PdfAConformanceException(
                     MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_CATALOG_VERSION_SHALL_CONTAIN_RIGHT_PDF_VERSION, "2"));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkFileSpec(PdfDictionary fileSpec) {
+        if (fileSpec.getAsName(PdfName.AFRelationship) == null) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY);
+        }
+        if (!fileSpec.containsKey(PdfName.F) || !fileSpec.containsKey(PdfName.UF)) {
+            throw new PdfAConformanceException(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
+        }
+        if (!fileSpec.containsKey(PdfName.Desc)) {
+            LOGGER.warn(PdfAConformanceLogMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHOULD_CONTAIN_DESC_KEY);
         }
     }
 
@@ -261,6 +288,14 @@ public class PdfA4Checker extends PdfA3Checker {
         if (!PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && annotDic.containsKey(PdfName.AA)) {
             throw new PdfAConformanceException(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkContentConfigurationDictAgainstAsKey(PdfDictionary config) {
+        // Do nothing because in PDF/A-4 AS key may appear in any optional content configuration dictionary.
     }
 
     /**

@@ -31,10 +31,12 @@ public final class PdfaExceptionMessageConstant {
     public static final String INVALID_INLINE_IMAGE_FILTER_USAGE = "Filters that are not listed in ISO 32000-2:—, 8.9.7, Table 92 or an array containing any such value shall not be used.";
     public static final String DOCUMENT_INFO_DICTIONARY_SHALL_ONLY_CONTAIN_MOD_DATE = "If a document information dictionary is present, it shall only contain a ModDate entry.";
     public static final String DOCUMENT_SHALL_NOT_CONTAIN_INFO_UNLESS_THERE_IS_PIECE_INFO = "The Info key shall not be present in the trailer dictionary of PDF/A-4 conforming files unless there exists a PieceInfo entry in the document catalog dictionary.";
+    public static final String NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY = "Conforming file shall contain an EmbeddedFiles key in the name dictionary of the document catalog dictionary.";
     public static final String THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION = "The file header shall begin at byte zero and shall consist of “%PDF-{0}.n”";
     public static final String THE_CATALOG_VERSION_SHALL_CONTAIN_RIGHT_PDF_VERSION = "The catalog version key shall begin at byte zero and shall consist of “%PDF-{0}.n”";
     public static final String CANNOT_FIND_PDFA_CHECKER_FOR_SPECIFIED_NAME
             = "Can't find an appropriate checker for a specified name.";
+    public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY = "Each embedded file’s file specification dictionary shall contain an AFRelationship key.";
     public static final String WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY = "Widget annotation dictionary or field dictionary shall not include a entry";
 
     public static final String THE_DOCUMENT_AND_THE_PAGE_DO_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE =

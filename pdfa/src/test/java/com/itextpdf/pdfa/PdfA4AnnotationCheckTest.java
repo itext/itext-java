@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
@@ -217,6 +218,8 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
+        addSimpleEmbeddedFile(doc);
+
         PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
         page.addAnnotation(annot);
 
@@ -230,6 +233,8 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
+
+        addSimpleEmbeddedFile(doc);
 
         PdfAnnotation annot = new Pdf3DAnnotation(new Rectangle(100, 100, 100, 100), new PdfArray());
         page.addAnnotation(annot);
@@ -248,9 +253,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
-            PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
-                    doc, "file".getBytes(), "description", "file.txt", null, null, null);
-            doc.addFileAttachment("file.txt", fs);
+            addSimpleEmbeddedFile(doc);
 
             PdfAnnotation annot = new PdfFileAttachmentAnnotation(new Rectangle(100, 100, 100, 100));
             annot.setFlag(PdfAnnotation.PRINT);
@@ -270,9 +273,7 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent())) {
             PdfPage page = doc.addNewPage();
 
-            PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
-                    doc, "file".getBytes(), "description", "file.txt", null, null, null);
-            doc.addFileAttachment("file.txt", fs);
+            addSimpleEmbeddedFile(doc);
 
             PdfAnnotation annot = new PdfLinkAnnotation(new Rectangle(100, 100, 100, 100));
             annot.setFlag(PdfAnnotation.PRINT);
@@ -304,6 +305,8 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
+
+        addSimpleEmbeddedFile(doc);
 
         PdfAnnotation annot = new PdfWidgetAnnotation(new Rectangle(100, 100, 100, 100));
         annot.getPdfObject().put(PdfName.A, (new PdfAction()).getPdfObject());
@@ -339,6 +342,8 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
+        addSimpleEmbeddedFile(doc);
+
         PdfAnnotation annot = new PdfLinkAnnotation(new Rectangle(100, 100, 100, 100));
         annot.getPdfObject().put(PdfName.AA, (new PdfAction()).getPdfObject());
         annot.setFlag(PdfAnnotation.PRINT);
@@ -354,6 +359,12 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
         if (result != null) {
             Assert.fail(result);
         }
+    }
+
+    private void addSimpleEmbeddedFile(PdfDocument doc) {
+        PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
+                doc, "file".getBytes(), "description", "file.txt", null, null, null);
+        doc.addFileAttachment("file.txt", fs);
     }
 
     private PdfOutputIntent createOutputIntent() throws FileNotFoundException {

@@ -971,6 +971,17 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     /**
+     * Check optional content configuration dictionary against AS key.
+     *
+     * @param config a content configuration dictionary
+     */
+    protected void checkContentConfigurationDictAgainstAsKey(PdfDictionary config) {
+        if (config.containsKey(PdfName.AS)) {
+            throw new PdfAConformanceException(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY);
+        }
+    }
+
+    /**
      * Retrieve transparency error message valid for the pdf/a standard being used.
      *
      * @return error message.
@@ -1128,9 +1139,8 @@ public class PdfA2Checker extends PdfA1Checker {
         if (!names.add(name.toUnicodeString())) {
             throw new PdfAConformanceException(PdfAConformanceException.VALUE_OF_NAME_ENTRY_SHALL_BE_UNIQUE_AMONG_ALL_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARIES);
         }
-        if (config.containsKey(PdfName.AS)) {
-            throw new PdfAConformanceException(PdfAConformanceException.THE_AS_KEY_SHALL_NOT_APPEAR_IN_ANY_OPTIONAL_CONTENT_CONFIGURATION_DICTIONARY);
-        }
+        checkContentConfigurationDictAgainstAsKey(config);
+
         PdfArray orderArray = config.getAsArray(PdfName.Order);
         if (orderArray != null) {
             HashSet<PdfObject> order = new HashSet<>();
