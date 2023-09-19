@@ -36,28 +36,29 @@ public class PdfAnnotationFlattenFactory {
         map.put(PdfName.Link, () -> new DefaultAnnotationFlattener());
         map.put(PdfName.Popup, () -> new NotSupportedFlattener());
         map.put(PdfName.Widget, () -> new NotSupportedFlattener());
-        map.put(PdfName.Screen, () -> new NotSupportedFlattener());
-        map.put(PdfName._3D, () -> new NotSupportedFlattener());
+        map.put(PdfName.Screen, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName._3D, () -> new DefaultAnnotationFlattener());
         map.put(PdfName.Highlight, () -> new HighLightTextMarkupAnnotationFlattener());
         map.put(PdfName.Underline, () -> new UnderlineTextMarkupAnnotationFlattener());
         map.put(PdfName.Squiggly, () -> new SquigglyTextMarkupAnnotationFlattener());
         map.put(PdfName.StrikeOut, () -> new StrikeOutTextMarkupAnnotationFlattener());
-        map.put(PdfName.Caret, () -> new NotSupportedFlattener());
-        map.put(PdfName.Text, () -> new NotSupportedFlattener());
-        map.put(PdfName.Sound, () -> new NotSupportedFlattener());
-        map.put(PdfName.Stamp, () -> new NotSupportedFlattener());
-        map.put(PdfName.FileAttachment, () -> new NotSupportedFlattener());
-        map.put(PdfName.Ink, () -> new NotSupportedFlattener());
-        map.put(PdfName.PrinterMark, () -> new NotSupportedFlattener());
-        map.put(PdfName.TrapNet, () -> new NotSupportedFlattener());
-        map.put(PdfName.FreeText, () -> new NotSupportedFlattener());
-        map.put(PdfName.Square, () -> new NotSupportedFlattener());
-        map.put(PdfName.Circle, () -> new NotSupportedFlattener());
-        map.put(PdfName.Line, () -> new NotSupportedFlattener());
-        map.put(PdfName.Polygon, () -> new NotSupportedFlattener());
-        map.put(PdfName.PolyLine, () -> new NotSupportedFlattener());
-        map.put(PdfName.Redact, () -> new NotSupportedFlattener());
-        map.put(PdfName.Watermark, () -> new NotSupportedFlattener());
+        map.put(PdfName.Caret, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Text, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Sound, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Stamp, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.FileAttachment, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Ink, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.PrinterMark, () -> new DefaultAnnotationFlattener());
+        // TrapNet is a deprecated property in the PDF 2.0 version
+        map.put(PdfName.TrapNet, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.FreeText, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Square, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Circle, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Line, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Polygon, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.PolyLine, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Redact, () -> new DefaultAnnotationFlattener());
+        map.put(PdfName.Watermark, () -> new DefaultAnnotationFlattener());
         // To allow for the unknown subtype
         map.put(UNKNOWN, () -> new NotSupportedFlattener());
     }

@@ -67,12 +67,12 @@ import org.junit.experimental.categories.Category;
 @Category(IntegrationTest.class)
 public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/flatteningTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/flatteningTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/utils/flatteningTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/utils/flatteningTest/";
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
 
     @Test
     public void defaultAppearanceGetsRendered() throws IOException, InterruptedException {
-        String resultFile = destinationFolder + "default_annotations_app.pdf";
+        String resultFile = DESTINATION_FOLDER + "default_annotations_app.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(resultFile))) {
             PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 21));
             PdfCanvas canvasN = new PdfCanvas(formN, pdfDoc);
@@ -177,8 +177,8 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
 
         Assert.assertNull(
                 new CompareTool().compareByContent(resultFile,
-                        sourceFolder + "cmp_default_annotations_app.pdf",
-                        destinationFolder, "diff_"));
+                        SOURCE_FOLDER + "cmp_default_annotations_app.pdf",
+                        DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -230,8 +230,8 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
 
     @Test
     public void removeQuadPoints() throws IOException, InterruptedException {
-        String fileToFlatten = destinationFolder + "file_to_quadpoints.pdf";
-        String resultFile = destinationFolder + "flattened_quadpoints.pdf";
+        String fileToFlatten = DESTINATION_FOLDER + "file_to_quadpoints.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattened_quadpoints.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileToFlatten))) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -252,15 +252,15 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         //it is expected that the line is the middle of the page because the annotation whole rectangle is the
         // size of the page, it's also expected that underline will not show up as it is at the bottom of the page
         Assert.assertNull(
-                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_text_quadpoints.pdf",
-                        destinationFolder, "diff_"));
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_text_quadpoints.pdf",
+                        DESTINATION_FOLDER, "diff_"));
     }
 
 
     @Test
     public void invalidQuadPoints() throws IOException, InterruptedException {
-        String fileToFlatten = destinationFolder + "file_to_invalid_quadpoints.pdf";
-        String resultFile = destinationFolder + "flattened_invalid_quadpoints.pdf";
+        String fileToFlatten = DESTINATION_FOLDER + "file_to_invalid_quadpoints.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattened_invalid_quadpoints.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileToFlatten))) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -281,8 +281,8 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
         //it is expected that the line is the middle of the page because the annotation whole rectangle is the
         // size of the page, it's also expected that underline will not show up as it is at the bottom of the page
         Assert.assertNull(
-                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_invalid_quadpoints.pdf",
-                        destinationFolder, "diff_"));
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_invalid_quadpoints.pdf",
+                        DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -322,20 +322,20 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
     public void flattenPdfLink() throws IOException, InterruptedException {
-        String resultFile = destinationFolder + "flattened_pdf_link.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "simple_link_annotation.pdf"),
+        String resultFile = DESTINATION_FOLDER + "flattened_pdf_link.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simple_link_annotation.pdf"),
                 new PdfWriter(resultFile))) {
             new PdfAnnotationFlattener().flatten(pdfDoc.getFirstPage());
         }
         Assert.assertNull(
-                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_flattened_pdf_link.pdf",
-                        destinationFolder, "diff_"));
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattened_pdf_link.pdf",
+                        DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void flattenPdfLinkWithDefaultAppearance() throws IOException, InterruptedException {
-        String resultFile = destinationFolder + "flattened_DA_pdf_link.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "simple_link_annotation.pdf"),
+        String resultFile = DESTINATION_FOLDER + "flattened_DA_pdf_link.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simple_link_annotation.pdf"),
                 new PdfWriter(resultFile))) {
             PdfAnnotation annot = pdfDoc.getFirstPage().getAnnotations().get(0);
             annot.setNormalAppearance(new PdfDictionary());
@@ -352,15 +352,15 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             new PdfAnnotationFlattener().flatten(pdfDoc.getFirstPage());
         }
         Assert.assertNull(
-                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_flattened_DA_pdf_link.pdf",
-                        destinationFolder, "diff_"));
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattened_DA_pdf_link.pdf",
+                        DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void flattenTextMarkupAnnotations()
             throws IOException, InterruptedException {
-        String fileToFlatten = destinationFolder + "file_to_flatten_markup_text.pdf";
-        String resultFile = destinationFolder + "flattened_markup_text.pdf";
+        String fileToFlatten = DESTINATION_FOLDER + "file_to_flatten_markup_text.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattened_markup_text.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileToFlatten))) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -385,8 +385,414 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
                     .flatten(pdfDoc.getFirstPage().getAnnotations(), pdfDoc.getFirstPage());
         }
         Assert.assertNull(
-                new CompareTool().compareByContent(resultFile, sourceFolder + "cmp_text_markup_flatten.pdf",
-                        destinationFolder, "diff_"));
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_text_markup_flatten.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenLinkAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenLinkAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenLinkAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenLinkAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenWidgetAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenWidgetAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenWidgetAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenWidgetAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flattenScreenAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenScreenAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenScreenAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenScreenAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flatten3DAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flatten3DAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flatten3DAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flatten3DAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenHighlightAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenHighlightAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenHighlightAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenHighlightAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenUnderlineAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenUnderlineAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenUnderlineAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenUnderlineAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenSquigglyAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenSquigglyAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenSquigglyAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenSquigglyAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenStrikeOutAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenStrikeOutAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenStrikeOutAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenStrikeOutAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenCaretAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenCaretAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenCaretAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenCaretAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenTextAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenTextAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenTextAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenTextAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flattenSoundAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenSoundAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenSoundAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenSoundAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenStampAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenStampAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenStampAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenStampAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flattenFileAttachmentAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenFileAttachmentAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenFileAttachmentAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenFileAttachmentAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenInkAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenInkAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenInkAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenInkAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flattenPrinterMarkAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenPrinterMarkAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenPrinterMarkAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenPrinterMarkAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flattenTrapNetAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenTrapNetAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenTrapNetAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenTrapNetAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flattenFreeTextAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenFreeTextAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenFreeTextAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenFreeTextAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenSquareAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenSquareAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenSquareAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenSquareAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenCircleAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenCircleAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenCircleAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenCircleAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED, count = 2)})
+    public void flattenLineAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenLineAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenLineAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(2, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenLineAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenPolygonAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenPolygonAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenPolygonAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenPolygonAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenPolyLineAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenPolyLineAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenPolyLineAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenPolyLineAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    //TODO DEVSIX-2440 Investigate whether we can support popup and widget annotations
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED)})
+    public void flattenRedactAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenRedactAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenRedactAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenRedactAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void flattenWatermarkAnnotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "flattenWatermarkAnnotationTest.pdf";
+        String resultFile = DESTINATION_FOLDER + "flattenWatermarkAnnotationTest.pdf";
+        try(PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))){
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document.getFirstPage());
+
+            Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assert.assertNull(
+                new CompareTool().compareByContent(resultFile, SOURCE_FOLDER + "cmp_flattenWatermarkAnnotationTest.pdf",
+                        DESTINATION_FOLDER, "diff_"));
     }
 
     private PdfTextMarkupAnnotation createTextAnnotation(PdfCanvas canvas, float x, float y, float[] quadPoints,
