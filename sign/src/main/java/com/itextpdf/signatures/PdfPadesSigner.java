@@ -117,6 +117,7 @@ public class PdfPadesSigner {
      * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
      * @param externalSignature {@link IExternalSignature} instance to be used for main signing operation
+     * @param tsaClient {@link ITSAClient} instance to be used for timestamp creation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
@@ -132,6 +133,7 @@ public class PdfPadesSigner {
      * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
      * @param privateKey {@link PrivateKey} instance to be used for main signing operation
+     * @param tsaClient {@link ITSAClient} instance to be used for timestamp creation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
@@ -149,6 +151,7 @@ public class PdfPadesSigner {
      * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
      * @param externalSignature {@link IExternalSignature} instance to be used for main signing operation
+     * @param tsaClient {@link ITSAClient} instance to be used for timestamp creation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
@@ -175,6 +178,7 @@ public class PdfPadesSigner {
      * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
      * @param privateKey {@link PrivateKey} instance to be used for main signing operation
+     * @param tsaClient {@link ITSAClient} instance to be used for timestamp creation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
@@ -192,6 +196,7 @@ public class PdfPadesSigner {
      * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
      * @param externalSignature {@link IExternalSignature} instance to be used for main signing operation
+     * @param tsaClient {@link ITSAClient} instance to be used for timestamp creation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
@@ -219,6 +224,7 @@ public class PdfPadesSigner {
      * @param pdfSigner {@link PdfSigner} instance to be used for main signing operation
      * @param chain the chain of certificates to be used for signing operation
      * @param privateKey {@link PrivateKey} instance to be used for main signing operation
+     * @param tsaClient {@link ITSAClient} instance to be used for timestamp creation
      *
      * @throws GeneralSecurityException in case of signing related exceptions
      * @throws IOException in case of files related exceptions
