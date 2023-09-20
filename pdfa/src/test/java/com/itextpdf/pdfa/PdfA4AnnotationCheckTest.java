@@ -71,7 +71,6 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() throws FileNotFoundException {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-
     }
 
     @Test
@@ -338,19 +337,21 @@ public class PdfA4AnnotationCheckTest extends ExtendedITextTest {
 
     @Test
     public void pdfA4ForbiddenAAKeyAnnotationTest() throws IOException, InterruptedException {
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F, createOutputIntent());
+
+        String outPdf = DESTINATION_FOLDER + "pdfA4ForbiddenAAKeyAnnotationTest.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4ForbiddenAAKeyAnnotationTest.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, createOutputIntent());
         PdfPage page = doc.addNewPage();
 
-        addSimpleEmbeddedFile(doc);
-
         PdfAnnotation annot = new PdfLinkAnnotation(new Rectangle(100, 100, 100, 100));
-        annot.getPdfObject().put(PdfName.AA, (new PdfAction()).getPdfObject());
+        PdfDictionary dict = new PdfDictionary();
+        dict.put(PdfName.Fo, new PdfName("bingbong"));
+        annot.getPdfObject().put(PdfName.AA, dict);
         annot.setFlag(PdfAnnotation.PRINT);
         page.addAnnotation(annot);
-
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY, e.getMessage());
+        doc.close();
+        compareResult(outPdf, cmpPdf);
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {

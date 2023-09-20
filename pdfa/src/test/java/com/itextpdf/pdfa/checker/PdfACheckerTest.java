@@ -51,9 +51,7 @@ import com.itextpdf.test.annotations.type.UnitTest;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

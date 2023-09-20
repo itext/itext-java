@@ -570,16 +570,26 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
+
+    /**
+     *  Checks if the catalog is compliant with the PDF/A-2 standard.
+     *
+     *  @param dict the catalog dictionary
+     */
+    protected void checkCatalogAAConformance(PdfDictionary dict) {
+        if (dict.containsKey(PdfName.AA)) {
+            throw new PdfAConformanceException(
+                    PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
+        }
+    }
+
     @Override
     protected void checkCatalogValidEntries(PdfDictionary catalogDict) {
         if (catalogDict.containsKey(PdfName.NeedsRendering)) {
             throw new PdfAConformanceException(PdfAConformanceException.THE_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_THE_NEEDSRENDERING_KEY);
         }
 
-        if (catalogDict.containsKey(PdfName.AA)) {
-            throw new PdfAConformanceException(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
-        }
-
+        checkCatalogAAConformance(catalogDict);
         if (catalogDict.containsKey(PdfName.Requirements)) {
             throw new PdfAConformanceException(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_REQUIREMENTS_ENTRY);
         }
@@ -714,12 +724,20 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
-    @Override
-    protected void checkPageObject(PdfDictionary pageDict, PdfDictionary pageResources) {
-        if (pageDict.containsKey(PdfName.AA)) {
+    /**
+     *  Checks if the page is compliant with the PDF/A-2 standard.
+     *
+     *  @param dict the page dictionary
+     */
+    protected void checkPageAAConformance(PdfDictionary dict) {
+        if (dict.containsKey(PdfName.AA)) {
             throw new PdfAConformanceException(PdfAConformanceException.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY);
         }
+    }
 
+    @Override
+    protected void checkPageObject(PdfDictionary pageDict, PdfDictionary pageResources) {
+        checkPageAAConformance(pageDict);
         if (pageDict.containsKey(PdfName.PresSteps)) {
             throw new PdfAConformanceException(PdfAConformanceException.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_PRESSTEPS_ENTRY);
         }

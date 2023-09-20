@@ -38,6 +38,17 @@ public final class PdfaExceptionMessageConstant {
             = "Can't find an appropriate checker for a specified name.";
     public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY = "Each embedded file’s file specification dictionary shall contain an AFRelationship key.";
     public static final String WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY = "Widget annotation dictionary or field dictionary shall not include a entry";
+    public static final String ANNOTATION_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS =
+            "If annotation dictionary (other than a Widget "
+                    + "annotation dictionary) includes an AA entry, its value (which is an additional-actions "
+                    + "dictionary) shall only contain keys from the following list: E, X, D, U, Fo, and B";
+    public static final String CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS =
+            "If a document catalog dictionary includes an AA entry, its value (which is an additional-actions "
+                    + "dictionary) shall only contain keys from the following list: E, X, D, U, Fo, and B";
+    public static final String PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS =
+            "If page dictionary includes an AA entry, its value (which is an additional-actions "
+                    + "dictionary) shall only contain keys from the following list: E, X, D, U, Fo, and B";
+
 
     public static final String THE_DOCUMENT_AND_THE_PAGE_DO_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE =
             "If the document does not contain a PDF/A output intent, then all pages that contain transparency shall"

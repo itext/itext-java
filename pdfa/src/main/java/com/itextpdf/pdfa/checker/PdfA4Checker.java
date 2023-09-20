@@ -103,6 +103,29 @@ public class PdfA4Checker extends PdfA3Checker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfAChecker.class);
 
+
+    private static final Set<PdfName> forbiddenActionsE = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.Launch,
+                    PdfName.Sound,
+                    PdfName.Movie,
+                    PdfName.ResetForm,
+                    PdfName.ImportData,
+                    PdfName.JavaScript,
+                    PdfName.Hide,
+                    PdfName.Rendition,
+                    PdfName.Trans
+            )));
+    private static final Set<PdfName> allowedEntriesInAAWhenNonWidget = Collections
+            .unmodifiableSet(new HashSet<>(Arrays.asList(
+                    PdfName.E,
+                    PdfName.X,
+                    PdfName.D,
+                    PdfName.U,
+                    PdfName.Fo,
+                    PdfName.Bl
+            )));
+
     /**
      * Creates a PdfA4Checker with the required conformance level
      *
@@ -200,6 +223,36 @@ public class PdfA4Checker extends PdfA3Checker {
         }
     }
 
+
+    /**
+     * Check the conformity of the AA dictionary on catalog level.
+     *
+     * @param dict the catalog dictionary
+     */
+    @Override
+    protected void checkCatalogAAConformance(PdfDictionary dict) {
+        final PdfDictionary aa = dict.getAsDictionary(PdfName.AA);
+        if (aa != null && hasAAIllegalEntries(aa)) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.CATALOG_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS);
+        }
+    }
+
+
+    /**
+     * Check the conformity of the AA dictionary on catalog level.
+     *
+     * @param dict the catalog dictionary
+     */
+    @Override
+    protected void checkPageAAConformance(PdfDictionary dict) {
+        final PdfDictionary aa = dict.getAsDictionary(PdfName.AA);
+        if (aa != null && hasAAIllegalEntries(aa)) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.PAGE_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS);
+        }
+    }
+
     //There are no limits for numbers in pdf-a/4
     /**
      * {@inheritDoc}
@@ -276,6 +329,22 @@ public class PdfA4Checker extends PdfA3Checker {
         return apLessAnnotations;
     }
 
+
+    /**
+     * Check the conformity of the AA dictionary on widget level.
+     *
+     * @param dict the widget dictionary
+     */
+    protected void checkWidgetAAConformance(PdfDictionary dict) {
+        if (!PdfName.Widget.equals(dict.getAsName(PdfName.Subtype)) && dict.containsKey(PdfName.AA)) {
+            final PdfObject additionalActions = dict.get(PdfName.AA);
+            if (additionalActions.isDictionary() && hasAAIllegalEntries((PdfDictionary) additionalActions)) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.ANNOTATION_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS);
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -285,9 +354,27 @@ public class PdfA4Checker extends PdfA3Checker {
             throw new PdfAConformanceException(
                     PdfaExceptionMessageConstant.WIDGET_ANNOTATION_DICTIONARY_OR_FIELD_DICTIONARY_SHALL_NOT_INCLUDE_A_ENTRY);
         }
-        if (!PdfName.Widget.equals(annotDic.getAsName(PdfName.Subtype)) && annotDic.containsKey(PdfName.AA)) {
-            throw new PdfAConformanceException(PdfAConformanceException.AN_ANNOTATION_DICTIONARY_SHALL_NOT_CONTAIN_AA_KEY);
+        checkWidgetAAConformance(annotDic);
+    }
+
+    private static boolean hasAAIllegalEntries(PdfDictionary aa) {
+        for (final PdfName key : aa.keySet()) {
+            if (!allowedEntriesInAAWhenNonWidget.contains(key)) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Set<PdfName> getForbiddenActions() {
+        if ("E".equals(conformanceLevel.getConformance())) {
+            return forbiddenActionsE;
+        }
+        return super.getForbiddenActions();
     }
 
     /**
