@@ -25,6 +25,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -342,6 +343,22 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     public void checkSignatureType(boolean isCAdES) {
         //nothing to do
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param text {@inheritDoc}
+     * @param font {@inheritDoc}
+     */
+    @Override
+    public void checkText(String text, PdfFont font) {
+        for (int i = 0; i < text.length(); ++i) {
+            if (!font.containsGlyph(text.charAt(i))) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+            }
+        }
     }
 
     @Override

@@ -20,25 +20,22 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.pdf;
+package com.itextpdf.io.font;
 
-/**
- * Type of object to conform.
- */
-public enum IsoKey {
-    CANVAS_STACK,
-    FILL_COLOR,
-    EXTENDED_GRAPHICS_STATE,
-    INLINE_IMAGE,
-    PAGE,
-    PDF_OBJECT,
-    RENDERING_INTENT,
-    STROKE_COLOR,
-    TAG_STRUCTURE_ELEMENT,
-    FONT_GLYPHS,
-    XREF_TABLE,
-    SIGNATURE,
-    SIGNATURE_TYPE,
-    CRYPTO,
-    FONT
+import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.type.UnitTest;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category(UnitTest.class)
+public class PdfEncodingsTest extends ExtendedITextTest {
+
+    @Test
+    public void convertToBytesNoEncodingTest() {
+        Assert.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', null));
+        Assert.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', ""));
+        Assert.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', "symboltt"));
+    }
 }

@@ -725,6 +725,9 @@ public class PdfCanvas {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
+
+        document.checkIsoConformance(text.toString(), IsoKey.FONT, null, null, currentGs.getFont());
+
         final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();
         float scaling = currentGs.getHorizontalScaling() / 100f;
@@ -894,9 +897,20 @@ public class PdfCanvas {
         checkDefaultDeviceGrayBlackColor(getColorKeyForText());
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
 
-        if (currentGs.getFont() == null)
+        if (currentGs.getFont() == null) {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+        }
+
+        // Take text part to process
+        StringBuilder text = new StringBuilder();
+        for (PdfObject obj : textArray) {
+            if (obj instanceof PdfString) {
+                text.append(obj);
+            }
+        }
+        document.checkIsoConformance(text.toString(), IsoKey.FONT, null, null, currentGs.getFont());
+
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
@@ -2377,9 +2391,13 @@ public class PdfCanvas {
      */
     private void showTextInt(String text) {
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
-        if (currentGs.getFont() == null)
+        if (currentGs.getFont() == null) {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
+        }
+
+        document.checkIsoConformance(text, IsoKey.FONT, null, null, currentGs.getFont());
+
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
     }
 

@@ -27,7 +27,6 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -35,18 +34,11 @@ import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.font.PdfType1Font;
 import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
-import com.itextpdf.kernel.pdf.CompressionConstants;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
@@ -271,49 +263,62 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void symbolicTtfCharEncodingsPdfA1Test01() throws IOException, InterruptedException {
+    public void symbolicTtfCharEncodingsPdfA1Test01() {
         // encoding must not be specified
-        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "Symbols1.ttf", "", PdfAConformanceLevel.PDF_A_1B, null);
+        // Here we produced valid pdfa files in the past by silently removing not valid symbols
+        // But right now we check for used glyphs which don't exist in the font and throw exception
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "Symbols1.ttf", "", PdfAConformanceLevel.PDF_A_1B)
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-2975 Using only shipped fonts in font provider can result in pdf with no-def glyph and not conforming PDF/A document
-    public void symbolicTtfCharEncodingsPdfA1Test02() throws IOException, InterruptedException {
-        String expectedVeraPdfWarning = "VeraPDF verification failed. See verification results: " +
-                UrlUtil.getNormalizedFileUriString(DESTINATION_FOLDER + "symbolicTtfCharEncodingsPdfA1Test02.xml");
+    public void symbolicTtfCharEncodingsPdfA1Test02() {
         // if you specify encoding, symbolic font is treated as non-symbolic
-        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "Symbols1.ttf", PdfEncodings.MACROMAN, PdfAConformanceLevel.PDF_A_1B, expectedVeraPdfWarning);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "Symbols1.ttf", PdfEncodings.MACROMAN, PdfAConformanceLevel.PDF_A_1B)
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                e.getMessage());
     }
 
     @Test
     public void symbolicTtfCharEncodingsPdfA1Test03() {
         // if you specify encoding, symbolic font is treated as non-symbolic
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
-                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_1B, null)
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_1B)
         );
-        Assert.assertEquals(PdfaExceptionMessageConstant.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY,
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
                 e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-2975 Using only shipped fonts in font provider can result in pdf with no-def glyph and not conforming PDF/A document
-    public void symbolicTtfCharEncodingsPdfA1Test04() throws IOException, InterruptedException {
-        String expectedVeraPdfWarning = "VeraPDF verification failed. See verification results: " +
-                UrlUtil.getNormalizedFileUriString(DESTINATION_FOLDER + "symbolicTtfCharEncodingsPdfA1Test04.xml");
-        // emulate behaviour with default WinAnsi, which was present in 7.1
-        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "Symbols1.ttf", PdfEncodings.WINANSI, PdfAConformanceLevel.PDF_A_1B, expectedVeraPdfWarning);
+    public void symbolicTtfCharEncodingsPdfA1Test04() {
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "Symbols1.ttf", PdfEncodings.WINANSI, PdfAConformanceLevel.PDF_A_1B)
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                e.getMessage());
     }
 
     @Test
-    public void symbolicTtfCharEncodingsPdfA1Test05() throws IOException, InterruptedException {
+    public void symbolicTtfCharEncodingsPdfA1Test05() {
         // Identity-H behaviour should be the same as the default one, starting from 7.2
-        createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test05.pdf", "Symbols1.ttf", PdfEncodings.IDENTITY_H, PdfAConformanceLevel.PDF_A_1B, null);
+        // Here we produced valid pdfa files in the past by silently removing not valid symbols
+        // But right now we check for used glyphs which don't exist in the font and throw exception
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test05.pdf", "Symbols1.ttf", PdfEncodings.IDENTITY_H, PdfAConformanceLevel.PDF_A_1B)
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                e.getMessage());
     }
 
     @Test
     public void nonSymbolicTtfCharEncodingsPdfA1Test01() throws IOException, InterruptedException {
         // encoding must be either winansi or macroman, by default winansi is used
-        createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test01.pdf", "FreeSans.ttf", PdfEncodings.WINANSI, PdfAConformanceLevel.PDF_A_1B, null);
+        createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test01.pdf", "FreeSans.ttf", PdfEncodings.WINANSI, PdfAConformanceLevel.PDF_A_1B);
     }
 
 
@@ -321,7 +326,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     public void nonSymbolicTtfCharEncodingsPdfA1Test02() {
         // encoding must be either winansi or macroman, by default winansi is used
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
-                () -> createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test02.pdf", "FreeSans.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_2B, null)
+                () -> createDocumentWithFont("nonSymbolicTtfCharEncodingsPdfA1Test02.pdf", "FreeSans.ttf", "ISO-8859-1", PdfAConformanceLevel.PDF_A_2B)
         );
         Assert.assertEquals(PdfaExceptionMessageConstant.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING,
                 e.getMessage());
@@ -342,33 +347,18 @@ public class PdfAFontTest extends ExtendedITextTest {
                 saveState().
                 beginText().
                 moveText(36, 786).
-                setFontAndSize(font, 36).
-                showText("\u00C5 \u1987").
-                endText().
-                restoreState();
-        font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
-                PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
-        canvas.
-                saveState().
-                beginText().
-                moveText(36, 756).
-                setFontAndSize(font, 36).
-                showText("\u1987").
-                endText().
-                restoreState();
-        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING,
+                setFontAndSize(font, 36);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> canvas.showText("\u00C5 \u1987")
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
                 e.getMessage());
     }
 
     @Test
-    // TODO: DEVSIX-2975 Using only shipped fonts in font provider can result in pdf with no-def glyph and not conforming PDF/A document
-    public void notdefFontTest2() throws IOException, InterruptedException {
+    public void notdefFontTest2() throws IOException {
         String outPdf = DESTINATION_FOLDER + "notdefFontTest2.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/notdefFontTest2.pdf";
-
-        String expectedVeraPdfWarning = "VeraPDF verification failed. See verification results: " +
-                UrlUtil.getNormalizedFileUriString(DESTINATION_FOLDER + "notdefFontTest2.xml");
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
@@ -381,14 +371,61 @@ public class PdfAFontTest extends ExtendedITextTest {
                 saveState().
                 beginText().
                 moveText(36, 786).
-                setFontAndSize(font, 36).
-                showText("\u898B\u7A4D\u3082\u308A").
-                endText().
-                restoreState();
+                setFontAndSize(font, 36);
 
-        doc.close();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> canvas.showText("\u898B\u7A4D\u3082\u308A")
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                e.getMessage());
+    }
 
-        compareResult(outPdf, cmpPdf, expectedVeraPdfWarning);
+    @Test
+    public void glyphLineWithUndefinedGlyphsTest() throws Exception {
+        String outPdf = DESTINATION_FOLDER + "glyphLineWithUndefinedGlyphs.pdf";
+
+        InputStream icm = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        Document document = new Document(new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm)));
+
+        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSans-Regular.ttf",
+                "", EmbeddingStrategy.PREFER_EMBEDDED);
+        Paragraph p = new Paragraph("\u898B\u7A4D\u3082\u308A");
+        p.setFont(font);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> document.add(p));
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                e.getMessage());
+    }
+
+    @Test
+    public void pdfArrayWithUndefinedGlyphsTest() throws Exception {
+        String outPdf = DESTINATION_FOLDER + "pdfArrayWithUndefinedGlyphs.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfDocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSans-Regular.ttf",
+                "", EmbeddingStrategy.PREFER_EMBEDDED);
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+        canvas.
+                saveState().
+                beginText().
+                moveText(36, 786).
+                setFontAndSize(font, 36);
+
+        PdfArray pdfArray = new PdfArray();
+        pdfArray.add(new PdfString("ABC"));
+        pdfArray.add(new PdfNumber(1));
+        pdfArray.add(new PdfString("\u898B\u7A4D\u3082\u308A"));
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> canvas.showText(pdfArray)
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                e.getMessage());
     }
 
     @Test
@@ -715,7 +752,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         compareResult(outPdf, cmpPdf, null);
     }
 
-    private void createDocumentWithFont(String outFileName, String fontFileName, String encoding, PdfAConformanceLevel conformanceLevel, String expectedVeraPdfWarning) throws IOException, InterruptedException {
+    private void createDocumentWithFont(String outFileName, String fontFileName, String encoding, PdfAConformanceLevel conformanceLevel) throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + outFileName;
         String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_" + outFileName;
         PdfWriter writer = new PdfWriter(outPdf);
@@ -737,7 +774,7 @@ public class PdfAFontTest extends ExtendedITextTest {
 
         doc.close();
 
-        compareResult(outPdf, cmpPdf, expectedVeraPdfWarning);
+        compareResult(outPdf, cmpPdf, null);
     }
 
     private void compareResult(String outPdf, String cmpPdf, String expectedVeraPdfWarning) throws IOException, InterruptedException {

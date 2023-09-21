@@ -1554,7 +1554,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
      *
      * @param obj An object to conform.
      * @param key type of object to conform.
@@ -1564,7 +1564,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
      *
      * @param obj           an object to conform.
      * @param key           type of object to conform.
@@ -1576,7 +1576,21 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
+     *
+     * @param obj           an object to conform.
+     * @param key           type of object to conform.
+     * @param resources     {@link PdfResources} associated with an object to check.
+     * @param contentStream current content stream.
+     * @param extra         extra data required for the check.
+     */
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
+            Object extra) {
+    }
+
+    /**
+     * Checks whether PDF document conforms a specific standard.
+     * Shall be overridden.
      *
      * @param gState    a {@link CanvasGraphicsState} object to conform.
      * @param resources {@link PdfResources} associated with an object to check.
@@ -1950,7 +1964,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
      */
     protected void checkIsoConformance() {
     }
@@ -2202,7 +2216,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Updates XMP metadata.
-     * Shall be override.
+     * Shall be overridden.
      */
     protected void updateXmpMetadata() {
         try {

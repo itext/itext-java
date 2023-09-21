@@ -154,13 +154,28 @@ public class PdfADocument extends PdfDocument {
         setChecker(conformanceLevel);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkIsoConformance(Object obj, IsoKey key) {
         checkIsoConformance(obj, key, null, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
+        checkIsoConformance(obj, key, resources, contentStream, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
+            Object extra) {
         if (!isPdfADocument) {
             super.checkIsoConformance(obj, key, resources, contentStream);
             return;
@@ -216,6 +231,9 @@ public class PdfADocument extends PdfDocument {
                 break;
             case CRYPTO:
                 checker.checkCrypto((PdfObject) obj);
+                break;
+            case FONT:
+                checker.checkText((String) obj, (PdfFont) extra);
                 break;
         }
     }

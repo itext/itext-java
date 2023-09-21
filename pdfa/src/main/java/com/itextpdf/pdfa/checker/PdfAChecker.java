@@ -286,7 +286,7 @@ public abstract class PdfAChecker {
      *
      * @param isCAdES true is CAdES sig type is used, false otherwise.
      *
-     * @deprecated Will become an abstract in the next major release.
+     * @deprecated Will become abstract in the next major release.
      */
     @Deprecated
     public void checkSignatureType(boolean isCAdES) {
@@ -427,6 +427,18 @@ public abstract class PdfAChecker {
      */
     @Deprecated
     public void checkCrypto(PdfObject crypto) {
+    }
+
+    /**
+     * Verify the conformity of the text written by the specified font.
+     *
+     * @param text Text to verify.
+     * @param font Font to verify the text against.
+     *
+     * @deprecated Will become abstract in the next major release.
+     */
+    @Deprecated
+    public void checkText(String text, PdfFont font) {
     }
 
     /**
