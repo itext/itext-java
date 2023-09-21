@@ -25,6 +25,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
@@ -37,6 +38,8 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
@@ -203,6 +206,20 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
         PdfFont newFont = PdfFontFactory.createFont();
         signatureAppearance.setLayer2Font(newFont);
         Assert.assertEquals(newFont, signatureAppearance.getLayer2Font());
+    }
+
+    @Test
+    public void setFontProviderAndFamilyTest() throws IOException {
+        PdfSignatureAppearance appearance = getTestSignatureAppearance();
+
+        FontProvider fontProvider = new FontProvider();
+        fontProvider.getFontSet().addFont(StandardFonts.HELVETICA, "");
+        String fontFamilyName = "fontFamily";
+        appearance.setFontProvider(fontProvider).setFontFamily(fontFamilyName);
+        Assert.assertEquals(fontProvider,
+                appearance.getModelElement().<FontProvider>getProperty(Property.FONT_PROVIDER));
+        Assert.assertEquals(fontFamilyName,
+                ((String[]) appearance.getModelElement().<String[]>getProperty(Property.FONT))[0]);
     }
 
     @Test

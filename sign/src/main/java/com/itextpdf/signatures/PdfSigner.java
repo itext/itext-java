@@ -1002,7 +1002,6 @@ public class PdfSigner {
         sigField.put(PdfName.F, new PdfNumber(flags));
 
         sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getModelElement());
-        sigField.regenerateField();
 
         sigField.setModified();
 
@@ -1038,7 +1037,6 @@ public class PdfSigner {
         widget.setPage(document.getPage(pagen));
 
         sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getModelElement());
-        sigField.regenerateField();
         acroForm.addField(sigField, document.getPage(pagen));
 
         if (acroForm.getPdfObject().isIndirect()) {

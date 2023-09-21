@@ -117,8 +117,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-7787 Get rid of this logs
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void textAutoscaleTest02() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest02.pdf";
         String dest = DESTINATION_FOLDER + fileName;
@@ -126,7 +124,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         Rectangle rect = new Rectangle(36, 648, 150, 50);
         testSignatureAppearanceAutoscale(dest, rect, PdfSignatureAppearance.RenderingMode.DESCRIPTION);
 
-        assertAppearanceFontSize(dest, 6.48f);
+        assertAppearanceFontSize(dest, 7.73f);
     }
 
     @Test
@@ -141,8 +139,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-7787 Get rid of this logs
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void textAutoscaleTest04() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest04.pdf";
         String dest = DESTINATION_FOLDER + fileName;
@@ -165,8 +161,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-7787 Get rid of this logs
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void textAutoscaleTest06() throws GeneralSecurityException, IOException {
         String fileName = "textAutoscaleTest06.pdf";
         String dest = DESTINATION_FOLDER + fileName;
@@ -237,8 +231,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-7787 Get rid of this logs
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 24))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 4))
     public void signaturesOnRotatedPages() throws IOException, GeneralSecurityException, InterruptedException {
         StringBuilder assertionResults = new StringBuilder();
 

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.kernel.font.PdfFont;
@@ -29,11 +30,15 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
@@ -127,6 +132,49 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
                 font = (PdfFont) retrievedFont;
             }
         }
+    }
+
+    /**
+     * Approximates font size to fit occupied area if width anf height are specified.
+     *
+     * @param layoutContext layout context that specifies layout area.
+     * @param lFontSize minimal font size value.
+     * @param rFontSize maximum font size value.
+     *
+     * @return fitting font size or -1 in case it shouldn't be approximated.
+     */
+    float approximateFontSize(LayoutContext layoutContext, float lFontSize, float rFontSize) {
+        IRenderer flatRenderer = createFlatRenderer().setParent(this);
+
+        Float areaWidth = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
+        Float areaHeight = retrieveHeight();
+        if (areaWidth == null || areaHeight == null) {
+            return -1;
+        }
+        flatRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(AbstractPdfFormField.DEFAULT_FONT_SIZE));
+        LayoutContext newLayoutContext = new LayoutContext(new LayoutArea(1,
+                new Rectangle((float) areaWidth, (float) areaHeight)));
+        if (flatRenderer.layout(newLayoutContext).getStatus() == LayoutResult.FULL) {
+            return -1;
+        } else {
+            final int numberOfIterations = 6;
+            return calculateFittingFontSize(flatRenderer, lFontSize, rFontSize, newLayoutContext, numberOfIterations);
+        }
+    }
+
+    float calculateFittingFontSize(IRenderer renderer, float lFontSize, float rFontSize,
+                                   LayoutContext newLayoutContext, int numberOfIterations) {
+        for (int i = 0; i < numberOfIterations; i++) {
+            float mFontSize = (lFontSize + rFontSize) / 2;
+            renderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(mFontSize));
+            LayoutResult result = renderer.layout(newLayoutContext);
+            if (result.getStatus() == LayoutResult.FULL) {
+                lFontSize = mFontSize;
+            } else {
+                rFontSize = mFontSize;
+            }
+        }
+        return lFontSize;
     }
 
     // The width based on cols of textarea and size of input isn't affected by box sizing, so we emulate it here.

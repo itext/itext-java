@@ -34,7 +34,6 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -133,9 +132,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true),
-            // TODO DEVSIX-7787 Get rid of this logs
-           @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2)})
+            ignore = true)})
     public void createNewSignatureFormFieldNotInvisibleAnnotationTest() throws IOException {
         PdfSigner signer = new PdfSigner(
                 new PdfReader(new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
@@ -155,8 +152,6 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-7787 Get rid of this logs
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2))
     public void signWithFieldLockNotNullTest() throws IOException, GeneralSecurityException {
         PdfSigner signer = new PdfSigner(new PdfReader(
                 new ByteArrayInputStream(createSimpleDocument(PdfVersion.PDF_2_0))),

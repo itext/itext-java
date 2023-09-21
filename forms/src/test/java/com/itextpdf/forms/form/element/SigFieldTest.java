@@ -74,8 +74,6 @@ public class SigFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-7787 Get rid of this logs
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void basicSigFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicSigField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicSigField.pdf";
@@ -155,7 +153,6 @@ public class SigFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-7787 Get rid of this logs
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void signatureFieldVerticalAlignmentTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "signatureFieldVerticalAlignment.pdf";
@@ -347,6 +344,7 @@ public class SigFieldTest extends ExtendedITextTest {
             sigField.setSize(100);
             sigField.setInteractive(true);
             sigField.setDescription("dashed");
+            sigField.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(30));
             document.add(sigField);
 
             PdfDictionary bs = new PdfDictionary();
@@ -359,6 +357,8 @@ public class SigFieldTest extends ExtendedITextTest {
             sigField2.setSize(100);
             sigField2.setInteractive(true);
             sigField2.setDescription("underline");
+            sigField2.setFontSize(18);
+            sigField2.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(30));
             document.add(sigField2);
 
             // INSET
@@ -370,6 +370,7 @@ public class SigFieldTest extends ExtendedITextTest {
             sigField3.setSize(100);
             sigField3.setInteractive(true);
             sigField3.setDescription("inset");
+            sigField3.setProperty(Property.MARGIN_BOTTOM, UnitValue.createPointValue(30));
             document.add(sigField3);
 
             // BEVELLED
@@ -381,6 +382,7 @@ public class SigFieldTest extends ExtendedITextTest {
             sigField4.setSize(100);
             sigField4.setInteractive(true);
             sigField4.setDescription("bevelled");
+            sigField4.setFontSize(18);
             document.add(sigField4);
 
             PdfFormCreator.getAcroForm(document.getPdfDocument(), false).flattenFields();

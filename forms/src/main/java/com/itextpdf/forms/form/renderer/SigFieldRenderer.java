@@ -24,6 +24,7 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
@@ -69,6 +70,8 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
 
     private static final float EPS = 1e-5f;
 
+    private boolean isFontSizeApproximated = false;
+
     /**
      * Creates a new {@link SigFieldRenderer} instance.
      *
@@ -111,7 +114,8 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
                     throw new IllegalStateException("A signature image must be present when rendering mode is " +
                             "graphic and description. Use setSignatureGraphic()");
                 }
-                div.add(new Image(signatureGraphic)).add(new Paragraph(description).setMultipliedLeading(0.9f));
+                div.add(new Image(signatureGraphic))
+                        .add(new Paragraph(description).setMargin(0).setMultipliedLeading(0.9f));
                 break;
             }
             case GRAPHIC:
@@ -123,10 +127,19 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
                 div.add(new Image(signatureGraphic));
                 break;
             default:
-                div.add(new Paragraph(description).setMultipliedLeading(0.9f));
+                div.add(new Paragraph(description).setMargin(0).setMultipliedLeading(0.9f));
                 break;
         }
         return div.createRendererSubTree();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LayoutResult layout(LayoutContext layoutContext) {
+        approximateFontSizeToFitLayoutArea(layoutContext);
+        return super.layout(layoutContext);
     }
 
     /**
@@ -153,28 +166,33 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
             case GRAPHIC_AND_DESCRIPTION: {
                 // Split the signature field into two and add the name of the signer or an image to the one side,
                 // the description to the other side.
+                UnitValue[] paddings = getPaddings();
                 if (bBox.getHeight() > bBox.getWidth()) {
+                    float topPadding = paddings[0].getValue();
+                    float bottomPadding = paddings[2].getValue();
                     signatureRect = new Rectangle(
                             bBox.getX(),
-                            bBox.getY() + bBox.getHeight() / 2,
+                            bBox.getY() + bBox.getHeight() / 2 + bottomPadding / 2,
                             bBox.getWidth(),
-                            bBox.getHeight() / 2);
+                            bBox.getHeight() / 2 - bottomPadding / 2);
                     descriptionRect = new Rectangle(
                             bBox.getX(),
                             bBox.getY(),
                             bBox.getWidth(),
-                            bBox.getHeight() / 2);
+                            bBox.getHeight() / 2 - topPadding / 2);
                 } else {
                     // origin is the bottom-left
+                    float rightPadding = paddings[1].getValue();
+                    float leftPadding = paddings[3].getValue();
                     signatureRect = new Rectangle(
                             bBox.getX(),
                             bBox.getY(),
-                            bBox.getWidth() / 2,
+                            bBox.getWidth() / 2 - rightPadding / 2,
                             bBox.getHeight());
                     descriptionRect = new Rectangle(
-                            bBox.getX() + bBox.getWidth() / 2,
+                            bBox.getX() + bBox.getWidth() / 2 + leftPadding / 2,
                             bBox.getY(),
-                            bBox.getWidth() / 2,
+                            bBox.getWidth() / 2 - leftPadding / 2,
                             bBox.getHeight());
                 }
                 break;
@@ -185,7 +203,15 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
                 break;
             default:
                 // Default one, it just shows whatever description was defined for the signature.
-                descriptionRect = bBox.setHeight(getOccupiedArea().getBBox().getHeight() * (1 - TOP_SECTION));
+                if (retrieveHeight() == null) {
+                    // Adjust calculated occupied area height to keep the same font size.
+                    float calculatedHeight = getOccupiedArea().getBBox().getHeight();
+                    getOccupiedArea().getBBox().moveDown(calculatedHeight * TOP_SECTION)
+                            .setHeight(calculatedHeight * (1 + TOP_SECTION));
+                    bBox.moveDown(calculatedHeight * TOP_SECTION);
+                }
+                descriptionRect = bBox.setHeight(getOccupiedArea().getBBox().getHeight() * (1 - TOP_SECTION)
+                - calculateAdditionalHeight());
                 break;
         }
 
@@ -331,10 +357,10 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
     }
 
     private void relayoutParagraph(IRenderer renderer, Rectangle rect, int pageNum) {
-        UnitValue fontSize = this.hasOwnProperty(Property.FONT_SIZE) ?
+        UnitValue fontSizeAsUV = this.hasOwnProperty(Property.FONT_SIZE) ?
                 (UnitValue) this.<UnitValue>getOwnProperty(Property.FONT_SIZE) :
                 (UnitValue) modelElement.<UnitValue>getOwnProperty(Property.FONT_SIZE);
-        if (fontSize == null || fontSize.getValue() < EPS) {
+        if (fontSizeAsUV == null || fontSizeAsUV.getValue() < EPS || isFontSizeApproximated) {
             // Calculate font size.
             IRenderer helper = ((Paragraph) renderer.getModelElement()).createRendererSubTree()
                     .setParent(renderer.getParent());
@@ -343,19 +369,8 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
             float lFontSize = 0.1f, rFontSize = 100;
             int numberOfIterations = 15;
             // 15 iterations with lFontSize = 0.1 and rFontSize = 100 should result in ~0.003 precision.
-            for (int i = 0; i < numberOfIterations; i++) {
-                float mFontSize = (lFontSize + rFontSize) / 2;
-                UnitValue fontSizeAsUV = UnitValue.createPointValue(mFontSize);
-                helper.setProperty(Property.FONT_SIZE, fontSizeAsUV);
-                LayoutResult result = helper.layout(layoutContext);
-                if (result.getStatus() == LayoutResult.FULL) {
-                    lFontSize = mFontSize;
-                } else {
-                    rFontSize = mFontSize;
-                }
-            }
-            UnitValue fontSizeAsUV = UnitValue.createPointValue(lFontSize);
-            renderer.getModelElement().setProperty(Property.FONT_SIZE, fontSizeAsUV);
+            float fontSize = calculateFittingFontSize(helper, lFontSize, rFontSize, layoutContext, numberOfIterations);
+            renderer.getModelElement().setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
         }
         // Relayout the element after font size was changed or signature was split into 2 parts.
         LayoutContext layoutContext = new LayoutContext(new LayoutArea(pageNum, rect));
@@ -388,6 +403,31 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
                     .setBackgroundRepeat(repeat)
                     .setBackgroundPosition(position)
                     .build());
+        }
+    }
+
+    private float calculateAdditionalHeight() {
+        Rectangle dummy = new Rectangle(0, 0);
+        this.applyMargins(dummy, true);
+        this.applyBorderBox(dummy, true);
+        this.applyPaddings(dummy, true);
+        return dummy.getHeight();
+    }
+
+    private void approximateFontSizeToFitLayoutArea(LayoutContext layoutContext) {
+        if (this.hasOwnProperty(Property.FONT_SIZE) || modelElement.hasOwnProperty(Property.FONT_SIZE)) {
+            return;
+        }
+        if (SigField.RenderingMode.GRAPHIC == ((SigField) modelElement).getRenderingMode() ||
+                SigField.RenderingMode.GRAPHIC_AND_DESCRIPTION == ((SigField) modelElement).getRenderingMode()) {
+            // We can expect CLIP_ELEMENT log messages since the initial image size may be larger than the field height.
+            // But image size will be adjusted during its relayout in #adjustFieldLayout.
+            return;
+        }
+        float fontSize = approximateFontSize(layoutContext, 0.1f, AbstractPdfFormField.DEFAULT_FONT_SIZE);
+        if (fontSize > 0) {
+            isFontSizeApproximated = true;
+            modelElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
         }
     }
 }

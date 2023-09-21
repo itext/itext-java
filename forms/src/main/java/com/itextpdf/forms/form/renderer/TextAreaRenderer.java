@@ -35,7 +35,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -267,37 +266,8 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
     }
 
     private void approximateFontSizeToFitMultiLine(LayoutContext layoutContext) {
-        IRenderer flatRenderer = createFlatRenderer();
-        flatRenderer.setParent(this);
-        TextArea modelElement = (TextArea) this.getModelElement();
-
-        float lFontSize = AbstractPdfFormField.MIN_FONT_SIZE;
-        float rFontSize = AbstractPdfFormField.DEFAULT_FONT_SIZE;
-        flatRenderer.setProperty(
-                Property.FONT_SIZE, UnitValue.createPointValue(AbstractPdfFormField.DEFAULT_FONT_SIZE));
-        Float areaWidth = retrieveWidth(layoutContext.getArea().getBBox().getWidth());
-        Float areaHeight = retrieveHeight();
-        LayoutContext newLayoutContext;
-        if (areaWidth == null || areaHeight == null) {
-            modelElement.setFontSize(AbstractPdfFormField.DEFAULT_FONT_SIZE);
-            return;
-        }
-        newLayoutContext = new LayoutContext(new LayoutArea(1, new Rectangle((float) areaWidth, (float) areaHeight)));
-        if (flatRenderer.layout(newLayoutContext).getStatus() == LayoutResult.FULL) {
-            lFontSize = AbstractPdfFormField.DEFAULT_FONT_SIZE;
-        } else {
-            final int numberOfIterations = 6;
-            for (int i = 0; i < numberOfIterations; i++) {
-                float mFontSize = (lFontSize + rFontSize) / 2;
-                flatRenderer.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(mFontSize));
-                LayoutResult result = flatRenderer.layout(newLayoutContext);
-                if (result.getStatus() == LayoutResult.FULL) {
-                    lFontSize = mFontSize;
-                } else {
-                    rFontSize = mFontSize;
-                }
-            }
-        }
-        modelElement.setFontSize(lFontSize);
+        float fontSize = approximateFontSize(layoutContext, AbstractPdfFormField.MIN_FONT_SIZE,
+                AbstractPdfFormField.DEFAULT_FONT_SIZE);
+        ((TextArea) modelElement).setFontSize(fontSize < 0 ? AbstractPdfFormField.DEFAULT_FONT_SIZE : fontSize);
     }
 }

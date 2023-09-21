@@ -34,6 +34,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.properties.Property;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -564,9 +566,37 @@ public class PdfSignatureAppearance {
      * Sets the signature layout element.
      *
      * @param modelElement the signature layout element.
+     *
+     * @return this instance to support fluent interface.
      */
-    public void setModelElement(SigField modelElement) {
+    public PdfSignatureAppearance setModelElement(SigField modelElement) {
         this.modelElement = modelElement;
+        return this;
+    }
+
+    /**
+     * Sets {@link FontProvider}. Note, font provider is inherited property.
+     *
+     * @param fontProvider the instance of {@link FontProvider}.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSignatureAppearance setFontProvider(FontProvider fontProvider) {
+        modelElement.setProperty(Property.FONT_PROVIDER, fontProvider);
+        return this;
+    }
+
+    /**
+     * Sets the preferable font families for the signature content.
+     * Note that {@link com.itextpdf.layout.font.FontProvider} shall be set as well.
+     *
+     * @param fontFamilyNames defines an ordered list of preferable font families for the signature element.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSignatureAppearance setFontFamily(String... fontFamilyNames) {
+        modelElement.setFontFamily(fontFamilyNames);
+        return this;
     }
 
     /**
@@ -574,6 +604,7 @@ public class PdfSignatureAppearance {
      *
      * @return the visibility status of the signature
      */
+    @Deprecated
     public boolean isInvisible() {
         return rect == null || rect.getWidth() == 0 || rect.getHeight() == 0;
     }
