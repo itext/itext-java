@@ -78,11 +78,11 @@ public class VeraPdfValidator {
             String xmlReportPath = "file://" + xmlReport.toURI().normalize().getPath();
 
             if (summary.getFailedParsingJobs() != 0) {
-                errorMessage = "An error occurred while parsing current file. See report:  " + xmlReportPath;
+                errorMessage = "An error occurred while parsing current file. See report: " + xmlReportPath;
             } else if (summary.getFailedEncryptedJobs() != 0) {
-                errorMessage = "VeraPDF execution failed - specified file is encrypted. See report:  " + xmlReportPath;
+                errorMessage = "VeraPDF execution failed - specified file is encrypted. See report: " + xmlReportPath;
             } else if (summary.getValidationSummary().getNonCompliantPdfaCount() != 0) {
-                errorMessage = "VeraPDF verification failed. See verification results:  " + xmlReportPath;
+                errorMessage = "VeraPDF verification failed. See verification results: " + xmlReportPath;
             } else {
                 System.out.println("VeraPDF verification finished. See verification report: " + xmlReportPath);
 
