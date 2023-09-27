@@ -123,7 +123,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate,
+        public void checkColorSpace(PdfColorSpace colorSpace, PdfObject object, PdfDictionary currentColorSpaces, boolean checkAlternate,
                 Boolean fill) {
 
         }

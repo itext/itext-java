@@ -368,7 +368,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         // for Pdf/A-2
         Assert.assertThrows(RuntimeException.class,
                 () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function),
-                        currentColorSpaces, true, false)
+                        null, currentColorSpaces, true, false)
         );
     }
 

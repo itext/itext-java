@@ -90,7 +90,7 @@ public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
     public void deviceNColorspaceWithMoreThan32Components() {
         //exception shall not be thrown as pdf/a-4 supports any number of deviceN components
         PdfDictionary currentColorSpaces = new PdfDictionary();
-        pdfA4Checker.checkColorSpace(buildDeviceNColorspace(40), currentColorSpaces, true, false);
+        pdfA4Checker.checkColorSpace(buildDeviceNColorspace(40), null, currentColorSpaces, true, false);
     }
 
     private PdfColorSpace buildDeviceNColorspace(int numberOfComponents) {

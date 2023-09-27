@@ -22,32 +22,64 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.IccBased;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.colors.DeviceN;
+import com.itextpdf.kernel.colors.Separation;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.function.PdfType0Function;
+import com.itextpdf.kernel.pdf.function.PdfType2Function;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
@@ -210,29 +242,956 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
-    public void invalidHalftoneTest3() throws IOException, InterruptedException {
+    public void invalidHalftoneTest3() throws IOException {
         testWithColourant(PdfName.Cyan);
     }
 
     @Test
-    public void invalidHalftoneTest4() throws IOException, InterruptedException {
+    public void invalidHalftoneTest4() throws IOException {
         testWithColourant(PdfName.Magenta);
     }
 
     @Test
-    public void invalidHalftoneTest5() throws IOException, InterruptedException {
+    public void invalidHalftoneTest5() throws IOException {
         testWithColourant(PdfName.Yellow);
     }
 
     @Test
-    public void invalidHalftoneTest6() throws IOException, InterruptedException {
+    public void invalidHalftoneTest6() throws IOException {
         testWithColourant(PdfName.Black);
     }
 
-    private void testWithColourant(PdfName color) throws FileNotFoundException {
+    @Test
+    public void colorCheckTest1() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
+
+            float[] whitePoint = {0.9505f, 1f, 1.089f};
+            float[] gamma = {2.2f, 2.2f, 2.2f};
+            float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
+            PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
+
+            PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+
+            canvas.getResources().setDefaultCmyk(calRgb);
+
+            Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                    () -> canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f))
+            );
+            Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.COLOR_SPACE_0_SHALL_HAVE_1_COMPONENTS,
+                    PdfName.DefaultCMYK.getValue(), 4), e.getMessage());
+        }
+    }
+
+    @Test
+    public void colorCheckTest2() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest2.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest2.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+
+        try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null)) {
+
+            float[] whitePoint = {0.9505f, 1f, 1.089f};
+            float[] gamma = {2.2f, 2.2f, 2.2f};
+            float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
+            PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
+
+            PdfCieBasedCs.CalGray calGray = new PdfCieBasedCs.CalGray(whitePoint, null, 2.2f);
+
+            PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+
+            canvas.getResources().setDefaultRgb(calRgb);
+            canvas.getResources().setDefaultGray(calGray);
+
+            String shortText = "text";
+
+            PdfFont font = PdfFontFactory.createFont(
+                    SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+            canvas.setFontAndSize(font, 12);
+            canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
+            canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
+        }
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void colorCheckTest3() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+
+        canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
+        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        canvas.fill();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> doc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_SHALL_ONLY_BE_USED_IF_CURRENT_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckTest4() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest4.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest4.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
+        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        canvas.fill();
+
+        canvas.setFillColor(DeviceGray.BLACK);
+        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        canvas.fill();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_SHALL_ONLY_BE_USED_IF_CURRENT_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckTest5() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest5.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest5.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = doc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
+        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        canvas.fill();
+
+        canvas.setFillColor(DeviceGray.BLACK);
+        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
+        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        canvas.fill();
+
+        // Here we use RGB and CMYK at the same time. And only page output intent is taken into account not both.
+        // So it throws on device RGB color.
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT,
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckTest6() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+
+        String shortText = "text";
+
+        PdfFont font = PdfFontFactory.createFont(
+                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+        canvas.setFontAndSize(font, 12);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
+        canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
+        canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL);
+        canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_SHALL_ONLY_BE_USED_IF_CURRENT_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckTest7() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest7.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest7.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = doc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        String shortText = "text";
+
+        PdfFont font = PdfFontFactory.createFont(
+                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+        canvas.setFontAndSize(font, 12);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
+        canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
+        canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL);
+        canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
+
+        // Here we use RGB and CMYK at the same time. And only page output intent is taken into account not both.
+        // So it throws on device RGB color.
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT,
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckTest8() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest8.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest8.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
+
+        String shortText = "text";
+
+        PdfFont font = PdfFontFactory.createFont(
+                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+        canvas.setFontAndSize(font, 12);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
+        canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
+        canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.INVISIBLE);
+        canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.DEVICECMYK_SHALL_ONLY_BE_USED_IF_CURRENT_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT,
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckTest9() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest9.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest9.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = doc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        String shortText = "text";
+
+        PdfFont font = PdfFontFactory.createFont(
+                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+        canvas.setFontAndSize(font, 12);
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
+        canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
+        canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
+
+        canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.INVISIBLE);
+        canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
+
+        doc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void colorCheckTest10() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest10.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest10.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // Add page blending colorspace
+        PdfTransparencyGroup transparencyGroup = new PdfTransparencyGroup();
+        PdfArray transparencyArray = new PdfArray(PdfName.ICCBased);
+        transparencyArray.add(PdfCieBasedCs.IccBased.getIccProfileStream(new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        transparencyGroup.setColorSpace(transparencyArray);
+        page.getPdfObject().put(PdfName.Group, transparencyGroup.getPdfObject());
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.setStrokeColor(DeviceCmyk.MAGENTA).circle(250, 300, 50).stroke();
+
+        pdfDoc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void colorCheckTest11() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest11.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest11.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // Add page blending colorspace
+        PdfTransparencyGroup transparencyGroup = new PdfTransparencyGroup();
+        PdfArray transparencyArray = new PdfArray(PdfName.ICCBased);
+        transparencyArray.add(PdfCieBasedCs.IccBased.getIccProfileStream(new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        transparencyGroup.setColorSpace(transparencyArray);
+        page.getPdfObject().put(PdfName.Group, transparencyGroup.getPdfObject());
+
+        // Add annotation
+        PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
+        annot.setFlag(PdfAnnotation.PRINT);
+        // Draw annotation
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        Canvas annotCanvas = new Canvas(xObject, pdfDoc);
+        annotCanvas.getPdfCanvas().setStrokeColor(DeviceCmyk.MAGENTA);
+        annotCanvas.getPdfCanvas().circle(50, 50, 40).stroke();
+
+        xObject.getPdfObject().put(PdfName.Group, transparencyGroup.getPdfObject());
+
+        // Add appearance stream
+        annot.setAppearance(PdfName.N, xObject.getPdfObject());
+        page.addAnnotation(annot);
+
+        pdfDoc.close();
+
+        // Here we have blending colorspaces set on page and xobject level but verapdf still asserts
+        // That's very weird
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void colorCheckTest12() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest12.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest12.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // Add page blending colorspace
+        PdfTransparencyGroup transparencyGroup = new PdfTransparencyGroup();
+        PdfArray transparencyArray = new PdfArray(PdfName.ICCBased);
+        transparencyArray.add(PdfCieBasedCs.IccBased.getIccProfileStream(new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        transparencyGroup.setColorSpace(transparencyArray);
+        page.getPdfObject().put(PdfName.Group, transparencyGroup.getPdfObject());
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.setStrokeColor(DeviceRgb.BLUE).circle(250, 300, 50).stroke();
+
+        pdfDoc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void defaultTextColorCheckTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "defaultColorCheck.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
+
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState();
+        canvas.beginText()
+                .moveText(36, 750)
+                .setFontAndSize(font, 16)
+                .showText("some text")
+                .endText()
+                .restoreState();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.DEVICEGRAY_SHALL_ONLY_BE_USED_IF_CURRENT_PDFA_OUTPUT_INTENT_OR_DEFAULTGRAY_IN_USAGE_CONTEXT),
+                e.getMessage());
+    }
+
+    @Test
+    public void defaultTextColorCheckWithPageOutputIntentTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "defaultTextColorCheckWithPageOutputIntent.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_defaultTextColorCheckWithPageOutputIntent.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
+
+        PdfPage page = pdfDocument.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState();
+        canvas.beginText()
+                .moveText(36, 750)
+                .setFontAndSize(font, 16)
+                .showText("some text")
+                .endText()
+                .restoreState();
+
+        pdfDocument.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void defaultTextColorCheckForInvisibleTextTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_defaultColorCheckInvisibleText.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_defaultColorCheckInvisibleText.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+                "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
+
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState();
+        canvas.beginText()
+                .setTextRenderingMode(TextRenderingMode.INVISIBLE)
+                .moveText(36, 750)
+                .setFontAndSize(font, 16)
+                .showText("some text")
+                .endText()
+                .restoreState();
+
+        pdfDocument.close();
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void defaultStrokeColorCheckTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "defaultColorCheck.pdf";
+
+        PdfDocument pdfDocument = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState();
+        float[] whitePoint = {0.9505f, 1f, 1.089f};
+        float[] gamma = {2.2f, 2.2f, 2.2f};
+        float[] matrix = {0.4124f, 0.2126f, 0.0193f, 0.3576f, 0.7152f, 0.1192f, 0.1805f, 0.0722f, 0.9505f};
+        PdfCieBasedCs.CalRgb calRgb = new PdfCieBasedCs.CalRgb(whitePoint, null, gamma, matrix);
+        canvas.getResources().setDefaultRgb(calRgb);
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.moveTo(pdfDocument.getDefaultPageSize().getLeft(), pdfDocument.getDefaultPageSize().getBottom());
+        canvas.lineTo(pdfDocument.getDefaultPageSize().getRight(), pdfDocument.getDefaultPageSize().getBottom());
+        canvas.lineTo(pdfDocument.getDefaultPageSize().getRight(), pdfDocument.getDefaultPageSize().getTop());
+        canvas.stroke();
+
+        // We set fill color but don't set stroke, so the exception should be thrown
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.DEVICEGRAY_SHALL_ONLY_BE_USED_IF_CURRENT_PDFA_OUTPUT_INTENT_OR_DEFAULTGRAY_IN_USAGE_CONTEXT),
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckWithDuplicatedCmykColorspaceTest1() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckWithDuplicatedCmykColorspace1.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckWithDuplicatedCmykColorspace1.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = pdfDoc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Create color
+        FileInputStream stream = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        IccBased magenta = new IccBased(stream, new float[]{0f, 1f, 0f, 0f});
+
+        canvas.setStrokeColor(magenta).circle(250, 300, 50).stroke();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE),
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckWithDuplicatedCmykColorspaceTest2() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckWithDuplicatedCmykColorspace2.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckWithDuplicatedCmykColorspace2.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // Add page blending colorspace
+        PdfTransparencyGroup transparencyGroup = new PdfTransparencyGroup();
+        PdfArray transparencyArray = new PdfArray(PdfName.ICCBased);
+        transparencyArray.add(PdfCieBasedCs.IccBased.getIccProfileStream(new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        transparencyGroup.setColorSpace(transparencyArray);
+        page.getPdfObject().put(PdfName.Group, transparencyGroup.getPdfObject());
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Create color
+        FileInputStream stream = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        IccBased magenta = new IccBased(stream, new float[]{0f, 1f, 0f, 0f});
+
+        canvas.setStrokeColor(magenta).circle(250, 300, 50).stroke();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+              Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE),
+                    e.getMessage());
+    }
+
+    @Test
+    public void colorCheckWithDuplicatedCmykColorspaceTest3() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckWithDuplicatedCmykColorspace3.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckWithDuplicatedCmykColorspace3.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // Add page blending colorspace
+        PdfTransparencyGroup transparencyGroup = new PdfTransparencyGroup();
+        PdfArray transparencyArray = new PdfArray(PdfName.ICCBased);
+        transparencyArray.add(PdfCieBasedCs.IccBased.getIccProfileStream(new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        transparencyGroup.setColorSpace(transparencyArray);
+        page.getPdfObject().put(PdfName.Group, transparencyGroup.getPdfObject());
+
+        // Create color
+        FileInputStream stream = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        IccBased magenta = new IccBased(stream, new float[]{0f, 1f, 0f, 0f});
+
+        // Add annotation
+        PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
+        annot.setFlag(PdfAnnotation.PRINT);
+        // Draw annotation
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        Canvas annotCanvas = new Canvas(xObject, pdfDoc);
+        annotCanvas.getPdfCanvas().setStrokeColor(magenta);
+        annotCanvas.getPdfCanvas().circle(50, 50, 40).stroke();
+
+        // Add appearance stream
+        annot.setAppearance(PdfName.N, xObject.getPdfObject());
+        page.addAnnotation(annot);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+              Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE),
+                    e.getMessage());
+    }
+
+    @Test
+    public void colorCheckWithDuplicatedCmykColorspaceTest4() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckWithDuplicatedCmykColorspace4.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckWithDuplicatedCmykColorspace4.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = pdfDoc.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Create color
+        FileInputStream stream = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        IccBased magenta = new IccBased(stream, new float[]{0f, 1f, 0f, 0f});
+
+        canvas.setStrokeColor(magenta).circle(250, 300, 50).stroke();
+
+        // Add annotation
+        PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
+        annot.setFlag(PdfAnnotation.PRINT);
+        // Draw annotation
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        Canvas annotCanvas = new Canvas(xObject, pdfDoc);
+        annotCanvas.getPdfCanvas().setStrokeColor(magenta);
+        annotCanvas.getPdfCanvas().circle(50, 50, 40).stroke();
+
+        // Add stream blending colorspace
+        PdfTransparencyGroup transparencyGroup = new PdfTransparencyGroup();
+        PdfArray transparencyArray = new PdfArray(PdfName.ICCBased);
+        transparencyArray.add(PdfCieBasedCs.IccBased.getIccProfileStream(new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        transparencyGroup.setColorSpace(transparencyArray);
+        xObject.getPdfObject().put(PdfName.Group, transparencyGroup.getPdfObject());
+
+        // Add appearance stream
+        annot.setAppearance(PdfName.N, xObject.getPdfObject());
+        page.addAnnotation(annot);
+
+        // Verapdf doesn't assert for such file however the expectation is that it's not a valid pdfa4
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE),
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckWithDuplicatedRgbColorspaceTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckWithDuplicatedRgbColorspace.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckWithDuplicatedRgbColorspace.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Create color
+        FileInputStream stream = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        IccBased green = new IccBased(stream, new float[]{0f, 1f, 0f});
+
+        canvas.setStrokeColor(green).circle(250, 300, 50).stroke();
+
+        pdfDoc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void colorCheckWithDuplicatedRgbAndCmykColorspaceTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckWithDuplicatedRgbAndCmykColorspace.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckWithDuplicatedRgbAndCmykColorspace.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = pdfDoc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Create colors
+        FileInputStream stream = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        IccBased green = new IccBased(stream, new float[]{0f, 1f, 0f});
+        stream = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        IccBased magenta = new IccBased(stream, new float[]{0f, 1f, 0f, 0f});
+
+        canvas.setStrokeColor(green).setFillColor(magenta).circle(250, 300, 50).fillStroke();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE),
+                e.getMessage());
+    }
+
+    @Test
+    public void colorCheckWithDuplicated2CmykColorspacesTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckWithDuplicated2CmykColorspaces.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckWithDuplicated2CmykColorspaces.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+
+        PdfPage page = pdfDoc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Create colors
+        FileInputStream stream = new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc");
+        IccBased cayan = new IccBased(stream, new float[]{1f, 0f, 0f, 0f});
+        stream = new FileInputStream(SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc");
+        IccBased magenta = new IccBased(stream, new float[]{0f, 1f, 0f, 0f});
+
+        canvas.setStrokeColor(cayan).setFillColor(magenta).circle(250, 300, 50).fillStroke();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE),
+                e.getMessage());
+    }
+
+    @Test
+    public void colourSpaceTest01() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colourSpaceTest01.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colourSpaceTest01.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a stream
+        byte[] samples = {0x00,0x00,0x00,0x01,0x01,0x01};
+        float[] domain = new float[]{0,1};
+        float[] range  = new float[]{0,1,0,1,0,1};
+        int[] size = new int[]{2};
+        int bitsPerSample = 8;
+
+        PdfType0Function type0 = new PdfType0Function(domain, size, range, 1, bitsPerSample, samples);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction0",
+                alternateSpace, type0);
+        //Add to document
+        page.getResources().addColorSpace(separationColourSpace);
+
+        doc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void colourSpaceTest02() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colourSpaceTest02.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colourSpaceTest02.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a dictionary
+        float[] domain = new float[]{0,1};
+        float[] range = new float[]{0,1,0,1,0,1};
+        float[] C0 = new float[]{0,0,0};
+        float[] C1 = new float[]{1,1,1};
+        int n = 1;
+
+        PdfType2Function type2 = new PdfType2Function(domain, range, C0, C1, n);
+        PdfColorSpace separationColourSpace = new PdfSpecialCs.Separation("separationTestFunction2",
+                alternateSpace, type2);
+        //Add to document
+        page.getResources().addColorSpace(separationColourSpace);
+        doc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void colourSpaceTest03() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_colourSpaceTest03.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colourSpaceTest03.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        PdfColorSpace alternateSpace= new PdfDeviceCs.Rgb();
+        //Tint transformation function is a dictionary
+        float[] domain = new float[]{0,1};
+        float[] range  = new float[]{0,1,0,1,0,1};
+        float[] C0 = new float[]{0,0,0};
+        float[] C1 = new float[]{1,1,1};
+        int n = 1;
+
+        PdfType2Function type2 = new PdfType2Function(domain, range, C0, C1, n);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        String separationName = "separationTest";
+        canvas.setColor(new Separation(separationName, alternateSpace, type2, 0.5f), true);
+
+        PdfDictionary attributes = new PdfDictionary();
+        PdfDictionary colorantsDict = new PdfDictionary();
+        colorantsDict.put(new PdfName(separationName), new PdfSpecialCs.Separation(separationName, alternateSpace,type2).getPdfObject());
+        attributes.put(PdfName.Colorants, colorantsDict);
+        DeviceN deviceN = new DeviceN(new PdfSpecialCs.NChannel(Collections.singletonList(separationName), alternateSpace, type2, attributes), new float[]{0.5f});
+        canvas.setColor(deviceN, true);
+
+        doc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void imageFailureTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "imageFailure.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_imageFailure.pdf";
+
+        PdfDocument pdfDoc = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // This should suppress transparency issue
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.saveState();
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
+        canvas.restoreState();
+
+        // But devicergb should still be not allowed
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT),
+                e.getMessage());
+    }
+
+    @Test
+    public void imageTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_image.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_image.pdf";
+
+        PdfDocument pdfDoc = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // This should suppress transparency and device RGB
+        page.addOutputIntent(new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1",
+                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.saveState();
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
+        canvas.restoreState();
+
+        pdfDoc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void pdfA4AnnotationsNoOutputIntentTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4AnnotationsNoOutputIntent.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4AnnotationsNoOutputIntent.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDoc.addNewPage();
+
+        PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
+        annot.setFlag(PdfAnnotation.PRINT);
+
+        // Draw annotation
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        Canvas canvas = new Canvas(xObject, pdfDoc);
+        canvas.getPdfCanvas().setFillColor(DeviceRgb.RED);
+        canvas.getPdfCanvas().circle(50, 50, 40).stroke();
+
+        annot.setAppearance(PdfName.N, xObject.getPdfObject());
+        page.addAnnotation(annot);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT),
+                e.getMessage());
+    }
+
+    @Test
+    public void pdfA4AnnotationsWrongPageOutputIntentTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4AnnotationsWrongPageOutputIntent.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4AnnotationsWrongPageOutputIntent.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDoc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(SOURCE_FOLDER + "USWebUncoated.icc")));
+
+        PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
+        annot.setFlag(PdfAnnotation.PRINT);
+        annot.setContents("Circle");
+        annot.setColor(DeviceRgb.BLUE);
+
+        // Draw annotation
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        Canvas canvas = new Canvas(xObject, pdfDoc);
+        canvas.getPdfCanvas().setStrokeColor(DeviceRgb.BLUE);
+        canvas.getPdfCanvas().circle(50, 50, 40).stroke();
+
+        annot.setAppearance(PdfName.N, xObject.getPdfObject());
+        page.addAnnotation(annot);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT),
+                e.getMessage());
+    }
+
+    @Test
+    public void pdfA4AnnotationsCorrectPageOutputIntentTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4AnnotationsCorrectPageOutputIntent.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4AnnotationsCorrectPageOutputIntent.pdf";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDoc.addNewPage();
+        page.addOutputIntent(new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1",
+                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+
+        PdfAnnotation annot = new PdfCircleAnnotation(new Rectangle(100, 100, 100, 100));
+        annot.setFlag(PdfAnnotation.PRINT);
+        annot.setContents("Circle");
+        annot.setColor(DeviceRgb.BLUE);
+
+        // Draw annotation
+        PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        Canvas canvas = new Canvas(xObject, pdfDoc);
+        canvas.getPdfCanvas().setStrokeColor(DeviceRgb.BLUE);
+        canvas.getPdfCanvas().circle(50, 50, 40).stroke();
+
+        annot.setAppearance(PdfName.N, xObject.getPdfObject());
+        page.addAnnotation(annot);
+
+        pdfDoc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    private void testWithColourant(PdfName color) throws FileNotFoundException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                is);
 
         try (PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent)) {
             doc.addNewPage();
@@ -247,8 +1206,17 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfAConformanceException.class,
                     () -> canvas.setExtGState(new PdfExtGState().setHalftone(halftone))
             );
-            Assert.assertEquals(PdfaExceptionMessageConstant.ALL_HALFTONES_CONTAINING_TRANSFER_FUNCTION_SHALL_HAVE_HALFTONETYPE_5,
+            Assert.assertEquals(
+                    PdfaExceptionMessageConstant.ALL_HALFTONES_CONTAINING_TRANSFER_FUNCTION_SHALL_HAVE_HALFTONETYPE_5,
                     e.getMessage());
+        }
+    }
+
+    private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
+        if (result != null) {
+            fail(result);
         }
     }
 }

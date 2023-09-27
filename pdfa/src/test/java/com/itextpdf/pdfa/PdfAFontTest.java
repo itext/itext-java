@@ -610,8 +610,6 @@ public class PdfAFontTest extends ExtendedITextTest {
         String testString = "A A A A E E E ~ \u00E9";
 
         //writing type3 font characters
-        String title = "Type3 font iText Document";
-
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
 
         PdfType3Font type3 = PdfFontFactory.createType3Font(doc, false);
@@ -650,15 +648,15 @@ public class PdfAFontTest extends ExtendedITextTest {
         symbol233.lineTo(5, 340);
         symbol233.stroke();
 
-            PdfPage page = doc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
-            canvas.saveState()
-                    .beginText()
-                    .setFontAndSize(type3, 12)
-                    .moveText(50, 800)
-                    .showText(testString)
-                    .endText();
-            page.flush(true);
+        PdfPage page = doc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.saveState()
+                .beginText()
+                .setFontAndSize(type3, 12)
+                .moveText(50, 800)
+                .showText(testString)
+                .endText();
+        page.flush(true);
 
         doc.close();
 

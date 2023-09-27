@@ -76,24 +76,13 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
 
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.saveState();
-        canvas.beginText()
-                .moveText(36, 750)
-                .setFontAndSize(font, 16)
-                .showText("Page 1 without transparency")
-                .endText()
-                .restoreState();
-
-        PdfPage page2 = pdfDocument.addNewPage();
-
-        canvas = new PdfCanvas(page2);
-        canvas.saveState();
         PdfExtGState state = new PdfExtGState();
         state.setFillOpacity(0.6f);
         canvas.setExtGState(state);
         canvas.beginText()
                 .moveText(36, 750)
                 .setFontAndSize(font, 16)
-                .showText("Page 2 with transparency")
+                .showText("Page with transparency")
                 .endText()
                 .restoreState();
 

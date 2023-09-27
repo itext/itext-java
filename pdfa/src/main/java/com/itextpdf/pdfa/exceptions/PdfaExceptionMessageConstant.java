@@ -183,5 +183,27 @@ public final class PdfaExceptionMessageConstant {
     public static final String SIGNATURE_SHALL_CONFORM_TO_ONE_OF_THE_PADES_PROFILE =
             "Signature shall conform to one of the PAdES profiles from either ISO 32000-2 or ISO 14533-3.";
 
+    public static final String DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT =
+            "DeviceRGB shall only be used if a device independent DefaultRGB colour space has been set when the "
+                    + "DeviceRGB colour space is used or if the current transparency blending space, when the DeviceRGB "
+                    + "colour space is used, is a device independent RGB-based colour space or the current "
+                    + "PDF/A OutputIntent, when the DeviceRGB colour space is used, contains an ‘RGB ’ destination "
+                    + "profile.";
+
+    public static final String DEVICECMYK_SHALL_ONLY_BE_USED_IF_CURRENT_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT =
+            "DeviceCMYK shall only be used if a device independent DefaultCMYK colour space has been set when the "
+                    + "DeviceCMYK colour space is used or if the current transparency blending space, when the "
+                    + "DeviceCMYK colour space is used, is a device independent CMYK-based colour space or the current "
+                    + "PDF/A OutputIntent, when the DeviceCMYK colour space is used, contains a ‘CMYK’ destination "
+                    + "profile.";
+
+    public static final String DEVICEGRAY_SHALL_ONLY_BE_USED_IF_CURRENT_PDFA_OUTPUT_INTENT_OR_DEFAULTGRAY_IN_USAGE_CONTEXT =
+            "DeviceGray shall only be used if a device independent DefaultGray colour space has been set when the "
+                    + "DeviceGray colour space is used, or if a PDF/A OutputIntent is in effect.";
+
+    public static final String ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE =
+            "An ICCBased colour space shall not be used where the profile is a CMYK destination profile and is "
+                    + "identical to that in the current PDF/A OutputIntent or the current transparency blending colorspace.";
+
     private PdfaExceptionMessageConstant(){}
 }

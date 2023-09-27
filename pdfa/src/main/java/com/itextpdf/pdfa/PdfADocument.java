@@ -234,6 +234,17 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param outputIntent {@inheritDoc}
+     */
+    @Override
+    public void addOutputIntent(PdfOutputIntent outputIntent) {
+        super.addOutputIntent(outputIntent);
+        checker.setPdfAOutputIntentColorSpace(getCatalog().getPdfObject());
+    }
+
     void logThatPdfAPageFlushingWasNotPerformed() {
         if (!alreadyLoggedThatPageFlushingWasNotPerformed) {
             alreadyLoggedThatPageFlushingWasNotPerformed = true;

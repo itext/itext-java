@@ -24,6 +24,7 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -34,6 +35,9 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
+import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -45,15 +49,17 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * PdfA4Checker defines the requirements of the PDF/A-4 standard and contains a
@@ -63,6 +69,8 @@ import org.slf4j.LoggerFactory;
  * The specification implemented by this class is ISO 19005-4
  */
 public class PdfA4Checker extends PdfA3Checker {
+    private static final String CALRGB_COLOR_SPACE = "CalRGB";
+
     private static final Set<PdfName> forbiddenAnnotations4 = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName._3D,
@@ -137,7 +145,8 @@ public class PdfA4Checker extends PdfA3Checker {
                     PdfName.Bl
             )));
 
-
+    // Map pdfObject using CMYK - list of CMYK icc profile streams
+    private Map<PdfObject, List<PdfStream>> iccBasedCmykObjects = new HashMap<>();
     /**
      * Creates a PdfA4Checker with the required conformance level
      *
@@ -145,6 +154,61 @@ public class PdfA4Checker extends PdfA3Checker {
      */
     public PdfA4Checker(PdfAConformanceLevel conformanceLevel) {
         super(conformanceLevel);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkColorSpace(PdfColorSpace colorSpace, PdfObject pdfObject, PdfDictionary currentColorSpaces,
+            boolean checkAlternate, Boolean fill) {
+        if (colorSpace instanceof PdfCieBasedCs.IccBased) {
+            // 6.2.4.2: An ICCBased colour space shall not be used where the profile is a CMYK destination profile and is
+            // identical to that in the current PDF/A OutputIntent or the current transparency blending colorspace.
+            PdfStream iccStream = ((PdfArray) colorSpace.getPdfObject()).getAsStream(1);
+            byte[] iccBytes = iccStream.getBytes();
+            // If not CMYK - we don't care
+            if (ICC_COLOR_SPACE_CMYK.equals(IccProfile.getIccColorSpaceName(iccBytes))) {
+                if (!iccBasedCmykObjects.containsKey(pdfObject)) {
+                    iccBasedCmykObjects.put(pdfObject, new ArrayList<>());
+                }
+                iccBasedCmykObjects.get(pdfObject).add(iccStream);
+            }
+        }
+
+        super.checkColorSpace(colorSpace, pdfObject, currentColorSpaces,checkAlternate, fill);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
+        // Get page pdf/a output intent output profile
+        PdfStream pageDestOutputProfile = null;
+        PdfArray outputIntents = pageDict.getAsArray(PdfName.OutputIntents);
+        if (outputIntents != null) {
+            PdfDictionary pdfAPageOutputIntent = getPdfAOutputIntent(outputIntents);
+            if (pdfAPageOutputIntent != null) {
+                pageDestOutputProfile = pdfAPageOutputIntent.getAsStream(PdfName.DestOutputProfile);
+            }
+        }
+
+        if (pageDestOutputProfile == null) {
+            pageDestOutputProfile = pdfAOutputIntentDestProfile;
+        }
+
+        // Page blending colorspace should be taken into account while checking objects using device dependent colors
+        PdfColorSpace pageTransparencyBlendingCS = getDeviceIndependentTransparencyBlendingCSIfRbgOrCmykBased(pageDict);
+
+        // We don't know on which pages these objects are so that we have to go inside anyway
+        if (!rgbUsedObjects.isEmpty() || !cmykUsedObjects.isEmpty() || !grayUsedObjects.isEmpty() ||
+                !iccBasedCmykObjects.isEmpty()) {
+            checkPageContentsForColorUsages(pageDict, pageDestOutputProfile, pageTransparencyBlendingCS);
+            checkAnnotationsForColorUsages(pageDict.getAsArray(PdfName.Annots), pageDestOutputProfile,
+                    pageTransparencyBlendingCS);
+            checkResourcesForColorUsages(pageResources, pageDestOutputProfile, pageTransparencyBlendingCS);
+        }
     }
 
     /**
@@ -234,7 +298,7 @@ public class PdfA4Checker extends PdfA3Checker {
             pdfAPageOutputIntent = getPdfAOutputIntent(outputIntents);
         }
         if (pdfAOutputIntentColorSpace == null && pdfAPageOutputIntent == null
-                && transparencyObjects.size() > 0
+                && !transparencyObjects.isEmpty()
                 && (pageDict.getAsDictionary(PdfName.Group) == null
                 || pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS) == null)) {
             checkContentsForTransparency(pageDict);
@@ -242,7 +306,6 @@ public class PdfA4Checker extends PdfA3Checker {
             checkResourcesForTransparency(pageResources, new HashSet<PdfObject>());
         }
     }
-
 
     /**
      * Check the conformity of the AA dictionary on catalog level.
@@ -356,7 +419,7 @@ public class PdfA4Checker extends PdfA3Checker {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_REF_KEY);
         }
         checkTransparencyGroup(form, null);
-        checkResources(form.getAsDictionary(PdfName.Resources));
+        checkResources(form.getAsDictionary(PdfName.Resources), form);
         checkContentStream(form);
     }
 
@@ -494,7 +557,6 @@ public class PdfA4Checker extends PdfA3Checker {
         }
     }
 
-
     private static boolean isValidXmpConformance(String value) {
         if (value == null) {
             return false;
@@ -520,7 +582,6 @@ public class PdfA4Checker extends PdfA3Checker {
         return true;
     }
 
-
     private void checkPacketHeader(byte[] meta) {
         if (meta == null) {
             return;
@@ -534,7 +595,6 @@ public class PdfA4Checker extends PdfA3Checker {
                             .XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE);
         }
     }
-
 
     private void checkFileProvenanceSpec(XMPMeta meta) {
         try {
@@ -561,13 +621,10 @@ public class PdfA4Checker extends PdfA3Checker {
                             "stEvt:when"));
                 }
             }
-
-
         } catch (XMPException e) {
             throw new PdfException(e);
         }
     }
-
 
     private void checkVersionIdentification(XMPMeta meta) {
         try {
@@ -608,5 +665,184 @@ public class PdfA4Checker extends PdfA3Checker {
     private boolean isCMYKColorant(PdfName colourant) {
         return PdfName.Cyan.equals(colourant) || PdfName.Magenta.equals(colourant)
                 || PdfName.Yellow.equals(colourant) || PdfName.Black.equals(colourant);
+    }
+
+    private void checkPageContentsForColorUsages(PdfDictionary pageDict, PdfStream pageIntentProfile,
+            PdfColorSpace pageTransparencyBlendingCS) {
+        PdfStream contentStream = pageDict.getAsStream(PdfName.Contents);
+        if (contentStream != null) {
+            checkContentForColorUsages(contentStream, pageIntentProfile, pageTransparencyBlendingCS);
+        } else {
+            PdfArray contentSteamArray = pageDict.getAsArray(PdfName.Contents);
+            if (contentSteamArray != null) {
+                for (int i = 0; i < contentSteamArray.size(); i++) {
+                    checkContentForColorUsages(contentSteamArray.get(i), pageIntentProfile, pageTransparencyBlendingCS);
+                }
+            }
+        }
+    }
+
+    private void checkAnnotationsForColorUsages(PdfArray annotations, PdfStream pageIntentProfile,
+            PdfColorSpace pageTransparencyBlendingCS) {
+        if (annotations == null) {
+            return;
+        }
+        for (int i = 0; i < annotations.size(); ++i) {
+            PdfDictionary annot = annotations.getAsDictionary(i);
+            PdfDictionary ap = annot.getAsDictionary(PdfName.AP);
+            if (ap != null) {
+                checkAppearanceStreamForColorUsages(ap, pageIntentProfile, pageTransparencyBlendingCS);
+            }
+        }
+    }
+
+    private void checkAppearanceStreamForColorUsages(PdfDictionary ap, PdfStream pageIntentProfile,
+            PdfColorSpace pageTransparencyBlendingCS) {
+        checkContentForColorUsages(ap, pageIntentProfile, pageTransparencyBlendingCS);
+        for (final PdfObject val : ap.values()) {
+            checkContentForColorUsages(val, pageIntentProfile, pageTransparencyBlendingCS);
+            if (val.isDictionary()) {
+                checkAppearanceStreamForColorUsages((PdfDictionary) val, pageIntentProfile, pageTransparencyBlendingCS);
+            } else if (val.isStream()) {
+                checkObjectWithResourcesForColorUsages(val, pageIntentProfile, pageTransparencyBlendingCS);
+            }
+        }
+    }
+
+    private void checkObjectWithResourcesForColorUsages(PdfObject objectWithResources, PdfStream pageIntentProfile,
+            PdfColorSpace pageTransparencyBlendingCS) {
+        checkContentForColorUsages(objectWithResources, pageIntentProfile, pageTransparencyBlendingCS);
+
+        if (objectWithResources instanceof PdfDictionary) {
+            checkResourcesForColorUsages(((PdfDictionary) objectWithResources).getAsDictionary(PdfName.Resources),
+                    pageIntentProfile, pageTransparencyBlendingCS);
+        }
+    }
+
+    private void checkResourcesForColorUsages(PdfDictionary resources, PdfStream pageIntentProfile,
+            PdfColorSpace pageTransparencyBlendingCS) {
+        if (resources != null) {
+            checkSingleResourceTypeForColorUsages(resources.getAsDictionary(PdfName.XObject), pageIntentProfile,
+                    pageTransparencyBlendingCS);
+            checkSingleResourceTypeForColorUsages(resources.getAsDictionary(PdfName.Pattern), pageIntentProfile,
+                    pageTransparencyBlendingCS);
+        }
+    }
+
+    private void checkSingleResourceTypeForColorUsages(PdfDictionary singleResourceDict, PdfStream pageIntentProfile,
+            PdfColorSpace pageTransparencyBlendingCS) {
+        if (singleResourceDict != null) {
+            for (PdfObject resource : singleResourceDict.values()) {
+                checkObjectWithResourcesForColorUsages(resource, pageIntentProfile, pageTransparencyBlendingCS);
+            }
+        }
+    }
+
+    private void checkContentForColorUsages(PdfObject pdfObject, PdfStream pageIntentProfile,
+            PdfColorSpace pageTransparencyBlendingCS) {
+        String pageIntentCSType = pageIntentProfile == null ? null :
+                IccProfile.getIccColorSpaceName(pageIntentProfile.getBytes());
+
+        PdfColorSpace currentTransparencyBlendingCS = pdfObject instanceof PdfDictionary ?
+                getDeviceIndependentTransparencyBlendingCSIfRbgOrCmykBased((PdfDictionary)pdfObject) : null;
+        // Step 1 - 6.2.4.3: check if device dependent color in the object is allowed
+        // Current output intent, page blending colorspace and object blending colorspace should be taken into account
+        // Step 1.1 - check if any excuse exists
+        if (pageIntentCSType == null && pageTransparencyBlendingCS == null && currentTransparencyBlendingCS == null) {
+            if (rgbUsedObjects.contains(pdfObject)) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT);
+            } else if (cmykUsedObjects.contains(pdfObject)) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.DEVICECMYK_SHALL_ONLY_BE_USED_IF_CURRENT_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
+            }
+        }
+        // pageTransparencyBlendingCS currentTransparencyBlendingCS don't help for DeviceGray
+        if (grayUsedObjects.contains(pdfObject) && pageIntentCSType == null) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.DEVICEGRAY_SHALL_ONLY_BE_USED_IF_CURRENT_PDFA_OUTPUT_INTENT_OR_DEFAULTGRAY_IN_USAGE_CONTEXT);
+        }
+
+        String pageTransparencyBlendingCSType = getColorspaceTypeIfIccBasedOrCalRgb(pageTransparencyBlendingCS);
+        String currentTransparencyBlendingCSType = getColorspaceTypeIfIccBasedOrCalRgb(currentTransparencyBlendingCS);
+        // Step 1.2 - check for RGB
+        if (rgbUsedObjects.contains(pdfObject) && !ICC_COLOR_SPACE_RGB.equals(pageIntentCSType) &&
+                !ICC_COLOR_SPACE_RGB.equals(pageTransparencyBlendingCSType) &&
+                !ICC_COLOR_SPACE_RGB.equals(currentTransparencyBlendingCSType) &&
+                !CALRGB_COLOR_SPACE.equals(pageTransparencyBlendingCSType) &&
+                !CALRGB_COLOR_SPACE.equals(currentTransparencyBlendingCSType)) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.DEVICERGB_SHALL_ONLY_BE_USED_IF_CURRENT_RGB_PDFA_OUTPUT_INTENT_OR_DEFAULTRGB_IN_USAGE_CONTEXT);
+        }
+
+        // Step 1.3 - check for CMYK
+        if (cmykUsedObjects.contains(pdfObject) && !ICC_COLOR_SPACE_CMYK.equals(pageIntentCSType) &&
+                !ICC_COLOR_SPACE_CMYK.equals(pageTransparencyBlendingCSType) &&
+                !ICC_COLOR_SPACE_CMYK.equals(currentTransparencyBlendingCSType)) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.DEVICECMYK_SHALL_ONLY_BE_USED_IF_CURRENT_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
+        }
+
+        // Step 2 - 6.2.4.2: An ICCBased colour space shall not be used where the profile is a CMYK destination profile and is
+        // identical to that in the current PDF/A OutputIntent or the current transparency blending colorspace.
+        List<PdfStream> currentICCBasedProfiles = iccBasedCmykObjects.get(pdfObject);
+        if (currentICCBasedProfiles == null) {
+            return;
+        }
+        for (PdfStream currentICCBasedProfile : currentICCBasedProfiles) {
+            throwIfIdenticalProfiles(currentICCBasedProfile, pageIntentProfile);
+            if (ICC_COLOR_SPACE_CMYK.equals(currentTransparencyBlendingCSType)) {
+                PdfStream iccStream = ((PdfArray) currentTransparencyBlendingCS.getPdfObject()).getAsStream(1);
+                throwIfIdenticalProfiles(currentICCBasedProfile, iccStream);
+            }
+            if (ICC_COLOR_SPACE_CMYK.equals(pageTransparencyBlendingCSType)) {
+                PdfStream iccStream = ((PdfArray) pageTransparencyBlendingCS.getPdfObject()).getAsStream(1);
+                throwIfIdenticalProfiles(currentICCBasedProfile, iccStream);
+            }
+        }
+    }
+
+    private static void throwIfIdenticalProfiles(PdfStream iccBasedProfile1, PdfStream iccBasedProfile2) {
+        if (iccBasedProfile1 != null && iccBasedProfile2 != null &&
+                (iccBasedProfile1.equals(iccBasedProfile2) ||
+                        Arrays.equals(iccBasedProfile1.getBytes(), iccBasedProfile2.getBytes()))) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.ICCBASED_COLOUR_SPACE_SHALL_NOT_BE_USED_IF_IT_IS_CMYK_AND_IS_IDENTICAL_TO_CURRENT_PROFILE);
+        }
+    }
+
+    private static String getColorspaceTypeIfIccBasedOrCalRgb(PdfColorSpace colorspace) {
+        if (colorspace instanceof PdfCieBasedCs.CalRgb) {
+            return CALRGB_COLOR_SPACE;
+        }
+
+        if (colorspace instanceof PdfCieBasedCs.IccBased) {
+            // 6.2.4.2: An ICCBased colour space shall not be used where the profile is a CMYK destination profile and is
+            // identical to that in the current PDF/A OutputIntent or the current transparency blending colorspace.
+            PdfStream iccStream = ((PdfArray) colorspace.getPdfObject()).getAsStream(1);
+            return IccProfile.getIccColorSpaceName(iccStream.getBytes());
+        }
+
+        return null;
+    }
+
+    private static PdfColorSpace getDeviceIndependentTransparencyBlendingCSIfRbgOrCmykBased(PdfDictionary pageDict) {
+        if (!isContainsTransparencyGroup(pageDict)) {
+            return null;
+        }
+
+        PdfObject cs = pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS);
+        if (cs == null) {
+            return null;
+        }
+
+        PdfColorSpace transparencyBlendingCS = PdfColorSpace.makeColorSpace(cs);
+        if (transparencyBlendingCS instanceof PdfCieBasedCs.CalRgb ||
+                transparencyBlendingCS instanceof PdfCieBasedCs.IccBased) {
+            // Do not take others into account
+            return transparencyBlendingCS;
+        }
+
+        return null;
     }
 }
