@@ -38,5 +38,6 @@ public enum IsoKey {
     FONT_GLYPHS,
     XREF_TABLE,
     SIGNATURE,
+    SIGNATURE_TYPE,
     CRYPTO
 }

@@ -104,6 +104,12 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void checkSignatureTypeTest() {
+        pdfA1Checker.checkSignatureType(true);
+        //nothing to check, only for coverage
+    }
+
+    @Test
     public void checkLZWDecodeInInlineImage() {
         PdfStream stream = new PdfStream();
         stream.put(PdfName.Filter, PdfName.LZWDecode);

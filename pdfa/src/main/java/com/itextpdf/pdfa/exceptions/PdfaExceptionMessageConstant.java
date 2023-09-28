@@ -180,5 +180,8 @@ public final class PdfaExceptionMessageConstant {
     public static final String XMP_METADATA_HISTORY_ENTRY_SHALL_CONTAIN_KEY = "XMP metadata history entry shall"
             + " contain key {0}";
 
+    public static final String SIGNATURE_SHALL_CONFORM_TO_ONE_OF_THE_PADES_PROFILE =
+            "Signature shall conform to one of the PAdES profiles from either ISO 32000-2 or ISO 14533-3.";
+
     private PdfaExceptionMessageConstant(){}
 }

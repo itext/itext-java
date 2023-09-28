@@ -556,6 +556,8 @@ public class PdfSigner {
             }
         }
 
+        document.checkIsoConformance(sigtype == CryptoStandard.CADES, IsoKey.SIGNATURE_TYPE);
+
         Collection<byte[]> crlBytes = null;
         int i = 0;
         while (crlBytes == null && i < chain.length) {

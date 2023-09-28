@@ -211,6 +211,9 @@ public class PdfADocument extends PdfDocument {
             case SIGNATURE:
                 checker.checkSignature((PdfDictionary) obj);
                 break;
+            case SIGNATURE_TYPE:
+                checker.checkSignatureType(((Boolean) obj).booleanValue());
+                break;
             case CRYPTO:
                 checker.checkCrypto((PdfObject) obj);
                 break;

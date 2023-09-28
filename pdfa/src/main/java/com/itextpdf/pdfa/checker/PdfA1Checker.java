@@ -320,6 +320,14 @@ public class PdfA1Checker extends PdfAChecker {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkSignatureType(boolean isCAdES) {
+        //nothing to do
+    }
+
     @Override
     protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
         // This check is irrelevant for the PdfA1 checker, so the body of the method is empty

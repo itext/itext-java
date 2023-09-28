@@ -293,6 +293,16 @@ public class PdfA4Checker extends PdfA3Checker {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkSignatureType(boolean isCAdES) {
+        if (!isCAdES) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.SIGNATURE_SHALL_CONFORM_TO_ONE_OF_THE_PADES_PROFILE);
+        }
+    }
+
     //There is no limit for String length in pdf-a/4
     /**
      * {@inheritDoc}

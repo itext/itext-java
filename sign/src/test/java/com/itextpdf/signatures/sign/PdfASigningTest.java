@@ -134,6 +134,41 @@ public class PdfASigningTest extends ExtendedITextTest {
     }
 
     @Test
+    public void signPdf2CmsTest() {
+        String srcFile = sourceFolder + "simplePdfA4Document.pdf";
+        String outPdf = destinationFolder + "signPdfCms.pdf";
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () ->
+                sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CMS, "Test 1",
+                        "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f));
+        Assert.assertEquals(PdfaExceptionMessageConstant.SIGNATURE_SHALL_CONFORM_TO_ONE_OF_THE_PADES_PROFILE, e.getMessage());
+    }
+
+    @Test
+    public void signPdf2CadesTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = sourceFolder + "simplePdfA4Document.pdf";
+        String cmpPdf = sourceFolder + "cmp_signPdfCades.pdf";
+        String outPdf = destinationFolder + "signPdfCades.pdf";
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256,
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, destinationFolder, "diff_",
+                getTestMap(rect)));
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
     public void failedSigningPdfA2DocumentTest() throws IOException {
         String src = sourceFolder + "simplePdfADocument.pdf";
         String out = destinationFolder + "signedPdfADocument2.pdf";

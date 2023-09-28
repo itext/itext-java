@@ -115,7 +115,8 @@ public class PdfMergerProperties {
     }
 
     /**
-     * merge documents ECMA scripts
+     * merge documents ECMA scripts,
+     * if AA or OpenAction or Names dictionaries contained in both documents than nothing will be merged
      *
      * @param mergeNames true to merge, false otherwise
      *

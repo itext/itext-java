@@ -274,6 +274,18 @@ public abstract class PdfAChecker {
     }
 
     /**
+     * This method checks compliance of the signature type
+     *
+     * @param isCAdES true is CAdES sig type is used, false otherwise.
+     *
+     * @deprecated Will become an abstract in the next major release.
+     */
+    @Deprecated
+    public void checkSignatureType(boolean isCAdES) {
+
+    }
+
+    /**
      * This method checks compliance with the graphics state architectural
      * limitation, explained by {@link PdfAChecker#maxGsStackDepth}.
      *
