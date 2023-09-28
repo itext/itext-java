@@ -221,4 +221,8 @@ public interface XMPConst
 	 * Conformance, A, B, or U.
 	 */
 	String CONFORMANCE = "conformance";
+	/**
+	 * History
+	 */
+	String HISTORY = "History";
 }

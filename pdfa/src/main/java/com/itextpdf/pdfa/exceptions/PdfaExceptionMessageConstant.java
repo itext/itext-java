@@ -166,6 +166,19 @@ public final class PdfaExceptionMessageConstant {
     public static final String ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_A_GRAPHIC_STATE_AND_ANNOTATION_DICTIONARY =
             "Only blend modes that are specified in ISO 32000-2:2020 shall be used for the value of the BM key in a"
                     + " graphic state dictionary or an annotation dictionary.";
+    public static final String XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE = "XMP metadata"
+            + " header packet may not contain bytes or encoding attribute.";
+    public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART = "XMP metadata header shall"
+            + " contain version identifier pdfaid:part with value {0}";
+
+    public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV = "XMP metadata header shall"
+            + " contain version identifier pdfaid:rev with four digit integer value";
+
+    public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_CONFORMANCE =
+            "XMP metadata header shall"
+                    + " contain version identifier pdfaid:rev F or E or absent if no conformance level is specified";
+    public static final String XMP_METADATA_HISTORY_ENTRY_SHALL_CONTAIN_KEY = "XMP metadata history entry shall"
+            + " contain key {0}";
 
     private PdfaExceptionMessageConstant(){}
 }

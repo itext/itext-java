@@ -466,7 +466,6 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
         doc.addNewPage();
         consumer.accept(doc);
         doc.close();
-
     }
 
 }

@@ -23,6 +23,7 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -34,15 +35,22 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.xmp.XMPException;
+import com.itextpdf.kernel.xmp.XMPMeta;
+import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.properties.XMPProperty;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,6 +137,7 @@ public class PdfA4Checker extends PdfA3Checker {
                     PdfName.Bl
             )));
 
+
     /**
      * Creates a PdfA4Checker with the required conformance level
      *
@@ -148,7 +157,8 @@ public class PdfA4Checker extends PdfA3Checker {
         if (trailer.get(PdfName.Info) != null) {
             PdfDictionary info = trailer.getAsDictionary(PdfName.Info);
             if (info.size() != 1 || info.get(PdfName.ModDate) == null) {
-                throw new PdfAConformanceException(PdfaExceptionMessageConstant.DOCUMENT_INFO_DICTIONARY_SHALL_ONLY_CONTAIN_MOD_DATE);
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.DOCUMENT_INFO_DICTIONARY_SHALL_ONLY_CONTAIN_MOD_DATE);
             }
         }
     }
@@ -160,18 +170,21 @@ public class PdfA4Checker extends PdfA3Checker {
     protected void checkCatalog(PdfCatalog catalog) {
         if ('2' != catalog.getDocument().getPdfVersion().toString().charAt(4)) {
             throw new PdfAConformanceException(
-                    MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION, "2"));
+                    MessageFormatUtil.format(
+                            PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION, "2"));
         }
         PdfDictionary trailer = catalog.getDocument().getTrailer();
         if (trailer.get(PdfName.Info) != null) {
             if (catalog.getPdfObject().get(PdfName.PieceInfo) == null) {
-                throw new PdfAConformanceException(PdfaExceptionMessageConstant.DOCUMENT_SHALL_NOT_CONTAIN_INFO_UNLESS_THERE_IS_PIECE_INFO);
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.DOCUMENT_SHALL_NOT_CONTAIN_INFO_UNLESS_THERE_IS_PIECE_INFO);
             }
         }
 
         if ("F".equals(conformanceLevel.getConformance())) {
             if (!catalog.nameTreeContainsKey(PdfName.EmbeddedFiles)) {
-                throw new PdfAConformanceException(PdfaExceptionMessageConstant.NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY);
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY);
             }
         }
     }
@@ -186,7 +199,8 @@ public class PdfA4Checker extends PdfA3Checker {
         if (version != null && (version.toString().charAt(0) != '2'
                 || version.toString().charAt(1) != '.' || !Character.isDigit(version.toString().charAt(2)))) {
             throw new PdfAConformanceException(
-                    MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_CATALOG_VERSION_SHALL_CONTAIN_RIGHT_PDF_VERSION, "2"));
+                    MessageFormatUtil.format(
+                            PdfaExceptionMessageConstant.THE_CATALOG_VERSION_SHALL_CONTAIN_RIGHT_PDF_VERSION, "2"));
         }
     }
 
@@ -196,10 +210,12 @@ public class PdfA4Checker extends PdfA3Checker {
     @Override
     protected void checkFileSpec(PdfDictionary fileSpec) {
         if (fileSpec.getAsName(PdfName.AFRelationship) == null) {
-            throw new PdfAConformanceException(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY);
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_AFRELATIONSHIP_KEY);
         }
         if (!fileSpec.containsKey(PdfName.F) || !fileSpec.containsKey(PdfName.UF)) {
-            throw new PdfAConformanceException(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
+            throw new PdfAConformanceException(
+                    PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
         }
         if (!fileSpec.containsKey(PdfName.Desc)) {
             LOGGER.warn(PdfAConformanceLogMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHOULD_CONTAIN_DESC_KEY);
@@ -219,7 +235,8 @@ public class PdfA4Checker extends PdfA3Checker {
         }
         if (pdfAOutputIntentColorSpace == null && pdfAPageOutputIntent == null
                 && transparencyObjects.size() > 0
-                && (pageDict.getAsDictionary(PdfName.Group) == null || pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS) == null)) {
+                && (pageDict.getAsDictionary(PdfName.Group) == null
+                || pageDict.getAsDictionary(PdfName.Group).get(PdfName.CS) == null)) {
             checkContentsForTransparency(pageDict);
             checkAnnotationsForTransparency(pageDict.getAsArray(PdfName.Annots));
             checkResourcesForTransparency(pageResources, new HashSet<PdfObject>());
@@ -257,6 +274,7 @@ public class PdfA4Checker extends PdfA3Checker {
     }
 
     //There are no limits for numbers in pdf-a/4
+
     /**
      * {@inheritDoc}
      */
@@ -266,6 +284,7 @@ public class PdfA4Checker extends PdfA3Checker {
     }
 
     //There is no limit for canvas stack in pdf-a/4
+
     /**
      * {@inheritDoc}
      */
@@ -284,6 +303,7 @@ public class PdfA4Checker extends PdfA3Checker {
     }
 
     //There is no limit for DeviceN components count in pdf-a/4
+
     /**
      * {@inheritDoc}
      */
@@ -340,7 +360,8 @@ public class PdfA4Checker extends PdfA3Checker {
         // Extra check for blending mode
         PdfName blendMode = annotDic.getAsName(PdfName.BM);
         if (blendMode != null && !allowedBlendModes4.contains(blendMode)) {
-            throw new PdfAConformanceException(PdfaExceptionMessageConstant.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_A_GRAPHIC_STATE_AND_ANNOTATION_DICTIONARY);
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_A_GRAPHIC_STATE_AND_ANNOTATION_DICTIONARY);
         }
 
         // And then treat the annotation as an object with transparency
@@ -383,6 +404,24 @@ public class PdfA4Checker extends PdfA3Checker {
                 throw new PdfAConformanceException(
                         PdfaExceptionMessageConstant.ANNOTATION_AA_DICTIONARY_SHALL_CONTAIN_ONLY_ALLOWED_KEYS);
             }
+        }
+    }
+
+    /**
+     * @param catalog the catalog {@link PdfDictionary} to check
+     */
+    @Override
+    protected void checkMetaData(PdfDictionary catalog) {
+        super.checkMetaData(catalog);
+        try {
+            final PdfStream xmpMetadata = catalog.getAsStream(PdfName.Metadata);
+            byte[] bytes = xmpMetadata.getBytes();
+            checkPacketHeader(bytes);
+            final XMPMeta meta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
+            checkVersionIdentification(meta);
+            checkFileProvenanceSpec(meta);
+        } catch (XMPException ex) {
+            throw new PdfException(ex);
         }
     }
 
@@ -440,7 +479,119 @@ public class PdfA4Checker extends PdfA3Checker {
     @Override
     protected void checkBlendMode(PdfName blendMode) {
         if (!allowedBlendModes4.contains(blendMode)) {
-            throw new PdfAConformanceException(PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
+            throw new PdfAConformanceException(
+                    PdfAConformanceException.ONLY_STANDARD_BLEND_MODES_SHALL_BE_USED_FOR_THE_VALUE_OF_THE_BM_KEY_IN_AN_EXTENDED_GRAPHIC_STATE_DICTIONARY);
+        }
+    }
+
+
+    private static boolean isValidXmpConformance(String value) {
+        if (value == null) {
+            return false;
+        }
+        if (value.length() != 1) {
+            return false;
+        }
+        return "F".equals(value) || "E".equals(value);
+    }
+
+    private static boolean isValidXmpRevision(String value) {
+        if (value == null) {
+            return false;
+        }
+        if (value.length() != 4) {
+            return false;
+        }
+        for (final char c : value.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    private void checkPacketHeader(byte[] meta) {
+        if (meta == null) {
+            return;
+        }
+        final String metAsStr = new String(meta);
+        final String regex = "<\\?xpacket.*encoding|bytes.*\\?>";
+        final Pattern pattern = Pattern.compile(regex);
+        if (pattern.matcher(metAsStr).find()) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant
+                            .XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE);
+        }
+    }
+
+
+    private void checkFileProvenanceSpec(XMPMeta meta) {
+        try {
+            XMPProperty history = meta.getProperty(XMPConst.NS_XMP_MM, XMPConst.HISTORY);
+            if (history == null) {
+                return;
+            }
+            if (!history.getOptions().isArray()) {
+                return;
+            }
+            final int amountOfEntries = meta.countArrayItems(XMPConst.NS_XMP_MM, XMPConst.HISTORY);
+            for (int i = 0; i < amountOfEntries; i++) {
+                int nameSpaceIndex = i + 1;
+                if (!meta.doesPropertyExist(XMPConst.NS_XMP_MM,
+                        XMPConst.HISTORY + "[" + nameSpaceIndex + "]/stEvt:action")) {
+                    throw new PdfAConformanceException(MessageFormatUtil.format(
+                            PdfaExceptionMessageConstant.XMP_METADATA_HISTORY_ENTRY_SHALL_CONTAIN_KEY,
+                            "stEvt:action"));
+                }
+                if (!meta.doesPropertyExist(XMPConst.NS_XMP_MM,
+                        XMPConst.HISTORY + "[" + nameSpaceIndex + "]/stEvt:when")) {
+                    throw new PdfAConformanceException(MessageFormatUtil.format(
+                            PdfaExceptionMessageConstant.XMP_METADATA_HISTORY_ENTRY_SHALL_CONTAIN_KEY,
+                            "stEvt:when"));
+                }
+            }
+
+
+        } catch (XMPException e) {
+            throw new PdfException(e);
+        }
+    }
+
+
+    private void checkVersionIdentification(XMPMeta meta) {
+        try {
+            XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
+            if (prop == null || !getConformanceLevel().getPart().equals(prop.getValue())) {
+                throw new PdfAConformanceException(MessageFormatUtil.format(
+                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART,
+                        getConformanceLevel().getPart()));
+            }
+        } catch (XMPException e) {
+            throw new PdfAConformanceException(MessageFormatUtil.format(
+                    PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART,
+                    getConformanceLevel().getPart()));
+        }
+
+        try {
+            XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.REV);
+            if (prop == null || !isValidXmpRevision(prop.getValue())) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV);
+            }
+        } catch (XMPException e) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV);
+        }
+
+        try {
+            XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
+            if (prop != null && !isValidXmpConformance(prop.getValue())) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_CONFORMANCE);
+            }
+        } catch (XMPException e) {
+            // ignored because it is not required
         }
     }
 

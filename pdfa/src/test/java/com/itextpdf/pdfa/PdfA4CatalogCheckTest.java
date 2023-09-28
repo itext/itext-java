@@ -49,16 +49,16 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
@@ -306,4 +306,89 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
         Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
+
+    @Test
+    public void createInvalidPdfAVersionNumberWithPDFA4() throws IOException {
+        PdfWriter writer = new PdfWriter(new PdfWriter(new ByteArrayOutputStream()),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_7));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(
+                MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
+                        "2"), e.getMessage());
+    }
+
+    @Test
+    public void createInvalidPdfAVersionNumberWithPDFA4F() throws IOException {
+        PdfWriter writer = new PdfWriter(new PdfWriter(new ByteArrayOutputStream()),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_7));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(
+                MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
+                        "2"), e.getMessage());
+    }
+
+    @Test
+    public void createInvalidPdfAVersionNumberWithPDFA4E() throws IOException {
+        PdfWriter writer = new PdfWriter(new PdfWriter(new ByteArrayOutputStream()),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_7));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(
+                MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
+                        "2"), e.getMessage());
+    }
+
+    @Test
+    public void createInvalidPdfAVersion16NumberWithPDFA4() throws IOException {
+        PdfWriter writer = new PdfWriter(new PdfWriter(new ByteArrayOutputStream()),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_6));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(
+                MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
+                        "2"), e.getMessage());
+    }
+
+    @Test
+    public void createInvalidPdfAVersion13NumberWithPDFA4F() throws IOException {
+        PdfWriter writer = new PdfWriter(new PdfWriter(new ByteArrayOutputStream()),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_3));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4F,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(
+                MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
+                        "2"), e.getMessage());
+    }
+
+    @Test
+    public void createInvalidPdfAVersionNumber17WithPDFA4E() throws IOException {
+        PdfWriter writer = new PdfWriter(new PdfWriter(new ByteArrayOutputStream()),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_7));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assert.assertEquals(
+                MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
+                        "2"), e.getMessage());
+    }
+
 }
