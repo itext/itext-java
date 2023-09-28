@@ -35,6 +35,7 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -73,6 +74,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -448,6 +450,51 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         Assert.assertEquals(fieldName, signer.getFieldName());
 
         reader.close();
+    }
+
+    @Test
+    public void prepareDocumentTestWithSHA256() throws IOException, GeneralSecurityException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
+
+        String fieldName = signer.fieldName;
+        int estimatedSize = 8079;
+        byte[] digest = signer.prepareDocumentForSignature(DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+                PdfName.Adbe_pkcs7_detached, estimatedSize, false);
+        PdfReader resultReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        PdfDocument resultDoc = new PdfDocument(resultReader);
+        SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
+        PdfSignature signature = signatureUtil.getSignature(fieldName);
+        Assert.assertEquals(estimatedSize, signature.getContents().getValueBytes().length);
+    }
+
+    @Test
+    public void addSignatureToPreparedDocumentTest() throws IOException, GeneralSecurityException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
+
+        String fieldName = signer.fieldName;
+        int estimatedSize = 8079;
+        byte[] digest = signer.prepareDocumentForSignature(DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+                PdfName.Adbe_pkcs7_detached, estimatedSize, false);
+        PdfReader resultReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        PdfDocument resultDoc = new PdfDocument(resultReader);
+
+        ByteArrayOutputStream completedOutputStream = new ByteArrayOutputStream();
+        byte[] testData = ByteUtils.getIsoBytes("Some data to test the signature addition with");
+        PdfSigner.addSignatureToPreparedDocument(resultDoc, fieldName, completedOutputStream, testData);
+
+        resultReader = new PdfReader(new ByteArrayInputStream(completedOutputStream.toByteArray()));
+        resultDoc = new PdfDocument(resultReader);
+
+        SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
+        PdfSignature signature = signatureUtil.getSignature(fieldName);
+        byte[] content = signature.getContents().getValueBytes();
+        for (int i  = 0 ; i < testData.length; i++) {
+            Assert.assertEquals(testData[i], content[i]);
+        }
     }
 
     private static byte[] createDocumentWithEmptyField() {

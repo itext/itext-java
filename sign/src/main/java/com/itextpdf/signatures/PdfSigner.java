@@ -767,12 +767,7 @@ public class PdfSigner {
             throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
         }
 
-        PdfSignature dic = new PdfSignature();
-        dic.setReason(appearance.getReason());
-        dic.setLocation(appearance.getLocation());
-        dic.setSignatureCreator(getSignatureCreator());
-        dic.setContact(getContact());
-        dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
+        PdfSignature dic = createSignatureDictionary(true);
         externalSignatureContainer.modifySigningDictionary(dic.getPdfObject());
         cryptoDictionary = dic;
 
@@ -859,6 +854,67 @@ public class PdfSigner {
     }
 
     /**
+     * Prepares document for signing, calculates the document digest to sign and closes the document.
+     *
+     * @param digestAlgorithm the algorithm to generate the digest with
+     * @param filter          PdfName of the signature handler to use when validating this signature
+     * @param subFilter       PdfName that describes the encoding of the signature
+     * @param estimatedSize   the estimated size of the signature, this is the size of the space reserved for
+     *                        the Cryptographic Message Container
+     * @param includeDate     specifies if the signing date should be set to the signature dictionary
+     *
+     * @return the message digest of the prepared document.
+     *
+     * @throws IOException              if some I/O problem occurs.
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     */
+    public byte[] prepareDocumentForSignature(String digestAlgorithm, PdfName filter, PdfName subFilter,
+            int estimatedSize, boolean includeDate) throws IOException, GeneralSecurityException {
+        if (closed) {
+            throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
+        }
+
+        cryptoDictionary = createSignatureDictionary(includeDate);
+        cryptoDictionary.put(PdfName.Filter, filter);
+        cryptoDictionary.put(PdfName.SubFilter, subFilter);
+
+
+        Map<PdfName, Integer> exc = new HashMap<>();
+        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
+        preClose(exc);
+
+        InputStream data = getRangeStream();
+        byte[] digest = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(digestAlgorithm));
+
+        byte[] paddedSig = new byte[estimatedSize];
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.Contents, new PdfString(paddedSig).setHexWriting(true));
+        close(dic2);
+
+        closed = true;
+
+        return digest;
+    }
+
+    /**
+     * Adds an existing signature to a PDF where space was already reserved.
+     *
+     * @param document      the original PDF
+     * @param fieldName     the field to sign. It must be the last field
+     * @param outs          the output PDF
+     * @param signedContent the bytes for the signed data
+     *
+     * @throws IOException              if some I/O problem occurs.
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     */
+    public static void addSignatureToPreparedDocument(PdfDocument document, String fieldName, OutputStream outs,
+                                                    byte[] signedContent) throws IOException, GeneralSecurityException {
+        SignatureApplier applier = new SignatureApplier(document, fieldName, outs);
+        applier.apply(a -> signedContent);
+    }
+
+    /**
      * Signs a PDF where space was already reserved.
      *
      * @param document                   the original PDF
@@ -869,49 +925,11 @@ public class PdfSigner {
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
-    public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs, IExternalSignatureContainer externalSignatureContainer) throws IOException, GeneralSecurityException {
-        SignatureUtil signatureUtil = new SignatureUtil(document);
-        PdfSignature signature = signatureUtil.getSignature(fieldName);
-        if (signature == null) {
-            throw new PdfException(SignExceptionMessageConstant.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME)
-                    .setMessageParams(fieldName);
-        }
-        if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
-            throw new PdfException(
-                    SignExceptionMessageConstant.SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT
-            ).setMessageParams(fieldName);
-        }
-
-        PdfArray b = signature.getByteRange();
-        long[] gaps = b.toLongArray();
-
-        if (b.size() != 4 || gaps[0] != 0) {
-            throw new IllegalArgumentException("Single exclusion space supported");
-        }
-
-        IRandomAccessSource readerSource = document.getReader().getSafeFile().createSourceView();
-        InputStream rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(readerSource, gaps));
-        byte[] signedContent = externalSignatureContainer.sign(rg);
-        int spaceAvailable = (int) (gaps[2] - gaps[1]) - 2;
-        if ((spaceAvailable & 1) != 0) {
-            throw new IllegalArgumentException("Gap is not a multiple of 2");
-        }
-        spaceAvailable /= 2;
-        if (spaceAvailable < signedContent.length) {
-            throw new PdfException(SignExceptionMessageConstant.AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE);
-        }
-        StreamUtil.copyBytes(readerSource, 0, gaps[1] + 1, outs);
-        ByteBuffer bb = new ByteBuffer(spaceAvailable * 2);
-        for (byte bi : signedContent) {
-            bb.appendHex(bi);
-        }
-        int remain = (spaceAvailable - signedContent.length) * 2;
-        for (int k = 0; k < remain; ++k) {
-            bb.append((byte) 48);
-        }
-        byte[] bbArr = bb.toByteArray();
-        outs.write(bbArr);
-        StreamUtil.copyBytes(readerSource, gaps[2] - 1, gaps[3] + 1, outs);
+    public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs,
+                                    IExternalSignatureContainer externalSignatureContainer)
+            throws IOException, GeneralSecurityException {
+        SignatureApplier applier = new SignatureApplier(document, fieldName, outs);
+        applier.apply(a -> externalSignatureContainer.sign(a.getDataToSign()));
     }
 
     /**
@@ -1379,6 +1397,19 @@ public class PdfSigner {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
     }
 
+    private PdfSignature createSignatureDictionary(boolean includeDate) {
+        PdfSignature dic = new PdfSignature();
+        PdfSignatureAppearance appearance = getSignatureAppearance();
+        dic.setReason(appearance.getReason());
+        dic.setLocation(appearance.getLocation());
+        dic.setSignatureCreator(appearance.getSignatureCreator());
+        dic.setContact(appearance.getContact());
+        if (includeDate) {
+            dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
+        }
+        return dic;
+    }
+
     /**
      * An interface to retrieve the signature dictionary for modification.
      */
@@ -1390,5 +1421,72 @@ public class PdfSigner {
          * @param sig The signature dictionary
          */
         void getSignatureDictionary(PdfSignature sig);
+    }
+
+    private static class SignatureApplier {
+
+        private final PdfDocument document;
+        private final String fieldName;
+        private final OutputStream outs;
+        private IRandomAccessSource readerSource;
+        private long[] gaps;
+
+        public SignatureApplier(PdfDocument document, String fieldName, OutputStream outs) {
+            this.document = document;
+            this.fieldName = fieldName;
+            this.outs = outs;
+        }
+
+        public void apply(ISignatureDataProvider signatureDataProvider) throws IOException, GeneralSecurityException {
+            SignatureUtil signatureUtil = new SignatureUtil(document);
+            PdfSignature signature = signatureUtil.getSignature(fieldName);
+            if (signature == null) {
+                throw new PdfException(SignExceptionMessageConstant.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME)
+                        .setMessageParams(fieldName);
+            }
+            if (!signatureUtil.signatureCoversWholeDocument(fieldName)) {
+                throw new PdfException(
+                  SignExceptionMessageConstant.SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT
+                ).setMessageParams(fieldName);
+            }
+
+            PdfArray b = signature.getByteRange();
+            gaps = b.toLongArray();
+
+            readerSource = document.getReader().getSafeFile().createSourceView();
+
+            int spaceAvailable = (int) (gaps[2] - gaps[1]) - 2;
+            if ((spaceAvailable & 1) != 0) {
+                throw new IllegalArgumentException("Gap is not a multiple of 2");
+            }
+
+            byte[] signedContent = signatureDataProvider.sign(this);
+            spaceAvailable /= 2;
+            if (spaceAvailable < signedContent.length) {
+                throw new PdfException(SignExceptionMessageConstant.AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE);
+            }
+            StreamUtil.copyBytes(readerSource, 0, gaps[1] + 1, outs);
+            ByteBuffer bb = new ByteBuffer(spaceAvailable * 2);
+            for (byte bi : signedContent) {
+                bb.appendHex(bi);
+            }
+            int remain = (spaceAvailable - signedContent.length) * 2;
+            for (int k = 0; k < remain; ++k) {
+                bb.append((byte) 48);
+            }
+            byte[] bbArr = bb.toByteArray();
+            outs.write(bbArr);
+            StreamUtil.copyBytes(readerSource, gaps[2] - 1, gaps[3] + 1, outs);
+            document.close();
+        }
+
+        public InputStream getDataToSign() throws IOException {
+            return new RASInputStream(new RandomAccessSourceFactory().createRanged(readerSource, gaps));
+        }
+    }
+
+    @FunctionalInterface
+    private interface ISignatureDataProvider {
+        byte[] sign(SignatureApplier applier) throws GeneralSecurityException, IOException;
     }
 }
