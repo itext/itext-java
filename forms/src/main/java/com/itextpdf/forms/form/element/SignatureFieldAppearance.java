@@ -23,7 +23,7 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.forms.form.renderer.SigFieldRenderer;
+import com.itextpdf.forms.form.renderer.SignatureAppearanceRenderer;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
@@ -31,13 +31,12 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
  * Extension of the {@link FormField} class representing a signature field in PDF.
  */
-public class SigField extends FormField<SigField> {
+public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance> {
     /**
      * Default paddings for the signature field.
      */
@@ -87,6 +86,7 @@ public class SigField extends FormField<SigField> {
      * Holds value of property signDate.
      */
     private Calendar signDate;
+    private boolean isSignDateSet = false;
 
     /**
      * The image that needs to be used for a visible signature.
@@ -130,11 +130,11 @@ public class SigField extends FormField<SigField> {
     private String idWithDots = null;
 
     /**
-     * Creates a new {@link SigField} instance.
+     * Creates a new {@link SignatureFieldAppearance} instance.
      *
      * @param id the id.
      */
-    public SigField(String id) {
+    public SignatureFieldAppearance(String id) {
         // We should support signing of existing fields with dots in name.
         super(id != null && id.contains(".") ? "" : id);
         if (id.contains(".")) {
@@ -162,9 +162,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param renderingMode the rendering mode.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setRenderingMode(RenderingMode renderingMode) {
+    public SignatureFieldAppearance setRenderingMode(RenderingMode renderingMode) {
         this.renderingMode = renderingMode;
         return this;
     }
@@ -183,9 +183,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param reason signing reason.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setReason(String reason) {
+    public SignatureFieldAppearance setReason(String reason) {
         this.reason = reason;
         return this;
     }
@@ -195,9 +195,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param reasonCaption new signing reason caption.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setReasonCaption(String reasonCaption) {
+    public SignatureFieldAppearance setReasonCaption(String reasonCaption) {
         this.reasonCaption = reasonCaption;
         return this;
     }
@@ -216,9 +216,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param location new signing location.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setLocation(String location) {
+    public SignatureFieldAppearance setLocation(String location) {
         this.location = location;
         return this;
     }
@@ -228,9 +228,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param locationCaption new signing location caption.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setLocationCaption(String locationCaption) {
+    public SignatureFieldAppearance setLocationCaption(String locationCaption) {
         this.locationCaption = locationCaption;
         return this;
     }
@@ -249,9 +249,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param signatureCreator new name of the application signing a document.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setSignatureCreator(String signatureCreator) {
+    public SignatureFieldAppearance setSignatureCreator(String signatureCreator) {
         this.signatureCreator = signatureCreator;
         return this;
     }
@@ -270,9 +270,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param contact new signing contact.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setContact(String contact) {
+    public SignatureFieldAppearance setContact(String contact) {
         this.contact = contact;
         return this;
     }
@@ -291,9 +291,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param signatureGraphic image rendered.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setSignatureGraphic(ImageData signatureGraphic) {
+    public SignatureFieldAppearance setSignatureGraphic(ImageData signatureGraphic) {
         this.signatureGraphic = signatureGraphic;
         return this;
     }
@@ -312,9 +312,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param reuseAppearance is an appearances reusing flag value to set.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setReuseAppearance(boolean reuseAppearance) {
+    public SignatureFieldAppearance setReuseAppearance(boolean reuseAppearance) {
         this.reuseAppearance = reuseAppearance;
         return this;
     }
@@ -333,9 +333,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param image the background image.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setImage(ImageData image) {
+    public SignatureFieldAppearance setImage(ImageData image) {
         this.image = image;
         return this;
     }
@@ -357,9 +357,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param imageScale the scaling to be applied to the background image.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setImageScale(float imageScale) {
+    public SignatureFieldAppearance setImageScale(float imageScale) {
         this.imageScale = imageScale;
         return this;
     }
@@ -370,9 +370,9 @@ public class SigField extends FormField<SigField> {
      * @param text the signature text identifying the signer. If null or not set
      *             a standard description will be used.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setDescription(String text) {
+    public SignatureFieldAppearance setDescription(String text) {
         description = text;
         return this;
     }
@@ -393,9 +393,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param signedBy name of the signer.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setSignedBy(String signedBy) {
+    public SignatureFieldAppearance setSignedBy(String signedBy) {
         this.signedBy = signedBy;
         return this;
     }
@@ -423,10 +423,11 @@ public class SigField extends FormField<SigField> {
      *
      * @param signDate new signature date.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setSignDate(java.util.Calendar signDate) {
+    public SignatureFieldAppearance setSignDate(java.util.Calendar signDate) {
         this.signDate = signDate;
+        this.isSignDateSet = true;
         return this;
     }
 
@@ -444,9 +445,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param n0 layer xObject.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setBackgroundLayer(PdfFormXObject n0) {
+    public SignatureFieldAppearance setBackgroundLayer(PdfFormXObject n0) {
         this.n0 = n0;
         return this;
     }
@@ -466,9 +467,9 @@ public class SigField extends FormField<SigField> {
      *
      * @param n2 layer xObject.
      *
-     * @return this same {@link SigField} instance.
+     * @return this same {@link SignatureFieldAppearance} instance.
      */
-    public SigField setSignatureAppearanceLayer(PdfFormXObject n2) {
+    public SignatureFieldAppearance setSignatureAppearanceLayer(PdfFormXObject n2) {
         this.n2 = n2;
         return this;
     }
@@ -490,7 +491,7 @@ public class SigField extends FormField<SigField> {
      */
     @Override
     protected IRenderer makeNewRenderer() {
-        return new SigFieldRenderer(this);
+        return new SignatureAppearanceRenderer(this);
     }
 
     private String generateDescriptionText() {
@@ -498,7 +499,7 @@ public class SigField extends FormField<SigField> {
         if (!signedBy.isEmpty()) {
             buf.append("Digitally signed by ").append(signedBy);
         }
-        if (signDate != null) {
+        if (isSignDateSet) {
             buf.append('\n').append("Date: ").append(DateTimeUtil.dateToString(signDate));
         }
         if (reason != null) {

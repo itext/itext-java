@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
@@ -300,8 +301,20 @@ public class PdfSigner {
      *
      * @return {@link PdfSignatureAppearance} object.
      */
+    @Deprecated
     public PdfSignatureAppearance getSignatureAppearance() {
         return appearance;
+    }
+
+    /**
+     * Sets the signature field layout element to customize the appearance of the signature. Signer's sign date will
+     * be set.
+     *
+     * @param appearance the {@link SignatureFieldAppearance} layout element.
+     */
+    public void setSignatureAppearance(SignatureFieldAppearance appearance) {
+        appearance.setSignDate(signDate);
+        this.appearance.setSignatureAppearance(appearance);
     }
 
     /**
@@ -407,8 +420,8 @@ public class PdfSigner {
                 List<PdfWidgetAnnotation> widgets = field.getWidgets();
                 if (widgets.size() > 0) {
                     PdfWidgetAnnotation widget = widgets.get(0);
-                    appearance.setPageRect(getWidgetRectangle(widget));
-                    appearance.setPageNumber(getWidgetPageNumber(widget));
+                    setPageRect(getWidgetRectangle(widget));
+                    setPageNumber(getWidgetPageNumber(widget));
                 }
             } else {
                 // Do not allow dots for new fields
@@ -442,6 +455,57 @@ public class PdfSigner {
             throw new IllegalArgumentException(SignExceptionMessageConstant.DOCUMENT_MUST_HAVE_READER);
         }
         this.document = document;
+    }
+
+    /**
+     * Provides the page number of the signature field which this signature
+     * appearance is associated with.
+     *
+     * @return The page number of the signature field which this signature
+     * appearance is associated with.
+     */
+    public int getPageNumber() {
+        return appearance.getPageNumber();
+    }
+
+    /**
+     * Sets the page number of the signature field which this signature
+     * appearance is associated with. Implicitly calls {@link PdfSigner#setPageRect}
+     * which considers page number to process the rectangle correctly.
+     *
+     * @param pageNumber The page number of the signature field which
+     *                   this signature appearance is associated with.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSigner setPageNumber(int pageNumber) {
+        appearance.setPageNumber(pageNumber);
+        return this;
+    }
+
+    /**
+     * Provides the rectangle that represent the position and dimension
+     * of the signature field in the page.
+     *
+     * @return the rectangle that represent the position and dimension
+     * of the signature field in the page
+     */
+    public Rectangle getPageRect() {
+        return appearance.getPageRect();
+    }
+
+    /**
+     * Sets the rectangle that represent the position and dimension of
+     * the signature field in the page.
+     *
+     * @param pageRect The rectangle that represents the position and
+     *                 dimension of the signature field in the page.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSigner setPageRect(Rectangle pageRect) {
+        appearance.setPageRect(pageRect);
+        return this;
     }
 
     /**
@@ -577,7 +641,6 @@ public class PdfSigner {
                 estimatedSize += 4192;
             }
         }
-        PdfSignatureAppearance appearance = getSignatureAppearance();
         appearance.setCertificate(chain[0]);
         if (sigtype == CryptoStandard.CADES && !isDocumentPdf2()) {
             addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
@@ -664,7 +727,6 @@ public class PdfSigner {
         }
 
         PdfSignature dic = new PdfSignature();
-        PdfSignatureAppearance appearance = getSignatureAppearance();
         dic.setReason(appearance.getReason());
         dic.setLocation(appearance.getLocation());
         dic.setSignatureCreator(appearance.getSignatureCreator());
@@ -991,7 +1053,7 @@ public class PdfSigner {
             sigFieldLock = this.fieldLock;
         }
 
-        sigField.put(PdfName.P, document.getPage(appearance.getPageNumber()).getPdfObject());
+        sigField.put(PdfName.P, document.getPage(getPageNumber()).getPdfObject());
         sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
         PdfObject obj = sigField.getPdfObject().get(PdfName.F);
         int flags = 0;
@@ -1003,7 +1065,7 @@ public class PdfSigner {
         flags |= PdfAnnotation.LOCKED;
         sigField.put(PdfName.F, new PdfNumber(flags));
 
-        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getModelElement());
+        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getSignatureAppearance());
 
         sigField.setModified();
 
@@ -1020,7 +1082,7 @@ public class PdfSigner {
      * @throws IOException if font for the appearance dictionary cannot be created
      */
     protected PdfSigFieldLock createNewSignatureFormField(PdfAcroForm acroForm, String name) throws IOException {
-        PdfWidgetAnnotation widget = new PdfWidgetAnnotation(appearance.getPageRect());
+        PdfWidgetAnnotation widget = new PdfWidgetAnnotation(getPageRect());
         widget.setFlags(PdfAnnotation.PRINT | PdfAnnotation.LOCKED);
 
         PdfSignatureFormField sigField = new SignatureFormFieldBuilder(document, name).createSignature();
@@ -1035,10 +1097,10 @@ public class PdfSigner {
             sigFieldLock = this.fieldLock;
         }
 
-        int pagen = appearance.getPageNumber();
+        int pagen = getPageNumber();
         widget.setPage(document.getPage(pagen));
 
-        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getModelElement());
+        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getSignatureAppearance());
         acroForm.addField(sigField, document.getPage(pagen));
 
         if (acroForm.getPdfObject().isIndirect()) {

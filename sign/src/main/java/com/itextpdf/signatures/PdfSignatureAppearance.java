@@ -25,7 +25,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
-import com.itextpdf.forms.form.element.SigField;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.Color;
@@ -53,7 +53,7 @@ public class PdfSignatureAppearance {
     /**
      * Signature model element.
      */
-    private SigField modelElement = new SigField("");
+    private SignatureFieldAppearance modelElement = new SignatureFieldAppearance("");
 
     /**
      * The page where the signature will appear.
@@ -127,6 +127,7 @@ public class PdfSignatureAppearance {
      * @return The page number of the signature field which this signature
      * appearance is associated with.
      */
+    @Deprecated
     public int getPageNumber() {
         return page;
     }
@@ -141,6 +142,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setPageNumber(int pageNumber) {
         this.page = pageNumber;
         setPageRect(pageRect);
@@ -154,6 +156,7 @@ public class PdfSignatureAppearance {
      * @return the rectangle that represent the position and dimension
      * of the signature field in the page
      */
+    @Deprecated
     public Rectangle getPageRect() {
         return pageRect;
     }
@@ -167,6 +170,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setPageRect(Rectangle pageRect) {
         this.pageRect = new Rectangle(pageRect);
         this.rect = new Rectangle(pageRect.getWidth(), pageRect.getHeight());
@@ -182,6 +186,7 @@ public class PdfSignatureAppearance {
      *
      * @return layer 0
      */
+    @Deprecated
     public PdfFormXObject getLayer0() {
         if (n0 == null) {
             n0 = new PdfFormXObject(rect);
@@ -199,6 +204,7 @@ public class PdfSignatureAppearance {
      *
      * @return layer 2
      */
+    @Deprecated
     public PdfFormXObject getLayer2() {
         if (n2 == null) {
             n2 = new PdfFormXObject(rect);
@@ -212,6 +218,7 @@ public class PdfSignatureAppearance {
      *
      * @return the rendering mode for this signature
      */
+    @Deprecated
     public RenderingMode getRenderingMode() {
         return renderingMode;
     }
@@ -223,20 +230,21 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setRenderingMode(RenderingMode renderingMode) {
         this.renderingMode = renderingMode;
         switch (renderingMode) {
             case NAME_AND_DESCRIPTION:
-                modelElement.setRenderingMode(SigField.RenderingMode.NAME_AND_DESCRIPTION);
+                modelElement.setRenderingMode(SignatureFieldAppearance.RenderingMode.NAME_AND_DESCRIPTION);
                 break;
             case GRAPHIC_AND_DESCRIPTION:
-                modelElement.setRenderingMode(SigField.RenderingMode.GRAPHIC_AND_DESCRIPTION);
+                modelElement.setRenderingMode(SignatureFieldAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION);
                 break;
             case GRAPHIC:
-                modelElement.setRenderingMode(SigField.RenderingMode.GRAPHIC);
+                modelElement.setRenderingMode(SignatureFieldAppearance.RenderingMode.GRAPHIC);
                 break;
             default:
-                modelElement.setRenderingMode(SigField.RenderingMode.DESCRIPTION);
+                modelElement.setRenderingMode(SignatureFieldAppearance.RenderingMode.DESCRIPTION);
                 break;
         }
         return this;
@@ -247,6 +255,7 @@ public class PdfSignatureAppearance {
      *
      * @return reason for signing
      */
+    @Deprecated
     public String getReason() {
         return modelElement.getReason();
     }
@@ -258,6 +267,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setReason(String reason) {
         modelElement.setReason(reason);
         return this;
@@ -270,6 +280,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setReasonCaption(String reasonCaption) {
         modelElement.setReasonCaption(reasonCaption);
         return this;
@@ -280,6 +291,7 @@ public class PdfSignatureAppearance {
      *
      * @return signing location
      */
+    @Deprecated
     public String getLocation() {
         return modelElement.getLocation();
     }
@@ -291,6 +303,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setLocation(String location) {
         modelElement.setLocation(location);
         return this;
@@ -303,6 +316,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setLocationCaption(String locationCaption) {
         modelElement.setLocationCaption(locationCaption);
         return this;
@@ -313,6 +327,7 @@ public class PdfSignatureAppearance {
      *
      * @return The signature creator
      */
+    @Deprecated
     public String getSignatureCreator(){
         return modelElement.getSignatureCreator();
     }
@@ -324,6 +339,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setSignatureCreator(String signatureCreator) {
         modelElement.setSignatureCreator(signatureCreator);
         return this;
@@ -334,6 +350,7 @@ public class PdfSignatureAppearance {
      *
      * @return The signing contact
      */
+    @Deprecated
     public String getContact() {
         return modelElement.getContact();
     }
@@ -345,6 +362,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setContact(String contact) {
         modelElement.setContact(contact);
         return this;
@@ -358,6 +376,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setCertificate(Certificate signCertificate) {
         this.signCertificate = signCertificate;
         String signedBy =
@@ -379,6 +398,7 @@ public class PdfSignatureAppearance {
      *
      * @return the signing certificate
      */
+    @Deprecated
     public Certificate getCertificate() {
         return signCertificate;
     }
@@ -388,6 +408,7 @@ public class PdfSignatureAppearance {
      *
      * @return the image
      */
+    @Deprecated
     public ImageData getSignatureGraphic() {
         return modelElement.getSignatureGraphic();
     }
@@ -399,6 +420,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setSignatureGraphic(ImageData signatureGraphic) {
         modelElement.setSignatureGraphic(signatureGraphic);
         return this;
@@ -411,6 +433,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setReuseAppearance(boolean reuseAppearance) {
         modelElement.setReuseAppearance(reuseAppearance);
         return this;
@@ -423,6 +446,7 @@ public class PdfSignatureAppearance {
      *
      * @return the background image for the layer 2
      */
+    @Deprecated
     public ImageData getImage() {
         return modelElement.getImage();
     }
@@ -434,6 +458,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setImage(ImageData image) {
         modelElement.setImage(image);
         return this;
@@ -444,6 +469,7 @@ public class PdfSignatureAppearance {
      *
      * @return the scaling to be applied to the background image
      */
+    @Deprecated
     public float getImageScale() {
         return modelElement.getImageScale();
     }
@@ -458,6 +484,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setImageScale(float imageScale) {
         modelElement.setImageScale(imageScale);
         return this;
@@ -471,6 +498,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setLayer2Text(String text) {
         modelElement.setDescription(text);
         return this;
@@ -481,6 +509,7 @@ public class PdfSignatureAppearance {
      *
      * @return the signature text identifying the signer
      */
+    @Deprecated
     public String getLayer2Text() {
         return modelElement.getDescription(false);
     }
@@ -490,6 +519,7 @@ public class PdfSignatureAppearance {
      *
      * @return the n2 and n4 layer font
      */
+    @Deprecated
     public PdfFont getLayer2Font() {
         return this.layer2Font;
     }
@@ -501,6 +531,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setLayer2Font(PdfFont layer2Font) {
         this.layer2Font = layer2Font;
         modelElement.setFont(layer2Font);
@@ -514,6 +545,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setLayer2FontSize(float fontSize) {
         this.layer2FontSize = fontSize;
         modelElement.setFontSize(fontSize);
@@ -525,6 +557,7 @@ public class PdfSignatureAppearance {
      *
      * @return the n2 and n4 layer font size
      */
+    @Deprecated
     public float getLayer2FontSize() {
         return layer2FontSize;
     }
@@ -536,6 +569,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     public PdfSignatureAppearance setLayer2FontColor(Color color) {
         this.layer2FontColor = color;
         modelElement.setFontColor(color);
@@ -547,6 +581,7 @@ public class PdfSignatureAppearance {
      *
      * @return the n2 and n4 layer font color
      */
+    @Deprecated
     public Color getLayer2FontColor() {
         return layer2FontColor;
     }
@@ -556,7 +591,8 @@ public class PdfSignatureAppearance {
      *
      * @return the signature layout element.
      */
-    public SigField getModelElement() {
+    @Deprecated
+    public SignatureFieldAppearance getSignatureAppearance() {
         modelElement.setBackgroundLayer(n0);
         modelElement.setSignatureAppearanceLayer(n2);
         return modelElement;
@@ -569,7 +605,8 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface.
      */
-    public PdfSignatureAppearance setModelElement(SigField modelElement) {
+    @Deprecated
+    public PdfSignatureAppearance setSignatureAppearance(SignatureFieldAppearance modelElement) {
         this.modelElement = modelElement;
         return this;
     }
@@ -581,6 +618,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface.
      */
+    @Deprecated
     public PdfSignatureAppearance setFontProvider(FontProvider fontProvider) {
         modelElement.setProperty(Property.FONT_PROVIDER, fontProvider);
         return this;
@@ -594,6 +632,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface.
      */
+    @Deprecated
     public PdfSignatureAppearance setFontFamily(String... fontFamilyNames) {
         modelElement.setFontFamily(fontFamilyNames);
         return this;
@@ -617,6 +656,7 @@ public class PdfSignatureAppearance {
      * @see <a href="https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PPKAppearances.pdf">Adobe Pdf Digital
      * Signature Appearances</a>
      */
+    @Deprecated
     protected PdfFormXObject getAppearance() throws IOException {
         SignatureUtil signatureUtil = new SignatureUtil(document);
         String name = modelElement.getId();
@@ -639,6 +679,7 @@ public class PdfSignatureAppearance {
      *
      * @return the signature date
      */
+    @Deprecated
     protected java.util.Calendar getSignDate() {
         return modelElement.getSignDate();
     }
@@ -650,6 +691,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface
      */
+    @Deprecated
     protected PdfSignatureAppearance setSignDate(java.util.Calendar signDate) {
         modelElement.setSignDate(signDate);
         return this;
@@ -664,7 +706,7 @@ public class PdfSignatureAppearance {
      * @return this instance to support fluent interface
      */
     protected PdfSignatureAppearance setFieldName(String fieldName) {
-        SigField newModelElement = new SigField(fieldName);
+        SignatureFieldAppearance newModelElement = new SignatureFieldAppearance(fieldName);
         newModelElement.setRenderingMode(modelElement.getRenderingMode());
         newModelElement.setReason(modelElement.getReason());
         newModelElement.setLocation(modelElement.getLocation());
@@ -688,6 +730,7 @@ public class PdfSignatureAppearance {
     /**
      * Signature rendering modes.
      */
+    @Deprecated
     public enum RenderingMode {
         /**
          * The rendering mode is just the description.

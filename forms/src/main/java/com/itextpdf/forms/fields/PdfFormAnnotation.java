@@ -36,7 +36,7 @@ import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.SelectFieldItem;
-import com.itextpdf.forms.form.element.SigField;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -1102,29 +1102,29 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     void createSigField() {
-        if (!(formFieldElement instanceof SigField)) {
+        if (!(formFieldElement instanceof SignatureFieldAppearance)) {
             // Create it one time and re-set properties during each widget regeneration.
-            formFieldElement = new SigField(parent.getPartialFieldName().toUnicodeString());
+            formFieldElement = new SignatureFieldAppearance(parent.getPartialFieldName().toUnicodeString());
         }
 
         if (formFieldElement.<Object>getProperty(Property.FONT) == null) {
-            ((SigField) formFieldElement).setFont(getFont());
+            ((SignatureFieldAppearance) formFieldElement).setFont(getFont());
         }
         if (getColor() != null) {
-            ((SigField) formFieldElement).setFontColor(color);
+            ((SignatureFieldAppearance) formFieldElement).setFontColor(color);
         }
 
         PdfString reason = parent.getPdfObject().getAsString(PdfName.Reason);
         if (reason != null) {
-            ((SigField) formFieldElement).setReason(reason.toUnicodeString());
+            ((SignatureFieldAppearance) formFieldElement).setReason(reason.toUnicodeString());
         }
         PdfString location = parent.getPdfObject().getAsString(PdfName.Location);
         if (location != null) {
-            ((SigField) formFieldElement).setLocation(location.toUnicodeString());
+            ((SignatureFieldAppearance) formFieldElement).setLocation(location.toUnicodeString());
         }
         PdfString contact = parent.getPdfObject().getAsString(PdfName.ContactInfo);
         if (contact != null) {
-            ((SigField) formFieldElement).setContact(contact.toUnicodeString());
+            ((SignatureFieldAppearance) formFieldElement).setContact(contact.toUnicodeString());
         }
     }
 
@@ -1359,8 +1359,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * @return n0 layer xObject.
      */
     private PdfFormXObject createN0Layer(float width, float height) {
-        if (((SigField) formFieldElement).getBackgroundLayer() != null) {
-            return ((SigField) formFieldElement).getBackgroundLayer();
+        if (((SignatureFieldAppearance) formFieldElement).getBackgroundLayer() != null) {
+            return ((SignatureFieldAppearance) formFieldElement).getBackgroundLayer();
         }
         // Create blank n0.
         PdfFormXObject n0LayerXObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
@@ -1368,7 +1368,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         PdfCanvas canvas = new PdfCanvas(n0LayerXObject, getDocument());
         canvas.writeLiteral("% DSBlank\n");
 
-        if (((SigField) formFieldElement).isReuseAppearance()) {
+        if (((SignatureFieldAppearance) formFieldElement).isReuseAppearance()) {
             // Reuse existed field appearance as a background
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(getDocument(), true);
             PdfFormField field = acroForm.getField(parent.getFieldName().toUnicodeString());
@@ -1377,7 +1377,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             if (oldAppearanceStream != null) {
                 n0LayerXObject = new PdfFormXObject(oldAppearanceStream);
             } else {
-                ((SigField) formFieldElement).setReuseAppearance(false);
+                ((SignatureFieldAppearance) formFieldElement).setReuseAppearance(false);
             }
         }
         return n0LayerXObject;
@@ -1397,8 +1397,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * @return n2 layer xObject.
      */
     private PdfFormXObject createN2Layer(float width, float height) {
-        if (((SigField) formFieldElement).getSignatureAppearanceLayer() != null) {
-            return ((SigField) formFieldElement).getSignatureAppearanceLayer();
+        if (((SignatureFieldAppearance) formFieldElement).getSignatureAppearanceLayer() != null) {
+            return ((SignatureFieldAppearance) formFieldElement).getSignatureAppearanceLayer();
         }
         PdfFormXObject n2LayerXObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         Canvas n2LayerCanvas = new Canvas(n2LayerXObject, this.getDocument());

@@ -62,7 +62,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Category(IntegrationTest.class)
-public class SigFieldTest extends ExtendedITextTest {
+public class SignatureFieldAppearanceTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/SigFieldTest/";
     public static final String DESTINATION_FOLDER =
@@ -79,7 +79,7 @@ public class SigFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_basicSigField.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField formSigField = new SigField("form SigField");
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("form SigField");
             formSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formSigField.setDescription("form SigField");
             formSigField.setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
@@ -87,7 +87,7 @@ public class SigFieldTest extends ExtendedITextTest {
 
             document.add(new Paragraph(""));
 
-            SigField flattenSigField = new SigField("flatten SigField");
+            SignatureFieldAppearance flattenSigField = new SignatureFieldAppearance("flatten SigField");
             flattenSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flattenSigField.setDescription("flatten SigField");
             flattenSigField.setBorder(new SolidBorder(ColorConstants.PINK, 1));
@@ -104,7 +104,7 @@ public class SigFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_invisibleSigField.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField formSigField = new SigField("form SigField");
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("form SigField");
             formSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formSigField.setDescription("form SigField");
             formSigField.setProperty(Property.PADDING_LEFT, UnitValue.createPointValue(0));
@@ -124,7 +124,7 @@ public class SigFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_customizedSigField.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField formSigField = new SigField("form SigField");
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("form SigField");
             formSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formSigField.setSignedBy("signedBy").setLocationCaption("Location capt: ").setLocation("location")
                     .setReasonCaption("Reason capt: ").setReason("reason")
@@ -137,7 +137,7 @@ public class SigFieldTest extends ExtendedITextTest {
 
             document.add(new Paragraph(""));
 
-            SigField flattenSigField = new SigField("flatten SigField");
+            SignatureFieldAppearance flattenSigField = new SignatureFieldAppearance("flatten SigField");
             flattenSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flattenSigField.setSignedBy("signedBy").setLocationCaption("Location capt: ").setLocation("location")
                     .setReasonCaption("Reason capt: ").setReason("reason")
@@ -159,7 +159,7 @@ public class SigFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_signatureFieldVerticalAlignment.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField bottomSigField = new SigField("bottomSigField");
+            SignatureFieldAppearance bottomSigField = new SignatureFieldAppearance("bottomSigField");
             bottomSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             bottomSigField.setDescription("description on bottom");
             bottomSigField.setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.BOTTOM);
@@ -169,10 +169,10 @@ public class SigFieldTest extends ExtendedITextTest {
             bottomSigField.setFontSize(15);
             document.add(bottomSigField);
 
-            SigField middleSigField = new SigField("middleSigField");
+            SignatureFieldAppearance middleSigField = new SignatureFieldAppearance("middleSigField");
             middleSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             middleSigField.setDescription("description on the middle");
-            middleSigField.setRenderingMode(SigField.RenderingMode.NAME_AND_DESCRIPTION);
+            middleSigField.setRenderingMode(SignatureFieldAppearance.RenderingMode.NAME_AND_DESCRIPTION);
             middleSigField.setSignedBy("Name");
             middleSigField.setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
             middleSigField.setProperty(Property.TEXT_ALIGNMENT, TextAlignment.CENTER);
@@ -181,10 +181,10 @@ public class SigFieldTest extends ExtendedITextTest {
             middleSigField.setFontSize(15);
             document.add(middleSigField);
 
-            SigField topSigField = new SigField("topSigField");
+            SignatureFieldAppearance topSigField = new SignatureFieldAppearance("topSigField");
             topSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             topSigField.setDescription("description on top");
-            topSigField.setRenderingMode(SigField.RenderingMode.GRAPHIC_AND_DESCRIPTION);
+            topSigField.setRenderingMode(SignatureFieldAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION);
             topSigField.setSignatureGraphic(ImageDataFactory.create(SOURCE_FOLDER + "1.png"));
             topSigField.setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.TOP);
             topSigField.setProperty(Property.TEXT_ALIGNMENT, TextAlignment.CENTER);
@@ -204,10 +204,10 @@ public class SigFieldTest extends ExtendedITextTest {
         String imagePath = SOURCE_FOLDER + "1.png";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField formSigField = new SigField("SigField");
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             ImageData image = ImageDataFactory.create(imagePath);
             formSigField.setSignatureGraphic(image);
-            formSigField.setRenderingMode(SigField.RenderingMode.GRAPHIC_AND_DESCRIPTION);
+            formSigField.setRenderingMode(SignatureFieldAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION);
             formSigField.setDescription("description");
             formSigField.setFontColor(ColorConstants.BLUE);
             formSigField.setFontSize(20);
@@ -227,10 +227,10 @@ public class SigFieldTest extends ExtendedITextTest {
         String imagePath = SOURCE_FOLDER + "1.png";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField formSigField = new SigField("SigField");
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             ImageData image = ImageDataFactory.create(imagePath);
             formSigField.setSignatureGraphic(image);
-            formSigField.setRenderingMode(SigField.RenderingMode.GRAPHIC);
+            formSigField.setRenderingMode(SignatureFieldAppearance.RenderingMode.GRAPHIC);
             formSigField.setBorder(new SolidBorder(ColorConstants.GREEN, 1));
             formSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             document.add(formSigField);
@@ -245,10 +245,10 @@ public class SigFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_sigFieldWithNameAndDescriptionModeHorizontal.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField formSigField = new SigField("SigField");
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             formSigField.setProperty(Property.WIDTH, UnitValue.createPointValue(250));
             formSigField.setProperty(Property.HEIGHT, UnitValue.createPointValue(150));
-            formSigField.setRenderingMode(SigField.RenderingMode.NAME_AND_DESCRIPTION);
+            formSigField.setRenderingMode(SignatureFieldAppearance.RenderingMode.NAME_AND_DESCRIPTION);
             formSigField.setDescription("description");
             formSigField.setSignedBy("name");
             formSigField.setFontSize(20);
@@ -268,10 +268,10 @@ public class SigFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_sigFieldWithNameAndDescriptionModeVertical.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField formSigField = new SigField("SigField");
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             formSigField.setProperty(Property.WIDTH, UnitValue.createPointValue(150));
             formSigField.setProperty(Property.HEIGHT, UnitValue.createPointValue(250));
-            formSigField.setRenderingMode(SigField.RenderingMode.NAME_AND_DESCRIPTION);
+            formSigField.setRenderingMode(SignatureFieldAppearance.RenderingMode.NAME_AND_DESCRIPTION);
             formSigField.setDescription("description");
             formSigField.setSignedBy("name");
             formSigField.setFontSize(20);
@@ -292,7 +292,7 @@ public class SigFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             // BORDER_BOX
-            SigField interactiveSigField = new SigField("interactiveSigField")
+            SignatureFieldAppearance interactiveSigField = new SignatureFieldAppearance("interactiveSigField")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 10));
             interactiveSigField.setWidth(200).setHeight(100);
             interactiveSigField.setInteractive(true);
@@ -301,7 +301,7 @@ public class SigFieldTest extends ExtendedITextTest {
             document.add(interactiveSigField);
 
             // CONTENT_BOX
-            SigField interactiveSigField2 = new SigField("interactiveSigField2")
+            SignatureFieldAppearance interactiveSigField2 = new SignatureFieldAppearance("interactiveSigField2")
                     .setBorder(new SolidBorder(ColorConstants.YELLOW, 10));
             interactiveSigField2.setWidth(200).setHeight(100);
             interactiveSigField2.setInteractive(true);
@@ -310,7 +310,7 @@ public class SigFieldTest extends ExtendedITextTest {
             document.add(interactiveSigField2);
 
             // BORDER_BOX
-            SigField flattenSigField = new SigField("flattenSigField")
+            SignatureFieldAppearance flattenSigField = new SignatureFieldAppearance("flattenSigField")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 10));
             flattenSigField.setWidth(200).setHeight(100);
             flattenSigField.setInteractive(false);
@@ -319,7 +319,7 @@ public class SigFieldTest extends ExtendedITextTest {
             document.add(flattenSigField);
 
             // CONTENT_BOX
-            SigField flattenSigField2 = new SigField("flattenSigField2")
+            SignatureFieldAppearance flattenSigField2 = new SignatureFieldAppearance("flattenSigField2")
                     .setBorder(new SolidBorder(ColorConstants.YELLOW, 10));
             flattenSigField2.setWidth(200).setHeight(100);
             flattenSigField2.setInteractive(false);
@@ -338,7 +338,7 @@ public class SigFieldTest extends ExtendedITextTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             // DASHED
-            SigField sigField = new SigField("SigField")
+            SignatureFieldAppearance sigField = new SignatureFieldAppearance("SigField")
                     .setBorder(new DashedBorder(ColorConstants.PINK, 10))
                     .setBackgroundColor(ColorConstants.YELLOW);
             sigField.setSize(100);
@@ -350,7 +350,7 @@ public class SigFieldTest extends ExtendedITextTest {
             PdfDictionary bs = new PdfDictionary();
             // UNDERLINE
             bs.put(PdfName.S, PdfAnnotation.STYLE_UNDERLINE);
-            SigField sigField2 = new SigField("SigField2")
+            SignatureFieldAppearance sigField2 = new SignatureFieldAppearance("SigField2")
                     .setBorder(FormBorderFactory.getBorder(bs, 10f, ColorConstants.YELLOW,
                             ColorConstants.ORANGE))
                     .setBackgroundColor(ColorConstants.PINK);
@@ -363,7 +363,7 @@ public class SigFieldTest extends ExtendedITextTest {
 
             // INSET
             bs.put(PdfName.S, PdfAnnotation.STYLE_INSET);
-            SigField sigField3 = new SigField("SigField3")
+            SignatureFieldAppearance sigField3 = new SignatureFieldAppearance("SigField3")
                     .setBorder(FormBorderFactory.getBorder(bs, 10f, ColorConstants.PINK,
                             ColorConstants.RED))
                     .setBackgroundColor(ColorConstants.YELLOW);
@@ -375,7 +375,7 @@ public class SigFieldTest extends ExtendedITextTest {
 
             // BEVELLED
             bs.put(PdfName.S, PdfAnnotation.STYLE_BEVELED);
-            SigField sigField4 = new SigField("SigField4")
+            SignatureFieldAppearance sigField4 = new SignatureFieldAppearance("SigField4")
                     .setBorder(FormBorderFactory.getBorder(bs, 10f, ColorConstants.YELLOW,
                             ColorConstants.ORANGE))
                     .setBackgroundColor(ColorConstants.PINK);
@@ -410,17 +410,17 @@ public class SigFieldTest extends ExtendedITextTest {
             PdfSignatureFormField field3 = new SignatureFormFieldBuilder(document.getPdfDocument(), "sigField3")
                     .setWidgetRectangle(new Rectangle(50, 50, 400, 200)).setPage(3).createSignature();
 
-            SigField sigField1 = new SigField("sigField1");
+            SignatureFieldAppearance sigField1 = new SignatureFieldAppearance("sigField1");
             sigField1.setDescription("rotation 90 rotation 90 rotation 90 rotation 90 rotation 90");
             sigField1.setFontSize(25);
             field1.getFirstFormAnnotation().setFormFieldElement(sigField1).setBorderColor(ColorConstants.GREEN);
 
-            SigField sigField2 = new SigField("sigField2");
+            SignatureFieldAppearance sigField2 = new SignatureFieldAppearance("sigField2");
             sigField2.setDescription("rotation 180 rotation 180 rotation 180 rotation 180 rotation 180");
             sigField2.setFontSize(25);
             field2.getFirstFormAnnotation().setFormFieldElement(sigField2).setBorderColor(ColorConstants.GREEN);
 
-            SigField sigField3 = new SigField("sigField3");
+            SignatureFieldAppearance sigField3 = new SignatureFieldAppearance("sigField3");
             sigField3.setDescription("rotation 270 rotation 270 rotation 270 rotation 270 rotation 270");
             sigField3.setFontSize(25);
             field3.getFirstFormAnnotation().setFormFieldElement(sigField3).setBorderColor(ColorConstants.GREEN);
@@ -437,12 +437,12 @@ public class SigFieldTest extends ExtendedITextTest {
     @Test
     public void wrongRenderingModeTest() {
         try (Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
-            SigField formSigField = new SigField("SigField");
-            formSigField.setRenderingMode(SigField.RenderingMode.GRAPHIC_AND_DESCRIPTION);
+            SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
+            formSigField.setRenderingMode(SignatureFieldAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION);
             Assert.assertThrows(IllegalStateException.class, () -> document.add(formSigField));
 
-            SigField formSigField2 = new SigField("SigField2");
-            formSigField2.setRenderingMode(SigField.RenderingMode.GRAPHIC);
+            SignatureFieldAppearance formSigField2 = new SignatureFieldAppearance("SigField2");
+            formSigField2.setRenderingMode(SignatureFieldAppearance.RenderingMode.GRAPHIC);
             Assert.assertThrows(IllegalStateException.class, () -> document.add(formSigField2));
         }
     }
@@ -453,7 +453,7 @@ public class SigFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_signatureFieldBackground.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            SigField field1 = new SigField("field1");
+            SignatureFieldAppearance field1 = new SignatureFieldAppearance("field1");
             field1.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             field1.setDescription("scale -1").setFontColor(ColorConstants.GREEN).setFontSize(50)
                     .setImage(ImageDataFactory.create(SOURCE_FOLDER + "1.png")).setImageScale(-1)
@@ -461,7 +461,7 @@ public class SigFieldTest extends ExtendedITextTest {
                     .setProperty(Property.TEXT_ALIGNMENT, TextAlignment.CENTER);
             document.add(field1);
 
-            SigField field2 = new SigField("field2");
+            SignatureFieldAppearance field2 = new SignatureFieldAppearance("field2");
             field2.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             field2.setDescription("scale 0").setFontColor(ColorConstants.GREEN).setFontSize(50)
                     .setImage(ImageDataFactory.create(SOURCE_FOLDER + "1.png")).setImageScale(0)
@@ -469,7 +469,7 @@ public class SigFieldTest extends ExtendedITextTest {
                     .setProperty(Property.TEXT_ALIGNMENT, TextAlignment.CENTER);
             document.add(field2);
 
-            SigField field3 = new SigField("field3");
+            SignatureFieldAppearance field3 = new SignatureFieldAppearance("field3");
             field3.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             field3.setDescription("scale 0.5").setFontColor(ColorConstants.GREEN).setFontSize(50)
                     .setImage(ImageDataFactory.create(SOURCE_FOLDER + "1.png")).setImageScale(0.5f)

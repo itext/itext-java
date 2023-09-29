@@ -117,7 +117,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
                 new ReaderProperties().setPassword(OWNER)), new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.appearance.setPageRect(new Rectangle(100, 100, 0, 0));
+        signer.setPageRect(new Rectangle(100, 100, 0, 0));
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
         signer.createNewSignatureFormField(acroForm, signer.fieldName);
@@ -138,7 +138,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new PdfReader(new ByteArrayInputStream(createEncryptedDocumentWithoutWidgetAnnotation()),
                         new ReaderProperties().setPassword(OWNER)), new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.appearance.setPageRect(new Rectangle(100, 100, 10, 10));
+        signer.setPageRect(new Rectangle(100, 100, 10, 10));
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
         signer.fieldLock = fieldLock;
 
@@ -158,7 +158,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new ByteArrayOutputStream(),
                 new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.appearance.setPageRect(new Rectangle(100, 100, 10, 10));
+        signer.setPageRect(new Rectangle(100, 100, 10, 10));
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
         signer.fieldLock = fieldLock;
 
@@ -211,7 +211,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()), new ReaderProperties().setPassword(OWNER)),
                 new ByteArrayOutputStream(), new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
-        signer.appearance.setPageRect(new Rectangle(100, 100, 0, 0));
+        signer.setPageRect(new Rectangle(100, 100, 0, 0));
 
         widgetAnnotation = (PdfWidgetAnnotation) signer.document.getPage(1).getAnnotations().get(0);
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);
@@ -245,7 +245,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         signer.cryptoDictionary = new PdfSignature();
         PdfSigFieldLock fieldLock = new PdfSigFieldLock();
         signer.fieldLock = fieldLock;
-        signer.appearance.setPageRect(new Rectangle(100, 100, 10, 10));
+        signer.setPageRect(new Rectangle(100, 100, 10, 10));
 
         widgetAnnotation = (PdfWidgetAnnotation) signer.document.getPage(1).getAnnotations().get(0);
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signer.document, true);

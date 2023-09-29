@@ -36,6 +36,7 @@ import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -57,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
@@ -1865,6 +1867,72 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             form.addField(root);
         }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void signatureLayersTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "signatureLayersTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
+
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+        pdfDoc.addNewPage();
+
+        PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
+                .setWidgetRectangle(new Rectangle(36, 436, 100, 100)).createSignature();
+
+        PdfFormXObject layer0 = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+
+        // Draw pink rectangle with blue border
+        new PdfCanvas(layer0, pdfDoc)
+                .saveState()
+                .setFillColor(ColorConstants.PINK)
+                .setStrokeColor(ColorConstants.BLUE)
+                .rectangle(0, 0, 100, 100)
+                .fillStroke()
+                .restoreState();
+
+        PdfFormXObject layer2 = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+
+        // Draw yellow circle with gray border
+        new PdfCanvas(layer2, pdfDoc)
+                .saveState()
+                .setFillColor(ColorConstants.YELLOW)
+                .setStrokeColor(ColorConstants.DARK_GRAY)
+                .circle(50, 50, 50)
+                .fillStroke()
+                .restoreState();
+
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance("signature")
+                .setBackgroundLayer(layer0).setSignatureAppearanceLayer(layer2);
+
+        signField.getFirstFormAnnotation().setFormFieldElement(appearance);
+        form.addField(signField);
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_signatureLayersTest.pdf",
+                destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void pdfWithSignatureFieldTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "pdfWithSignatureFieldTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
+
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+        pdfDoc.addNewPage();
+
+        PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
+                .setWidgetRectangle(new Rectangle(100, 500, 100, 50)).createSignature();
+        signField.getPdfObject().put(PdfName.Reason, new PdfString("test reason"));
+        signField.getPdfObject().put(PdfName.Location, new PdfString("test location"));
+        signField.getPdfObject().put(PdfName.ContactInfo, new PdfString("test contact"));
+        signField.getFirstFormAnnotation().setBackgroundColor(ColorConstants.PINK).setColor(ColorConstants.WHITE);
+        form.addField(signField);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName,
+                sourceFolder + "cmp_pdfWithSignatureFieldTest.pdf", destinationFolder, "diff_"));
     }
 
     static class CustomButtonFormField extends PdfButtonFormField {

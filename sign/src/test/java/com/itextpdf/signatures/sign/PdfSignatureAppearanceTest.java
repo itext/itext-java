@@ -305,7 +305,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 .setReason("Test 1")
                 .setLocation("TestCity")
                 .setReuseAppearance(true)
-                .getModelElement().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
+                .getSignatureAppearance().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
         signer.setFieldName("Signature1");
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,

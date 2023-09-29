@@ -31,6 +31,7 @@ import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -182,11 +183,12 @@ public class PadesSigTest extends ExtendedITextTest {
 
         PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), new FileOutputStream(outFileName), new StampingProperties());
         signer.setFieldName("Signature1");
-        signer.getSignatureAppearance()
-                .setPageRect(new Rectangle(50, 650, 200, 100))
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1")
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
+                .setDescription("Approval test signature.\nCreated by iText.");
+        signer.setPageRect(new Rectangle(50, 650, 200, 100))
+                .setSignatureAppearance(appearance);
 
         if (sigPolicyIdentifier != null) {
             signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,

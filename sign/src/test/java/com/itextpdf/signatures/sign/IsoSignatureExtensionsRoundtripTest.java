@@ -25,6 +25,7 @@ package com.itextpdf.signatures.sign;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -324,11 +325,12 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
 
         PdfSigner signer = new PdfSigner(new PdfReader(SOURCE_FILE), os, new StampingProperties());
         signer.setFieldName(SIGNATURE_FIELD);
-        signer.getSignatureAppearance()
-                .setPageRect(new Rectangle(50, 650, 200, 100))
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SIGNATURE_FIELD)
                 .setReason("Test")
                 .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
+                .setDescription("Approval test signature.\nCreated by iText.");
+        signer.setPageRect(new Rectangle(50, 650, 200, 100))
+                .setSignatureAppearance(appearance);
 
         signer.signDetached(
                 new BouncyCastleDigest(), pks, signChain, null, null, null, 0,

@@ -28,7 +28,7 @@ import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
-import com.itextpdf.forms.form.element.SigField;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The {@link AbstractTextFieldRenderer} implementation for SigFields.
  */
-public class SigFieldRenderer extends AbstractTextFieldRenderer {
+public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
     /**
      * Extra space at the top.
      */
@@ -73,11 +73,11 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
     private boolean isFontSizeApproximated = false;
 
     /**
-     * Creates a new {@link SigFieldRenderer} instance.
+     * Creates a new {@link SignatureAppearanceRenderer} instance.
      *
      * @param modelElement the model element
      */
-    public SigFieldRenderer(SigField modelElement) {
+    public SignatureAppearanceRenderer(SignatureFieldAppearance modelElement) {
         super(modelElement);
         applyBackgroundImage(modelElement);
     }
@@ -101,15 +101,17 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
     protected IRenderer createFlatRenderer() {
         Div div = new Div();
 
-        String description = ((SigField) modelElement).getDescription(true);
-        SigField.RenderingMode renderingMode = ((SigField) modelElement).getRenderingMode();
+        String description = ((SignatureFieldAppearance) modelElement).getDescription(true);
+        SignatureFieldAppearance.RenderingMode renderingMode =
+                ((SignatureFieldAppearance) modelElement).getRenderingMode();
         switch (renderingMode) {
             case NAME_AND_DESCRIPTION:
-                div.add(new Paragraph(((SigField) modelElement).getSignedBy()).setMargin(0).setMultipliedLeading(0.9f))
+                div.add(new Paragraph(((SignatureFieldAppearance) modelElement).getSignedBy())
+                                .setMargin(0).setMultipliedLeading(0.9f))
                         .add(new Paragraph(description).setMargin(0).setMultipliedLeading(0.9f));
                 break;
             case GRAPHIC_AND_DESCRIPTION: {
-                ImageData signatureGraphic = ((SigField) modelElement).getSignatureGraphic();
+                ImageData signatureGraphic = ((SignatureFieldAppearance) modelElement).getSignatureGraphic();
                 if (signatureGraphic == null) {
                     throw new IllegalStateException("A signature image must be present when rendering mode is " +
                             "graphic and description. Use setSignatureGraphic()");
@@ -119,7 +121,7 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
                 break;
             }
             case GRAPHIC:
-                ImageData signatureGraphic = ((SigField) modelElement).getSignatureGraphic();
+                ImageData signatureGraphic = ((SignatureFieldAppearance) modelElement).getSignatureGraphic();
                 if (signatureGraphic == null) {
                     throw new IllegalStateException("A signature image must be present when rendering mode is " +
                             "graphic. Use setSignatureGraphic()");
@@ -160,7 +162,8 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
         Rectangle descriptionRect = null;
         Rectangle signatureRect = null;
 
-        SigField.RenderingMode renderingMode = ((SigField) modelElement).getRenderingMode();
+        SignatureFieldAppearance.RenderingMode renderingMode =
+                ((SignatureFieldAppearance) modelElement).getRenderingMode();
         switch (renderingMode) {
             case NAME_AND_DESCRIPTION:
             case GRAPHIC_AND_DESCRIPTION: {
@@ -225,7 +228,7 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
      */
     @Override
     public IRenderer getNextRenderer() {
-        return new SigFieldRenderer((SigField) modelElement);
+        return new SignatureAppearanceRenderer((SignatureFieldAppearance) modelElement);
     }
 
     /**
@@ -249,7 +252,7 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
         String name = getModelId();
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(SigFieldRenderer.class);
+            Logger logger = LoggerFactory.getLogger(SignatureAppearanceRenderer.class);
             logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.FONT_SIZE));
         }
@@ -279,7 +282,7 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
         sigField.setFont(font).setFontSize(fontSizeValue);
         sigField.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(sigField);
-        sigField.getFirstFormAnnotation().setFormFieldElement((SigField) modelElement);
+        sigField.getFirstFormAnnotation().setFormFieldElement((SignatureFieldAppearance) modelElement);
         sigField.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);
         forms.addField(sigField, page);
@@ -287,7 +290,7 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
         writeAcroFormFieldLangAttribute(doc);
     }
 
-    private void adjustChildrenLayout(SigField.RenderingMode renderingMode,
+    private void adjustChildrenLayout(SignatureFieldAppearance.RenderingMode renderingMode,
                                       Rectangle signatureRect, Rectangle descriptionRect, int pageNum) {
         switch (renderingMode) {
             case NAME_AND_DESCRIPTION: {
@@ -377,7 +380,7 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
         renderer.layout(layoutContext);
     }
 
-    private void applyBackgroundImage(SigField modelElement) {
+    private void applyBackgroundImage(SignatureFieldAppearance modelElement) {
         if (modelElement.getImage() != null) {
             BackgroundRepeat repeat = new BackgroundRepeat(BackgroundRepeat.BackgroundRepeatValue.NO_REPEAT);
             BackgroundPosition position = new BackgroundPosition()
@@ -418,8 +421,10 @@ public class SigFieldRenderer extends AbstractTextFieldRenderer {
         if (this.hasOwnProperty(Property.FONT_SIZE) || modelElement.hasOwnProperty(Property.FONT_SIZE)) {
             return;
         }
-        if (SigField.RenderingMode.GRAPHIC == ((SigField) modelElement).getRenderingMode() ||
-                SigField.RenderingMode.GRAPHIC_AND_DESCRIPTION == ((SigField) modelElement).getRenderingMode()) {
+        if (SignatureFieldAppearance.RenderingMode.GRAPHIC ==
+                ((SignatureFieldAppearance) modelElement).getRenderingMode() ||
+                SignatureFieldAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION ==
+                        ((SignatureFieldAppearance) modelElement).getRenderingMode()) {
             // We can expect CLIP_ELEMENT log messages since the initial image size may be larger than the field height.
             // But image size will be adjusted during its relayout in #adjustFieldLayout.
             return;

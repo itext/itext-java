@@ -91,12 +91,12 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         Assert.assertNull(signatureAppearance.getLayer2Text());
 
-        String layer2Text = signatureAppearance.getModelElement().getDescription(true);
+        String layer2Text = signatureAppearance.getSignatureAppearance().getDescription(true);
         // There is no text from new reason caption in the default layer 2 text
         Assert.assertFalse(layer2Text.contains(newReasonCaption));
 
         signatureAppearance.setReasonCaption(newReasonCaption);
-        layer2Text = signatureAppearance.getModelElement().getDescription(true);
+        layer2Text = signatureAppearance.getSignatureAppearance().getDescription(true);
         // Now layer 2 text contains text from new reason caption
         Assert.assertTrue(layer2Text.contains(newReasonCaption));
     }
@@ -109,12 +109,12 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         Assert.assertNull(signatureAppearance.getLayer2Text());
 
-        String layer2Text = signatureAppearance.getModelElement().getDescription(true);
+        String layer2Text = signatureAppearance.getSignatureAppearance().getDescription(true);
         // There is no text from new location caption in the default layer 2 text
         Assert.assertFalse(layer2Text.contains(newLocationCaption));
 
         signatureAppearance.setLocationCaption(newLocationCaption);
-        layer2Text = signatureAppearance.getModelElement().getDescription(true);
+        layer2Text = signatureAppearance.getSignatureAppearance().getDescription(true);
         // Now layer 2 text contains text from new location caption
         Assert.assertTrue(layer2Text.contains(newLocationCaption));
     }
@@ -217,9 +217,9 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
         String fontFamilyName = "fontFamily";
         appearance.setFontProvider(fontProvider).setFontFamily(fontFamilyName);
         Assert.assertEquals(fontProvider,
-                appearance.getModelElement().<FontProvider>getProperty(Property.FONT_PROVIDER));
+                appearance.getSignatureAppearance().<FontProvider>getProperty(Property.FONT_PROVIDER));
         Assert.assertEquals(fontFamilyName,
-                ((String[]) appearance.getModelElement().<String[]>getProperty(Property.FONT))[0]);
+                ((String[]) appearance.getSignatureAppearance().<String[]>getProperty(Property.FONT))[0]);
     }
 
     @Test
