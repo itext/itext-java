@@ -718,6 +718,59 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         Assert.assertEquals(PdfaExceptionMessageConstant.NOT_IDENTITY_CRYPT_FILTER_IS_NOT_PERMITTED, e.getMessage());
     }
 
+    @Test
+    public void checkColorSpaceWithDeviceNWithoutAttributes() {
+        List<String> tmpArray = new ArrayList<String>(3);
+        float[] transformArray = new float[6];
+        tmpArray.add("Black");
+        tmpArray.add("Magenta");
+        tmpArray.add("White");
+
+        for (int i = 0; i < 3; i++) {
+            transformArray[i * 2] = 0;
+            transformArray[i * 2 + 1]  = 1;
+        }
+        PdfType4Function function = new PdfType4Function(transformArray, new float[]{0, 1, 0, 1, 0, 1},
+                "{0}".getBytes(StandardCharsets.ISO_8859_1));
+
+        PdfArray deviceNAsArray = ((PdfArray)(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function)).getPdfObject());
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), currentColorSpaces, true, false)
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
+    }
+
+
+    @Test
+    public void checkColorSpaceWithDeviceNWithoutColorants() {
+        List<String> tmpArray = new ArrayList<String>(3);
+        float[] transformArray = new float[6];
+        tmpArray.add("Black");
+        tmpArray.add("Magenta");
+        tmpArray.add("White");
+
+        for (int i = 0; i < 3; i++) {
+            transformArray[i * 2] = 0;
+            transformArray[i * 2 + 1]  = 1;
+        }
+        PdfType4Function function = new PdfType4Function(transformArray, new float[]{0, 1, 0, 1, 0, 1},
+                "{0}".getBytes(StandardCharsets.ISO_8859_1));
+
+        PdfArray deviceNAsArray = ((PdfArray)(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function)).getPdfObject());
+        PdfDictionary currentColorSpaces = new PdfDictionary();
+        PdfDictionary attributes = new PdfDictionary();
+        deviceNAsArray.add(attributes);
+
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(deviceNAsArray), currentColorSpaces, true, false)
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE, e.getMessage());
+    }
+
     private static PdfDictionary createSignatureDict() {
         PdfDictionary signatureDict = new PdfDictionary();
 

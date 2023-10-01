@@ -407,8 +407,12 @@ public class PdfA4Checker extends PdfA3Checker {
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void checkFormXObject(PdfStream form) {
+    protected void checkFormXObject(PdfStream form, PdfStream contentStream) {
         if (isAlreadyChecked(form)) {
             return;
         }
@@ -418,7 +422,7 @@ public class PdfA4Checker extends PdfA3Checker {
         if (form.containsKey(PdfName.Ref)) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_REF_KEY);
         }
-        checkTransparencyGroup(form, null);
+        checkTransparencyGroup(form, contentStream);
         checkResources(form.getAsDictionary(PdfName.Resources), form);
         checkContentStream(form);
     }

@@ -256,17 +256,21 @@ public class PdfA2Checker extends PdfA1Checker {
 
             PdfSpecialCs.DeviceN deviceN = (PdfSpecialCs.DeviceN) colorSpace;
             checkNumberOfDeviceNComponents(deviceN);
-            //TODO DEVSIX-4203 Fix IndexOutOfBounds exception being thrown for DeviceN (not NChannel) colorspace without
-            // attributes. According to the spec PdfAConformanceException should be thrown.
+            //According to spec DeviceN is an array of size 4 or 5 depending on whether it contains attributes or not (see ISO 32000-2:2020 8.6.6.5)
+            //for the pdf/a-2 it should look as follows: [/DeviceN names alternateSpace tintTransform attributes], since colourants dictionary is
+            // located in attributes and according to pdf/a-2 spec it should always be present.
+            if (((PdfArray) deviceN.getPdfObject()).size() != 5) {
+                throw new PdfAConformanceException(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE);
+            }
             PdfDictionary attributes = ((PdfArray) deviceN.getPdfObject()).getAsDictionary(4);
             PdfDictionary colorants = attributes.getAsDictionary(PdfName.Colorants);
-            //TODO DEVSIX-4203 Colorants dictionary is mandatory in PDF/A-2 spec. Need to throw an appropriate exception
-            // if it is not present.
-            if (colorants != null) {
+            if (colorants != null && !colorants.isEmpty()) {
                 for (Map.Entry<PdfName, PdfObject> entry : colorants.entrySet()) {
                     PdfArray separation = (PdfArray) entry.getValue();
                     checkSeparationInsideDeviceN(separation, ((PdfArray) deviceN.getPdfObject()).get(2), ((PdfArray) deviceN.getPdfObject()).get(3));
                 }
+            } else {
+                throw new PdfAConformanceException(PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE);
             }
 
             if (checkAlternate) {
@@ -956,7 +960,13 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
+    /**
+     * For pdf/a-2+ checkers use the {@code checkFormXObject(PdfStream form, PdfStream contentStream)} method
+     *
+     * @param form the {@link PdfStream} to check
+     */
     @Override
+    @Deprecated
     protected void checkFormXObject(PdfStream form) {
         checkFormXObject(form, null);
     }
@@ -987,6 +997,13 @@ public class PdfA2Checker extends PdfA1Checker {
         checkContentStream(form);
     }
 
+    /**
+     * Verify the conformity of the transparency group XObject with appropriate
+     * specification. Throws PdfAConformanceException if any discrepancy was found
+     *
+     * @param form the {@link PdfStream} transparency group XObject.
+     * @param contentStream the {@link PdfStream} current content stream
+     */
     protected void checkTransparencyGroup(PdfStream form, PdfStream contentStream) {
         if (isContainsTransparencyGroup(form)) {
             if (contentStream != null) {

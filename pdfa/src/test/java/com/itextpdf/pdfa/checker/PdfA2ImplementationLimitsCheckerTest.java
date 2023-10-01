@@ -25,6 +25,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -47,10 +48,11 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
-    private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
+    private PdfA2Checker pdfA2Checker;
 
     @Before
     public void before() {
+        pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
         pdfA2Checker.setFullCheckMode(true);
     }
 
@@ -170,6 +172,10 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         //TODO DEVSIX-4205 Replace with a constructor with 4 parameters or use a setter for attributes dictionary
         PdfArray deviceNAsArray = ((PdfArray)(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function)).getPdfObject());
         PdfDictionary attributes = new PdfDictionary();
+        PdfDictionary colourants = new PdfDictionary();
+        String colourantName = "colourantTest";
+        colourants.put(new PdfName(colourantName), new PdfSpecialCs.DeviceN(((PdfArray)(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function)).getPdfObject())).getPdfObject());
+        attributes.put(PdfName.Colorants, colourants);
         deviceNAsArray.add(attributes);
         return new PdfSpecialCs.DeviceN(deviceNAsArray);
     }
