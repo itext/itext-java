@@ -1,0 +1,66 @@
+external-url-prefix: "http://test.example.com"
+keysets:
+  testkeys:
+    keys:
+      ca:
+        path: keys/root_key.pem
+        password: testpassphrase
+      leaf:
+        path: keys/key.pem
+        password: testpassphrase
+
+pki-architectures:
+  example-ca:
+    keyset: testkeys
+    entity-defaults:
+      country-name: BE
+      organization-name: iText
+    entities:
+      ca:
+        common-name: iTextTestAdvancedRoot
+      leaf:
+        common-name: iTextAdvancedTest
+    certs:
+      ca:
+        subject: ca
+        issuer: ca
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2500-01-01T00:00:00+0000"
+        extensions:
+          - id: basic_constraints
+            critical: true
+            value:
+              ca: true
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      leaf:
+        issuer: ca
+        validity:
+          valid-from: "2020-01-01T00:00:00+0000"
+          valid-to: "2400-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment]
+          - id: crl_distribution_points
+            smart-value:
+              schema: crl-dist-url
+              params:
+                crl-repo-names: [root-ca-crl]
+    services:
+      crl-repo:
+        root-ca-crl:
+          for-issuer: ca
+          signing-key: ca
+          simulated-update-schedule: "P90D"
+      ocsp:
+        root-ca-ocsp:
+          for-issuer: ca
+          responder-cert: ca
+          signing-key: ca

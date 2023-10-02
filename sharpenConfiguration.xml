@@ -479,7 +479,7 @@
                 <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
                 <file path="com/itextpdf/signatures/sign/LtvSigTest.java"/>
-                <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
+                <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest.java"/>
                 <file path="com/itextpdf/signatures/sign/TimestampSigTest.java"/>
             </fileset>
@@ -585,6 +585,7 @@
             <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/helloWorldDoc.pdf"/>
             <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/signedPAdES-LT.pdf"/>
             <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest/signedPAdES-T.pdf"/>
+
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest1.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest2.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest3.pdf"/>
@@ -603,6 +604,37 @@
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest1_FIPS.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest2_FIPS.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest3_FIPS.pdf"/>
+
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlNoOcsp_rootCertCrlNoOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlNoOcsp_rootCertCrlOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlNoOcsp_rootCertOcspNoCrl.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlNoOcsp_rootCertNoCrlNoOcsp.pdf"/>
+
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertCrlNoOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertCrlOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertOcspNoCrl.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertNoCrlNoOcsp.pdf"/>
+
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertCrlNoOcsp_revoked.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertCrlOcsp_revoked.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertOcspNoCrl_revoked.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertCrlOcsp_rootCertNoCrlNoOcsp_revoked.pdf"/>
+
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertNoOcspNoCrl_rootCertCrlNoOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertNoOcspNoCrl_rootCertCrlOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertNoOcspNoCrl_rootCertOcspNoCrl.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertNoOcspNoCrl_rootCertNoCrlNoOcsp.pdf"/>
+
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertCrlNoOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertCrlOcsp.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertOcspNoCrl.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertNoCrlNoOcsp.pdf"/>
+
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertCrlNoOcsp_revoked.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertCrlOcsp_revoked.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertOcspNoCrl_revoked.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertNoCrlNoOcsp_revoked.pdf"/>
+
             <file path="com/itextpdf/signatures/sign/TimestampSigTest/cmp_timestampTest01.pdf"/>
             <file path="com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/cmp_testTroughPdfSignerWithTsaClient.pdf"/>
             <file path="com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/cmp_testTroughPdfSignerWithTsaClient_FIPS.pdf"/>

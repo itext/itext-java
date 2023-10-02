@@ -47,9 +47,14 @@ public class TestCrlBuilder {
     private Date nextUpdate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 30);
 
     public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, Date thisUpdate)
-            throws CertificateEncodingException, IOException {
+            throws CertificateEncodingException {
         this.crlBuilder = FACTORY.createX509v2CRLBuilder(FACTORY.createX500Name(issuerCert), thisUpdate);
         this.issuerPrivateKey = issuerPrivateKey;
+    }
+    
+    public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
+            throws CertificateEncodingException {
+        this(issuerCert, issuerPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
     }
 
     public void setNextUpdate(Date nextUpdate) {
@@ -61,6 +66,10 @@ public class TestCrlBuilder {
      */
     public void addCrlEntry(X509Certificate certificate, Date revocationDate, int reason) {
         crlBuilder.addCRLEntry(certificate.getSerialNumber(), revocationDate, reason);
+    }
+
+    public void addCrlEntry(X509Certificate certificate, int reason) {
+        crlBuilder.addCRLEntry(certificate.getSerialNumber(), nextUpdate, reason);
     }
 
     public byte[] makeCrl() throws IOException, AbstractOperatorCreationException {
