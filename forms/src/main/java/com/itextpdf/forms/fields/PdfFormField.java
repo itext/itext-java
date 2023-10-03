@@ -148,7 +148,8 @@ public class PdfFormField extends AbstractPdfFormField {
         FORM_FIELD_KEYS.add(PdfName.TI);
         FORM_FIELD_KEYS.add(PdfName.I);
         FORM_FIELD_KEYS.add(PdfName.Lock);
-        FORM_FIELD_KEYS.add(PdfName.SV);
+        //Exists error in line, it is not recognized, therefore exists error when use function signDetached
+        //FORM_FIELD_KEYS.add(PdfName.SV);
     }
 
     /**
