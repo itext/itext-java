@@ -25,11 +25,13 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.utils.annotationsflattening.IAnnotationFlattener;
 import com.itextpdf.kernel.utils.annotationsflattening.PdfAnnotationFlattenFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,36 +65,56 @@ public class PdfAnnotationFlattener {
      * {@link IAnnotationFlattener}.
      *
      * @param annotationsToFlatten the annotations that should be flattened.
-     * @param page                 the page where the annotations are located.
+     *
+     * @return the list of annotations that were not flattened successfully
      */
-    public void flatten(List<PdfAnnotation> annotationsToFlatten, PdfPage page) {
-        if (page == null) {
-            throw new PdfException(
-                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "page"));
-        }
+    public List<PdfAnnotation> flatten(List<PdfAnnotation> annotationsToFlatten) {
         if (annotationsToFlatten == null) {
             throw new PdfException(
                     MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL,
                             "annotationsToFlatten"));
         }
+        final List<PdfAnnotation> unFlattenedAnnotations = new ArrayList<>();
         for (final PdfAnnotation pdfAnnotation : annotationsToFlatten) {
+            if (pdfAnnotation == null) {
+                continue;
+            }
+            PdfPage page = pdfAnnotation.getPage();
+            if (page == null) {
+                continue;
+            }
             final IAnnotationFlattener worker = pdfAnnotationFlattenFactory.getAnnotationFlattenWorker(
                     pdfAnnotation.getSubtype());
-            worker.flatten(pdfAnnotation, page);
+            final boolean flattenedSuccessfully = worker.flatten(pdfAnnotation, page);
+            if (!flattenedSuccessfully) {
+                unFlattenedAnnotations.add(pdfAnnotation);
+            }
+
         }
+        return unFlattenedAnnotations;
     }
 
     /**
-     * Flattens all annotations on the page according to the defined implementation of
+     * Flattens the annotations on the page according to the defined implementation of
      * {@link IAnnotationFlattener}.
      *
-     * @param page the page where the annotations are located.
+     * @param document the document that contains the annotations that should be flattened.
+     *
+     * @return the list of annotations that were not flattened successfully
      */
-    public void flatten(PdfPage page) {
-        if (page == null) {
+    public List<PdfAnnotation> flatten(PdfDocument document) {
+        if (document == null) {
             throw new PdfException(
-                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "page"));
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "document"));
         }
-        flatten(page.getAnnotations(), page);
+        final List<PdfAnnotation> annotations = new ArrayList<>();
+        // Process page by page to avoid loading a bunch of annotations into memory
+        final int documentNumberOfPages = document.getNumberOfPages();
+        for (int i = 1; i <= documentNumberOfPages; i++) {
+            final PdfPage page = document.getPage(i);
+            final List<PdfAnnotation> failedFlatteningAnnotations = flatten(page.getAnnotations());
+            annotations.addAll(failedFlatteningAnnotations);
+        }
+        return annotations;
     }
 }

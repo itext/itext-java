@@ -34,8 +34,8 @@ public class PdfAnnotationFlattenFactory {
     static {
         map = new HashMap<>();
         map.put(PdfName.Link, () -> new DefaultAnnotationFlattener());
-        map.put(PdfName.Popup, () -> new NotSupportedFlattener());
-        map.put(PdfName.Widget, () -> new NotSupportedFlattener());
+        map.put(PdfName.Popup, () -> new RemoveWithoutDrawingFlattener());
+        map.put(PdfName.Widget, () -> new WarnFormfieldFlattener());
         map.put(PdfName.Screen, () -> new DefaultAnnotationFlattener());
         map.put(PdfName._3D, () -> new DefaultAnnotationFlattener());
         map.put(PdfName.Highlight, () -> new HighLightTextMarkupAnnotationFlattener());

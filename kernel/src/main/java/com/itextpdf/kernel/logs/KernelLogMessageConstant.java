@@ -87,6 +87,8 @@ public final class KernelLogMessageConstant {
                     + "fail";
     public static final String FLATTENING_IS_NOT_YET_SUPPORTED =
             "Flattening annotation type {0} is not yet supported, it will not be removed from the page";
+    public static final String FORMFIELD_ANNOTATION_WILL_NOT_BE_FLATTENED = "Form field annotation flattening is not "
+            + "supported. Use the PdfAcroForm#flattenFields() method instead.";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
