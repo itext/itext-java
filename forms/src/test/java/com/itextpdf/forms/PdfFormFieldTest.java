@@ -31,12 +31,12 @@ import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
-import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -76,7 +76,6 @@ import java.io.IOException;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -1877,7 +1876,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         pdfDoc.addNewPage();
 
-        PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
+        PdfSignatureFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
                 .setWidgetRectangle(new Rectangle(36, 436, 100, 100)).createSignature();
 
         PdfFormXObject layer0 = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
@@ -1902,10 +1901,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 .fillStroke()
                 .restoreState();
 
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance("signature")
-                .setBackgroundLayer(layer0).setSignatureAppearanceLayer(layer2);
-
-        signField.getFirstFormAnnotation().setFormFieldElement(appearance);
+        signField.setBackgroundLayer(layer0).setSignatureAppearanceLayer(layer2);
         form.addField(signField);
         pdfDoc.close();
 
@@ -1922,7 +1918,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDoc.addNewPage();
 
         PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
-                .setWidgetRectangle(new Rectangle(100, 500, 100, 50)).createSignature();
+                .setWidgetRectangle(new Rectangle(100, 600, 400, 150)).createSignature();
+        signField.getPdfObject().put(PdfName.Name, new PdfName("test name"));
         signField.getPdfObject().put(PdfName.Reason, new PdfString("test reason"));
         signField.getPdfObject().put(PdfName.Location, new PdfString("test location"));
         signField.getPdfObject().put(PdfName.ContactInfo, new PdfString("test contact"));

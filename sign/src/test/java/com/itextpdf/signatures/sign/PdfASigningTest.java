@@ -28,7 +28,6 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.forms.PdfSigFieldLock;
-import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -41,6 +40,7 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.testutils.PemFileHelper;
@@ -186,13 +186,12 @@ public class PdfASigningTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont("Helvetica","WinAnsi",
                 EmbeddingStrategy.PREFER_EMBEDDED);
 
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance("")
+        signer.setPageRect(rect)
+                .getSignatureAppearance()
                 .setReason("pdfA test")
                 .setLocation("TestCity")
-                .setFont(font)
+                .setLayer2Font(font)
                 .setReuseAppearance(false);
-        signer.setPageRect(rect)
-                .setSignatureAppearance(appearance);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 
@@ -229,19 +228,18 @@ public class PdfASigningTest extends ExtendedITextTest {
         signer.setFieldName(name);
 
         // Creating the appearance
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name)
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
                 .setReason(reason)
                 .setLocation(location)
-                .setFont(font)
+                .setLayer2Font(font)
                 .setReuseAppearance(setReuseAppearance);
 
         if (rectangleForNewField != null) {
             signer.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
-            appearance.setFontSize((float) fontSize);
+            appearance.setLayer2FontSize((float) fontSize);
         }
-        signer.setSignatureAppearance(appearance);
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());

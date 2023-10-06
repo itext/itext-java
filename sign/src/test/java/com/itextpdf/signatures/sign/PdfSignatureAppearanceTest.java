@@ -32,7 +32,6 @@ import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -58,8 +57,6 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.FileOutputStream;
@@ -231,7 +228,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 4))
     public void signaturesOnRotatedPages() throws IOException, GeneralSecurityException, InterruptedException {
         StringBuilder assertionResults = new StringBuilder();
 
@@ -299,6 +295,7 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
+        signer.setFieldName("Signature1");
         signer.getSignatureAppearance()
                 .setLayer2Text("SIGNED")
                 .setLayer2FontColor(ColorConstants.GREEN)
@@ -306,7 +303,6 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 .setLocation("TestCity")
                 .setReuseAppearance(true)
                 .getSignatureAppearance().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
-        signer.setFieldName("Signature1");
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());

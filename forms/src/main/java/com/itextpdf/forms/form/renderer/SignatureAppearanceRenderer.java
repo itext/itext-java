@@ -29,14 +29,14 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
@@ -44,12 +44,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Background;
-import com.itextpdf.layout.properties.BackgroundImage;
-import com.itextpdf.layout.properties.BackgroundPosition;
-import com.itextpdf.layout.properties.BackgroundRepeat;
-import com.itextpdf.layout.properties.BackgroundSize;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
@@ -58,6 +53,8 @@ import com.itextpdf.layout.renderer.ImageRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * The {@link AbstractTextFieldRenderer} implementation for SigFields.
@@ -70,6 +67,8 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
 
     private static final float EPS = 1e-5f;
 
+    private final RenderingMode renderingMode;
+
     private boolean isFontSizeApproximated = false;
 
     /**
@@ -79,7 +78,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
      */
     public SignatureAppearanceRenderer(SignatureFieldAppearance modelElement) {
         super(modelElement);
-        applyBackgroundImage(modelElement);
+        renderingMode = retrieveRenderingMode();
     }
 
     /**
@@ -100,37 +99,12 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
     @Override
     protected IRenderer createFlatRenderer() {
         Div div = new Div();
-
-        String description = ((SignatureFieldAppearance) modelElement).getDescription(true);
-        SignatureFieldAppearance.RenderingMode renderingMode =
-                ((SignatureFieldAppearance) modelElement).getRenderingMode();
-        switch (renderingMode) {
-            case NAME_AND_DESCRIPTION:
-                div.add(new Paragraph(((SignatureFieldAppearance) modelElement).getSignedBy())
-                                .setMargin(0).setMultipliedLeading(0.9f))
-                        .add(new Paragraph(description).setMargin(0).setMultipliedLeading(0.9f));
-                break;
-            case GRAPHIC_AND_DESCRIPTION: {
-                ImageData signatureGraphic = ((SignatureFieldAppearance) modelElement).getSignatureGraphic();
-                if (signatureGraphic == null) {
-                    throw new IllegalStateException("A signature image must be present when rendering mode is " +
-                            "graphic and description. Use setSignatureGraphic()");
-                }
-                div.add(new Image(signatureGraphic))
-                        .add(new Paragraph(description).setMargin(0).setMultipliedLeading(0.9f));
-                break;
+        for (IElement element : ((SignatureFieldAppearance) modelElement).getContentElements()) {
+            if (element instanceof Image) {
+                div.add((Image) element);
+            } else {
+                div.add((IBlockElement) element);
             }
-            case GRAPHIC:
-                ImageData signatureGraphic = ((SignatureFieldAppearance) modelElement).getSignatureGraphic();
-                if (signatureGraphic == null) {
-                    throw new IllegalStateException("A signature image must be present when rendering mode is " +
-                            "graphic. Use setSignatureGraphic()");
-                }
-                div.add(new Image(signatureGraphic));
-                break;
-            default:
-                div.add(new Paragraph(description).setMargin(0).setMultipliedLeading(0.9f));
-                break;
         }
         return div.createRendererSubTree();
     }
@@ -162,8 +136,6 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         Rectangle descriptionRect = null;
         Rectangle signatureRect = null;
 
-        SignatureFieldAppearance.RenderingMode renderingMode =
-                ((SignatureFieldAppearance) modelElement).getRenderingMode();
         switch (renderingMode) {
             case NAME_AND_DESCRIPTION:
             case GRAPHIC_AND_DESCRIPTION: {
@@ -204,7 +176,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
                 // The signature field will consist of an image only; no description will be shown.
                 signatureRect = bBox;
                 break;
-            default:
+            case DESCRIPTION:
                 // Default one, it just shows whatever description was defined for the signature.
                 if (retrieveHeight() == null) {
                     // Adjust calculated occupied area height to keep the same font size.
@@ -216,6 +188,8 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
                 descriptionRect = bBox.setHeight(getOccupiedArea().getBBox().getHeight() * (1 - TOP_SECTION)
                 - calculateAdditionalHeight());
                 break;
+            default:
+                return;
         }
 
         adjustChildrenLayout(renderingMode, signatureRect, descriptionRect, layoutContext.getArea().getPageNumber());
@@ -290,7 +264,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         writeAcroFormFieldLangAttribute(doc);
     }
 
-    private void adjustChildrenLayout(SignatureFieldAppearance.RenderingMode renderingMode,
+    private void adjustChildrenLayout(RenderingMode renderingMode,
                                       Rectangle signatureRect, Rectangle descriptionRect, int pageNum) {
         switch (renderingMode) {
             case NAME_AND_DESCRIPTION: {
@@ -380,35 +354,6 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         renderer.layout(layoutContext);
     }
 
-    private void applyBackgroundImage(SignatureFieldAppearance modelElement) {
-        if (modelElement.getImage() != null) {
-            BackgroundRepeat repeat = new BackgroundRepeat(BackgroundRepeat.BackgroundRepeatValue.NO_REPEAT);
-            BackgroundPosition position = new BackgroundPosition()
-                    .setPositionX(BackgroundPosition.PositionX.CENTER)
-                    .setPositionY(BackgroundPosition.PositionY.CENTER);
-            BackgroundSize size = new BackgroundSize();
-            if (Math.abs(modelElement.getImageScale()) < EPS) {
-                size.setBackgroundSizeToValues(UnitValue.createPercentValue(100),
-                        UnitValue.createPercentValue(100));
-            } else {
-                float imageScale = modelElement.getImageScale();
-                if (imageScale < 0) {
-                    size.setBackgroundSizeToContain();
-                } else {
-                    size.setBackgroundSizeToValues(
-                            UnitValue.createPointValue(imageScale * modelElement.getImage().getWidth()),
-                            UnitValue.createPointValue(imageScale * modelElement.getImage().getHeight()));
-                }
-            }
-            modelElement.setBackgroundImage(new BackgroundImage.Builder()
-                    .setImage(new PdfImageXObject(modelElement.getImage()))
-                    .setBackgroundSize(size)
-                    .setBackgroundRepeat(repeat)
-                    .setBackgroundPosition(position)
-                    .build());
-        }
-    }
-
     private float calculateAdditionalHeight() {
         Rectangle dummy = new Rectangle(0, 0);
         this.applyMargins(dummy, true);
@@ -421,10 +366,8 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         if (this.hasOwnProperty(Property.FONT_SIZE) || modelElement.hasOwnProperty(Property.FONT_SIZE)) {
             return;
         }
-        if (SignatureFieldAppearance.RenderingMode.GRAPHIC ==
-                ((SignatureFieldAppearance) modelElement).getRenderingMode() ||
-                SignatureFieldAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION ==
-                        ((SignatureFieldAppearance) modelElement).getRenderingMode()) {
+        if (RenderingMode.GRAPHIC == renderingMode || RenderingMode.GRAPHIC_AND_DESCRIPTION == renderingMode ||
+                RenderingMode.CUSTOM == renderingMode) {
             // We can expect CLIP_ELEMENT log messages since the initial image size may be larger than the field height.
             // But image size will be adjusted during its relayout in #adjustFieldLayout.
             return;
@@ -434,5 +377,52 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
             isFontSizeApproximated = true;
             modelElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
         }
+    }
+
+    private RenderingMode retrieveRenderingMode() {
+        List<IElement> contentElements = ((SignatureFieldAppearance) modelElement).getContentElements();
+        if (contentElements.size() == 2 && contentElements.get(1) instanceof Paragraph) {
+            if (contentElements.get(0) instanceof Paragraph) {
+                return RenderingMode.NAME_AND_DESCRIPTION;
+            }
+            if (contentElements.get(0) instanceof Image) {
+                return RenderingMode.GRAPHIC_AND_DESCRIPTION;
+            }
+        }
+        if (contentElements.size() == 1) {
+            if (contentElements.get(0) instanceof Paragraph) {
+                return RenderingMode.DESCRIPTION;
+            }
+            if (contentElements.get(0) instanceof Image) {
+                return RenderingMode.GRAPHIC;
+            }
+        }
+        return RenderingMode.CUSTOM;
+    }
+
+    /**
+     * Signature rendering modes.
+     */
+    private enum RenderingMode {
+        /**
+         * The rendering mode is just the description.
+         */
+        DESCRIPTION,
+        /**
+         * The rendering mode is the name of the signer and the description.
+         */
+        NAME_AND_DESCRIPTION,
+        /**
+         * The rendering mode is an image and the description.
+         */
+        GRAPHIC_AND_DESCRIPTION,
+        /**
+         * The rendering mode is just an image.
+         */
+        GRAPHIC,
+        /**
+         * The rendering mode is div.
+         */
+        CUSTOM
     }
 }

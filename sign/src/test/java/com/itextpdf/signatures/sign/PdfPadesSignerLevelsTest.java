@@ -289,9 +289,7 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
                 new StampingProperties());
         signer.setFieldName("Signature1");
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
-                .setReason("Test")
-                .setLocation("TestCity")
-                .setDescription("Approval test signature.\nCreated by iText.");
+                .setContent("Approval test signature.\nCreated by iText.");
         signer.setPageRect(new Rectangle(50, 650, 200, 100))
                 .setSignatureAppearance(appearance);
         return signer;

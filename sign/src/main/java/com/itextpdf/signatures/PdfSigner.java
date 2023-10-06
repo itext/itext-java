@@ -313,7 +313,6 @@ public class PdfSigner {
      * @param appearance the {@link SignatureFieldAppearance} layout element.
      */
     public void setSignatureAppearance(SignatureFieldAppearance appearance) {
-        appearance.setSignDate(signDate);
         this.appearance.setSignatureAppearance(appearance);
     }
 
@@ -539,6 +538,48 @@ public class PdfSigner {
     }
 
     /**
+     * Returns the signature creator.
+     *
+     * @return The signature creator.
+     */
+    public String getSignatureCreator() {
+        return appearance.getSignatureCreator();
+    }
+
+    /**
+     * Sets the name of the application used to create the signature.
+     *
+     * @param signatureCreator A new name of the application signing a document.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSigner setSignatureCreator(String signatureCreator) {
+        appearance.setSignatureCreator(signatureCreator);
+        return this;
+    }
+
+    /**
+     * Returns the signing contact.
+     *
+     * @return The signing contact.
+     */
+    public String getContact() {
+        return appearance.getContact();
+    }
+
+    /**
+     * Sets the signing contact.
+     *
+     * @param contact A new signing contact.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSigner setContact(String contact) {
+        appearance.setContact(contact);
+        return this;
+    }
+
+    /**
      * Signs the document using the detached mode, CMS or CAdES equivalent.
      * <br><br>
      * NOTE: This method closes the underlying pdf document. This means, that current instance
@@ -660,8 +701,8 @@ public class PdfSigner {
                 : PdfName.Adbe_pkcs7_detached);
         dic.setReason(appearance.getReason());
         dic.setLocation(appearance.getLocation());
-        dic.setSignatureCreator(appearance.getSignatureCreator());
-        dic.setContact(appearance.getContact());
+        dic.setSignatureCreator(getSignatureCreator());
+        dic.setContact(getContact());
         dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
         cryptoDictionary = dic;
 
@@ -729,8 +770,8 @@ public class PdfSigner {
         PdfSignature dic = new PdfSignature();
         dic.setReason(appearance.getReason());
         dic.setLocation(appearance.getLocation());
-        dic.setSignatureCreator(appearance.getSignatureCreator());
-        dic.setContact(appearance.getContact());
+        dic.setSignatureCreator(getSignatureCreator());
+        dic.setContact(getContact());
         dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
         externalSignatureContainer.modifySigningDictionary(dic.getPdfObject());
         cryptoDictionary = dic;
@@ -1065,7 +1106,12 @@ public class PdfSigner {
         flags |= PdfAnnotation.LOCKED;
         sigField.put(PdfName.F, new PdfNumber(flags));
 
+        sigField.disableFieldRegeneration();
+        sigField.setReuseAppearance(appearance.isReuseAppearance())
+                .setSignatureAppearanceLayer(appearance.getSignatureAppearanceLayer())
+                .setBackgroundLayer(appearance.getBackgroundLayer());
         sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getSignatureAppearance());
+        sigField.enableFieldRegeneration();
 
         sigField.setModified();
 
@@ -1100,7 +1146,12 @@ public class PdfSigner {
         int pagen = getPageNumber();
         widget.setPage(document.getPage(pagen));
 
+        sigField.disableFieldRegeneration();
+        sigField.setReuseAppearance(appearance.isReuseAppearance())
+                .setSignatureAppearanceLayer(appearance.getSignatureAppearanceLayer())
+                .setBackgroundLayer(appearance.getBackgroundLayer());
         sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getSignatureAppearance());
+        sigField.enableFieldRegeneration();
         acroForm.addField(sigField, document.getPage(pagen));
 
         if (acroForm.getPdfObject().isIndirect()) {
