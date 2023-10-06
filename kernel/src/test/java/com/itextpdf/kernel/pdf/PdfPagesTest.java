@@ -56,14 +56,11 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -73,6 +70,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest {
@@ -84,6 +85,25 @@ public class PdfPagesTest extends ExtendedITextTest {
     @BeforeClass
     public static void setup() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @Test
+    public void hugeNumberOfPagesWithOnePageTest() throws IOException {
+         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "hugeNumberOfPagesWithOnePage.pdf"),
+                 new PdfWriter(new ByteArrayOutputStream()));
+         PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
+        AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+    }
+
+    @Test
+    public void countDontCorrespondToRealTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "countDontCorrespondToReal.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
+        PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
+        AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+
+        // we don't expect that Count will be different from real number of pages
+        Assert.assertThrows(NullPointerException.class, () -> pdfDoc.close());
     }
 
     @Test
