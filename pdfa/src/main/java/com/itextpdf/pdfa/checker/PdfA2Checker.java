@@ -618,34 +618,7 @@ public class PdfA2Checker extends PdfA1Checker {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_ALTERNATEPRESENTATIONS_NAMES_ENTRY);
         }
 
-        PdfDictionary oCProperties = catalogDict.getAsDictionary(PdfName.OCProperties);
-        if (oCProperties != null) {
-            List<PdfDictionary> configList = new ArrayList<>();
-            PdfDictionary d = oCProperties.getAsDictionary(PdfName.D);
-            if (d != null) {
-                configList.add(d);
-            }
-            PdfArray configs = oCProperties.getAsArray(PdfName.Configs);
-            if (configs != null) {
-                for (PdfObject config : configs) {
-                    configList.add((PdfDictionary) config);
-                }
-            }
-
-            HashSet<PdfObject> ocgs = new HashSet<>();
-            PdfArray ocgsArray = oCProperties.getAsArray(PdfName.OCGs);
-            if (ocgsArray != null) {
-                for (PdfObject ocg : ocgsArray) {
-                    ocgs.add(ocg);
-                }
-            }
-
-            HashSet<String> names = new HashSet<>();
-
-            for (PdfDictionary config : configList) {
-                checkCatalogConfig(config, ocgs, names);
-            }
-        }
+        checkOCProperties(catalogDict.getAsDictionary(PdfName.OCProperties));
     }
 
     @Override
@@ -825,6 +798,36 @@ public class PdfA2Checker extends PdfA1Checker {
         if (cmykIsUsed || !cmykUsedObjects.isEmpty()) {
             if (!ICC_COLOR_SPACE_CMYK.equals(pdfAOutputIntentColorSpace)) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.DEVICECMYK_MAY_BE_USED_ONLY_IF_THE_FILE_HAS_A_CMYK_PDFA_OUTPUT_INTENT_OR_DEFAULTCMYK_IN_USAGE_CONTEXT);
+            }
+        }
+    }
+
+    private void checkOCProperties(PdfDictionary oCProperties) {
+        if (oCProperties != null) {
+            List<PdfDictionary> configList = new ArrayList<>();
+            PdfDictionary d = oCProperties.getAsDictionary(PdfName.D);
+            if (d != null) {
+                configList.add(d);
+            }
+            PdfArray configs = oCProperties.getAsArray(PdfName.Configs);
+            if (configs != null) {
+                for (PdfObject config : configs) {
+                    configList.add((PdfDictionary) config);
+                }
+            }
+
+            HashSet<PdfObject> ocgs = new HashSet<>();
+            PdfArray ocgsArray = oCProperties.getAsArray(PdfName.OCGs);
+            if (ocgsArray != null) {
+                for (PdfObject ocg : ocgsArray) {
+                    ocgs.add(ocg);
+                }
+            }
+
+            HashSet<String> names = new HashSet<>();
+
+            for (PdfDictionary config : configList) {
+                checkCatalogConfig(config, ocgs, names);
             }
         }
     }

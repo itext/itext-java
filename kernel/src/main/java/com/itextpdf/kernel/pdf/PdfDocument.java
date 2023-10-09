@@ -874,6 +874,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         xmp.put(PdfName.Filter, ar);
                     }
                 }
+
+                if (!properties.appendMode && catalog.isOCPropertiesMayHaveChanged()) {
+                    catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
+                }
+
                 checkIsoConformance();
 
                 if (getNumberOfPages() == 0) {
@@ -932,7 +937,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
                 } else {
                     if (catalog.isOCPropertiesMayHaveChanged()) {
-                        catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
                     }
                     if (catalog.pageLabels != null) {
