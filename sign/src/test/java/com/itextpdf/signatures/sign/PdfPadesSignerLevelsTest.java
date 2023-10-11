@@ -31,12 +31,7 @@ import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.signatures.DigestAlgorithms;
-import com.itextpdf.signatures.ICrlClient;
-import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfPadesSigner;
-import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.*;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
@@ -45,6 +40,9 @@ import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -108,18 +106,18 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
         PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
 
-        PdfSigner signer = createPdfSigner(srcFileName, outFileName);
+        SignerProperties signerProperties = createSignerProperties();
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         if ((boolean) useTempFolder) {
             padesSigner.setTemporaryDirectoryPath(destinationFolder);
         }
         if ((boolean) useSignature) {
             IExternalSignature pks =
                     new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
-            padesSigner.signWithBaselineBProfile(signer, signRsaChain, pks);
+            padesSigner.signWithBaselineBProfile(signerProperties, signRsaChain, pks);
         } else {
-            padesSigner.signWithBaselineBProfile(signer, signRsaChain, signRsaPrivateKey);
+            padesSigner.signWithBaselineBProfile(signerProperties, signRsaChain, signRsaPrivateKey);
         }
 
         PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
@@ -142,20 +140,20 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
-        PdfSigner signer = createPdfSigner(srcFileName, outFileName);
+        SignerProperties signerProperties = createSignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
-
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
         if ((boolean) useTempFolder) {
             padesSigner.setTemporaryDirectoryPath(destinationFolder);
         }
         if ((boolean) useSignature) {
             IExternalSignature pks =
                     new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
-            padesSigner.signWithBaselineTProfile(signer, signRsaChain, pks, testTsa);
+            padesSigner.signWithBaselineTProfile(signerProperties, signRsaChain, pks, testTsa);
         } else {
-            padesSigner.signWithBaselineTProfile(signer, signRsaChain, signRsaPrivateKey, testTsa);
+            padesSigner.signWithBaselineTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
         }
 
         PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
@@ -181,13 +179,14 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
 
-        PdfSigner signer = createPdfSigner(srcFileName, outFileName);
+        SignerProperties signerProperties = createSignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
         if ((boolean) useTempFolder) {
             padesSigner.setTemporaryDirectoryPath(destinationFolder);
         }
@@ -195,9 +194,9 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         if ((boolean) useSignature) {
             IExternalSignature pks =
                     new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
-            padesSigner.signWithBaselineLTProfile(signer, signRsaChain, pks, testTsa);
+            padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, pks, testTsa);
         } else {
-            padesSigner.signWithBaselineLTProfile(signer, signRsaChain, signRsaPrivateKey, testTsa);
+            padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
         }
 
         PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
@@ -223,13 +222,14 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
 
-        PdfSigner signer = createPdfSigner(srcFileName, outFileName);
+        SignerProperties signerProperties = createSignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
         if ((boolean) useTempFolder) {
             padesSigner.setTemporaryDirectoryPath(destinationFolder);
         }
@@ -238,9 +238,9 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         if ((boolean) useSignature) {
             IExternalSignature pks =
                     new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
-            padesSigner.signWithBaselineLTAProfile(signer, signRsaChain, pks, testTsa);
+            padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
         } else {
-            padesSigner.signWithBaselineLTAProfile(signer, signRsaChain, signRsaPrivateKey, testTsa);
+            padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
         }
 
         PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
@@ -267,31 +267,34 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
         ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         if ((boolean) useTempFolder) {
             padesSigner.setTemporaryDirectoryPath(destinationFolder);
         }
         padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
         if ((boolean) useSignature) {
-            padesSigner.prolongSignatures(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
-                    FileUtil.getFileOutputStream(outFileName), testTsa);
+            padesSigner.prolongSignatures(testTsa);
         } else {
-            padesSigner.prolongSignatures(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
-                    FileUtil.getFileOutputStream(outFileName));
+            padesSigner.prolongSignatures();
         }
 
         PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
-    
-    private PdfSigner createPdfSigner(String srcFileName, String outFileName) throws IOException {
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName),
-                new StampingProperties());
-        signer.setFieldName("Signature1");
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
+
+    private SignerProperties createSignerProperties() {
+        SignerProperties signerProperties = new SignerProperties();
+        signerProperties.setFieldName("Signature1");
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signerProperties.getFieldName())
                 .setContent("Approval test signature.\nCreated by iText.");
-        signer.setPageRect(new Rectangle(50, 650, 200, 100))
+        signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
                 .setSignatureAppearance(appearance);
-        return signer;
+
+        return signerProperties;
+    }
+
+    private PdfPadesSigner createPdfPadesSigner(String srcFileName, String outFileName) throws IOException {
+        return new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
+                FileUtil.getFileOutputStream(outFileName));
     }
 }

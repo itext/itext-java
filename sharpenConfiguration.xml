@@ -481,6 +481,7 @@
                 <file path="com/itextpdf/signatures/sign/LtvSigTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest.java"/>
+                <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest.java"/>
                 <file path="com/itextpdf/signatures/sign/TimestampSigTest.java"/>
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
@@ -634,6 +635,8 @@
             <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertCrlOcsp_revoked.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertOcspNoCrl_revoked.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertNoCrlNoOcsp_revoked.pdf"/>
+            
+            <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest/cmp_defaultSignerPropertiesTest.pdf"/>
 
             <file path="com/itextpdf/signatures/sign/TimestampSigTest/cmp_timestampTest01.pdf"/>
             <file path="com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/cmp_testTroughPdfSignerWithTsaClient.pdf"/>

@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -36,6 +37,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPadesSigner;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
@@ -159,9 +161,9 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         testCrlClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[0], crlBuilderMainCert);
         testCrlClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[1], crlBuilderRootCert);
 
-        PdfSigner signer = createPdfSigner(srcFileName, outFileName);
+        SignerProperties signer = createSignerProperties();
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         padesSigner.setOcspClient(testOcspClient);
         padesSigner.setCrlClient(testCrlClient);
 
@@ -174,15 +176,19 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    private PdfSigner createPdfSigner(String srcFileName, String outFileName) throws IOException {
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName),
-                new StampingProperties());
-        signer.setFieldName("Signature1");
-        signer.getSignatureAppearance()
-                .setPageRect(new Rectangle(50, 650, 200, 100))
-                .setReason("Test")
-                .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
-        return signer;
+    private SignerProperties createSignerProperties() {
+        SignerProperties signerProperties = new SignerProperties();
+        signerProperties.setFieldName("Signature1");
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signerProperties.getFieldName())
+                .setContent("Approval test signature.\nCreated by iText.");
+        signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
+                .setSignatureAppearance(appearance);
+
+        return signerProperties;
+    }
+
+    private PdfPadesSigner createPdfPadesSigner(String srcFileName, String outFileName) throws IOException {
+        return new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
+                FileUtil.getFileOutputStream(outFileName));
     }
 }

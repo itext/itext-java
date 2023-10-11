@@ -28,18 +28,15 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.signatures.DigestAlgorithms;
-import com.itextpdf.signatures.ICrlClient;
-import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfPadesSigner;
-import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.*;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
@@ -93,18 +90,19 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
 
-        PdfSigner signer = createPdfSigner(srcFileName, outFileName);
+        SignerProperties signerProperties = createSignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
         padesSigner.setTemporaryDirectoryPath(destinationFolder + "newPdf.pdf");
         padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
 
         Exception exception = Assert.assertThrows(PdfException.class,
-                () -> padesSigner.signWithBaselineLTProfile(signer, signRsaChain, pks, testTsa));
+                () -> padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, pks, testTsa));
         Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.PATH_IS_NOT_DIRECTORY,
                 destinationFolder + "newPdf.pdf"), exception.getMessage());
     }
@@ -127,12 +125,11 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
         padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
 
         Exception exception = Assert.assertThrows(PdfException.class,
-                () -> padesSigner.prolongSignatures(new PdfReader(srcFileName),
-                        FileUtil.getFileOutputStream(outFileName), testTsa));
+                () -> padesSigner.prolongSignatures(testTsa));
         Assert.assertEquals(SignExceptionMessageConstant.NO_SIGNATURES_TO_PROLONG, exception.getMessage());
     }
     
@@ -152,27 +149,68 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
-        PdfSigner signer = createPdfSigner(srcFileName, outFileName);
+        SignerProperties signerProperties = createSignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
 
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
-        PdfPadesSigner padesSigner = new PdfPadesSigner();
         padesSigner.setTemporaryDirectoryPath(destinationFolder);
 
         Exception exception = Assert.assertThrows(PdfException.class,
-                () -> padesSigner.signWithBaselineLTProfile(signer, signRsaChain, pks, testTsa));
+                () -> padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, pks, testTsa));
         Assert.assertEquals(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED, exception.getMessage());
     }
 
-    private PdfSigner createPdfSigner(String srcFileName, String outFileName) throws IOException {
-        PdfSigner signer = new PdfSigner(new PdfReader(srcFileName), FileUtil.getFileOutputStream(outFileName),
-                new StampingProperties());
-        signer.setFieldName("Signature1");
-        signer.getSignatureAppearance()
-                .setPageRect(new Rectangle(50, 650, 200, 100))
-                .setReason("Test")
-                .setLocation("TestCity")
-                .setLayer2Text("Approval test signature.\nCreated by iText.");
-        return signer;
+    @Test
+    public void defaultSignerPropertiesTest()
+            throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
+        String fileName = "defaultSignerPropertiesTest.pdf";
+        String outFileName = destinationFolder + fileName;
+        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName;
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
+        String tsaCertFileName = certsSrc + "tsCertRsa.pem";
+        String caCertFileName = certsSrc + "rootRsa.pem";
+
+        Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+        IExternalSignature pks =
+                new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
+
+        SignerProperties signerProperties = new SignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
+
+        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
+        ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
+        
+        padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
+
+        padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
+
+        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+    }
+    
+    private SignerProperties createSignerProperties() {
+        SignerProperties signerProperties = new SignerProperties();
+        signerProperties.setFieldName("Signature1");
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signerProperties.getFieldName())
+                .setContent("Approval test signature.\nCreated by iText.");
+        signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
+                .setSignatureAppearance(appearance);
+
+        return signerProperties;
+    }
+
+    private PdfPadesSigner createPdfPadesSigner(String srcFileName, String outFileName) throws IOException {
+        return new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
+                FileUtil.getFileOutputStream(outFileName));
     }
 }
