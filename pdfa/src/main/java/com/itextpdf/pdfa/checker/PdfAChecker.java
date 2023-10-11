@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -41,10 +42,8 @@ import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -164,7 +163,9 @@ public abstract class PdfAChecker {
         checkCatalog(catalog);
         checkLogicalStructure(catalogDict);
         checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
-        checkOutlines(catalogDict);
+        if (catalog.getDocument().hasOutlines()) {
+            checkOutlines(catalog.getDocument().getOutlines(false));
+        }
         checkPages(catalog.getDocument());
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkColorsUsages();
@@ -917,32 +918,16 @@ public abstract class PdfAChecker {
         }
     }
 
-    private void checkOutlines(PdfDictionary catalogDict){
-        PdfDictionary outlines = catalogDict.getAsDictionary(PdfName.Outlines);
-        if (outlines != null) {
-            for (PdfDictionary outline : getOutlines(outlines)) {
-                PdfDictionary action = outline.getAsDictionary(PdfName.A);
-                if (action != null) {
-                    checkAction(action);
-                }
+    private void checkOutlines(PdfOutline outline){
+        if (outline != null) {
+            final PdfDictionary action = outline.getContent().getAsDictionary(PdfName.A);
+            if (action != null) {
+                checkAction(action);
+            }
+            for (PdfOutline child : outline.getAllChildren()) {
+                checkOutlines(child);
             }
         }
-    }
-
-    private List<PdfDictionary> getOutlines(PdfDictionary item) {
-        List<PdfDictionary> outlines = new ArrayList<>();
-        outlines.add(item);
-
-        PdfDictionary processItem = item.getAsDictionary(PdfName.First);
-        if (processItem != null){
-            outlines.addAll(getOutlines(processItem));
-        }
-        processItem = item.getAsDictionary(PdfName.Next);
-        if (processItem != null){
-            outlines.addAll(getOutlines(processItem));
-        }
-
-        return outlines;
     }
 
     private void setCheckerOutputIntent(PdfDictionary outputIntent) {
