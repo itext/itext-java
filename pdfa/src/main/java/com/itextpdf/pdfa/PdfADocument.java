@@ -419,6 +419,9 @@ public class PdfADocument extends PdfDocument {
             case "3":
                 version = PdfVersion.PDF_1_7;
                 break;
+            case "4":
+                version = PdfVersion.PDF_2_0;
+                break;
             default:
                 version = PdfVersion.PDF_1_4;
                 break;

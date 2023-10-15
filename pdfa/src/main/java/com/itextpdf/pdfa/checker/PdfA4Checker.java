@@ -561,6 +561,13 @@ public class PdfA4Checker extends PdfA3Checker {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected int getMaxNameLength() {
+        return Integer.MAX_VALUE;
+    }
+
     private static boolean isValidXmpConformance(String value) {
         if (value == null) {
             return false;

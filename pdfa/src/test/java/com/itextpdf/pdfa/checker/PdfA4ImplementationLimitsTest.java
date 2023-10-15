@@ -47,6 +47,7 @@ import org.junit.experimental.categories.Category;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Category(UnitTest.class)
@@ -97,6 +98,12 @@ public class PdfA4ImplementationLimitsTest extends ExtendedITextTest {
         //exception shall not be thrown as pdf/a-4 supports any number of deviceN components
         PdfDictionary currentColorSpaces = new PdfDictionary();
         pdfA4Checker.checkColorSpace(buildDeviceNColorspace(40), null, currentColorSpaces, true, false);
+    }
+
+    @Test
+    public void longPdfNameTest() {
+        //exception shall not be thrown as pdf/a-4 supports greater than 127 characters pdf names
+        pdfA4Checker.checkPdfObject(PdfACheckerTestUtils.getLongName(200));
     }
 
     private PdfColorSpace buildDeviceNColorspace(int numberOfComponents) {
