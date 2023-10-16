@@ -22,15 +22,30 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(UnitTest.class)
+import java.security.Security;
+
+@Category(BouncyCastleUnitTest.class)
 public class DigestAlgorithmsTest extends ExtendedITextTest {
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final boolean FIPS_MODE = "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName());
+
+    @BeforeClass
+    public static void before() {
+        Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
+    }
+
     @Test
     public void emptyStringOidGetDigestTest() {
         String oid = "";
@@ -56,5 +71,23 @@ public class DigestAlgorithmsTest extends ExtendedITextTest {
     @Test
     public void nullNameGetAllowedDigestTest() {
         Assert.assertThrows(IllegalArgumentException.class, () -> DigestAlgorithms.getAllowedDigest(null));
+    }
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, ignore = true)})
+    @Test
+    public void notAllowedOidGetDigestTest() {
+        String name = "SM3";
+        String oid = "1.2.156.10197.1.401";
+        Assert.assertEquals(FIPS_MODE ? oid : name, DigestAlgorithms.getDigest(oid));
+    }
+
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, ignore = true)})
+    @Test
+    public void notAllowedNameGetAllowedDigestTest() {
+        String name = "SM3";
+        String oid = "1.2.156.10197.1.401";
+        Assert.assertEquals(FIPS_MODE ? null : oid, DigestAlgorithms.getAllowedDigest(name));
     }
 }

@@ -314,6 +314,7 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
@@ -348,6 +349,22 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public String getAlgorithmOid(String name) {
         AlgorithmIdentifier algorithmIdentifier = new DefaultSignatureAlgorithmIdentifierFinder().find(name);
         return algorithmIdentifier.getAlgorithm().getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDigestAlgorithmOid(String name) {
+        try {
+            AlgorithmIdentifier algorithmIdentifier = new DefaultDigestAlgorithmIdentifierFinder().find(name);
+            if (algorithmIdentifier != null) {
+                return algorithmIdentifier.getAlgorithm().getId();
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Do nothing.
+        }
+        return null;
     }
 
     /**

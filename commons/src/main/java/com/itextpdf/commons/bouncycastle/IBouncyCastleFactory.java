@@ -163,6 +163,15 @@ public interface IBouncyCastleFactory {
     String getAlgorithmOid(String name);
 
     /**
+     * Get hash algorithm oid from its name.
+     *
+     * @param name name of the algorithm
+     *
+     * @return algorithm oid
+     */
+    String getDigestAlgorithmOid(String name);
+
+    /**
      * Get signing algorithm name from its oid.
      * 
      * @param oid oid of the algorithm

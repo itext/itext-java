@@ -22,7 +22,12 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -109,6 +114,10 @@ public class DigestAlgorithms {
      * Maps algorithm names to output lengths in bits.
      */
     private static final Map<String, Integer> bitLengths = new HashMap<>();
+
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DigestAlgorithms.class);
 
     static {
         digestNames.put("1.2.840.113549.2.5", "MD5");
@@ -271,15 +280,22 @@ public class DigestAlgorithms {
     }
 
     /**
-     * Gets the digest name for a certain id
+     * Gets the digest name for a certain id.
      *
-     * @param oid	an id (for instance "1.2.840.113549.2.5")
-     * @return	a digest name (for instance "MD5")
+     * @param oid an id (for instance "1.2.840.113549.2.5")
+     *
+     * @return a digest name (for instance "MD5")
      */
     public static String getDigest(String oid) {
         String ret = digestNames.get(oid);
         if (ret == null) {
-            return oid;
+            try {
+                String digest = getMessageDigest(oid, BOUNCY_CASTLE_FACTORY.getProviderName()).getAlgorithm();
+                LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+                return digest;
+            } catch (Exception e) {
+                return oid;
+            }
         } else {
             return ret;
         }
@@ -310,7 +326,15 @@ public class DigestAlgorithms {
             throw new IllegalArgumentException(
                     SignExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
         }
-        return allowedDigests.get(name.toUpperCase());
+        String allowedDigest = allowedDigests.get(name.toUpperCase());
+        if (allowedDigest != null) {
+            return allowedDigest;
+        }
+        allowedDigest = BOUNCY_CASTLE_FACTORY.getDigestAlgorithmOid(name.toUpperCase());
+        if (allowedDigest != null) {
+            LOGGER.warn(SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+        }
+        return allowedDigest;
     }
 
     /**
