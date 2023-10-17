@@ -25,8 +25,6 @@ package com.itextpdf.barcodes.qrcode;
 /**
  * Encapsulates a QR Code's format information, including the data mask used and
  * error correction level.
- *
- * @author Sean Owen
  * @see ErrorCorrectionLevel
  */
 final class FormatInformation {

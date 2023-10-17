@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
@@ -133,6 +134,41 @@ public class PdfASigningTest extends ExtendedITextTest {
     }
 
     @Test
+    public void signPdf2CmsTest() {
+        String srcFile = sourceFolder + "simplePdfA4Document.pdf";
+        String outPdf = destinationFolder + "signPdfCms.pdf";
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () ->
+                sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CMS, "Test 1",
+                        "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f));
+        Assert.assertEquals(PdfaExceptionMessageConstant.SIGNATURE_SHALL_CONFORM_TO_ONE_OF_THE_PADES_PROFILE, e.getMessage());
+    }
+
+    @Test
+    public void signPdf2CadesTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = sourceFolder + "simplePdfA4Document.pdf";
+        String cmpPdf = sourceFolder + "cmp_signPdfCades.pdf";
+        String outPdf = destinationFolder + "signPdfCades.pdf";
+
+        Rectangle rect = new Rectangle(30, 200, 200, 100);
+
+        String fieldName = "Signature1";
+        sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256,
+                PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, true, PdfSigner.NOT_CERTIFIED, 12f);
+
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, destinationFolder, "diff_",
+                getTestMap(rect)));
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
     public void failedSigningPdfA2DocumentTest() throws IOException {
         String src = sourceFolder + "simplePdfADocument.pdf";
         String out = destinationFolder + "signedPdfADocument2.pdf";
@@ -150,19 +186,19 @@ public class PdfASigningTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont("Helvetica","WinAnsi",
                 EmbeddingStrategy.PREFER_EMBEDDED);
 
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
+        signer.setPageRect(rect)
+                .getSignatureAppearance()
                 .setReason("pdfA test")
                 .setLocation("TestCity")
                 .setLayer2Font(font)
-                .setReuseAppearance(false)
-                .setPageRect(rect);
+                .setReuseAppearance(false);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () ->
                 signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null,
                         0, PdfSigner.CryptoStandard.CADES));
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
                         "Helvetica"), e.getMessage());
     }
 
@@ -189,6 +225,7 @@ public class PdfASigningTest extends ExtendedITextTest {
         signer.setCertificationLevel(certificationLevel);
 
         PdfFont font = PdfFontFactory.createFont(FONT, "WinAnsi", EmbeddingStrategy.PREFER_EMBEDDED);
+        signer.setFieldName(name);
 
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance()
@@ -198,13 +235,12 @@ public class PdfASigningTest extends ExtendedITextTest {
                 .setReuseAppearance(setReuseAppearance);
 
         if (rectangleForNewField != null) {
-            appearance.setPageRect(rectangleForNewField);
+            signer.setPageRect(rectangleForNewField);
         }
         if (fontSize != null) {
             appearance.setLayer2FontSize((float) fontSize);
         }
 
-        signer.setFieldName(name);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, subfilter);

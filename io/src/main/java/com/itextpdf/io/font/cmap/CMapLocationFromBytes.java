@@ -26,9 +26,6 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
-/**
- * @author psoares
- */
 public class CMapLocationFromBytes implements ICMapLocation {
 
     private byte[] data;

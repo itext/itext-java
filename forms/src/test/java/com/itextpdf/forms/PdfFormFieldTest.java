@@ -31,6 +31,7 @@ import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
@@ -57,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
@@ -74,7 +76,6 @@ import java.io.IOException;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -674,7 +675,6 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-7264: Investigate 3 failed forms tests from 7.3/develop on .NET")
     public void regenerateAppearance() throws IOException, InterruptedException {
         String input = "regenerateAppearance.pdf";
         String output = "regenerateAppearance.pdf";
@@ -1866,6 +1866,70 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             form.addField(root);
         }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+    }
+
+    @Test
+    public void signatureLayersTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "signatureLayersTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
+
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+        pdfDoc.addNewPage();
+
+        PdfSignatureFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
+                .setWidgetRectangle(new Rectangle(36, 436, 100, 100)).createSignature();
+
+        PdfFormXObject layer0 = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+
+        // Draw pink rectangle with blue border
+        new PdfCanvas(layer0, pdfDoc)
+                .saveState()
+                .setFillColor(ColorConstants.PINK)
+                .setStrokeColor(ColorConstants.BLUE)
+                .rectangle(0, 0, 100, 100)
+                .fillStroke()
+                .restoreState();
+
+        PdfFormXObject layer2 = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+
+        // Draw yellow circle with gray border
+        new PdfCanvas(layer2, pdfDoc)
+                .saveState()
+                .setFillColor(ColorConstants.YELLOW)
+                .setStrokeColor(ColorConstants.DARK_GRAY)
+                .circle(50, 50, 50)
+                .fillStroke()
+                .restoreState();
+
+        signField.setBackgroundLayer(layer0).setSignatureAppearanceLayer(layer2);
+        form.addField(signField);
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName, sourceFolder + "cmp_signatureLayersTest.pdf",
+                destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void pdfWithSignatureFieldTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "pdfWithSignatureFieldTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
+
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+        pdfDoc.addNewPage();
+
+        PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
+                .setWidgetRectangle(new Rectangle(100, 600, 400, 150)).createSignature();
+        signField.getPdfObject().put(PdfName.Name, new PdfName("test name"));
+        signField.getPdfObject().put(PdfName.Reason, new PdfString("test reason"));
+        signField.getPdfObject().put(PdfName.Location, new PdfString("test location"));
+        signField.getPdfObject().put(PdfName.ContactInfo, new PdfString("test contact"));
+        signField.getFirstFormAnnotation().setBackgroundColor(ColorConstants.PINK).setColor(ColorConstants.WHITE);
+        form.addField(signField);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName,
+                sourceFolder + "cmp_pdfWithSignatureFieldTest.pdf", destinationFolder, "diff_"));
     }
 
     static class CustomButtonFormField extends PdfButtonFormField {

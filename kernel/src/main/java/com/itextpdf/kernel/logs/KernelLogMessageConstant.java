@@ -60,6 +60,7 @@ public final class KernelLogMessageConstant {
 
     public static final String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE =
             "Unable to parse color {0} within {1} color space";
+    public static final String CANNOT_MERGE_ENTRY = "Cannot merge entry {0}, entry with such key already exists.";
 
     /**
      * Message warns about unexpected product name which was mentioned as involved into PDF
@@ -84,6 +85,10 @@ public final class KernelLogMessageConstant {
     public static final String UNCONFIRMED_EVENT =
             "Event for the product {0} with type {1} was reported but was not confirmed. Probably appropriate process "
                     + "fail";
+    public static final String FLATTENING_IS_NOT_YET_SUPPORTED =
+            "Flattening annotation type {0} is not yet supported, it will not be removed from the page";
+    public static final String FORMFIELD_ANNOTATION_WILL_NOT_BE_FLATTENED = "Form field annotation flattening is not "
+            + "supported. Use the PdfAcroForm#flattenFields() method instead.";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

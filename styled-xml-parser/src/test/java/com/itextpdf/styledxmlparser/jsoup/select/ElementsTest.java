@@ -41,8 +41,7 @@ import java.util.List;
 
 /**
  Tests for ElementList.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 @Category(UnitTest.class)
 public class ElementsTest extends ExtendedITextTest {
     @Test public void filter() {

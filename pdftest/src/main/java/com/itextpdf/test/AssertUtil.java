@@ -43,7 +43,7 @@ public class AssertUtil {
         try {
             executor.execute();
         } catch (Exception ex) {
-            Assert.fail();
+            Assert.fail(ex.getMessage());
         }
     }
 

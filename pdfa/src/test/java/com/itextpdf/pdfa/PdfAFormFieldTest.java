@@ -67,6 +67,7 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -96,8 +97,6 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-6319")
-    // TODO DEVSIX-6319 Radio buttons shall be widgets instead of form fields
     public void pdfAButtonFieldTest() throws Exception {
         PdfDocument pdf;
         InputStream is = new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
@@ -232,7 +231,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -287,7 +286,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -319,7 +318,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -355,7 +354,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -386,7 +385,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -455,7 +454,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         Exception exception = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDoc.close());
 
         Assert.assertEquals(MessageFormatUtil.format(
-                PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
+                PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0, "Helvetica"),
                 exception.getMessage());
     }
 
@@ -528,7 +527,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         Exception ex = Assert.assertThrows(PdfException.class, () -> pdfDocToMerge.close());
         Assert.assertEquals(MessageFormatUtil
-                .format(PdfAConformanceException.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
+                .format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
                         "Helvetica"), ex.getMessage());
     }
 }

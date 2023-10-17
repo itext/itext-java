@@ -22,12 +22,12 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.DeflaterOutputStream;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
@@ -596,6 +596,12 @@ public class PdfDocumentTest extends ExtendedITextTest {
         SerializeOptions options = new SerializeOptions().setUseCanonicalFormat(true);
         document.setSerializeOptions(options);
         Assert.assertEquals(options, document.getSerializeOptions());
+    }
+
+    @Test
+    public void getDiContainer() {
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Assert.assertNotNull(document.getDiContainer());
     }
 
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {

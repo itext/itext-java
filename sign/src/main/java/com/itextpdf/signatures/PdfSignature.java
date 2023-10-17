@@ -34,8 +34,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 
 /**
  * Represents the signature dictionary.
- *
- * @author Paulo Soares
  */
 public class PdfSignature extends PdfObjectWrapper<PdfDictionary> {
 

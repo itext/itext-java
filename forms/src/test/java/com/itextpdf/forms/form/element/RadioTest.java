@@ -22,13 +22,19 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -77,10 +83,12 @@ public class RadioTest extends ExtendedITextTest {
             Radio formRadio2 = createRadioButton("form radio button 2", "form radio group", null, null, false, false);
             document.add(formRadio2);
 
-            Radio flattenRadio1 = createRadioButton("flatten radio button 1", "flatten radio group", null, null, true, true);
+            Radio flattenRadio1 = createRadioButton("flatten radio button 1", "flatten radio group", null, null, true,
+                    true);
             document.add(flattenRadio1);
 
-            Radio flattenRadio2 = createRadioButton("flatten radio button 2", "flatten radio group", null, null, false, true);
+            Radio flattenRadio2 = createRadioButton("flatten radio button 2", "flatten radio group", null, null, false,
+                    true);
             document.add(flattenRadio2);
         }
 
@@ -330,6 +338,31 @@ public class RadioTest extends ExtendedITextTest {
             document.add(div);
         }
 
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void multiPageRadioFieldTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "multiPageCheckboxField.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_multiPageCheckBoxField.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+            for (int i = 0; i < 10; i++) {
+                document.addNewPage();
+                Rectangle rect = new Rectangle(210, 490, 150, 22);
+                final PdfFormField group = new RadioFormFieldBuilder(document, "fing").createRadioGroup();
+                final PdfFormAnnotation radio = new RadioFormFieldBuilder(document, "fing")
+                        .setWidgetRectangle(rect)
+                        .createRadioButton("bing bong", rect);
+                PdfPage page = document.getPage(i + 1);
+                group.addKid(radio);
+                form.addField(group, page);
+                if (i > 2) {
+                    page.flush();
+                }
+            }
+        }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 

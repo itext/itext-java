@@ -972,7 +972,6 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        // TODO DEVSIX-1735: set pagesize as 196x132 to produce a NPE
         doc.getPdfDocument().setDefaultPageSize(new PageSize(196, 192));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
@@ -1010,17 +1009,16 @@ public class TableBorderTest extends AbstractTableTest {
         table.addCell("middle row 3");
         doc.add(table);
 
-        // TODO DEVSIX-1735: uncomment to produce a NPE
-//        doc.add(new AreaBreak());
-//
-//        doc.add(new Paragraph("No more"));
-//        doc.add(new Paragraph("place"));
-//        doc.add(new Paragraph("here"));
-//
-//        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-//        table.setHorizontalBorderSpacing(20);
-//        table.setVerticalBorderSpacing(20);
-//        doc.add(table);
+        doc.add(new AreaBreak());
+
+        doc.add(new Paragraph("No more"));
+        doc.add(new Paragraph("place"));
+        doc.add(new Paragraph("here"));
+
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1068,15 +1066,14 @@ public class TableBorderTest extends AbstractTableTest {
                 .setWidth(UnitValue.createPercentValue(100))
                 .setFixedLayout();
         table.addCell(new Cell().add(new Paragraph(text + "1")));
-        table.addCell(new Cell(2, 1).add(new Paragraph(text + "2")).setBorder(new SolidBorder(ColorConstants.GREEN, 4)));
+        table.addCell(new Cell(2, 1).add(new Paragraph(text + "2")).setBorder(new SolidBorder(ColorConstants.GREEN, 1)));
         table.addCell(new Cell().add(new Paragraph(text + "3")));
         table.addCell(new Cell().add(new Paragraph(text + "4")));
         table.addCell(new Cell().add(new Paragraph(text + "5")));
 
         doc.add(table);
 
-        // TODO DEVSIX-1735: set pagesize as 204x160 to produce a bug: cell with a big rowspan appears only on the final page
-        doc.getPdfDocument().setDefaultPageSize(new PageSize(224, 200));
+        doc.getPdfDocument().setDefaultPageSize(new PageSize(204, 160));
         doc.add(new AreaBreak());
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         table.setHorizontalBorderSpacing(20);
@@ -1087,7 +1084,6 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-1735: uncomment snippet with separated borders to produce a NPE
     public void splitCellsTest09() throws IOException, InterruptedException {
         fileName = "splitCellsTest09.pdf";
         Document doc = createDocument();
@@ -1104,11 +1100,11 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-//        doc.add(new AreaBreak());
-//        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-//        table.setHorizontalBorderSpacing(20);
-//        table.setVerticalBorderSpacing(20);
-//        doc.add(table);
+        doc.add(new AreaBreak());
+        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
+        table.setHorizontalBorderSpacing(20);
+        table.setVerticalBorderSpacing(20);
+        doc.add(table);
 
         closeDocumentAndCompareOutputs(doc);
     }
@@ -1143,7 +1139,6 @@ public class TableBorderTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-1735
     public void splitCellsTest10A() throws IOException, InterruptedException {
         fileName = "splitCellsTest10A.pdf";
         Document doc = createDocument();

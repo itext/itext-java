@@ -224,7 +224,7 @@ public class MulticolRenderer extends AbstractRenderer {
     }
 
     private void setOverflowForAllChildren(IRenderer renderer) {
-        if (renderer == null) {
+        if (renderer == null || renderer instanceof AreaBreakRenderer) {
             return;
         }
         renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);

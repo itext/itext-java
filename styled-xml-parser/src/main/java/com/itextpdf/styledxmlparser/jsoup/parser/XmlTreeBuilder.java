@@ -42,8 +42,6 @@ import java.util.List;
  * document.
  * <p>
  * Usage example: {@code Document xmlDoc = Jsoup.parse(html, baseUrl, Parser.xmlParser());}
- *
- * @author Jonathan Hedley
  */
 public class XmlTreeBuilder extends TreeBuilder {
     ParseSettings defaultSettings() {

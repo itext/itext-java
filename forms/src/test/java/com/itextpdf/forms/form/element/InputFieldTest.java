@@ -22,10 +22,17 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
@@ -93,7 +100,7 @@ public class InputFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
-    
+
     @Test
     public void inputFieldDoesNotFitTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "inputFieldDoesNotFit.pdf";
@@ -105,7 +112,7 @@ public class InputFieldTest extends ExtendedITextTest {
             div.setHeight(UnitValue.createPointValue(752));
             div.setBackgroundColor(ColorConstants.PINK);
             document.add(div);
-            
+
             InputField flattenInputField = new InputField("input field does not fit");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "input field does not fit");
@@ -164,7 +171,7 @@ public class InputFieldTest extends ExtendedITextTest {
             formInputField.setProperty(Property.BORDER, new SolidBorder(2f));
             formInputField.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, true);
             document.add(formInputField);
-            
+
             InputField flattenInputField = new InputField("flatten input field with password");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with password");
@@ -175,7 +182,7 @@ public class InputFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
-    
+
     @Test
     public void heightInputFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "heightInputField.pdf";
@@ -275,7 +282,6 @@ public class InputFieldTest extends ExtendedITextTest {
             inputField0.setInteractive(true);
             document.add(inputField0);
 
-
             InputField inputField90 = new InputField("1");
             inputField90.setValue(value);
             inputField90.setHeight(50);
@@ -346,8 +352,8 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(flattenInputField);
 
             // CONTENT_BOX
-            InputField flattenInputField2 = new InputField("flattenInputField2")
-                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 10));
+            InputField flattenInputField2 = new InputField("flattenInputField2").setBorder(
+                    new SolidBorder(ColorConstants.YELLOW, 10));
             flattenInputField2.setWidth(200);
             flattenInputField2.setInteractive(false);
             flattenInputField2.setValue("content box");
@@ -355,6 +361,55 @@ public class InputFieldTest extends ExtendedITextTest {
             document.add(flattenInputField2);
         }
 
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void multiPageInputFieldTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "multiPageInputField.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_multiPageInputField.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+            for (int i = 0; i < 10; i++) {
+                document.addNewPage();
+                Rectangle rect = new Rectangle(210, 490, 150, 22);
+                final PdfFormField inputField = new TextFormFieldBuilder(document, "fing").setWidgetRectangle(rect)
+                        .createText();
+                inputField.setValue("some value").setFont(PdfFontFactory.createFont(StandardFonts.COURIER))
+                        .setFontSize(10);
+                PdfPage page = document.getPage(i + 1);
+                form.addField(inputField, page);
+                if (i > 2) {
+                    page.flush();
+                }
+            }
+        }
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void multiPageInputFieldFormFlushTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "multiPageInputFieldFormFlush.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_multiPageInputFieldFormFlush.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+            for (int i = 0; i < 10; i++) {
+                document.addNewPage();
+                Rectangle rect = new Rectangle(210, 490, 150, 22);
+                final PdfFormField inputField = new TextFormFieldBuilder(document, "fing").setWidgetRectangle(rect)
+                        .createText();
+                inputField.setValue("some value").setFont(PdfFontFactory.createFont(StandardFonts.COURIER))
+                        .setFontSize(10);
+                PdfPage page = document.getPage(i + 1);
+                form.addField(inputField, page);
+                page.flush();
+                inputField.flush();
+                // simulate behaviour from applyAcrofield methods that always get the acroforms
+                form = PdfAcroForm.getAcroForm(document, true);
+            }
+        }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }

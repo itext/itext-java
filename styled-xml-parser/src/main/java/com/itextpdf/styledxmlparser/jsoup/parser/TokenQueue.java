@@ -27,8 +27,6 @@ import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
 
 /**
  * A character queue with parsing helpers.
- *
- * @author Jonathan Hedley
  */
 public class TokenQueue {
     private String queue;

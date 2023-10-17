@@ -59,9 +59,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Aiken Sam (aikensam@ieee.org)
- */
 public abstract class PubKeySecurityHandler extends SecurityHandler {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
@@ -214,7 +211,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         //constants permissions: PdfWriter.AllowCopy | PdfWriter.AllowPrinting | PdfWriter.AllowScreenReaders |
         // PdfWriter.AllowAssembly;
         int permission = recipient.getPermission();
-        // NOTE! Added while porting to itext7
+        // NOTE! Added while porting to itext
         // Previous strange code was:
         // int revision = 3;
         // permission |= revision == 3 ? 0xfffff0c0 : 0xffffffc0;

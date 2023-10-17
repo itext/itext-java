@@ -34,8 +34,6 @@ import java.util.Map;
 
 /**
  * Tests for Attributes.
- *
- * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
 public class AttributesTest extends ExtendedITextTest {

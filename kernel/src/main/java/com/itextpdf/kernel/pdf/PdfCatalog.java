@@ -297,6 +297,17 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
+     * This method checks Names tree for specified tree type.
+     *
+     * @param treeType type of tree which existence should be checked
+     *
+     * @return true if such tree exists, false otherwise
+     */
+    public boolean nameTreeContainsKey(PdfName treeType) {
+        return nameTrees.containsKey(treeType);
+    }
+
+    /**
      * This method returns the NumberTree of Page Labels
      *
      * @param createIfNotExists defines whether the NumberTree of Page Labels should be created

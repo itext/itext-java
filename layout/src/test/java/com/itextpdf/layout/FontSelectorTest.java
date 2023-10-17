@@ -647,7 +647,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         fc = new FontCharacteristics();
         fc.setFontStyle("italic");
         fc.setFontWeight((short) 500);
-        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-LightItalic");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-Italic");
 
         fc = new FontCharacteristics();
         fc.setFontStyle("oblique");
@@ -742,7 +742,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         fc = new FontCharacteristics();
         fc.setFontStyle("italic");
         fc.setFontWeight((short) 500);
-        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-LightItalic");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-Italic");
 
         fc = new FontCharacteristics();
         fc.setFontStyle("oblique");
@@ -838,7 +838,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         fc = new FontCharacteristics();
         fc.setFontStyle("italic");
         fc.setFontWeight((short) 500);
-        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-LightItalic");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-Italic");
 
         fc = new FontCharacteristics();
         fc.setFontStyle("oblique");
@@ -934,7 +934,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         fc = new FontCharacteristics();
         fc.setFontStyle("italic");
         fc.setFontWeight((short) 500);
-        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-LightItalic");
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-Italic");
 
         fc = new FontCharacteristics();
         fc.setFontStyle("oblique");
@@ -961,6 +961,19 @@ public class FontSelectorTest extends ExtendedITextTest {
         fc.setFontStyle("italic");
         fc.setFontWeight((short) 800);
         assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-ExtraBoldItalic");
+    }
+
+    @Test
+    public void openSansLightTest() {
+        FontSet set = getOpenSansFontSet();
+        addTimesFonts(set);
+        Collection<FontInfo> fontInfoCollection = set.getFonts();
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add("Open Sans Light");
+
+        FontCharacteristics fc = new FontCharacteristics();
+        fc.setFontWeight((short) 500);
+        assertSelectedFont(fontInfoCollection, fontFamilies, fc, "OpenSans-Light");
     }
 
     @Test
@@ -1105,6 +1118,24 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         //Expected font is Courier
         Assert.assertEquals("Helvetica",
+                new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
+    }
+
+    @Test
+    public void family2UsedToSortFontsTest() {
+        FontSet set = new FontSet();
+        set.addFont(fontsFolder + "Lato/Lato-Black.ttf");
+        set.addFont(fontsFolder + "Lato/Lato-Regular.ttf");
+        set.addFont(fontsFolder + "Lato/Lato-Italic.ttf");
+        set.addFont(fontsFolder + "Lato/Lato-Hairline.ttf");
+
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add("Lato Hairline");
+
+        FontCharacteristics fc = new FontCharacteristics();
+        fc.setFontWeight((short) 300); // Between hairline (200) and regular (400)
+
+        Assert.assertEquals("Lato-Hairline",
                 new FontSelector(set.getFonts(), fontFamilies, fc).bestMatch().getDescriptor().getFontName());
     }
 

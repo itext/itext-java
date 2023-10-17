@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -70,7 +71,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Launch.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Launch.getValue()),
                 e.getMessage());
     }
 
@@ -85,7 +86,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Hide.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Hide.getValue()),
                 e.getMessage());
     }
 
@@ -100,7 +101,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Sound.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Sound.getValue()),
                 e.getMessage());
     }
 
@@ -115,7 +116,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Movie.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Movie.getValue()),
                 e.getMessage());
     }
 
@@ -130,7 +131,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.ResetForm.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.ResetForm.getValue()),
                 e.getMessage());
     }
 
@@ -145,7 +146,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.ImportData.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.ImportData.getValue()),
                 e.getMessage());
     }
 
@@ -160,7 +161,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.JavaScript.getValue()), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.JavaScript.getValue()), e.getMessage());
     }
 
     @Test
@@ -175,7 +176,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException.NAMED_ACTION_TYPE_0_IS_NOT_ALLOWED, "CustomName"),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant.NAMED_ACTION_TYPE_0_IS_NOT_ALLOWED, "CustomName"),
                 e.getMessage());
     }
 
@@ -190,7 +191,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.SetOCGState.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.SetOCGState.getValue()),
                 e.getMessage());
     }
 
@@ -207,7 +208,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> doc.close()
         );
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Rendition.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Rendition.getValue()),
                 e.getMessage());
     }
 
@@ -222,7 +223,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Trans.getValue()), e.getMessage());
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.Trans.getValue()), e.getMessage());
     }
 
     @Test
@@ -236,7 +237,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OpenAction, openActions);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(MessageFormatUtil.format(PdfAConformanceException._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.GoTo3DView.getValue()),
+        Assert.assertEquals(MessageFormatUtil.format(PdfaExceptionMessageConstant._0_ACTIONS_ARE_NOT_ALLOWED, PdfName.GoTo3DView.getValue()),
                 e.getMessage());
     }
 
@@ -249,7 +250,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         page.setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_PAGE_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY, e.getMessage());
     }
 
     @Test
@@ -261,7 +262,7 @@ public class PdfA2ActionCheckTest extends ExtendedITextTest {
         doc.getCatalog().setAdditionalAction(PdfName.C, PdfAction.createJavaScript("js"));
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_NOT_CONTAIN_AA_ENTRY, e.getMessage());
     }
 
     @Test

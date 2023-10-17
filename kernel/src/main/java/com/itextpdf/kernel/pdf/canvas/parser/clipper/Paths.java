@@ -35,9 +35,6 @@ import java.util.ArrayList;
 
 /**
  * A pure convenience class to avoid writing {@code List<Path>} everywhere.
- *
- * @author Tobias Mahlmann
- *
  */
 public class Paths extends ArrayList<Path> {
 

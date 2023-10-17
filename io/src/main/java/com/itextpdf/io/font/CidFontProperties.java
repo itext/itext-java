@@ -28,7 +28,7 @@ import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -94,7 +94,7 @@ public class CidFontProperties {
         for (Object key : p.keySet()) {
             String value = p.getProperty((String)key);
             String[] sp = value.split(" ");
-            Set<String> hs = new HashSet<String>();
+            Set<String> hs = new LinkedHashSet<String>();
             for (String s : sp) {
                 if (s.length() > 0)
                     hs.add(s);

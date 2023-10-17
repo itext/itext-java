@@ -24,10 +24,6 @@ package com.itextpdf.barcodes.qrcode;
 
 import com.itextpdf.barcodes.exceptions.WriterException;
 
-/**
- * @author satorux@google.com (Satoru Takabayashi) - creator
- * @author dswitkin@google.com (Daniel Switkin) - ported from C++
- */
 final class MatrixUtil {
 
     private MatrixUtil() {

@@ -1,0 +1,5 @@
+<svg version="1.1" baseProfile="full" width="250" height="250" xmlns="http://www.w3.org/2000/svg">
+    <svg x="10" y="10" width="200" height="200" id="name_svg" xmlns="http://www.w3.org/2000/svg">
+        <rect x='0' y='0' width='200' height='200' stroke='green' fill='yellowgreen' id="name_rect"/>
+    </svg>
+</svg>

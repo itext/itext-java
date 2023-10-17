@@ -116,8 +116,8 @@
  ********************************************************************/
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -231,7 +231,9 @@ public final class Pfm2afm {
         kernpairs = input.readIntLE();
         res2 = input.readIntLE();
         fontname = input.readIntLE();
-        if (h_len != input.length() || extlen != 30 || fontname < 75 || fontname > 512) {
+        //Those checks come from an old C implementation of pfm2afm, when reading the specs
+        //Nothing indicates the fontnameOffset should be max 512
+        if (h_len != input.length() || extlen != 30 || fontname < 75 || fontname > 1024) {
             throw new java.io.IOException("not.a.valid.pfm.file");
         }
         input.seek(psext + 14);

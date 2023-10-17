@@ -37,8 +37,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  Tests Nodes
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 @Category(UnitTest.class)
 public class NodeTest extends ExtendedITextTest {
     @Test

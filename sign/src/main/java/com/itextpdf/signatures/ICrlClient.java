@@ -29,8 +29,6 @@ import java.util.Collection;
 /**
  * Interface that needs to be implemented if you want to embed
  * Certificate Revocation Lists (CRL) into your PDF.
- *
- * @author Paulo Soares
  */
 public interface ICrlClient {
 

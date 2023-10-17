@@ -122,6 +122,16 @@ public class PdfDocumentInfo {
         return put(PdfName.CreationDate, new PdfDate().getPdfObject());
     }
 
+    /**
+     * Remove creation date from the document info dictionary.
+     *
+     * @return this instance.
+     */
+    public PdfDocumentInfo removeCreationDate() {
+        infoDictionary.remove(PdfName.CreationDate);
+        return this;
+    }
+
     public PdfDocumentInfo addModDate() {
         return put(PdfName.ModDate, new PdfDate().getPdfObject());
     }

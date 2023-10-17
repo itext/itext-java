@@ -33,8 +33,6 @@ import org.junit.experimental.categories.Category;
 
 /**
  * Tests for the DocumentType node
- *
- * @author Jonathan Hedley, http://jonathanhedley.com/
  */
 @Category(UnitTest.class)
 public class DocumentTypeTest extends ExtendedITextTest {

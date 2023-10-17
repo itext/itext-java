@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -41,10 +42,8 @@ import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,7 +64,6 @@ import java.util.Set;
  * iText - pdfa project.
  */
 public abstract class PdfAChecker {
-
 
     /**
      * The Red-Green-Blue color profile as defined by the International Color
@@ -107,12 +105,21 @@ public abstract class PdfAChecker {
     public static final int maxGsStackDepth = 28;
 
     protected PdfAConformanceLevel conformanceLevel;
+    protected PdfStream pdfAOutputIntentDestProfile;
     protected String pdfAOutputIntentColorSpace;
 
     protected int gsStackDepth = 0;
+
+    @Deprecated
     protected boolean rgbIsUsed = false;
+    @Deprecated
     protected boolean cmykIsUsed = false;
+    @Deprecated
     protected boolean grayIsUsed = false;
+
+    protected Set<PdfObject> rgbUsedObjects = new HashSet<>();
+    protected Set<PdfObject> cmykUsedObjects = new HashSet<>();
+    protected Set<PdfObject> grayUsedObjects = new HashSet<>();
 
     /**
      * Contains some objects that are already checked.
@@ -153,9 +160,12 @@ public abstract class PdfAChecker {
         checkMetaData(catalogDict);
         checkCatalogValidEntries(catalogDict);
         checkTrailer(catalog.getDocument().getTrailer());
+        checkCatalog(catalog);
         checkLogicalStructure(catalogDict);
         checkForm(catalogDict.getAsDictionary(PdfName.AcroForm));
-        checkOutlines(catalogDict);
+        if (catalog.getDocument().hasOutlines()) {
+            checkOutlines(catalog.getDocument().getOutlines(false));
+        }
         checkPages(catalog.getDocument());
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkColorsUsages();
@@ -169,7 +179,6 @@ public abstract class PdfAChecker {
     public void checkSinglePage(PdfPage page) {
         checkPage(page);
     }
-
 
     /**
      * This method checks the requirements that must be fulfilled by a COS
@@ -273,6 +282,18 @@ public abstract class PdfAChecker {
     }
 
     /**
+     * This method checks compliance of the signature type
+     *
+     * @param isCAdES true is CAdES sig type is used, false otherwise.
+     *
+     * @deprecated Will become abstract in the next major release.
+     */
+    @Deprecated
+    public void checkSignatureType(boolean isCAdES) {
+
+    }
+
+    /**
      * This method checks compliance with the graphics state architectural
      * limitation, explained by {@link PdfAChecker#maxGsStackDepth}.
      *
@@ -307,11 +328,50 @@ public abstract class PdfAChecker {
      * on the type and properties of that color space.
      *
      * @param colorSpace the color space to check
+     * @param pdfObject the pdf object to check color space in
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param checkAlternate whether or not to also check the parent color space
      * @param fill whether the color space is used for fill or stroke operations
+     *
+     * @deprecated Will become abstract in the next major release.
      */
-    public abstract void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate, Boolean fill);
+    @Deprecated
+    public void checkColorSpace(PdfColorSpace colorSpace, PdfObject pdfObject, PdfDictionary currentColorSpaces,
+            boolean checkAlternate, Boolean fill) {
+    }
+
+    /**
+     * This method performs a range of checks on the given color space, depending
+     * on the type and properties of that color space.
+     *
+     * @param colorSpace the color space to check
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     * @param checkAlternate whether or not to also check the parent color space
+     * @param fill whether the color space is used for fill or stroke operations
+     *
+     * @deprecated in favor of {@code checkColorSpace(PdfColorSpace colorSpace, PdfObject object, PdfDictionary
+     * currentColorSpaces, boolean checkAlternate, Boolean fill)}
+     */
+    @Deprecated
+    public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces,
+            boolean checkAlternate, Boolean fill) {
+        checkColorSpace(colorSpace, null, currentColorSpaces, checkAlternate, fill);
+    }
+
+    /**
+     * Set Pdf A output intent color space.
+     *
+     * @param catalog Catalog dictionary to retrieve the color space from.
+     */
+    public void setPdfAOutputIntentColorSpace(PdfDictionary catalog) {
+        PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null) {
+            return;
+        }
+
+        PdfDictionary pdfAOutputIntent = getPdfAOutputIntent(outputIntents);
+        setCheckerOutputIntent(pdfAOutputIntent);
+    }
 
     /**
      * Checks whether the rendering intent of the document is within the allowed
@@ -359,6 +419,29 @@ public abstract class PdfAChecker {
     public abstract void checkXrefTable(PdfXrefTable xrefTable);
 
     /**
+     * Verify the conformity of encryption usage.
+     *
+     * @param crypto Encryption object to verify.
+     *
+     * @deprecated Will become abstract in the next major release.
+     */
+    @Deprecated
+    public void checkCrypto(PdfObject crypto) {
+    }
+
+    /**
+     * Verify the conformity of the text written by the specified font.
+     *
+     * @param text Text to verify.
+     * @param font Font to verify the text against.
+     *
+     * @deprecated Will become abstract in the next major release.
+     */
+    @Deprecated
+    public void checkText(String text, PdfFont font) {
+    }
+
+    /**
      * Attest content stream conformance with appropriate specification.
      * Throws PdfAConformanceException if any discrepancy was found
      *
@@ -372,7 +455,38 @@ public abstract class PdfAChecker {
      *
      * @param object is an operand of content stream to validate
      */
-    protected abstract void checkContentStreamObject(PdfObject object);
+    protected void checkContentStreamObject(PdfObject object) {
+        byte type = object.getType();
+        switch (type) {
+            case PdfObject.NAME:
+                checkPdfName((PdfName) object);
+                break;
+            case PdfObject.STRING:
+                checkPdfString((PdfString) object);
+                break;
+            case PdfObject.NUMBER:
+                checkPdfNumber((PdfNumber) object);
+                break;
+            case PdfObject.ARRAY:
+                PdfArray array = (PdfArray) object;
+                checkPdfArray(array);
+                for (PdfObject obj : array) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+            case PdfObject.DICTIONARY:
+                PdfDictionary dictionary = (PdfDictionary) object;
+                checkPdfDictionary(dictionary);
+                for (final PdfName name: dictionary.keySet()) {
+                    checkPdfName(name);
+                    checkPdfObject(dictionary.get(name, false));
+                }
+                for (final PdfObject obj : dictionary.values()) {
+                    checkContentStreamObject(obj);
+                }
+                break;
+        }
+    }
 
     /**
      * Retrieve maximum allowed number of indirect objects in conforming document.
@@ -418,8 +532,23 @@ public abstract class PdfAChecker {
 
     /**
      * Verify the conformity of used color spaces.
+     *
+     * @deprecated in favor of {@code checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources)}
      */
+    @Deprecated
     protected abstract void checkColorsUsages();
+
+    /**
+     * Verify the conformity of used color spaces on the page.
+     *
+     * @param pageDict the {@link PdfDictionary} contains contents for colors to be checked.
+     * @param pageResources the {@link PdfDictionary} contains resources for colors to be checked.
+     *
+     * @deprecated Will become abstract in the next major release.
+     */
+    @Deprecated
+    protected void checkPageColorsUsages(PdfDictionary pageDict, PdfDictionary pageResources) {
+    }
 
     /**
      * Verify the conformity of the given image.
@@ -550,6 +679,18 @@ public abstract class PdfAChecker {
     protected abstract void checkTrailer(PdfDictionary trailer);
 
     /**
+     * Verify the conformity of the pdf catalog.
+     *
+     * @param catalog the {@link PdfCatalog} of trailer to check.
+     *
+     * @deprecated Will become abstract in the next major release.
+     */
+    @Deprecated
+    protected void checkCatalog(PdfCatalog catalog) {
+
+    }
+
+    /**
      * Verify the conformity of the page transparency.
      *
      * @param pageDict the {@link PdfDictionary} contains contents for transparency to be checked
@@ -561,8 +702,21 @@ public abstract class PdfAChecker {
      * Verify the conformity of the resources dictionary.
      *
      * @param resources the {@link PdfDictionary} to be checked
+     *
+     * @deprecated in favor of {@code checkResources(PdfDictionary resources, PdfObject pdfObject)}
      */
+    @Deprecated
     protected void checkResources(PdfDictionary resources) {
+        checkResources(resources, null);
+    }
+
+    /**
+     * Verify the conformity of the resources dictionary.
+     *
+     * @param resources the {@link PdfDictionary} to be checked
+     * @param pdfObject the pdf object to check resources for
+     */
+    protected void checkResources(PdfDictionary resources, PdfObject pdfObject) {
         if (resources == null)
             return;
 
@@ -592,7 +746,8 @@ public abstract class PdfAChecker {
             for (PdfObject shading : shadings.values()) {
                 PdfDictionary shadingDict = (PdfDictionary) shading;
                 if (!isAlreadyChecked(shadingDict)) {
-                    checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), resources.getAsDictionary(PdfName.ColorSpace), true, null);
+                    checkColorSpace(PdfColorSpace.makeColorSpace(shadingDict.get(PdfName.ColorSpace)), pdfObject,
+                            resources.getAsDictionary(PdfName.ColorSpace), true, null);
                 }
             }
         }
@@ -602,7 +757,7 @@ public abstract class PdfAChecker {
                 if (p.isStream()) {
                     PdfStream pStream = (PdfStream) p;
                     if (!isAlreadyChecked(pStream)) {
-                        checkResources(pStream.getAsDictionary(PdfName.Resources));
+                        checkResources(pStream.getAsDictionary(PdfName.Resources), pdfObject);
                     }
                 }
             }
@@ -677,7 +832,18 @@ public abstract class PdfAChecker {
             return;
         }
 
-        checkResources(appearanceStream.getAsDictionary(PdfName.Resources));
+        checkResources(appearanceStream.getAsDictionary(PdfName.Resources), appearanceStream);
+    }
+
+    PdfDictionary getPdfAOutputIntent(PdfArray outputIntents) {
+        for (int i = 0; i < outputIntents.size(); ++i) {
+            PdfName outputIntentSubtype = outputIntents.getAsDictionary(i).getAsName(PdfName.S);
+            if (PdfName.GTS_PDFA1.equals(outputIntentSubtype)) {
+                return outputIntents.getAsDictionary(i);
+            }
+        }
+
+        return null;
     }
 
     private void checkResourcesOfAppearanceStreams(PdfDictionary appearanceStreamsDict, Set<PdfObject> checkedObjects) {
@@ -730,10 +896,11 @@ public abstract class PdfAChecker {
 
         checkPageObject(pageDict, page.getResources().getPdfObject());
         PdfDictionary pageResources = page.getResources().getPdfObject();
-        checkResources(pageResources);
+        checkResources(pageResources, pageDict);
         checkAnnotations(pageDict);
         checkPageSize(pageDict);
         checkPageTransparency(pageDict, page.getResources().getPdfObject());
+        checkPageColorsUsages(pageDict, page.getResources().getPdfObject());
 
         int contentStreamCount = page.getContentStreamCount();
         for (int j = 0; j < contentStreamCount; ++j) {
@@ -763,60 +930,24 @@ public abstract class PdfAChecker {
         }
     }
 
-    private void checkOutlines(PdfDictionary catalogDict){
-        PdfDictionary outlines = catalogDict.getAsDictionary(PdfName.Outlines);
-        if (outlines != null) {
-            for (PdfDictionary outline : getOutlines(outlines)) {
-                PdfDictionary action = outline.getAsDictionary(PdfName.A);
-                if (action != null) {
-                    checkAction(action);
-                }
+    private void checkOutlines(PdfOutline outline){
+        if (outline != null) {
+            final PdfDictionary action = outline.getContent().getAsDictionary(PdfName.A);
+            if (action != null) {
+                checkAction(action);
+            }
+            for (PdfOutline child : outline.getAllChildren()) {
+                checkOutlines(child);
             }
         }
-    }
-
-    private List<PdfDictionary> getOutlines(PdfDictionary item) {
-        List<PdfDictionary> outlines = new ArrayList<>();
-        outlines.add(item);
-
-        PdfDictionary processItem = item.getAsDictionary(PdfName.First);
-        if (processItem != null){
-            outlines.addAll(getOutlines(processItem));
-        }
-        processItem = item.getAsDictionary(PdfName.Next);
-        if (processItem != null){
-            outlines.addAll(getOutlines(processItem));
-        }
-
-        return outlines;
-    }
-
-    private void setPdfAOutputIntentColorSpace(PdfDictionary catalog) {
-        PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
-        if (outputIntents == null)
-            return;
-
-        PdfDictionary pdfAOutputIntent = getPdfAOutputIntent(outputIntents);
-        setCheckerOutputIntent(pdfAOutputIntent);
-    }
-
-    private PdfDictionary getPdfAOutputIntent(PdfArray outputIntents) {
-        for (int i = 0; i < outputIntents.size(); ++i) {
-            PdfName outputIntentSubtype = outputIntents.getAsDictionary(i).getAsName(PdfName.S);
-            if (PdfName.GTS_PDFA1.equals(outputIntentSubtype)) {
-                return outputIntents.getAsDictionary(i);
-            }
-        }
-
-        return null;
     }
 
     private void setCheckerOutputIntent(PdfDictionary outputIntent) {
         if (outputIntent != null) {
-            PdfStream destOutputProfile = outputIntent.getAsStream(PdfName.DestOutputProfile);
-            if (destOutputProfile != null) {
-                String intentCS = IccProfile.getIccColorSpaceName(destOutputProfile.getBytes());
-                this.pdfAOutputIntentColorSpace = intentCS;
+            pdfAOutputIntentDestProfile = outputIntent.getAsStream(PdfName.DestOutputProfile);
+            if (pdfAOutputIntentDestProfile != null) {
+                String intentCS = IccProfile.getIccColorSpaceName(pdfAOutputIntentDestProfile.getBytes());
+                pdfAOutputIntentColorSpace = intentCS;
             }
         }
     }

@@ -35,8 +35,6 @@ import java.io.InputStream;
 
 /**
  * The core public access point to the jsoup functionality.
- *
- * @author Jonathan Hedley
  */
 public class Jsoup {
     private Jsoup() {}

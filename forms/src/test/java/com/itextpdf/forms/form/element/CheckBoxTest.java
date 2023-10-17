@@ -23,6 +23,7 @@
 package com.itextpdf.forms.form.element;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.CheckBoxFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
@@ -34,8 +35,10 @@ import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrateg
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.util.EnumUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -71,14 +74,12 @@ import org.junit.experimental.categories.Category;
 public class CheckBoxTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/form/element/CheckBoxTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/form/element/CheckBoxTest/";
-
+    private int counter = 0;
 
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
-
-    private int counter = 0;
 
     @Before
     public void before() {
@@ -537,6 +538,29 @@ public class CheckBoxTest extends ExtendedITextTest {
             document.add(checkBox2);
         }
 
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void multiPageCheckboxFieldTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "multiPageCheckboxField.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_multiPageCheckBoxField.pdf";
+
+        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+            for (int i = 0; i < 10; i++) {
+                document.addNewPage();
+                Rectangle rect = new Rectangle(210, 490, 150, 22);
+                final PdfFormField inputField = new CheckBoxFormFieldBuilder(document, "fing").setWidgetRectangle(rect)
+                        .createCheckBox();
+                inputField.setValue("1");
+                PdfPage page = document.getPage(i + 1);
+                form.addField(inputField, page);
+                if (i > 2) {
+                    page.flush();
+                }
+            }
+        }
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 

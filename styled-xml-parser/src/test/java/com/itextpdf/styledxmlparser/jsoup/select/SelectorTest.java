@@ -34,8 +34,6 @@ import org.junit.experimental.categories.Category;
 
 /**
  * Tests that the selector selects correctly.
- *
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(UnitTest.class)
 public class SelectorTest extends ExtendedITextTest {

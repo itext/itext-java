@@ -27,6 +27,7 @@ import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.utils.DIContainer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
@@ -179,6 +180,9 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     private PdfString modifiedDocumentId;
     private PdfFont defaultFont = null;
     private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
+
+    private final DIContainer diContainer = new DIContainer();
+
 
     /**
      * Open PDF document in reading mode.
@@ -360,6 +364,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             return reference.getRefersTo();
         }
     }
+
 
     /**
      * Get number of indirect objects in the document.
@@ -642,6 +647,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         catalog.getPageTree().removePage(pageNum);
     }
 
+
+    /**
+     * Gets the container containing all available dependencies.
+     *
+     * @return the container containing all available dependencies.
+     */
+    public DIContainer getDiContainer() {
+        return diContainer;
+    }
+
     /**
      * Gets document information dictionary.
      * {@link PdfDocument#info} is lazy initialized. It will be initialized during the first call of this method.
@@ -859,6 +874,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                         xmp.put(PdfName.Filter, ar);
                     }
                 }
+
+                if (!properties.appendMode && catalog.isOCPropertiesMayHaveChanged()) {
+                    catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
+                }
+
                 checkIsoConformance();
 
                 if (getNumberOfPages() == 0) {
@@ -889,13 +909,10 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
 
                     PdfObject pageRoot = catalog.getPageTree().generateTree();
+                    flushInfoDictionary(properties.appendMode);
                     if (catalog.getPdfObject().isModified() || pageRoot.isModified()) {
                         catalog.put(PdfName.Pages, pageRoot);
                         catalog.getPdfObject().flush(false);
-                    }
-
-                    if (getDocumentInfo().getPdfObject().isModified()) {
-                        getDocumentInfo().getPdfObject().flush(false);
                     }
                     flushFonts();
 
@@ -920,7 +937,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     }
                 } else {
                     if (catalog.isOCPropertiesMayHaveChanged()) {
-                        catalog.getPdfObject().put(PdfName.OCProperties, catalog.getOCProperties(false).getPdfObject());
                         catalog.getOCProperties(false).flush();
                     }
                     if (catalog.pageLabels != null) {
@@ -945,8 +961,8 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(false);
                     }
+                    flushInfoDictionary(properties.appendMode);
                     catalog.getPdfObject().flush(false);
-                    getDocumentInfo().getPdfObject().flush(false);
                     flushFonts();
 
                     if (writer.crypto != null) {
@@ -975,17 +991,17 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 // To avoid encryption of XrefStream and Encryption dictionary remove crypto.
                 // NOTE. No need in reverting, because it is the last operation with the document.
                 writer.crypto = null;
+                checkIsoConformance(crypto, IsoKey.CRYPTO);
 
                 if (!properties.appendMode && crypto != null) {
                     // no need to flush crypto in append mode, it shall not have changed in this case
                     crypto.flush(false);
                 }
 
-                // The following two operators prevents the possible inconsistency between root and info
+                // The following operator prevents the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
                 // may appear when user gets trailer and explicitly sets new root or info dictionaries.
                 trailer.put(PdfName.Root, catalog.getPdfObject());
-                trailer.put(PdfName.Info, getDocumentInfo().getPdfObject());
 
                 //By this time original and modified document ids should always be not null due to initializing in
                 // either writer properties, or in the writer init section on document open or from pdfreader. So we
@@ -1538,7 +1554,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
      *
      * @param obj An object to conform.
      * @param key type of object to conform.
@@ -1548,7 +1564,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
      *
      * @param obj           an object to conform.
      * @param key           type of object to conform.
@@ -1560,7 +1576,21 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
+     *
+     * @param obj           an object to conform.
+     * @param key           type of object to conform.
+     * @param resources     {@link PdfResources} associated with an object to check.
+     * @param contentStream current content stream.
+     * @param extra         extra data required for the check.
+     */
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
+            Object extra) {
+    }
+
+    /**
+     * Checks whether PDF document conforms a specific standard.
+     * Shall be overridden.
      *
      * @param gState    a {@link CanvasGraphicsState} object to conform.
      * @param resources {@link PdfResources} associated with an object to check.
@@ -1934,7 +1964,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be override.
+     * Shall be overridden.
      */
     protected void checkIsoConformance() {
     }
@@ -2055,7 +2085,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 }
 
                 trailer.put(PdfName.Root, catalog.getPdfObject().getIndirectReference());
-                trailer.put(PdfName.Info, getDocumentInfo().getPdfObject().getIndirectReference());
 
                 if (reader != null) {
                     // If the reader's trailer contains an ID entry, let's copy it over to the new trailer
@@ -2169,8 +2198,25 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
+     * Flush info dictionary if needed.
+     *
+     * @param appendMode <code>true</code> if the document is edited in append mode.
+     */
+    protected void flushInfoDictionary(boolean appendMode) {
+        PdfObject infoDictObj = getDocumentInfo().getPdfObject();
+        if (!appendMode || infoDictObj.isModified()) {
+            infoDictObj.flush(false);
+        }
+
+        // The following operator prevents the possible inconsistency between root and info
+        // entries existing in the trailer object and corresponding fields. This inconsistency
+        // may appear when user gets trailer and explicitly sets new root or info dictionaries.
+        trailer.put(PdfName.Info, infoDictObj);
+    }
+
+    /**
      * Updates XMP metadata.
-     * Shall be override.
+     * Shall be overridden.
      */
     protected void updateXmpMetadata() {
         try {

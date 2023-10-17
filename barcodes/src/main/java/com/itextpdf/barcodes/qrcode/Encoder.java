@@ -29,10 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author satorux@google.com (Satoru Takabayashi) - creator
- * @author dswitkin@google.com (Daniel Switkin) - ported from C++
- */
 final class Encoder {
 
     // The original table is defined in the table 5 of JISX0510:2004 (p.19).

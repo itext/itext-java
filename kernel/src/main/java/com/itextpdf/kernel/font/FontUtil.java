@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.font.FontCache;
+import com.itextpdf.io.font.CjkResourceLoader;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.io.font.cmap.CMapLocationResource;
@@ -110,7 +110,7 @@ public class FontUtil {
             if (PdfEncodings.IDENTITY_H.equals(uniMap)) {
                 toUnicode = CMapToUnicode.getIdentity();
             } else {
-                CMapUniCid uni = FontCache.getUni2CidCmap(uniMap);
+                CMapUniCid uni = CjkResourceLoader.getUni2CidCmap(uniMap);
                 toUnicode = uni.exportToUnicode();
             }
             uniMaps.put(uniMap, toUnicode);

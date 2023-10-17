@@ -36,6 +36,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IReq;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -54,8 +55,8 @@ public class TestOcspResponseBuilder {
     private X509Certificate issuerCert;
     private PrivateKey issuerPrivateKey;
     private ICertificateStatus certificateStatus;
-    private Calendar thisUpdate = DateTimeUtil.getCurrentTimeCalendar();
-    private Calendar nextUpdate = DateTimeUtil.getCurrentTimeCalendar();
+    private Calendar thisUpdate = DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME);
+    private Calendar nextUpdate = DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME);
 
     public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey,
             ICertificateStatus certificateStatus) throws CertificateEncodingException, IOException {
@@ -110,7 +111,7 @@ public class TestOcspResponseBuilder {
                     nextUpdate.getTime(), FACTORY.createNullExtensions());
         }
 
-        Date time = DateTimeUtil.getCurrentTimeDate();
+        Date time = TimeTestUtil.TEST_DATE_TIME;
 
         IX509CertificateHolder[] chain = {FACTORY.createJcaX509CertificateHolder(issuerCert)};
         IContentSigner signer = FACTORY.createJcaContentSignerBuilder(SIGN_ALG).setProvider(FACTORY.getProviderName())

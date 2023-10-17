@@ -52,6 +52,13 @@ public final class FormsExceptionMessageConstant {
     public static final String VALUE_SHALL_NOT_BE_NULL = "Value <{0}> shall not be null";
     public static final String INDEX_OUT_OF_BOUNDS = "Index: {0}, Size: {1}";
 
+
+    public static final String SEPARATOR_SHOULD_BE_A_VALID_VALUE = "Separator should be a valid value. Values that are "
+            + "not allowed are null,empty string, or . ";
+    public static final String FIELD_NAME_ALREADY_EXISTS_IN_FORM = "Field name {0} already exists in the form.";
+
+
     private FormsExceptionMessageConstant() {
+        // empty constructor
     }
 }

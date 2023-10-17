@@ -286,7 +286,7 @@ public class CompareToolTest extends ExtendedITextTest {
                 PdfDocument doc = new PdfDocument(reader)) {
             String[] docInfo = compareTool.convertDocInfoToStrings(doc.getDocumentInfo());
             Assert.assertEquals("very long title to compare later on", docInfo[0]);
-            Assert.assertEquals("itext7core", docInfo[1]);
+            Assert.assertEquals("itextcore", docInfo[1]);
             Assert.assertEquals("test file", docInfo[2]);
             Assert.assertEquals("new job", docInfo[3]);
             Assert.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);

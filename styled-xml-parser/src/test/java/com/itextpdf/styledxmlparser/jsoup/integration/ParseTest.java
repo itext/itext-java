@@ -47,8 +47,6 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * Integration test: parses from real-world example HTML.
- *
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(IntegrationTest.class)
 public class ParseTest extends ExtendedITextTest {

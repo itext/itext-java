@@ -23,12 +23,12 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.*;
@@ -348,8 +348,8 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         Div innerFlex = new FlexContainer();
         innerFlex.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
         innerFlex.add(createNewDiv()).add(createNewDiv()).add(createNewDiv());
-        for (IElement children : innerFlex.getChildren()) {
-            children.setProperty(Property.FLEX_GROW, 0.2f);
+        for (IElement child : innerFlex.getChildren()) {
+            child.setProperty(Property.FLEX_GROW, 0.2f);
         }
         innerFlex.setProperty(Property.BACKGROUND, new Background(ColorConstants.GREEN));
         innerFlex.setProperty(Property.FLEX_GROW, 0.7f);
@@ -504,6 +504,132 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         flexContainer.add(innerDiv).add(createNewDiv());
         document.add(flexContainer);
         document.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA), ignore = true)
+    public void flexContainerPaginationTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "flexContainerPaginationTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerPaginationTest" + comparisonPdfId + ".pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+
+            Div flexContainer = createFlexContainer();
+            flexContainer.deleteOwnProperty(Property.HEIGHT);
+            flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 10));
+
+            flexContainer.add(createNewDiv().add(new Paragraph("1")))
+                    .add(createNewDiv().add(new Paragraph("2")).setWidth(210))
+                    .add(createNewDiv().add(new Paragraph("3")))
+                    .add(createNewDiv().add(new Paragraph("4")))
+                    .add(createNewDiv().add(new Paragraph("5")))
+                    .add(createNewDiv().add(new Paragraph("6")))
+                    .add(createNewDiv().add(new Paragraph("7")))
+                    .add(createNewDiv().add(new Paragraph("8")))
+                    .add(createNewDiv().add(new Paragraph("9")).setHeight(1000).setBackgroundColor(ColorConstants.PINK))
+                    .add(createNewDiv().add(new Paragraph("10")))
+                    .add(createNewDiv().add(new Paragraph("11")))
+                    .add(createNewDiv().add(new Paragraph("12")).setWidth(300))
+                    .add(createNewDiv().add(new Paragraph("13")))
+                    .add(createNewDiv().add(new Paragraph("14")))
+                    .add(createNewDiv().add(new Paragraph("15")));
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void flexContainerWithFixedHeightPaginationTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "flexContainerWithFixedHeightPagination" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerWithFixedHeightPagination" + comparisonPdfId + ".pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+
+            Div flexContainer = createFlexContainer();
+            flexContainer.setHeight(1000);
+            flexContainer.setBorder(new SolidBorder(ColorConstants.PINK, 10));
+
+            flexContainer.add(createNewDiv().add(new Paragraph("1")))
+                    .add(createNewDiv().add(new Paragraph("2")).setWidth(210))
+                    .add(createNewDiv().add(new Paragraph("3")))
+                    .add(createNewDiv().add(new Paragraph("4")))
+                    .add(createNewDiv().add(new Paragraph("5")))
+                    .add(createNewDiv().add(new Paragraph("6")))
+                    .add(createNewDiv().add(new Paragraph("7")))
+                    .add(createNewDiv().add(new Paragraph("8")))
+                    .add(createNewDiv().add(new Paragraph("9")).setHeight(200))
+                    .add(createNewDiv().add(new Paragraph("10")))
+                    .add(createNewDiv().add(new Paragraph("11")))
+                    .add(createNewDiv().add(new Paragraph("12")).setWidth(300))
+                    .add(createNewDiv().add(new Paragraph("13")))
+                    .add(createNewDiv().add(new Paragraph("14")))
+                    .add(createNewDiv().add(new Paragraph("15")));
+            document.add(flexContainer);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
+    public void flexContainerInsideDivPaginationTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "flexContainerInsideDivPaginationTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideDivPaginationTest" + comparisonPdfId + ".pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+
+            Div div = new Div().setHeight(1800).setWidth(350).setBorder(new SolidBorder(ColorConstants.RED, 20));
+            Div flexContainer = createFlexContainer();
+            flexContainer.deleteOwnProperty(Property.HEIGHT);
+            flexContainer.setBorder(new SolidBorder(ColorConstants.BLUE, 10));
+
+            flexContainer.add(createNewDiv().add(new Paragraph("1")))
+                    .add(createNewDiv().add(new Paragraph("2")).setWidth(210))
+                    .add(createNewDiv().add(new Paragraph("3")))
+                    .add(createNewDiv().add(new Paragraph("4")))
+                    .add(createNewDiv().add(new Paragraph("5")))
+                    .add(createNewDiv().add(new Paragraph("6")))
+                    .add(createNewDiv().add(new Paragraph("7")))
+                    .add(createNewDiv().add(new Paragraph("8")))
+                    .add(createNewDiv().add(new Paragraph("9")).setHeight(800).setBackgroundColor(ColorConstants.PINK))
+                    .add(createNewDiv().add(new Paragraph("10")))
+                    .add(createNewDiv().add(new Paragraph("11")))
+                    .add(createNewDiv().add(new Paragraph("12")).setWidth(300))
+                    .add(createNewDiv().add(new Paragraph("13")))
+                    .add(createNewDiv().add(new Paragraph("14")))
+                    .add(createNewDiv().add(new Paragraph("15")));
+            div.add(flexContainer);
+            document.add(div);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
+    public void flexContainerInsideDivTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "flexContainerInsideDivTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideDivTest" + comparisonPdfId + ".pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+
+            Div div = new Div().setHeight(400).setWidth(140).setBorder(new SolidBorder(ColorConstants.PINK, 10));
+            Div flexContainer = createFlexContainer();
+            flexContainer.deleteOwnProperty(Property.HEIGHT);
+            flexContainer.setBorder(new SolidBorder(ColorConstants.YELLOW, 5));
+
+            flexContainer.add(createNewDiv().add(new Paragraph("1")))
+                    .add(createNewDiv().add(new Paragraph("2")))
+                    .add(createNewDiv().add(new Paragraph("3")))
+                    .add(createNewDiv().add(new Paragraph("4")))
+                    .add(createNewDiv().add(new Paragraph("5")))
+                    .add(createNewDiv().add(new Paragraph("6")))
+                    .add(createNewDiv().add(new Paragraph("7")))
+                    .add(createNewDiv().add(new Paragraph("8")))
+                    .add(createNewDiv().add(new Paragraph("9")))
+                    .add(createNewDiv().add(new Paragraph("10")));
+            div.add(flexContainer);
+            document.add(div);
+        }
 
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }

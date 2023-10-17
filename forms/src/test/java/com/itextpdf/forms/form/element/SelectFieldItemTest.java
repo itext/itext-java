@@ -24,6 +24,7 @@ package com.itextpdf.forms.form.element;
 
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -32,7 +33,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
-public class SelectFieldItemTest extends ITextTest {
+public class SelectFieldItemTest extends ExtendedITextTest {
 
     @Test
     public void newSelectFieldItem2ParamConstructorTest() {

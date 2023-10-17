@@ -29,8 +29,7 @@ import java.io.IOException;
 
 /**
  A text node.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 public class TextNode extends LeafNode {
     /**
      Create a new TextNode representing the supplied (unencoded) text).

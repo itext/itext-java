@@ -22,11 +22,14 @@
  */
 package com.itextpdf.kernel.colors;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Cmyk;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Gray;
+import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Rgb;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 
 import java.util.Arrays;
@@ -56,10 +59,11 @@ public class Color {
      */
     protected Color(PdfColorSpace colorSpace, float[] colorValue) {
         this.colorSpace = colorSpace;
-        if (colorValue == null)
+        if (colorValue == null) {
             this.colorValue = new float[colorSpace.getNumberOfComponents()];
-        else
+        } else {
             this.colorValue = colorValue;
+        }
     }
 
     /**
@@ -67,6 +71,7 @@ public class Color {
      * All color value components will be initialised with zeroes.
      *
      * @param colorSpace the color space to which the returned Color object relates
+     *
      * @return the created Color object.
      */
     public static Color makeColor(PdfColorSpace colorSpace) {
@@ -79,6 +84,7 @@ public class Color {
      *
      * @param colorSpace the color space to which the returned Color object relates
      * @param colorValue the color value of the returned Color object
+     *
      * @return the created Color object.
      */
     public static Color makeColor(PdfColorSpace colorSpace, float[] colorValue) {
@@ -90,7 +96,8 @@ public class Color {
             } else if (colorSpace instanceof PdfDeviceCs.Rgb) {
                 c = colorValue != null ? new DeviceRgb(colorValue[0], colorValue[1], colorValue[2]) : new DeviceRgb();
             } else if (colorSpace instanceof PdfDeviceCs.Cmyk) {
-                c = colorValue != null ? new DeviceCmyk(colorValue[0], colorValue[1], colorValue[2], colorValue[3]) : new DeviceCmyk();
+                c = colorValue != null ? new DeviceCmyk(colorValue[0], colorValue[1], colorValue[2], colorValue[3])
+                        : new DeviceCmyk();
             } else {
                 unknownColorSpace = true;
             }
@@ -139,6 +146,7 @@ public class Color {
      * {@link DeviceRgb DeviceRgb} color
      *
      * @param cmykColor the DeviceCmyk color which will be converted to DeviceRgb color
+     *
      * @return converted color
      */
     public static DeviceRgb convertCmykToRgb(DeviceCmyk cmykColor) {
@@ -158,6 +166,7 @@ public class Color {
      * {@link DeviceCmyk DeviceCmyk} color
      *
      * @param rgbColor the DeviceRgb color which will be converted to DeviceCmyk color
+     *
      * @return converted color
      */
     public static DeviceCmyk convertRgbToCmyk(DeviceRgb rgbColor) {
@@ -170,6 +179,36 @@ public class Color {
         float m = (1 - greenComp - k) / (1 - k);
         float y = (1 - blueComp - k) / (1 - k);
         return new DeviceCmyk(c, m, y, k);
+    }
+
+    /**
+     * Creates a color object based on the passed through values.
+     * <p>
+     *
+     * @param colorValue the float array with the values
+     *                   <p>
+     *                   The number of array elements determines the colour space in which the colour shall be defined:
+     *                   0 - No colour; transparent
+     *                   1 - DeviceGray
+     *                   3 - DeviceRGB
+     *                   4 - DeviceCMYK
+     *
+     * @return Color the color or null if it's invalid
+     */
+    public static Color createColorWithColorSpace(float[] colorValue) {
+        if (colorValue == null || colorValue.length == 0) {
+            return null;
+        }
+        if (colorValue.length == 1) {
+            return makeColor(new Gray(), colorValue);
+        }
+        if (colorValue.length == 3) {
+            return makeColor(new Rgb(), colorValue);
+        }
+        if (colorValue.length == 4) {
+            return makeColor(new Cmyk(), colorValue);
+        }
+        return null;
     }
 
     /**
@@ -213,8 +252,19 @@ public class Color {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int result = colorSpace == null ? 0 : colorSpace.getPdfObject().hashCode();
+        result = 31 * result + (colorValue != null ? Arrays.hashCode(colorValue) : 0);
+        return result;
+    }
+
+    /**
      * Indicates whether the color is equal to the given color.
-     * The {@link Color#colorSpace color space} and {@link Color#colorValue color value} are considered during the comparison.
+     * The {@link Color#colorSpace color space} and {@link Color#colorValue color value} are considered during the
+     * comparison.
      */
     @Override
     public boolean equals(Object o) {
@@ -225,17 +275,7 @@ public class Color {
             return false;
         }
         Color color = (Color) o;
-        return (colorSpace != null ? colorSpace.getPdfObject().equals(color.colorSpace.getPdfObject()) : color.colorSpace == null)
-                && Arrays.equals(colorValue, color.colorValue);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        int result = colorSpace == null ? 0 : colorSpace.getPdfObject().hashCode();
-        result = 31 * result + (colorValue != null ? Arrays.hashCode(colorValue) : 0);
-        return result;
+        return (colorSpace != null ? colorSpace.getPdfObject().equals(color.colorSpace.getPdfObject())
+                : color.colorSpace == null) && Arrays.equals(colorValue, color.colorValue);
     }
 }

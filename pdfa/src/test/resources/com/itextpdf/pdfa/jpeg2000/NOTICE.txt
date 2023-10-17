@@ -1,0 +1,14 @@
+This software uses the following test resources under the following licenses:
+| file1.jp2 | (2023/07/25) cpyrght.htm | 
+| file2.jp2 | (2023/07/25) cpyrght.htm | 
+| file3.jp2 | (2023/07/25) cpyrght.htm | 
+| file4.jp2 | (2023/07/25) cpyrght.htm | 
+| file5.jp2 | (2023/07/25) cpyrght.htm | 
+| file6.jp2 | (2023/07/25) cpyrght.htm | 
+| file7.jp2 | (2023/07/25) cpyrght.htm | 
+| file8.jp2 | (2023/07/25) cpyrght.htm | 
+| file9.jp2 | (2023/07/25) cpyrght.htm | 
+| p0_01.j2k | (2023/07/25) cpyrght.htm | 
+| p0_02.j2k | (2023/07/25) cpyrght.htm | 
+| p1_01.j2k | (2023/07/25) cpyrght.htm | 
+| p1_02.j2k | (2023/07/25) cpyrght.htm | 

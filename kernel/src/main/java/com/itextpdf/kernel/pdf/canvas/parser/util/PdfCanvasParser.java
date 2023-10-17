@@ -42,7 +42,6 @@ import java.util.List;
 
 /**
  * Parses the page or form XObject content.
- * @author Paulo Soares
  */
 public class PdfCanvasParser {
 

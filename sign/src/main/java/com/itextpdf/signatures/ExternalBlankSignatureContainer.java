@@ -31,7 +31,6 @@ import java.security.GeneralSecurityException;
 /**
  * Produces a blank (or empty) signature. Useful for deferred signing with
  * MakeSignature.signExternalContainer().
- * @author Paulo Soares
  */
 public class ExternalBlankSignatureContainer implements IExternalSignatureContainer {
 

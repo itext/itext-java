@@ -25,9 +25,6 @@ package com.itextpdf.io.font.cmap;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
 
-/**
- * @author psoares
- */
 public class CMapUniCid extends AbstractCMap {
 
     private IntHashtable map = new IntHashtable(65537);

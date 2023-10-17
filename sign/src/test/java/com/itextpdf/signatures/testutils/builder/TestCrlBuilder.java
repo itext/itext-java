@@ -29,6 +29,7 @@ import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.operator.IContentSigner;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -43,12 +44,17 @@ public class TestCrlBuilder {
 
     private final PrivateKey issuerPrivateKey;
     private final IX509v2CRLBuilder crlBuilder;
-    private Date nextUpdate = DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), 30);
+    private Date nextUpdate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 30);
 
     public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, Date thisUpdate)
-            throws CertificateEncodingException, IOException {
+            throws CertificateEncodingException {
         this.crlBuilder = FACTORY.createX509v2CRLBuilder(FACTORY.createX500Name(issuerCert), thisUpdate);
         this.issuerPrivateKey = issuerPrivateKey;
+    }
+    
+    public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
+            throws CertificateEncodingException {
+        this(issuerCert, issuerPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
     }
 
     public void setNextUpdate(Date nextUpdate) {
@@ -60,6 +66,10 @@ public class TestCrlBuilder {
      */
     public void addCrlEntry(X509Certificate certificate, Date revocationDate, int reason) {
         crlBuilder.addCRLEntry(certificate.getSerialNumber(), revocationDate, reason);
+    }
+
+    public void addCrlEntry(X509Certificate certificate, int reason) {
+        crlBuilder.addCRLEntry(certificate.getSerialNumber(), nextUpdate, reason);
     }
 
     public byte[] makeCrl() throws IOException, AbstractOperatorCreationException {

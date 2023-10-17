@@ -26,8 +26,6 @@ import java.util.ArrayList;
 
 /**
  * A container for ParseErrors.
- * 
- * @author Jonathan Hedley
  */
 public class ParseErrorList extends ArrayList<ParseError>{
     private static final int INITIAL_CAPACITY = 16;

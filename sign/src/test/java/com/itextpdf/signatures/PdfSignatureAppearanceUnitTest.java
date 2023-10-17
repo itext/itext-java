@@ -25,6 +25,9 @@ package com.itextpdf.signatures;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.forms.form.FormProperty;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
@@ -32,9 +35,17 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.signatures.PdfSignatureAppearance.RenderingMode;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
@@ -86,12 +97,12 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         Assert.assertNull(signatureAppearance.getLayer2Text());
 
-        String layer2Text = signatureAppearance.generateLayer2Text();
+        String layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // There is no text from new reason caption in the default layer 2 text
         Assert.assertFalse(layer2Text.contains(newReasonCaption));
 
         signatureAppearance.setReasonCaption(newReasonCaption);
-        layer2Text = signatureAppearance.generateLayer2Text();
+        layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // Now layer 2 text contains text from new reason caption
         Assert.assertTrue(layer2Text.contains(newReasonCaption));
     }
@@ -104,12 +115,12 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
 
         Assert.assertNull(signatureAppearance.getLayer2Text());
 
-        String layer2Text = signatureAppearance.generateLayer2Text();
+        String layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // There is no text from new location caption in the default layer 2 text
         Assert.assertFalse(layer2Text.contains(newLocationCaption));
 
         signatureAppearance.setLocationCaption(newLocationCaption);
-        layer2Text = signatureAppearance.generateLayer2Text();
+        layer2Text = signatureAppearance.generateSignatureText().generateDescriptionText();
         // Now layer 2 text contains text from new location caption
         Assert.assertTrue(layer2Text.contains(newLocationCaption));
     }
@@ -204,6 +215,20 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void setFontProviderAndFamilyTest() throws IOException {
+        PdfSignatureAppearance appearance = getTestSignatureAppearance();
+
+        FontProvider fontProvider = new FontProvider();
+        fontProvider.getFontSet().addFont(StandardFonts.HELVETICA, "");
+        String fontFamilyName = "fontFamily";
+        appearance.setFontProvider(fontProvider).setFontFamily(fontFamilyName);
+        Assert.assertEquals(fontProvider,
+                appearance.getSignatureAppearance().<FontProvider>getProperty(Property.FONT_PROVIDER));
+        Assert.assertEquals(fontFamilyName,
+                ((String[]) appearance.getSignatureAppearance().<String[]>getProperty(Property.FONT))[0]);
+    }
+
+    @Test
     public void layer2FontSizeSetGetTest() throws IOException {
         PdfSignatureAppearance signatureAppearance = getTestSignatureAppearance();
 
@@ -227,8 +252,10 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void getAppearanceInvisibleTest() throws IOException {
-        PdfSignatureAppearance appearance = new PdfSignatureAppearance(null, new Rectangle(0, 100), 1);
+    public void getAppearanceInvisibleTest() {
+        PdfSignatureAppearance appearance = new PdfSignatureAppearance(
+                new PdfDocument(new PdfWriter(new ByteArrayOutputStream())),
+                new Rectangle(0, 100), 1);
         PdfFormXObject xObject = appearance.getAppearance();
 
         Assert.assertTrue(new Rectangle(0, 0).equalsWithEpsilon(xObject.getBBox().toRectangle()));
@@ -241,6 +268,63 @@ public class PdfSignatureAppearanceUnitTest extends ExtendedITextTest {
         Calendar current = DateTimeUtil.getCurrentTimeCalendar();
         appearance.setSignDate(current);
         Assert.assertEquals(current, appearance.getSignDate());
+    }
+
+    @Test
+    public void wrongRenderingModeTest() {
+        try (Document ignored = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
+            PdfSignatureAppearance appearance = new PdfSignatureAppearance(null, new Rectangle(100, 100), 1);
+            appearance.setRenderingMode(RenderingMode.GRAPHIC_AND_DESCRIPTION);
+            Assert.assertThrows(IllegalStateException.class, () -> appearance.getSignatureAppearance());
+
+            PdfSignatureAppearance appearance2 = new PdfSignatureAppearance(null, new Rectangle(100, 100), 1);
+            appearance2.setRenderingMode(RenderingMode.GRAPHIC);
+            Assert.assertThrows(IllegalStateException.class, () -> appearance2.getSignatureAppearance());
+        }
+    }
+
+    @Test
+    public void backgroundImageTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "signatureFieldBackground.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signatureFieldBackground.pdf";
+        PdfSignatureAppearance appearance = new PdfSignatureAppearance(null, new Rectangle(100, 100), 1);
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            SignatureFieldAppearance field1 = new SignatureFieldAppearance("field1");
+            field1.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            field1.setContent("scale -1").setFontColor(ColorConstants.GREEN).setFontSize(50)
+                    .setBorder(new SolidBorder(ColorConstants.RED, 10)).setHeight(200).setWidth(300)
+                    .setProperty(Property.TEXT_ALIGNMENT, TextAlignment.CENTER);
+            appearance.setSignatureAppearance(field1)
+                    .setImage(ImageDataFactory.create(SOURCE_FOLDER + "1.png"))
+                    .setImageScale(-1)
+                    .applyBackgroundImage();
+            document.add(field1);
+
+            SignatureFieldAppearance field2 = new SignatureFieldAppearance("field2");
+            field2.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            field2.setContent("scale 0").setFontColor(ColorConstants.GREEN).setFontSize(50)
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 10)).setHeight(200).setWidth(300)
+                    .setProperty(Property.TEXT_ALIGNMENT, TextAlignment.CENTER);
+            appearance.setSignatureAppearance(field2)
+                    .setImage(ImageDataFactory.create(SOURCE_FOLDER + "1.png"))
+                    .setImageScale(0)
+                    .applyBackgroundImage();
+            document.add(field2);
+
+            SignatureFieldAppearance field3 = new SignatureFieldAppearance("field3");
+            field3.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            field3.setContent("scale 0.5").setFontColor(ColorConstants.GREEN).setFontSize(50)
+                    .setBorder(new SolidBorder(ColorConstants.GREEN, 10)).setHeight(200).setWidth(300)
+                    .setProperty(Property.TEXT_ALIGNMENT, TextAlignment.CENTER);
+            appearance.setSignatureAppearance(field3)
+                    .setImage(ImageDataFactory.create(SOURCE_FOLDER + "1.png"))
+                    .setImageScale(0.5f)
+                    .applyBackgroundImage();
+            document.add(field3);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     private static PdfSignatureAppearance getTestSignatureAppearance() throws IOException {

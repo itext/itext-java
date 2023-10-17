@@ -34,8 +34,7 @@ import org.junit.experimental.categories.Category;
 
 /**
  Tests for the cleaner.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 @Category(UnitTest.class)
 public class CleanerTest extends ExtendedITextTest {
     @Test public void simpleBehaviourTest() {

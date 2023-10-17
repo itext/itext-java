@@ -211,7 +211,7 @@ public class PdfEncodings {
     }
 
     /**
-     * Converts a {@code String} to a {@code byte} array according
+     * Converts a {@code char} to a {@code byte} array according
      * to the font's encoding.
      *
      * @param encoding the encoding
@@ -219,8 +219,10 @@ public class PdfEncodings {
      * @return an array of {@code byte} representing the conversion according to the font's encoding
      */
     public static byte[] convertToBytes(char ch, String encoding) {
-        if (encoding == null || encoding.length() == 0)
+        if (encoding == null || encoding.length() == 0 || "symboltt".equals(encoding)) {
             return new byte[]{(byte) ch};
+        }
+
         IntHashtable hash = null;
         if (encoding.equals(WINANSI))
             hash = winansi;

@@ -53,6 +53,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -124,13 +125,13 @@ public class FlexUtilTest extends ExtendedITextTest {
         flexContainerRenderer.setParent(documentRenderer);
         div.setNextRenderer(flexContainerRenderer);
 
-        for (int i = 0; i < flexBasisValues.size(); i++) {
+        for (UnitValue flexBasisValue : flexBasisValues) {
             Div flexItem = new Div().add(new Paragraph("x"));
             AbstractRenderer flexItemRenderer = (AbstractRenderer) flexItem.createRendererSubTree()
                     .setParent(flexContainerRenderer);
             flexItemRenderer.setProperty(Property.FLEX_GROW, 0f);
             flexItemRenderer.setProperty(Property.FLEX_SHRINK, 0.1f);
-            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValues.get(i));
+            flexItemRenderer.setProperty(Property.FLEX_BASIS, flexBasisValue);
             flexContainerRenderer.addChild(flexItemRenderer);
         }
 
@@ -149,10 +150,10 @@ public class FlexUtilTest extends ExtendedITextTest {
                 .setMargin(15)
                 .setBorder(new SolidBorder(10))
                 .setPadding(50);
-        ;
+
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 style,
-                Arrays.<UnitValue>asList(UnitValue.createPointArray(new float[] {10f, 20f, 30f})),
+                Arrays.<UnitValue>asList(UnitValue.createPointArray(new float[]{10f, 20f, 30f})),
                 Arrays.asList(1f, 1f, 1f),
                 Arrays.asList(0f, 0f, 0f)
         );
@@ -171,10 +172,10 @@ public class FlexUtilTest extends ExtendedITextTest {
                 .setMargin(15)
                 .setBorder(new SolidBorder(10))
                 .setPadding(5);
-        ;
+
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 style,
-                Arrays.<UnitValue>asList(UnitValue.createPointArray(new float[] {50f, 100f, 150f})),
+                Arrays.<UnitValue>asList(UnitValue.createPointArray(new float[]{50f, 100f, 150f})),
                 Arrays.asList(1f, 1f, 1f),
                 Arrays.asList(0f, 0f, 0f)
         );
@@ -207,7 +208,7 @@ public class FlexUtilTest extends ExtendedITextTest {
             }
         }
     }
-    
+
     @Test
     public void basis100Grow0Shrink0ColumnTest() {
         List<List<FlexItemInfo>> rectangleTable = testFlex(
@@ -283,7 +284,7 @@ public class FlexUtilTest extends ExtendedITextTest {
             }
         }
     }
-    
+
     @Test
     public void basis100Grow0CustomShrinkContainerHeight50ColumnTest() {
         List<List<FlexItemInfo>> rectangleTable = testFlex(
@@ -537,7 +538,7 @@ public class FlexUtilTest extends ExtendedITextTest {
                 Arrays.asList(1f, 1f, 1f),
                 Arrays.asList(0f, 0f, 0f)
         );
-        
+
         // after checks
         Assert.assertEquals(3, rectangleTable.size());
 
@@ -562,7 +563,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         // after checks
         Assert.assertEquals(3, rectangleTable.size());
-        
+
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getWidth(), EPS);
@@ -584,7 +585,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         // after checks
         Assert.assertEquals(3, rectangleTable.size());
-        
+
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getWidth(), EPS);
@@ -606,7 +607,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         // after checks
         Assert.assertEquals(3, rectangleTable.size());
-        
+
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(133.33333f, flexItemInfo.getRectangle().getWidth(), EPS);
@@ -629,7 +630,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         // after checks
         Assert.assertEquals(3, rectangleTable.size());
-        
+
         for (List<FlexItemInfo> line : rectangleTable) {
             for (FlexItemInfo flexItemInfo : line) {
                 Assert.assertEquals(100.0f, flexItemInfo.getRectangle().getWidth(), EPS);
@@ -653,7 +654,7 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         // after checks
         Assert.assertEquals(3, rectangleTable.size());
-        
+
         for (int i = 0; i < rectangleTable.size(); ++i) {
             List<FlexItemInfo> line = rectangleTable.get(i);
             for (FlexItemInfo flexItemInfo : line) {
@@ -753,7 +754,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
         flexContainerRenderer.setParent(documentRenderer);
         div.setNextRenderer(flexContainerRenderer);
-        
+
         flexContainerRenderer.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
 
         for (int i = 0; i < flexBasisValues.size(); i++) {
@@ -2994,19 +2995,19 @@ public class FlexUtilTest extends ExtendedITextTest {
     }
 
     private static List<List<FlexItemInfo>> testFlex(List<UnitValue> flexBasisValues, List<Float> flexGrowValues,
-            List<Float> flexShrinkValues) {
+                                                     List<Float> flexShrinkValues) {
         return testFlex(DEFAULT_STYLE, flexBasisValues, flexGrowValues, flexShrinkValues);
     }
 
     private static List<List<FlexItemInfo>> testFlex(Style containerStyle, List<UnitValue> flexBasisValues,
-            List<Float> flexGrowValues,
-            List<Float> flexShrinkValues) {
+                                                     List<Float> flexGrowValues,
+                                                     List<Float> flexShrinkValues) {
         return testFlex(containerStyle, flexBasisValues, flexGrowValues, flexShrinkValues, null);
     }
 
     private static List<List<FlexItemInfo>> testFlex(Style containerStyle, List<UnitValue> flexBasisValues,
-            List<Float> flexGrowValues,
-            List<Float> flexShrinkValues, Style elementStyle) {
+                                                     List<Float> flexGrowValues,
+                                                     List<Float> flexShrinkValues, Style elementStyle) {
         assert flexBasisValues.size() == flexGrowValues.size();
         assert flexBasisValues.size() == flexShrinkValues.size();
 

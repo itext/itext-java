@@ -123,7 +123,7 @@ public class XMPWriterTest extends ExtendedITextTest {
         pdfDocument.getCatalog().setViewerPreferences(
                 new PdfViewerPreferences().setDisplayDocTitle(true));
         PdfDocumentInfo info = pdfDocument.getDocumentInfo();
-        info.setTitle("iText7 PDF/UA test");
+        info.setTitle("iText PDF/UA test");
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
         Paragraph p = new Paragraph();
         p.setFont(font);

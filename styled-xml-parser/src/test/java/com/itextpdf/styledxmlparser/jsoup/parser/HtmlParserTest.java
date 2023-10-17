@@ -52,8 +52,6 @@ import static com.itextpdf.styledxmlparser.jsoup.parser.ParseSettings.preserveCa
 
 /**
  * Tests for the Parser
- *
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(UnitTest.class)
 public class HtmlParserTest extends ExtendedITextTest {

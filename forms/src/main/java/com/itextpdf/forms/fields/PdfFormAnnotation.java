@@ -24,8 +24,10 @@ package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.datastructures.NullableContainer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
+import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.CheckBox;
@@ -35,6 +37,7 @@ import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.forms.form.renderer.checkboximpl.PdfCheckBoxRenderingStrategy;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -46,6 +49,7 @@ import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -53,6 +57,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
@@ -103,6 +108,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     public static final String ON_STATE_VALUE = "Yes";
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormAnnotation.class);
     private static final String LINE_ENDINGS_REGEXP = "\\r\\n|\\r|\\n";
+    private static final float EPS = 1e-4f;
     protected float borderWidth = 1;
     protected Color backgroundColor;
     protected Color borderColor;
@@ -620,7 +626,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             }
         }
 
-        PdfArray matrix = getRotationMatrix(getRotation() % 360, height, width);
+        PdfArray matrix = getRotationMatrix(getRotation(), height, width);
         if (matrix != null) {
             xObject.put(PdfName.Matrix, matrix);
         }
@@ -641,7 +647,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         createInputButton();
 
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
-        PdfArray matrix = getRotationMatrix(getRotation() % 360, height, width);
+        PdfArray matrix = getRotationMatrix(getRotation(), height, width);
         if (matrix != null) {
             xObject.put(PdfName.Matrix, matrix);
         }
@@ -692,6 +698,50 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         // flushes TagTreePointer that will be used later, so set null to the corresponding property.
         canvas.setProperty(Property.TAGGING_HELPER, null);
         canvas.close();
+        formFieldElement.setInteractive(true);
+    }
+
+    /**
+     * Draws the appearance of a signature field and saves it into an appearance stream.
+     */
+    protected void drawSignatureFormFieldAndSaveAppearance() {
+        Rectangle rectangle = getRect(this.getPdfObject());
+        if (PdfFormAnnotation.isFieldInvisible(rectangle)) {
+            // According to the spec, appearance stream is not required but can be an empty xObject
+            // if the width or height of the rectangle is 0.
+            final PdfDictionary appearanceDictionary = new PdfDictionary();
+            final PdfFormXObject normalAppearance = new PdfFormXObject(new Rectangle(0, 0));
+            normalAppearance.makeIndirect(this.getDocument());
+            appearanceDictionary.put(PdfName.N, normalAppearance.getPdfObject());
+            appearanceDictionary.setModified();
+            put(PdfName.AP, appearanceDictionary);
+            return;
+        }
+        PdfPage page = getWidget().getPage();
+        boolean rotateRect = page != null && (page.getRotation() / 90) % 2 == 1;
+        float width = rotateRect ? rectangle.getHeight() : rectangle.getWidth();
+        float height = rotateRect ? rectangle.getWidth() : rectangle.getHeight();
+        if (rotateRect) {
+            rectangle.setWidth(width).setHeight(height);
+        }
+
+        createSigField();
+        setModelElementProperties(rectangle);
+
+        PdfFormXObject normalAppearance = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        PdfCanvas normalAppearanceCanvas = new PdfCanvas(normalAppearance, getDocument());
+
+        PdfFormXObject topLayerXObject = createTopLayer(width, height);
+        normalAppearance.getResources().addForm(topLayerXObject, new PdfName("FRM"));
+        normalAppearanceCanvas.addXObjectAt(topLayerXObject,
+                topLayerXObject.getBBox().getAsNumber(0).floatValue(),
+                topLayerXObject.getBBox().getAsNumber(1).floatValue());
+
+        PdfDictionary appearanceDict = new PdfDictionary();
+        PdfStream normalAppearanceStream = normalAppearance.getPdfObject();
+        appearanceDict.put(PdfName.N, normalAppearanceStream);
+        appearanceDict.setModified();
+        put(PdfName.AP, appearanceDict);
     }
 
     /**
@@ -709,6 +759,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             // Create it one time and re-set properties during each widget regeneration.
             formFieldElement = new Radio("");
         }
+        final boolean wasChecked = Boolean.TRUE.equals(
+                formFieldElement.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
         setModelElementProperties(getRect(getPdfObject()));
 
         // First draw off appearance
@@ -731,8 +783,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             canvas.add(formFieldElement);
             normalAppearance.put(new PdfName(value), xObject.getPdfObject());
         }
-
+        ((Radio) formFieldElement).setChecked(wasChecked);
         getWidget().setNormalAppearance(normalAppearance);
+        formFieldElement.setInteractive(true);
     }
 
     /**
@@ -800,6 +853,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         canvas.getPdfCanvas().restoreState().endVariableText();
 
         getWidget().setNormalAppearance(xObject.getPdfObject());
+        formFieldElement.setInteractive(true);
     }
 
     /**
@@ -831,13 +885,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         formFieldElement.setProperty(Property.TEXT_ALIGNMENT, parent.getJustification());
         formFieldElement.setProperty(FormProperty.FORM_FIELD_PASSWORD_FLAG, getParentField().isPassword());
         formFieldElement.setProperty(Property.ADD_MARKED_CONTENT_TEXT, Boolean.TRUE);
-
         if (getColor() != null) {
             formFieldElement.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
         }
 
         // Rotation
-        final int fieldRotation = getRotation() % 360;
+        final int fieldRotation = getRotation();
         PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
         if (fieldRotation == 90 || fieldRotation == 270) {
             Rectangle invertedRectangle = rectangle.clone();
@@ -858,6 +911,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
         canvas.add(formFieldElement);
 
+        formFieldElement.setInteractive(true);
         getWidget().setNormalAppearance(xObject.getPdfObject());
     }
 
@@ -904,7 +958,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         canvas.add(comboBoxField);
         canvas.getPdfCanvas().restoreState().endVariableText();
         getWidget().setNormalAppearance(xObject.getPdfObject());
-
+        formFieldElement.setInteractive(true);
     }
 
     private void prepareComboBoxFieldWithCorrectOptionsAndValues(ComboBoxField comboBoxField) {
@@ -942,6 +996,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
         reconstructCheckBoxType();
         createCheckBox();
+        final boolean wasChecked = Boolean.TRUE.equals(
+                formFieldElement.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
         final PdfDictionary normalAppearance = new PdfDictionary();
         ((CheckBox) formFieldElement).setChecked(false);
         final PdfFormXObject xObjectOff = new PdfFormXObject(
@@ -977,6 +1033,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                 new PdfString(PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(
                         parent.checkType.getValue())));
         getWidget().put(PdfName.MK, mk);
+        formFieldElement.setInteractive(true);
+        ((CheckBox) formFieldElement).setChecked(wasChecked);
     }
 
     static void setMetaInfoToCanvas(Canvas canvas) {
@@ -1022,6 +1080,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                 drawCheckBoxAndSaveAppearance(getCheckBoxValue());
             }
             return true;
+        } else if (PdfName.Sig.equals(type)) {
+            drawSignatureFormFieldAndSaveAppearance();
+            return true;
         }
         return false;
     }
@@ -1040,6 +1101,41 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
 
         setModelElementProperties(getRect(getPdfObject()));
+    }
+
+    void createSigField() {
+        if (!(formFieldElement instanceof SignatureFieldAppearance)) {
+            // Create it one time and re-set properties during each widget regeneration.
+            formFieldElement = new SignatureFieldAppearance(parent.getPartialFieldName().toUnicodeString());
+        }
+
+        if (formFieldElement.<Object>getProperty(Property.FONT) == null) {
+            ((SignatureFieldAppearance) formFieldElement).setFont(getFont());
+        }
+        if (getColor() != null) {
+            ((SignatureFieldAppearance) formFieldElement).setFontColor(color);
+        }
+
+        if (((SignatureFieldAppearance) formFieldElement).getContentElements().isEmpty()) {
+            final SignedAppearanceText description = new SignedAppearanceText();
+            final PdfName name = parent.getPdfObject().getAsName(PdfName.Name);
+            if (name != null) {
+                description.setSignedBy(name.getValue());
+            }
+            final PdfString reason = parent.getPdfObject().getAsString(PdfName.Reason);
+            if (reason != null) {
+                description.setReasonLine("Reason: " + reason.toUnicodeString());
+            }
+            final PdfString location = parent.getPdfObject().getAsString(PdfName.Location);
+            if (location != null) {
+                description.setLocationLine("Location: " + location.toUnicodeString());
+            }
+            final PdfString date = parent.getPdfObject().getAsString(PdfName.M);
+            if (date != null) {
+                description.setSignDate(PdfDate.decode(date.getValue()));
+            }
+            ((SignatureFieldAppearance) formFieldElement).setContent(description);
+        }
     }
 
     float getFontSize(PdfArray bBox, String value) {
@@ -1127,17 +1223,43 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         formFieldElement.setProperty(Property.BORDER, getBorder());
         // Set fixed size
         BoxSizingPropertyValue boxSizing = formFieldElement.<BoxSizingPropertyValue>getProperty(Property.BOX_SIZING);
-        // Borders are already taken into account for rectangle area, but shouldn't be included into width and height
-        // of the field in case of content-box value of box-sizing property.
-        float extraBorderWidth = BoxSizingPropertyValue.CONTENT_BOX == boxSizing ? 2 * borderWidth : 0;
-        formFieldElement.setWidth(rectangle.getWidth() - extraBorderWidth);
-        formFieldElement.setHeight(rectangle.getHeight() - extraBorderWidth);
+        // Borders and paddings are already taken into account for rectangle area, but shouldn't be included into width
+        // and height of the field in case of content-box value of box-sizing property.
+        float extraBorderWidth = 0;
+        float extraPaddingsW = 0;
+        float extraPaddingsH = 0;
+        if (BoxSizingPropertyValue.CONTENT_BOX == boxSizing) {
+            extraBorderWidth += 2 * borderWidth;
+            UnitValue lPadding = formFieldElement.<UnitValue>getProperty(Property.PADDING_LEFT);
+            if (lPadding != null) {
+                extraPaddingsW += lPadding.getValue();
+            }
+            UnitValue rPadding = formFieldElement.<UnitValue>getProperty(Property.PADDING_RIGHT);
+            if (rPadding != null) {
+                extraPaddingsW += rPadding.getValue();
+            }
+            UnitValue tPadding = formFieldElement.<UnitValue>getProperty(Property.PADDING_TOP);
+            if (tPadding != null) {
+                extraPaddingsH += tPadding.getValue();
+            }
+            UnitValue bPadding = formFieldElement.<UnitValue>getProperty(Property.PADDING_BOTTOM);
+            if (bPadding != null) {
+                extraPaddingsH += bPadding.getValue();
+            }
+        }
+
+        formFieldElement.setWidth(rectangle.getWidth() - extraBorderWidth - extraPaddingsW);
+        formFieldElement.setHeight(rectangle.getHeight() - extraBorderWidth - extraPaddingsH);
         // Always flatten
         formFieldElement.setInteractive(false);
     }
 
     private static PdfArray getRotationMatrix(int rotation, float height, float width) {
-        switch (rotation) {
+        int normalizedRotation = rotation % 360;
+        if (normalizedRotation < 0) {
+            normalizedRotation += 360;
+        }
+        switch (normalizedRotation) {
             case 0:
                 return null;
             case 90:
@@ -1187,5 +1309,125 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         return parent != null && PdfName.Btn.equals(parent.getFormType())
                 && !parent.getFieldFlag(PdfButtonFormField.FF_RADIO)
                 && !parent.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON);
+    }
+
+    /**
+     * Gets the visibility status of the signature.
+     *
+     * @return the visibility status of the signature
+     */
+    private static boolean isFieldInvisible(Rectangle rect) {
+        return rect == null || Math.abs(rect.getWidth()) < EPS || Math.abs(rect.getHeight()) < EPS;
+    }
+
+    /**
+     * Signature appearance is assembled with the top-level and second-level XObjects and the standard layers. The AP
+     * dictionary’s N attribute references a top-level XObject. This top-level XObject is necessary to properly resize
+     * signature appearances when these appearances are referred to by more than one signature field. The top-level
+     * XObject performs a Do on the second-level XObjects (n0 and n2 painted in sequence). The matrix may change if the
+     * signature is resized.
+     *
+     * @param width  the width of the annotation rectangle.
+     * @param height the height of the annotation rectangle.
+     *
+     * @return top layer xObject (/FRM).
+     *
+     * @see <a href="https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PPKAppearances.pdf">Adobe Pdf
+     * Digital Signature Appearances</a>
+     */
+    private PdfFormXObject createTopLayer(float width, float height) {
+        PdfFormXObject topLayerXObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        PdfArray matrix = getRotationMatrix(getRotation(), height, width);
+        if (matrix != null) {
+            topLayerXObject.put(PdfName.Matrix, matrix);
+        }
+        PdfCanvas topLayerCanvas = new PdfCanvas(topLayerXObject, this.getDocument());
+
+        PdfFormXObject n0LayerXObject = createN0Layer(width, height);
+        topLayerXObject.getResources().addForm(n0LayerXObject, new PdfName("n0"));
+        topLayerCanvas.addXObjectWithTransformationMatrix(n0LayerXObject, 1, 0, 0, 1, 0, 0);
+
+        PdfFormXObject n2LayerXObject = createN2Layer(width, height);
+        topLayerXObject.getResources().addForm(n2LayerXObject, new PdfName("n2"));
+        topLayerCanvas.addXObjectWithTransformationMatrix(n2LayerXObject, 1, 0, 0, 1, 0, 0);
+
+        return topLayerXObject;
+    }
+
+    /**
+     * The background layer that is present when creating the signature field. This layer renders the background and
+     * border of the annotation. The Matrix of this XObject is unity and the BBox is that of the original annotation.
+     *
+     * <p>
+     * In the default itext implementation n0 layer is either a blank xObject or normal appearance of the existed field
+     * (in case signature field was created but not signed) when reuseAppearance property is true, but user can modify
+     * n0 layer manually.
+     *
+     * @param width  the width of the annotation rectangle.
+     * @param height the height of the annotation rectangle.
+     *
+     * @return n0 layer xObject.
+     */
+    private PdfFormXObject createN0Layer(float width, float height) {
+        if (((PdfSignatureFormField) parent).getBackgroundLayer() != null) {
+            return ((PdfSignatureFormField) parent).getBackgroundLayer();
+        }
+        // Create blank n0.
+        PdfFormXObject n0LayerXObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        n0LayerXObject.makeIndirect(getDocument());
+        PdfCanvas canvas = new PdfCanvas(n0LayerXObject, getDocument());
+        canvas.writeLiteral("% DSBlank\n");
+
+        if (((PdfSignatureFormField) parent).isReuseAppearance()) {
+            // Reuse existed field appearance as a background
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(getDocument(), true);
+            PdfFormField field = acroForm.getField(parent.getFieldName().toUnicodeString());
+            PdfStream oldAppearanceStream = field.getWidgets().get(0).getAppearanceDictionary().getAsStream(PdfName.N);
+
+            if (oldAppearanceStream != null) {
+                n0LayerXObject = new PdfFormXObject(oldAppearanceStream);
+            } else {
+                ((PdfSignatureFormField) parent).setReuseAppearance(false);
+            }
+        }
+        return n0LayerXObject;
+    }
+
+    /**
+     * The signature appearance layer that contains information about the signature, e.g. the line art for the
+     * handwritten signature, the text giving the signer’s name, date, reason, location and so on. The content of this
+     * layer can be dynamically created when the signature is created, but thereafter it remains static. Specifically,
+     * it remains static when the validity state is changed. All appearance handlers that render text honor the font
+     * type and color defaults that were set for the signature annotation. So, this layer is the main layer where
+     * signature appearance should be drawn in the current itext implementation.
+     *
+     * @param width  the width of the annotation rectangle.
+     * @param height the height of the annotation rectangle.
+     *
+     * @return n2 layer xObject.
+     */
+    private PdfFormXObject createN2Layer(float width, float height) {
+        if (((PdfSignatureFormField) parent).getSignatureAppearanceLayer() != null) {
+            return ((PdfSignatureFormField) parent).getSignatureAppearanceLayer();
+        }
+        PdfFormXObject n2LayerXObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        Canvas n2LayerCanvas = new Canvas(n2LayerXObject, this.getDocument());
+
+        PdfPage page = getWidget().getPage();
+        int rotation = page == null ? 0 : page.getRotation();
+        float squeezeTransformation = height / width;
+        if (rotation == 90) {
+            n2LayerCanvas.getPdfCanvas().concatMatrix(0, squeezeTransformation, -1 / squeezeTransformation, 0, width, 0);
+        } else if (rotation == 180) {
+            n2LayerCanvas.getPdfCanvas().concatMatrix(-1, 0, 0, -1, width, height);
+        } else if (rotation == 270) {
+            n2LayerCanvas.getPdfCanvas().concatMatrix(0, -squeezeTransformation, 1 / squeezeTransformation, 0, 0, height);
+        }
+        n2LayerCanvas.add(formFieldElement);
+        // We need to draw waitingDrawingElements (drawn inside close method), but the close method
+        // flushes TagTreePointer that will be used later, so set null to the corresponding property.
+        n2LayerCanvas.setProperty(Property.TAGGING_HELPER, null);
+        n2LayerCanvas.close();
+        return n2LayerXObject;
     }
 }

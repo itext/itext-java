@@ -304,7 +304,7 @@ public class Glyph {
      * @return the Unicode char sequence that corresponds to this glyph
      */
     public char[] getUnicodeChars() {
-        if (chars != null) {
+        if (chars != null && chars.length > 0) {
             return chars;
         } else {
             return REPLACEMENT_CHARACTERS;
