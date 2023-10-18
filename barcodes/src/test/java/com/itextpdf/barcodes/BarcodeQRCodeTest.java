@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,10 +55,15 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeQRCode01.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -75,7 +81,7 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeQRCode02.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page1 = document.addNewPage();
@@ -91,7 +97,7 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
     @Test
     public void barcodeVersioningTest() throws IOException, PdfException, InterruptedException{
         String filename = "barcodeQRCodeVersioning.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
         for(int i = -9; i<42;i+=10) {
             PdfPage page1 = document.addNewPage();

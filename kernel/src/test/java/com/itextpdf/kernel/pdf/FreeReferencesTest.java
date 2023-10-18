@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,6 +50,11 @@ public class FreeReferencesTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void freeReferencesTest01() throws IOException {
         String src = "freeRefsGapsAndMaxGen.pdf";
@@ -864,7 +871,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        pdfDocument = new PdfDocument(new PdfReader(destinationFolder + out));
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(destinationFolder + out));
         PdfObject contentsObj = pdfDocument.getPage(1).getPdfObject().get(PdfName.Contents);
         Assert.assertEquals(PdfNull.PDF_NULL, contentsObj);
         pdfDocument.close();
@@ -1258,11 +1265,11 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String out1 = "freeRefsXrefStream01_xrefStream.pdf";
         String out2 = "freeRefsXrefStream01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + src),
-                new PdfWriter(destinationFolder + out1, new WriterProperties().setFullCompressionMode(true)));
+                CompareTool.createTestPdfWriter(destinationFolder + out1, new WriterProperties().setFullCompressionMode(true)));
 
         pdfDocument.close();
 
-        pdfDocument = new PdfDocument(new PdfReader(destinationFolder + out1),
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(destinationFolder + out1),
                 new PdfWriter(destinationFolder + out2, new WriterProperties().setFullCompressionMode(false)));
 
         pdfDocument.close();
@@ -1513,7 +1520,7 @@ public class FreeReferencesTest extends ExtendedITextTest {
         String output = destinationFolder + "result_readingXrefWithLotsOfFreeObj.pdf";
 
         //Test for array out of bounds when a pdf contains multiple free references
-        PdfDocument doc = new PdfDocument(new PdfReader(input), new PdfWriter(output));
+        PdfDocument doc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
 
         int actualNumberOfObj = doc.getNumberOfPdfObjects();
 

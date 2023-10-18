@@ -27,6 +27,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,12 +44,17 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void documentInfoCreatePdf20() throws IOException, InterruptedException {
         String outFile = destinationFolder + "test01.pdf";
         String cmpFile = sourceFolder + "cmp_test01.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         document.addNewPage();
         document.getDocumentInfo().setAuthor("Alexey");
         document.close();
@@ -65,7 +71,7 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         String outFile = destinationFolder + "metadata_pdf_20.pdf";
         String cmpFile = sourceFolder + "cmp_metadata_pdf_20.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument document = new PdfDocument(new PdfReader(inputFile), CompareTool.createTestPdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         document.close();
 
         CompareTool ct = new CompareTool();
@@ -81,7 +87,7 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         String cmpFile = sourceFolder + "cmp_metadata_pdf_20_append.pdf";
 
         PdfDocument document = new PdfDocument(new PdfReader(inputFile),
-                new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                CompareTool.createTestPdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 new StampingProperties().useAppendMode());
         document.getDocumentInfo().setAuthor("Alexey Subach");
         document.close();
@@ -114,7 +120,7 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         String outFile = destinationFolder + "metadata_pdf_20_changed_append.pdf";
         String cmpFile = sourceFolder + "cmp_metadata_pdf_20_changed_append.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outFile), new StampingProperties().useAppendMode());
+        PdfDocument document = new PdfDocument(new PdfReader(inputFile), CompareTool.createTestPdfWriter(outFile), new StampingProperties().useAppendMode());
         document.getDocumentInfo().setAuthor("Alexey Subach");
         document.close();
 
@@ -130,7 +136,7 @@ public class PdfDocumentInfoTest extends ExtendedITextTest {
         String outFile = destinationFolder + "metadata_pdf_20_unchanged_stamper.pdf";
         String cmpFile = sourceFolder + "cmp_metadata_pdf_20_unchanged_append.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfReader(inputFile), new PdfWriter(outFile), new StampingProperties());
+        PdfDocument document = new PdfDocument(new PdfReader(inputFile), CompareTool.createTestPdfWriter(outFile), new StampingProperties());
         String author = document.getDocumentInfo().getAuthor();
         document.close();
 

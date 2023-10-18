@@ -29,11 +29,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,21 +71,26 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void linkAnnotationExplicitDestinationMissingTest() throws IOException {
         PdfReader sourceReader = new PdfReader(SOURCE_ANNOTATION_WITH_DESTINATION_EXPLICIT);
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER, "LinkAnnotationExplicitDestinationMissing.pdf").toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationExplicitDestinationMissing.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 2, targetDoc, 2);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 2 and verify the annotation is not copied
@@ -104,16 +111,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER, "LinkAnnotationExplicitDestinationTargetBecomesPage5.pdf")
-                .toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationExplicitDestinationTargetBecomesPage5.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 3, targetDoc, 3);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 3 and verify it points to page 5
@@ -138,15 +144,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER, "LinkAnnotationNamedDestinationMissing.pdf").toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationNamedDestinationMissing.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 2, targetDoc, 2);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 2 and verify the annotation is not copied
@@ -168,16 +174,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER, "LinkAnnotationNamedDestinationTargetBecomesPage5.pdf")
-                .toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationNamedDestinationTargetBecomesPage5.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 3, targetDoc, 3);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 3 and verify it points to page 5
@@ -202,16 +207,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER, "TestLinkAnnotationViaActionExplicitDestinationMissing.pdf")
-                .toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "TestLinkAnnotationViaActionExplicitDestinationMissing.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 2, targetDoc, 2);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 2 and verify the annotation is not copied
@@ -232,16 +236,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER,
-                "LinkAnnotationViaActionExplicitDestinationTargetBecomesPage5.pdf").toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationViaActionExplicitDestinationTargetBecomesPage5.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 3, targetDoc, 3);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 3 and verify it points to page 5
@@ -266,16 +269,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER, "LinkAnnotationViaActionNamedDestinationMissing.pdf")
-                .toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationViaActionNamedDestinationMissing.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 2, targetDoc, 2);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 2 and verify the annotation is not copied
@@ -299,16 +301,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER,
-                "LinkAnnotationViaActionNamedDestinationTargetBecomesPage5.pdf").toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationViaActionNamedDestinationTargetBecomesPage5.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 3, targetDoc, 3);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 3 and verify it points to page 5
@@ -334,16 +335,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER,
-                "TestLinkAnnotationViaNextActionExplicitDestinationMissing.pdf").toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "TestLinkAnnotationViaNextActionExplicitDestinationMissing.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 2, targetDoc, 2);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 2 and verify the annotation is not copied
@@ -365,16 +365,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER,
-                "LinkAnnotationViaNextActionExplicitDestinationTargetBecomesPage5.pdf").toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationViaNextActionExplicitDestinationTargetBecomesPage5.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 3, targetDoc, 3);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 3 and verify it points to page 5
@@ -400,16 +399,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER, "LinkAnnotationViaNextActionNamedDestinationMissing.pdf")
-                .toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationViaNextActionNamedDestinationMissing.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 2, targetDoc, 2);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 2 and verify the annotation is not copied
@@ -433,16 +431,15 @@ public class PdfDestinationCopyingTest extends ExtendedITextTest {
         PdfDocument copySource = new PdfDocument(sourceReader);
 
         PdfReader targetReader = new PdfReader(TARGET_DOC);
-        String outputPath = Paths.get(DESTINATION_FOLDER,
-                "LinkAnnotationViaNextActionNamedDestinationTargetBecomesPage5.pdf").toString();
-        PdfDocument targetDoc = new PdfDocument(targetReader, new PdfWriter(outputPath));
+        String outputPath = DESTINATION_FOLDER + "LinkAnnotationViaNextActionNamedDestinationTargetBecomesPage5.pdf";
+        PdfDocument targetDoc = new PdfDocument(targetReader, CompareTool.createTestPdfWriter(outputPath));
 
         copySource.copyPagesTo(1, 3, targetDoc, 3);
 
         copySource.close();
         targetDoc.close();
 
-        PdfReader resultReader = new PdfReader(outputPath);
+        PdfReader resultReader = CompareTool.createOutputReader(outputPath);
         PdfDocument resultDoc = new PdfDocument(resultReader);
 
         // get annotation on page 3 and verify it points to page 5

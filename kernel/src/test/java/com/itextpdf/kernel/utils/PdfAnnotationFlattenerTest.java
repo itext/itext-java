@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -76,6 +77,11 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -136,7 +142,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     @Test
     public void defaultAppearanceGetsRendered() throws IOException, InterruptedException {
         String resultFile = DESTINATION_FOLDER + "default_annotations_app.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(resultFile))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(resultFile))) {
             PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 21));
             PdfCanvas canvasN = new PdfCanvas(formN, pdfDoc);
             PdfAnnotation annotation = new PdfLinkAnnotation(new Rectangle(100, 540, 300, 50)).
@@ -222,7 +228,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void removeQuadPoints() throws IOException, InterruptedException {
         String fileToFlatten = DESTINATION_FOLDER + "file_to_quadpoints.pdf";
         String resultFile = DESTINATION_FOLDER + "flattened_quadpoints.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileToFlatten))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(fileToFlatten))) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             float x = 50;
@@ -235,7 +241,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             page.addAnnotation(annot);
 
         }
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(fileToFlatten), new PdfWriter(resultFile))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createOutputReader(fileToFlatten), CompareTool.createTestPdfWriter(resultFile))) {
             new PdfAnnotationFlattener()
                     .flatten(pdfDoc.getFirstPage().getAnnotations());
         }
@@ -251,7 +257,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void invalidQuadPoints() throws IOException, InterruptedException {
         String fileToFlatten = DESTINATION_FOLDER + "file_to_invalid_quadpoints.pdf";
         String resultFile = DESTINATION_FOLDER + "flattened_invalid_quadpoints.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileToFlatten))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(fileToFlatten))) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             float x = 50;
@@ -264,7 +270,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             page.addAnnotation(annot);
 
         }
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(fileToFlatten), new PdfWriter(resultFile))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createOutputReader(fileToFlatten), CompareTool.createTestPdfWriter(resultFile))) {
             new PdfAnnotationFlattener()
                     .flatten(pdfDoc.getFirstPage().getAnnotations());
         }
@@ -314,7 +320,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenPdfLink() throws IOException, InterruptedException {
         String resultFile = DESTINATION_FOLDER + "flattened_pdf_link.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simple_link_annotation.pdf"),
-                new PdfWriter(resultFile))) {
+                CompareTool.createTestPdfWriter(resultFile))) {
             new PdfAnnotationFlattener().flatten(pdfDoc);
         }
         Assert.assertNull(
@@ -326,7 +332,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenPdfLinkWithDefaultAppearance() throws IOException, InterruptedException {
         String resultFile = DESTINATION_FOLDER + "flattened_DA_pdf_link.pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simple_link_annotation.pdf"),
-                new PdfWriter(resultFile))) {
+                CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotation annot = pdfDoc.getFirstPage().getAnnotations().get(0);
             annot.setNormalAppearance(new PdfDictionary());
             PdfFormXObject formN = new PdfFormXObject(new Rectangle(179, 530, 122, 21));
@@ -351,7 +357,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String fileToFlatten = DESTINATION_FOLDER + "file_to_flatten_markup_text.pdf";
         String resultFile = DESTINATION_FOLDER + "flattened_markup_text.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileToFlatten))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(fileToFlatten))) {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
             float x = 50;
@@ -370,7 +376,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
             page.addAnnotation(createTextAnnotation(canvas, x, y, points4, PdfName.Highlight, ColorConstants.YELLOW));
 
         }
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(fileToFlatten), new PdfWriter(resultFile))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createOutputReader(fileToFlatten), CompareTool.createTestPdfWriter(resultFile))) {
             new PdfAnnotationFlattener()
                     .flatten(pdfDoc.getFirstPage().getAnnotations());
         }
@@ -384,7 +390,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenLinkAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenLinkAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenLinkAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
             Assert.assertEquals(1, document.getFirstPage().getAnnotations().size());
@@ -400,7 +406,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenWidgetAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenWidgetAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenWidgetAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             List<PdfAnnotation> annot = flattener.flatten(document);
             Assert.assertEquals(1, annot.size());
@@ -415,7 +421,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenScreenAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenScreenAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenScreenAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
             Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
@@ -429,7 +435,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flatten3DAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flatten3DAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flatten3DAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
             Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
@@ -443,7 +449,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenHighlightAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenHighlightAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenHighlightAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -458,7 +464,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenUnderlineAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenUnderlineAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenUnderlineAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -474,7 +480,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenSquigglyAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenSquigglyAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenSquigglyAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -490,7 +496,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenStrikeOutAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenStrikeOutAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenStrikeOutAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -506,7 +512,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenCaretAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenCaretAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenCaretAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -522,7 +528,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenTextAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenTextAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenTextAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -538,7 +544,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenSoundAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenSoundAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenSoundAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -554,7 +560,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenStampAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenStampAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenStampAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             Assert.assertEquals(0, flattener.flatten(document).size());
             Assert.assertEquals(0, document.getFirstPage().getAnnotations().size());
@@ -569,7 +575,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenFileAttachmentAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenFileAttachmentAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenFileAttachmentAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -586,7 +592,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenInkAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenInkAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenInkAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -602,7 +608,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenPrinterMarkAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenPrinterMarkAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenPrinterMarkAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -619,7 +625,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenTrapNetAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenTrapNetAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenTrapNetAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -672,7 +678,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenFreeTextAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenFreeTextAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenFreeTextAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -688,7 +694,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenSquareAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenSquareAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenSquareAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -704,7 +710,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenCircleAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenCircleAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenCircleAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -747,7 +753,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenLineAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenLineAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenLineAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -763,7 +769,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenPolygonAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenPolygonAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenPolygonAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -779,7 +785,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenPolyLineAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenPolyLineAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenPolyLineAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -795,7 +801,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenRedactAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenRedactAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenRedactAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 
@@ -811,7 +817,7 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     public void flattenWatermarkAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenWatermarkAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenWatermarkAnnotationTest.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), new PdfWriter(resultFile))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
             PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
             flattener.flatten(document);
 

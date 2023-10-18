@@ -26,8 +26,11 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,9 +53,14 @@ public class PdfWriterTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void createEmptyDocument() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "emptyDocument.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "emptyDocument.pdf"));
         pdfDoc.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
@@ -60,7 +68,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         page.flush();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "emptyDocument.pdf");
+        PdfReader reader = CompareTool.createOutputReader(destinationFolder + "emptyDocument.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         Assert.assertNotNull(pdfDocument.getPage(1));
@@ -75,7 +83,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void useObjectForMultipleTimes1() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes1.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "useObjectForMultipleTimes1.pdf"));
 
         PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -90,7 +98,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void useObjectForMultipleTimes2() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes2.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "useObjectForMultipleTimes2.pdf"));
 
         PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -106,7 +114,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void useObjectForMultipleTimes3() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes3.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "useObjectForMultipleTimes3.pdf"));
 
         PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -122,7 +130,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
     @Test
     public void useObjectForMultipleTimes4() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "useObjectForMultipleTimes4.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "useObjectForMultipleTimes4.pdf"));
 
         PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -137,7 +145,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     }
 
     private void validateUseObjectForMultipleTimesTest(String filename) throws IOException {
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDoc = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary page = pdfDoc.getPage(1).getPdfObject();
@@ -160,7 +168,7 @@ public class PdfWriterTest extends ExtendedITextTest {
      */
     @Test
     public void copyObject1() throws IOException {
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject1_1.pdf"));
+        PdfDocument pdfDoc1 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject1_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
@@ -180,7 +188,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         aDirect.add(new PdfString("string"));
         catalog1.put(new PdfName("aDirect"), aDirect);
 
-        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject1_2.pdf"));
+        PdfDocument pdfDoc2 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject1_2.pdf"));
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -189,7 +197,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         pdfDoc1.close();
         pdfDoc2.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyObject1_2.pdf");
+        PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject1_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
@@ -215,7 +223,7 @@ public class PdfWriterTest extends ExtendedITextTest {
      */
     @Test
     public void copyObject2() throws IOException {
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject2_1.pdf"));
+        PdfDocument pdfDoc1 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject2_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
@@ -237,10 +245,10 @@ public class PdfWriterTest extends ExtendedITextTest {
         catalog1.put(aDirectName, aDirect);
         pdfDoc1.close();
 
-        PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject2_1.pdf"));
+        PdfDocument pdfDoc1R = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "copyObject2_1.pdf"));
         aDirect = (PdfArray) pdfDoc1R.getCatalog().getPdfObject().get(aDirectName);
 
-        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject2_2.pdf"));
+        PdfDocument pdfDoc2 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject2_2.pdf"));
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -249,7 +257,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         pdfDoc1R.close();
         pdfDoc2.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyObject2_2.pdf");
+        PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject2_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
@@ -276,7 +284,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     @Test
     public void copyObject3() throws IOException {
         {
-            PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject3_1.pdf"));
+            PdfDocument pdfDoc1 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject3_1.pdf"));
             PdfPage page1 = pdfDoc1.addNewPage();
             page1.flush();
             PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
@@ -292,10 +300,10 @@ public class PdfWriterTest extends ExtendedITextTest {
             catalog1.put(arr1Name, arr1);
             pdfDoc1.close();
 
-            PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject3_1.pdf"));
+            PdfDocument pdfDoc1R = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "copyObject3_1.pdf"));
             arr1 = (PdfArray) pdfDoc1R.getCatalog().getPdfObject().get(arr1Name);
 
-            PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject3_2.pdf"));
+            PdfDocument pdfDoc2 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject3_2.pdf"));
             PdfPage page2 = pdfDoc2.addNewPage();
             page2.flush();
             PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -306,7 +314,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         }
 
         {
-            PdfReader reader = new PdfReader(destinationFolder + "copyObject3_2.pdf");
+            PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject3_2.pdf");
             PdfDocument pdfDocument = new PdfDocument(reader);
             Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
             PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
@@ -326,7 +334,7 @@ public class PdfWriterTest extends ExtendedITextTest {
      */
     @Test
     public void copyObject4() throws IOException {
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject4_1.pdf"));
+        PdfDocument pdfDoc1 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject4_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.flush();
         PdfDictionary catalog1 = pdfDoc1.getCatalog().getPdfObject();
@@ -339,10 +347,10 @@ public class PdfWriterTest extends ExtendedITextTest {
         catalog1.put(new PdfName("stream"), stream1);
         pdfDoc1.close();
 
-        PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject4_1.pdf"));
+        PdfDocument pdfDoc1R = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "copyObject4_1.pdf"));
         stream1 = (PdfStream) pdfDoc1R.getCatalog().getPdfObject().get(new PdfName("stream"));
 
-        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject4_2.pdf"));
+        PdfDocument pdfDoc2 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject4_2.pdf"));
         PdfPage page2 = pdfDoc2.addNewPage();
         page2.flush();
         PdfDictionary catalog2 = pdfDoc2.getCatalog().getPdfObject();
@@ -351,7 +359,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         pdfDoc1R.close();
         pdfDoc2.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyObject4_2.pdf");
+        PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject4_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
@@ -368,16 +376,16 @@ public class PdfWriterTest extends ExtendedITextTest {
      */
     @Test
     public void copyObject5() throws IOException {
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject5_1.pdf"));
+        PdfDocument pdfDoc1 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject5_1.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
         page1.getContentStream(0).getOutputStream().write(ByteUtils.getIsoBytes("%Page_1"));
         page1.flush();
         pdfDoc1.close();
 
-        PdfDocument pdfDoc1R = new PdfDocument(new PdfReader(destinationFolder + "copyObject5_1.pdf"));
+        PdfDocument pdfDoc1R = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "copyObject5_1.pdf"));
         page1 = pdfDoc1R.getPage(1);
 
-        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject5_2.pdf"));
+        PdfDocument pdfDoc2 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject5_2.pdf"));
         PdfPage page2 = page1.copyTo(pdfDoc2);
         pdfDoc2.addPage(page2);
         page2.flush();
@@ -388,7 +396,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         pdfDoc1R.close();
         pdfDoc2.close();
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyObject5_2.pdf");
+        PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject5_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         Assert.assertEquals(8, reader.trailer.getAsNumber(PdfName.Size).intValue());
@@ -408,7 +416,7 @@ public class PdfWriterTest extends ExtendedITextTest {
      */
     @Test
     public void copyObject6() throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_1.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject6_1.pdf"));
 
         PdfDictionary helloWorld = (PdfDictionary) new PdfDictionary().makeIndirect(pdfDoc);
         helloWorld.put(new PdfName("Hello"), new PdfString("World"));
@@ -416,9 +424,9 @@ public class PdfWriterTest extends ExtendedITextTest {
         page.getPdfObject().put(new PdfName("HelloWorld"), helloWorld);
         pdfDoc.close();
 
-        pdfDoc = new PdfDocument(new PdfReader(destinationFolder + "copyObject6_1.pdf"));
+        pdfDoc = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "copyObject6_1.pdf"));
         helloWorld = (PdfDictionary) pdfDoc.getPage(1).getPdfObject().get(new PdfName("HelloWorld"));
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_2.pdf"));
+        PdfDocument pdfDoc1 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject6_2.pdf"));
         PdfPage page1 = pdfDoc1.addNewPage();
 
         page1.getPdfObject().put(new PdfName("HelloWorldCopy1"), helloWorld.copyTo(pdfDoc1));
@@ -430,7 +438,7 @@ public class PdfWriterTest extends ExtendedITextTest {
         pdfDoc1.close();
 
 
-        PdfReader reader = new PdfReader(destinationFolder + "copyObject6_2.pdf");
+        PdfReader reader = CompareTool.createOutputReader(destinationFolder + "copyObject6_2.pdf");
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
 
@@ -464,8 +472,8 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void copyObject7() throws IOException {
         String exceptionMessage = null;
 
-        PdfDocument pdfDoc1 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_1.pdf"));
-        PdfDocument pdfDoc2 = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_2.pdf"));
+        PdfDocument pdfDoc1 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject6_1.pdf"));
+        PdfDocument pdfDoc2 = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject6_2.pdf"));
         try {
 
             PdfPage page1 = pdfDoc1.addNewPage();
@@ -497,7 +505,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void copyObject8() throws IOException {
         String exceptionMessage = null;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "copyObject6_1.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyObject6_1.pdf"));
         try {
             PdfPage page1 = pdfDoc.addNewPage();
             PdfDictionary directDict = new PdfDictionary();
@@ -546,7 +554,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void directInIndirectChain() throws IOException {
         String filename = destinationFolder + "directInIndirectChain.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfArray level1 = new PdfArray();
         level1.add(new PdfNumber(1).makeIndirect(pdfDoc));
         PdfDictionary level2 = new PdfDictionary();
@@ -565,7 +573,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDocument = new PdfDocument(reader);
         Assert.assertEquals("Rebuilt", false, reader.hasRebuiltXref());
         Assert.assertEquals("Page count", 1, pdfDocument.getNumberOfPages());
@@ -578,7 +586,7 @@ public class PdfWriterTest extends ExtendedITextTest {
     public void createPdfStreamByInputStream() throws IOException {
         String filename = destinationFolder + "createPdfStreamByInputStream.pdf";
 
-        PdfDocument document = new PdfDocument(new PdfWriter(filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         document.getDocumentInfo().setAuthor("Alexander Chingarev").
                 setCreator("iText 6").
                 setTitle("Empty iText 6 Document");
@@ -601,7 +609,7 @@ public class PdfWriterTest extends ExtendedITextTest {
 //        Assert.assertTrue(message, diff < 5000);
 //        reader.close();
 
-        PdfReader reader6 = new PdfReader(filename);
+        PdfReader reader6 = CompareTool.createOutputReader(filename);
         document = new PdfDocument(reader6);
         Assert.assertEquals("Rebuilt", false, reader6.hasRebuiltXref());
         Assert.assertEquals("Fixed", false, reader6.hasFixedXref());

@@ -30,6 +30,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -38,6 +39,7 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
+import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,6 +71,11 @@ public class EncryptionInApprovedModeTest extends ExtendedITextTest {
         Security.addProvider(FACTORY.getProvider());
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT))
     public void checkMD5LogMessageWhileReadingPdfTest() throws IOException {
@@ -82,7 +89,7 @@ public class EncryptionInApprovedModeTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT))
     public void checkMD5LogMessageWhileCreatingPdfTest() throws IOException {
         String fileName = "checkMD5LogMessageWhileCreatingPdf.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + fileName,
+        try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName,
                 new WriterProperties().setStandardEncryption(USER, OWNER, EncryptionConstants.ALLOW_SCREENREADERS,
                         EncryptionConstants.ENCRYPTION_AES_256).addXmpMetadata()))) {
             // this test checks log message
@@ -95,7 +102,7 @@ public class EncryptionInApprovedModeTest extends ExtendedITextTest {
     public void checkMD5LogMessageForEachPdfTest() throws IOException {
         String fileName = "checkMD5LogMessageForEachPdf.pdf";
         for (int i = 0; i < 3; ++i) {
-            try (PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + fileName,
+            try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName,
                     new WriterProperties().setStandardEncryption(USER, OWNER, EncryptionConstants.ALLOW_SCREENREADERS,
                             EncryptionConstants.ENCRYPTION_AES_256).addXmpMetadata()))) {
                 // this test checks log message

@@ -37,6 +37,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,12 +54,17 @@ public class PdfCanvasGlyphlineShowTextTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void notoSerifWithInvalidXYPlacementAnchorDeltaTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "notoSerifWithInvalidXYPlacementAnchorDeltaTest.pdf";
         String cmpPdf = sourceFolder + "cmp_notoSerifWithInvalidXYPlacementAnchorDeltaTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         PdfPage page = pdfDoc.addNewPage();
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSerif-Regular_v1.7.ttf", PdfEncodings.IDENTITY_H);

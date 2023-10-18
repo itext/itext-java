@@ -41,6 +41,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,10 +58,15 @@ public class BarcodePDF417Test extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode417_01.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -84,7 +90,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode417_02.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "DocumentWithTrueTypeFont1.pdf");
         PdfDocument document = new PdfDocument(reader, writer);
 
@@ -108,7 +114,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void macroPDF417Test01() throws IOException, InterruptedException {
         String filename = "barcode417Macro_01.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument pdfDocument = new PdfDocument(writer);
 
         PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -175,7 +181,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417CreateAWTImageTest() throws IOException, InterruptedException {
         String filename = "barcode417CreateAWTImageTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -203,7 +209,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417XObjectTest() throws IOException, InterruptedException {
         String filename = "barcode417XObjectTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -254,7 +260,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417CodeReuseTest() throws IOException, InterruptedException {
         String filename = "barcode417CodeReuseTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -283,7 +289,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417NumbersTest() throws IOException, InterruptedException {
         String filename = "barcode417NumbersTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -303,7 +309,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417ByteLessThanSixSizeNumbersTest() throws IOException, InterruptedException {
         String filename = "barcode417ByteLessThanSixSizeNumbersTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -323,7 +329,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void barcode417ByteMoreThanSixSizeNumbersTest() throws IOException, InterruptedException {
         String filename = "barcode417ByteMoreThanSixSizeNumbersTest.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
@@ -473,7 +479,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
     @Test
     public void ccittImageFromBarcodeTest() throws IOException, InterruptedException {
         String filename = "ccittImage01.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();

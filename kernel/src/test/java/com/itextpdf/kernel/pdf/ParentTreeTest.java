@@ -36,6 +36,7 @@ import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,11 +56,16 @@ public class ParentTreeTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void test01() throws IOException {
         String outFile = destinationFolder + "parentTreeTest01.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest01.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.setTagged();
 
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -92,7 +98,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "stampingFormXObjectInnerContentTaggedTest.pdf";
         String cmpPdf = sourceFolder + "cmp_stampingFormXObjectInnerContentTaggedTest.pdf";
 
-        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.setTagged();
         taggedPdf.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
@@ -104,7 +110,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "severalXObjectsOnOnePageTest.pdf";
         String cmpPdf = sourceFolder + "cmp_severalXObjectsOnOnePageTest.pdf";
 
-        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.setTagged();
         taggedPdf.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
@@ -116,7 +122,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "earlyFlushXObjectTaggedTest.pdf";
         String cmpPdf = sourceFolder + "cmp_earlyFlushXObjectTaggedTest.pdf";
 
-        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         PdfDictionary resource = taggedPdf.getFirstPage().getResources().getResource(PdfName.XObject);
         resource.get(new PdfName("Fm1")).flush();
 
@@ -130,7 +136,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "identicalMcidIdInOneStreamTest.pdf";
         String cmpPdf = sourceFolder + "cmp_identicalMcidIdInOneStreamTest.pdf";
 
-        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.setTagged();
         taggedPdf.close();
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
@@ -141,7 +147,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_copyPageWithFormXobjectTaggedTest.pdf";
         String outDoc = destinationFolder + "copyPageWithFormXobjectTaggedTest.pdf";
         PdfDocument srcPdf = new PdfDocument(new PdfReader(sourceFolder + "copyFromFile.pdf"));
-        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "copyToFile.pdf"), new PdfWriter(outDoc));
+        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "copyToFile.pdf"), CompareTool.createTestPdfWriter(outDoc));
 
         outPdf.setTagged();
         srcPdf.copyPagesTo(1, 1, outPdf);
@@ -157,7 +163,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_removePageWithFormXobjectTaggedTest.pdf";
         String outDoc = destinationFolder + "removePageWithFormXobjectTaggedTest.pdf";
 
-        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "forRemovePage.pdf"), new PdfWriter(outDoc));
+        PdfDocument outPdf = new PdfDocument(new PdfReader(sourceFolder + "forRemovePage.pdf"), CompareTool.createTestPdfWriter(outDoc));
 
         outPdf.setTagged();
         outPdf.removePage(1);
@@ -171,7 +177,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public void test02() throws IOException {
         String outFile = destinationFolder + "parentTreeTest02.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest02.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.setTagged();
 
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -203,7 +209,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public void test03() throws IOException {
         String outFile = destinationFolder + "parentTreeTest03.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest03.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.setTagged();
 
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -236,7 +242,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public void test04() throws IOException {
         String outFile = destinationFolder + "parentTreeTest04.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest04.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.setTagged();
 
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -267,7 +273,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public void test05() throws IOException {
         String outFile = destinationFolder + "parentTreeTest05.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest05.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.setTagged();
 
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -315,7 +321,7 @@ public class ParentTreeTest extends ExtendedITextTest {
     public void test06() throws IOException {
         String outFile = destinationFolder + "parentTreeTest06.pdf";
         String cmpFile = sourceFolder + "cmp_parentTreeTest06.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         document.setTagged();
 
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -345,9 +351,9 @@ public class ParentTreeTest extends ExtendedITextTest {
     }
 
     private boolean checkParentTree(String outFileName, String cmpFileName) throws IOException {
-        PdfReader outReader = new PdfReader(outFileName);
+        PdfReader outReader = CompareTool.createOutputReader(outFileName);
         PdfDocument outDocument = new PdfDocument(outReader);
-        PdfReader cmpReader = new PdfReader(cmpFileName);
+        PdfReader cmpReader = CompareTool.createOutputReader(cmpFileName);
         PdfDocument cmpDocument = new PdfDocument(cmpReader);
         CompareResult result = new CompareTool().compareByCatalog(outDocument, cmpDocument);
         if (!result.isOk()) {

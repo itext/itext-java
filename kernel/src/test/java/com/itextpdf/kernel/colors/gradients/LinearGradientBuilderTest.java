@@ -36,6 +36,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,6 +51,11 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -763,7 +769,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     private void generateAndComparePdfs(String fileName, Rectangle toDraw, AffineTransform transform,
             AbstractLinearGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         String outPdfPath = destinationFolder + fileName;
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new File(outPdfPath)))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath))) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
             if (transform != null) {
@@ -783,7 +789,8 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     private void generateAndComparePdfsWithoutArgumentToBuild(String fileName, Rectangle toDraw,
             AbstractLinearGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         String outPdfPath = destinationFolder + fileName;
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new File(outPdfPath)))) {
+        PdfWriter writer = CompareTool.createTestPdfWriter(outPdfPath);
+        try (PdfDocument pdfDoc = new PdfDocument(writer)) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
             canvas.setFillColor(gradientBuilder.buildColor(null, null, pdfDoc))

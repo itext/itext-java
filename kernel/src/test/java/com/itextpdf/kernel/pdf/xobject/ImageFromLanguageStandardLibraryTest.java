@@ -36,6 +36,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,6 +53,11 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     // See http://stackoverflow.com/questions/39119776/itext-binary-transparency-bug
     public void imageBinaryTransparencySameColorTest() throws java.io.IOException {
@@ -61,7 +67,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
         ImageData bkgnd = ImageDataFactory.create(sourceFolder + "itext.jpg");
         PdfImageXObject image = new PdfImageXObject(bkgnd);
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
         PdfPage firstPage = pdfDocument.getFirstPage();
@@ -98,7 +104,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
         ImageData bkgnd = ImageDataFactory.create(sourceFolder + "itext.jpg");
         PdfImageXObject image = new PdfImageXObject(bkgnd);
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
 
         PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
         PdfPage firstPage = pdfDocument.getFirstPage();

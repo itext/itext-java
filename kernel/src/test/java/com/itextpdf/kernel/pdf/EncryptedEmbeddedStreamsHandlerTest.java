@@ -31,6 +31,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,6 +51,11 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
             ignore = true))
@@ -95,7 +102,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "pdfWithFileAttachments.pdf", new ReaderProperties().setPassword("password".getBytes()));
         // Setting compression level to zero doesn't affect the encryption at any level.
         // We do it to simplify observation of the resultant PDF.
-        PdfDocument pdfDocument = new PdfDocument(reader, new PdfWriter(outFileName).setCompressionLevel(0));
+        PdfDocument pdfDocument = new PdfDocument(reader, CompareTool.createTestPdfWriter(outFileName).setCompressionLevel(0));
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                 pdfDocument, "file".getBytes(), "description", "file.txt", null, null, null);
         pdfDocument.addFileAttachment("file.txt", fs);
@@ -134,7 +141,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
         PdfReader reader = new PdfReader(sourceFolder + "pdfWithFileAttachmentAnnotations.pdf", new ReaderProperties().setPassword("password".getBytes()));
         // Setting compression level to zero doesn't affect the encryption at any level.
         // We do it to simplify observation of the resultant PDF.
-        PdfDocument pdfDocument = new PdfDocument(reader, new PdfWriter(outFileName).setCompressionLevel(0));
+        PdfDocument pdfDocument = new PdfDocument(reader, CompareTool.createTestPdfWriter(outFileName).setCompressionLevel(0));
         pdfDocument.addNewPage();
         PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                 pdfDocument, "file".getBytes(), "description", "file.txt", null, null, null);
@@ -164,7 +171,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     private PdfDocument createEncryptedDocument(int encryptionAlgorithm, String outFileName) throws IOException {
-        PdfWriter writer = new PdfWriter(outFileName,
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setStandardEncryption(
                         "password".getBytes(), "password".getBytes(), 0, encryptionAlgorithm | EncryptionConstants.EMBEDDED_FILES_ONLY));
         // Setting compression level to zero doesn't affect the encryption at any level.
@@ -174,7 +181,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     }
 
     private PdfDocument createEncryptedDocument(PdfReader reader, int encryptionAlgorithm, String outFileName) throws IOException {
-        PdfWriter writer = new PdfWriter(outFileName,
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setStandardEncryption(
                         "password".getBytes(), "password".getBytes(), 0, encryptionAlgorithm | EncryptionConstants.EMBEDDED_FILES_ONLY));
         // Setting compression level to zero doesn't affect the encryption at any level.

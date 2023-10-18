@@ -37,6 +37,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,12 +53,17 @@ public class ImageMasksTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void imageResizedParentWithHardMaskTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "imageResizedParentWithHardMask.pdf";
         String cmpFileName = sourceFolder + "cmp_imageResizedParentWithHardMask.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         ImageData mask = ImageDataFactory.create(sourceFolder + "hardMask.png");
         mask.makeMask();
@@ -83,7 +89,7 @@ public class ImageMasksTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "diffMasksOnSameImageXObject.pdf";
         String cmpFileName = sourceFolder + "cmp_diffMasksOnSameImageXObject.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         ImageData sMask = ImageDataFactory.create(sourceFolder + "SMask3px.jpg");
         sMask.makeMask();
@@ -111,7 +117,7 @@ public class ImageMasksTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageResizedParentWithSoftMask.pdf";
         String cmpFileName = sourceFolder + "cmp_imageResizedParentWithSoftMask.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         ImageData mask = ImageDataFactory.create(sourceFolder + "SMask3px.jpg");
         mask.makeMask();
@@ -136,7 +142,7 @@ public class ImageMasksTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageWithSoftMaskMatte.pdf";
         String cmpFileName = sourceFolder + "cmp_imageWithSoftMaskMatte.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         ImageData mask = ImageDataFactory.create(sourceFolder + "matteMask.jpg");
         mask.makeMask();
@@ -162,7 +168,7 @@ public class ImageMasksTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "sMaskMatteDifferentSizeOfImg.pdf";
         String cmpFileName = sourceFolder + "cmp_sMaskMatteDifferentSizeOfImg.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         ImageData mask = ImageDataFactory.create(sourceFolder + "matteMask.jpg");
         mask.makeMask();

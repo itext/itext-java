@@ -76,7 +76,8 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void contentStreamProcessorTest() throws IOException {
-        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "tableWithImageAndText.pdf"), new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "tableWithImageAndText.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
 
         StringBuilder pageEventsLog = new StringBuilder();
         for (int i = 1; i <= document.getNumberOfPages(); ++i) {

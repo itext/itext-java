@@ -33,6 +33,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,6 +48,11 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -79,7 +85,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
         String srcFile = SOURCE_FOLDER + "releaseObjectsInSimpleDoc.pdf";
         String release = DESTINATION_FOLDER + "outReleaseObjectsInSimpleDoc.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(release))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(release))) {
             doc.getCatalog().getPdfObject().release();
         }
 
@@ -92,7 +98,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
         String srcFile = SOURCE_FOLDER + "releaseObjectsInSimpleDoc.pdf";
         String release = DESTINATION_FOLDER + "outReleaseObjectsInSimpleDoc.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(release))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(release))) {
             doc.getCatalog().getPdfObject().getAsDictionary(PdfName.Pages).release();
         }
 
@@ -105,7 +111,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
         String srcFile = SOURCE_FOLDER + "releaseObjectsInDocWithStructTreeRoot.pdf";
         String release = DESTINATION_FOLDER + "outReleaseObjectsInDocWithStructTreeRoot.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(release))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(release))) {
             doc.getStructTreeRoot().getPdfObject().release();
         }
 
@@ -119,7 +125,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
         String cmpFile = SOURCE_FOLDER + "cmp_releaseModifiedObject.pdf";
         String outFile = DESTINATION_FOLDER + "releaseModifiedObject.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(outFile))) {
 
             PdfAnnotation annots = doc.getPage(1).getAnnotations().get(0);
 
@@ -135,7 +141,7 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
         String srcFile = SOURCE_FOLDER + "releaseObjectsInSimpleDoc.pdf";
 
         PdfDocument doc = new PdfDocument(new PdfReader(srcFile),
-                new PdfWriter(DESTINATION_FOLDER + "addingReleasedObjectToDocument.pdf"));
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "addingReleasedObjectToDocument.pdf"));
         try {
             PdfObject releasedObj = doc.getPdfObject(1);
             releasedObj.release();
@@ -155,11 +161,11 @@ public class PdfObjectReleaseTest extends ExtendedITextTest {
         String outPureStamping = DESTINATION_FOLDER + outStampingFilename;
         String outStampingRelease = DESTINATION_FOLDER + outStampingReleaseFilename;
 
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outPureStamping));
+        PdfDocument doc = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(outPureStamping));
         // We open/close document to make sure that the results of release logic and simple overwriting coincide.
         doc.close();
 
-        PdfDocument stamperRelease = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outStampingRelease));
+        PdfDocument stamperRelease = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(outStampingRelease));
 
         for (int i = 0; i < stamperRelease.getNumberOfPdfObjects(); i++) {
             PdfObject pdfObject = stamperRelease.getPdfObject(i);

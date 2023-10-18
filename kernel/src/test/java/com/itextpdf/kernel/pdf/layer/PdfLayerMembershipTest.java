@@ -34,6 +34,8 @@ import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,6 +55,10 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
 
     @Test
     public void enabledVisibilityPolicyAllOnTest() throws IOException, InterruptedException {
@@ -61,7 +67,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -89,7 +95,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -116,7 +122,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -142,7 +148,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -168,7 +174,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -196,7 +202,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -224,7 +230,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -250,7 +256,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -276,7 +282,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -315,7 +321,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String cmpPdf = "cmp_" + destPdf;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                new PdfWriter(destinationFolder + destPdf));
+                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);

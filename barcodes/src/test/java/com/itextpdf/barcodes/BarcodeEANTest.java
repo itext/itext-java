@@ -34,6 +34,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,10 +50,15 @@ public class BarcodeEANTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeEAN_01.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -75,7 +81,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeEAN_02.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfReader reader = new PdfReader(sourceFolder + "DocumentWithTrueTypeFont1.pdf");
         PdfDocument document = new PdfDocument(reader, writer);
 
@@ -98,7 +104,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
     @Test
     public void barcode03Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeEANSUP.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -124,7 +130,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
     @Test
     public void placeBarcodeUPCATest() throws IOException, PdfException, InterruptedException {
         String filename = "placeBarcodeUPCATest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -146,7 +152,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
     @Test
     public void placeBarcodeUPCETest() throws IOException, PdfException, InterruptedException {
         String filename = "placeBarcodeUPCETest.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -168,7 +174,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
     @Test
     public void placeBarcodeSUPP2Test() throws IOException, PdfException, InterruptedException {
         String filename = "placeBarcodeSUPP2Test.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -190,7 +196,7 @@ public class BarcodeEANTest extends ExtendedITextTest {
     @Test
     public void placeBarcodeSUPP5Test() throws IOException, PdfException, InterruptedException {
         String filename = "placeBarcodeSUPP5Test.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();

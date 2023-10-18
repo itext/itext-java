@@ -31,6 +31,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,6 +47,11 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     //TODO: update cmp-files when DEVSIX-3635 will be fixed
     public void addNewPageToDocumentWithInheritedPageRotationTest() throws InterruptedException, IOException {
@@ -53,7 +59,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
         String outputFileName = destinationFolder + "addNewPageToDocumentWithInheritedPageRotation.pdf";
         String cmpFileName = sourceFolder + "cmp_addNewPageToDocumentWithInheritedPageRotation.pdf";
 
-        PdfDocument outFile = new PdfDocument(new PdfReader(inputFileName), new PdfWriter(outputFileName));
+        PdfDocument outFile = new PdfDocument(new PdfReader(inputFileName), CompareTool.createTestPdfWriter(outputFileName));
 
         PdfPage page = outFile.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -76,7 +82,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_setRotationToPage.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader
-                (sourceFolder + "srcFileTestRotationInheritance.pdf"), new PdfWriter(outputFileName));
+                (sourceFolder + "srcFileTestRotationInheritance.pdf"), CompareTool.createTestPdfWriter(outputFileName));
 
         PdfPage page = pdfDoc.getPage(1);
         page.setRotation(90);
@@ -96,7 +102,7 @@ public class InheritedPageEntriesTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc2 = new PdfDocument(new PdfReader
                 (sourceFolder + "addSeveralPagesToDocumentWithInheritedPageRotation.pdf"),
-                new PdfWriter(outputFileName));
+                CompareTool.createTestPdfWriter(outputFileName));
 
         pdfDoc1.copyPagesTo(1, 2, pdfDoc2);
         pdfDoc1.close();

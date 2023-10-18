@@ -72,6 +72,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -123,6 +124,11 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
         Security.addProvider(FACTORY.getProvider());
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -317,7 +323,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         setPublicKeySecurityParams(getPublicCertificate(CERT), getPrivateKey(),
                                 FACTORY.getProviderName(), null)));
         String fileName = "copiedEncryptedDoc.pdf";
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
         srcDoc.copyPagesTo(1, 1, destDoc);
 
         PdfDictionary srcInfo = srcDoc.getTrailer().getAsDictionary(PdfName.Info);
@@ -356,7 +362,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         String fileName = "stampedNoPassword.pdf";
 
         try (PdfReader reader = new PdfReader(sourceFolder + "noUserPassword.pdf");
-                PdfWriter writer = new PdfWriter(destinationFolder + fileName)) {
+                PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + fileName)) {
 
             Exception e = Assert.assertThrows(BadPasswordException.class, () -> new PdfDocument(reader, writer));
             Assert.assertEquals(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword, e.getMessage());
@@ -372,7 +378,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
-        PdfWriter writer = new PdfWriter(outFileName,
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setStandardEncryption(USER, OWNER, permissions, encryptionType).addXmpMetadata()
         );
         PdfDocument document = new PdfDocument(writer);
@@ -424,7 +430,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(
                 new PdfReader(src, new ReaderProperties().setPassword(OWNER)),
-                new PdfWriter(out, new WriterProperties()),
+                CompareTool.createTestPdfWriter(out, new WriterProperties()),
                 new StampingProperties().preserveEncryption());
 
         pdfDoc.close();
@@ -447,7 +453,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(
                 new PdfReader(src, new ReaderProperties().setPassword(OWNER)),
-                new PdfWriter(out, new WriterProperties()
+                CompareTool.createTestPdfWriter(out, new WriterProperties()
                         .setStandardEncryption(USER, OWNER, EncryptionConstants.ALLOW_PRINTING,
                                 EncryptionConstants.STANDARD_ENCRYPTION_40)),
                 new StampingProperties());
@@ -499,7 +505,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(
                 new PdfReader(sourceFolder + "encryptedWithPasswordStandard40.pdf",
                         new ReaderProperties().setPassword(OWNER)),
-                new PdfWriter(destinationFolder + filename,
+                CompareTool.createTestPdfWriter(destinationFolder + filename,
                         new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 new StampingProperties().preserveEncryption());
         doc.close();
@@ -516,7 +522,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(
                 new PdfReader(sourceFolder + "encryptedWithPasswordAes256.pdf",
                         new ReaderProperties().setPassword(OWNER)),
-                new PdfWriter(destinationFolder + filename,
+                CompareTool.createTestPdfWriter(destinationFolder + filename,
                         new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 new StampingProperties().preserveEncryption());
         doc.close();
@@ -531,7 +537,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(
                 new PdfReader(sourceFolder + "encryptedWithPasswordAes256.pdf",
                         new ReaderProperties().setPassword(OWNER)),
-                new PdfWriter(destinationFolder + filename,
+                CompareTool.createTestPdfWriter(destinationFolder + filename,
                         new WriterProperties()
                                 .setPdfVersion(PdfVersion.PDF_2_0)
                                 .setStandardEncryption(USER, OWNER, 0, EncryptionConstants.ENCRYPTION_AES_256)));
@@ -547,7 +553,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS
                 | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         PdfDocument doc = new PdfDocument(
-                new PdfWriter(destinationFolder + filename,
+                CompareTool.createTestPdfWriter(destinationFolder + filename,
                         new WriterProperties()
                                 .setPdfVersion(PdfVersion.PDF_2_0)
                                 .setStandardEncryption(USER, OWNER, permissions,
@@ -569,7 +575,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
                         EncryptionConstants.ALLOW_PRINTING,
                         EncryptionConstants.ENCRYPTION_AES_128 | EncryptionConstants.DO_NOT_ENCRYPT_METADATA);
         String outFilename = "encryptWithPasswordAes128NoMetadataCompression.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + outFilename, props);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + outFilename, props);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.close();
 
@@ -629,7 +635,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         if (isPdf2) {
             writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         }
-        PdfWriter writer = new PdfWriter(destinationFolder + filename, writerProperties.addXmpMetadata());
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename, writerProperties.addXmpMetadata());
         writer.setCompressionLevel(compression);
         PdfDocument document = new PdfDocument(writer);
         document.getDocumentInfo().setMoreInfo(customInfoEntryKey, customInfoEntryValue);
@@ -649,7 +655,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
-        PdfWriter writer = new PdfWriter(outFileName,
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties()
                         .setStandardEncryption(USER, OWNER, permissions, encryptionType)
                         .addXmpMetadata()
@@ -689,7 +695,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
     private static void checkDecryptedWithPasswordContent(String src, byte[] password, String pageContent,
             boolean expectError) throws IOException {
-        PdfReader reader = new com.itextpdf.kernel.pdf.PdfReader(src, new ReaderProperties().setPassword(password));
+        PdfReader reader = CompareTool.createOutputReader(src, new ReaderProperties().setPassword(password));
         PdfDocument document = new com.itextpdf.kernel.pdf.PdfDocument(reader);
         PdfPage page = document.getPage(1);
 
@@ -713,8 +719,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "stamped_" + filename;
-        PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(password));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName));
+        PdfReader reader = CompareTool.createOutputReader(srcFileName, new ReaderProperties().setPassword(password));
+        PdfDocument document = new PdfDocument(reader, CompareTool.createTestPdfWriter(outFileName));
         document.close();
 
         CompareTool compareTool = new CompareTool();
@@ -731,8 +737,8 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "appended_" + filename;
-        PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(password));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName),
+        PdfReader reader = CompareTool.createOutputReader(srcFileName, new ReaderProperties().setPassword(password));
+        PdfDocument document = new PdfDocument(reader, CompareTool.createTestPdfWriter(outFileName),
                 new StampingProperties().useAppendMode());
         PdfPage newPage = document.addNewPage();
         newPage.put(PdfName.Default, new PdfString("Hello world string"));

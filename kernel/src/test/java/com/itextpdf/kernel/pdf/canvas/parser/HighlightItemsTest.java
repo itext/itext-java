@@ -43,8 +43,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -55,9 +57,14 @@ public class HighlightItemsTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/HighlightItemsTest/";
     private static final String outputPath = "./target/test/com/itextpdf/kernel/parser/HighlightItemsTest/";
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void beforeClass() {
         createDestinationFolder(outputPath);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(outputPath);
     }
 
     @Test
@@ -65,7 +72,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "page229.pdf";
         String output = outputPath + "page229.pdf";
         String cmp = sourceFolder + "cmp_page229.pdf";
-        parseAndHighlight(input, output, false);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, false);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -74,7 +82,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "page229.pdf";
         String output = outputPath + "page229_characters.pdf";
         String cmp = sourceFolder + "cmp_page229_characters.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -83,7 +92,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "ISO-TC171-SC2_N0896_SC2WG5_Edinburgh_Agenda.pdf";
         String output = outputPath + "SC2_N0896_SC2WG5_Edinburgh_Agenda.pdf";
         String cmp = sourceFolder + "cmp_ISO-TC171-SC2_N0896_SC2WG5_Edinburgh_Agenda.pdf";
-        parseAndHighlight(input, output, false);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, false);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -92,7 +102,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "ISO-TC171-SC2_N0896_SC2WG5_Edinburgh_Agenda.pdf";
         String output = outputPath + "ISO-TC171-SC2_N0896_SC2WG5_Edinburgh_Agenda_characters.pdf";
         String cmp = sourceFolder + "cmp_ISO-TC171-SC2_N0896_SC2WG5_Edinburgh_Agenda_characters.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -101,7 +112,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "HeaderFooter.pdf";
         String output = outputPath + "HeaderFooter.pdf";
         String cmp = sourceFolder + "cmp_HeaderFooter.pdf";
-        parseAndHighlight(input, output, false);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, false);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -110,7 +122,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "HeaderFooter.pdf";
         String output = outputPath + "HeaderFooter_characters.pdf";
         String cmp = sourceFolder + "cmp_HeaderFooter_characters.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -119,7 +132,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "reference_page2.pdf";
         String output = outputPath + "reference_page2_characters.pdf";
         String cmp = sourceFolder + "cmp_reference_page2_characters.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -128,7 +142,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "reference_page832.pdf";
         String output = outputPath + "reference_page832_characters.pdf";
         String cmp = sourceFolder + "cmp_reference_page832_characters.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -137,7 +152,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "reference_page604.pdf";
         String output = outputPath + "reference_page604_characters.pdf";
         String cmp = sourceFolder + "cmp_reference_page604_characters.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -146,7 +162,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "notdefWidth.pdf";
         String output = outputPath + "notdefWidth_highlighted.pdf";
         String cmp = sourceFolder + "cmp_notdefWidth.pdf";
-        parseAndHighlight(input, output, false);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, false);
         Assert.assertEquals(null, new CompareTool().compareByContent(output, cmp, outputPath, "diff"));
     }
 
@@ -155,7 +172,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "fillStandardEncodingType1NoDescriptorTest.pdf";
         String output = outputPath + "fillStandardEncodingType1NoDescriptorTest.pdf";
         String cmp = sourceFolder + "cmp_fillStandardEncodingType1NoDescriptorTest.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
@@ -164,7 +182,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "fillStandardEncodingTrueTypeFontDescriptorTest.pdf";
         String output = outputPath + "fillStandardEncodingTrueTypeFontDescriptorTest.pdf";
         String cmp = sourceFolder + "cmp_fillStandardEncodingTrueTypeFontDescriptorTest.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
@@ -173,7 +192,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "fillStandardEncodingType1FontDescriptorTest.pdf";
         String output = outputPath + "fillStandardEncodingType1FontDescriptorTest.pdf";
         String cmp = sourceFolder + "cmp_fillStandardEncodingType1FontDescriptorTest.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
@@ -184,7 +204,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "incorrectAscentFontDescriptorTest.pdf";
         String output = outputPath + "incorrectAscentFontDescriptorTest.pdf";
         String cmp = sourceFolder + "cmp_incorrectAscentFontDescriptorTest.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
@@ -193,7 +214,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "incorrectDescentFontDescriptorTest.pdf";
         String output = outputPath + "incorrectDescentFontDescriptorTest.pdf";
         String cmp = sourceFolder + "cmp_incorrectDescentFontDescriptorTest.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
@@ -202,7 +224,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "fontDictWidthArrayMissingWidthTest.pdf";
         String output = outputPath + "fontDictWidthArrayMissingWidthTest.pdf";
         String cmp = sourceFolder + "cmp_fontDictWidthArrayMissingWidthTest.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
@@ -211,7 +234,8 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "trueTypeCIDFontWithDWWithoutProperWidthGlyphTest.pdf";
         String output = outputPath + "trueTypeCIDFontWithDWWithoutProperWidthGlyphTest.pdf";
         String cmp = sourceFolder + "cmp_trueTypeCIDFontWithDWWithoutProperWidthGlyphTest.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
@@ -221,12 +245,13 @@ public class HighlightItemsTest extends ExtendedITextTest {
         String input = sourceFolder + "invalidHighlight.pdf";
         String output = outputPath + "invalidHighlightOutput.pdf";
         String cmp = sourceFolder + "cmp_invalidHighlight.pdf";
-        parseAndHighlight(input, output, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(output);
+        parseAndHighlight(input, writer, true);
         Assert.assertNull(new CompareTool().compareByContent(output, cmp, outputPath));
     }
 
-    private void parseAndHighlight(String input, String output, boolean singleCharacters) throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), new PdfWriter(output));
+    private void parseAndHighlight(String input, PdfWriter writer, boolean singleCharacters) throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), writer);
 
         MyEventListener myEventListener = singleCharacters ? new MyCharacterEventListener() : new MyEventListener();
         PdfDocumentContentParser parser = new PdfDocumentContentParser(pdfDocument);

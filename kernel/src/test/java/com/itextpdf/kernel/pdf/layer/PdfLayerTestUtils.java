@@ -73,8 +73,8 @@ class PdfLayerTestUtils {
     static void compareLayers(String outPdf, String cmpPdf) throws IOException {
         ITextTest.printOutCmpPdfNameAndDir(outPdf, cmpPdf);
         System.out.println();
-        try (PdfDocument outDoc = new PdfDocument(new PdfReader(outPdf))) {
-            try (PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpPdf))) {
+        try (PdfDocument outDoc = new PdfDocument(CompareTool.createOutputReader(outPdf))) {
+            try (PdfDocument cmpDoc = new PdfDocument(CompareTool.createOutputReader(cmpPdf))) {
                 PdfDictionary outOCP = outDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
                 PdfDictionary cmpOCP = cmpDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
                 Assert.assertNull(new CompareTool().compareDictionariesStructure(outOCP, cmpOCP));

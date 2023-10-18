@@ -49,6 +49,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,9 +66,14 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void addLinkAnnotation01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "linkAnnotation01.pdf"));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotation01.pdf"));
 
         PdfPage page1 = document.addNewPage();
         PdfPage page2 = document.addNewPage();
@@ -104,7 +110,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addLinkAnnotation02() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "linkAnnotation02.pdf"));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotation02.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -132,7 +138,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addAndGetLinkAnnotations() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "linkAnnotation03.pdf"));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotation03.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -168,7 +174,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
                 .compareByContent(destinationFolder + "linkAnnotation03.pdf", sourceFolder + "cmp_linkAnnotation03.pdf",
                         destinationFolder, "diff_"));
 
-        document = new PdfDocument(new PdfReader(destinationFolder + "linkAnnotation03.pdf"));
+        document = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "linkAnnotation03.pdf"));
         page = document.getPage(1);
         Assert.assertEquals(3, page.getAnnotsSize());
         List<PdfAnnotation> annotations = page.getAnnotations();
@@ -183,7 +189,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET)})
     public void linkAnnotationActionDestinationTest() throws IOException, InterruptedException {
         String fileName = "linkAnnotationActionDestinationTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream(destinationFolder + fileName)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
         PdfArray array = new PdfArray();
         array.add(pdfDocument.addNewPage().getPdfObject());
         array.add(PdfName.XYZ);
@@ -210,7 +216,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         String input = sourceFolder + "taggedLinkAnnotationAsLink.pdf";
         String output = destinationFolder + "removeLinkAnnotationTaggedAsLinkTest.pdf";
         String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationTaggedAsLinkTest.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output))) {
             PdfPage page = pdfDoc.getPage(1);
             page.removeAnnotation(page.getAnnotations().get(0));
         }
@@ -223,7 +229,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         String input = sourceFolder + "taggedLinkAnnotationAsAnnot.pdf";
         String output = destinationFolder + "removeLinkAnnotationTaggedAsAnnotTest.pdf";
         String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationTaggedAsAnnotTest.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output))) {
             PdfPage page = pdfDoc.getPage(1);
             page.removeAnnotation(page.getAnnotations().get(0));
         }
@@ -236,7 +242,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         String input = sourceFolder + "taggedLinkAnnotationTagWithContent.pdf";
         String output = destinationFolder + "removeLinkAnnotationTagWithContentTest.pdf";
         String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationTagWithContentTest.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output))) {
             PdfPage page = pdfDoc.getPage(1);
             page.removeAnnotation(page.getAnnotations().get(0));
         }
@@ -249,7 +255,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         String input = sourceFolder + "taggedInvalidNoLinkAnnotationTag.pdf";
         String output = destinationFolder + "removeLinkAnnotationWithNoTagTest.pdf";
         String cmp =  sourceFolder + "cmp_" + "removeLinkAnnotationWithNoTagTest.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), new PdfWriter(output))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output))) {
             PdfPage page = pdfDoc.getPage(1);
             page.removeAnnotation(page.getAnnotations().get(0));
         }

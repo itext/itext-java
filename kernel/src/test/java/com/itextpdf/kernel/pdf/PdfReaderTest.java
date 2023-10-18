@@ -63,6 +63,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -84,18 +85,23 @@ public class PdfReaderTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+    
     @Test
     public void openSimpleDoc() throws IOException {
         String filename = DESTINATION_FOLDER + "openSimpleDoc.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
         pdfDoc.addNewPage();
         pdfDoc.close();
 
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         pdfDoc = new PdfDocument(reader);
         Assert.assertEquals(author, pdfDoc.getDocumentInfo().getAuthor());
         Assert.assertEquals(creator, pdfDoc.getDocumentInfo().getCreator());
@@ -242,13 +248,13 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void primitivesRead() throws IOException {
         String filename = DESTINATION_FOLDER + "primitivesRead.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
         catalog.put(new PdfName("a"), new PdfBoolean(true).makeIndirect(document));
         document.close();
 
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         document = new PdfDocument(reader);
 
         PdfObject object = document.getXref().get(1).getRefersTo();
@@ -279,7 +285,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void indirectsChain1() throws IOException {
         String filename = DESTINATION_FOLDER + "indirectsChain1.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
         PdfObject pdfObject = getTestPdfDictionary();
@@ -289,7 +295,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         catalog.put(new PdfName("a"), pdfObject);
         document.close();
 
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         document = new PdfDocument(reader);
 
         pdfObject = document.getXref().get(1).getRefersTo();
@@ -320,7 +326,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     @Test
     public void indirectsChain2() throws IOException {
         String filename = DESTINATION_FOLDER + "indirectsChain2.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         document.addNewPage();
         PdfDictionary catalog = document.getCatalog().getPdfObject();
         PdfObject pdfObject = getTestPdfDictionary();
@@ -330,7 +336,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         catalog.put(new PdfName("a"), pdfObject);
         document.close();
 
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         document = new PdfDocument(reader);
 
         pdfObject = document.getXref().get(1).getRefersTo();
@@ -1608,7 +1614,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         String outputFile = DESTINATION_FOLDER + "freeReferences02.pdf";
         String inputFile = SOURCE_FOLDER + "freeReferences02.pdf";
 
-        PdfWriter writer = new PdfWriter(outputFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFile);
         PdfReader reader = new PdfReader(inputFile);
 
         PdfDocument inputPdfDocument = new PdfDocument(reader);
@@ -1676,7 +1682,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         //wrong /Pg number
         String source = SOURCE_FOLDER + "wrongTagStructureFlushingTest.pdf";
         String dest = DESTINATION_FOLDER + "wrongTagStructureFlushingTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(source), new PdfWriter(dest));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(source), CompareTool.createTestPdfWriter(dest));
         pdfDoc.setTagged();
         Assert.assertEquals(PdfNull.PDF_NULL, ((PdfDictionary) pdfDoc.getPdfObject(12)).get(PdfName.Pg));
         pdfDoc.close();
@@ -1691,7 +1697,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         //wrong /key number
         String source = SOURCE_FOLDER + "wrongStructureFlushingTest.pdf";
         String dest = DESTINATION_FOLDER + "wrongStructureFlushingTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(source), new PdfWriter(dest));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(source), CompareTool.createTestPdfWriter(dest));
         pdfDoc.close();
     }
 
@@ -2518,12 +2524,12 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         // Read/write pdf document to rewrite xref structure.
         try (PdfReader reader = new PdfReader(fileName);
-                PdfWriter writer = new PdfWriter(outputName);
+                PdfWriter writer = CompareTool.createTestPdfWriter(outputName);
                 PdfDocument document = new PdfDocument(reader, writer)) {
         }
 
         // Read and check that in created pdf we have valid xref prev.
-        try (PdfReader reader = new PdfReader(outputName);
+        try (PdfReader reader = CompareTool.createOutputReader(outputName);
                 PdfDocument document = new PdfDocument(reader)) {
             PdfDictionary trailer = document.getTrailer();
             Assert.assertNull(trailer.get(PdfName.Prev, false));
@@ -2545,13 +2551,13 @@ public class PdfReaderTest extends ExtendedITextTest {
         // Read and write document in append mode to not change previous xref prev.
         final StampingProperties properties = new StampingProperties().useAppendMode();
         try (PdfReader reader = new PdfReader(fileName);
-                PdfWriter writer = new PdfWriter(outputName);
+                PdfWriter writer = CompareTool.createTestPdfWriter(outputName);
                 PdfDocument document = new PdfDocument(reader, writer, properties)) {
             document.addNewPage();
         }
 
         // Read resulted document and check, that previous xref prev doesn't change and current is pdfNumber.
-        try (PdfReader reader = new PdfReader(outputName);
+        try (PdfReader reader = CompareTool.createOutputReader(outputName);
                 PdfDocument document = new PdfDocument(reader)) {
             final PdfDictionary trailer = document.getTrailer();
             Assert.assertFalse(trailer.get(PdfName.Prev, false).isIndirectReference());
@@ -2662,7 +2668,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void conformanceLevelCacheTest() throws IOException, XMPException {
         String filename = DESTINATION_FOLDER + "simpleDoc.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         XMPMeta xmp = XMPMetaFactory.create();
         xmp.appendArrayItem(XMPConst.NS_DC, "subject",
                 new PropertyOptions(PropertyOptions.ARRAY), "Hello World", null);
@@ -2671,7 +2677,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         pdfDoc.addNewPage();
         pdfDoc.close();
 
-        TestPdfDocumentCache pdfTestDoc = new TestPdfDocumentCache(new PdfReader(filename));
+        TestPdfDocumentCache pdfTestDoc = new TestPdfDocumentCache(CompareTool.createOutputReader(filename));
         for (int i = 0; i < 1000; ++i) {
             pdfTestDoc.getReader().getPdfAConformanceLevel();
         }

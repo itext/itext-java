@@ -42,6 +42,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,6 +58,11 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER),
@@ -66,7 +72,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     })
     public void inlineImagesTest01() throws IOException, InterruptedException {
         String filename = "inlineImages01.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -94,7 +100,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     })
     public void inlineImagesTest02() throws IOException, InterruptedException {
         String filename = "inlineImages02.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -143,7 +149,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     @Test
     public void inlineImagesTest03() throws IOException, InterruptedException {
         String filename = "inlineImages03.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename,
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename,
                 new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0))
                 .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
 
@@ -162,7 +168,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     //TODO update cmp-files after DEVSIX-3564 will be fixed
     public void inlineImagesPngTest() throws IOException, InterruptedException {
         String filename = "inlineImagePng.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -178,7 +184,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
     //TODO update cmp-files after DEVSIX-3564 will be fixed
     public void inlineImagesPngErrorWhileOpenTest() throws IOException, InterruptedException {
         String filename = "inlineImagePngErrorWhileOpen.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);

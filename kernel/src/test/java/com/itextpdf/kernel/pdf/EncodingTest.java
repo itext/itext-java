@@ -32,6 +32,8 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,10 +52,15 @@ public class EncodingTest extends ExtendedITextTest {
         createDestinationFolder(outputFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(outputFolder);
+    }
+
     @Test
     public void surrogatePairTest() throws IOException, InterruptedException {
         String fileName = "surrogatePairTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "DejaVuSans.ttf", PdfEncodings.IDENTITY_H);
@@ -76,7 +83,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void customSimpleEncodingTimesRomanTest() throws IOException, InterruptedException {
         String fileName = "customSimpleEncodingTimesRomanTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
@@ -100,7 +107,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void customFullEncodingTimesRomanTest() throws IOException, InterruptedException {
         String fileName = "customFullEncodingTimesRomanTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN,
@@ -122,7 +129,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void notdefInStandardFontTest() throws IOException, InterruptedException {
         String fileName = "notdefInStandardFontTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA,
@@ -156,7 +163,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void notdefInTrueTypeFontTest() throws IOException, InterruptedException {
         String fileName = "notdefInTrueTypeFontTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
                 "# simple 32 0020 00C5 1987", EmbeddingStrategy.PREFER_EMBEDDED);
@@ -188,7 +195,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void notdefInType0Test() throws IOException, InterruptedException {
         String fileName = "notdefInType0Test.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
@@ -210,7 +217,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void symbolDefaultFontTest() throws IOException, InterruptedException {
         String fileName = "symbolDefaultFontTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.SYMBOL);
@@ -263,7 +270,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void symbolTrueTypeFontWinAnsiTest() throws IOException, InterruptedException {
         String fileName = "symbolTrueTypeFontWinAnsiTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.WINANSI,
@@ -311,7 +318,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void symbolTrueTypeFontIdentityTest() throws IOException, InterruptedException {
         String fileName = "symbolTrueTypeFontIdentityTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
@@ -362,7 +369,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void symbolTrueTypeFontSameCharsIdentityTest() throws IOException, InterruptedException {
         String fileName = "symbolTrueTypeFontSameCharsIdentityTest.pdf";
-        PdfWriter writer = new PdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);

@@ -53,6 +53,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,6 +74,11 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     public static void setUpBeforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -145,7 +151,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
             writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         }
 
-        try (PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
+        try (PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
                 PdfDocument document = new PdfDocument(writer)) {
             writeTextToDocument(document);
         }
@@ -158,7 +164,7 @@ public class PdfEncryptingTest extends ExtendedITextTest {
         Certificate certificate = CryptoUtil.readPublicCertificate(new FileInputStream(CERTS_SRC + certificatePath));
         WriterProperties writerProperties = new WriterProperties().setPublicKeyEncryption(
                 new Certificate[] {certificate}, new int[] {-1}, EncryptionConstants.ENCRYPTION_AES_256);
-        try (PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
+        try (PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName, writerProperties.addXmpMetadata());
                 PdfDocument document = new PdfDocument(writer)) {
             writeTextToDocument(document);
         }

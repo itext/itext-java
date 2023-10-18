@@ -35,6 +35,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,6 +50,11 @@ public class CreateImageStreamTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -68,7 +74,7 @@ public class CreateImageStreamTest extends ExtendedITextTest {
         String out = destinationFolder + "compareColorspacesTest.pdf";
         String cmp = sourceFolder + "cmp_compareColorspacesTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(out));
         PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
         canvas.beginText().moveText(40, 730).setFontAndSize(PdfFontFactory.createFont(), 12)
                 .showText("The images below are in row and expected to form four continuous lines of constant colors.")
@@ -130,7 +136,7 @@ public class CreateImageStreamTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp_" + imgName.substring(0, imgName.length() - 4) + ".pdf";
 
         ImageData img = ImageDataFactory.create(sourceFolder + imgName);
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(out));
         PdfImageXObject imageXObject = new PdfImageXObject(img);
         new PdfCanvas(pdfDocument.addNewPage(new PageSize(img.getWidth(), img.getHeight())))
                 .addXObjectFittedIntoRectangle(imageXObject, new Rectangle(0, 0, img.getWidth(), img.getHeight()));

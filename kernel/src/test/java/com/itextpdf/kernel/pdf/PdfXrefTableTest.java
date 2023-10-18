@@ -22,11 +22,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,11 +45,16 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void testCreateAndUpdateXMP() throws IOException {
         String created = destinationFolder + "testCreateAndUpdateXMP_create.pdf";
         String updated = destinationFolder + "testCreateAndUpdateXMP_update.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
 
         // create XMP metadata
@@ -55,7 +62,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated));
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(created), CompareTool.createTestPdfWriter(updated));
         PdfXrefTable xref = pdfDocument.getXref();
 
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
@@ -89,7 +96,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         String created = destinationFolder + "testCreateAndUpdateTwiceXMP_create.pdf";
         String updated = destinationFolder + "testCreateAndUpdateTwiceXMP_update.pdf";
         String updatedAgain = destinationFolder + "testCreateAndUpdateTwiceXMP_updatedAgain.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(created));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(created));
         pdfDocument.addNewPage();
 
         // create XMP metadata
@@ -97,7 +104,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        pdfDocument = new PdfDocument(new PdfReader(created), new PdfWriter(updated));
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(created), CompareTool.createTestPdfWriter(updated));
 
         PdfDictionary catalog = pdfDocument.getCatalog().getPdfObject();
         ((PdfIndirectReference)catalog.remove(PdfName.Metadata)).setFree();
@@ -105,7 +112,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        pdfDocument = new PdfDocument(new PdfReader(updated), new PdfWriter(updatedAgain));
+        pdfDocument = new PdfDocument(CompareTool.createOutputReader(updated), CompareTool.createTestPdfWriter(updatedAgain));
 
         catalog = pdfDocument.getCatalog().getPdfObject();
         ((PdfIndirectReference)catalog.remove(PdfName.Metadata)).setFree();

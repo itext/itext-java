@@ -35,6 +35,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,6 +55,11 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -268,7 +274,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
     private void generateAndComparePdfs(String fileName, AffineTransform transform,
             AbstractLinearGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         String outPdfPath = destinationFolder + fileName;
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new File(outPdfPath)))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath))) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
             if (transform != null) {

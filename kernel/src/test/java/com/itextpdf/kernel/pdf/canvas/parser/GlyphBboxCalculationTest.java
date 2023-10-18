@@ -39,6 +39,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.util.ArrayList;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,6 +60,11 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -97,7 +103,7 @@ public class GlyphBboxCalculationTest extends ExtendedITextTest {
     public void type3FontsWithIdentityFontMatrixAndMultiplier() throws IOException, InterruptedException {
         String inputPdf = sourceFolder + "type3FontsWithIdentityFontMatrixAndMultiplier.pdf";
         String outputPdf = destinationFolder +  "type3FontsWithIdentityFontMatrixAndMultiplier.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputPdf), new PdfWriter(outputPdf));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputPdf), CompareTool.createTestPdfWriter(outputPdf));
         CharacterPositionEventListener listener = new CharacterPositionEventListener();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
         processor.processPageContent(pdfDocument.getPage(1));

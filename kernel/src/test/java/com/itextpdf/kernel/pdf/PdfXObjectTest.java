@@ -39,6 +39,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,11 +69,15 @@ public class PdfXObjectTest extends ExtendedITextTest{
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void createDocumentFromImages1() throws IOException,  InterruptedException {
         final String destinationDocument = DESTINATION_FOLDER + "documentFromImages1.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationDocument);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = new PdfWriter(destinationDocument);
         PdfDocument document = new PdfDocument(writer);
         PdfImageXObject[] images = new PdfImageXObject[4];
         for (int i = 0; i < 4; i++) {
@@ -108,8 +113,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
     })
     public void createDocumentFromImages2() throws IOException,  InterruptedException {
         final String destinationDocument = DESTINATION_FOLDER + "documentFromImages2.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationDocument);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationDocument);
         PdfDocument document = new PdfDocument(writer);
 
         ImageData image = ImageDataFactory.create(SOURCE_FOLDER + "itext.jpg");
@@ -129,8 +133,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
     @Test
     public void createDocumentWithForms() throws IOException,  InterruptedException {
         final String destinationDocument = DESTINATION_FOLDER + "documentWithForms1.pdf";
-        FileOutputStream fos = new FileOutputStream(destinationDocument);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationDocument);
         PdfDocument document = new PdfDocument(writer);
 
         //Create form XObject and flush to document.
@@ -180,7 +183,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         String src = SOURCE_FOLDER + "checkboxes_XObject_iterative_reference.pdf";
         String dest = DESTINATION_FOLDER + "checkboxes_XObject_iterative_reference_out.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(dest).setSmartMode(true));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(dest).setSmartMode(true));
         PdfReader pdfReader = new PdfReader(src);
         PdfDocument sourceDocumentPdf = new PdfDocument(pdfReader);
         sourceDocumentPdf.copyPagesTo(1, sourceDocumentPdf.getNumberOfPages(), pdf);
@@ -256,8 +259,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         final String fileName = "calculateProportionallyFitRectangleWithWidthTest.pdf";
         final String destPdf = DESTINATION_FOLDER + fileName;
         final String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
-        FileOutputStream fos = new FileOutputStream(destPdf);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destPdf);
         PdfDocument document = new PdfDocument(writer);
 
         PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(5, 5, 15, 20));
@@ -297,8 +299,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         final String fileName = "calculateProportionallyFitRectangleWithHeightTest.pdf";
         final String destPdf = DESTINATION_FOLDER + fileName;
         final String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
-        FileOutputStream fos = new FileOutputStream(destPdf);
-        PdfWriter writer = new PdfWriter(fos);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destPdf);
         PdfDocument document = new PdfDocument(writer);
 
         PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(5, 5, 15, 20));

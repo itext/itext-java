@@ -34,6 +34,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -172,6 +174,11 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
             ignore = true))
@@ -195,7 +202,7 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties()
                 .setStandardEncryption(PdfEncryptionTest.USER, ownerPassword, permissions, EncryptionConstants.ENCRYPTION_AES_256)
                 .setPdfVersion(PdfVersion.PDF_2_0);
-        PdfWriter writer = new PdfWriter(destinationFolder + filename, writerProperties.addXmpMetadata());
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename, writerProperties.addXmpMetadata());
         PdfDocument document = new PdfDocument(writer);
         document.getDocumentInfo().setMoreInfo(PdfEncryptionTest.customInfoEntryKey, PdfEncryptionTest.customInfoEntryValue);
         PdfPage page = document.addNewPage();

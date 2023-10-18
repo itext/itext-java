@@ -59,6 +59,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,9 +85,14 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void addTextAnnotation01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "textAnnotation01.pdf"));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "textAnnotation01.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -108,7 +115,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void caretTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "caretAnnotation.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -154,7 +161,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
 
     @Test
     public void addFreeTextAnnotation01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "freeTextAnnotation01.pdf"));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "freeTextAnnotation01.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -175,7 +182,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
 
     @Test
     public void addSquareAndCircleAnnotations01() throws Exception {
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "squareAndCircleAnnotations01.pdf"));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "squareAndCircleAnnotations01.pdf"));
 
         PdfPage page = document.addNewPage();
 
@@ -196,7 +203,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void fileAttachmentTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "fileAttachmentAnnotation.pdf";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -221,7 +228,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     @Test
     public void fileAttachmentTargetTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "fileAttachmentTargetTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDoc, sourceFolder + "sample.pdf", null, "embedded_doc.pdf", null, null);
         PdfFileAttachmentAnnotation fileAttachmentAnnotation = new PdfFileAttachmentAnnotation(new Rectangle(300, 500, 50, 50), spec);
@@ -263,7 +270,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void noFileAttachmentTargetTest() throws IOException, InterruptedException {
         String fileName = "noFileAttachmentTargetTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
         pdfDoc.addNewPage();
 
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(400, 500, 50, 50));
@@ -300,7 +307,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
                 .restoreState();
         inputDoc.close();
 
-        PdfDocument finalDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())), new PdfWriter(fileName), new StampingProperties().useAppendMode());
+        PdfDocument finalDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())), CompareTool.createTestPdfWriter(fileName), new StampingProperties().useAppendMode());
         PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(finalDoc, "Some test".getBytes(), null, "test.txt", null);
         finalDoc.addFileAttachment("some_test", spec);
         finalDoc.close();
@@ -313,7 +320,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void rubberStampTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "rubberStampAnnotation01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
@@ -373,7 +380,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void rubberStampWrongStampTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "rubberStampAnnotation02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
         PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
@@ -396,7 +403,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void inkTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "inkAnnotation01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -431,7 +438,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void printerMarkText() throws IOException, InterruptedException {
         String filename = destinationFolder + "printerMarkAnnotation01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page1 = pdfDoc.addNewPage();
 
         PdfCanvas canvasText = new PdfCanvas(page1);
@@ -471,7 +478,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void trapNetworkText() throws IOException, InterruptedException {
         String filename = destinationFolder + "trapNetworkAnnotation01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page = pdfDoc.addNewPage();
 
@@ -514,7 +521,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void waterMarkTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "watermarkAnnotation01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -558,7 +565,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public void redactionTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "redactionAnnotation01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfPage page1 = pdfDoc.addNewPage();
 
@@ -630,7 +637,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
         String cmpPath = sourceFolder + "cmp_" + name + ".pdf";
         String diff = "diff_" + name + "_";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPath), new PdfWriter(outPath));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPath), CompareTool.createTestPdfWriter(outPath));
         PdfPage page = pdfDoc.getPage(1);
 
         Rectangle rect = new Rectangle(20, 700, 250, 50);
@@ -703,7 +710,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     @Test
     public void add3dAnnotationTest() throws IOException, InterruptedException {
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "add3DAnnotation01.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "add3DAnnotation01.pdf"));
         Rectangle rect = new Rectangle(100, 400, 400, 400);
 
         PdfStream stream3D = new PdfStream(pdfDoc, new FileInputStream(sourceFolder + "teapot.u3d"));

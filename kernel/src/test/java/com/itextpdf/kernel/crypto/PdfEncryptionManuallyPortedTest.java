@@ -58,6 +58,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -103,6 +104,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         Security.addProvider(FACTORY.getProvider());
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
@@ -212,7 +217,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         Certificate cert = getPublicCertificate(CERT);
-        PdfWriter writer = new PdfWriter(outFileName, new WriterProperties()
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName, new WriterProperties()
                 .setPublicKeyEncryption(new Certificate[] {cert}, new int[] {permissions}, encryptionType)
                 .addXmpMetadata());
         writer.setCompressionLevel(compression);
@@ -258,7 +263,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
     public void checkDecryptedWithCertificateContent(String filename, Certificate certificate, String pageContent)
             throws IOException, AbstractPKCSException, AbstractOperatorCreationException {
         String src = destinationFolder + filename;
-        PdfReader reader = new PdfReader(src, new ReaderProperties()
+        PdfReader reader = CompareTool.createOutputReader(src, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument document = new PdfDocument(reader);
         PdfPage page = document.getPage(1);
@@ -277,9 +282,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             throws IOException, InterruptedException, AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "stamped_" + filename;
-        PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
+        PdfReader reader = CompareTool.createOutputReader(srcFileName, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName));
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
+        PdfDocument document = new PdfDocument(reader, writer);
         document.close();
 
         CompareTool compareTool = new CompareTool();
@@ -297,9 +303,10 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
             throws IOException, InterruptedException, AbstractPKCSException, AbstractOperatorCreationException {
         String srcFileName = destinationFolder + filename;
         String outFileName = destinationFolder + "appended_" + filename;
-        PdfReader reader = new PdfReader(srcFileName, new ReaderProperties()
+        PdfReader reader = CompareTool.createOutputReader(srcFileName, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
-        PdfDocument document = new PdfDocument(reader, new PdfWriter(outFileName),
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
+        PdfDocument document = new PdfDocument(reader, writer,
                 new StampingProperties().useAppendMode());
         PdfPage newPage = document.addNewPage();
         String helloWorldStringValue = "Hello world string";
@@ -307,7 +314,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         writeTextBytesOnPageContent(newPage, "Hello world page_2!");
         document.close();
 
-        PdfReader appendedDocReader = new PdfReader(outFileName, new ReaderProperties()
+        PdfReader appendedDocReader = CompareTool.createOutputReader(outFileName, new ReaderProperties()
                 .setPublicKeySecurityParams(certificate, getPrivateKey(), FACTORY.getProviderName(), null));
         PdfDocument appendedDoc = new PdfDocument(appendedDocReader);
         PdfPage secondPage = appendedDoc.getPage(2);

@@ -48,6 +48,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,13 +64,18 @@ public class CreateShadingTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void createAxialShadingWithStitchingFunctionTest() throws IOException {
         String testName = "createAxialShadingWithStitchingFunctionTest";
         String outName = destinationFolder + testName + ".pdf";
         String cmpName = sourceFolder + "cmp_" + testName + ".pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outName));
         PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
 
         int x0 = 40;
@@ -96,7 +102,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         String input = sourceFolder + "axialShading.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(input), new PdfWriter(outName),
+                new PdfReader(input), CompareTool.createTestPdfWriter(outName),
                 new StampingProperties().useAppendMode());
 
         PdfResources resources = pdfDocument.getPage(1).getResources();
@@ -122,7 +128,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         String outName = destinationFolder + testName + ".pdf";
         String cmpName = sourceFolder + "cmp_" + testName + ".pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outName));
         PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
 
         int x0 = 100;
@@ -151,7 +157,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         String outName = destinationFolder + testName + ".pdf";
         String cmpName = sourceFolder + "cmp_" + testName + ".pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outName));
         PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
 
         int x0 = 40;
@@ -180,7 +186,7 @@ public class CreateShadingTest extends ExtendedITextTest {
         String input = sourceFolder + "radialShading.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(input), new PdfWriter(outName),
+                new PdfReader(input), CompareTool.createTestPdfWriter(outName),
                 new StampingProperties().useAppendMode());
 
         PdfResources resources = pdfDocument.getPage(1).getResources();
@@ -220,8 +226,8 @@ public class CreateShadingTest extends ExtendedITextTest {
     private static void assertShadingDictionaryResult(String outName, String cmpName, String shadingResourceName) throws IOException {
         printOutCmpPdfNameAndDir(outName, cmpName);
 
-        PdfDocument outPdf = new PdfDocument(new PdfReader(outName));
-        PdfDocument cmpPdf = new PdfDocument(new PdfReader(cmpName));
+        PdfDocument outPdf = new PdfDocument(CompareTool.createOutputReader(outName));
+        PdfDocument cmpPdf = new PdfDocument(CompareTool.createOutputReader(cmpName));
 
         PdfName resName = new PdfName(shadingResourceName);
         PdfObject outShDictionary = outPdf.getPage(1).getResources().getResourceObject(PdfName.Shading, resName);
