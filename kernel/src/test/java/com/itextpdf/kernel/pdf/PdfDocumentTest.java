@@ -610,6 +610,13 @@ public class PdfDocumentTest extends ExtendedITextTest {
         Assert.assertNotNull(document.getDiContainer());
     }
 
+    @Test
+    public void getDefaultConformanceLevelTest() {
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Assert.assertNull(document.getConformanceLevel());
+    }
+
+
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 
         IgnoreTagStructurePdfDocument(PdfReader reader) {

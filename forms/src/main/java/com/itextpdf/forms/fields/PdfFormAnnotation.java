@@ -823,7 +823,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                 continue;
             }
 
-            final boolean selected = indices == null ? false : indices.contains(new PdfNumber(index));
+            final boolean selected = indices != null && indices.contains(new PdfNumber(index));
             SelectFieldItem existingItem = ((ListBoxField) formFieldElement).getOption(exportValue);
             if (existingItem == null) {
                 existingItem = new SelectFieldItem(exportValue, displayValue);
@@ -1045,6 +1045,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     boolean regenerateWidget() {
+        if (fontRequiredForRegeneration()) {
+            return false;
+        }
+
         if (!isFieldRegenerationEnabled()) {
             return false;
         }
@@ -1085,6 +1089,16 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return true;
         }
         return false;
+    }
+
+    private boolean fontRequiredForRegeneration() {
+        if (getFont() != null) {
+            return false;
+        }
+        if (parent instanceof PdfButtonFormField) {
+            return ((PdfButtonFormField) parent).isPushButton();
+        }
+        return true;
     }
 
     void createInputButton() {

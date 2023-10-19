@@ -27,6 +27,7 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -269,6 +270,26 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      */
     protected String getLang() {
         return this.<String>getProperty(FormProperty.FORM_ACCESSIBILITY_LANGUAGE);
+    }
+
+
+    /**
+     * Gets the conformance level. If the conformance level is not set, the conformance level of the document is used.
+     *
+     * @param document the document
+     *
+     * @return the conformance level or null if the conformance level is not set.
+     */
+    protected PdfAConformanceLevel getConformanceLevel(PdfDocument document) {
+        final PdfAConformanceLevel conformanceLevel = this.<PdfAConformanceLevel>getProperty(
+                FormProperty.FORM_CONFORMANCE_LEVEL);
+        if (conformanceLevel != null) {
+            return conformanceLevel;
+        }
+        if (document == null) {
+            return null;
+        }
+        return document.getConformanceLevel();
     }
 
     /**

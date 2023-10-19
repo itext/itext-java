@@ -22,9 +22,17 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+
+import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class extends {@link PdfADocument} and serves as {@link PdfADocument} for
@@ -36,6 +44,8 @@ import com.itextpdf.kernel.pdf.StampingProperties;
  * as well as {@link com.itextpdf.pdfa.exceptions.PdfAConformanceException} for PDF/A documents.
  */
 public class PdfAAgnosticPdfDocument extends PdfADocument {
+
+    private PdfFont defaultFont;
 
     /**
      * Opens a PDF/A document in stamping mode.
@@ -56,5 +66,29 @@ public class PdfAAgnosticPdfDocument extends PdfADocument {
      */
     public PdfAAgnosticPdfDocument (PdfReader reader, PdfWriter writer, StampingProperties properties) {
         super(reader, writer, properties, true);
+    }
+
+    /**
+     * Get default font for the document: Helvetica, WinAnsi.
+     * One instance per document.
+     *
+     * @return instance of {@link PdfFont} or {@code null} on error.
+     */
+    @Override
+    public PdfFont getDefaultFont() {
+        // TODO DEVSIX-7850 investigate embedding default font into PDF/A documents while signing
+        if (defaultFont == null) {
+            try {
+                defaultFont = PdfFontFactory.createFont();
+                if (writer != null) {
+                    defaultFont.makeIndirect(this);
+                }
+            } catch (IOException e) {
+                Logger logger = LoggerFactory.getLogger(PdfDocument.class);
+                logger.error(IoLogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
+                defaultFont = null;
+            }
+        }
+        return defaultFont;
     }
 }

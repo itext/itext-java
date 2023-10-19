@@ -1142,6 +1142,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
     }
 
+
+    /**
+     * Get the {@link PdfAConformanceLevel}
+     *
+     * @return the {@link PdfAConformanceLevel}  will be null if the document is not a PDF/A document
+     */
+    public PdfAConformanceLevel getConformanceLevel() {
+        return null;
+    }
+
     /**
      * Copies a range of pages from current document to {@code toDocument}. This range is inclusive, both {@code page}
      * and {@code pageTo} are included in list of copied pages.

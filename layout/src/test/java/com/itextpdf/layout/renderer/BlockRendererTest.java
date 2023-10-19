@@ -22,8 +22,12 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -31,6 +35,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
@@ -113,4 +118,71 @@ public class BlockRendererTest extends ExtendedITextTest {
         document.close();
         Assert.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
+
+    @Test
+    public void resolveFontTest() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Div div = new Div();
+        div.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN));
+        DivRenderer renderer = (DivRenderer) div.getRenderer();
+        PdfFont font = renderer.getResolvedFont(pdfDocument);
+        Assert.assertEquals("Times-Roman", font.getFontProgram().getFontNames().getFontName());
+    }
+
+
+    @Test
+    public void resolveFontWithPdfDocumentNullTest() {
+        Div div = new Div();
+        DivRenderer renderer = (DivRenderer) div.getRenderer();
+        PdfFont font = renderer.getResolvedFont(null);
+        Assert.assertNull(font);
+    }
+
+
+    @Test
+    public void resolveFontFromFontProviderTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Div div = new Div();
+
+        FontProvider provider = new FontProvider();
+        provider.getFontSet().addFont(StandardFonts.COURIER, null, "courier");
+        div.setProperty(Property.FONT_PROVIDER, provider);
+        div.setProperty(Property.FONT, new String[] {"courier"});
+        DivRenderer renderer = (DivRenderer) div.getRenderer();
+        PdfFont font = renderer.getResolvedFont(pdfDocument);
+        Assert.assertEquals("Courier", font.getFontProgram().getFontNames().getFontName());
+    }
+
+
+    @Test
+    public void resolveFontFromFontProviderNullTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Div div = new Div();
+
+        div.setProperty(Property.FONT_PROVIDER, null);
+        div.setProperty(Property.FONT, new String[] {"courier"});
+        DivRenderer renderer = (DivRenderer) div.getRenderer();
+        PdfFont font = renderer.getResolvedFont(pdfDocument);
+        Assert.assertEquals("Helvetica", font.getFontProgram().getFontNames().getFontName());
+    }
+
+    @Test
+    public void resolveFontFromFontProviderNullAndDocNullTest() {
+        Div div = new Div();
+
+        div.setProperty(Property.FONT_PROVIDER, null);
+        div.setProperty(Property.FONT, new String[] {"courier"});
+        DivRenderer renderer = (DivRenderer) div.getRenderer();
+        PdfFont font = renderer.getResolvedFont(null);
+        Assert.assertNull(font);
+    }
+
 }
+
+
+
+
+
+
+
+

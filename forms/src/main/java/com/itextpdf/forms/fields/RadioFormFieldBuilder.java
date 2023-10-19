@@ -53,9 +53,11 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
      */
     public PdfButtonFormField createRadioGroup() {
         PdfButtonFormField radioGroup = PdfFormCreator.createButtonFormField(getDocument());
+        radioGroup.disableFieldRegeneration();
         radioGroup.pdfAConformanceLevel = getConformanceLevel();
         radioGroup.setFieldName(getFormFieldName());
         radioGroup.setFieldFlags(PdfButtonFormField.FF_RADIO);
+        radioGroup.enableFieldRegeneration();
         return radioGroup;
     }
 

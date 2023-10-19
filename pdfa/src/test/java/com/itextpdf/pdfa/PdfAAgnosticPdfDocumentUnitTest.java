@@ -76,6 +76,13 @@ public class PdfAAgnosticPdfDocumentUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getDefaultFont() throws IOException {
+        TestAgnosticPdfDocument pdfDoc = new TestAgnosticPdfDocument(new PdfReader(sourceFolder + "pdfs/simpleDoc.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
+        Assert.assertNotNull(pdfDoc.getDefaultFont());
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED)})
     public void loadPdfADocumentTest() throws IOException, XMPException {

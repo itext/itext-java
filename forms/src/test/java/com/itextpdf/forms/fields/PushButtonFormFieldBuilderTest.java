@@ -36,12 +36,12 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
@@ -113,6 +113,7 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
         putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Btn);
         putIfAbsent(expectedDictionary, PdfName.Ff, new PdfNumber(PdfButtonFormField.FF_PUSH_BUTTON));
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
+        putIfAbsent(expectedDictionary, PdfName.DA, pushButtonFormField.getPdfObject().get(PdfName.DA));
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         pushButtonFormField.makeIndirect(DUMMY_DOCUMENT);

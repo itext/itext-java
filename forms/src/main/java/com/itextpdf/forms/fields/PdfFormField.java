@@ -949,8 +949,9 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public void updateDefaultAppearance() {
         if (hasDefaultAppearance()) {
-            assert getFont() != null;
-
+            if (getFont() == null) {
+                return;
+            }
             PdfDictionary defaultResources = (PdfDictionary) getAcroFormObject(PdfName.DR, PdfObject.DICTIONARY);
             if (defaultResources == null) {
                 // Ensure that AcroForm dictionary exists
@@ -1245,6 +1246,9 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     static String optionsArrayToString(PdfArray options) {
+        if (options == null || options.isEmpty()) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         for (PdfObject obj : options) {
             if (obj.isString()) {

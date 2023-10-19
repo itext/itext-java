@@ -22,13 +22,12 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
-import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.form.element.ListBoxField;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -181,8 +180,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
     @Override
     protected void applyAcroField(DrawContext drawContext) {
         // Retrieve font properties
-        Object retrievedFont = this.<Object>getProperty(Property.FONT);
-        PdfFont font = retrievedFont instanceof PdfFont ? (PdfFont) retrievedFont : null;
+        PdfFont font = getResolvedFont(drawContext.getDocument());
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
             Logger logger = LoggerFactory.getLogger(SelectFieldListBoxRenderer.class);
@@ -202,7 +200,9 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
 
         ListBoxField lbModelElement = (ListBoxField) modelElement;
         List<String> selectedOptions = lbModelElement.getSelectedStrings();
-        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId()).setWidgetRectangle(area);
+        ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, getModelId())
+                .setConformanceLevel(getConformanceLevel(doc))
+                .setWidgetRectangle(area);
         setupBuilderValues(builder, lbModelElement);
         PdfChoiceFormField choiceField = builder.createList();
         choiceField.disableFieldRegeneration();

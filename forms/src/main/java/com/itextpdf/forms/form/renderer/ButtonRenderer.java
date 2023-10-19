@@ -259,8 +259,9 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         final Color backgroundColor = background == null ? null : background.getColor();
 
         final float fontSizeValue = fontSize.getValue();
+
         if (font == null) {
-            font = doc.getDefaultFont();
+            font = getResolvedFont(doc);
         }
 
         // Some properties are set to the HtmlDocumentRenderer, which is root renderer for this ButtonRenderer, but
@@ -269,6 +270,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfButtonFormField button = new PushButtonFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setConformanceLevel(getConformanceLevel(doc))
                 .createPushButton();
         button.disableFieldRegeneration();
         button.setFont(font).setFontSize(fontSizeValue);

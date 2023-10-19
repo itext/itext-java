@@ -51,10 +51,10 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link AbstractTextFieldRenderer} implementation for SigFields.
@@ -251,6 +251,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfSignatureFormField sigField = new SignatureFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setConformanceLevel(getConformanceLevel(doc))
                 .createSignature();
         sigField.disableFieldRegeneration();
         sigField.setFont(font).setFontSize(fontSizeValue);

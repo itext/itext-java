@@ -57,10 +57,9 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
@@ -116,6 +115,17 @@ public class PdfADocument extends PdfDocument {
         addOutputIntent(outputIntent);
     }
 
+
+    /**
+     * No default font for PDF/A documents.
+     *
+     * @return {@code null}.
+     */
+    @Override
+    public PdfFont getDefaultFont() {
+        return null;
+    }
+
     /**
      * Opens a PDF/A document in the stamping mode.
      *
@@ -139,7 +149,6 @@ public class PdfADocument extends PdfDocument {
 
     PdfADocument(PdfReader reader, PdfWriter writer, StampingProperties properties, boolean tolerant) {
         super(reader, writer, properties);
-
         PdfAConformanceLevel conformanceLevel = reader.getPdfAConformanceLevel();
         if (conformanceLevel == null) {
             if (tolerant) {
@@ -239,11 +248,9 @@ public class PdfADocument extends PdfDocument {
     }
 
     /**
-     * Gets the PdfAConformanceLevel set in the constructor or in the metadata
-     * of the {@link PdfReader}.
-     *
-     * @return a {@link PdfAConformanceLevel}
+     * {@inheritDoc}
      */
+    @Override
     public PdfAConformanceLevel getConformanceLevel() {
         if (isPdfADocument) {
             return checker.getConformanceLevel();

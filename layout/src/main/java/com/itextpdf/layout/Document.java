@@ -296,6 +296,11 @@ public class Document extends RootElement<Document> {
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
+            case Property.FONT:
+                if (getPdfDocument().getConformanceLevel() != null) {
+                    return (T1) (Object) getPdfDocument().getDefaultFont();
+                }
+                return super.<T1>getDefaultProperty(property);
             case Property.MARGIN_BOTTOM:
             case Property.MARGIN_LEFT:
             case Property.MARGIN_RIGHT:

@@ -38,13 +38,13 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
@@ -233,6 +233,7 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
         putIfAbsent(expectedDictionary, PdfName.Opt, new PdfArray());
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
         putIfAbsent(expectedDictionary, PdfName.V, new PdfArray());
+        putIfAbsent(expectedDictionary, PdfName.DA, choiceFormField.getPdfObject().get(PdfName.DA));
 
         expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
         choiceFormField.makeIndirect(DUMMY_DOCUMENT);
