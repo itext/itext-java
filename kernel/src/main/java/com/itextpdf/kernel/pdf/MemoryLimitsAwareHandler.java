@@ -43,6 +43,7 @@ public class MemoryLimitsAwareHandler {
     private static final int SUM_SCALE_COEFFICIENT = 500;
 
     private static final int MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE = 50000000;
+    private static final int MIN_LIMIT_FOR_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE = 500000;
     private static final int SINGLE_DECOMPRESSED_PDF_STREAM_MIN_SIZE = Integer.MAX_VALUE / 100;
     private static final long SUM_OF_DECOMPRESSED_PDF_STREAMS_MIN_SIZE = Integer.MAX_VALUE / 20;
     private static final long MAX_X_OBJECTS_SIZE_PER_PAGE = 1024L*1024L*1024L*3;
@@ -76,7 +77,7 @@ public class MemoryLimitsAwareHandler {
     public MemoryLimitsAwareHandler(long documentSize) {
         this((int) calculateDefaultParameter(documentSize, SINGLE_SCALE_COEFFICIENT,
                 SINGLE_DECOMPRESSED_PDF_STREAM_MIN_SIZE), calculateDefaultParameter(documentSize, SUM_SCALE_COEFFICIENT,
-                SUM_OF_DECOMPRESSED_PDF_STREAMS_MIN_SIZE), MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE, MAX_X_OBJECTS_SIZE_PER_PAGE);
+                SUM_OF_DECOMPRESSED_PDF_STREAMS_MIN_SIZE), calculateMaxElementsInXref(documentSize), MAX_X_OBJECTS_SIZE_PER_PAGE);
     }
 
     private MemoryLimitsAwareHandler(int maxSizeOfSingleDecompressedPdfStream, long maxSizeOfDecompressedPdfStreamsSum,
@@ -212,6 +213,19 @@ public class MemoryLimitsAwareHandler {
         if (totalXObjectsSize > maxXObjectsSizePerPage) {
             throw new MemoryLimitsAwareException(KernelExceptionMessageConstant.TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT);
         }
+    }
+
+    /**
+     * Calculate max number of elements allowed in xref table based on the size of the document, achieving max limit at 100MB.
+     *
+     * @param documentSizeInBytes document size in bytes.
+     *
+     * @return calculated limit.
+     */
+    protected static int calculateMaxElementsInXref(long documentSizeInBytes) {
+        int maxDocSizeForMaxLimit = MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE/MIN_LIMIT_FOR_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE;
+        int documentSizeInMb = Math.max(1, Math.min((int) documentSizeInBytes / (1024 * 1024), maxDocSizeForMaxLimit));
+        return documentSizeInMb * MIN_LIMIT_FOR_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE;
     }
 
     /**

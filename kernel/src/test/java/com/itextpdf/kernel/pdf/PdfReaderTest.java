@@ -55,6 +55,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -90,7 +91,7 @@ public class PdfReaderTest extends ExtendedITextTest {
     public static void afterClass() {
         CompareTool.cleanup(DESTINATION_FOLDER);
     }
-    
+
     @Test
     public void openSimpleDoc() throws IOException {
         String filename = DESTINATION_FOLDER + "openSimpleDoc.pdf";
@@ -1704,19 +1705,6 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
-    @Ignore("DEVSIX-2649")
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, count = 1),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT)})
-    public void wrongStructureFlushingTest() throws IOException {
-        //TODO: update after DEVSIX-2649 fix
-        //wrong /key number
-        String source = SOURCE_FOLDER + "wrongStructureFlushingTest.pdf";
-        String dest = DESTINATION_FOLDER + "wrongStructureFlushingTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(source), CompareTool.createTestPdfWriter(dest));
-        pdfDoc.close();
-    }
-
-    @Test
     public void readerReuseTest() throws IOException {
         String filename = SOURCE_FOLDER + "hello.pdf";
 
@@ -2362,6 +2350,34 @@ public class PdfReaderTest extends ExtendedITextTest {
             Assert.assertEquals(KernelExceptionMessageConstant.XREF_STREAM_HAS_CYCLED_REFERENCES,
                     exception.getMessage());
         }
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+    @Test
+    public void exactLimitOfObjectNrSizeTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "exactLimitOfObjectNr.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assert.assertThrows(MemoryLimitsAwareException.class,
+                    () -> new PdfDocument(pdfReader));
+
+            Assert.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT,
+                    exception.getMessage());
+        }
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT))
+    @Test
+    public void justBeforeLimitOfObjectNrSizeTest() throws IOException, InterruptedException {
+        String inputFile = SOURCE_FOLDER + "justBeforeLimitOfObjectNr.pdf";
+
+        //trying to open the document to see that no error is thrown
+        PdfReader pdfReader = new PdfReader(inputFile);
+        PdfDocument document = new PdfDocument(pdfReader);
+        Assert.assertEquals(500000, document.getXref().getCapacity());
+        document.close();
     }
 
     @Test

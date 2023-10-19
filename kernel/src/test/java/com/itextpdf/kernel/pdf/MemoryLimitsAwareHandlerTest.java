@@ -129,6 +129,20 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void minSizeBasedXrefCapacityHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(1024*1024);
+
+        Assert.assertEquals(500000, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
+    }
+
+    @Test
+    public void sizeBasedXrefCapacityHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(1024*1024*80);
+
+        Assert.assertEquals(40000000, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
+    }
+
+    @Test
     public void checkCapacityExceedsLimitTest() {
         final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
         // There we add 2 instead of 1 since xref structures used 1-based indexes, so we decrement the capacity
