@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -50,8 +49,10 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -639,6 +640,15 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + outputPdf,
                 SOURCE_FOLDER + "cmp_" + outputPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void getPdfObjectsTest() throws IOException {
+        PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "mergedSiblingWidgets.pdf")
+        );
+        Collection<PdfIndirectReference> pdfObjects = document.getPdfObjectsAsIndirectReference();
+        Assertions.assertEquals(23, pdfObjects.size());
     }
 
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
