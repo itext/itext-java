@@ -367,6 +367,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
 
     /**
+     * Gets all PdfObjects as PdfIndirectReference as held by the PdfXrefTable.
+     *
+     * @return a Collection holding all references of the PdfXrefTable
+     */
+    public Collection<PdfIndirectReference> getPdfObjectsAsIndirectReference() {
+        checkClosingStatus();
+        return this.xref.getAllReferences();
+    }
+
+    /**
      * Get number of indirect objects in the document.
      *
      * @return number of indirect objects.

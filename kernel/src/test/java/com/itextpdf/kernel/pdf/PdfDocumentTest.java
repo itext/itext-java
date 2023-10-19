@@ -49,10 +49,11 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.AfterClass;
+import java.util.Collection;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -616,6 +617,14 @@ public class PdfDocumentTest extends ExtendedITextTest {
         Assert.assertNull(document.getConformanceLevel());
     }
 
+    @Test
+    public void getPdfObjectsTest() throws IOException {
+        PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "mergedSiblingWidgets.pdf")
+        );
+        Collection<PdfIndirectReference> pdfObjects = document.getPdfObjectsAsIndirectReference();
+        Assert.assertEquals(23, pdfObjects.size());
+    }
 
     private static class IgnoreTagStructurePdfDocument extends PdfDocument {
 

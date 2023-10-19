@@ -630,4 +630,27 @@ public class PdfXrefTable {
         System.arraycopy(this.xref, 0, newXref, 0, this.xref.length);
         this.xref = newXref;
     }
+
+    /**
+     * Fetches all references held by this PdfXrefTable instance.
+     *
+     * @return a Collection holding all the references in this PdfXrefTable
+     */
+    public Collection<PdfIndirectReference> getAllReferences() {
+        // I didn't opt for Arrays.asList(this.xref) because we don't set the size of the
+        // xref[] to the actual size of the table but to the next power of 2, filling up the
+        // remainder of the xref[] with null values.
+        // This will filter out the null values, as we don't have any benefit to passing them
+        // to the user of this API.
+        List<PdfIndirectReference> pdfObjects = new ArrayList<>();
+
+        for ( PdfIndirectReference pdfObject : this.xref ) {
+            if ( pdfObject != null
+                    && pdfObject.getObjNumber() != 0 ) {
+                pdfObjects.add(pdfObject);
+            }
+        }
+
+        return pdfObjects;
+    }
 }
