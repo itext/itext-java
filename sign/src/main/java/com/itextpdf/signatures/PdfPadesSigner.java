@@ -173,7 +173,8 @@ public class PdfPadesSigner {
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(outputStream), new StampingProperties().useAppendMode())) {
-                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()));
+                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()),
+                        LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
             }
         } finally {
             deleteTempFiles();
@@ -217,7 +218,8 @@ public class PdfPadesSigner {
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(createOutputStream()), new StampingProperties().useAppendMode())) {
-                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()));
+                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()),
+                        LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
                 performTimestamping(pdfDocument, outputStream, tsaClient);
             }
         } finally {
@@ -263,7 +265,7 @@ public class PdfPadesSigner {
                 throw new PdfException(SignExceptionMessageConstant.NO_SIGNATURES_TO_PROLONG);
             }
             createRevocationClients(new Certificate[0], false);
-            performLtvVerification(pdfDocument, signatureNames);
+            performLtvVerification(pdfDocument, signatureNames, LtvVerification.RevocationDataNecessity.OPTIONAL);
             if (tsaClient != null) {
                 performTimestamping(pdfDocument, outputStream, tsaClient);
             }
@@ -429,13 +431,13 @@ public class PdfPadesSigner {
         return signer;
     }
 
-    private void performLtvVerification(PdfDocument pdfDocument, List<String> signatureNames)
+    private void performLtvVerification(PdfDocument pdfDocument, List<String> signatureNames,
+                                        LtvVerification.RevocationDataNecessity revocationDataNecessity)
             throws IOException, GeneralSecurityException {
         LtvVerification ltvVerification = new LtvVerification(pdfDocument);
         for (String signatureName : signatureNames) {
-            ltvVerification.addVerification(signatureName, ocspClient, crlClient,
-                    CertificateOption.WHOLE_CHAIN, Level.OCSP_OPTIONAL_CRL,
-                    LtvVerification.CertificateInclusion.YES);
+            ltvVerification.addVerification(signatureName, ocspClient, crlClient, CertificateOption.WHOLE_CHAIN,
+                    Level.OCSP_OPTIONAL_CRL, LtvVerification.CertificateInclusion.YES, revocationDataNecessity);
         }
         ltvVerification.merge();
     }

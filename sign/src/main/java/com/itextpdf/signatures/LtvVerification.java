@@ -35,6 +35,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -134,6 +135,20 @@ public class LtvVerification {
     }
 
     /**
+     * Option to determine whether revocation information is required for the signing certificate.
+     */
+    public enum RevocationDataNecessity {
+        /**
+         * Require revocation information for the signing certificate.
+         */
+        REQUIRED_FOR_SIGNING_CERTIFICATE,
+        /**
+         * Revocation data for the signing certificate may be optional.
+         */
+        OPTIONAL
+    }
+
+    /**
      * The verification constructor. This class should only be created with
      * PdfStamper.getLtvVerification() otherwise the information will not be
      * added to the Pdf.
@@ -177,6 +192,31 @@ public class LtvVerification {
      */
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
             Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
+        return addVerification(signatureName, ocsp, crl, certOption, level, certInclude,
+                RevocationDataNecessity.OPTIONAL);
+    }
+
+    /**
+     * Add verification for a particular signature.
+     *
+     * @param signatureName            the signature to validate (it may be a timestamp)
+     * @param ocsp                     the interface to get the OCSP
+     * @param crl                      the interface to get the CRL
+     * @param certOption               options as to how many certificates to include
+     * @param level                    the validation options to include
+     * @param certInclude              certificate inclusion options
+     * @param isRevocationDataRequired option to determine if revocation data is required for the signing certificate
+     *
+     * @return true if a validation was generated, false otherwise.
+     *
+     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
+     *                                  is not available.
+     * @throws IOException              signals that an I/O exception has occurred.
+     */
+    public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
+                                   Level level, CertificateInclusion certInclude,
+                                   RevocationDataNecessity isRevocationDataRequired)
+            throws IOException, GeneralSecurityException {
         if (used) {
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
         }
@@ -189,21 +229,25 @@ public class LtvVerification {
         for (Certificate certificate : xc) {
             cert = (X509Certificate) certificate;
             LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
+            boolean isSigningCertificate = cert.equals(signingCert);
             if (certOption == CertificateOption.SIGNING_CERTIFICATE
-                    && !cert.equals(signingCert)) {
+                    && !isSigningCertificate) {
                 continue;
             }
+            boolean isRequiredRevocationDataAdded =
+                    RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE != isRevocationDataRequired;
             byte[] ocspEnc = null;
             if (ocsp != null && level != Level.CRL) {
                 ocspEnc = ocsp.getEncoded(cert, getParent(cert, xc), null);
                 if (ocspEnc != null) {
                     vd.ocsps.add(buildOCSPResponse(ocspEnc));
+                    isRequiredRevocationDataAdded = true;
                     LOGGER.info("OCSP added");
                 }
             }
             if (crl != null
                     && (level == Level.CRL || level == Level.OCSP_CRL
-                        || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
+                    || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
                 Collection<byte[]> cims = crl.getEncoded(cert, null);
                 if (cims != null) {
                     for (byte[] cim : cims) {
@@ -216,6 +260,7 @@ public class LtvVerification {
                         }
                         if (!dup) {
                             vd.crls.add(cim);
+                            isRequiredRevocationDataAdded = true;
                             LOGGER.info("CRL added");
                         }
                     }
@@ -223,6 +268,9 @@ public class LtvVerification {
             }
             if (certInclude == CertificateInclusion.YES) {
                 vd.certs.add(cert.getEncoded());
+            }
+            if (isSigningCertificate && !isRequiredRevocationDataAdded) {
+                throw new PdfException(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE);
             }
         }
         if (vd.crls.size() == 0 && vd.ocsps.size() == 0) {

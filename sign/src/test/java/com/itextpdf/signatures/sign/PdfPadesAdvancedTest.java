@@ -29,15 +29,15 @@ import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPadesSigner;
-import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignerProperties;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
@@ -52,6 +52,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -161,19 +162,32 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         testCrlClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[0], crlBuilderMainCert);
         testCrlClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[1], crlBuilderRootCert);
 
-        SignerProperties signer = createSignerProperties();
+        SignerProperties signerProperties = createSignerProperties();
 
-        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
+        OutputStream outputStream = FileUtil.getFileOutputStream(outFileName);
+        PdfPadesSigner padesSigner = new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
+                outputStream);
         padesSigner.setOcspClient(testOcspClient);
         padesSigner.setCrlClient(testCrlClient);
 
         IExternalSignature pks =
                 new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
-        padesSigner.signWithBaselineLTAProfile(signer, signRsaChain, pks, testTsa);
+        if (signCertFileName.contains("NoOcspNoCrl") || (signCertFileName.contains("OcspNoCrl") && isOcspRevoked)) {
+            try {
+                Exception exception = Assert.assertThrows(PdfException.class,
+                        () -> padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa));
+                Assert.assertEquals(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE,
+                        exception.getMessage());
+            } finally {
+                outputStream.close();
+            }
+        } else {
+            padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+            PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
 
-        Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+            Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+        }
     }
 
     private SignerProperties createSignerProperties() {
@@ -185,10 +199,5 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
                 .setSignatureAppearance(appearance);
 
         return signerProperties;
-    }
-
-    private PdfPadesSigner createPdfPadesSigner(String srcFileName, String outFileName) throws IOException {
-        return new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
-                FileUtil.getFileOutputStream(outFileName));
     }
 }

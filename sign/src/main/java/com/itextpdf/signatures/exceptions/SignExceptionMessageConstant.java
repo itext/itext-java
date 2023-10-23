@@ -57,6 +57,8 @@ public final class SignExceptionMessageConstant {
             + "certificate chain.";
     public static final String INVALID_TSA_RESPONSE = "Invalid TSA {0} response code {1}.";
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
+    public static final String NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE = "Neither ocsp nor crl data available for " +
+            "the signing certificate or certificate is revoked.";
     public static final String NO_SIGNATURES_TO_PROLONG = "Document doesn't contain any signatures to prolong.";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
