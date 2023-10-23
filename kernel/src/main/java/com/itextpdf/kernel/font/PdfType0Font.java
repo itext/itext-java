@@ -259,7 +259,7 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public Glyph getGlyph(int unicode) {
-        // TODO handle unicode value with cmap and use only glyphByCode
+        // TODO DEVSIX-7568 handle unicode value with cmap and use only glyphByCode
         Glyph glyph = getFontProgram().getGlyph(unicode);
         if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
             // Handle special layout characters like sfthyphen (00AD).
@@ -585,7 +585,6 @@ public class PdfType0Font extends PdfFont {
         return process;
     }
 
-    //TODO what if Glyphs contains only whitespaces and ignorable identifiers?
     private boolean isAppendableGlyph(Glyph glyph) {
         // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
         // Character.isIdentifierIgnorable(0) gets true.

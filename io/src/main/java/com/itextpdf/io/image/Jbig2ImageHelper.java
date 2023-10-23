@@ -22,11 +22,11 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.Jbig2SegmentReader;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.util.HashMap;
@@ -72,17 +72,11 @@ class Jbig2ImageHelper {
             image.setWidth(p.pageBitmapWidth);
             image.setBpc(1);
             image.setColorEncodingComponentsNumber(1);
-            //TODO JBIG2 globals caching
+
             byte[] globals = sr.getGlobal(true);
 
-            //TODO due to the fact, that streams now may be transformed to indirect objects only on writing,
-            //pdfStream.getDocument() cannot longer be the sign of inline/indirect images
-
-            // in case inline image pdfStream.getDocument() will be null
-            if (globals != null /*&& stream.getDocument() != null*/) {
+            if (globals != null) {
                 Map<String, Object> decodeParms = new HashMap<>();
-//                PdfStream globalsStream = new PdfStream().makeIndirect(pdfStream.getDocument());
-//                globalsStream.getOutputStream().write(globals);
                 decodeParms.put("JBIG2Globals", globals);
                 image.decodeParms = decodeParms;
             }
