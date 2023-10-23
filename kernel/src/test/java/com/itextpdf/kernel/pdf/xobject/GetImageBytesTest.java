@@ -191,6 +191,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testRGBSeparationCSWithFlateDecoderAndFunctionType0() throws Exception {
         testFile("RGBFlateF0.pdf", "Im1", "png");
     }
