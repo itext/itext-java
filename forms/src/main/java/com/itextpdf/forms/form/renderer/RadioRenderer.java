@@ -28,9 +28,9 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
-import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Radio;
+import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -51,6 +51,8 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+
+import java.util.Map;
 
 /**
  * The {@link AbstractFormFieldRenderer} implementation for radio buttons.
@@ -168,7 +170,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         Rectangle area = flatRenderer.getOccupiedArea().getBBox().clone();
-        deleteMargins();
+        final Map<Integer, Object> margins = deleteMargins();
 
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         String groupName = this.<String>getProperty(FormProperty.FORM_FIELD_RADIO_GROUP_NAME);
@@ -177,12 +179,10 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         }
 
         PdfButtonFormField radioGroup = (PdfButtonFormField) form.getField(groupName);
-        boolean addNew = false;
         if (null == radioGroup) {
             radioGroup = new RadioFormFieldBuilder(doc, groupName).createRadioGroup();
             radioGroup.disableFieldRegeneration();
             radioGroup.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
-            addNew = true;
         } else {
             radioGroup.disableFieldRegeneration();
         }
@@ -204,13 +204,10 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         radioGroup.addKid(radio);
         radioGroup.enableFieldRegeneration();
 
-        if (addNew) {
-            form.addField(radioGroup, page);
-        } else {
-            form.replaceField(groupName, radioGroup);
-        }
+        form.addField(radioGroup, page);
 
         writeAcroFormFieldLangAttribute(doc);
+        applyProperties(margins);
     }
 
     /**

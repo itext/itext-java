@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a CMap file.
- *
- * @author Ben Litchfield (ben@benlitchfield.com)
  */
 public class CMapToUnicode extends AbstractCMap {
 

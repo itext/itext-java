@@ -25,6 +25,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -33,6 +34,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -46,10 +48,11 @@ import org.junit.experimental.categories.Category;
 
 @Category(UnitTest.class)
 public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
-    private PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
+    private PdfA2Checker pdfA2Checker;
 
     @Before
     public void before() {
+        pdfA2Checker = new PdfA2Checker(PdfAConformanceLevel.PDF_A_2B);
         pdfA2Checker.setFullCheckMode(true);
     }
 
@@ -66,7 +69,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfObject(longString)
         );
-        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -88,7 +91,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkContentStream(stream)
         );
-        Assert.assertEquals(PdfAConformanceException.PDF_STRING_IS_TOO_LONG, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
@@ -128,7 +131,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkPdfObject(largeNumber)
         );
-        Assert.assertEquals(PdfAConformanceException.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
@@ -136,7 +139,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         Exception e = Assert.assertThrows(PdfAConformanceException.class,
                 () -> checkColorspace(buildDeviceNColorspace(34))
         );
-        Assert.assertEquals(PdfAConformanceException.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOR_COMPONENTS_IN_DEVICE_N_COLORSPACE_SHOULD_NOT_EXCEED, e.getMessage());
     }
 
     @Test
@@ -151,7 +154,7 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     private void checkColorspace(PdfColorSpace colorSpace) {
         PdfDictionary currentColorSpaces = new PdfDictionary();
-        pdfA2Checker.checkColorSpace(colorSpace, currentColorSpaces, true, false);
+        pdfA2Checker.checkColorSpace(colorSpace, null, currentColorSpaces, true, false);
     }
 
     private PdfColorSpace buildDeviceNColorspace(int numberOfComponents) {
@@ -169,6 +172,10 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
         //TODO DEVSIX-4205 Replace with a constructor with 4 parameters or use a setter for attributes dictionary
         PdfArray deviceNAsArray = ((PdfArray)(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function)).getPdfObject());
         PdfDictionary attributes = new PdfDictionary();
+        PdfDictionary colourants = new PdfDictionary();
+        String colourantName = "colourantTest";
+        colourants.put(new PdfName(colourantName), new PdfSpecialCs.DeviceN(((PdfArray)(new  PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function)).getPdfObject())).getPdfObject());
+        attributes.put(PdfName.Colorants, colourants);
         deviceNAsArray.add(attributes);
         return new PdfSpecialCs.DeviceN(deviceNAsArray);
     }

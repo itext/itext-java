@@ -33,8 +33,6 @@ import java.io.StringReader;
 
 /**
  * Test suite for character reader.
- *
- * @author Jonathan Hedley, jonathan@hedley.net
  */
 @Category(UnitTest.class)
 public class CharacterReaderTest extends ExtendedITextTest {

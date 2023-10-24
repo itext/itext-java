@@ -58,6 +58,8 @@ public final class StandardCMapCharsets {
 
         // Japanese
         registerHV("UniJIS-UCS2", UCS2_ENCODER);
+        registerHV("UniJIS-UCS2-HW", UCS2_ENCODER);
+        registerHV("UniJIS2004-UTF16", UTF16_ENCODER);
         registerHV("UniJIS-UTF16", UTF16_ENCODER);
 
         // Korean

@@ -75,7 +75,9 @@ public class FlatteningTest extends ExtendedITextTest {
         String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";
         PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
-        PdfFormCreator.getAcroForm(doc, false).flattenFields();
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, false);
+        acroForm.setGenerateAppearance(false);
+        acroForm.flattenFields();
         doc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(dest, cmp, destinationFolder, "diff_"));

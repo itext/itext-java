@@ -181,6 +181,47 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testRGBSeparationCSWithJPXDecoderAndFunctionType0() throws Exception {
+        testFile("RGBJpxF0.pdf", "Im1", "jp2");
+    }
+
+    @Test
+    public void testRGBSeparationCSWithDCTDecoderAndFunctionType0() throws Exception {
+        testFile("RGBDctF0.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    @org.junit.Ignore
+    public void testRGBSeparationCSWithFlateDecoderAndFunctionType0() throws Exception {
+        testFile("RGBFlateF0.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void testCMYKSeparationCSWithJPXDecoderAndFunctionType2() throws Exception {
+        testFile("CMYKJpxF2.pdf", "Im1", "jp2");
+    }
+
+    @Test
+    public void testRGBSeparationCSWithJPXDecoderAndFunctionType2() throws Exception {
+        testFile("RGBJpxF2.pdf", "Im1", "jp2");
+    }
+
+    @Test
+    public void testCMYKSeparationCSWithDCTDecoderAndFunctionType2() throws Exception {
+        testFile("CMYKDctF2.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void testRGBSeparationCSWithDCTDecoderAndFunctionType2() throws Exception {
+        testFile("RGBDctF2.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void testRGBSeparationCSWithFlateDecoderAndFunctionType2() throws Exception {
+        testFile("RGBFlateF2.pdf", "Im1", "png");
+    }
+
+    @Test
     public void extractByteAlignedG4TiffImageTest() throws IOException {
         String inFileName = SOURCE_FOLDER + "extractByteAlignedG4TiffImage.pdf";
         String outImageFileName = DESTINATION_FOLDER + "extractedByteAlignedImage.png";

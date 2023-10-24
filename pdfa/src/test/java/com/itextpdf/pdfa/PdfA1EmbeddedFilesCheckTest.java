@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -71,7 +72,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(PdfAConformanceException.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.A_NAME_DICTIONARY_SHALL_NOT_CONTAIN_THE_EMBEDDED_FILES_KEY, e.getMessage());
     }
 
     @Test
@@ -90,7 +91,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(PdfAConformanceException.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS,
+        Assert.assertEquals(PdfaExceptionMessageConstant.STREAM_OBJECT_DICTIONARY_SHALL_NOT_CONTAIN_THE_F_FFILTER_OR_FDECODEPARAMS_KEYS,
                 e.getMessage());
     }
 
@@ -110,6 +111,6 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         pdfDocument.addNewPage();
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
-        Assert.assertEquals(PdfAConformanceException.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY, e.getMessage());
     }
 }

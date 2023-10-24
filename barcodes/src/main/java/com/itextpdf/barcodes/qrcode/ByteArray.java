@@ -24,8 +24,6 @@ package com.itextpdf.barcodes.qrcode;
 
 /**
 * This class implements an array of unsigned bytes.
-*
-* @author dswitkin@google.com (Daniel Switkin)
 */
 final class ByteArray {
 

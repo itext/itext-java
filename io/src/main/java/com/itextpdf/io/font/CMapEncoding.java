@@ -77,7 +77,7 @@ public class CMapEncoding {
             isDirect = true;
             this.codeSpaceRanges = IDENTITY_H_V_CODESPACE_RANGES;
         } else {
-            cid2Code = FontCache.getCidToCodepointCmap(cmap);
+            cid2Code = CjkResourceLoader.getCidToCodepointCmap(cmap);
             code2Cid = CMapEncoding.getCodeToCidCmap(cmap, cid2Code);
             this.codeSpaceRanges = cid2Code.getCodeSpaceRanges();
         }
@@ -197,7 +197,7 @@ public class CMapEncoding {
 
     private static CMapCodepointToCid getCodeToCidCmap(String cmap, CMapCidToCodepoint cid2Code) {
         try {
-            return FontCache.getCodepointToCidCmap(cmap);
+            return CjkResourceLoader.getCodepointToCidCmap(cmap);
         } catch (com.itextpdf.io.exceptions.IOException ex) {
             // if not found, fall back to reversing
             return new CMapCodepointToCid(cid2Code);

@@ -31,10 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- *
- * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
- */
 public abstract class OpenTypeFontTableReader {
 
     protected final RandomAccessFileOrArray rf;

@@ -76,7 +76,7 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
         canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "smpl.bmp"), new Rectangle(36, 500, 100, 100), true);
         canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "itext.png"), new Rectangle(36, 460, 100, 14.16f), true);
         canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "0047478.jpg"), new Rectangle(36, 300, 100, 141.41f), true);
-        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "map.jp2"), new Rectangle(36, 200, 100, 76.34f), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "bee.jp2"), new Rectangle(36, 200, 60, 76.34f), true);
         canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "amb.jb2"), new Rectangle(36, 30, 100, 150), true);
 
         document.close();
@@ -123,11 +123,11 @@ public class PdfCanvasInlineImagesTest extends ExtendedITextTest {
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
         canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 300, 100, 141.41f), true);
-        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "map.jp2"));
+        stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "bee.jp2"));
 
         baos = new ByteArrayOutputStream();
         StreamUtil.transferBytes(stream, baos);
-        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 200, 100, 76.34f), true);
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(baos.toByteArray()), new Rectangle(36, 200, 60, 76.34f), true);
         stream = UrlUtil.openStream(UrlUtil.toURL(sourceFolder + "amb.jb2"));
 
         baos = new ByteArrayOutputStream();

@@ -32,18 +32,24 @@ import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
 
-/**
- * @author psoares
- */
 public class CMapLocationResource implements ICMapLocation {
 
     @Override
     public PdfTokenizer getLocation(String location) throws java.io.IOException {
-        String fullName = FontResources.CMAPS + location;
+        String fullName = getLocationPath() + location;
         InputStream inp = ResourceUtil.getResourceStream(fullName);
         if (inp == null) {
             throw new IOException(IoExceptionMessageConstant.CMAP_WAS_NOT_FOUND).setMessageParams(fullName);
         }
         return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(inp)));
+    }
+
+    /**
+     * Retrieve base folder path where CMaps are located.
+     *
+     * @return CMaps location path.
+     */
+    public String getLocationPath() {
+        return FontResources.CMAPS;
     }
 }

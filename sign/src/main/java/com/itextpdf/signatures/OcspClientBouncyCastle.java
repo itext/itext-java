@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * OcspClient implementation using BouncyCastle.
- *
- * @author Paulo Soarees
  */
 public class OcspClientBouncyCastle implements IOcspClient {
 
@@ -142,8 +140,10 @@ public class OcspClientBouncyCastle implements IOcspClient {
      *
      * @throws AbstractOCSPException is thrown if any errors occur while handling OCSP requests/responses
      * @throws IOException           signals that an I/O exception has occurred
+     * @throws CertificateEncodingException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws AbstractOperatorCreationException is thrown if any errors occur while handling OCSP requests/responses
      */
-    private static IOCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
+    protected static IOCSPReq generateOCSPRequest(X509Certificate issuerCert, BigInteger serialNumber)
             throws AbstractOCSPException, IOException, CertificateEncodingException, AbstractOperatorCreationException {
         //Add provider BC
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
@@ -182,11 +182,30 @@ public class OcspClientBouncyCastle implements IOcspClient {
         if (url == null) {
             return null;
         }
+        InputStream in = createRequestAndResponse(checkCert, rootCert, url);
+        return BOUNCY_CASTLE_FACTORY.createOCSPResp(StreamUtil.inputStreamToArray(in));
+    }
+
+    /**
+     * Create OCSP request and get the response for this request, represented as {@link InputStream}.
+     * 
+     * @param checkCert {@link X509Certificate} certificate to get OCSP response for
+     * @param rootCert {@link X509Certificate} root certificate from which OCSP request will be built
+     * @param url {@link URL} link, which is expected to be used to get OCSP response from
+     * 
+     * @return OCSP response bytes, represented as {@link InputStream}
+     * 
+     * @throws IOException if an I/O error occurs
+     * @throws AbstractOperatorCreationException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws AbstractOCSPException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws CertificateEncodingException is thrown if any errors occur while handling OCSP requests/responses
+     */
+    protected InputStream createRequestAndResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
+            throws IOException, AbstractOperatorCreationException, AbstractOCSPException, CertificateEncodingException {
         LOGGER.info("Getting OCSP from " + url);
         IOCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
         URL urlt = new URL(url);
-        InputStream in = SignUtils.getHttpResponseForOcspRequest(array, urlt);
-        return BOUNCY_CASTLE_FACTORY.createOCSPResp(StreamUtil.inputStreamToArray(in));
+        return SignUtils.getHttpResponseForOcspRequest(array, urlt);
     }
 }

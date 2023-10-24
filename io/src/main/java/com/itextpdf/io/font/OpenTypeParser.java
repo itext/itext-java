@@ -271,10 +271,12 @@ class OpenTypeParser implements Closeable {
         fontNames.setFontName(getPsFontName());
         fontNames.setFullName(fontNames.getNames(4));
         String[][] otfFamilyName = fontNames.getNames(16);
+        String[][] familyName = fontNames.getNames(1);
+        fontNames.setFamilyName2(familyName);
         if (otfFamilyName != null) {
             fontNames.setFamilyName(otfFamilyName);
         } else {
-            fontNames.setFamilyName(fontNames.getNames(1));
+            fontNames.setFamilyName(familyName);
         }
         String[][] subfamily = fontNames.getNames(2);
         if (subfamily != null) {

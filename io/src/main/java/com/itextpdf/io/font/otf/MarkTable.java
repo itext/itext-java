@@ -24,10 +24,6 @@ package com.itextpdf.io.font.otf;
 
 import java.util.Arrays;
 
-/**
- *
- * @author psoares
- */
 public class MarkTable {
 
     private MarkTable() {

@@ -57,6 +57,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
@@ -3149,7 +3150,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-3716
     public void cellWithBigRowspanCompletedRowTooTest() throws IOException, InterruptedException {
         String testName = "cellWithBigRowspanCompletedRowTooTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -3189,7 +3189,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-3716
     public void cellWithBigRowspanCompletedRowNotTest() throws IOException, InterruptedException {
         String testName = "cellWithBigRowspanCompletedRowNotTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -3327,7 +3326,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarFullTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarFullTest.pdf";
 
@@ -3362,7 +3360,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-5250 The first column should be fully red, but on page 2 it is not
     public void bigRowSpanTooFarPartialTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarPartialTest.pdf";
 
@@ -3401,7 +3398,6 @@ public class TableTest extends AbstractTableTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
-    // TODO DEVSIX-5250 The first column should be fully red
     public void bigRowSpanTooFarNothingTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarNothingTest.pdf";
 
@@ -3524,6 +3520,41 @@ public class TableTest extends AbstractTableTest {
 
         Assert.assertTrue(tableRect.equalsWithEpsilon(tableRectRelayout));
         }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
+    })
+    public void infiniteLoopKeepTogetherTest() throws IOException, InterruptedException {
+        String fileName = "infiniteLoopKeepTogether.pdf";
+        float fontSize = 8;
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+                Document doc = new Document(pdfDoc)) {
+            doc.setMargins(138, 20, 75, 20);
+
+            Table table = new Table(5);
+            table.setKeepTogether(true);
+
+            for (int i = 0; i < 37; i++) {
+                table.addCell(new Cell(1, 5).add(new Paragraph(new Text("Cell"))).setFontSize(fontSize));
+                table.startNewRow();
+            }
+
+            Table commentsTable = new Table(1);
+            Cell commentsCell = new Cell().add(new Paragraph(new Text("First line\nSecond line")));
+            commentsTable.addCell(commentsCell);
+
+            Cell outerCommentsCell = new Cell(1, 5).setFontSize(fontSize);
+            outerCommentsCell.add(commentsTable);
+            table.addCell(outerCommentsCell);
+
+            doc.add(table);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
+                sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
     private static class RotatedDocumentRenderer extends DocumentRenderer {

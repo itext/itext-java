@@ -323,7 +323,9 @@ public class ParagraphRenderer extends BlockRenderer {
                     boolean keepTogether = isKeepTogether(result.getCauseOfNothing());
                     if (keepTogether) {
                         floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
-                        return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
+                        // Use paragraph as a cause of nothing because parent relationship between TextRenderer
+                        // and ParagraphRenderer can be broken by ParagraphRenderer#updateParentLines method.
+                        return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
                     } else {
                         if (marginsCollapsingEnabled) {
                             if (anythingPlaced && notAllKidsAreFloats) {

@@ -27,9 +27,6 @@ import com.itextpdf.io.font.PdfEncodings;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author psoares
- */
 public abstract class AbstractCMap {
 
 

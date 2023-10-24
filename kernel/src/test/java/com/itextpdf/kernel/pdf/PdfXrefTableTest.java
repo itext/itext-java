@@ -32,10 +32,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-/**
- *
- * @author benoit
- */
 @Category(IntegrationTest.class)
 public class PdfXrefTableTest extends ExtendedITextTest {
 

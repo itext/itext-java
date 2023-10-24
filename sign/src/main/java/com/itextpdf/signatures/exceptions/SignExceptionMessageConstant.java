@@ -41,6 +41,9 @@ public final class SignExceptionMessageConstant {
             + "signature creation failed. Document shall not contain any certification or approval signatures before "
             + "signing with certification signature.";
     public static final String CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE = "Certificate {0} failed: {1}";
+    public static final String DEFAULT_CLIENTS_CANNOT_BE_CREATED = "Default implementation of OCSP and CRL clients " 
+            + "cannot be created, because signing certificate doesn't contain revocation data sources. " 
+            + "Please try to explicitly add OCSP or CRL client.";
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
@@ -54,10 +57,15 @@ public final class SignExceptionMessageConstant {
             + "certificate chain.";
     public static final String INVALID_TSA_RESPONSE = "Invalid TSA {0} response code {1}.";
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
+    public static final String NO_SIGNATURES_TO_PROLONG = "Document doesn't contain any signatures to prolong.";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
             + "data.";
     public static final String NOT_ENOUGH_SPACE = "Not enough space.";
+    public static final String PATH_IS_NOT_DIRECTORY = "Provided path: {0} is not a directory. "
+            + "Please provide a directory path to store temporary pdf files which are required for signing.";
+    public static final String PROVIDED_TSA_CLIENT_IS_NULL =
+            "Provided TSA client is null. TSA client is required for timestamp signing.";
     public static final String SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT = "Signature "
             + "with name {0} is not the last. It doesn't cover the whole document.";
     public static final String THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL = "The name of the digest algorithm is null.";

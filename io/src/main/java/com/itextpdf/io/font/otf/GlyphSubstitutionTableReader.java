@@ -31,8 +31,6 @@ import java.util.Map;
  * to a single Glyph. This is especially useful for Asian languages like Bangla, Hindi, etc.
  * <p>
  * This has been written according to the OPenTypeFont specifications. This may be found <a href="http://www.microsoft.com/typography/otspec/gsub.htm">here</a>.
- * 
- * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
  */
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 

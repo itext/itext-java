@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -125,7 +126,7 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfAConformanceException.class,
                     () -> pdfA2Checker.checkSinglePage(pageToCheck)
             );
-            Assert.assertEquals(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
+            Assert.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
                     e.getMessage());
         }
     }
@@ -173,7 +174,7 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfAConformanceException.class,
                     () -> pdfA2Checker.checkSinglePage(pageToCheck)
             );
-            Assert.assertEquals(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
+            Assert.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
                     e.getMessage());
         }
     }
@@ -201,7 +202,7 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
             Exception e = Assert.assertThrows(PdfAConformanceException.class,
                     () -> pdfA2Checker.checkSinglePage(pageToCheck)
             );
-            Assert.assertEquals(PdfAConformanceException.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
+            Assert.assertEquals(PdfaExceptionMessageConstant.THE_DOCUMENT_DOES_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE,
                     e.getMessage());
         }
     }

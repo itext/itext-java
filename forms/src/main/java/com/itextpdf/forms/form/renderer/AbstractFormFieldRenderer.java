@@ -43,12 +43,16 @@ import com.itextpdf.layout.layout.MinMaxWidthLayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -294,12 +298,37 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
      * Deletes all margin properties. Used in {@code applyAcroField} to not apply margins twice as we already use area
      * with margins applied (margins shouldn't be an interactive part of the field, i.e. included into its occupied
      * area).
+     *
+     * @return the map of deleted margins
      */
-    void deleteMargins() {
+    Map<Integer, Object> deleteMargins() {
+
+        final Map<Integer, Object> margins = new HashMap<>();
+        margins.put(Property.MARGIN_TOP, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_TOP));
+        margins.put(Property.MARGIN_BOTTOM, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_BOTTOM));
+        margins.put(Property.MARGIN_LEFT, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_LEFT));
+        margins.put(Property.MARGIN_RIGHT, this.modelElement.<UnitValue>getOwnProperty(Property.MARGIN_RIGHT));
+
         modelElement.deleteOwnProperty(Property.MARGIN_RIGHT);
         modelElement.deleteOwnProperty(Property.MARGIN_LEFT);
         modelElement.deleteOwnProperty(Property.MARGIN_TOP);
         modelElement.deleteOwnProperty(Property.MARGIN_BOTTOM);
+        return margins;
+    }
+
+    /**
+     * Applies the properties to the model element.
+     *
+     * @param properties the properties to apply
+     */
+    void applyProperties(Map<Integer, Object> properties) {
+        for (Entry<Integer, Object> integerObjectEntry : properties.entrySet()) {
+            if (integerObjectEntry.getValue() != null) {
+                modelElement.setProperty(integerObjectEntry.getKey(), integerObjectEntry.getValue());
+            } else {
+                modelElement.deleteOwnProperty(integerObjectEntry.getKey());
+            }
+        }
     }
 
     /**

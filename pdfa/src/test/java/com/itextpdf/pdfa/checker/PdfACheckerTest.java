@@ -28,6 +28,7 @@ import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -44,15 +45,14 @@ import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +68,13 @@ public class PdfACheckerTest extends ExtendedITextTest {
     public void before() {
         pdfAChecker = new EmptyPdfAChecker();
         pdfAChecker.setFullCheckMode(true);
+    }
+
+    @Test
+    public void checkPdfWithHugeAmountOfOutlinesTest() throws IOException {
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(SOURCE_FOLDER + "outlineStackOverflowTest01.pdf"))) {
+            AssertUtil.doesNotThrow(() -> pdfAChecker.checkDocument(pdf.getCatalog()));
+        }
     }
 
     @Test
@@ -124,7 +131,7 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
-        public void checkColorSpace(PdfColorSpace colorSpace, PdfDictionary currentColorSpaces, boolean checkAlternate,
+        public void checkColorSpace(PdfColorSpace colorSpace, PdfObject object, PdfDictionary currentColorSpaces, boolean checkAlternate,
                 Boolean fill) {
 
         }
@@ -286,6 +293,11 @@ public class PdfACheckerTest extends ExtendedITextTest {
 
         @Override
         protected void checkTrailer(PdfDictionary trailer) {
+
+        }
+
+        @Override
+        protected void checkCatalog(PdfCatalog catalog) {
 
         }
 

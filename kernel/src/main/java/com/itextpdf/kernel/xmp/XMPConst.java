@@ -213,7 +213,16 @@ public interface XMPConst
 	String PART = "part";
 
 	/**
+	 * ISO 19005 revision
+	 */
+	String REV = "rev";
+
+	/**
 	 * Conformance, A, B, or U.
 	 */
 	String CONFORMANCE = "conformance";
+	/**
+	 * History
+	 */
+	String HISTORY = "History";
 }

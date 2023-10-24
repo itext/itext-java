@@ -30,7 +30,7 @@ import org.junit.experimental.categories.Category;
 
 /**
  Tag tests.
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 @Category(UnitTest.class)
 public class TagTest extends ExtendedITextTest {
     @Test public void isCaseSensitive() {

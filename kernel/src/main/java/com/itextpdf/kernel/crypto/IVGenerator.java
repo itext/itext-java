@@ -28,8 +28,6 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * An initialization vector generator for a CBC block encryption. It's a random generator based on ARCFOUR.
- *
- * @author Paulo Soares
  */
 public final class IVGenerator {
 

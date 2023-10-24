@@ -27,9 +27,6 @@ import com.itextpdf.io.exceptions.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author psoares
- */
 public class CMapByteCid extends AbstractCMap {
 
 

@@ -109,12 +109,33 @@ public final class FontProgramFactory {
      * not parsed again.
      * <p>
      *
+     * @param fontProgram the name of the font or its location on file
+     * @param cmap CMap to convert Unicode value to CID if CJK font is used
+     * @param cached whether to cache this font program after it has been loaded
+     * @return returns a new {@link FontProgram}. This font program may come from the cache
+     * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
+     */
+    public static FontProgram createFont(String fontProgram, String cmap, boolean cached) throws java.io.IOException {
+        return createFont(fontProgram, cmap, null, cached);
+    }
+
+    /**
+     * Creates a new font program. This font program can be one of the 14 built in fonts,
+     * a Type1 font referred to by an AFM or PFM file, a TrueType font or
+     * a CJK font from the Adobe Asian Font Pack.
+     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
+     * This would get the second font (indexes start at 0), in this case "MS PGothic".
+     * <p>
+     * The fonts are cached and if they already exist they are extracted from the cache,
+     * not parsed again.
+     * <p>
+     *
      * @param fontProgram the byte contents of the font program
      * @return returns a new {@link FontProgram}. This font program may come from the cache
      * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
      */
     public static FontProgram createFont(byte[] fontProgram) throws java.io.IOException {
-        return createFont(null, fontProgram, DEFAULT_CACHED);
+        return createFont(null, null, fontProgram, DEFAULT_CACHED);
     }
 
     /**
@@ -134,20 +155,25 @@ public final class FontProgramFactory {
      * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
      */
     public static FontProgram createFont(byte[] fontProgram, boolean cached) throws java.io.IOException {
-        return createFont(null, fontProgram, cached);
+        return createFont(null, null, fontProgram, cached);
     }
 
-    private static FontProgram createFont(String name, byte[] fontProgram, boolean cached) throws java.io.IOException {
+    private static FontProgram createFont(String name, String cmap, byte[] fontProgram, boolean cached)
+            throws java.io.IOException {
         String baseName = FontProgram.trimFontStyle(name);
 
         //yes, we trying to find built-in standard font with original name, not baseName.
         boolean isBuiltinFonts14 = StandardFonts.isStandardFont(name);
-        boolean isCidFont = !isBuiltinFonts14 && FontCache.isPredefinedCidFont(baseName);
+        boolean isCidFont = !isBuiltinFonts14 && CjkResourceLoader.isPredefinedCidFont(baseName);
 
         FontProgram fontFound;
         FontCacheKey fontKey = null;
         if (cached) {
-            fontKey = createFontCacheKey(name, fontProgram);
+            if (isCidFont && cmap != null) {
+                fontKey = createFontCacheKey(name + cmap, fontProgram);
+            } else {
+                fontKey = createFontCacheKey(name, fontProgram);
+            }
             fontFound = FontCache.getFont(fontKey);
             if (fontFound != null) {
                 return fontFound;
@@ -182,7 +208,7 @@ public final class FontProgramFactory {
             if (isBuiltinFonts14 || ".afm".equals(fontFileExtension) || ".pfm".equals(fontFileExtension)) {
                 fontBuilt = new Type1Font(name, null, null, null);
             } else if (isCidFont) {
-                fontBuilt = new CidFont(name, FontCache.getCompatibleCmaps(baseName));
+                fontBuilt = new CidFont(name, cmap, CjkResourceLoader.getCompatibleCmaps(baseName));
             } else if (".ttf".equals(fontFileExtension) || ".otf".equals(fontFileExtension)) {
                 if (fontProgram != null) {
                     fontBuilt = new TrueTypeFont(fontProgram);

@@ -671,8 +671,6 @@ public abstract class Evaluator {
 
     /**
      * Abstract evaluator for sibling index matching
-     *
-     * @author ant
      */
     public abstract static class IndexEvaluator extends Evaluator {
         int index;

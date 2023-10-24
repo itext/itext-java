@@ -37,6 +37,7 @@ public class FontProgramDescriptor {
     private final String fullNameLowerCase;
     private final String fontNameLowerCase;
     private final String familyNameLowerCase;
+    private final String familyName2LowerCase;
 
     private final String style;
     private final int macStyle;
@@ -63,7 +64,14 @@ public class FontProgramDescriptor {
         this.fontName = fontNames.getFontName();
         this.fontNameLowerCase = this.fontName.toLowerCase();
         this.fullNameLowerCase = fontNames.getFullName()[0][3].toLowerCase();
-        this.familyNameLowerCase = fontNames.getFamilyName() != null && fontNames.getFamilyName()[0][3] != null ? fontNames.getFamilyName()[0][3].toLowerCase() : null;
+        this.familyNameLowerCase = fontNames.getFamilyName() != null && fontNames.getFamilyName()[0][3] != null ?
+                fontNames.getFamilyName()[0][3].toLowerCase() : null;
+        // For font family2 let's take the last element in array. The family in the 1st element has high chance
+        // to be the same as returned by getFamilyName. Ideally we should take different families based on OS
+        // but it breaks the compatibility, produces different results on different OSs etc.
+        String[][] familyName2 = fontNames.getFamilyName2();
+        this.familyName2LowerCase = familyName2 != null && familyName2[familyName2.length - 1][3] != null ?
+                familyName2[familyName2.length - 1][3].toLowerCase() : null;
         this.style = fontNames.getStyle();
         this.weight = fontNames.getFontWeight();
         this.macStyle = fontNames.getMacStyle();
@@ -116,6 +124,15 @@ public class FontProgramDescriptor {
 
     public String getFamilyNameLowerCase() {
         return familyNameLowerCase;
+    }
+
+    /**
+     * Get extra family name if exists.
+     *
+     * @return extra family name if exists in the font, {@code null} otherwise.
+     */
+    public String getFamilyName2LowerCase() {
+        return familyName2LowerCase;
     }
 
     public Set<String> getFullNameAllLangs() { return fullNamesAllLangs; }

@@ -30,7 +30,6 @@ import java.security.GeneralSecurityException;
 
 /**
  * Interface to sign a document. The signing is fully done externally, including the container composition.
- * @author Paulo Soares
  */
 public interface IExternalSignatureContainer {
 

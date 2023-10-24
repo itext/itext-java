@@ -22,10 +22,6 @@
  */
 package com.itextpdf.io.font.otf;
 
-/**
- *  
- * @author <a href="mailto:paawak@gmail.com">Palash Ray</a>
- */
 public class FontReadingException extends java.io.IOException {
 
 

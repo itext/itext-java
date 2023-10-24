@@ -36,8 +36,10 @@ public class FontNames {
 
     // name, ID = 4
     private String[][] fullName;
-    // name, ID = 1 or 16
+    // name, ID = 16 or 1
     private String[][] familyName;
+    // name, ID = 1
+    private String[][] familyName2;
     // name, ID = 2 or 17
     private String[][] subfamily;
     //name, ID = 6
@@ -80,6 +82,15 @@ public class FontNames {
 
     public String[][] getFamilyName() {
         return familyName;
+    }
+
+    /**
+     * Get extra family name if exists.
+     *
+     * @return extra family name if exists in the font, {@code null} otherwise.
+     */
+    public String[][] getFamilyName2() {
+        return familyName2;
     }
 
     public String getStyle() {
@@ -174,6 +185,15 @@ public class FontNames {
 
     protected void setFamilyName(String[][] familyName) {
         this.familyName = familyName;
+    }
+
+    /**
+     * Set extra family name used for better fonts match.
+     *
+     * @param familyName2 family name to set.
+     */
+    protected void setFamilyName2(String[][] familyName2) {
+        this.familyName2 = familyName2;
     }
 
     protected void setFamilyName(String familyName) {

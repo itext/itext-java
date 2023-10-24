@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -586,6 +587,143 @@ public class PdfMergerTest extends ExtendedITextTest {
                 "SameStructElemNoParent.pdf"));
     }
 
+    @Test
+    public void mergeDocumentsWithStringAdditionalActions() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "docAAString.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeAAString.pdf";
+        String mergedDocument = destinationFolder + "mergedAAString.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.CANNOT_MERGE_ENTRY)})
+    public void mergeDocumentsWithAdditionalActionsInDestination() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "docAAStream.pdf";
+        String secondPdfDocument = sourceFolder + "docAAString.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeAA2.pdf";
+        String mergedDocument = destinationFolder + "mergedAAInDest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    public void mergeDocumentsWithUnexpectedKeyAdditionalActions() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "docAAStringWithUnexpectedKey.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeAAUnexpectedKey.pdf";
+        String mergedDocument = destinationFolder + "mergedAAUnexpectedKey.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    public void mergeDocumentsWithStreamAdditionalActions() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "docAAStream.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeAAStream.pdf";
+        String mergedDocument = destinationFolder + "mergedAAStream.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    public void mergeDocumentsWithStringOpenActions() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "docOAString.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeOAString.pdf";
+        String mergedDocument = destinationFolder + "mergedOAString.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.CANNOT_MERGE_ENTRY)})
+    public void mergeDocumentsWithOpenActionInDestination() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "docOAStream.pdf";
+        String secondPdfDocument = sourceFolder + "docOAString.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeOA2.pdf";
+        String mergedDocument = destinationFolder + "mergedOAInDest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    public void mergeDocumentsWithStreamOpenActions() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "docOAStream.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeOAStream.pdf";
+        String mergedDocument = destinationFolder + "mergedOAStream.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+
+    @Test
+    public void mergeDocumentsWithJSInTree() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "docJS.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeJS.pdf";
+        String mergedDocument = destinationFolder + "mergedJS.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.CANNOT_MERGE_ENTRY)})
+    public void mergeDocumentsWithNamesJSInDestination() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "cmp_mergeJS.pdf";
+        String secondPdfDocument = sourceFolder + "docJS.pdf";
+        String cmpDocument = sourceFolder + "cmp_mergeJS2.pdf";
+        String mergedDocument = destinationFolder + "mergedJSInDest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+
     private PdfDictionary mergeSinglePdfAndGetResultingStructTreeRoot(String pathToMerge)
             throws IOException {
         List<File> sources = new ArrayList<File>();
@@ -605,6 +743,20 @@ public class PdfMergerTest extends ExtendedITextTest {
         PdfDocument mergedDoc = new PdfDocument(new PdfWriter(destination));
         mergedDoc.getWriter().setSmartMode(smartMode);
         PdfMerger merger = new PdfMerger(mergedDoc);
+        for (File source: sources) {
+            PdfDocument sourcePdf = new PdfDocument(new PdfReader(source));
+            merger.merge(sourcePdf, 1, sourcePdf.getNumberOfPages()).setCloseSourceDocuments(true);
+            sourcePdf.close();
+        }
+
+        merger.close();
+        mergedDoc.close();
+    }
+
+    private void mergePdfs(List<File> sources, String destination, PdfMergerProperties properties, boolean smartMode) throws IOException {
+        PdfDocument mergedDoc = new PdfDocument(new PdfWriter(destination));
+        mergedDoc.getWriter().setSmartMode(smartMode);
+        PdfMerger merger = new PdfMerger(mergedDoc, properties);
         for (File source: sources) {
             PdfDocument sourcePdf = new PdfDocument(new PdfReader(source));
             merger.merge(sourcePdf, 1, sourcePdf.getNumberOfPages()).setCloseSourceDocuments(true);

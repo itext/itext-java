@@ -28,7 +28,6 @@ import java.util.Map;
 
 /**
  * LookupType 3: Alternate Substitution Subtable
- * @author psoares
  */
 public class GsubLookupType3 extends OpenTableLookup {
 

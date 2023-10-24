@@ -49,8 +49,6 @@ import java.util.List;
 
 /**
  * Tests XmlTreeBuilder.
- *
- * @author Jonathan Hedley
  */
 @Category(UnitTest.class)
 public class XmlTreeBuilderTest extends ExtendedITextTest {

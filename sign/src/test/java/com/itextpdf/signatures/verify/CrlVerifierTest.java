@@ -31,6 +31,7 @@ import com.itextpdf.signatures.CRLVerifier;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
+import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.test.ExtendedITextTest;
@@ -67,7 +68,7 @@ public class CrlVerifierTest extends ExtendedITextTest {
         String caCertP12FileName = certsSrc + "rootRsa.pem";
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertP12FileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertP12FileName, password);
-        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
         Assert.assertTrue(verifyTest(crlBuilder));
     }
 
@@ -77,11 +78,11 @@ public class CrlVerifierTest extends ExtendedITextTest {
         String caCertP12FileName = certsSrc + "rootRsa.pem";
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertP12FileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertP12FileName, password);
-        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
 
         String checkCertFileName = certsSrc + "signCertRsa01.pem";
         X509Certificate checkCert = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
-        crlBuilder.addCrlEntry(checkCert, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -40),
+        crlBuilder.addCrlEntry(checkCert, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -40),
                 FACTORY.createCRLReason().getKeyCompromise());
 
         Assert.assertThrows(VerificationException.class, () -> verifyTest(crlBuilder));
@@ -93,8 +94,8 @@ public class CrlVerifierTest extends ExtendedITextTest {
         String caCertP12FileName = certsSrc + "rootRsa.pem";
         X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertP12FileName)[0];
         PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertP12FileName, password);
-        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -2));
-        crlBuilder.setNextUpdate(DateTimeUtil.addDaysToDate(DateTimeUtil.getCurrentTimeDate(), -1));
+        TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -2));
+        crlBuilder.setNextUpdate(DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
 
         Assert.assertFalse(verifyTest(crlBuilder));
     }
@@ -113,7 +114,7 @@ public class CrlVerifierTest extends ExtendedITextTest {
         for (byte[] crlBytes : crlBytesCollection) {
             X509CRL crl = (X509CRL) SignTestPortUtil.parseCrlFromStream(new ByteArrayInputStream(crlBytes));
             CRLVerifier verifier = new CRLVerifier(null, null);
-            verify = verifier.verify(crl, checkCert, caCert, DateTimeUtil.getCurrentTimeDate());
+            verify = verifier.verify(crl, checkCert, caCert, TimeTestUtil.TEST_DATE_TIME);
             break;
         }
         return verify;

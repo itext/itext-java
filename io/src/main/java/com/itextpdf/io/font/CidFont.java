@@ -23,7 +23,6 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.font.cmap.CMapCidUni;
 import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.util.IntHashtable;
@@ -35,27 +34,20 @@ import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
 
-
     private String fontName;
 	private int pdfFontFlags;
     private Set<String> compatibleCmaps;
 
-    CidFont(String fontName, Set<String> cmaps) {
+    CidFont(String fontName, String cmap, Set<String> compatibleCmaps) {
         this.fontName = fontName;
-        compatibleCmaps = cmaps;
+        this.compatibleCmaps = compatibleCmaps;
         fontNames = new FontNames();
         initializeCidFontNameAndStyle(fontName);
         Map<String, Object> fontDesc = CidFontProperties.getAllFonts().get(fontNames.getFontName());
         if (fontDesc == null) {
             throw new IOException("There is no such predefined font: {0}").setMessageParams(fontName);
         }
-        initializeCidFontProperties(fontDesc);
-    }
-
-    CidFont(String fontName, Set<String> cmaps, Map<String, Object> fontDescription) {
-        initializeCidFontNameAndStyle(fontName);
-        initializeCidFontProperties(fontDescription);
-        compatibleCmaps = cmaps;
+        initializeCidFontProperties(fontDesc, cmap);
     }
 
     public boolean compatibleWith(String cmap) {
@@ -97,7 +89,7 @@ public class CidFont extends FontProgram {
         fontNames.setFullName(new String[][]{new String[]{"", "", "", fontNames.getFontName()}});
     }
 
-    private void initializeCidFontProperties(Map<String, Object> fontDesc) {
+    private void initializeCidFontProperties(Map<String, Object> fontDesc, String cmap) {
         fontIdentification.setPanose((String) fontDesc.get("Panose"));
         fontMetrics.setItalicAngle(Integer.parseInt((String) fontDesc.get("ItalicAngle")));
         fontMetrics.setCapHeight(Integer.parseInt((String) fontDesc.get("CapHeight")));
@@ -113,10 +105,10 @@ public class CidFont extends FontProgram {
         int ury = Integer.parseInt(tk.nextToken());
         fontMetrics.updateBbox(llx, lly, urx, ury);
         registry = (String) fontDesc.get("Registry");
-        String uniMap = getCompatibleUniMap(registry);
+        String uniMap = getCompatibleUniMap(registry, cmap);
         if (uniMap != null) {
             IntHashtable metrics = (IntHashtable) fontDesc.get("W");
-            CMapUniCid uni2cid = FontCache.getUni2CidCmap(uniMap);
+            CMapUniCid uni2cid = CjkResourceLoader.getUni2CidCmap(uniMap);
             avgWidth = 0;
             for (int cp: uni2cid.getCodePoints()) {
                 int cid = uni2cid.lookup(cp);
@@ -133,14 +125,22 @@ public class CidFont extends FontProgram {
         }
     }
 
-    private static String getCompatibleUniMap(String registry) {
+    private static String getCompatibleUniMap(String registry, String cmap) {
+        Set<String> compatibleUniMaps = CidFontProperties.getRegistryNames().get(registry + "_Uni");
+        // 'cmap != null &&' part here is for autoport
+        if (cmap != null && compatibleUniMaps.contains(cmap)) {
+            return cmap;
+        }
+
         String uniMap = "";
-        for (String name : CidFontProperties.getRegistryNames().get(registry + "_Uni")) {
+        for (String name : compatibleUniMaps) {
             uniMap = name;
             if (name.endsWith("H")) {
+                uniMap = name;
                 break;
             }
         }
+
         return uniMap;
     }
 }

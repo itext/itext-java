@@ -34,8 +34,6 @@ import java.security.Signature;
 /**
  * Implementation of the {@link IExternalSignature} interface that
  * can be used when you have a {@link PrivateKey} object.
- *
- * @author Paulo Soares
  */
 public class PrivateKeySignature implements IExternalSignature {
 

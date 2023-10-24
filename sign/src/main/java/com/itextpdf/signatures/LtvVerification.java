@@ -68,8 +68,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Add verification according to PAdES-LTV (part 4).
- *
- * @author Paulo Soares
  */
 public class LtvVerification {
 

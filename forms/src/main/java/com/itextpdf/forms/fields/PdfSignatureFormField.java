@@ -28,12 +28,28 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.forms.PdfSigFieldLock;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 
 /**
  * An AcroForm field containing signature data.
  */
 public class PdfSignatureFormField extends PdfFormField {
+
+    /**
+     * Indicates if we need to reuse the existing appearance as a background layer.
+     */
+    private boolean reuseAppearance = false;
+
+    /**
+     * Background level of the signature appearance.
+     */
+    private PdfFormXObject n0;
+
+    /**
+     * Signature appearance layer that contains information about the signature.
+     */
+    private PdfFormXObject n2;
 
     protected PdfSignatureFormField(PdfDocument pdfDocument) {
         super(pdfDocument);
@@ -79,4 +95,70 @@ public class PdfSignatureFormField extends PdfFormField {
         PdfDictionary sigLockDict = (PdfDictionary) getPdfObject().get(PdfName.Lock);
         return sigLockDict == null ? null : new PdfSigFieldLock(sigLockDict);
     }
+
+    /**
+     * Sets the background layer that is present when creating the signature field.
+     *
+     * @param n0 layer xObject.
+     *
+     * @return this same {@link PdfSignatureFormField} instance.
+     */
+    public PdfSignatureFormField setBackgroundLayer(PdfFormXObject n0) {
+        this.n0 = n0;
+        regenerateField();
+        return this;
+    }
+
+    /**
+     * Sets the signature appearance layer that contains information about the signature, e.g. the line art for the
+     * handwritten signature, the text giving the signer’s name, date, reason, location and so on.
+     *
+     * @param n2 layer xObject.
+     *
+     * @return this same {@link PdfSignatureFormField} instance.
+     */
+    public PdfSignatureFormField setSignatureAppearanceLayer(PdfFormXObject n2) {
+        this.n2 = n2;
+        regenerateField();
+        return this;
+    }
+
+    /**
+     * Indicates that the existing appearances needs to be reused as a background.
+     *
+     * @param reuseAppearance is an appearances reusing flag value to set.
+     * @return this same {@link PdfSignatureFormField} instance.
+     */
+    public PdfSignatureFormField setReuseAppearance(boolean reuseAppearance) {
+        this.reuseAppearance = reuseAppearance;
+        return this;
+    }
+
+    /**
+     * Gets the background layer that is present when creating the signature field if it was set.
+     *
+     * @return n0 layer xObject.
+     */
+    PdfFormXObject getBackgroundLayer() {
+        return n0;
+    }
+
+    /**
+     * Gets the signature appearance layer that contains information about the signature if it was set.
+     *
+     * @return n2 layer xObject.
+     */
+    PdfFormXObject getSignatureAppearanceLayer() {
+        return n2;
+    }
+
+    /**
+     * Indicates if the existing appearances needs to be reused as a background.
+     *
+     * @return appearances reusing flag value.
+     */
+    boolean isReuseAppearance() {
+        return reuseAppearance;
+    }
+
 }

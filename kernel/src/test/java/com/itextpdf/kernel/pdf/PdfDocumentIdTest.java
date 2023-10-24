@@ -41,9 +41,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-/**
- * @author Michael Demey
- */
 @Category(IntegrationTest.class)
 public class PdfDocumentIdTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTestID/";

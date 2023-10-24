@@ -30,9 +30,6 @@ package com.itextpdf.test.annotations.type;
  * For example, if a test creates a Document, manipulates it, writes the result
  * to disk, and then compares the file with a reference document, then it is
  * definitely not a Unit Test but most likely an Integration Test.
- * 
- * @author Amedee Van Gasse
- *
  */
 public interface IntegrationTest extends SlowTest {
 }

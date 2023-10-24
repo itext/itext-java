@@ -396,5 +396,4 @@ public class EncodingTest extends ExtendedITextTest {
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
         Assert.assertEquals("Hello\u7121\u540dworld\u6b98\u528d", extractedText);
     }
-
 }

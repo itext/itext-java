@@ -22,34 +22,34 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
-import com.itextpdf.forms.logs.FormsLogMessageConstants;
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.InputField;
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
 /**
  * The {@link AbstractOneLineTextFieldRenderer} implementation for input fields.
@@ -163,10 +163,15 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = this.getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        deleteMargins();
+        final Map<Integer, Object> margins = deleteMargins();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
         final float fontSizeValue = fontSize.getValue();
 
+        // Some properties are set to the HtmlDocumentRenderer, which is root renderer for this ButtonRenderer, but
+        // in forms logic root renderer is CanvasRenderer, and these properties will have default values. So
+        // we get them from renderer and set these properties to model element, which will be passed to forms logic.
+        modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
+        modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         // Default html2pdf input field appearance differs from the default one for form fields.
         // That's why we got rid of several properties we set by default during InputField instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
@@ -190,6 +195,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
 
         writeAcroFormFieldLangAttribute(doc);
+        applyProperties(margins);
     }
 
     /**

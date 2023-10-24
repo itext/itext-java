@@ -41,7 +41,7 @@ public class Jpeg2000Test extends ExtendedITextTest {
     public void openJpeg2000_1() throws java.io.IOException {
         try {
             // Test a more specific entry point
-            ImageDataFactory.createJpeg2000(UrlUtil.toURL(sourceFolder + "WP_20140410_001.JP2"));
+            ImageDataFactory.createJpeg2000(UrlUtil.toURL(sourceFolder + "bee.jp2"));
         } catch (IOException e) {
             Assert.assertEquals(IoExceptionMessageConstant.UNSUPPORTED_BOX_SIZE_EQ_EQ_0, e.getMessage());
         }
@@ -49,9 +49,9 @@ public class Jpeg2000Test extends ExtendedITextTest {
 
     @Test
     public void openJpeg2000_2() throws java.io.IOException {
-        ImageData img = ImageDataFactory.create(sourceFolder + "WP_20140410_001.JPC");
-        Assert.assertEquals(2592, img.getWidth(), 0);
-        Assert.assertEquals(1456, img.getHeight(), 0);
-        Assert.assertEquals(8, img.getBpc());
+        ImageData img = ImageDataFactory.create(sourceFolder + "bee.jpc");
+        Assert.assertEquals(640, img.getWidth(), 0);
+        Assert.assertEquals(800, img.getHeight(), 0);
+        Assert.assertEquals(7, img.getBpc());
     }
 }

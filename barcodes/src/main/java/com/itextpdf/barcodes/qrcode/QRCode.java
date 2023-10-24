@@ -22,10 +22,6 @@
  */
 package com.itextpdf.barcodes.qrcode;
 
-/**
- * @author satorux@google.com (Satoru Takabayashi) - creator
- * @author dswitkin@google.com (Daniel Switkin) - ported from C++
- */
 final class QRCode {
 
     public static final int NUM_MASK_PATTERNS = 8;

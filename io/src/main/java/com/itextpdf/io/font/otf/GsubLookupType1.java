@@ -26,10 +26,6 @@ import com.itextpdf.io.util.IntHashtable;
 
 import java.util.List;
 
-/**
- * LookupType 1: Single Substitution Subtable
- * @author psoares
- */
 public class GsubLookupType1 extends OpenTableLookup {
 
     private IntHashtable substMap;

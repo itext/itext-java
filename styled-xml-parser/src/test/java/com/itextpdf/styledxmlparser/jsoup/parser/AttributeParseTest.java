@@ -38,8 +38,7 @@ import java.util.List;
 
 /**
  Test suite for attribute parser.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 @Category(UnitTest.class)
 public class AttributeParseTest extends ExtendedITextTest {
 

@@ -126,6 +126,18 @@ public final class DateTimeUtil {
     }
 
     /**
+     * Adds provided number of milliseconds to the Date.
+     * 
+     * @param date {@link Date} date to increase
+     * @param millis number of milliseconds to add
+     * 
+     * @return updated {@link Date}
+     */
+    public static Date addMillisToDate(Date date, long millis) {
+        return new Date(DateTimeUtil.getRelativeTime(date) + millis);
+    }
+
+    /**
      * Adds the specified amount of days to the given date.
      *
      * @param date the specified date to add
@@ -138,6 +150,22 @@ public final class DateTimeUtil {
         Calendar cal = new GregorianCalendar();
         cal.setTime(date);
         cal.add(Calendar.DAY_OF_YEAR, days);
+        return cal.getTime();
+    }
+
+    /**
+     * Adds the specified amount of years to the given date.
+     *
+     * @param date the specified date to add
+     * @param years the amount of years to be added
+     *
+     * @return a {@link Date} object representing the calendar's time value (millisecond
+     * offset from the Epoch)
+     */
+    public static Date addYearsToDate(Date date, int years) {
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, years);
         return cal.getTime();
     }
 
@@ -202,6 +230,17 @@ public final class DateTimeUtil {
     public static long getCurrentTimeZoneOffset(Date date) {
         TimeZone tz = TimeZone.getDefault();
         return tz.getOffset(date.getTime());
+    }
+
+    /**
+     * Converts {@link Calendar} date to string of "yyyy.MM.dd HH:mm:ss z" format.
+     *
+     * @param date to convert.
+     *
+     * @return string date value.
+     */
+    public static String dateToString(Calendar date) {
+        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(date.getTime());
     }
 
     private static DateFormat initParserSDF(String pattern) {

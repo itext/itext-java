@@ -143,7 +143,7 @@ public class ListRenderer extends BlockRenderer {
         if (defaultListSymbol instanceof Text) {
             return surroundTextBullet(new TextRenderer((Text) defaultListSymbol));
         } else if (defaultListSymbol instanceof Image) {
-            return new ImageRenderer((Image) defaultListSymbol);
+            return ((Image) defaultListSymbol).getRenderer();
         } else if (defaultListSymbol instanceof ListNumberingType) {
             ListNumberingType numberingType = (ListNumberingType) defaultListSymbol;
             String numberText;

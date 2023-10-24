@@ -31,6 +31,8 @@ import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfFormFieldMergeUtil;
+import com.itextpdf.forms.fields.merging.MergeFieldsStrategy;
+import com.itextpdf.forms.fields.merging.OnDuplicateFormFieldNameStrategy;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -156,11 +158,35 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * dictionary will be created and added to the document.
      *
      * @param document         the document to retrieve the {@link PdfAcroForm} from
-     * @param createIfNotExist when <code>true</code>, this method will create a {@link PdfAcroForm} if none exists for this document
+     * @param createIfNotExist when <code>true</code>, this method will create a {@link PdfAcroForm} if none exists
+     *                         for this document
+     *
      * @return the {@link PdfDocument document}'s AcroForm,
-     * or a new one provided that <code>createIfNotExist</code> parameter is <code>true</code>, otherwise <code>null</code>.
+     * or a new one provided that <code>createIfNotExist</code> parameter is <code>true</code>, otherwise
+     * <code>null</code>.
      */
     public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist) {
+        return getAcroForm(document, createIfNotExist, new MergeFieldsStrategy());
+    }
+
+    /**
+     * Retrieves AcroForm from the document. If there is no AcroForm in the
+     * document Catalog and createIfNotExist flag is true then the AcroForm
+     * dictionary will be created and added to the document.
+     *
+     * @param document                     the document to retrieve the {@link PdfAcroForm} from
+     * @param createIfNotExist             when <code>true</code>, this method will create a {@link PdfAcroForm} if none
+     *                                     exists for
+     *                                     this document
+     * @param onDuplicateFieldNameStrategy the strategy to be used when a field with the same name already exists
+     *
+     * @return the {@link PdfDocument document}'s AcroForm,
+     * or a new one provided that <code>createIfNotExist</code> parameter is <code>true</code>, otherwise
+     * <code>null</code>.
+     */
+    public static PdfAcroForm getAcroForm(PdfDocument document, boolean createIfNotExist,
+            OnDuplicateFormFieldNameStrategy onDuplicateFieldNameStrategy) {
+        document.getDiContainer().register(OnDuplicateFormFieldNameStrategy.class, onDuplicateFieldNameStrategy);
         PdfDictionary acroFormDictionary = document.getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
         PdfAcroForm acroForm = null;
         if (acroFormDictionary == null) {
@@ -185,6 +211,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         return acroForm;
     }
+
 
     /**
      * This method adds the field to the last page in the document.
@@ -234,17 +261,15 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         PdfFormFieldMergeUtil.mergeKidsWithSameNames(field, throwExceptionOnError);
 
-        PdfDictionary fieldDict = field.getPdfObject();
         // PdfPageFormCopier expects that we replace existed field by a new one in case they have the same names.
-        String fieldName = field.getFieldName().toUnicodeString();
-        if (!fields.containsKey(fieldName) ||
-                !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(fieldName), field, throwExceptionOnError)) {
+        if (needToAddToAcroform(field, throwExceptionOnError)) {
             PdfArray fieldsArray = getFields();
-            fieldsArray.add(fieldDict);
+            fieldsArray.add(field.getPdfObject());
             fieldsArray.setModified();
-            fields.put(fieldName, field);
+            fields.put(field.getFieldName().toUnicodeString(), field);
         }
-        processKids(fields.get(fieldName), page);
+        PdfDictionary fieldDict = field.getPdfObject();
+        processKids(fields.get(field.getFieldName().toUnicodeString()), page);
 
         if (fieldDict.containsKey(PdfName.Subtype) && page != null) {
             defineWidgetPageAndAddToIt(page, fieldDict, false);
@@ -252,6 +277,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
         setModified();
     }
+
 
     /**
      * This method merges field with its annotation and places it on the given
@@ -999,7 +1025,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
 
                 if (formField.isInReadingMode() || !fields.containsKey(name) ||
                         !PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(name), formField, true)) {
-                    fields.put(name, formField);
+                    fields.put(formField.getFieldName().toUnicodeString(), formField);
                 } else {
                     shouldBeRemoved.add(field);
                 }
@@ -1237,5 +1263,18 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             allFields.addAll(kids);
         }
         return allFields;
+    }
+
+    private boolean needToAddToAcroform(PdfFormField field, boolean throwExceptionOnError) {
+        final String fieldNameBeforeMergeCall = field.getFieldName().toUnicodeString();
+        if (!fields.containsKey(fieldNameBeforeMergeCall)) {
+            return true;
+        }
+        if (!PdfFormFieldMergeUtil.mergeTwoFieldsWithTheSameNames(fields.get(fieldNameBeforeMergeCall), field,
+                throwExceptionOnError)) {
+            return true;
+        }
+        final boolean isFieldNameChanged = !fieldNameBeforeMergeCall.equals(field.getFieldName().toUnicodeString());
+        return isFieldNameChanged;
     }
 }

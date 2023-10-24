@@ -34,16 +34,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -1622,6 +1613,36 @@ public class PdfCanvasTest extends ExtendedITextTest {
         document.close();
 
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void createSimpleCanvasWithPdfArrayText() throws IOException, InterruptedException {
+        final String outPdf = DESTINATION_FOLDER + "createSimpleCanvasWithPdfArrayText.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_createSimpleCanvasWithPdfArrayText.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfPage page1 = pdfDoc.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page1);
+
+        PdfArray pdfArray = new PdfArray();
+        pdfArray.add(new PdfString("ABC"));
+        pdfArray.add(new PdfNumber(-250));
+        pdfArray.add(new PdfString("DFG"));
+
+        //Initialize canvas and write text to it
+        canvas
+                .saveState()
+                .beginText()
+                .moveText(36, 750)
+                .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 16)
+                .showText(pdfArray)
+                .endText()
+                .restoreState();
+
+        canvas.release();
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     private void createStandardDocument(PdfWriter writer, int pageCount, ContentProvider contentProvider) throws IOException {

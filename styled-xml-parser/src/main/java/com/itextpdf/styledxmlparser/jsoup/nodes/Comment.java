@@ -29,8 +29,7 @@ import java.io.IOException;
 
 /**
  A comment node.
-
- @author Jonathan Hedley, jonathan@hedley.net */
+*/
 public class Comment extends LeafNode {
     /**
      Create a new comment node.

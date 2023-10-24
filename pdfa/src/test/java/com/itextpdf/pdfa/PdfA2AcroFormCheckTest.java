@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
@@ -117,7 +118,7 @@ public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.AcroForm, acroForm);
 
         Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> doc.close());
-        Assert.assertEquals(PdfAConformanceException.THE_INTERACTIVE_FORM_DICTIONARY_SHALL_NOT_CONTAIN_THE_XFA_KEY, e.getMessage());
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_INTERACTIVE_FORM_DICTIONARY_SHALL_NOT_CONTAIN_THE_XFA_KEY, e.getMessage());
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {

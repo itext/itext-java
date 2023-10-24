@@ -28,6 +28,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,8 +44,6 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
  * from an URL.
- *
- * @author Paulo Soares
  */
 public class CrlClientOnline implements ICrlClient {
 
@@ -141,7 +140,7 @@ public class CrlClientOnline implements ICrlClient {
         for (URL urlt : urlList) {
             try {
                 LOGGER.info("Checking CRL: " + urlt);
-                InputStream inp = SignUtils.getHttpResponse(urlt);
+                InputStream inp = getCrlResponse(checkCert, urlt);
                 byte[] buf = new byte[1024];
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 while (true) {
@@ -160,6 +159,20 @@ public class CrlClientOnline implements ICrlClient {
             }
         }
         return ar;
+    }
+
+    /**
+     * Get CRL response represented as {@link InputStream}.
+     * 
+     * @param cert {@link X509Certificate} certificate to get CRL response for
+     * @param urlt {@link URL} link, which is expected to be used to get CRL response from
+     * 
+     * @return CRL response bytes, represented as {@link InputStream}
+     * 
+     * @throws IOException if an I/O error occurs
+     */
+    protected InputStream getCrlResponse(X509Certificate cert, URL urlt) throws IOException {
+        return SignUtils.getHttpResponse(urlt);
     }
 
     /**

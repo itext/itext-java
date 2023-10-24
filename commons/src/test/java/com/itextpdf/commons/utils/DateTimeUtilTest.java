@@ -27,6 +27,8 @@ import com.itextpdf.test.annotations.type.UnitTest;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -61,6 +63,14 @@ public class DateTimeUtilTest extends ExtendedITextTest {
 
         Assert.assertEquals(1588636800000d - offset, millisFromEpochTo2020_05_05, ZERO_DELTA);
     }
+    
+    @Test
+    public void addMillisToDateTest() {
+        Date almostCurrentTime = new Date(new Date().getTime() - 2000);
+        long twoSeconds = 2000;
+        Assert.assertEquals(new Date().getTime(),
+                DateTimeUtil.addMillisToDate(almostCurrentTime, twoSeconds).getTime(), ONE_SECOND_DELTA);
+    }
 
     @Test
     public void compareUtcMillisFromEpochWithNullParamAndCurrentTimeTest() {
@@ -78,5 +88,25 @@ public class DateTimeUtilTest extends ExtendedITextTest {
         long offset = DateTimeUtil.getCurrentTimeZoneOffset(date);
 
         Assert.assertEquals(1588636800000d - offset, relativeTime, ZERO_DELTA);
+    }
+
+    @Test
+    public void addYearPositiveValueTest () {
+        GregorianCalendar originalDate = new GregorianCalendar(2000 + 1900, 1, 1);
+        originalDate.getTime();
+
+        Date newDate = DateTimeUtil.addYearsToDate(originalDate.getTime(), 5);
+
+        Assert.assertEquals(2005, newDate.getYear());
+    }
+
+    @Test
+    public void addYearNegativeValueTest () {
+        GregorianCalendar originalDate = new GregorianCalendar(2000 + 1900, 1, 1);
+        originalDate.getTime();
+
+        Date newDate = DateTimeUtil.addYearsToDate(originalDate.getTime(), -3);
+
+        Assert.assertEquals(1997, newDate.getYear());
     }
 }

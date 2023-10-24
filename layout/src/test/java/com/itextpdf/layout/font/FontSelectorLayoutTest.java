@@ -89,7 +89,6 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
 
     @Test
     public void utfToGlyphToUtfRountripTest() throws IOException {
-        // See DEVSIX-4945
         // this should not throw a null pointer exception
         try(PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
             Document doc = new Document(pdfDoc)) {

@@ -28,7 +28,6 @@ import java.security.GeneralSecurityException;
  * Interface that needs to be implemented to do the actual signing.
  * For instance: you'll have to implement this interface if you want
  * to sign a PDF using a smart card.
- * @author Paulo Soares
  */
 public interface IExternalSignature {
 

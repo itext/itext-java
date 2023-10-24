@@ -26,6 +26,7 @@ package com.itextpdf.pdfa.logs;
  * Class containing pdfa conformance constants to be used in logging.
  */
 public final class PdfAConformanceLogMessageConstant {
+    public static final String ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY = "Annotation of type {0} should have contents key";
     public static final String CATALOG_SHOULD_CONTAIN_LANG_ENTRY =
             "Catalog dictionary should contain lang entry";
 

@@ -51,8 +51,10 @@ import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
 import com.itextpdf.pdfa.checker.PdfA3Checker;
+import com.itextpdf.pdfa.checker.PdfA4Checker;
 import com.itextpdf.pdfa.checker.PdfAChecker;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
 import org.slf4j.Logger;
@@ -144,7 +146,7 @@ public class PdfADocument extends PdfDocument {
                 isPdfADocument = false;
             } else {
                 throw new PdfAConformanceException(
-                        PdfAConformanceException.
+                        PdfaExceptionMessageConstant.
                                 DOCUMENT_TO_READ_FROM_SHALL_BE_A_PDFA_CONFORMANT_FILE_WITH_VALID_XMP_METADATA);
             }
         }
@@ -152,13 +154,28 @@ public class PdfADocument extends PdfDocument {
         setChecker(conformanceLevel);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkIsoConformance(Object obj, IsoKey key) {
         checkIsoConformance(obj, key, null, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
+        checkIsoConformance(obj, key, resources, contentStream, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
+            Object extra) {
         if (!isPdfADocument) {
             super.checkIsoConformance(obj, key, resources, contentStream);
             return;
@@ -209,6 +226,15 @@ public class PdfADocument extends PdfDocument {
             case SIGNATURE:
                 checker.checkSignature((PdfDictionary) obj);
                 break;
+            case SIGNATURE_TYPE:
+                checker.checkSignatureType(((Boolean) obj).booleanValue());
+                break;
+            case CRYPTO:
+                checker.checkCrypto((PdfObject) obj);
+                break;
+            case FONT:
+                checker.checkText((String) obj, (PdfFont) extra);
+                break;
         }
     }
 
@@ -224,6 +250,17 @@ public class PdfADocument extends PdfDocument {
         } else {
             return null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param outputIntent {@inheritDoc}
+     */
+    @Override
+    public void addOutputIntent(PdfOutputIntent outputIntent) {
+        super.addOutputIntent(outputIntent);
+        checker.setPdfAOutputIntentColorSpace(getCatalog().getPdfObject());
     }
 
     void logThatPdfAPageFlushingWasNotPerformed() {
@@ -264,8 +301,13 @@ public class PdfADocument extends PdfDocument {
         try {
             XMPMeta xmpMeta = updateDefaultXmpMetadata();
             xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, checker.getConformanceLevel().getPart());
-            xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE,
-                    checker.getConformanceLevel().getConformance());
+            if (checker.getConformanceLevel().getConformance() != null) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE,
+                        checker.getConformanceLevel().getConformance());
+            }
+            if ("4".equals(checker.getConformanceLevel().getPart())) {
+                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.REV, PdfAConformanceLevel.PDF_A_4_REVISION);
+            }
             addCustomMetadataExtensions(xmpMeta);
             setXmpMetadata(xmpMeta);
         } catch (XMPException e) {
@@ -333,6 +375,12 @@ public class PdfADocument extends PdfDocument {
             case "3":
                 checker = new PdfA3Checker(conformanceLevel);
                 break;
+            case "4":
+                checker = new PdfA4Checker(conformanceLevel);
+                break;
+            default:
+                throw new IllegalArgumentException(PdfaExceptionMessageConstant
+                        .CANNOT_FIND_PDFA_CHECKER_FOR_SPECIFIED_NAME);
         }
     }
 
@@ -357,6 +405,22 @@ public class PdfADocument extends PdfDocument {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param appendMode {@inheritDoc}
+     */
+    @Override
+    protected void flushInfoDictionary(boolean appendMode) {
+        if (!isPdfADocument || (!"4".equals(checker.getConformanceLevel().getPart()))) {
+            super.flushInfoDictionary(appendMode);
+        } else if (getCatalog().getPdfObject().get(PdfName.PieceInfo) != null) {
+            // Leave only ModDate as required by 6.1.3 File trailer of pdf/a-4 spec
+            getDocumentInfo().removeCreationDate();
+            super.flushInfoDictionary(appendMode);
+        }
+    }
+
     boolean isClosing() {
         return isClosing;
     }
@@ -372,6 +436,9 @@ public class PdfADocument extends PdfDocument {
                 break;
             case "3":
                 version = PdfVersion.PDF_1_7;
+                break;
+            case "4":
+                version = PdfVersion.PDF_2_0;
                 break;
             default:
                 version = PdfVersion.PDF_1_4;
