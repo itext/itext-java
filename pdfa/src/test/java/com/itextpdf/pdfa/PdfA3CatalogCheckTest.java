@@ -37,7 +37,6 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -84,7 +83,6 @@ public class PdfA3CatalogCheckTest extends ExtendedITextTest {
         doc.getCatalog().put(PdfName.OCProperties, ocProperties);
 
         doc.close();
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
 
     }

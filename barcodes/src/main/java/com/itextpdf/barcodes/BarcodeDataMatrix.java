@@ -238,39 +238,6 @@ public class BarcodeDataMatrix extends Barcode2D {
         return getBarcodeSize();
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    /**
-     * Creates a <CODE>java.awt.Image</CODE>. A successful call to the method <CODE>generate()</CODE>
-     * before calling this method is required.
-     *
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        if (image == null)
-            return null;
-        int f = foreground.getRGB();
-        int g = background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-
-        int w = width + 2 * ws;
-        int h = height + 2 * ws;
-        int[] pix = new int[w * h];
-        int stride = (w + 7) / 8;
-        int ptr = 0;
-        for (int k = 0; k < h; ++k) {
-            int p = k * stride;
-            for (int j = 0; j < w; ++j) {
-                int b = image[p + j / 8] & 0xff;
-                b <<= j % 8;
-                pix[ptr++] = (b & 0x80) == 0 ? g : f;
-            }
-        }
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(w, h, pix, 0, w));
-        return img;
-    }
-    // Android-Conversion-Skip-Block-End
 	
     /**
      * Gets the barcode size

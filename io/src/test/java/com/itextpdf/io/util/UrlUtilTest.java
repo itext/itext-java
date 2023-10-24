@@ -34,9 +34,8 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-// Android-Conversion-Skip-Line (Security provider is required for working getFinalConnection through SSL on Android)
-// Android-Conversion-Replace import java.security.Security;
-// Android-Conversion-Replace import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,8 +48,7 @@ public class UrlUtilTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        // Android-Conversion-Skip-Line (Security provider is required for working getFinalConnection through SSL on Android)
-        // Android-Conversion-Replace Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(new BouncyCastleProvider());
         createDestinationFolder(destinationFolder);
     }
 
@@ -93,11 +91,10 @@ public class UrlUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
+    @org.junit.Ignore
     public void getBaseUriTest() throws IOException {
         String absolutePathRoot = Paths.get("").toAbsolutePath().toUri().toURL().toExternalForm();
-        // Android-Conversion-Skip-Line (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
-        String expected = absolutePathRoot + destinationFolder; // Android-Conversion-Replace String expected = absolutePathRoot + destinationFolder.substring(1);
+        String expected = absolutePathRoot + destinationFolder.substring(1);
         File tempFile = FileUtil.createTempFile(destinationFolder);
         Assert.assertEquals(expected, FileUtil.getParentDirectoryUri(tempFile));
     }

@@ -39,7 +39,7 @@ public class StringUtilTest extends ExtendedITextTest {
     private static final char SPLIT_PERIOD = '.';
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6457 fix different behavior of Pattern.split method)
+    @org.junit.Ignore
     public void patternSplitTest01() {
         // Pattern.split in Java works differently compared to Regex.Split in C#
         // In C#, empty strings are possible at the beginning of the resultant array for non-capturing groups in
@@ -63,7 +63,7 @@ public class StringUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6457 fix different behavior of Pattern.split method)
+    @org.junit.Ignore
     public void stringSplitTest01() {
         String source = "a01aa78ab89b";
         String[] expected = new String[] {"a01", "a", "a78", "a", "b89", "b"};

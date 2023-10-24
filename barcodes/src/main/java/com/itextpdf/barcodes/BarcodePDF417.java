@@ -841,41 +841,6 @@ public class BarcodePDF417 extends Barcode2D {
         return xObject;
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    /**
-     * Creates a <CODE>java.awt.Image</CODE>.
-     *
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = foreground.getRGB();
-        int g = background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-
-        paintCode();
-        int h = (int) yHeight;
-        int[] pix = new int[bitColumns * codeRows * h];
-        int stride = (bitColumns + 7) / 8;
-        int ptr = 0;
-        for (int k = 0; k < codeRows; ++k) {
-            int p = k * stride;
-            for (int j = 0; j < bitColumns; ++j) {
-                int b = outBits[p + j / 8] & 0xff;
-                b <<= j % 8;
-                pix[ptr++] = (b & 0x80) == 0 ? g : f;
-            }
-            for (int j = 1; j < h; ++j) {
-                System.arraycopy(pix, ptr - bitColumns, pix, ptr + bitColumns * (j - 1), bitColumns);
-            }
-            ptr += bitColumns * (h - 1);
-        }
-
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(bitColumns, codeRows * h, pix, 0, bitColumns));
-        return img;
-    }
-    // Android-Conversion-Skip-Block-End
 
     /**
      * Gets the raw image bits of the barcode. The image will have to
