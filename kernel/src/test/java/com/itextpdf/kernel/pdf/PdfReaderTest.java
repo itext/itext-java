@@ -39,6 +39,7 @@ import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -321,6 +322,20 @@ public class PdfReaderTest extends ExtendedITextTest {
 
         Assert.assertFalse("No need in rebuildXref()", reader.hasRebuiltXref());
         document.close();
+    }
+
+    @Test
+    public void exponentialXObjectLoopTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "exponentialXObjectLoop.pdf";
+        MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        //setting the limit to 256mb for xobjects
+        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(1024L*1024L*256L);
+        PdfReader pdfReader = new PdfReader(fileName, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler));
+        PdfDocument document = new PdfDocument(pdfReader);
+        Exception exception = Assert.assertThrows(MemoryLimitsAwareException.class,
+                () -> PdfTextExtractor.getTextFromPage(document.getPage(1)));
+        Assert.assertEquals(KernelExceptionMessageConstant.TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT,
+                exception.getMessage());
     }
 
     @Test

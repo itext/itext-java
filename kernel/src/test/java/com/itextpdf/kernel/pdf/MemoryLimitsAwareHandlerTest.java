@@ -42,6 +42,7 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         Assert.assertEquals(Integer.MAX_VALUE / 100, handler.getMaxSizeOfSingleDecompressedPdfStream());
         Assert.assertEquals(Integer.MAX_VALUE / 20, handler.getMaxSizeOfDecompressedPdfStreamsSum());
         Assert.assertEquals(50000000, handler.getMaxNumberOfElementsInXrefStructure());
+        Assert.assertEquals(1024L*1024L*1024L*3L, handler.getMaxXObjectsSizePerPage());
     }
 
     @Test
@@ -116,6 +117,15 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         Assert.assertEquals(50000000, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
         memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(20);
         Assert.assertEquals(20, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
+    }
+
+    @Test
+    public void customMaxXObjectSizePerPageHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+
+        Assert.assertEquals(1024L*1024L*1024L*3L, memoryLimitsAwareHandler.getMaxXObjectsSizePerPage());
+        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(1024L);
+        Assert.assertEquals(1024L, memoryLimitsAwareHandler.getMaxXObjectsSizePerPage());
     }
 
     @Test

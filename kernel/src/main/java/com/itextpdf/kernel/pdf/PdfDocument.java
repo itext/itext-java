@@ -421,6 +421,15 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
+     * Gets current memory limits handler
+     *
+     * @return {@code MemoryLimitsAwareHandler} instance
+     */
+    public MemoryLimitsAwareHandler getMemoryLimitsAwareHandler() {
+        return memoryLimitsAwareHandler;
+    }
+
+    /**
      * Marks {@link PdfStream} object as embedded file stream. Note that this method is for internal usage.
      * To add an embedded file to the PDF document please use specialized API for file attachments.
      * (e.g. {@link PdfDocument#addFileAttachment(String, PdfFileSpec)}, {@link PdfPage#addAnnotation(PdfAnnotation)})

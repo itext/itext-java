@@ -45,10 +45,13 @@ public class MemoryLimitsAwareHandler {
     private static final int MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE = 50000000;
     private static final int SINGLE_DECOMPRESSED_PDF_STREAM_MIN_SIZE = Integer.MAX_VALUE / 100;
     private static final long SUM_OF_DECOMPRESSED_PDF_STREAMS_MIN_SIZE = Integer.MAX_VALUE / 20;
+    private static final long MAX_X_OBJECTS_SIZE_PER_PAGE = 1024L*1024L*1024L*3;
 
     private int maxSizeOfSingleDecompressedPdfStream;
     private long maxSizeOfDecompressedPdfStreamsSum;
     private int maxNumberOfElementsInXrefStructure;
+
+    private long maxXObjectsSizePerPage;
 
     private long allMemoryUsedForDecompression = 0;
     private long memoryUsedForCurrentPdfStreamDecompression = 0;
@@ -61,7 +64,7 @@ public class MemoryLimitsAwareHandler {
      */
     public MemoryLimitsAwareHandler() {
         this(SINGLE_DECOMPRESSED_PDF_STREAM_MIN_SIZE, SUM_OF_DECOMPRESSED_PDF_STREAMS_MIN_SIZE,
-                MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE);
+                MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE, MAX_X_OBJECTS_SIZE_PER_PAGE);
     }
 
     /**
@@ -73,14 +76,15 @@ public class MemoryLimitsAwareHandler {
     public MemoryLimitsAwareHandler(long documentSize) {
         this((int) calculateDefaultParameter(documentSize, SINGLE_SCALE_COEFFICIENT,
                 SINGLE_DECOMPRESSED_PDF_STREAM_MIN_SIZE), calculateDefaultParameter(documentSize, SUM_SCALE_COEFFICIENT,
-                SUM_OF_DECOMPRESSED_PDF_STREAMS_MIN_SIZE), MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE);
+                SUM_OF_DECOMPRESSED_PDF_STREAMS_MIN_SIZE), MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE, MAX_X_OBJECTS_SIZE_PER_PAGE);
     }
 
     private MemoryLimitsAwareHandler(int maxSizeOfSingleDecompressedPdfStream, long maxSizeOfDecompressedPdfStreamsSum,
-            int maxNumberOfElementsInXrefStructure) {
+            int maxNumberOfElementsInXrefStructure, long maxXObjectsSizePerPage) {
         this.maxSizeOfSingleDecompressedPdfStream = maxSizeOfSingleDecompressedPdfStream;
         this.maxSizeOfDecompressedPdfStreamsSum = maxSizeOfDecompressedPdfStreamsSum;
         this.maxNumberOfElementsInXrefStructure = maxNumberOfElementsInXrefStructure;
+        this.maxXObjectsSizePerPage = maxXObjectsSizePerPage;
     }
 
     /**
@@ -165,6 +169,24 @@ public class MemoryLimitsAwareHandler {
     }
 
     /**
+     * Gets maximum page size.
+     *
+     * @return maximum page size.
+     */
+    public long getMaxXObjectsSizePerPage() {
+        return maxXObjectsSizePerPage;
+    }
+
+    /**
+     * Sets maximum page size.
+     *
+     * @param maxPageSize maximum page size.
+     */
+    public void setMaxXObjectsSizePerPage(long maxPageSize) {
+        this.maxXObjectsSizePerPage = maxPageSize;
+    }
+
+    /**
      * Sets maximum number of elements in xref structure.
      *
      * @param maxNumberOfElementsInXrefStructure maximum number of elements in xref structure.
@@ -183,6 +205,12 @@ public class MemoryLimitsAwareHandler {
         // amount of elements we need maxNumberOfElementsInXrefStructure + 1 capacity.
         if (requestedCapacity - 1 > maxNumberOfElementsInXrefStructure) {
             throw new MemoryLimitsAwareException(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT);
+        }
+    }
+
+    public void checkIfPageSizeExceedsTheLimit(long totalXObjectsSize) {
+        if (totalXObjectsSize > maxXObjectsSizePerPage) {
+            throw new MemoryLimitsAwareException(KernelExceptionMessageConstant.TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT);
         }
     }
 
