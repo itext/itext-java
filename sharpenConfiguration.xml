@@ -480,6 +480,7 @@
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
                 <file path="com/itextpdf/signatures/sign/LtvSigTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest.java"/>
+                <file path="com/itextpdf/signatures/sign/PdfPadesWithOcspCertificateTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest.java"/>
                 <file path="com/itextpdf/signatures/sign/TimestampSigTest.java"/>
@@ -635,6 +636,9 @@
             <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertCrlOcsp_revoked.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertOcspNoCrl_revoked.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesAdvancedTest/cmp_signedWith_signCertOcspNoCrl_rootCertNoCrlNoOcsp_revoked.pdf"/>
+            
+            <file path="com/itextpdf/signatures/sign/PdfPadesWithOcspCertificateTest/cmp_signCertWithOcspTest.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PdfPadesWithOcspCertificateTest/cmp_signCertWithOcspOcspCertSameAsSignCertTest.pdf"/>
             
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest/cmp_defaultSignerPropertiesTest.pdf"/>
 

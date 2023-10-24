@@ -800,6 +800,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IBasicOCSPResponse createBasicOCSPResponse(byte[] bytes) {
+        return new BasicOCSPResponseBCFips(BasicOCSPResponse.getInstance(bytes));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IBasicOCSPResp createBasicOCSPResp(IBasicOCSPResponse response) {
         BasicOCSPResponseBCFips responseBCFips = (BasicOCSPResponseBCFips) response;
         return new BasicOCSPRespBCFips(new BasicOCSPResp(responseBCFips.getBasicOCSPResponse()));

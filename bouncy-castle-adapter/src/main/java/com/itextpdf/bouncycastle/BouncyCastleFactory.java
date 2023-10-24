@@ -793,6 +793,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IBasicOCSPResponse createBasicOCSPResponse(byte[] bytes) {
+        return new BasicOCSPResponseBC(BasicOCSPResponse.getInstance(bytes));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IBasicOCSPResp createBasicOCSPResp(IBasicOCSPResponse response) {
         BasicOCSPResponseBC responseBC = (BasicOCSPResponseBC) response;
         return new BasicOCSPRespBC(new BasicOCSPResp(responseBC.getBasicOCSPResponse()));

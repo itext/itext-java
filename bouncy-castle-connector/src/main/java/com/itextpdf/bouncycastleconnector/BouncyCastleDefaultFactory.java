@@ -395,6 +395,11 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public IBasicOCSPResponse createBasicOCSPResponse(byte[] bytes) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
     public IBasicOCSPResp createBasicOCSPResp(IBasicOCSPResponse response) {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }

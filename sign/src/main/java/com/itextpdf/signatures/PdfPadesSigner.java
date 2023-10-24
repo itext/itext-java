@@ -436,8 +436,9 @@ public class PdfPadesSigner {
             throws IOException, GeneralSecurityException {
         LtvVerification ltvVerification = new LtvVerification(pdfDocument);
         for (String signatureName : signatureNames) {
-            ltvVerification.addVerification(signatureName, ocspClient, crlClient, CertificateOption.WHOLE_CHAIN,
-                    Level.OCSP_OPTIONAL_CRL, LtvVerification.CertificateInclusion.YES, revocationDataNecessity);
+            ltvVerification.addVerification(signatureName, ocspClient, crlClient,
+                    CertificateOption.CHAIN_AND_OCSP_RESPONSE_CERTIFICATES, Level.OCSP_OPTIONAL_CRL,
+                    LtvVerification.CertificateInclusion.YES, revocationDataNecessity);
         }
         ltvVerification.merge();
     }

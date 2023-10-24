@@ -589,6 +589,15 @@ public interface IBouncyCastleFactory {
     IBasicOCSPResponse createBasicOCSPResponse(IASN1Primitive primitive);
 
     /**
+     * Create basic OCSP Response wrapper from {@code byte[]} array.
+     * 
+     * @param bytes {@code byte[]} array to create basic OCSP response wrapper from
+     * 
+     * @return created basic OCSP response wrapper
+     */
+    IBasicOCSPResponse createBasicOCSPResponse(byte[] bytes);
+
+    /**
      * Create basic OCSP Resp wrapper from basic OCSP Response wrapper.
      *
      * @param response basic OCSP Response wrapper to create basic OCSP Resp wrapper from

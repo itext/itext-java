@@ -56,14 +56,17 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +119,12 @@ public class LtvVerification {
         /**
          * Include verification for the whole chain of certificates.
          */
-        WHOLE_CHAIN
+        WHOLE_CHAIN,
+        /**
+         * Include verification for the whole chain of certificates 
+         * and certificates used to create OCSP revocation data responses.
+         */
+        CHAIN_AND_OCSP_RESPONSE_CERTIFICATES
     }
 
     /**
@@ -205,7 +213,7 @@ public class LtvVerification {
      * @param certOption               options as to how many certificates to include
      * @param level                    the validation options to include
      * @param certInclude              certificate inclusion options
-     * @param isRevocationDataRequired option to determine if revocation data is required for the signing certificate
+     * @param revocationDataNecessity  option to specify the necessity of revocation data
      *
      * @return true if a validation was generated, false otherwise.
      *
@@ -214,69 +222,23 @@ public class LtvVerification {
      * @throws IOException              signals that an I/O exception has occurred.
      */
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
-                                   Level level, CertificateInclusion certInclude,
-                                   RevocationDataNecessity isRevocationDataRequired)
+            Level level, CertificateInclusion certInclude, RevocationDataNecessity revocationDataNecessity)
             throws IOException, GeneralSecurityException {
         if (used) {
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
         }
         PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
-        Certificate[] xc = pk.getCertificates();
-        X509Certificate cert;
+        Certificate[] certificateChain = pk.getCertificates();
         X509Certificate signingCert = pk.getSigningCertificate();
-        ValidationData vd = new ValidationData();
-        for (Certificate certificate : xc) {
-            cert = (X509Certificate) certificate;
-            LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
-            boolean isSigningCertificate = cert.equals(signingCert);
-            if (certOption == CertificateOption.SIGNING_CERTIFICATE
-                    && !isSigningCertificate) {
-                continue;
-            }
-            boolean isRequiredRevocationDataAdded =
-                    RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE != isRevocationDataRequired;
-            byte[] ocspEnc = null;
-            if (ocsp != null && level != Level.CRL) {
-                ocspEnc = ocsp.getEncoded(cert, getParent(cert, xc), null);
-                if (ocspEnc != null) {
-                    vd.ocsps.add(buildOCSPResponse(ocspEnc));
-                    isRequiredRevocationDataAdded = true;
-                    LOGGER.info("OCSP added");
-                }
-            }
-            if (crl != null
-                    && (level == Level.CRL || level == Level.OCSP_CRL
-                    || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
-                Collection<byte[]> cims = crl.getEncoded(cert, null);
-                if (cims != null) {
-                    for (byte[] cim : cims) {
-                        boolean dup = false;
-                        for (byte[] b : vd.crls) {
-                            if (Arrays.equals(b, cim)) {
-                                dup = true;
-                                break;
-                            }
-                        }
-                        if (!dup) {
-                            vd.crls.add(cim);
-                            isRequiredRevocationDataAdded = true;
-                            LOGGER.info("CRL added");
-                        }
-                    }
-                }
-            }
-            if (certInclude == CertificateInclusion.YES) {
-                vd.certs.add(cert.getEncoded());
-            }
-            if (isSigningCertificate && !isRequiredRevocationDataAdded) {
-                throw new PdfException(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE);
-            }
-        }
-        if (vd.crls.size() == 0 && vd.ocsps.size() == 0) {
+        ValidationData validationData = new ValidationData();
+        Set<X509Certificate> processedCerts = new HashSet<>();
+        addRevocationDataForChain(signingCert, certificateChain, ocsp, crl, level, certInclude, certOption,
+                revocationDataNecessity, validationData, processedCerts);
+        if (validationData.crls.size() == 0 && validationData.ocsps.size() == 0) {
             return false;
         }
-        validated.put(getSignatureHashKey(signatureName), vd);
+        validated.put(getSignatureHashKey(signatureName), validationData);
         return true;
     }
 
@@ -316,6 +278,38 @@ public class LtvVerification {
     }
 
     /**
+     * Merges the validation with any validation already in the document or creates a new one.
+     */
+    public void merge() {
+        if (used || validated.size() == 0) {
+            return;
+        }
+        used = true;
+        PdfDictionary catalog = document.getCatalog().getPdfObject();
+        PdfObject dss = catalog.get(PdfName.DSS);
+        if (dss == null) {
+            createDss();
+        } else {
+            updateDss();
+        }
+    }
+
+    /**
+     * Converts an array of bytes to a String of hexadecimal values
+     *
+     * @param bytes a byte array
+     *
+     * @return the same bytes expressed as hexadecimal values
+     */
+    public static String convertToHex(byte[] bytes) {
+        ByteBuffer buf = new ByteBuffer();
+        for (byte b : bytes) {
+            buf.appendHex(b);
+        }
+        return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
+    }
+
+    /**
      * Get the issuing certificate for a child certificate.
      *
      * @param cert  the certificate for which we search the parent
@@ -338,6 +332,83 @@ public class LtvVerification {
             }
         }
         return null;
+    }
+
+    private void addRevocationDataForChain(X509Certificate signingCert, Certificate[] certChain, IOcspClient ocsp,
+            ICrlClient crl, Level level, CertificateInclusion certInclude, CertificateOption certOption,
+            RevocationDataNecessity dataNecessity, ValidationData validationData,
+            Set<X509Certificate> processedCerts) throws CertificateEncodingException, IOException {
+        for (Certificate certificate : certChain) {
+            X509Certificate cert = (X509Certificate) certificate;
+            LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
+            if ((certOption == CertificateOption.SIGNING_CERTIFICATE && !cert.equals(signingCert))
+                    || processedCerts.contains(cert)) {
+                continue;
+            }
+            addRevocationDataForCertificate(signingCert, certChain, cert, ocsp, crl, level, certInclude, certOption,
+                    dataNecessity, validationData, processedCerts);
+        }
+    }
+
+    private void addRevocationDataForCertificate(X509Certificate signingCert, Certificate[] certificateChain,
+            X509Certificate cert, IOcspClient ocsp, ICrlClient crl, Level level, CertificateInclusion certInclude,
+            CertificateOption certOption, RevocationDataNecessity dataNecessity, ValidationData validationData,
+            Set<X509Certificate> processedCerts) throws IOException, CertificateEncodingException {
+        processedCerts.add(cert);
+        byte[] ocspEnc = null;
+        boolean revocationDataAdded = false;
+        if (ocsp != null && level != Level.CRL) {
+            ocspEnc = ocsp.getEncoded(cert, getParent(cert, certificateChain), null);
+            if (ocspEnc != null) {
+                validationData.ocsps.add(buildOCSPResponse(ocspEnc));
+                revocationDataAdded = true;
+                LOGGER.info("OCSP added");
+                if (certOption == CertificateOption.CHAIN_AND_OCSP_RESPONSE_CERTIFICATES) {
+                    Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(
+                            BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
+                                    BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(ocspEnc)));
+                    List<X509Certificate> certsList = iterableToList(certs);
+                    addRevocationDataForChain(signingCert, certsList.toArray(new X509Certificate[0]), ocsp, crl, level,
+                            certInclude, certOption, dataNecessity, validationData, processedCerts);
+                }
+            }
+        }
+        if (crl != null
+                && (level == Level.CRL || level == Level.OCSP_CRL
+                || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
+            Collection<byte[]> cims = crl.getEncoded(cert, null);
+            if (cims != null) {
+                for (byte[] cim : cims) {
+                    boolean dup = false;
+                    for (byte[] b : validationData.crls) {
+                        if (Arrays.equals(b, cim)) {
+                            dup = true;
+                            break;
+                        }
+                    }
+                    if (!dup) {
+                        validationData.crls.add(cim);
+                        revocationDataAdded = true;
+                        LOGGER.info("CRL added");
+                    }
+                }
+            }
+        }
+        if (dataNecessity == RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE &&
+                signingCert.equals(cert) && !revocationDataAdded) {
+            throw new PdfException(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE);
+        }
+        if (certInclude == CertificateInclusion.YES) {
+            validationData.certs.add(cert.getEncoded());
+        }
+    }
+    
+    private static List<X509Certificate> iterableToList(Iterable<X509Certificate> iterable) {
+        List<X509Certificate> list = new ArrayList<>();
+        for (X509Certificate certificate : iterable) {
+            list.add(certificate);
+        }
+        return list;
     }
 
     private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
@@ -368,23 +439,6 @@ public class LtvVerification {
     private static byte[] hashBytesSha1(byte[] b) throws NoSuchAlgorithmException {
         MessageDigest sh = MessageDigest.getInstance("SHA1");
         return sh.digest(b);
-    }
-
-    /**
-     * Merges the validation with any validation already in the document or creates a new one.
-     */
-    public void merge() {
-        if (used || validated.size() == 0) {
-            return;
-        }
-        used = true;
-        PdfDictionary catalog = document.getCatalog().getPdfObject();
-        PdfObject dss = catalog.get(PdfName.DSS);
-        if (dss == null) {
-            createDss();
-        } else {
-            updateDss();
-        }
     }
 
     private void updateDss() {
@@ -522,20 +576,5 @@ public class LtvVerification {
         public List<byte[]> crls = new ArrayList<>();
         public List<byte[]> ocsps = new ArrayList<>();
         public List<byte[]> certs = new ArrayList<>();
-    }
-
-    /**
-     * Converts an array of bytes to a String of hexadecimal values
-     *
-     * @param bytes a byte array
-     *
-     * @return the same bytes expressed as hexadecimal values
-     */
-    public static String convertToHex(byte[] bytes) {
-        ByteBuffer buf = new ByteBuffer();
-        for (byte b : bytes) {
-            buf.appendHex(b);
-        }
-        return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
     }
 }
