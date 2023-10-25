@@ -22,6 +22,10 @@
  */
 package com.itextpdf.barcodes.dmcode;
 
+/**
+ * Class that contains the parameters for a DM code.
+ * It contains all the information needed to create one data matrix entry
+ */
 public  class DmParams {
     /**
      * Creates a DM code parameter block

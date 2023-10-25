@@ -66,10 +66,20 @@ public final class ErrorCorrectionLevel {
         return ordinal;
     }
 
+    /**
+     * Gets the bits.
+     *
+     * @return the bits
+     */
     public int getBits() {
         return bits;
     }
 
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }

@@ -23,8 +23,8 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -33,6 +33,10 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * BarCode 128 is a high-density linear barcode symbology defined in ISO/IEC 15417:2007.
+ * It is used for alphanumeric or numeric-only barcodes. It can encode all 128 characters of ASCII
+ */
 public class Barcode128 extends Barcode1D {
 
     /** A type of barcode */
@@ -228,6 +232,10 @@ public class Barcode128 extends Barcode1D {
         this.textAlignment = ALIGN_CENTER;
         this.codeType = CODE128;
     }
+
+    /**
+     * The code set to be used to start encoding.
+     */
     public enum Barcode128CodeSet {
         A,
         B,
@@ -235,10 +243,20 @@ public class Barcode128 extends Barcode1D {
         AUTO
     }
 
+    /**
+     * Sets the code set to use.
+     *
+     * @param codeSet the code set to use.
+     */
     public void setCodeSet(Barcode128CodeSet codeSet) {
         this.codeSet = codeSet;
     }
 
+    /**
+     * Get the code set that is used.
+     *
+     * @return the code set.
+     */
     public Barcode128CodeSet getCodeSet() {
         return this.codeSet;
     }

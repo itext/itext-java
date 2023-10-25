@@ -22,15 +22,15 @@
  */
 package com.itextpdf.barcodes;
 
+import com.itextpdf.barcodes.exceptions.WriterException;
 import com.itextpdf.barcodes.qrcode.ByteMatrix;
 import com.itextpdf.barcodes.qrcode.EncodeHintType;
 import com.itextpdf.barcodes.qrcode.QRCodeWriter;
-import com.itextpdf.barcodes.exceptions.WriterException;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.util.Map;
@@ -68,7 +68,11 @@ public class BarcodeQRCode extends Barcode2D {
         this(content, null);
     }
 
+    /**
+     * Creates an instance of the {@link BarcodeQRCode} class.
+     */
     public BarcodeQRCode() {
+        // empty constructor
     }
 
     /**

@@ -22,6 +22,9 @@
  */
 package com.itextpdf.barcodes.dmcode;
 
+/**
+ * This class holds the error correction code for a data block.
+ */
 public final class ReedSolomon {
 
     private static final int[] log = {

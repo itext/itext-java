@@ -22,12 +22,17 @@
  */
 package com.itextpdf.barcodes;
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
+/**
+ * This is a class that is used to implement the logic common to all 2D barcodes.
+ * A 2D barcode is a barcode with two dimensions; this means that
+ * data can be encoded vertically and horizontally.
+ */
 public abstract class Barcode2D {
 
     protected static final float DEFAULT_MODULE_SIZE = 1;

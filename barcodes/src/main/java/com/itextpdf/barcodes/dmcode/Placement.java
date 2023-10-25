@@ -26,6 +26,9 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Utility class that helps to place the data in the barcode.
+ */
 public class Placement {
     private final int nrow;
     private final int ncol;
