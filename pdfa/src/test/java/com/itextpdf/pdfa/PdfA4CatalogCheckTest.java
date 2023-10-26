@@ -23,20 +23,16 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDate;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -45,18 +41,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
-import com.itextpdf.layout.element.ListItem;
-import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -420,6 +412,26 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         Assert.assertEquals(
                 MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
                         "2"), e.getMessage());
+    }
+
+    @Test
+    public void checkInvalidOperatorTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "invalidOperatorTest.pdf";
+        String cmpPdf = sourceFolder + "cmp/PdfA4CatalogCheckTest/cmp_invalidOperatorTest.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
+        doc.addNewPage();
+
+        PdfStream stream = doc.getPage(1).getContentStream(0);
+        stream.setData("№".getBytes(StandardCharsets.UTF_8));
+        doc.close();
+
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
 }
