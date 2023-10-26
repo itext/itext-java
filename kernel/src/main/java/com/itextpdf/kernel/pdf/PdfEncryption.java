@@ -53,6 +53,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int STANDARD_ENCRYPTION_128 = 3;
     private static final int AES_128 = 4;
     private static final int AES_256 = 5;
+    private static final int DEFAULT_KEY_LENGTH = 40;
 
     private static long seq = SystemUtil.getTimeBasedSeed();
 
@@ -434,8 +435,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void setKeyLength(int keyLength) {
-        // 40 - is default value;
-        if (keyLength != 40) {
+        if (keyLength != DEFAULT_KEY_LENGTH) {
             getPdfObject().put(PdfName.Length, new PdfNumber(keyLength));
         }
     }
@@ -494,9 +494,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 break;
             case 3:
                 PdfNumber lengthValue = encDict.getAsNumber(PdfName.Length);
-                if (lengthValue == null)
-                    throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
-                length = lengthValue.intValue();
+                length = lengthValue == null ? DEFAULT_KEY_LENGTH : lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
                 cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;
@@ -559,9 +557,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
                 break;
             case 2:
                 PdfNumber lengthValue = encDict.getAsNumber(PdfName.Length);
-                if (lengthValue == null)
-                    throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
-                length = lengthValue.intValue();
+                length = lengthValue == null ? DEFAULT_KEY_LENGTH : lengthValue.intValue();
                 if (length > 128 || length < 40 || length % 8 != 0)
                     throw new PdfException(KernelExceptionMessageConstant.ILLEGAL_LENGTH_VALUE);
                 cryptoMode = EncryptionConstants.STANDARD_ENCRYPTION_128;

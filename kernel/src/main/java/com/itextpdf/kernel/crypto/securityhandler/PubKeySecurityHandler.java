@@ -64,6 +64,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final int SEED_LENGTH = 20;
+    private static final int DEFAULT_KEY_LENGTH = 40;
 
     private List<PublicKeyRecipient> recipients = null;
 
@@ -160,8 +161,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
             boolean encryptMetadata, boolean embeddedFilesOnly) {
         addAllRecipients(certs, permissions);
 
-        Integer keyLen = encryptionDictionary.getAsInt(PdfName.Length);
-        int keyLength = keyLen != null ? (int) keyLen : 40;
+        int keyLength = getKeyLength(encryptionDictionary);
 
         String digestAlgorithm = getDigestAlgorithm();
         byte[] digest = computeGlobalKey(digestAlgorithm, encryptMetadata);
@@ -178,8 +178,7 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         byte[] encryptionKey = computeGlobalKeyOnReading(encryptionDictionary, (PrivateKey) certificateKey, certificate,
                 certificateKeyProvider, externalDecryptionProcess, encryptMetadata, digestAlgorithm);
 
-        Integer keyLen = encryptionDictionary.getAsInt(PdfName.Length);
-        int keyLength = keyLen != null ? (int) keyLen : 40;
+        int keyLength = getKeyLength(encryptionDictionary);
         initKey(encryptionKey, keyLength);
     }
 
@@ -298,5 +297,10 @@ public abstract class PubKeySecurityHandler extends SecurityHandler {
         IDEROctetString derOctetString = BOUNCY_CASTLE_FACTORY.createDEROctetString(cipheredBytes);
         IRecipientIdentifier recipId = BOUNCY_CASTLE_FACTORY.createRecipientIdentifier(issuerAndSerialNumber);
         return BOUNCY_CASTLE_FACTORY.createKeyTransRecipientInfo(recipId, algorithmIdentifier, derOctetString);
+    }
+
+    private int getKeyLength(PdfDictionary encryptionDict) {
+        Integer keyLength = encryptionDict.getAsInt(PdfName.Length);
+        return keyLength != null ? (int) keyLength : DEFAULT_KEY_LENGTH;
     }
 }

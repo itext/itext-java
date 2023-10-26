@@ -210,6 +210,21 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         }
     }
 
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void openEncryptedWithCertificateDocWithDefaultKeyLength() throws IOException, CertificateException,
+            AbstractOperatorCreationException, AbstractPKCSException {
+        Certificate cert = getPublicCertificate(CERT);
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithCertificateWithDefaultKeyLength.pdf",
+                new ReaderProperties().setPublicKeySecurityParams(cert, getPrivateKey(),
+                        FACTORY.getProviderName(), null));
+             PdfDocument document = new PdfDocument(reader)) {
+            Assert.assertFalse(document.getTrailer().getAsDictionary(PdfName.Encrypt).containsKey(PdfName.Length));
+        }
+    }
+
     public void encryptWithCertificate(String filename, int encryptionType, int compression) throws IOException,
             InterruptedException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         ITextTest.removeCryptographyRestrictions();

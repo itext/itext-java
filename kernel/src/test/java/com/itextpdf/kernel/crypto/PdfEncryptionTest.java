@@ -622,6 +622,17 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         Assert.assertEquals(KernelExceptionMessageConstant.BAD_PASSWORD_HASH, e.getCause().getMessage());
     }
 
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void openEncryptedWithPasswordDocWithDefaultKeyLength() throws IOException {
+        try (PdfReader reader = new PdfReader(sourceFolder + "encryptedWithPasswordWithDefaultKeyLength.pdf",
+                new ReaderProperties().setPassword("user".getBytes(StandardCharsets.UTF_8)));
+             PdfDocument document = new PdfDocument(reader)) {
+            Assert.assertFalse(document.getTrailer().getAsDictionary(PdfName.Encrypt).containsKey(PdfName.Length));
+        }
+    }
+
     public void encryptWithPassword2(String filename, int encryptionType, int compression)
             throws IOException, InterruptedException {
         encryptWithPassword2(filename, encryptionType, compression, false);
