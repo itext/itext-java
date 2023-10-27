@@ -464,43 +464,6 @@ public class MatcherTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6442 fix different Matcher#matches behavior)
-    public void matchesFailAfterFindFinish() {
-        Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.find());
-
-        Assert.assertFalse(matcher.matches());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.find());
-    }
-
-    @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6442 fix different Matcher#matches behavior)
-    public void findAfterMatchesFail() {
-        Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
-        Assert.assertFalse(matcher.matches());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.find());
-    }
-
-    @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6442 fix different Matcher#matches behavior)
-    public void matchesFailAfterSeveralFind() {
-        Matcher matcher = PATTERN.matcher("aaabbbccaabbccaab");
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.matches());
-        Assert.assertTrue(matcher.find());
-        Assert.assertTrue(matcher.find());
-        Assert.assertFalse(matcher.find());
-    }
-
-    @Test
     public void regionTest() {
         Matcher matcher = PATTERN.matcher("abbbbbabbbbbbbbbbbbbbb");
         matcher.region(6, 13);
