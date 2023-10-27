@@ -49,4 +49,5 @@ public class SecurityIDs {
     public static final String ID_AA_SIGNING_CERTIFICATE_V1 = "1.2.840.113549.1.9.16.2.12";
     public static final String ID_AA_SIGNING_CERTIFICATE_V2 = "1.2.840.113549.1.9.16.2.47";
     public static final String ID_MGF1 = "1.2.840.113549.1.1.8";
+    public static final String ID_AA_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14";
 }

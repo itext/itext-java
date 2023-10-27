@@ -176,7 +176,8 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
                 () -> tsaClientBouncyCastle.getTimeStampToken(digest)
         );
 
-        Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.INVALID_TSA_RESPONSE, url, "128"),
+        Assert.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.INVALID_TSA_RESPONSE, url,
+                        "128: request contains unknown algorithm"),
                 e.getMessage());
     }
 

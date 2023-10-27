@@ -224,12 +224,9 @@ public class TSAClientBouncyCastle implements ITSAClient {
         IPKIFailureInfo failure = response.getFailInfo();
         int value = failure.isNull() ? 0 : failure.intValue();
         if (value != 0) {
-            // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
             throw new PdfException(SignExceptionMessageConstant.INVALID_TSA_RESPONSE)
-                    .setMessageParams(tsaURL, String.valueOf(value));
+                    .setMessageParams(tsaURL, value + ": " + response.getStatusString());
         }
-        // @todo: validate the time stap certificate chain (if we want
-        //        assure we do not sign using an invalid timestamp).
 
         // extract just the time stamp token (removes communication status info)
         ITimeStampToken tsToken = response.getTimeStampToken();
