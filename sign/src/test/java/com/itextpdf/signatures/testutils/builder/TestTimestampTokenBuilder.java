@@ -76,12 +76,6 @@ public class TestTimestampTokenBuilder {
                 tsaCertificateChain.get(0), SIGN_ALG, "SHA1", POLICY_OID);
         tsTokGen.setAccuracySeconds(1);
 
-        // TODO setting this is somewhat wrong. Acrobat and openssl recognize timestamp tokens generated with this
-        //  line as corrupted
-        // openssl error message: 2304:error:2F09506F:time stamp routines:INT_TS_RESP_VERIFY_TOKEN:tsa name
-        // mismatch:ts_rsp_verify.c:476:
-//        tsTokGen.setTSA(new GeneralName(new X500Name(PrincipalUtil.getIssuerX509Principal(tsCertificate).getName())));
-
         tsTokGen.addCertificates(FACTORY.createJcaCertStore(tsaCertificateChain));
 
         // should be unique for every timestamp
