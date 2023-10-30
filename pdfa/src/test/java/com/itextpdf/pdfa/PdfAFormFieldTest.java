@@ -630,6 +630,43 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         }));
     }
 
+    @Test
+    public void testCopyPagesDoesntEmbedHelveticaFont() throws IOException, InterruptedException {
+        String simplePdf = DESTINATION_FOLDER + "simplePdfAWithFormfield.pdf";
+        String outPdf = DESTINATION_FOLDER + "testCopyPagesDoesntEmbedHelveticaFont.pdf";
+        String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_testCopyPagesDoesntEmbedHelveticaFont.pdf";
+
+        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+
+        PdfWriter writer = new PdfWriter(simplePdf, new WriterProperties()
+                .setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4E,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+
+        Document document = new Document(doc);
+        document.add(new InputField("inputfield1").setFont(font).setInteractive(true).setValue("Hello there"));
+        document.add(new Paragraph("Hello there paragraph").setFont(font));
+        doc.close();
+
+        PdfWriter writer2 = new PdfWriter(outPdf,
+                new WriterProperties()
+                        .setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument doc2 = new PdfADocument(writer2, PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+
+        PdfDocument docToCopy = new PdfDocument(new PdfReader(simplePdf));
+        docToCopy.copyPagesTo(1, 1, doc2, new PdfPageFormCopier());
+        docToCopy.close();
+        doc2.close();
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf));
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER, "diff_"));
+
+    }
+
     private void makePdfDocument(String outPdf, String cmp, Consumer<Document> consumer)
             throws IOException, InterruptedException {
         PdfWriter writer = new PdfWriter(outPdf,
