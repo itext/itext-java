@@ -159,7 +159,7 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 
 We use the [Stack Exchange][stackoverflow] network for free support and [GitHub][github] for code hosting. By using these services, you agree to abide by their terms:
 
-* StackExchange: [http://stackexchange.com/legal](http://stackexchange.com/legal)
+* StackExchange: [https://stackexchange.com/legal](https://stackexchange.com/legal)
 * Github: [https://help.github.com/articles/github-terms-of-service/](https://help.github.com/articles/github-terms-of-service/)
 
 [cla]: https://itextpdf.com/en/how-buy/legal/itext-contributor-license-agreement
@@ -168,7 +168,8 @@ We use the [Stack Exchange][stackoverflow] network for free support and [GitHub]
 [java-style-guide]: https://www.oracle.com/technetwork/java/codeconvtoc-136057.html
 [javadocs]: https://itextpdf.com/api
 [pull]: https://github.com/itext/itext7/pulls
-[sscce]: http://sscce.org/
+
+[sscce]: https://sscce.org/
 [stackoverflow]: https://stackoverflow.com/questions/tagged/itext
 [good-questions]: https://stackoverflow.com/help/how-to-ask
 [mcve]: https://stackoverflow.com/help/mcve
