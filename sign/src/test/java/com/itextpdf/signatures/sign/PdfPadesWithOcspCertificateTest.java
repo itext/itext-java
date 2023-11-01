@@ -24,6 +24,7 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
@@ -33,6 +34,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.PdfPadesSigner;
 import com.itextpdf.signatures.SignerProperties;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -41,7 +43,11 @@ import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -49,6 +55,8 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -71,51 +79,48 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
     }
     
     @Test
-    public void signCertWithOcspTest()
-            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
-        String fileName = "signCertWithOcspTest.pdf";
-        String outFileName = destinationFolder + fileName;
-        String cmpFileName = sourceFolder + "cmp_" + fileName;
+    public void signCertWithOcspTest() throws GeneralSecurityException, IOException, AbstractOperatorCreationException,
+            AbstractPKCSException, AbstractOCSPException {
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         String signCertFileName = certsSrc + "signRsaWithOcsp.pem";
         String tsaCertFileName = certsSrc + "tsCertRsa.pem";
         String rootCertFileName = certsSrc + "rootRsa2.pem";
         String ocspCertFileName = certsSrc + "ocspCert.pem";
 
-        Certificate signRsaCert = PemFileHelper.readFirstChain(signCertFileName)[0];
-        Certificate rootCert = PemFileHelper.readFirstChain(rootCertFileName)[0];
-        Certificate[] signRsaChain = new Certificate[2];
-        signRsaChain[0] = signRsaCert;
-        signRsaChain[1] = rootCert;
+        X509Certificate signRsaCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
         PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
-        Certificate ocspCert = PemFileHelper.readFirstChain(ocspCertFileName)[0];
+        X509Certificate ocspCert = (X509Certificate) PemFileHelper.readFirstChain(ocspCertFileName)[0];
         PrivateKey ocspPrivateKey = PemFileHelper.readFirstKey(ocspCertFileName, PASSWORD);
-        
+
         SignerProperties signerProperties = createSignerProperties();
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
-        ocspClient.addBuilderForCertIssuer((X509Certificate) signRsaCert, (X509Certificate) ocspCert, ocspPrivateKey);
-        ocspClient.addBuilderForCertIssuer((X509Certificate) ocspCert, (X509Certificate) ocspCert, ocspPrivateKey);
+        ocspClient.addBuilderForCertIssuer(signRsaCert, ocspCert, ocspPrivateKey);
+        ocspClient.addBuilderForCertIssuer(ocspCert, ocspCert, ocspPrivateKey);
 
-        try (OutputStream outputStream = FileUtil.getFileOutputStream(outFileName)) {
-            PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outputStream);
-            padesSigner.setOcspClient(ocspClient);
-            // It is expected to have two OCSP responses, one for signing cert and another for OCSP response.
-            padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outputStream);
+        padesSigner.setOcspClient(ocspClient);
+        Certificate[] signRsaChain = new Certificate[] {signRsaCert, rootCert};
+        padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
+        outputStream.close();
+        
+        TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
 
-            PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
-
-            Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
-        }
+        Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
+        Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        // It is expected to have two OCSP responses, one for signing cert and another for OCSP response.
+        expectedNumberOfOcsps.put(ocspCert.getSubjectDN().getName(), 2);
+        TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
+                expectedNumberOfCrls, expectedNumberOfOcsps);
     }
 
     @Test
     public void signCertWithoutOcspTest()
             throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
-        String fileName = "signCertWithoutOcspTest.pdf";
-        String outFileName = destinationFolder + fileName;
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         String signCertFileName = certsSrc + "signRsaWithoutOcsp.pem";
         String tsaCertFileName = certsSrc + "tsCertRsa.pem";
@@ -139,7 +144,7 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
         ocspClient.addBuilderForCertIssuer((X509Certificate) signRsaCert, (X509Certificate) ocspCert, ocspPrivateKey);
         ocspClient.addBuilderForCertIssuer((X509Certificate) ocspCert, (X509Certificate) ocspCert, ocspPrivateKey);
 
-        try (OutputStream outputStream = FileUtil.getFileOutputStream(outFileName)) {
+        try (OutputStream outputStream = new ByteArrayOutputStream()) {
             PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outputStream);
             padesSigner.setOcspClient(ocspClient);
             
@@ -150,21 +155,15 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
     }
 
     @Test
-    public void signCertWithOcspOcspCertSameAsSignCertTest()
-            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
-        String fileName = "signCertWithOcspOcspCertSameAsSignCertTest.pdf";
-        String outFileName = destinationFolder + fileName;
-        String cmpFileName = sourceFolder + "cmp_" + fileName;
+    public void signCertWithOcspOcspCertSameAsSignCertTest() throws GeneralSecurityException, IOException,
+            AbstractOperatorCreationException, AbstractPKCSException, AbstractOCSPException {
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         String signCertFileName = certsSrc + "signRsaWithOcsp.pem";
         String tsaCertFileName = certsSrc + "tsCertRsa.pem";
         String rootCertFileName = certsSrc + "rootRsa2.pem";
 
-        Certificate signRsaCert = PemFileHelper.readFirstChain(signCertFileName)[0];
-        Certificate rootCert = PemFileHelper.readFirstChain(rootCertFileName)[0];
-        Certificate[] signRsaChain = new Certificate[2];
-        signRsaChain[0] = signRsaCert;
-        signRsaChain[1] = rootCert;
+        X509Certificate signRsaCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
         PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
@@ -172,18 +171,22 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
         SignerProperties signerProperties = createSignerProperties();
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
         AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
-        ocspClient.addBuilderForCertIssuer((X509Certificate) signRsaCert, (X509Certificate) signRsaCert, signRsaPrivateKey);
+        ocspClient.addBuilderForCertIssuer(signRsaCert, signRsaCert, signRsaPrivateKey);
 
-        try (OutputStream outputStream = FileUtil.getFileOutputStream(outFileName)) {
-            PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outputStream);
-            padesSigner.setOcspClient(ocspClient);
-            // It is expected to have one OCSP response, only for signing cert.
-            padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outputStream);
+        padesSigner.setOcspClient(ocspClient);
+        X509Certificate[] signRsaChain = new X509Certificate[] {signRsaCert, rootCert};
+        padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
 
-            PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
 
-            Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
-        }
+        Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
+        Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        // It is expected to have one OCSP response, only for signing cert.
+        expectedNumberOfOcsps.put(signRsaCert.getSubjectDN().getName(), 1);
+        TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
+                expectedNumberOfCrls, expectedNumberOfOcsps);
     }
 
     private SignerProperties createSignerProperties() {

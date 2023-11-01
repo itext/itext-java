@@ -194,7 +194,7 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
 
         padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
     

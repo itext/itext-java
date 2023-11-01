@@ -39,6 +39,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
@@ -246,6 +247,6 @@ public class LtvSigTest extends ExtendedITextTest {
         Assert.assertEquals(4, dssDict.size());
         outDocument.close();
 
-        PadesSigTest.basicCheckSignedDoc(DESTINATION_FOLDER + outFileName, tsSigName);
+        TestSignUtils.basicCheckSignedDoc(DESTINATION_FOLDER + outFileName, tsSigName);
     }
 }

@@ -116,7 +116,7 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
             padesSigner.signWithBaselineBProfile(signerProperties, signRsaChain, signRsaPrivateKey);
         }
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
@@ -152,7 +152,7 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
             padesSigner.signWithBaselineTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
         }
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
@@ -195,7 +195,7 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
             padesSigner.signWithBaselineLTProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
         }
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
@@ -239,7 +239,7 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
             padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, signRsaPrivateKey, testTsa);
         }
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
@@ -274,7 +274,7 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
             padesSigner.prolongSignatures();
         }
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 

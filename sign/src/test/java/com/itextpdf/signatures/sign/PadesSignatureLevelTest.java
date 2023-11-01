@@ -38,6 +38,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.LtvVerification;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
@@ -105,7 +106,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
         signer.signDetached(new BouncyCastleDigest(), pks, signRsaChain, null, null, testTsa, 0, PdfSigner.CryptoStandard.CADES);
 
-        PadesSigTest.basicCheckSignedDoc(destinationFolder + "padesSignatureLevelTTest01.pdf", "Signature1");
+        TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesSignatureLevelTTest01.pdf", "Signature1");
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(
                 outFileName, sourceFolder + "cmp_padesSignatureLevelTTest01.pdf"));

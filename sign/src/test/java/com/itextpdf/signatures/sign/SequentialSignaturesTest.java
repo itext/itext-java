@@ -39,6 +39,7 @@ import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -96,7 +97,7 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
 
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, signatureName);
+        TestSignUtils.basicCheckSignedDoc(outFileName, signatureName);
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
@@ -134,8 +135,8 @@ public class SequentialSignaturesTest extends ExtendedITextTest {
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null,
                 null, 0, CryptoStandard.CADES);
 
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
-        PadesSigTest.basicCheckSignedDoc(outFileName, "Signature2");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature2");
 
         try (PdfDocument twiceSigned = new PdfDocument(new PdfReader(outFileName));
              PdfDocument resource = new PdfDocument(new PdfReader(srcFileName))) {

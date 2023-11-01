@@ -24,6 +24,7 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
@@ -37,6 +38,7 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPadesSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignerProperties;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
@@ -51,16 +53,22 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -82,6 +90,11 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
     private final String rootCertName;
     private final Boolean isOcspRevoked;
     private final String cmpFilePostfix;
+    
+    private final Integer amountOfCrlsForSign;
+    private final Integer amountOfOcspsForSign;
+    private final Integer amountOfCrlsForRoot;
+    private final Integer amountOfOcspsForRoot;
 
     @BeforeClass
     public static void before() {
@@ -89,51 +102,57 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public PdfPadesAdvancedTest(Object signingCertName, Object rootCertName, Object isOcspRevoked, Object cmpFilePostfix) {
+    public PdfPadesAdvancedTest(Object signingCertName, Object rootCertName, Object isOcspRevoked, Object cmpFilePostfix,
+            Object amountOfCrlsForSign, Object amountOfOcspsForSign, Object amountOfCrlsForRoot, Object amountOfOcspsForRoot) {
         this.signingCertName = (String) signingCertName;
         this.rootCertName = (String) rootCertName;
         this.isOcspRevoked = (Boolean) isOcspRevoked;
         this.cmpFilePostfix = (String) cmpFilePostfix;
+        
+        this.amountOfCrlsForSign = (Integer) amountOfCrlsForSign;
+        this.amountOfOcspsForSign = (Integer) amountOfOcspsForSign;
+        this.amountOfCrlsForRoot = (Integer) amountOfCrlsForRoot;
+        this.amountOfOcspsForRoot = (Integer) amountOfOcspsForRoot;
     }
 
     @Parameterized.Parameters(name = "{3}: signing cert: {0}; root cert: {1}; revoked: {2}")
     public static Iterable<Object[]> createParameters() {
         List<Object[]> parameters = new ArrayList<>();
-        parameters.addAll(createParametersUsingRootName("rootCertNoCrlNoOcsp"));
-        parameters.addAll(createParametersUsingRootName("rootCertCrlOcsp"));
-        parameters.addAll(createParametersUsingRootName("rootCertCrlNoOcsp"));
-        parameters.addAll(createParametersUsingRootName("rootCertOcspNoCrl"));
+        parameters.addAll(createParametersUsingRootName("rootCertNoCrlNoOcsp", 0, 0));
+        parameters.addAll(createParametersUsingRootName("rootCertCrlOcsp", 0, 1));
+        parameters.addAll(createParametersUsingRootName("rootCertCrlNoOcsp", 1, 0));
+        parameters.addAll(createParametersUsingRootName("rootCertOcspNoCrl", 0, 1));
         return parameters;
     }
     
-    private static List<Object[]> createParametersUsingRootName(String rootCertName) {
+    private static List<Object[]> createParametersUsingRootName(String rootCertName, int crlsForRoot, int ocspForRoot) {
         return Arrays.asList(
-                new Object[] {"signCertCrlOcsp.pem", rootCertName + ".pem", false, "_signCertCrlOcsp_" + rootCertName},
-                new Object[] {"signCertCrlOcsp.pem", rootCertName + ".pem", true, "_signCertCrlOcsp_" + rootCertName + "_revoked"},
-                new Object[] {"signCertOcspNoCrl.pem", rootCertName + ".pem", false, "_signCertOcspNoCrl_" + rootCertName},
-                new Object[] {"signCertOcspNoCrl.pem", rootCertName + ".pem", true, "_signCertOcspNoCrl_" + rootCertName + "_revoked"},
-                new Object[] {"signCertNoOcspNoCrl.pem", rootCertName + ".pem", false, "_signCertNoOcspNoCrl_" + rootCertName},
-                new Object[] {"signCertCrlNoOcsp.pem", rootCertName + ".pem", false, "_signCertCrlNoOcsp_" + rootCertName}
+                new Object[] {"signCertCrlOcsp.pem", rootCertName + ".pem", false, "_signCertCrlOcsp_" + rootCertName,
+                        0, 1, crlsForRoot, ocspForRoot},
+                new Object[] {"signCertCrlOcsp.pem", rootCertName + ".pem", true, "_signCertCrlOcsp_" + rootCertName + "_revoked",
+                        1, 0, crlsForRoot, ocspForRoot},
+                new Object[] {"signCertOcspNoCrl.pem", rootCertName + ".pem", false, "_signCertOcspNoCrl_" + rootCertName,
+                        0, 1, crlsForRoot, ocspForRoot},
+                new Object[] {"signCertOcspNoCrl.pem", rootCertName + ".pem", true, "_signCertOcspNoCrl_" + rootCertName + "_revoked",
+                        0, 0, crlsForRoot, ocspForRoot},
+                new Object[] {"signCertNoOcspNoCrl.pem", rootCertName + ".pem", false, "_signCertNoOcspNoCrl_" + rootCertName,
+                        0, 0, crlsForRoot, ocspForRoot},
+                new Object[] {"signCertCrlNoOcsp.pem", rootCertName + ".pem", false, "_signCertCrlNoOcsp_" + rootCertName,
+                        1, 0, crlsForRoot, ocspForRoot}
         );
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.OCSP_STATUS_IS_REVOKED), ignore = true)
     public void signWithAdvancedClientsTest()
-            throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
-        String fileName = "signedWith" + cmpFilePostfix + ".pdf";
-        String outFileName = DESTINATION_FOLDER + fileName;
-        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName;
+            throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException, AbstractOCSPException {
         String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
         String signCertFileName = CERTS_SRC + signingCertName;
         String rootCertFileName = CERTS_SRC + rootCertName;
         String tsaCertFileName = CERTS_SRC + "tsCertRsa.pem";
 
-        Certificate signRsaCert = PemFileHelper.readFirstChain(signCertFileName)[0];
-        Certificate rootCert = PemFileHelper.readFirstChain(rootCertFileName)[0];
-        Certificate[] signRsaChain = new Certificate[2];
-        signRsaChain[0] = signRsaCert;
-        signRsaChain[1] = rootCert;
+        X509Certificate signRsaCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
         
         PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(rootCertFileName, PASSWORD);
@@ -143,28 +162,28 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
 
         AdvancedTestOcspClient testOcspClient = new AdvancedTestOcspClient(null);
-        TestOcspResponseBuilder ocspBuilderMainCert = new TestOcspResponseBuilder((X509Certificate) signRsaChain[1], rootPrivateKey);
+        TestOcspResponseBuilder ocspBuilderMainCert = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
         if ((boolean) isOcspRevoked) {
             ocspBuilderMainCert.setCertificateStatus(FACTORY.createRevokedStatus(TimeTestUtil.TEST_DATE_TIME,
                     FACTORY.createCRLReason().getKeyCompromise()));
         }
-        TestOcspResponseBuilder ocspBuilderRootCert = new TestOcspResponseBuilder((X509Certificate) signRsaChain[1], rootPrivateKey);
-        testOcspClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[0], ocspBuilderMainCert);
-        testOcspClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[1], ocspBuilderRootCert);
+        TestOcspResponseBuilder ocspBuilderRootCert = new TestOcspResponseBuilder(rootCert, rootPrivateKey);
+        testOcspClient.addBuilderForCertIssuer(signRsaCert, ocspBuilderMainCert);
+        testOcspClient.addBuilderForCertIssuer(rootCert, ocspBuilderRootCert);
 
         AdvancedTestCrlClient testCrlClient = new AdvancedTestCrlClient();
-        TestCrlBuilder crlBuilderMainCert = new TestCrlBuilder((X509Certificate) signRsaChain[1], rootPrivateKey);
-        crlBuilderMainCert.addCrlEntry((X509Certificate) signRsaChain[0], FACTORY.createCRLReason().getKeyCompromise());
-        crlBuilderMainCert.addCrlEntry((X509Certificate) signRsaChain[1], FACTORY.createCRLReason().getKeyCompromise());
+        TestCrlBuilder crlBuilderMainCert = new TestCrlBuilder(rootCert, rootPrivateKey);
+        crlBuilderMainCert.addCrlEntry(signRsaCert, FACTORY.createCRLReason().getKeyCompromise());
+        crlBuilderMainCert.addCrlEntry(rootCert, FACTORY.createCRLReason().getKeyCompromise());
         
-        TestCrlBuilder crlBuilderRootCert = new TestCrlBuilder((X509Certificate) signRsaChain[1], rootPrivateKey);
-        crlBuilderRootCert.addCrlEntry((X509Certificate) signRsaChain[1], FACTORY.createCRLReason().getKeyCompromise());
-        testCrlClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[0], crlBuilderMainCert);
-        testCrlClient.addBuilderForCertIssuer((X509Certificate) signRsaChain[1], crlBuilderRootCert);
+        TestCrlBuilder crlBuilderRootCert = new TestCrlBuilder(rootCert, rootPrivateKey);
+        crlBuilderRootCert.addCrlEntry(rootCert, FACTORY.createCRLReason().getKeyCompromise());
+        testCrlClient.addBuilderForCertIssuer(signRsaCert, crlBuilderMainCert);
+        testCrlClient.addBuilderForCertIssuer(rootCert, crlBuilderRootCert);
 
         SignerProperties signerProperties = createSignerProperties();
 
-        OutputStream outputStream = FileUtil.getFileOutputStream(outFileName);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfPadesSigner padesSigner = new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
                 outputStream);
         padesSigner.setOcspClient(testOcspClient);
@@ -172,7 +191,8 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
 
         IExternalSignature pks =
                 new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
-        if (signCertFileName.contains("NoOcspNoCrl") || (signCertFileName.contains("OcspNoCrl") && isOcspRevoked)) {
+        Certificate[] signRsaChain = new Certificate[] {signRsaCert, rootCert};
+        if (signCertFileName.contains("NoOcspNoCrl") || (signCertFileName.contains("OcspNoCrl") && (boolean) isOcspRevoked)) {
             try {
                 Exception exception = Assert.assertThrows(PdfException.class,
                         () -> padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa));
@@ -184,10 +204,22 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         } else {
             padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
 
-            PadesSigTest.basicCheckSignedDoc(outFileName, "Signature1");
-
-            Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+            TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
+            assertDss(outputStream, rootCert);
         }
+    }
+    
+    private void assertDss(ByteArrayOutputStream outputStream, X509Certificate rootCert)
+            throws AbstractOCSPException, CertificateException, IOException, CRLException {
+        Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
+        if (amountOfCrlsForRoot + amountOfCrlsForSign != 0) {
+            expectedNumberOfCrls.put(rootCert.getSubjectDN().getName(), amountOfCrlsForRoot + amountOfCrlsForSign);
+        }
+        Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        if (amountOfOcspsForRoot + amountOfOcspsForSign != 0) {
+            expectedNumberOfOcsps.put(rootCert.getSubjectDN().getName(), amountOfOcspsForRoot + amountOfOcspsForSign);
+        }
+        TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()), expectedNumberOfCrls, expectedNumberOfOcsps);
     }
 
     private SignerProperties createSignerProperties() {

@@ -43,6 +43,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignaturePolicyInfo;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
@@ -82,7 +83,7 @@ public class PadesSigTest extends ExtendedITextTest {
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesRsaSigTest01.pdf");
 
-        basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
+        TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesRsaSigTest01.pdf", "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesRsaSigTest01.pdf", sourceFolder + "cmp_padesRsaSigTest01.pdf"));
     }
@@ -92,7 +93,7 @@ public class PadesSigTest extends ExtendedITextTest {
             throws IOException, GeneralSecurityException, AbstractPKCSException, AbstractOperatorCreationException {
         signApproval(certsSrc + "signCertRsaWithChain.pem", destinationFolder + "padesRsaSigTestWithChain01.pdf");
 
-        basicCheckSignedDoc(destinationFolder + "padesRsaSigTestWithChain01.pdf", "Signature1");
+        TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesRsaSigTestWithChain01.pdf", "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesRsaSigTestWithChain01.pdf", sourceFolder + "cmp_padesRsaSigTestWithChain01.pdf"));
     }
@@ -110,7 +111,7 @@ public class PadesSigTest extends ExtendedITextTest {
         signApproval(certsSrc + "signCertEcc01.pem",
                 destinationFolder + "padesEccSigTest01.pdf");
 
-        basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
+        TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesEccSigTest01.pdf", "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder
                 + "padesEccSigTest01.pdf", sourceFolder + "cmp_padesEccSigTest01.pdf"));
     }
@@ -134,7 +135,7 @@ public class PadesSigTest extends ExtendedITextTest {
 
         signApproval(certsSrc + "signCertRsa01.pem", destinationFolder + "padesEpesProfileTest01.pdf", sigPolicyIdentifier);
 
-        basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
+        TestSignUtils.basicCheckSignedDoc(destinationFolder + "padesEpesProfileTest01.pdf", "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(destinationFolder +
                 "padesEpesProfileTest01.pdf", sourceFolder + "cmp_padesEpesProfileTest01.pdf"));
     }
@@ -150,7 +151,7 @@ public class PadesSigTest extends ExtendedITextTest {
 
         signApproval(certsSrc + "signCertRsa01.pem", signedFileName, spi);
 
-        basicCheckSignedDoc(signedFileName, "Signature1");
+        TestSignUtils.basicCheckSignedDoc(signedFileName, "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(signedFileName,
                 sourceFolder + "cmp_signaturePolicyInfoUnavailableUrl_signed.pdf"));
     }
@@ -198,15 +199,5 @@ public class PadesSigTest extends ExtendedITextTest {
             signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0,
                     PdfSigner.CryptoStandard.CADES);
         }
-    }
-
-    static void basicCheckSignedDoc(String filePath, String signatureName) throws GeneralSecurityException, IOException {
-        PdfDocument outDocument = new PdfDocument(new PdfReader(filePath));
-
-        SignatureUtil sigUtil = new SignatureUtil(outDocument);
-        PdfPKCS7 signatureData = sigUtil.readSignatureData(signatureName);
-        Assert.assertTrue(signatureData.verifySignatureIntegrityAndAuthenticity());
-
-        outDocument.close();
     }
 }
