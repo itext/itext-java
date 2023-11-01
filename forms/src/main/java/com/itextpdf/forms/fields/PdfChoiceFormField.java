@@ -80,14 +80,31 @@ public class PdfChoiceFormField extends PdfFormField {
      */
     public static final int FF_COMMIT_ON_SEL_CHANGE = makeFieldFlag(27);
 
+    /**
+     * Creates a minimal {@link PdfChoiceFormField}.
+     *
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfChoiceFormField(PdfDocument pdfDocument) {
         super(pdfDocument);
     }
 
+    /**
+     * Creates a choice form field as a parent of a {@link PdfWidgetAnnotation}.
+     *
+     * @param widget The widget which will be a kid of the {@link PdfChoiceFormField}.
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfChoiceFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         super(widget, pdfDocument);
     }
 
+    /**
+     * Creates a choice form field as a wrapper object around a {@link PdfDictionary}.
+     * This {@link PdfDictionary} must be an indirect object.
+     *
+     * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
+     */
     protected PdfChoiceFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }

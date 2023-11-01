@@ -22,6 +22,9 @@
  */
 package com.itextpdf.commons.utils;
 
+/**
+ * Dependency injection configuration loader class.
+ */
 public class DIContainerConfigurations {
 
     private DIContainerConfigurations() {
@@ -32,6 +35,9 @@ public class DIContainerConfigurations {
             "com.itextpdf.forms.util.RegisterDefaultDiContainer"
     };
 
+    /**
+     * load default configuration class.
+     */
     public static void loadDefaultConfigurations() {
         for (final String defaultConfigurationClass : DEFAULT_CONFIGURATIONS_CLASS) {
             try {

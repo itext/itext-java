@@ -164,6 +164,14 @@ public final class PdfFormFieldMergeUtil {
         }
     }
 
+    /**
+     * This method combines two form fields.
+     *
+     * @param firstField first form field to be merged
+     * @param secondField second form field to be merged
+     * @param throwExceptionOnError define whether exception (true) or log (false) is expected in case kid with
+     *                              the same name exists and merge of two kids failed.
+     */
     public static void mergeFormFields(PdfFormField firstField, PdfFormField secondField,
             boolean throwExceptionOnError) {
         PdfFormAnnotationUtil.separateWidgetAndField(firstField);

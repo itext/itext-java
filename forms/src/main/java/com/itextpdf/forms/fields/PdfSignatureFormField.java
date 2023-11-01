@@ -51,14 +51,31 @@ public class PdfSignatureFormField extends PdfFormField {
      */
     private PdfFormXObject n2;
 
+    /**
+     * Creates a minimal {@link PdfSignatureFormField}.
+     *
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfSignatureFormField(PdfDocument pdfDocument) {
         super(pdfDocument);
     }
 
+    /**
+     * Creates a signature form field as a parent of a {@link PdfWidgetAnnotation}.
+     *
+     * @param widget The widget which will be a kid of the {@link PdfSignatureFormField}.
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfSignatureFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         super(widget, pdfDocument);
     }
 
+    /**
+     * Creates a signature form field as a wrapper object around a {@link PdfDictionary}.
+     * This {@link PdfDictionary} must be an indirect object.
+     *
+     * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
+     */
     protected PdfSignatureFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }

@@ -458,6 +458,11 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
         return this;
     }
 
+    /**
+     * Determines whether current form field is terminal or not.
+     *
+     * @return true if this form field is a terminal one, false otherwise.
+     */
     public boolean isTerminalFormField() {
         if (getPdfObject() == null || getPdfObject().get(PdfName.FT) == null) {
             return false;
