@@ -42,10 +42,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.CRLException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 
@@ -82,6 +85,20 @@ public final class TestSignUtils {
             SignatureUtil sigUtil = new SignatureUtil(outDocument);
             PdfPKCS7 signatureData = sigUtil.readSignatureData(signatureName);
             Assert.assertTrue(signatureData.verifySignatureIntegrityAndAuthenticity());
+        }
+    }
+    
+    public static void signedDocumentContainsCerts(InputStream inputStream, List<X509Certificate> expectedCertificates)
+            throws IOException {
+        try (PdfDocument outDocument = new PdfDocument(new PdfReader(inputStream))) {
+            SignatureUtil sigUtil = new SignatureUtil(outDocument);
+            List<Certificate> actualCertificates = Arrays.asList(sigUtil.readSignatureData("Signature1").getCertificates());
+            // Searching for every certificate we expect should be in the resulting document.
+            Assert.assertEquals(expectedCertificates.size(), actualCertificates.size());
+            for (X509Certificate expectedCert : expectedCertificates) {
+                Assert.assertTrue(actualCertificates.stream().anyMatch(cert ->
+                        ((X509Certificate) cert).getSubjectX500Principal().equals(expectedCert.getSubjectX500Principal())));
+            }
         }
     }
 

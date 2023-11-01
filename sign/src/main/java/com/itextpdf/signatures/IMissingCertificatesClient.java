@@ -20,21 +20,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.logs;
+package com.itextpdf.signatures;
+
+import java.security.cert.Certificate;
 
 /**
- * Class which contains constants to be used in logging inside sign module.
+ * Interface client to support Certificate Chain with Missing Certificates.
  */
-public final class SignLogMessageConstant {
-
-    public static final String ALGORITHM_NOT_FROM_SPEC =
-            "Requested algorithm might not be supported by the pdf specification.";
-    public static final String EXCEPTION_WITHOUT_MESSAGE =
-            "Unexpected exception without message was thrown during keystore processing";
-    public static final String UNABLE_TO_PARSE_AIA_CERT = "Unable to parse certificates coming from authority info "
-            + "access extension. Those won't be included into the certificate chain.";
-
-    private SignLogMessageConstant() {
-        // Private constructor will prevent the instantiation of this class directly
-    }
+public interface IMissingCertificatesClient {
+    /**
+     * Retrieves missing certificates in chain using Authority Information Access (AIA) Extension.
+     *
+     * @param chain certificate chain to restore with at least signing certificate.
+     *
+     * @return full chain of trust or maximum chain that could be restored in case missing certificates cannot be
+     * retrieved from AIA extension.
+     */
+    Certificate[] retrieveMissingCertificates(Certificate[] chain);
 }

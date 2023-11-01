@@ -65,6 +65,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -235,8 +236,14 @@ final class SignUtils {
     }
 
     static Collection<Certificate> readAllCerts(byte[] contentsKey) throws CertificateException {
-        final CertificateFactory factory = CertificateFactory.getInstance("X509", FACTORY.getProvider());
-        return new ArrayList<>(factory.generateCertificates(new ByteArrayInputStream(contentsKey)));
+        return SignUtils.readAllCerts(new ByteArrayInputStream(contentsKey), FACTORY.getProvider());
+    }
+
+    static Collection<Certificate> readAllCerts(InputStream contentsKey, Provider provider)
+            throws CertificateException {
+        final CertificateFactory factory = provider == null ? CertificateFactory.getInstance("X509") :
+                CertificateFactory.getInstance("X509", provider);
+        return new ArrayList<>(factory.generateCertificates(contentsKey));
     }
 
     static <T> T getFirstElement(Iterable<T> iterable) {

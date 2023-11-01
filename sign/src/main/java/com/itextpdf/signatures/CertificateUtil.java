@@ -159,6 +159,37 @@ public class CertificateUtil {
         return null;
     }
 
+    // Missing certificates in chain
+
+    /**
+     * Retrieves the URL for the issuer lists certificates for the given certificate.
+     *
+     * @param certificate the certificate
+     *
+     * @return the URL or null.
+     */
+    public static String getIssuerCertURL(X509Certificate certificate) {
+        IASN1Primitive obj;
+        try {
+            obj = getExtensionValue(certificate, FACTORY.createExtension().getAuthorityInfoAccess().getId());
+            if (obj == null) {
+                return null;
+            }
+            IASN1Sequence accessDescriptions = FACTORY.createASN1Sequence(obj);
+            for (int i = 0; i < accessDescriptions.size(); i++) {
+                IASN1Sequence accessDescription = FACTORY.createASN1Sequence(accessDescriptions.getObjectAt(i));
+                IASN1ObjectIdentifier id = FACTORY.createASN1ObjectIdentifier(accessDescription.getObjectAt(0));
+                if (accessDescription.size() == 2 && id != null && SecurityIDs.ID_CA_ISSUERS.equals(id.getId())) {
+                    IASN1Primitive description = FACTORY.createASN1Primitive(accessDescription.getObjectAt(1));
+                    return getStringFromGeneralName(description);
+                }
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
+    }
+
     // Time Stamp Authority
 
     /**
@@ -183,6 +214,29 @@ public class CertificateUtil {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    /**
+     * Checks if the certificate is signed by provided issuer certificate.
+     *
+     * @param subjectCertificate a certificate to check
+     * @param issuerCertificate an issuer certificate to check
+     *
+     * @return true if the first passed certificate is signed by next passed certificate.
+     */
+    static boolean isIssuerCertificate(X509Certificate subjectCertificate, X509Certificate issuerCertificate) {
+        return subjectCertificate.getIssuerX500Principal().equals(issuerCertificate.getSubjectX500Principal());
+    }
+
+    /**
+     * Checks if the certificate is self-signed.
+     *
+     * @param certificate a certificate to check
+     *
+     * @return true if the certificate is self-signed.
+     */
+    static boolean isSelfSigned(X509Certificate certificate) {
+        return certificate.getIssuerX500Principal().equals(certificate.getSubjectX500Principal());
     }
 
     // helper methods

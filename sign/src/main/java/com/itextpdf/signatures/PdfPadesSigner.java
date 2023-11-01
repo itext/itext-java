@@ -64,6 +64,7 @@ public class PdfPadesSigner {
     
     private IOcspClient ocspClient = null;
     private ICrlClient crlClient;
+    private IMissingCertificatesClient missingCertificatesClient = new MissingCertificatesClient();
     private int estimatedSize = 0;
     private String timestampSignatureName;
     private String temporaryDirectoryPath = null;
@@ -100,7 +101,8 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineBProfile(SignerProperties signerProperties, Certificate[] chain,
            IExternalSignature externalSignature) throws GeneralSecurityException, IOException {
-        performSignDetached(signerProperties, true, externalSignature, chain, null);
+        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        performSignDetached(signerProperties, true, externalSignature, fullChain, null);
     }
 
     /**
@@ -133,7 +135,8 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineTProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
-        performSignDetached(signerProperties, true, externalSignature, chain, tsaClient);
+        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        performSignDetached(signerProperties, true, externalSignature, fullChain, tsaClient);
     }
 
     /**
@@ -167,9 +170,10 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
-        createRevocationClients(chain, true);
+        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        createRevocationClients(fullChain, true);
         try {
-            performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
+            performSignDetached(signerProperties, false, externalSignature, fullChain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(outputStream), new StampingProperties().useAppendMode())) {
@@ -212,9 +216,10 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTAProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws IOException, GeneralSecurityException {
-        createRevocationClients(chain, true);
+        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        createRevocationClients(fullChain, true);
         try {
-            performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
+            performSignDetached(signerProperties, false, externalSignature, fullChain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(createOutputStream()), new StampingProperties().useAppendMode())) {
@@ -387,6 +392,22 @@ public class PdfPadesSigner {
      */
     public PdfPadesSigner setExternalDigest(IExternalDigest externalDigest) {
         this.externalDigest = externalDigest;
+        return this;
+    }
+
+    /**
+     * Set {@link IMissingCertificatesClient} to be used before main signing operation.
+     *
+     * <p>
+     * If none is set, {@link MissingCertificatesClient} instance will be used instead.
+     *
+     * @param missingCertificatesClient {@link IMissingCertificatesClient} instance to be used for getting missing
+     *                                                                    certificates in chain.
+     *
+     * @return same instance of {@link PdfPadesSigner}.
+     */
+    public PdfPadesSigner setMissingCertificatesClient(IMissingCertificatesClient missingCertificatesClient) {
+        this.missingCertificatesClient = missingCertificatesClient;
         return this;
     }
 
