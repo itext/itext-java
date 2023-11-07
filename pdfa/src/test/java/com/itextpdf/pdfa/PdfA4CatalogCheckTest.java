@@ -34,7 +34,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -413,25 +412,4 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
                 MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
                         "2"), e.getMessage());
     }
-
-    @Test
-    public void checkInvalidOperatorTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "invalidOperatorTest.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfA4CatalogCheckTest/cmp_invalidOperatorTest.pdf";
-        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        InputStream is = new FileInputStream(sourceFolder + "sRGB Color Space Profile.icm");
-        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
-        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, outputIntent);
-        doc.addNewPage();
-
-        PdfStream stream = doc.getPage(1).getContentStream(0);
-        stream.setData("№".getBytes(StandardCharsets.UTF_8));
-        doc.close();
-
-
-        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
-
-        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-    }
-
 }

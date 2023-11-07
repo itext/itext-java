@@ -43,6 +43,7 @@ import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -72,6 +73,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -1185,6 +1189,121 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         compareResult(outPdf, cmpPdf);
     }
+
+    @Test
+    public void destOutputIntentProfileNotAllowedTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowed.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("prtr", "not_def").getBytes(StandardCharsets.US_ASCII);
+
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        pdfDoc.addOutputIntent(pdfOutputIntent);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.PROFILE_STREAM_OF_OUTPUTINTENT_SHALL_BE_OUTPUT_PROFILE_PRTR_OR_MONITOR_PROFILE_MNTR, e.getMessage());
+    }
+
+    @Test
+    public void destOutputIntentProfileNotAllowedInPageTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowedInPage.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDoc.addNewPage();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("prtr", "not_def").getBytes(StandardCharsets.US_ASCII);
+
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        page.addOutputIntent(pdfOutputIntent);
+
+        //TODO DEVSIX-7884: Change assertion by catching the exception when closing the document and verify the content.
+        pdfDoc.close(); //should throw exception
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void destOutputIntentColorSpaceNotAllowedTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowed.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("CMYK", "not_def").getBytes(StandardCharsets.US_ASCII);
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        pdfDoc.addOutputIntent(pdfOutputIntent);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.OUTPUT_INTENT_COLOR_SPACE_SHALL_BE_EITHER_GRAY_RGB_OR_CMYK, e.getMessage());
+
+    }
+
+    @Test
+    public void destOutputIntentColorSpaceNotAllowedInPageTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowedInPage.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDoc.addNewPage();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("CMYK", "not_def").getBytes(StandardCharsets.US_ASCII);
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        page.addOutputIntent(pdfOutputIntent);
+
+        //TODO DEVSIX-7884: Change assertion by catching the exception when closing the document and verify the content.
+        pdfDoc.close(); //should throw exception
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+
+
+    @Test
+    public void destOutputIntentRefNotAllowedTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "PdfWithOutputIntentProfileRef.pdf";
+        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_4;
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfADocument = new PdfADocument(writer, conformanceLevel,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        PdfPage page = pdfADocument.addNewPage();
+
+        PdfDictionary catalog = pdfADocument.getCatalog().getPdfObject();
+        PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
+        PdfDictionary outputIntent = outputIntents.getAsDictionary(0);
+        outputIntent.put(new PdfName("DestOutputProfileRef"), new PdfDictionary());
+        outputIntents.add(outputIntent);
+        catalog.put(PdfName.OutputIntents, outputIntents);
+        pdfADocument.close();
+
+        //TODO DEVSIX-7885: Change assertion by catching the exception when closing the document and verify the content.
+        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
 
     private void testWithColourant(PdfName color) throws FileNotFoundException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),

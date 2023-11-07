@@ -25,7 +25,6 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -512,63 +511,6 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testDestOutputIntentProfileNotAllowedTest() throws IOException, XMPException {
-        PdfDictionary catalog = new PdfDictionary();
-        PdfArray array = new PdfArray();
-        PdfDictionary dictionary = new PdfDictionary();
-        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc"));
-
-        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("prtr", "not_def").getBytes(StandardCharsets.US_ASCII);
-        dictionary.put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
-        array.add(dictionary);
-        catalog.put(PdfName.OutputIntents, array);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
-                () -> new PdfA4Checker(PdfAConformanceLevel.PDF_A_4F).checkOutputIntents(catalog)
-        );
-        Assert.assertEquals(PdfaExceptionMessageConstant.PROFILE_STREAM_OF_OUTPUTINTENT_SHALL_BE_OUTPUT_PROFILE_PRTR_OR_MONITOR_PROFILE_MNTR, e.getMessage());
-
-    }
-
-    @Test
-    public void testDestOutputIntentColorSpaceNotAllowedTest() throws IOException, XMPException {
-        PdfDictionary catalog = new PdfDictionary();
-        PdfArray array = new PdfArray();
-        PdfDictionary dictionary = new PdfDictionary();
-        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc"));
-
-        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("CMYK", "not_def").getBytes(StandardCharsets.US_ASCII);
-        dictionary.put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
-        array.add(dictionary);
-        catalog.put(PdfName.OutputIntents, array);
-        Exception e = Assert.assertThrows(PdfAConformanceException.class,
-                () -> new PdfA4Checker(PdfAConformanceLevel.PDF_A_4F).checkOutputIntents(catalog)
-        );
-        Assert.assertEquals(PdfaExceptionMessageConstant.OUTPUT_INTENT_COLOR_SPACE_SHALL_BE_EITHER_GRAY_RGB_OR_CMYK, e.getMessage());
-
-    }
-
-    @Test
-    public void testDestOutputIntentRefNotAllowedTest() throws IOException, XMPException {
-        String outPdf = SOURCE_FOLDER + "PdfWithOutputIntentProfileRef.pdf";
-        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_4;
-        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        PdfADocument pdfADocument = new PdfADocument(writer, conformanceLevel,
-                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
-                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
-        pdfADocument.addNewPage();
-
-        PdfDictionary catalog = pdfADocument.getCatalog().getPdfObject();
-        PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
-        PdfDictionary outputIntent = outputIntents.getAsDictionary(0);
-        outputIntent.put(new PdfName("DestOutputProfileRef"), new PdfDictionary());
-        outputIntents.add(outputIntent);
-        catalog.put(PdfName.OutputIntents, outputIntents);
-        pdfADocument.close();
-
-        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-    }
-
-    @Test
     public void pdfA4DocumentMetaDataIsNotUTF8Encoded() throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "encodedXmp.xmp"));
         String outPdf = DESTINATION_FOLDER + "metadataNotUTF8.pdf";
@@ -578,7 +520,9 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                         new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();
         doc.getPage(1).setXmpMetadata(bytes);
-        doc.close();
+        doc.close(); //should throw exception
+
+        //TODO DEVSIX-7886: Change assertion by catching the exception when closing the document and verify the content.
         Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
