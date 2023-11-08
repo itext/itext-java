@@ -41,10 +41,10 @@ public class SignerProperties {
     private String fieldName;
     private int pageNumber = 1;
     private Rectangle pageRect = new Rectangle(0, 0);
-
     private String signatureCreator = "";
-
     private String contact = "";
+    private String reason = "";
+    private String location = "";
 
     /**
      * Create instance of {@link SignerProperties}.
@@ -260,6 +260,48 @@ public class SignerProperties {
      */
     public SignerProperties setContact(String contact) {
         this.contact = contact;
+        return this;
+    }
+
+    /**
+     * Returns the signing reason.
+     *
+     * @return The signing reason.
+     */
+    public String getReason() {
+        return this.reason;
+    }
+
+    /**
+     * Sets the signing reason.
+     *
+     * @param reason A new signing reason.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public SignerProperties setReason(String reason) {
+        this.reason = reason;
+        return this;
+    }
+
+    /**
+     * Returns the signing location.
+     *
+     * @return The signing location.
+     */
+    public String getLocation() {
+        return this.location;
+    }
+
+    /**
+     * Sets the signing location.
+     *
+     * @param location A new signing location.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public SignerProperties setLocation(String location) {
+        this.location = location;
         return this;
     }
 }

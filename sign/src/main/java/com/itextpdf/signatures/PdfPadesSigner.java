@@ -427,6 +427,8 @@ public class PdfPadesSigner {
         signer.setSignDate(signerProperties.getSignDate());
         signer.setSignatureCreator(signerProperties.getSignatureCreator());
         signer.setContact(signerProperties.getContact());
+        signer.setReason(signerProperties.getReason());
+        signer.setLocation(signerProperties.getLocation());
         signer.setSignatureAppearance(signerProperties.getSignatureAppearance());
         return signer;
     }

@@ -580,6 +580,48 @@ public class PdfSigner {
     }
 
     /**
+     * Returns the signing reason.
+     *
+     * @return The signing reason.
+     */
+    public String getReason() {
+        return appearance.getReason();
+    }
+
+    /**
+     * Sets the signing reason.
+     *
+     * @param reason A new signing reason.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSigner setReason(String reason) {
+        appearance.setReason(reason);
+        return this;
+    }
+
+    /**
+     * Returns the signing location.
+     *
+     * @return The signing location.
+     */
+    public String getLocation() {
+        return appearance.getLocation();
+    }
+
+    /**
+     * Sets the signing location.
+     *
+     * @param location A new signing location.
+     *
+     * @return this instance to support fluent interface.
+     */
+    public PdfSigner setLocation(String location) {
+        appearance.setLocation(location);
+        return this;
+    }
+
+    /**
      * Signs the document using the detached mode, CMS or CAdES equivalent.
      * <br><br>
      * NOTE: This method closes the underlying pdf document. This means, that current instance
@@ -699,8 +741,8 @@ public class PdfSigner {
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, sigtype == CryptoStandard.CADES
                 ? PdfName.ETSI_CAdES_DETACHED
                 : PdfName.Adbe_pkcs7_detached);
-        dic.setReason(appearance.getReason());
-        dic.setLocation(appearance.getLocation());
+        dic.setReason(getReason());
+        dic.setLocation(getLocation());
         dic.setSignatureCreator(getSignatureCreator());
         dic.setContact(getContact());
         dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
@@ -1400,10 +1442,10 @@ public class PdfSigner {
     private PdfSignature createSignatureDictionary(boolean includeDate) {
         PdfSignature dic = new PdfSignature();
         PdfSignatureAppearance appearance = getSignatureAppearance();
-        dic.setReason(appearance.getReason());
-        dic.setLocation(appearance.getLocation());
-        dic.setSignatureCreator(appearance.getSignatureCreator());
-        dic.setContact(appearance.getContact());
+        dic.setReason(getReason());
+        dic.setLocation(getLocation());
+        dic.setSignatureCreator(getSignatureCreator());
+        dic.setContact(getContact());
         if (includeDate) {
             dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
         }

@@ -344,7 +344,7 @@ public class PdfSignatureAppearance {
      *
      * @return reason for signing.
      *
-     * @deprecated in favour of {@link SignedAppearanceText} that should be used for {@link SignatureFieldAppearance}.
+     * @deprecated won't be public in the next major release. Use {@link PdfSigner#getReason()} instead.
      */
     @Deprecated
     public String getReason() {
@@ -358,7 +358,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface.
      *
-     * @deprecated in favour of {@link SignedAppearanceText} that should be used for {@link SignatureFieldAppearance}.
+     * @deprecated won't be public in the next major release. Use {@link PdfSigner#setReason} instead.
      */
     @Deprecated
     public PdfSignatureAppearance setReason(String reason) {
@@ -386,7 +386,7 @@ public class PdfSignatureAppearance {
      *
      * @return signing location.
      *
-     * @deprecated in favour of {@link SignedAppearanceText} that should be used for {@link SignatureFieldAppearance}.
+     * @deprecated won't be public in the next major release. Use {@link PdfSigner#getLocation()} instead.
      */
     @Deprecated
     public String getLocation() {
@@ -400,7 +400,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface.
      *
-     * @deprecated in favour of {@link SignedAppearanceText} that should be used for {@link SignatureFieldAppearance}.
+     * @deprecated won't be public in the next major release. Use {@link PdfSigner#setLocation} instead.
      */
     @Deprecated
     public PdfSignatureAppearance setLocation(String location) {
@@ -726,6 +726,8 @@ public class PdfSignatureAppearance {
             setContent();
             setFontRelatedProperties();
             applyBackgroundImage();
+        } else {
+            populateExistingModelElement();
         }
         return modelElement;
     }
@@ -821,7 +823,7 @@ public class PdfSignatureAppearance {
      *
      * @return the signature date.
      *
-     * @deprecated in favour of {@link SignedAppearanceText} that should be used for {@link SignatureFieldAppearance}.
+     * @deprecated use {@link PdfSigner#getSignDate()} instead.
      */
     @Deprecated
     protected java.util.Calendar getSignDate() {
@@ -835,7 +837,7 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface.
      *
-     * @deprecated in favour of {@link SignedAppearanceText} that should be used for {@link SignatureFieldAppearance}.
+     * @deprecated use {@link PdfSigner#setSignDate(Calendar)} instead.
      */
     @Deprecated
     protected PdfSignatureAppearance setSignDate(java.util.Calendar signDate) {
@@ -971,6 +973,20 @@ public class PdfSignatureAppearance {
                 } else {
                     modelElement.setContent(generateSignatureText());
                 }
+            }
+        }
+    }
+
+    private void populateExistingModelElement() {
+        modelElement.setSignerName(getSignerName());
+        SignedAppearanceText signedAppearanceText = modelElement.getSignedAppearanceText();
+        if (signedAppearanceText != null) {
+            signedAppearanceText.setSignedBy(getSignerName()).setSignDate(signDate);
+            if (reasonCaption.equals(signedAppearanceText.getReasonLine())) {
+                signedAppearanceText.setReasonLine(reasonCaption + reason);
+            }
+            if (locationCaption.equals(signedAppearanceText.getLocationLine())) {
+                signedAppearanceText.setLocationLine(locationCaption + location);
             }
         }
     }

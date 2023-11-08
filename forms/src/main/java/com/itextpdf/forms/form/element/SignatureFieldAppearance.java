@@ -52,6 +52,9 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      */
     private final List<IElement> contentElements = new ArrayList<IElement>();
 
+    private SignedAppearanceText signedAppearanceText;
+    private String signerName;
+
     /**
      * We should support signing of existing fields with dots in name, but dots are now allowed in model element id.
      * So it is a placeholder for such cases.
@@ -85,7 +88,7 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(SignedAppearanceText description) {
-        addTextContent(description.generateDescriptionText());
+        prepareContent(null, description);
         return this;
     }
 
@@ -97,6 +100,7 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(String description) {
+        prepareContent(null, null);
         addTextContent(description);
         return this;
     }
@@ -110,8 +114,8 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(SignedAppearanceText description, ImageData image) {
+        prepareContent(null, description);
         addImageContent(image);
-        addTextContent(description.generateDescriptionText());
         return this;
     }
 
@@ -124,6 +128,7 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(String description, ImageData image) {
+        prepareContent(null, null);
         addImageContent(image);
         addTextContent(description);
         return this;
@@ -137,6 +142,7 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(ImageData image) {
+        prepareContent(null, null);
         addImageContent(image);
         return this;
     }
@@ -150,8 +156,7 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(String signerName, SignedAppearanceText description) {
-        addTextContent(signerName);
-        addTextContent(description.generateDescriptionText());
+        prepareContent(signerName, description);
         return this;
     }
 
@@ -159,12 +164,12 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * Sets the content for this signature.
      *
      * @param signerName  the name of the signer from the certificate.
-     * @param description {@link SignedAppearanceText} instance representing the signature text identifying the signer.
+     * @param description the signature text identifying the signer.
      *
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(String signerName, String description) {
-        addTextContent(signerName);
+        prepareContent(signerName, null);
         addTextContent(description);
         return this;
     }
@@ -177,17 +182,46 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
      * @return this same {@link SignatureFieldAppearance} instance.
      */
     public SignatureFieldAppearance setContent(Div data) {
+        prepareContent(null, null);
         contentElements.add(data);
         return this;
     }
 
     /**
-     * Gets the content for this signature.
+     * Gets the final content for this signature.
      *
      * @return collection of the layout elements which will be rendered as a signature content.
      */
     public List<IElement> getContentElements() {
+        if (signerName != null) {
+            addTextContent(0, signerName);
+            signerName = null;
+        }
+        if (signedAppearanceText != null) {
+            addTextContent(signedAppearanceText.generateDescriptionText());
+            signedAppearanceText = null;
+        }
         return Collections.unmodifiableList(contentElements);
+    }
+
+    /**
+     * Gets the {@link SignedAppearanceText} instance for this signature.
+     *
+     * @return {@link SignedAppearanceText} instance if it was set by {@link #setContent}, null otherwise.
+     */
+    public SignedAppearanceText getSignedAppearanceText() {
+        return signedAppearanceText;
+    }
+
+    /**
+     * Replaces the signer name for this signature if it was set by {@link #setContent}.
+     *
+     * @param signerName signer name to set.
+     */
+    public void setSignerName(String signerName) {
+        if (this.signerName != null) {
+            this.signerName = signerName;
+        }
     }
 
     /**
@@ -210,8 +244,18 @@ public class SignatureFieldAppearance extends FormField<SignatureFieldAppearance
         return new SignatureAppearanceRenderer(this);
     }
 
+    private void prepareContent(String signer, SignedAppearanceText description) {
+        contentElements.clear();
+        signedAppearanceText = description;
+        signerName = signer;
+    }
+
     private void addTextContent(String text) {
-        contentElements.add(new Paragraph(text).setMargin(0).setMultipliedLeading(0.9f));
+        addTextContent(contentElements.size(), text);
+    }
+
+    private void addTextContent(int index, String text) {
+        contentElements.add(index, new Paragraph(text).setMargin(0).setMultipliedLeading(0.9f));
     }
 
     private void addImageContent(ImageData imageData) {
