@@ -87,6 +87,14 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     }
 
     @Test
+    public void simpleFontWithPartialToUnicodeTest() throws IOException {
+        String inFile = sourceFolder + "simpleFontWithPartialToUnicode.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            Assert.assertEquals("Registered", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+        }
+    }
+
+    @Test
     public void type0FontToUnicodeTest() throws IOException {
         String inFile = sourceFolder + "type0FontToUnicode.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {

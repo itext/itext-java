@@ -103,12 +103,22 @@ public class FontEncoding {
     public static FontEncoding createFontSpecificEncoding() {
         FontEncoding encoding = new FontEncoding();
         encoding.fontSpecific = true;
+        FontEncoding.fillFontEncoding(encoding);
+
+        return encoding;
+    }
+
+    /**
+     * Fill {@link FontEncoding} object with default data.
+     *
+     * @param encoding {@link FontEncoding} to fill.
+     */
+    public static void fillFontEncoding(FontEncoding encoding) {
         for (int ch = 0; ch < 256; ch++) {
             encoding.unicodeToCode.put(ch, ch);
             encoding.codeToUnicode[ch] = ch;
             encoding.unicodeDifferences.put(ch, ch);
         }
-        return encoding;
     }
 
     public String getBaseEncoding() {

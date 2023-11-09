@@ -85,4 +85,10 @@ public class FontEncodingTest extends ExtendedITextTest {
 
         Assert.assertEquals("a", encoding.getDifference(0));
     }
+
+    @Test
+    public void fontSpecificEncodingTest() {
+        FontEncoding encoding = FontEncoding.createFontSpecificEncoding();
+        Assert.assertTrue(encoding.isFontSpecific());
+    }
 }

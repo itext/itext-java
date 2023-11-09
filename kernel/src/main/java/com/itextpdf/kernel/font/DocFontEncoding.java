@@ -61,6 +61,8 @@ class DocFontEncoding extends FontEncoding {
         }
         if (toUnicode != null) {
             DocFontEncoding fontEncoding = new DocFontEncoding();
+            FontEncoding.fillFontEncoding(fontEncoding);
+
             fontEncoding.differences = new String[256];
             fillDifferences(fontEncoding, toUnicode);
             return fontEncoding;
