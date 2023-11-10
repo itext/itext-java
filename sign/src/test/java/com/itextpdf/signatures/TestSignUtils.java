@@ -108,7 +108,7 @@ public final class TestSignUtils {
             IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(ocspResp.getResponseObject());
             Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(basicOCSPResp);
             for (X509Certificate cert : certs) {
-                String x500Principal = cert.getSubjectDN().getName();
+                String x500Principal = cert.getSubjectX500Principal().getName();
                 Integer currentAmount =
                         realNumberOfOcsp.get(x500Principal) == null ? 0 : realNumberOfOcsp.get(x500Principal);
                 realNumberOfOcsp.put(x500Principal, currentAmount + 1);

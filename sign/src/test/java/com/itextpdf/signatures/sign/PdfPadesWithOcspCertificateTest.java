@@ -37,7 +37,6 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.client.AdvancedTestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
@@ -45,9 +44,7 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -113,7 +110,7 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
         // It is expected to have two OCSP responses, one for signing cert and another for OCSP response.
-        expectedNumberOfOcsps.put(ocspCert.getSubjectDN().getName(), 2);
+        expectedNumberOfOcsps.put(ocspCert.getSubjectX500Principal().getName(), 2);
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
                 expectedNumberOfCrls, expectedNumberOfOcsps);
     }
@@ -184,7 +181,7 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
         // It is expected to have one OCSP response, only for signing cert.
-        expectedNumberOfOcsps.put(signRsaCert.getSubjectDN().getName(), 1);
+        expectedNumberOfOcsps.put(signRsaCert.getSubjectX500Principal().getName(), 1);
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
                 expectedNumberOfCrls, expectedNumberOfOcsps);
     }

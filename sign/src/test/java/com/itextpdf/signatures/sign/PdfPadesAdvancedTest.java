@@ -41,7 +41,6 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
@@ -56,7 +55,6 @@ import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -213,11 +211,11 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
             throws AbstractOCSPException, CertificateException, IOException, CRLException {
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         if (amountOfCrlsForRoot + amountOfCrlsForSign != 0) {
-            expectedNumberOfCrls.put(rootCert.getSubjectDN().getName(), amountOfCrlsForRoot + amountOfCrlsForSign);
+            expectedNumberOfCrls.put(rootCert.getSubjectX500Principal().getName(), amountOfCrlsForRoot + amountOfCrlsForSign);
         }
         Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
         if (amountOfOcspsForRoot + amountOfOcspsForSign != 0) {
-            expectedNumberOfOcsps.put(rootCert.getSubjectDN().getName(), amountOfOcspsForRoot + amountOfOcspsForSign);
+            expectedNumberOfOcsps.put(rootCert.getSubjectX500Principal().getName(), amountOfOcspsForRoot + amountOfOcspsForSign);
         }
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()), expectedNumberOfCrls, expectedNumberOfOcsps);
     }
