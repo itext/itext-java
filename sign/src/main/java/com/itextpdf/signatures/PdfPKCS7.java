@@ -423,6 +423,7 @@ public class PdfPKCS7 {
                         IASN1Set attributeValues = ts.getAttrValues();
                         IASN1Sequence tokenSequence =
                                 BOUNCY_CASTLE_FACTORY.createASN1SequenceInstance(attributeValues.getObjectAt(0));
+                        this.timestampCerts = SignUtils.readAllCerts(tokenSequence.getEncoded());
                         IContentInfo contentInfo = BOUNCY_CASTLE_FACTORY.createContentInfo(tokenSequence);
                         this.timeStampTokenInfo = BOUNCY_CASTLE_FACTORY.createTSTInfo(contentInfo);
                     }
@@ -431,6 +432,7 @@ public class PdfPKCS7 {
             if (isTsp) {
                 IContentInfo contentInfoTsp = BOUNCY_CASTLE_FACTORY.createContentInfo(signedData);
                 this.timeStampTokenInfo = BOUNCY_CASTLE_FACTORY.createTSTInfo(contentInfoTsp);
+                this.timestampCerts = this.certs;
                 String algOID = timeStampTokenInfo.getMessageImprint().getHashAlgorithm().getAlgorithm().getId();
                 messageDigest = DigestAlgorithms.getMessageDigestFromOid(algOID, null);
             } else {
@@ -1339,6 +1341,8 @@ public class PdfPKCS7 {
      * All the X.509 certificates in no particular order.
      */
     private Collection<Certificate> certs;
+    
+    private Collection<Certificate> timestampCerts;
 
     /**
      * All the X.509 certificates used for the main signature.
@@ -1358,6 +1362,15 @@ public class PdfPKCS7 {
      */
     public Certificate[] getCertificates() {
         return certs.toArray(new X509Certificate[certs.size()]);
+    }
+
+    /**
+     * Get all X.509 certificates associated with this PKCS#7 object timestamp in no particular order.
+     * 
+     * @return {@link Certificate[]} array
+     */
+    public Certificate[] getTimestampCertificates() {
+        return timestampCerts.toArray(new Certificate[0]);
     }
 
     /**

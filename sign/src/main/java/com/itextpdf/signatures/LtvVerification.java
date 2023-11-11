@@ -31,8 +31,6 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -77,12 +75,11 @@ public class LtvVerification {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
 
-    private PdfDocument document;
-    private SignatureUtil sgnUtil;
-    private PdfAcroForm acroForm;
-    private Map<PdfName, ValidationData> validated = new HashMap<>();
+    private final PdfDocument document;
+    private final SignatureUtil sgnUtil;
+    private final Map<PdfName, ValidationData> validated = new HashMap<>();
     private boolean used = false;
     private String securityProviderCode = null;
 
@@ -124,7 +121,12 @@ public class LtvVerification {
          * Include verification for the whole chain of certificates 
          * and certificates used to create OCSP revocation data responses.
          */
-        CHAIN_AND_OCSP_RESPONSE_CERTIFICATES
+        CHAIN_AND_OCSP_RESPONSE_CERTIFICATES,
+        /**
+         * Include verification for the whole certificates chain, certificates used to create OCSP responses
+         * and timestamp certificates included in the signatures.
+         */
+        CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES
     }
 
     /**
@@ -165,7 +167,6 @@ public class LtvVerification {
      */
     public LtvVerification(PdfDocument document) {
         this.document = document;
-        this.acroForm = PdfFormCreator.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
     }
 
@@ -235,6 +236,13 @@ public class LtvVerification {
         Set<X509Certificate> processedCerts = new HashSet<>();
         addRevocationDataForChain(signingCert, certificateChain, ocsp, crl, level, certInclude, certOption,
                 revocationDataNecessity, validationData, processedCerts);
+        
+        if (certOption == CertificateOption.CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES) {
+            Certificate[] timestampCertsChain = pk.getTimestampCertificates();
+            addRevocationDataForChain(signingCert, timestampCertsChain, ocsp, crl, level, certInclude, certOption,
+                    revocationDataNecessity, validationData, processedCerts);
+        }
+        
         if (validationData.crls.size() == 0 && validationData.ocsps.size() == 0) {
             return false;
         }
@@ -363,7 +371,8 @@ public class LtvVerification {
                 validationData.ocsps.add(buildOCSPResponse(ocspEnc));
                 revocationDataAdded = true;
                 LOGGER.info("OCSP added");
-                if (certOption == CertificateOption.CHAIN_AND_OCSP_RESPONSE_CERTIFICATES) {
+                if (certOption == CertificateOption.CHAIN_AND_OCSP_RESPONSE_CERTIFICATES ||
+                        certOption == CertificateOption.CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES) {
                     Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(
                             BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
                                     BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(ocspEnc)));

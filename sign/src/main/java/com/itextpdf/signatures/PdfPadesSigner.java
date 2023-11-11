@@ -437,7 +437,7 @@ public class PdfPadesSigner {
         LtvVerification ltvVerification = new LtvVerification(pdfDocument);
         for (String signatureName : signatureNames) {
             ltvVerification.addVerification(signatureName, ocspClient, crlClient,
-                    CertificateOption.CHAIN_AND_OCSP_RESPONSE_CERTIFICATES, Level.OCSP_OPTIONAL_CRL,
+                    CertificateOption.CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES, Level.OCSP_OPTIONAL_CRL,
                     LtvVerification.CertificateInclusion.YES, revocationDataNecessity);
         }
         ltvVerification.merge();
