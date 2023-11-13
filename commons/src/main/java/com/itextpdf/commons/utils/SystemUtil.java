@@ -202,7 +202,6 @@ public final class SystemUtil {
      * @return subprocess output result.
      *
      * @throws IOException if any I/O error occurs.
-     * @throws InterruptedException if process was interrupted.
      */
     public static String runProcessAndGetOutput(String command, String params) throws IOException {
         return getProcessOutput(runProcess(command, params, null));
@@ -224,7 +223,6 @@ public final class SystemUtil {
      * @return subprocess errors as {@code StringBuilder}.
      *
      * @throws IOException if any I/O error occurs.
-     * @throws InterruptedException if process was interrupted.
      */
     public static StringBuilder runProcessAndCollectErrors(String execPath, String params) throws IOException {
         return printProcessErrorsOutput(runProcess(execPath, params, null));
