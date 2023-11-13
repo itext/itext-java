@@ -60,6 +60,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
+import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.ByteArrayOutputStream;
@@ -253,7 +254,7 @@ public class PdfSigner {
         appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
         appearance.setSignDate(signDate);
     }
-    
+
     PdfSigner(PdfDocument document, OutputStream outputStream, ByteArrayOutputStream temporaryOS, File tempFile) {
         if (tempFile == null) {
             this.temporaryOS = temporaryOS;
@@ -946,31 +947,31 @@ public class PdfSigner {
      */
     public byte[] prepareDocumentForSignature(String digestAlgorithm, PdfName filter, PdfName subFilter,
             int estimatedSize, boolean includeDate) throws IOException, GeneralSecurityException {
-        if (closed) {
-            throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
-        }
+        return prepareDocumentForSignature(SignUtils.getMessageDigest(digestAlgorithm), filter, subFilter,
+                estimatedSize, includeDate);
+    }
 
-        cryptoDictionary = createSignatureDictionary(includeDate);
-        cryptoDictionary.put(PdfName.Filter, filter);
-        cryptoDictionary.put(PdfName.SubFilter, subFilter);
-
-
-        Map<PdfName, Integer> exc = new HashMap<>();
-        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
-        preClose(exc);
-
-        InputStream data = getRangeStream();
-        byte[] digest = DigestAlgorithms.digest(data, SignUtils.getMessageDigest(digestAlgorithm));
-
-        byte[] paddedSig = new byte[estimatedSize];
-
-        PdfDictionary dic2 = new PdfDictionary();
-        dic2.put(PdfName.Contents, new PdfString(paddedSig).setHexWriting(true));
-        close(dic2);
-
-        closed = true;
-
-        return digest;
+    /**
+     * Prepares document for signing, calculates the document digest to sign and closes the document.
+     *
+     * @param externalDigest  an external digest to provide the MessageDigest
+     * @param digestAlgorithm the algorithm to generate the digest with
+     * @param filter          PdfName of the signature handler to use when validating this signature
+     * @param subFilter       PdfName that describes the encoding of the signature
+     * @param estimatedSize   the estimated size of the signature, this is the size of the space reserved for
+     *                        the Cryptographic Message Container
+     * @param includeDate     specifies if the signing date should be set to the signature dictionary
+     *
+     * @return the message digest of the prepared document.
+     *
+     * @throws IOException              if some I/O problem occurs.
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     */
+    public byte[] prepareDocumentForSignature(IExternalDigest externalDigest, String digestAlgorithm, PdfName filter,
+                                              PdfName subFilter, int estimatedSize, boolean includeDate)
+            throws IOException, GeneralSecurityException {
+        return prepareDocumentForSignature(externalDigest.getMessageDigest(digestAlgorithm), filter, subFilter,
+                estimatedSize, includeDate);
     }
 
     /**
@@ -985,9 +986,28 @@ public class PdfSigner {
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
      */
     public static void addSignatureToPreparedDocument(PdfDocument document, String fieldName, OutputStream outs,
-                                                    byte[] signedContent) throws IOException, GeneralSecurityException {
+                                                      byte[] signedContent)
+            throws IOException, GeneralSecurityException {
         SignatureApplier applier = new SignatureApplier(document, fieldName, outs);
         applier.apply(a -> signedContent);
+    }
+
+    /**
+     * Adds an existing signature to a PDF where space was already reserved.
+     *
+     * @param document      the original PDF
+     * @param fieldName     the field to sign. It must be the last field
+     * @param outs          the output PDF
+     * @param cmsContainer  the finalized CMS container
+     *
+     * @throws IOException              if some I/O problem occurs.
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     */
+    public static void addSignatureToPreparedDocument(PdfDocument document, String fieldName, OutputStream outs,
+                                                      CMSContainer cmsContainer)
+            throws IOException, GeneralSecurityException {
+        SignatureApplier applier = new SignatureApplier(document, fieldName, outs);
+        applier.apply(a -> cmsContainer.serialize());
     }
 
     /**
@@ -1057,7 +1077,8 @@ public class PdfSigner {
      * document. Note that due to the hex string coding this size should be byte_size*2+2.
      *
      * @param exclusionSizes Map with names and sizes to be excluded in the signature
-     *                       calculation. The key is a PdfName and the value an Integer. At least the /Contents must be present
+     *                       calculation. The key is a PdfName and the value an Integer.
+     *                       At least the /Contents must be present
      * @throws IOException on error
      */
     protected void preClose(Map<PdfName, Integer> exclusionSizes) throws IOException {
@@ -1468,6 +1489,34 @@ public class PdfSigner {
             }
         }
         return pageNumber;
+    }
+
+    private byte[] prepareDocumentForSignature(MessageDigest messageDigest, PdfName filter,
+                                               PdfName subFilter, int estimatedSize, boolean includeDate)
+            throws IOException {
+        if (closed) {
+            throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
+        }
+
+        cryptoDictionary = createSignatureDictionary(includeDate);
+        cryptoDictionary.put(PdfName.Filter, filter);
+        cryptoDictionary.put(PdfName.SubFilter, subFilter);
+
+
+        Map<PdfName, Integer> exc = new HashMap<>();
+        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
+        preClose(exc);
+
+        InputStream data = getRangeStream();
+        byte[] digest = DigestAlgorithms.digest(data, messageDigest);
+        byte[] paddedSig = new byte[estimatedSize];
+
+        PdfDictionary dic2 = new PdfDictionary();
+        dic2.put(PdfName.Contents, new PdfString(paddedSig).setHexWriting(true));
+        close(dic2);
+
+        closed = true;
+        return digest;
     }
 
     private boolean isDocumentPdf2() {

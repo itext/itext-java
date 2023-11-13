@@ -27,7 +27,7 @@ package com.itextpdf.signatures.exceptions;
  */
 public final class SignExceptionMessageConstant {
     public static final String ALGORITHMS_NOT_SUPPORTED = "Signing algorithms {0} and {1} are not supported.";
-    
+
     public static final String AUTHENTICATED_ATTRIBUTE_IS_MISSING_THE_DIGEST = "Authenticated attribute is missing "
             + "the digest.";
     public static final String AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE = "Available space is not enough for "
@@ -86,10 +86,12 @@ public final class SignExceptionMessageConstant {
     public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNKNOWN_HASH_ALGORITHM = "Unknown hash algorithm: {0}.";
-    public static final String COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID = "Could not determine OID for signature algorithm {0} with digest {1}.";
+    public static final String COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID =
+            "Could not determine OID for signature algorithm {0} with digest {1}.";
     public static final String VERIFICATION_ALREADY_OUTPUT = "Verification already output.";
 
-    public static final String ALGO_REQUIRES_SPECIFIC_HASH = "{0} requires the document to be digested using {1}, not {2}";
+    public static final String ALGO_REQUIRES_SPECIFIC_HASH =
+            "{0} requires the document to be digested using {1}, not {2}";
 
     public static final String ONLY_MGF1_SUPPORTED_IN_RSASSA_PSS = "Only MGF1 is supported in RSASSA-PSS";
     public static final String RSASSA_PSS_DIGESTMISSMATCH = "Digest algorithm in RSASSA-PSS parameters is {0} while" +
@@ -97,8 +99,18 @@ public final class SignExceptionMessageConstant {
     public static final String DISGEST_ALGORITM_MGF_MISMATCH = "Digest algorithm in MGF1 parameters is {0} while" +
             " ambient digest algorithm is {1}";
     public static final String INVALID_ARGUMENTS = "Invalid parameters provided.";
+    public static final String CMS_SIGNERINFO_READONLY =
+            "Updating the signed attributes of this SignerInfo instance is" +
+            " not possible because it has been serialized or been initiated from a serialized version.";
+    public static final String CMS_SIGNERINFO_NOT_INITIALIZED = "Signer info is not yet initialized";
+    public static final String CMS_INVALID_CONTAINER_STRUCTURE = "Provided data is not a CMS container";
+    public static final String CMS_ONLY_ONE_SIGNER_ALLOWED = "Only one signer per CMS container is allowed";
+    public static final String CMS_CERTIFICATE_NOT_FOUND = "Signer certificate not found in list of certificates";
+    public static final String CMS_MISSING_CERTIFICATES =
+            "The certificate set must at least contains the signer certificate";
 
-    private SignExceptionMessageConstant(){
+
+    private SignExceptionMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly
     }
 }

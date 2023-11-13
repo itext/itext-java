@@ -140,7 +140,7 @@ final class SignUtils {
     }
 
     static InputStream getHttpResponse(URL urlt) throws IOException {
-        HttpURLConnection con = (HttpURLConnection)urlt.openConnection();
+        HttpURLConnection con = (HttpURLConnection) urlt.openConnection();
         if (con.getResponseCode() / 100 != 2) {
             throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
                     .setMessageParams(con.getResponseCode());
@@ -251,6 +251,12 @@ final class SignUtils {
         return new ArrayList<>(factory.generateCertificates(contentsKey));
     }
 
+    static Certificate generateCertificate(InputStream data, Provider provider) throws CertificateException {
+        final CertificateFactory factory = provider == null ? CertificateFactory.getInstance("X509") :
+                CertificateFactory.getInstance("X509", provider);
+        return factory.generateCertificate(data);
+    }
+
     static <T> T getFirstElement(Iterable<T> iterable) {
         return iterable.iterator().next();
     }
@@ -270,8 +276,7 @@ final class SignUtils {
         URLConnection tsaConnection;
         try {
             tsaConnection = url.openConnection();
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             throw new PdfException(SignExceptionMessageConstant.FAILED_TO_GET_TSA_RESPONSE).setMessageParams(tsaUrl);
         }
         tsaConnection.setDoInput(true);
@@ -281,7 +286,7 @@ final class SignUtils {
         //tsaConnection.setRequestProperty("Content-Transfer-Encoding", "base64");
         tsaConnection.setRequestProperty("Content-Transfer-Encoding", "binary");
 
-        if ((tsaUsername != null) && !tsaUsername.equals("") ) {
+        if ((tsaUsername != null) && !tsaUsername.equals("")) {
             String userPassword = tsaUsername + ":" + tsaPassword;
             tsaConnection.setRequestProperty("Authorization", "Basic " +
                     Base64.encodeBytes(userPassword.getBytes(StandardCharsets.UTF_8), Base64.DONT_BREAK_LINES));
@@ -378,6 +383,7 @@ final class SignUtils {
             public Iterator<X509Certificate> iterator() {
                 return new Iterator<X509Certificate>() {
                     private X509Certificate nextCert;
+
                     @Override
                     public boolean hasNext() {
                         if (nextCert == null) {

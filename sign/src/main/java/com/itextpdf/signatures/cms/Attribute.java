@@ -20,20 +20,43 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.commons.bouncycastle.cert;
+package com.itextpdf.signatures.cms;
 
-import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 
 /**
- * This interface represents the wrapper for X509CertificateHolder that provides the ability
- * to switch between bouncy-castle and bouncy-castle FIPS implementations.
+ * This class represents Attribute structure.
  */
-public interface IX509CertificateHolder {
+public class Attribute {
+    private final String type;
+    private final IASN1Primitive value;
 
     /**
-     * Retrieves signature algorithm identifier from the certificate.
+     * Creates an attribute.
      *
-     * @return signature algorithm.
+     * @param type  the type of the attribute
+     * @param value the value
      */
-    IAlgorithmIdentifier getSignatureAlgorithm();
+    public Attribute(String type, IASN1Primitive value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    /**
+     * Returns the type of the attribute.
+     *
+     * @return the type of the attribute.
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Returns the value of the attribute.
+     *
+     * @return the value of the attribute.
+     */
+    public IASN1Primitive getValue() {
+        return value;
+    }
 }

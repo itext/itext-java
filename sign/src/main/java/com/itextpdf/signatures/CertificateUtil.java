@@ -40,10 +40,12 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -210,10 +212,23 @@ public class CertificateUtil {
     }
 
     /**
+     * Generates a certificate object and initializes it with the data read from the input stream inStream.
+     *
+     * @param data the input stream with the certificates.
+     *
+     * @return a certificate object initialized with the data from the input stream.
+     *
+     * @throws CertificateException on parsing errors.
+     */
+    public static Certificate generateCertificate(InputStream data) throws CertificateException {
+        return SignUtils.generateCertificate(data, FACTORY.getProvider());
+    }
+
+    /**
      * Checks if the certificate is signed by provided issuer certificate.
      *
      * @param subjectCertificate a certificate to check
-     * @param issuerCertificate an issuer certificate to check
+     * @param issuerCertificate  an issuer certificate to check
      *
      * @return true if the first passed certificate is signed by next passed certificate.
      */
@@ -240,9 +255,9 @@ public class CertificateUtil {
      *
      * @return the extension value as an {@link IASN1Primitive} object.
      * 
-     * @throws IOException
+     * @throws IOException on processing exception
      */
-    private static IASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
+    public static IASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
         return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(certificate, oid));
     }
 
@@ -252,7 +267,7 @@ public class CertificateUtil {
      *
      * @return the extension value as an {@link IASN1Primitive} object.
      *
-     * @throws IOException
+     * @throws IOException on processing exception
      */
     private static IASN1Primitive getExtensionValue(CRL crl, String oid) throws IOException {
         return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(crl, oid));
@@ -265,7 +280,7 @@ public class CertificateUtil {
      *
      * @return the extension value as an {@link IASN1Primitive} object.
      *
-     *  @throws IOException
+     * @throws IOException on processing exception.
      */
     private static IASN1Primitive getExtensionValueFromByteArray(byte[] extensionValue) throws IOException {
         if (extensionValue == null) {
@@ -296,7 +311,7 @@ public class CertificateUtil {
      * Retrieves accessLocation value for specified accessMethod from the Authority Information Access extension.
      *
      * @param extensionValue Authority Information Access extension value
-     * @param accessMethod accessMethod OID; usually id-ad-caIssuers or id-ad-ocsp
+     * @param accessMethod   accessMethod OID; usually id-ad-caIssuers or id-ad-ocsp
      *
      * @return the location (URI) of the information.
      */

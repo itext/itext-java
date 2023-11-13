@@ -54,8 +54,8 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
+import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
@@ -63,6 +63,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -74,12 +79,6 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleUnitTest.class)
 public class PdfSignerUnitTest extends ExtendedITextTest {
@@ -112,7 +111,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void createNewSignatureFormFieldInvisibleAnnotationTest() throws IOException {
         PdfSigner signer = new PdfSigner(new PdfReader(
@@ -161,8 +160,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
                 new StampingProperties());
         signer.cryptoDictionary = new PdfSignature();
         signer.setPageRect(new Rectangle(100, 100, 10, 10));
-        PdfSigFieldLock fieldLock = new PdfSigFieldLock();
-        signer.fieldLock = fieldLock;
+        signer.fieldLock = new PdfSigFieldLock();
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
@@ -199,7 +197,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void populateExistingSignatureFormFieldInvisibleAnnotationTest() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -231,7 +229,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void populateExistingSignatureFormFieldNotInvisibleAnnotationTest() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -469,6 +467,24 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         Assert.assertEquals(estimatedSize, signature.getContents().getValueBytes().length);
     }
 
+
+    @Test
+    public void prepareDocumentTestWithExternalDigest() throws IOException, GeneralSecurityException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
+
+        String fieldName = signer.fieldName;
+        int estimatedSize = 8079;
+        byte[] digest = signer.prepareDocumentForSignature(new BouncyCastleDigest(), DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+                PdfName.Adbe_pkcs7_detached, estimatedSize, false);
+        PdfReader resultReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        PdfDocument resultDoc = new PdfDocument(resultReader);
+        SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
+        PdfSignature signature = signatureUtil.getSignature(fieldName);
+        Assert.assertEquals(estimatedSize, signature.getContents().getValueBytes().length);
+    }
+
     @Test
     public void addSignatureToPreparedDocumentTest() throws IOException, GeneralSecurityException {
         PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
@@ -492,7 +508,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
         PdfSignature signature = signatureUtil.getSignature(fieldName);
         byte[] content = signature.getContents().getValueBytes();
-        for (int i  = 0 ; i < testData.length; i++) {
+        for (int i = 0; i < testData.length; i++) {
             Assert.assertEquals(testData[i], content[i]);
         }
     }
@@ -579,11 +595,11 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         }
     }
 
-    class DummySignatureEvent implements ISignatureEvent {
+    static class DummySignatureEvent implements ISignatureEvent {
 
         @Override
         public void getSignatureDictionary(PdfSignature sig) {
-            // Do nothing
+            // Do nothing.
         }
     }
 }
