@@ -79,6 +79,7 @@
                 <file path="com/itextpdf/io/source/MappedChannelRandomAccessSource.java"/>
                 <file path="com/itextpdf/io/source/PagedChannelRandomAccessSource.java"/>
                 <file path="com/itextpdf/io/source/FileChannelRandomAccessSource.java"/>
+                <file path="com/itextpdf/io/source/PagedChannelRandomAccessSourceTest.java"/>
             </fileset>
             <fileset reason="Read method with parameters is mapped to JRead which cannot be overriden (should be mapped to the Read with parameters).
         Read method without parameters cannot be overriden and not necessary in dotnet.
