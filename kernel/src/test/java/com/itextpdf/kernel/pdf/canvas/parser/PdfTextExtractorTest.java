@@ -124,4 +124,12 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
             Assert.assertEquals(expected, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
+
+    @Test
+    public void shortOctalDataAsTextTest() throws IOException {
+        String inFile = sourceFolder + "shortOctalDataAsText.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            Assert.assertEquals("EC", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+        }
+    }
 }

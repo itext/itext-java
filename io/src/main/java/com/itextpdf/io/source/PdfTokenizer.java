@@ -583,12 +583,23 @@ public class PdfTokenizer implements Closeable {
                                 break;
                             }
                             ch = content[i++];
+                            if (ch < '0' || ch > '7') {
+                                i--;
+                                ch = octal;
+                                break;
+                            }
                             octal = (octal << 3) + ch - '0';
-                            if (ch < '0' || ch > '7' || i > to) {
+
+                            if (i > to) {
                                 ch = octal;
                                 break;
                             }
                             ch = content[i++];
+                            if (ch < '0' || ch > '7') {
+                                i--;
+                                ch = octal;
+                                break;
+                            }
                             octal = (octal << 3) + ch - '0';
                             ch = octal & 0xff;
                             break;
