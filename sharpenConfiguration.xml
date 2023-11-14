@@ -16,6 +16,7 @@
             <fileset reason="Underlying implementation classes not autoportable (e.g. java.nio.charset.Charset,
         java.nio.charset.CharsetEncoder, java.nio.ByteBuffer">
                 <file path="com/itextpdf/commons/utils/EncodingUtil.java"/>
+                <file path="com/itextpdf/pdfa/PdfAXMPUtil.java"/>
             </fileset>
             <fileset reason="Underlying implementation classes not autoportable (e.g. java.util.GregorianCalendar, java.util.Date,
         java.util.Calendar">

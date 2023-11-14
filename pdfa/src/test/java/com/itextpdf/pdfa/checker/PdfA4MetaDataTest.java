@@ -39,7 +39,9 @@ import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.pdfa.PdfAXMPUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
@@ -511,7 +513,28 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4DocumentMetaDataIsNotUTF8Encoded() throws IOException {
+    public void pdfA4DocumentMetaDataIsNotUTF8Encoded() throws IOException, XMPException {
+        String outPdf = DESTINATION_FOLDER + "metadataNotUTF8.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithEmpty.xmp"));
+        XMPMeta xmpMeta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        XMPMetaFactory.serialize(xmpMeta, os);
+        doc.setXmpMetadata(xmpMeta, new SerializeOptions().setEncodeUTF16BE(true));
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+            doc.close();
+        });
+        Assert.assertEquals(
+                PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING,
+                e.getMessage());
+    }
+
+    @Test
+    public void pdfA4DocumentPageMetaDataIsNotUTF8Encoded() throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "encodedXmp.xmp"));
         String outPdf = DESTINATION_FOLDER + "metadataNotUTF8.pdf";
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
@@ -520,10 +543,12 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                         new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
         doc.addNewPage();
         doc.getPage(1).setXmpMetadata(bytes);
-        doc.close(); //should throw exception
-
-        //TODO DEVSIX-7886: Change assertion by catching the exception when closing the document and verify the content.
-        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+            doc.close();
+        });
+        Assert.assertEquals(
+                PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING,
+                e.getMessage());
     }
 
     private void generatePdfADocument(PdfAConformanceLevel conformanceLevel, String outPdf,
