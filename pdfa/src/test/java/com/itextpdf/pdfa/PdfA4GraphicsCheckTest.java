@@ -1229,9 +1229,10 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
         page.addOutputIntent(pdfOutputIntent);
 
-        //TODO DEVSIX-7884: Change assertion by catching the exception when closing the document and verify the content.
-        pdfDoc.close(); //should throw exception
-        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.PROFILE_STREAM_OF_OUTPUTINTENT_SHALL_BE_OUTPUT_PROFILE_PRTR_OR_MONITOR_PROFILE_MNTR, e.getMessage());
     }
 
     @Test
@@ -1274,9 +1275,10 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
         page.addOutputIntent(pdfOutputIntent);
 
-        //TODO DEVSIX-7884: Change assertion by catching the exception when closing the document and verify the content.
-        pdfDoc.close(); //should throw exception
-        Assert.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.OUTPUT_INTENT_COLOR_SPACE_SHALL_BE_EITHER_GRAY_RGB_OR_CMYK, e.getMessage());
     }
 
 

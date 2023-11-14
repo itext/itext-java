@@ -603,9 +603,9 @@ public abstract class PdfAChecker {
     /**
      * Verify the conformity of the output intents array in the catalog dictionary.
      *
-     * @param catalog the {@link PdfDictionary} to check
+     * @param catalogOrPageDict the {@link PdfDictionary} of a catalog or page to check
      */
-    protected abstract void checkOutputIntents(PdfDictionary catalog);
+    protected abstract void checkOutputIntents(PdfDictionary catalogOrPageDict);
 
     /**
      * Verify the conformity of the page dictionary.
@@ -901,6 +901,9 @@ public abstract class PdfAChecker {
         checkPageSize(pageDict);
         checkPageTransparency(pageDict, page.getResources().getPdfObject());
         checkPageColorsUsages(pageDict, page.getResources().getPdfObject());
+        //This check is valid for pdf/a-4 only, but it's not a problem
+        //to add additional restrictions on earlier versions
+        checkOutputIntents(pageDict);
 
         int contentStreamCount = page.getContentStreamCount();
         for (int j = 0; j < contentStreamCount; ++j) {
