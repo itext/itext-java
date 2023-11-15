@@ -23,8 +23,8 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -37,7 +37,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -500,6 +499,26 @@ public class PdfA4Checker extends PdfA3Checker {
         } catch (XMPException ex) {
             throw new PdfException(ex);
         }
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    protected void checkOutputIntents(PdfDictionary catalog) {
+        super.checkOutputIntents(catalog);
+        final PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null) {
+            return;
+        }
+        for (int i = 0; i < outputIntents.size(); ++i) {
+            final PdfDictionary outputIntent = outputIntents.getAsDictionary(i);
+            if (outputIntent.containsKey(new PdfName("DestOutputProfileRef"))) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.OUTPUTINTENT_SHALL_NOT_CONTAIN_DESTOUTPUTPROFILEREF_KEY);
+            }
+        }
+
     }
 
     /**

@@ -210,6 +210,8 @@ public final class PdfaExceptionMessageConstant {
 
     public static final String COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE = "For any spot color " +
             "used in a DeviceN or NChannel colorspace, an entry in the Colorants dictionary shall be present.";
+    public static final String OUTPUTINTENT_SHALL_NOT_CONTAIN_DESTOUTPUTPROFILEREF_KEY = "DestOutputProfileRef "
+            + "shall not be present in output intent";
 
     private PdfaExceptionMessageConstant(){}
 }
