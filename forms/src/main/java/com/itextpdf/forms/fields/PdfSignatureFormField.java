@@ -42,6 +42,11 @@ public class PdfSignatureFormField extends PdfFormField {
     private boolean reuseAppearance = false;
 
     /**
+     * Indicates if we need to ignore page rotation for the signature field annotation.
+     */
+    private boolean ignorePageRotation = true;
+
+    /**
      * Background level of the signature appearance.
      */
     private PdfFormXObject n0;
@@ -144,10 +149,26 @@ public class PdfSignatureFormField extends PdfFormField {
      * Indicates that the existing appearances needs to be reused as a background.
      *
      * @param reuseAppearance is an appearances reusing flag value to set.
+     *
      * @return this same {@link PdfSignatureFormField} instance.
      */
     public PdfSignatureFormField setReuseAppearance(boolean reuseAppearance) {
         this.reuseAppearance = reuseAppearance;
+        return this;
+    }
+
+    /**
+     * Sets the boolean value which indicates if page rotation should be ignored for the signature appearance.
+     *
+     * <p>
+     * Default value is {@code true}.
+     *
+     * @param ignore boolean value to set.
+     *
+     * @return this same {@link PdfSignatureFormField} instance.
+     */
+    public PdfSignatureFormField setIgnorePageRotation(boolean ignore) {
+        this.ignorePageRotation = ignore;
         return this;
     }
 
@@ -178,4 +199,12 @@ public class PdfSignatureFormField extends PdfFormField {
         return reuseAppearance;
     }
 
+    /**
+     * Indicates if page rotation should be ignored for the signature appearance.
+     *
+     * @return the boolean value which indicates if we need to ignore page rotation for the signature appearance.
+     */
+    boolean isPageRotationIgnored() {
+        return this.ignorePageRotation;
+    }
 }
