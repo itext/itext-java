@@ -22,15 +22,15 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.ImageMagickHelper;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.io.util.XmlUtil;
-import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -62,6 +62,7 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.ParseOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -1246,8 +1247,11 @@ public class CompareTool {
             cmpPagesRef = new ArrayList<>();
             loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
 
-            if (outPages.size() != cmpPages.size())
+            if (outPages.size() != cmpPages.size()) {
+                CompareTool.writeOnDisk(outPdf);
+                CompareTool.writeOnDiskIfNotExists(cmpPdf);
                 return compareVisuallyAndCombineReports("Documents have different numbers of pages.", outPath, differenceImagePrefix, ignoredAreas, null);
+            }
 
             CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
             List<Integer> equalPages = new ArrayList<>(cmpPages.size());
