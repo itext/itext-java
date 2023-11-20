@@ -130,7 +130,9 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
         }
         field.disableFieldRegeneration();
         field.pdfAConformanceLevel = getConformanceLevel();
-
+        if (this.getFont() != null) {
+            field.setFont(this.getFont());
+        }
         field.setFieldFlags(flags);
         field.setFieldName(getFormFieldName());
 

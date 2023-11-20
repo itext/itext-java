@@ -86,11 +86,13 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
             }
         }
         field.disableFieldRegeneration();
+        if (this.getFont() != null) {
+            field.setFont(this.getFont());
+        }
         field.pdfAConformanceLevel = getConformanceLevel();
         field.setPushButton(true);
         field.setFieldName(getFormFieldName());
         field.text = caption;
-
         if (annotation != null) {
             field.getFirstFormAnnotation().backgroundColor = ColorConstants.LIGHT_GRAY;
             PdfDictionary mk = new PdfDictionary();

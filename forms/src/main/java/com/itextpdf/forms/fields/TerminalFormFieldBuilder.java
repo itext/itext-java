@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -40,6 +41,7 @@ public abstract class TerminalFormFieldBuilder<T extends TerminalFormFieldBuilde
      * Page number to place widget at.
      */
     private int page = 0;
+    private PdfFont font;
 
     /**
      * Creates builder for terminal form field creation.
@@ -112,4 +114,26 @@ public abstract class TerminalFormFieldBuilder<T extends TerminalFormFieldBuilde
             field.setPage(page);
         }
     }
+
+    /**
+     * Set font to be used for form field creation.
+     *
+     * @param font instance of {@link PdfFont}.
+     *
+     * @return this builder
+     */
+    public T setFont(PdfFont font) {
+        this.font = font;
+        return getThis();
+    }
+
+    /**
+     * Get font to be used for form field creation.
+     *
+     * @return instance of {@link PdfFont}.
+     */
+    public PdfFont getFont() {
+        return font;
+    }
+
 }

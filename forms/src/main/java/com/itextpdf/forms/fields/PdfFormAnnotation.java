@@ -1122,14 +1122,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             // Create it one time and re-set properties during each widget regeneration.
             formFieldElement = new SignatureFieldAppearance(parent.getPartialFieldName().toUnicodeString());
         }
-
         if (formFieldElement.<Object>getProperty(Property.FONT) == null) {
             ((SignatureFieldAppearance) formFieldElement).setFont(getFont());
         }
         if (getColor() != null) {
             ((SignatureFieldAppearance) formFieldElement).setFontColor(color);
         }
-
         if (((SignatureFieldAppearance) formFieldElement).getContentElements().isEmpty()) {
             final SignedAppearanceText description = new SignedAppearanceText();
             final PdfName name = parent.getPdfObject().getAsName(PdfName.Name);

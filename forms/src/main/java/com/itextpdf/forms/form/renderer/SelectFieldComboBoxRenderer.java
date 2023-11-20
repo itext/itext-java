@@ -110,7 +110,10 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         final PdfDocument doc = drawContext.getDocument();
         final Rectangle area = getOccupiedAreaBBox();
         final PdfPage page = doc.getPage(occupiedArea.getPageNumber());
+        PdfFont font = getResolvedFont(doc);
+
         final ChoiceFormFieldBuilder builder = new ChoiceFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setFont(font)
                 .setConformanceLevel(getConformanceLevel(doc));
 
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
@@ -124,10 +127,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
             comboBoxField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
         }
         AbstractFormFieldRenderer.applyBorderProperty(this, comboBoxField.getFirstFormAnnotation());
-        PdfFont font = getResolvedFont(doc);
-        if (font != null) {
-            comboBoxField.setFont(font);
-        }
+
         UnitValue fontSize = getFontSize();
         if (fontSize != null) {
             comboBoxField.setFontSize(fontSize.getValue());

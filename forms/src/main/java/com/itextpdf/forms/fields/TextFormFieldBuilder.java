@@ -64,6 +64,9 @@ public class TextFormFieldBuilder extends TerminalFormFieldBuilder<TextFormField
             field = PdfFormCreator.createTextFormField(annotation, getDocument());
             setPageToField(field);
         }
+        if (null != getFont()) {
+            field.setFont(getFont());
+        }
         field.disableFieldRegeneration();
         field.pdfAConformanceLevel = getConformanceLevel();
         field.setMultiline(multiline);

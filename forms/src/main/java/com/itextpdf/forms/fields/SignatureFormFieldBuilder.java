@@ -58,6 +58,11 @@ public class SignatureFormFieldBuilder extends TerminalFormFieldBuilder<Signatur
             signatureFormField = PdfFormCreator.createSignatureFormField(annotation, getDocument());
             setPageToField(signatureFormField);
         }
+        // we can't use setFont() here, because the signature values can only be created one time on first
+        // appearance generation, so we avoid the generation call until the moment we have all the necessary data
+        if (getFont() != null) {
+            signatureFormField.font = getFont();
+        }
         signatureFormField.pdfAConformanceLevel = getConformanceLevel();
         signatureFormField.setFieldName(getFormFieldName());
         return signatureFormField;

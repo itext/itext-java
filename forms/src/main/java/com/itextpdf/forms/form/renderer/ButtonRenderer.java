@@ -270,10 +270,11 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfButtonFormField button = new PushButtonFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setFont(font)
                 .setConformanceLevel(getConformanceLevel(doc))
                 .createPushButton();
         button.disableFieldRegeneration();
-        button.setFont(font).setFontSize(fontSizeValue);
+        button.setFontSize(fontSizeValue);
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
         button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);

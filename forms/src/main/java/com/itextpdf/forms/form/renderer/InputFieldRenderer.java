@@ -176,11 +176,12 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         // That's why we got rid of several properties we set by default during InputField instance creation.
         modelElement.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
         final PdfFormField inputField = new TextFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setFont(font)
                 .setConformanceLevel(getConformanceLevel(doc))
                 .createText();
         inputField.disableFieldRegeneration();
         inputField.setValue(value);
-        inputField.setFont(font).setFontSize(fontSizeValue);
+        inputField.setFontSize(fontSizeValue);
         if (password) {
             inputField.setFieldFlag(PdfFormField.FF_PASSWORD, true);
         } else {
