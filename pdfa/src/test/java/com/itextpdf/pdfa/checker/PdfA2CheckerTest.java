@@ -391,6 +391,23 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void deprecatedCheckColorShadingTest() {
+        PdfDictionary patternDict = new PdfDictionary();
+        patternDict.put(PdfName.ExtGState, new PdfDictionary());
+        PdfPattern.Shading pattern = new PdfPattern.Shading(patternDict);
+
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.ColorSpace, PdfName.DeviceCMYK);
+        pattern.setShading(dictionary);
+
+        Color color = new PatternColor(pattern);
+
+        AssertUtil.doesNotThrow(() -> {
+            pdfA2Checker.checkColor(color, new PdfDictionary(), true, null);
+        });
+    }
+
+    @Test
     public void checkColorShadingWithoutExtGStatePropertyInPatternDictTest() {
         PdfDictionary patternDict = new PdfDictionary();
         patternDict.put(PdfName.PatternType, new PdfNumber(2));

@@ -711,6 +711,51 @@ public class PdfMergerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void mergeDocumentsWithNullDestination() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "linkAnnotationWithNullDestinationTest.pdf";
+        String cmpDocument = sourceFolder + "cmp_linkAnnotationWithNullDestinationTest.pdf";
+        String mergedDocument = destinationFolder + "mergedLinkAnnotationWithNullDestinationTest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    public void mergeDocumentsWithNullDestinationInGoTo() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "linkAnnotationWithNullDestinationInGoToTest.pdf";
+        String cmpDocument = sourceFolder + "cmp_linkAnnotationWithNullDestinationInGoToTest.pdf";
+        String mergedDocument = destinationFolder + "mergedLinkAnnotationWithNullDestinationInGoToTest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
+    public void mergeDocumentsWithPdfNullDestinationInGoTo() throws IOException, InterruptedException {
+        String firstPdfDocument = sourceFolder + "doc1.pdf";
+        String secondPdfDocument = sourceFolder + "linkAnnotationWithPdfNullDestinationInGoToTest.pdf";
+        String cmpDocument = sourceFolder + "cmp_linkAnnotationWithPdfNullDestinationInGoToTest.pdf";
+        String mergedDocument = destinationFolder + "mergedLinkAnnotationWithPdfNullDestinationInGoToTest.pdf";
+
+        List<File> sources = new ArrayList<File>();
+        sources.add(new File(firstPdfDocument));
+        sources.add(new File(secondPdfDocument));
+        mergePdfs(sources, mergedDocument, new PdfMergerProperties().setMergeScripts(true), true);
+
+        Assert.assertNull(new CompareTool().compareByContent(mergedDocument, cmpDocument, destinationFolder));
+    }
+
+    @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.CANNOT_MERGE_ENTRY)})
     public void mergeDocumentsWithNamesJSInDestination() throws IOException, InterruptedException {
         String firstPdfDocument = sourceFolder + "cmp_mergeJS.pdf";
