@@ -3557,6 +3557,24 @@ public class TableTest extends AbstractTableTest {
                 sourceFolder + "cmp_" + fileName, destinationFolder));
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN),
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, logLevel = LogLevelConstants.WARN)
+    })
+    public void negativeLayoutAreaTest() throws IOException, InterruptedException {
+        String testName = "negativeLayoutAreaTable.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc, new PageSize(595.0f, 50.0f));
+
+        doc.add(new Table(new float[]{1, 1}).addCell(new Cell().setHeight(10.0f)));
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
     private static class RotatedDocumentRenderer extends DocumentRenderer {
         private final PdfDocument pdfDoc;
 

@@ -388,7 +388,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
         // in this case layout result need to be changed
         if (overflowRenderer != null || processOverflowedFloats) {
-            layoutResult = !anythingPlaced && !waitingOverflowFloatRenderers.isEmpty()
+            layoutResult = !anythingPlaced && (!waitingOverflowFloatRenderers.isEmpty()
+                    || !isAnythingOccupied())
                     // nothing was placed and there are some overflowed floats
                     ? LayoutResult.NOTHING
                     // either something was placed or (since there are no overflowed floats) there is overflow renderer
@@ -1132,6 +1133,10 @@ public abstract class BlockRenderer extends AbstractRenderer {
         if (anythingPlaced && hasOwnProperty(Property.FORCED_PLACEMENT)) {
             deleteOwnProperty(Property.FORCED_PLACEMENT);
         }
+    }
+
+    private boolean isAnythingOccupied() {
+        return !(occupiedArea.getBBox().getHeight() < EPS);
     }
 
     private void replaceSplitRendererKidFloats(Map<Integer, IRenderer> waitingFloatsSplitRenderers, IRenderer splitRenderer) {
