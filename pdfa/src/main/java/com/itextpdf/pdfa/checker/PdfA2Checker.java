@@ -211,23 +211,41 @@ public class PdfA2Checker extends PdfA1Checker {
         checkImage(inlineImage, currentColorSpaces);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Deprecated
     public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream) {
+        checkColor(null, color, currentColorSpaces, fill, contentStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces,
+                                    Boolean fill, PdfStream contentStream) {
         if (color instanceof PatternColor) {
             PdfPattern pattern = ((PatternColor) color).getPattern();
             if (pattern instanceof PdfPattern.Shading) {
                 PdfDictionary shadingDictionary = ((PdfPattern.Shading) pattern).getShading();
                 PdfObject colorSpace = shadingDictionary.get(PdfName.ColorSpace);
                 checkColorSpace(PdfColorSpace.makeColorSpace(colorSpace), contentStream, currentColorSpaces, true, true);
-                final PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
-                CanvasGraphicsState gState = new UpdateCanvasGraphicsState(extGStateDict);
+                if (gState == null) {
+                    //Note that this method of getting ExtGState won't work for PatternType = 1, and won't always work
+                    //for PatternType = 2, since it's an optional parameter there, so this code is just a fallback for the
+                    //user input.
+                    final PdfDictionary extGStateDict = ((PdfDictionary) pattern.getPdfObject()).getAsDictionary(PdfName.ExtGState);
+                    gState = new UpdateCanvasGraphicsState(extGStateDict);
+                }
                 checkExtGState(gState, contentStream);
             } else if (pattern instanceof PdfPattern.Tiling) {
                 checkContentStream((PdfStream) pattern.getPdfObject());
             }
         }
 
-        super.checkColor(color, currentColorSpaces, fill, contentStream);
+        super.checkColor(gState, color, currentColorSpaces, fill, contentStream);
     }
 
     /**

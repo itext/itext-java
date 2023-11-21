@@ -154,8 +154,20 @@ public class PdfA1Checker extends PdfAChecker {
         checkImage(inlineImage, currentColorSpaces);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
     @Override
     public void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream stream) {
+        checkColor(null, color, currentColorSpaces, fill, stream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkColor(CanvasGraphicsState graphicsState, Color color, PdfDictionary currentColorSpaces, Boolean fill, PdfStream stream) {
         checkColorSpace(color.getColorSpace(), stream, currentColorSpaces, true, fill);
         if (color instanceof PatternColor) {
             PdfPattern pattern = ((PatternColor) color).getPattern();

@@ -214,14 +214,14 @@ public class PdfADocument extends PdfDocument {
                 break;
             case FILL_COLOR:
                 gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getFillColor(), currentColorSpaces, true, contentStream);
+                checker.checkColor(gState, gState.getFillColor(), currentColorSpaces, true, contentStream);
                 break;
             case PAGE:
                 checker.checkSinglePage((PdfPage) obj);
                 break;
             case STROKE_COLOR:
                 gState = (CanvasGraphicsState) obj;
-                checker.checkColor(gState.getStrokeColor(), currentColorSpaces, false, contentStream);
+                checker.checkColor(gState, gState.getStrokeColor(), currentColorSpaces, false, contentStream);
                 break;
             case TAG_STRUCTURE_ELEMENT:
                 checker.checkTagStructureElement((PdfObject) obj);

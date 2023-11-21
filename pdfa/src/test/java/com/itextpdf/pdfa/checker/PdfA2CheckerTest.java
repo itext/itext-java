@@ -33,9 +33,11 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
@@ -384,7 +386,25 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         Color color = new PatternColor(pattern);
 
         AssertUtil.doesNotThrow(() -> {
-            pdfA2Checker.checkColor(color, new PdfDictionary(), true, null);
+            pdfA2Checker.checkColor(null, color, new PdfDictionary(), true, null);
+        });
+    }
+
+    @Test
+    public void checkColorShadingWithoutExtGStatePropertyInPatternDictTest() {
+        PdfDictionary patternDict = new PdfDictionary();
+        patternDict.put(PdfName.PatternType, new PdfNumber(2));
+        PdfPattern.Shading pattern = new PdfPattern.Shading(patternDict);
+
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.ColorSpace, PdfName.DeviceCMYK);
+        pattern.setShading(dictionary);
+
+        Color color = new PatternColor(pattern);
+
+        AssertUtil.doesNotThrow(() -> {
+            pdfA2Checker.checkColor(new UpdateCanvasGraphicsState(new PdfDictionary()),
+                    color, new PdfDictionary(), true, null);
         });
     }
 
@@ -788,5 +808,11 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
         signatureDict.put(PdfName.Reference, types);
 
         return signatureDict;
+    }
+
+    private static final class UpdateCanvasGraphicsState extends CanvasGraphicsState {
+        public UpdateCanvasGraphicsState(PdfDictionary extGStateDict) {
+            updateFromExtGState(new PdfExtGState(extGStateDict));
+        }
     }
 }

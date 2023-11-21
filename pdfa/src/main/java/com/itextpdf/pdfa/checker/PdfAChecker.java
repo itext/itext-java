@@ -319,9 +319,29 @@ public abstract class PdfAChecker {
      * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
      * @param fill whether the color is used for fill or stroke operations
      * @param contentStream current content stream
+     *
+     * @deprecated in favor of {@code checkColor(CanvasGraphicsState gState, Color color,
+     *                                      PdfDictionary currentColorSpaces, Boolean fill, PdfStream contentStream)}
      */
+    @Deprecated
     public abstract void checkColor(Color color, PdfDictionary currentColorSpaces, Boolean fill,
                                     PdfStream contentStream);
+
+    /**
+     * This method checks compliance with the color restrictions imposed by the
+     * available color spaces in the document.
+     *
+     * @param gState canvas graphics state
+     * @param color the color to check
+     * @param currentColorSpaces a {@link PdfDictionary} containing the color spaces used in the document
+     * @param fill whether the color is used for fill or stroke operations
+     * @param contentStream current content stream
+     *
+     * @deprecated This method will be abstract in next major release
+     */
+    @Deprecated
+    public void checkColor(CanvasGraphicsState gState, Color color, PdfDictionary currentColorSpaces,
+                                    Boolean fill, PdfStream contentStream) {}
 
     /**
      * This method performs a range of checks on the given color space, depending

@@ -621,7 +621,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         Color color = new PatternColor(pattern);
 
-        pdfA1Checker.checkColor(color, new PdfDictionary(), true, null);
+        pdfA1Checker.checkColor(null, color, new PdfDictionary(), true, null);
     }
 
     private void checkInShadingPattern(PdfObject object) {
