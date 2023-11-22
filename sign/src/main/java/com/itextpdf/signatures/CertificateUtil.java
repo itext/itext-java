@@ -128,6 +128,23 @@ public class CertificateUtil {
         return SignUtils.parseCrlFromStream(new URL(url).openStream());
     }
 
+    /**
+     * Retrieves the URL for the issuer certificate for the given CRL.
+     *
+     * @param crl the CRL response
+     *
+     * @return the URL or null.
+     */
+    public static String getIssuerCertURL(CRL crl) {
+        IASN1Primitive obj;
+        try {
+            obj = getExtensionValue(crl, FACTORY.createExtension().getAuthorityInfoAccess().getId());
+            return getValueFromAIAExtension(obj, SecurityIDs.ID_CA_ISSUERS);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     // Online Certificate Status Protocol
 
     /**
@@ -141,22 +158,10 @@ public class CertificateUtil {
         IASN1Primitive obj;
         try {
             obj = getExtensionValue(certificate, FACTORY.createExtension().getAuthorityInfoAccess().getId());
-            if (obj == null) {
-                return null;
-            }
-            IASN1Sequence accessDescriptions = FACTORY.createASN1Sequence(obj);
-            for (int i = 0; i < accessDescriptions.size(); i++) {
-                IASN1Sequence accessDescription = FACTORY.createASN1Sequence(accessDescriptions.getObjectAt(i));
-                IASN1ObjectIdentifier id = FACTORY.createASN1ObjectIdentifier(accessDescription.getObjectAt(0));
-                if (accessDescription.size() == 2 && id != null && SecurityIDs.ID_OCSP.equals(id.getId())) {
-                    IASN1Primitive description = FACTORY.createASN1Primitive(accessDescription.getObjectAt(1));
-                    return getStringFromGeneralName(description);
-                }
-            }
+            return getValueFromAIAExtension(obj, SecurityIDs.ID_OCSP);
         } catch (IOException e) {
             return null;
         }
-        return null;
     }
 
     // Missing certificates in chain
@@ -172,22 +177,10 @@ public class CertificateUtil {
         IASN1Primitive obj;
         try {
             obj = getExtensionValue(certificate, FACTORY.createExtension().getAuthorityInfoAccess().getId());
-            if (obj == null) {
-                return null;
-            }
-            IASN1Sequence accessDescriptions = FACTORY.createASN1Sequence(obj);
-            for (int i = 0; i < accessDescriptions.size(); i++) {
-                IASN1Sequence accessDescription = FACTORY.createASN1Sequence(accessDescriptions.getObjectAt(i));
-                IASN1ObjectIdentifier id = FACTORY.createASN1ObjectIdentifier(accessDescription.getObjectAt(0));
-                if (accessDescription.size() == 2 && id != null && SecurityIDs.ID_CA_ISSUERS.equals(id.getId())) {
-                    IASN1Primitive description = FACTORY.createASN1Primitive(accessDescription.getObjectAt(1));
-                    return getStringFromGeneralName(description);
-                }
-            }
+            return getValueFromAIAExtension(obj, SecurityIDs.ID_CA_ISSUERS);
         } catch (IOException e) {
             return null;
         }
-        return null;
     }
 
     // Time Stamp Authority
@@ -245,17 +238,41 @@ public class CertificateUtil {
      * @param certificate the certificate from which we need the ExtensionValue
      * @param oid         the Object Identifier value for the extension.
      *
-     * @return the extension value as an {@link IASN1Primitive} object
+     * @return the extension value as an {@link IASN1Primitive} object.
      * 
      * @throws IOException
      */
     private static IASN1Primitive getExtensionValue(X509Certificate certificate, String oid) throws IOException {
-        byte[] bytes = SignUtils.getExtensionValueByOid(certificate, oid);
-        if (bytes == null) {
+        return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(certificate, oid));
+    }
+
+    /**
+     * @param crl the CRL from which we need the ExtensionValue
+     * @param oid the Object Identifier value for the extension.
+     *
+     * @return the extension value as an {@link IASN1Primitive} object.
+     *
+     * @throws IOException
+     */
+    private static IASN1Primitive getExtensionValue(CRL crl, String oid) throws IOException {
+        return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(crl, oid));
+    }
+
+    /**
+     * Converts extension value represented as byte array to {@link IASN1Primitive} object.
+     *
+     * @param extensionValue the extension value as byte array
+     *
+     * @return the extension value as an {@link IASN1Primitive} object.
+     *
+     *  @throws IOException
+     */
+    private static IASN1Primitive getExtensionValueFromByteArray(byte[] extensionValue) throws IOException {
+        if (extensionValue == null) {
             return null;
         }
         IASN1OctetString octs;
-        try (IASN1InputStream aIn = FACTORY.createASN1InputStream(new ByteArrayInputStream(bytes))) {
+        try (IASN1InputStream aIn = FACTORY.createASN1InputStream(new ByteArrayInputStream(extensionValue))) {
             octs = FACTORY.createASN1OctetString(aIn.readObject());
         }
         try (IASN1InputStream aIn = FACTORY.createASN1InputStream(new ByteArrayInputStream(octs.getOctets()))) {
@@ -273,5 +290,29 @@ public class CertificateUtil {
     private static String getStringFromGeneralName(IASN1Primitive names) {
         IASN1TaggedObject taggedObject = FACTORY.createASN1TaggedObject(names);
         return new String(FACTORY.createASN1OctetString(taggedObject, false).getOctets(), StandardCharsets.ISO_8859_1);
+    }
+
+    /**
+     * Retrieves accessLocation value for specified accessMethod from the Authority Information Access extension.
+     *
+     * @param extensionValue Authority Information Access extension value
+     * @param accessMethod accessMethod OID; usually id-ad-caIssuers or id-ad-ocsp
+     *
+     * @return the location (URI) of the information.
+     */
+    private static String getValueFromAIAExtension(IASN1Primitive extensionValue, String accessMethod) {
+        if (extensionValue == null) {
+            return null;
+        }
+        IASN1Sequence accessDescriptions = FACTORY.createASN1Sequence(extensionValue);
+        for (int i = 0; i < accessDescriptions.size(); i++) {
+            IASN1Sequence accessDescription = FACTORY.createASN1Sequence(accessDescriptions.getObjectAt(i));
+            IASN1ObjectIdentifier id = FACTORY.createASN1ObjectIdentifier(accessDescription.getObjectAt(0));
+            if (accessDescription.size() == 2 && id != null && accessMethod.equals(id.getId())) {
+                IASN1Primitive description = FACTORY.createASN1Primitive(accessDescription.getObjectAt(1));
+                return getStringFromGeneralName(description);
+            }
+        }
+        return null;
     }
 }

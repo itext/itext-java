@@ -64,7 +64,7 @@ public class PdfPadesSigner {
     
     private IOcspClient ocspClient = null;
     private ICrlClient crlClient;
-    private IMissingCertificatesClient missingCertificatesClient = new MissingCertificatesClient();
+    private IIssuingCertificateRetriever issuingCertificateRetriever = new IssuingCertificateRetriever();
     private int estimatedSize = 0;
     private String timestampSignatureName;
     private String temporaryDirectoryPath = null;
@@ -101,7 +101,7 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineBProfile(SignerProperties signerProperties, Certificate[] chain,
            IExternalSignature externalSignature) throws GeneralSecurityException, IOException {
-        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
         performSignDetached(signerProperties, true, externalSignature, fullChain, null);
     }
 
@@ -135,7 +135,7 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineTProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
-        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
         performSignDetached(signerProperties, true, externalSignature, fullChain, tsaClient);
     }
 
@@ -170,7 +170,7 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
-        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
         createRevocationClients(fullChain, true);
         try {
             performSignDetached(signerProperties, false, externalSignature, fullChain, tsaClient);
@@ -216,7 +216,7 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTAProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws IOException, GeneralSecurityException {
-        Certificate[] fullChain = missingCertificatesClient.retrieveMissingCertificates(chain);
+        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
         createRevocationClients(fullChain, true);
         try {
             performSignDetached(signerProperties, false, externalSignature, fullChain, tsaClient);
@@ -396,18 +396,17 @@ public class PdfPadesSigner {
     }
 
     /**
-     * Set {@link IMissingCertificatesClient} to be used before main signing operation.
+     * Set {@link IIssuingCertificateRetriever} to be used before main signing operation.
      *
      * <p>
-     * If none is set, {@link MissingCertificatesClient} instance will be used instead.
+     * If none is set, {@link IssuingCertificateRetriever} instance will be used instead.
      *
-     * @param missingCertificatesClient {@link IMissingCertificatesClient} instance to be used for getting missing
-     *                                                                    certificates in chain.
-     *
+     * @param issuingCertificateRetriever {@link IIssuingCertificateRetriever} instance to be used for getting missing
+     *                                 certificates in chain or CRL response issuer certificates.
      * @return same instance of {@link PdfPadesSigner}.
      */
-    public PdfPadesSigner setMissingCertificatesClient(IMissingCertificatesClient missingCertificatesClient) {
-        this.missingCertificatesClient = missingCertificatesClient;
+    public PdfPadesSigner setIssuingCertificateRetriever(IIssuingCertificateRetriever issuingCertificateRetriever) {
+        this.issuingCertificateRetriever = issuingCertificateRetriever;
         return this;
     }
 
@@ -457,11 +456,13 @@ public class PdfPadesSigner {
     private void performLtvVerification(PdfDocument pdfDocument, List<String> signatureNames,
                                         LtvVerification.RevocationDataNecessity revocationDataNecessity)
             throws IOException, GeneralSecurityException {
-        LtvVerification ltvVerification = new LtvVerification(pdfDocument);
+        LtvVerification ltvVerification = new LtvVerification(pdfDocument)
+                .setRevocationDataNecessity(revocationDataNecessity)
+                .setIssuingCertificateRetriever(issuingCertificateRetriever);
         for (String signatureName : signatureNames) {
             ltvVerification.addVerification(signatureName, ocspClient, crlClient,
-                    CertificateOption.CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES, Level.OCSP_OPTIONAL_CRL,
-                    LtvVerification.CertificateInclusion.YES, revocationDataNecessity);
+                    CertificateOption.ALL_CERTIFICATES, Level.OCSP_OPTIONAL_CRL,
+                    LtvVerification.CertificateInclusion.YES);
         }
         ltvVerification.merge();
     }

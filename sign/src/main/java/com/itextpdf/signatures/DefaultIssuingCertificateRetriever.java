@@ -22,19 +22,40 @@
  */
 package com.itextpdf.signatures;
 
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 
 /**
- * Interface client to support Certificate Chain with Missing Certificates.
+ * Empty {@link IIssuingCertificateRetriever} implementation for compatibility with the older code.
  */
-public interface IMissingCertificatesClient {
+class DefaultIssuingCertificateRetriever implements IIssuingCertificateRetriever {
+
     /**
-     * Retrieves missing certificates in chain using Authority Information Access (AIA) Extension.
-     *
-     * @param chain certificate chain to restore with at least signing certificate.
-     *
-     * @return full chain of trust or maximum chain that could be restored in case missing certificates cannot be
-     * retrieved from AIA extension.
+     * Creates {@link DefaultIssuingCertificateRetriever} instance.
      */
-    Certificate[] retrieveMissingCertificates(Certificate[] chain);
+    public DefaultIssuingCertificateRetriever() {
+        // Empty constructor.
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param chain {@inheritDoc}
+     * @return {@inheritDoc}
+     */
+    @Override
+    public Certificate[] retrieveMissingCertificates(Certificate[] chain) {
+        return chain;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param crl {@inheritDoc}
+     * @return {@inheritDoc}
+     */
+    @Override
+    public Certificate[] getCrlIssuerCertificates(CRL crl) {
+        return new Certificate[0];
+    }
 }

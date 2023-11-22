@@ -27,6 +27,7 @@ import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -37,16 +38,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link IMissingCertificatesClient} default implementation.
+ * {@link IIssuingCertificateRetriever} default implementation.
  */
-public class MissingCertificatesClient implements IMissingCertificatesClient {
+public class IssuingCertificateRetriever implements IIssuingCertificateRetriever {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(MissingCertificatesClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IssuingCertificateRetriever.class);
 
     /**
-     * Creates {@link MissingCertificatesClient} instance.
+     * Creates {@link IssuingCertificateRetriever} instance.
      */
-    public MissingCertificatesClient() {
+    public IssuingCertificateRetriever() {
         // Empty constructor.
     }
 
@@ -73,7 +74,8 @@ public class MissingCertificatesClient implements IMissingCertificatesClient {
                 i++;
             } else {
                 // Get missing certificates using AIA Extensions
-                Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(lastAddedCert);
+                String url = CertificateUtil.getIssuerCertURL((X509Certificate) lastAddedCert);
+                Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
                 if (certificatesFromAIA == null || certificatesFromAIA.isEmpty()) {
                     // Unable to retrieve missing certificates
                     while (i < chain.length) {
@@ -88,6 +90,28 @@ public class MissingCertificatesClient implements IMissingCertificatesClient {
         }
 
         return fullChain.toArray(new Certificate[0]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param crl {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public Certificate[] getCrlIssuerCertificates(CRL crl) {
+        // Usually CRLs are signed using CA certificate, so we don’t need to do anything extra and the revocation data
+        // is already collected. However, it is possible to sign it with any other certificate.
+
+        // IssuingDistributionPoint extension: https://datatracker.ietf.org/doc/html/rfc5280#section-5.2.5
+        // Nothing special for the indirect CRLs.
+
+        // AIA Extension
+        String url = CertificateUtil.getIssuerCertURL(crl);
+        List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
+        return certificatesFromAIA == null ? new Certificate[0] :
+                retrieveMissingCertificates(certificatesFromAIA.toArray(new Certificate[0]));
     }
 
     /**
@@ -117,8 +141,7 @@ public class MissingCertificatesClient implements IMissingCertificatesClient {
         return SignUtils.readAllCerts(certsData, null);
     }
 
-    private Collection<Certificate> processCertificatesFromAIA(Certificate certificate) {
-        String url = CertificateUtil.getIssuerCertURL((X509Certificate) certificate);
+    private Collection<Certificate> processCertificatesFromAIA(String url) {
         if (url == null) {
             // We don't have any URIs to the issuer certificates in AuthorityInfoAccess extension
             return null;

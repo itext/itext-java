@@ -24,55 +24,47 @@ package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.IIssuingCertificateRetriever;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.PdfPadesSigner;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import java.util.HashMap;
+import java.util.Map;
 
-@RunWith(Parameterized.class)
 @Category(BouncyCastleIntegrationTest.class)
-public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
+public class PdfPadesWithCrlCertificateTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/certs/";
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/";
+    private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithCrlCertificateTest/certs/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithCrlCertificateTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesWithCrlCertificateTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
-    
-    private final String missingCertName1;
-    private final String missingCertName2;
 
     @BeforeClass
     public static void before() {
@@ -80,65 +72,64 @@ public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    public PdfPadesWithMissingCertTest(Object missingCertName1, Object missingCertName2) {
-        this.missingCertName1 = (String) missingCertName1;
-        this.missingCertName2 = (String) missingCertName2;
-    }
-
-    @Parameterized.Parameters(name = "first missing cert: {0}; second missing cert: {1};")
-    public static Iterable<Object[]> createParameters() {
-        return Arrays.asList(new Object[] {"missing_cert1.cer", "missing_cert2.cer"},
-                new Object[] {"missing_cert1.crt", "missing_cert2.crt"},
-                new Object[] {null, "missing_certs.p7b"},
-                new Object[] {"not_existing_file", "not_existing_file"},
-                new Object[] {"missing_cert1.der", "missing_cert2.der"});
-    }
-    
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT), ignore = true)
-    public void missingCertTest()
-            throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
+    public void signCertWithCrlTest() throws GeneralSecurityException, IOException, AbstractOperatorCreationException,
+            AbstractPKCSException, AbstractOCSPException {
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String signCertFileName = certsSrc + "sign_cert.pem";
-        String fistIntermediateCertFileName = certsSrc + "first_intermediate_cert.pem";
-        String secondIntermediateCertFileName = certsSrc + "second_intermediate_cert.pem";
-        String rootCertFileName = certsSrc + "root_cert.pem";
-        String firstMissingCertFileName = certsSrc + missingCertName1;
-        String secondMissingCertFileName = certsSrc + missingCertName2;
+        String rootCertFileName = certsSrc + "root.pem";
+        String signCertFileName = certsSrc + "sign.pem";
+        String rootCrlFileName = certsSrc + "crlRoot.crt";
+        String crlCertFileName = certsSrc + "crlCert.pem";
+        String tsaCertFileName = certsSrc + "tsCert.pem";
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
-        X509Certificate fistIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(fistIntermediateCertFileName)[0];
-        X509Certificate secondIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(secondIntermediateCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
-        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
+        PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
+        X509Certificate crlCert = (X509Certificate) PemFileHelper.readFirstChain(crlCertFileName)[0];
+        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
 
         SignerProperties signerProperties = createSignerProperties();
+        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
+
+        CrlClientOnline testCrlClient = new CrlClientOnline() {
+            @Override
+            protected InputStream getCrlResponse(X509Certificate cert, URL urlt) throws IOException {
+                if (urlt.toString().contains("cert-crl")) {
+                    return FileUtil.getInputStreamForFile(certsSrc + "crlSignedByCrlCert.crl");
+                }
+                return FileUtil.getInputStreamForFile(certsSrc + "crlSignedByCA.crl");
+            }
+        };
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outputStream);
+        padesSigner.setCrlClient(testCrlClient);
         IIssuingCertificateRetriever issuingCertificateRetriever = new IssuingCertificateRetriever() {
             @Override
             protected InputStream getIssuerCertByURI(String uri) throws IOException {
-                if (uri.contains("intermediate")) {
-                    return FileUtil.getInputStreamForFile(firstMissingCertFileName);
+                if (uri.contains("crl_cert")) {
+                    return FileUtil.getInputStreamForFile(crlCertFileName);
                 }
-                if (uri.contains("leaf")) {
-                    return FileUtil.getInputStreamForFile(secondMissingCertFileName);
-                }
-                return null;
+                return FileUtil.getInputStreamForFile(rootCrlFileName);
             }
         };
         padesSigner.setIssuingCertificateRetriever(issuingCertificateRetriever);
-        
-        padesSigner.signWithBaselineBProfile(signerProperties, new Certificate[]{signCert, rootCert}, signPrivateKey);
-        
+
+
+        Certificate[] signChain = new Certificate[]{signCert, rootCert};
+        padesSigner.signWithBaselineLTProfile(signerProperties, signChain, signRsaPrivateKey, testTsa);
+        outputStream.close();
+
         TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
-        List<X509Certificate> expectedCerts;
-        if ("not_existing_file".equals(missingCertName1)) {
-            expectedCerts = Arrays.asList(signCert, rootCert);
-        } else {
-            expectedCerts = Arrays.asList(signCert, fistIntermediateCert, secondIntermediateCert, rootCert);
-        }
-        TestSignUtils.signedDocumentContainsCerts(new ByteArrayInputStream(outputStream.toByteArray()), expectedCerts);
+
+        Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
+        Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        // It is expected to have two CRL responses, one for signing cert and another for CRL response.
+        expectedNumberOfCrls.put(rootCert.getSubjectX500Principal().getName(), 1);
+        expectedNumberOfCrls.put(crlCert.getSubjectX500Principal().getName(), 1);
+        TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
+                expectedNumberOfCrls, expectedNumberOfOcsps);
     }
 
     private SignerProperties createSignerProperties() {

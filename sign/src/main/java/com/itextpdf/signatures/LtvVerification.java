@@ -54,7 +54,8 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CRLException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +83,8 @@ public class LtvVerification {
     private final Map<PdfName, ValidationData> validated = new HashMap<>();
     private boolean used = false;
     private String securityProviderCode = null;
+    private RevocationDataNecessity revocationDataNecessity = RevocationDataNecessity.OPTIONAL;
+    private IIssuingCertificateRetriever issuingCertificateRetriever = new DefaultIssuingCertificateRetriever();
 
     /**
      * What type of verification to include.
@@ -118,15 +121,10 @@ public class LtvVerification {
          */
         WHOLE_CHAIN,
         /**
-         * Include verification for the whole chain of certificates 
-         * and certificates used to create OCSP revocation data responses.
+         * Include verification for the whole certificates chain, certificates used to create OCSP responses,
+         * CRL response certificates and timestamp certificates included in the signatures.
          */
-        CHAIN_AND_OCSP_RESPONSE_CERTIFICATES,
-        /**
-         * Include verification for the whole certificates chain, certificates used to create OCSP responses
-         * and timestamp certificates included in the signatures.
-         */
-        CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES
+        ALL_CERTIFICATES
     }
 
     /**
@@ -184,6 +182,36 @@ public class LtvVerification {
     }
 
     /**
+     * Sets {@link RevocationDataNecessity} option to specify the necessity of revocation data.
+     *
+     * <p>
+     * Default value is {@link RevocationDataNecessity#OPTIONAL}.
+     *
+     * @param revocationDataNecessity {@link RevocationDataNecessity} value to set
+     *
+     * @return this {@link LtvVerification} instance.
+     */
+    public LtvVerification setRevocationDataNecessity(RevocationDataNecessity revocationDataNecessity) {
+        this.revocationDataNecessity = revocationDataNecessity;
+        return this;
+    }
+
+    /**
+     * Sets {@link IIssuingCertificateRetriever} instance needed to get CRL issuer certificates (using AIA extension).
+     *
+     * <p>
+     * Default value is {@link DefaultIssuingCertificateRetriever}.
+     *
+     * @param issuingCertificateRetriever {@link IIssuingCertificateRetriever} instance to set
+     *
+     * @return this {@link LtvVerification} instance.
+     */
+    public LtvVerification setIssuingCertificateRetriever(IIssuingCertificateRetriever issuingCertificateRetriever) {
+        this.issuingCertificateRetriever = issuingCertificateRetriever;
+        return this;
+    }
+
+    /**
      * Add verification for a particular signature.
      *
      * @param signatureName the signature to validate (it may be a timestamp)
@@ -200,30 +228,7 @@ public class LtvVerification {
      * @throws IOException              signals that an I/O exception has occurred
      */
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
-            Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
-        return addVerification(signatureName, ocsp, crl, certOption, level, certInclude,
-                RevocationDataNecessity.OPTIONAL);
-    }
-
-    /**
-     * Add verification for a particular signature.
-     *
-     * @param signatureName            the signature to validate (it may be a timestamp)
-     * @param ocsp                     the interface to get the OCSP
-     * @param crl                      the interface to get the CRL
-     * @param certOption               options as to how many certificates to include
-     * @param level                    the validation options to include
-     * @param certInclude              certificate inclusion options
-     * @param revocationDataNecessity  option to specify the necessity of revocation data
-     *
-     * @return true if a validation was generated, false otherwise.
-     *
-     * @throws GeneralSecurityException when requested cryptographic algorithm or security provider
-     *                                  is not available.
-     * @throws IOException              signals that an I/O exception has occurred.
-     */
-    public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
-            Level level, CertificateInclusion certInclude, RevocationDataNecessity revocationDataNecessity)
+            Level level, CertificateInclusion certInclude)
             throws IOException, GeneralSecurityException {
         if (used) {
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
@@ -235,12 +240,12 @@ public class LtvVerification {
         ValidationData validationData = new ValidationData();
         Set<X509Certificate> processedCerts = new HashSet<>();
         addRevocationDataForChain(signingCert, certificateChain, ocsp, crl, level, certInclude, certOption,
-                revocationDataNecessity, validationData, processedCerts);
-        
-        if (certOption == CertificateOption.CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES) {
+                validationData, processedCerts);
+
+        if (certOption == CertificateOption.ALL_CERTIFICATES) {
             Certificate[] timestampCertsChain = pk.getTimestampCertificates();
             addRevocationDataForChain(signingCert, timestampCertsChain, ocsp, crl, level, certInclude, certOption,
-                    revocationDataNecessity, validationData, processedCerts);
+                    validationData, processedCerts);
         }
         
         if (validationData.crls.size() == 0 && validationData.ocsps.size() == 0) {
@@ -344,8 +349,8 @@ public class LtvVerification {
 
     private void addRevocationDataForChain(X509Certificate signingCert, Certificate[] certChain, IOcspClient ocsp,
             ICrlClient crl, Level level, CertificateInclusion certInclude, CertificateOption certOption,
-            RevocationDataNecessity dataNecessity, ValidationData validationData,
-            Set<X509Certificate> processedCerts) throws CertificateEncodingException, IOException {
+            ValidationData validationData, Set<X509Certificate> processedCerts)
+            throws CertificateException, IOException, CRLException {
         for (Certificate certificate : certChain) {
             X509Certificate cert = (X509Certificate) certificate;
             LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
@@ -354,14 +359,14 @@ public class LtvVerification {
                 continue;
             }
             addRevocationDataForCertificate(signingCert, certChain, cert, ocsp, crl, level, certInclude, certOption,
-                    dataNecessity, validationData, processedCerts);
+                    validationData, processedCerts);
         }
     }
 
     private void addRevocationDataForCertificate(X509Certificate signingCert, Certificate[] certificateChain,
             X509Certificate cert, IOcspClient ocsp, ICrlClient crl, Level level, CertificateInclusion certInclude,
-            CertificateOption certOption, RevocationDataNecessity dataNecessity, ValidationData validationData,
-            Set<X509Certificate> processedCerts) throws IOException, CertificateEncodingException {
+            CertificateOption certOption, ValidationData validationData, Set<X509Certificate> processedCerts)
+            throws IOException, CertificateException, CRLException {
         processedCerts.add(cert);
         byte[] ocspEnc = null;
         boolean revocationDataAdded = false;
@@ -371,14 +376,13 @@ public class LtvVerification {
                 validationData.ocsps.add(buildOCSPResponse(ocspEnc));
                 revocationDataAdded = true;
                 LOGGER.info("OCSP added");
-                if (certOption == CertificateOption.CHAIN_AND_OCSP_RESPONSE_CERTIFICATES ||
-                        certOption == CertificateOption.CHAIN_OCSP_AND_TIMESTAMP_CERTIFICATES) {
+                if (certOption == CertificateOption.ALL_CERTIFICATES) {
                     Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(
                             BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
                                     BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(ocspEnc)));
                     List<X509Certificate> certsList = iterableToList(certs);
-                    addRevocationDataForChain(signingCert, certsList.toArray(new X509Certificate[0]), ocsp, crl, level,
-                            certInclude, certOption, dataNecessity, validationData, processedCerts);
+                    addRevocationDataForChain(signingCert, certsList.toArray(new X509Certificate[0]),
+                            ocsp, crl, level, certInclude, certOption, validationData, processedCerts);
                 }
             }
         }
@@ -399,11 +403,17 @@ public class LtvVerification {
                         validationData.crls.add(cim);
                         revocationDataAdded = true;
                         LOGGER.info("CRL added");
+                        if (certOption == CertificateOption.ALL_CERTIFICATES) {
+                            Certificate[] certsList = issuingCertificateRetriever.getCrlIssuerCertificates(
+                                    SignUtils.parseCrlFromStream(new ByteArrayInputStream(cim)));
+                            addRevocationDataForChain(signingCert, certsList, ocsp, crl,
+                                    level, certInclude, certOption, validationData, processedCerts);
+                        }
                     }
                 }
             }
         }
-        if (dataNecessity == RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE &&
+        if (revocationDataNecessity == RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE &&
                 signingCert.equals(cert) && !revocationDataAdded) {
             throw new PdfException(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE);
         }

@@ -76,6 +76,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.cert.X509CRL;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.text.ParseException;
@@ -115,6 +116,10 @@ final class SignUtils {
 
     static byte[] getExtensionValueByOid(X509Certificate certificate, String oid) {
         return certificate.getExtensionValue(oid);
+    }
+
+    static byte[] getExtensionValueByOid(CRL crl, String oid) {
+        return ((X509CRL) crl).getExtensionValue(oid);
     }
 
     static MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {
