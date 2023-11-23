@@ -25,10 +25,10 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -366,7 +366,15 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     public void checkText(String text, PdfFont font) {
         for (int i = 0; i < text.length(); ++i) {
-            if (!font.containsGlyph(text.charAt(i))) {
+            int ch;
+            if (TextUtil.isSurrogatePair(text, i)) {
+                ch = TextUtil.convertToUtf32(text, i);
+                i++;
+            } else {
+                ch = text.charAt(i);
+            }
+
+            if (!font.containsGlyph(ch)) {
                 throw new PdfAConformanceException(
                         PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
             }
