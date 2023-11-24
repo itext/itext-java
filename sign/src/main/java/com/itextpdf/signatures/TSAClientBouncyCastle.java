@@ -61,9 +61,9 @@ public class TSAClientBouncyCastle implements ITSAClient {
      */
     public static final String DEFAULTHASHALGORITHM = "SHA-256";
     /**
-     * The default value for the hash algorithm
+     * The default value for token size estimation.
      */
-    public static final int DEFAULTTOKENSIZE = 4096;
+    public static final int DEFAULTTOKENSIZE = 10240;
     /**
      * The Logger instance.
      */
@@ -87,16 +87,18 @@ public class TSAClientBouncyCastle implements ITSAClient {
     /**
      * Estimate of the received time stamp token
      */
-    protected int tokenSizeEstimate;
+    protected int tokenSizeEstimate = DEFAULTTOKENSIZE;
     /**
      * Hash algorithm
      */
-    protected String digestAlgorithm;
+    protected String digestAlgorithm = DEFAULTHASHALGORITHM;
 
     /**
      * TSA request policy
      */
     private String tsaReqPolicy;
+    
+    private int customTokenSizeEstimate = -1;
 
     /**
      * Creates an instance of a TSAClient that will use BouncyCastle.
@@ -104,7 +106,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
      */
     public TSAClientBouncyCastle(String url) {
-        this(url, null, null, DEFAULTTOKENSIZE, DEFAULTHASHALGORITHM);
+        this(url, null, null);
     }
 
     /**
@@ -115,7 +117,9 @@ public class TSAClientBouncyCastle implements ITSAClient {
      * @param password String - password
      */
     public TSAClientBouncyCastle(String url, String username, String password) {
-        this(url, username, password, 4096, DEFAULTHASHALGORITHM);
+        this.tsaURL = url;
+        this.tsaUsername = username;
+        this.tsaPassword = password;
     }
 
     /**
@@ -135,7 +139,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         this.tsaURL = url;
         this.tsaUsername = username;
         this.tsaPassword = password;
-        this.tokenSizeEstimate = tokSzEstimate;
+        this.customTokenSizeEstimate = tokSzEstimate;
         this.digestAlgorithm = digestAlgorithm;
     }
 
@@ -154,7 +158,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
      */
     @Override
     public int getTokenSizeEstimate() {
-        return tokenSizeEstimate;
+        return customTokenSizeEstimate == -1 ? tokenSizeEstimate : customTokenSizeEstimate;
     }
 
     /**

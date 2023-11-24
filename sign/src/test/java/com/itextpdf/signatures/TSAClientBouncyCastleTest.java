@@ -66,7 +66,7 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         Assert.assertEquals(url, tsaClientBouncyCastle.tsaURL);
         Assert.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
         Assert.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
-        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.getTokenSizeEstimate());
         Assert.assertEquals(TSAClientBouncyCastle.DEFAULTHASHALGORITHM, tsaClientBouncyCastle.digestAlgorithm);
     }
 
@@ -83,7 +83,8 @@ public class TSAClientBouncyCastleTest extends ExtendedITextTest {
         Assert.assertEquals(url, tsaClientBouncyCastle.tsaURL);
         Assert.assertEquals(userName, tsaClientBouncyCastle.tsaUsername);
         Assert.assertEquals(password, tsaClientBouncyCastle.tsaPassword);
-        Assert.assertEquals(tokenSize, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assert.assertEquals(TSAClientBouncyCastle.DEFAULTTOKENSIZE, tsaClientBouncyCastle.tokenSizeEstimate);
+        Assert.assertEquals(tokenSize, tsaClientBouncyCastle.getTokenSizeEstimate());
         Assert.assertEquals(digestAlgorithm, tsaClientBouncyCastle.digestAlgorithm);
     }
 

@@ -1505,6 +1505,15 @@ public interface IBouncyCastleFactory {
     boolean isNullExtension(IExtension extNonce);
 
     /**
+     * Check if provided encodable wrapper wrap {@code null}.
+     * 
+     * @param encodable encodable wrapper to be checked
+     * 
+     * @return {@code true} if provided encodable wrapper wraps {@code null}, {@code false} otherwise
+     */
+    boolean isNull(IASN1Encodable encodable);
+
+    /**
      * Get {@link SecureRandom} implementation from the factory.
      *
      * @return {@link SecureRandom} implementation

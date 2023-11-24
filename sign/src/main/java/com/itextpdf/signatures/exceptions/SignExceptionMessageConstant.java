@@ -32,6 +32,9 @@ public final class SignExceptionMessageConstant {
             + "the digest.";
     public static final String AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE = "Available space is not enough for "
             + "signature.";
+    public static final String TOKEN_ESTIMATION_SIZE_IS_NOT_LARGE_ENOUGH = "Timestamp token estimation size is not " 
+            + "large enough to accommodate the entire timestamp token. Timestamp token estimation size is: {0} bytes, " 
+            + "however real timestamp token size is: {1} bytes.";
     public static final String CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT = "Cannot decode PKCS#7 SignedData object.";
     public static final String CANNOT_FIND_SIGNING_CERTIFICATE_WITH_THIS_SERIAL = "Cannot find signing certificate "
             + "with serial {0}.";

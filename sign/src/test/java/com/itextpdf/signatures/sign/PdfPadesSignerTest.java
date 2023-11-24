@@ -197,6 +197,46 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
+
+    @Test
+    public void smallTokenSizeEstimationTest()
+            throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
+        String fileName = "smallTokenSizeEstimationTest.pdf";
+        String outFileName = destinationFolder + fileName;
+        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
+        String tsaCertFileName = certsSrc + "tsCertRsa.pem";
+        String caCertFileName = certsSrc + "rootRsa.pem";
+
+        Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+        IExternalSignature pks =
+                new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
+
+        SignerProperties signerProperties = new SignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
+
+        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey) {
+            @Override
+            public int getTokenSizeEstimate() {
+                return 1024;
+            }
+        };
+        ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
+
+        padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
+
+        Exception e = Assert.assertThrows(IOException.class,
+                () -> padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa));
+        Assert.assertEquals(MessageFormatUtil.format(
+                SignExceptionMessageConstant.TOKEN_ESTIMATION_SIZE_IS_NOT_LARGE_ENOUGH, 1024, 2780), e.getMessage());
+    }
     
     private SignerProperties createSignerProperties() {
         SignerProperties signerProperties = new SignerProperties();

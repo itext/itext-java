@@ -419,7 +419,7 @@ public class PdfPKCS7 {
                     IAttributeTable attble = BOUNCY_CASTLE_FACTORY.createAttributeTable(unat);
                     IPKCSObjectIdentifiers ipkcsObjectIdentifiers = BOUNCY_CASTLE_FACTORY.createPKCSObjectIdentifiers();
                     IAttribute ts = attble.get(ipkcsObjectIdentifiers.getIdAaSignatureTimeStampToken());
-                    if (ts != null && ts.getAttrValues().size() > 0) {
+                    if (!BOUNCY_CASTLE_FACTORY.isNull(ts) && ts.getAttrValues().size() > 0) {
                         IASN1Set attributeValues = ts.getAttrValues();
                         IASN1Sequence tokenSequence =
                                 BOUNCY_CASTLE_FACTORY.createASN1SequenceInstance(attributeValues.getObjectAt(0));

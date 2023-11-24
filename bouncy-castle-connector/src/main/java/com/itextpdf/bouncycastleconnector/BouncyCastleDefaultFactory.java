@@ -905,6 +905,11 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public boolean isNull(IASN1Encodable encodable) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
     public SecureRandom getSecureRandom() {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }

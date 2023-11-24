@@ -1687,6 +1687,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public boolean isNull(IASN1Encodable encodable) {
+        return ((ASN1EncodableBC) encodable).getEncodable() == null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SecureRandom getSecureRandom() {
         return new SecureRandom();
     }

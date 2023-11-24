@@ -1695,6 +1695,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public boolean isNull(IASN1Encodable encodable) {
+        return ((ASN1EncodableBCFips) encodable).getEncodable() == null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SecureRandom getSecureRandom() {
         return ((BouncyCastleFipsProvider) PROVIDER).getDefaultSecureRandom();
     }

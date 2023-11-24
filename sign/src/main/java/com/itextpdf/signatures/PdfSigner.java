@@ -23,6 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -721,7 +722,7 @@ public class PdfSigner {
                 estimatedSize += 4192;
             }
             if (tsaClient != null) {
-                estimatedSize += 4192;
+                estimatedSize += tsaClient.getTokenSizeEstimate() + 96;
             }
         }
         appearance.setCertificate(chain[0]);
@@ -843,7 +844,8 @@ public class PdfSigner {
      * @param tsa           the timestamp generator
      * @param signatureName the signature name or null to have a name generated
      *                      automatically
-     * @throws IOException              if some I/O problem occurs
+     * @throws IOException              if some I/O problem occurs or estimation for timestamp signature,
+     *                                  provided with {@link ITSAClient#getTokenSizeEstimate()}, is not big enough
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
      */
     public void timestamp(ITSAClient tsa, String signatureName) throws IOException, GeneralSecurityException {
@@ -882,8 +884,11 @@ public class PdfSigner {
             throw new GeneralSecurityException(e.getMessage(), e);
         }
 
-        if (contentEstimated + 2 < tsToken.length)
-            throw new IOException("Not enough space");
+        if (contentEstimated + 2 < tsToken.length) {
+            throw new IOException(MessageFormatUtil.format(
+                    SignExceptionMessageConstant.TOKEN_ESTIMATION_SIZE_IS_NOT_LARGE_ENOUGH,
+                    contentEstimated, tsToken.length));
+        }
 
         byte[] paddedSig = new byte[contentEstimated];
         System.arraycopy(tsToken, 0, paddedSig, 0, tsToken.length);
