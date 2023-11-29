@@ -101,8 +101,7 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineBProfile(SignerProperties signerProperties, Certificate[] chain,
            IExternalSignature externalSignature) throws GeneralSecurityException, IOException {
-        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
-        performSignDetached(signerProperties, true, externalSignature, fullChain, null);
+        performSignDetached(signerProperties, true, externalSignature, chain, null);
     }
 
     /**
@@ -135,8 +134,7 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineTProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
-        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
-        performSignDetached(signerProperties, true, externalSignature, fullChain, tsaClient);
+        performSignDetached(signerProperties, true, externalSignature, chain, tsaClient);
     }
 
     /**
@@ -170,10 +168,9 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
-        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
-        createRevocationClients(fullChain, true);
+        createRevocationClients(chain[0], true);
         try {
-            performSignDetached(signerProperties, false, externalSignature, fullChain, tsaClient);
+            performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(outputStream), new StampingProperties().useAppendMode())) {
@@ -216,10 +213,9 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTAProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws IOException, GeneralSecurityException {
-        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
-        createRevocationClients(fullChain, true);
+        createRevocationClients(chain[0], true);
         try {
-            performSignDetached(signerProperties, false, externalSignature, fullChain, tsaClient);
+            performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(createOutputStream()), new StampingProperties().useAppendMode())) {
@@ -269,7 +265,7 @@ public class PdfPadesSigner {
             if (signatureNames.isEmpty()) {
                 throw new PdfException(SignExceptionMessageConstant.NO_SIGNATURES_TO_PROLONG);
             }
-            createRevocationClients(new Certificate[0], false);
+            createRevocationClients(null, false);
             performLtvVerification(pdfDocument, signatureNames, LtvVerification.RevocationDataNecessity.OPTIONAL);
             if (tsaClient != null) {
                 performTimestamping(pdfDocument, outputStream, tsaClient);
@@ -419,9 +415,10 @@ public class PdfPadesSigner {
     private void performSignDetached(SignerProperties signerProperties, boolean isFinal,
             IExternalSignature externalSignature, Certificate[] chain, ITSAClient tsaClient)
             throws GeneralSecurityException, IOException {
+        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
         PdfSigner signer = createPdfSigner(signerProperties, isFinal);
         try {
-            signer.signDetached(externalDigest, externalSignature, chain, null, null, tsaClient,
+            signer.signDetached(externalDigest, externalSignature, fullChain, null, null, tsaClient,
                     estimatedSize, CryptoStandard.CADES);
         } finally {
             signer.originalOS.close();
@@ -503,16 +500,16 @@ public class PdfPadesSigner {
         return tempFile;
     }
     
-    private void createRevocationClients(Certificate[] chain, boolean clientsRequired) {
+    private void createRevocationClients(Certificate signingCert, boolean clientsRequired) {
         if (crlClient == null && ocspClient == null && clientsRequired) {
-            X509Certificate signingCertificate = (X509Certificate) chain[0];
+            X509Certificate signingCertificate = (X509Certificate) signingCert;
             if (CertificateUtil.getOCSPURL(signingCertificate) == null &&
                     CertificateUtil.getCRLURL(signingCertificate) == null) {
                 throw new PdfException(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED);
             }
         }
         if (crlClient == null) {
-            crlClient = new CrlClientOnline(chain);
+            crlClient = new CrlClientOnline();
         }
         if (ocspClient == null) {
             ocspClient = new OcspClientBouncyCastle(null);

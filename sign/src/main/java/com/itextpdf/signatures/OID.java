@@ -135,6 +135,11 @@ public final class OID {
          */
         public static final String ID_PKIX_OCSP_NOCHECK = "1.3.6.1.5.5.7.48.1.5";
 
+        /**
+         * Extension for certificates from ETSI EN 319 412-1 V1.4.4.
+         */
+        public static final String VALIDITY_ASSURED_SHORT_TERM = "0.4.0.194121.2.1";
+
 
         /**
          * According to https://tools.ietf.org/html/rfc5280 4.2. "Certificate Extensions":

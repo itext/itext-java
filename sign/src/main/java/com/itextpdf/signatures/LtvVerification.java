@@ -30,6 +30,9 @@ import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
@@ -46,7 +49,9 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.signatures.OID.X509Extensions;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -249,6 +254,11 @@ public class LtvVerification {
             addRevocationDataForChain(signingCert, timestampCertsChain, ocsp, crl, level, certInclude, certOption,
                     validationData, processedCerts);
         }
+        if (certInclude == CertificateInclusion.YES) {
+            for (X509Certificate processedCert : processedCerts) {
+                validationData.certs.add(processedCert.getEncoded());
+            }
+        }
         
         if (validationData.crls.size() == 0 && validationData.ocsps.size() == 0) {
             return false;
@@ -372,6 +382,12 @@ public class LtvVerification {
             CertificateOption certOption, ValidationData validationData, Set<X509Certificate> processedCerts)
             throws IOException, CertificateException, CRLException {
         processedCerts.add(cert);
+        byte[] validityAssured = SignUtils.getExtensionValueByOid(cert, X509Extensions.VALIDITY_ASSURED_SHORT_TERM);
+        if (validityAssured != null) {
+            LOGGER.info(MessageFormatUtil.format(SignLogMessageConstant.REVOCATION_DATA_NOT_ADDED_VALIDITY_ASSURED,
+                    cert.getSubjectX500Principal()));
+            return;
+        }
         byte[] ocspEnc = null;
         boolean revocationDataAdded = false;
         if (ocsp != null && level != Level.CRL) {
@@ -381,12 +397,8 @@ public class LtvVerification {
                 revocationDataAdded = true;
                 LOGGER.info("OCSP added");
                 if (certOption == CertificateOption.ALL_CERTIFICATES) {
-                    Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(
-                            BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
-                                    BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(ocspEnc)));
-                    List<X509Certificate> certsList = iterableToList(certs);
-                    addRevocationDataForChain(signingCert, certsList.toArray(new X509Certificate[0]),
-                            ocsp, crl, level, certInclude, certOption, validationData, processedCerts);
+                    addRevocationDataForOcspCert(ocspEnc, signingCert, ocsp, crl, level, certInclude, certOption,
+                            validationData, processedCerts);
                 }
             }
         }
@@ -421,9 +433,35 @@ public class LtvVerification {
                 signingCert.equals(cert) && !revocationDataAdded) {
             throw new PdfException(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE);
         }
-        if (certInclude == CertificateInclusion.YES) {
-            validationData.certs.add(cert.getEncoded());
+    }
+    
+    private void addRevocationDataForOcspCert(byte[] ocspEnc, X509Certificate signingCert, IOcspClient ocsp,
+            ICrlClient crl, Level level, CertificateInclusion certInclude, CertificateOption certOption,
+            ValidationData validationData, Set<X509Certificate> processedCerts)
+            throws CertificateException, IOException, CRLException {
+        IBasicOCSPResp ocspResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
+                BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(ocspEnc));
+        Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(ocspResp);
+        List<X509Certificate> ocspCertsList = iterableToList(certs);
+        X509Certificate ocspSigningCert = null;
+        for (X509Certificate ocspCert : ocspCertsList) {
+            try {
+                if (SignUtils.isSignatureValid(ocspResp, ocspCert, BOUNCY_CASTLE_FACTORY.getProviderName())) {
+                    ocspSigningCert = ocspCert;
+                    break;
+                }
+            } catch (AbstractOperatorCreationException | AbstractOCSPException ignored) {
+                // Wasn't possible to check if this cert is signing one, skip.
+            }
         }
+        if (ocspSigningCert != null && SignUtils.getExtensionValueByOid(
+                ocspSigningCert, X509Extensions.ID_PKIX_OCSP_NOCHECK) != null) {
+            // If ocsp_no_check extension is set on OCSP signing cert we shan't collect revocation data for this cert.
+            ocspCertsList.remove(ocspSigningCert);
+            processedCerts.add(ocspSigningCert);
+        }
+        addRevocationDataForChain(signingCert, ocspCertsList.toArray(new X509Certificate[0]),
+                ocsp, crl, level, certInclude, certOption, validationData, processedCerts);
     }
     
     private static List<X509Certificate> iterableToList(Iterable<X509Certificate> iterable) {

@@ -52,6 +52,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -112,11 +113,17 @@ public class PdfPadesWithTimestampCertificateTest extends ExtendedITextTest {
         
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        List<String> expectedCerts = Arrays.asList(getCertName(caCert), getCertName((X509Certificate) signRsaChain[0]),
+                getCertName((X509Certificate) tsaChain[0]), getCertName((X509Certificate) tsaChain[1]));
         // It is expected to have two OCSP responses, one for timestamp cert and another timestamp root cert.
         expectedNumberOfOcsps.put(caCert.getSubjectX500Principal().getName(), 2);
         expectedNumberOfCrls.put(caCert.getSubjectX500Principal().getName(), 1);
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
-                expectedNumberOfCrls, expectedNumberOfOcsps);
+                expectedNumberOfCrls, expectedNumberOfOcsps, expectedCerts);
+    }
+    
+    private String getCertName(X509Certificate certificate) {
+        return certificate.getSubjectX500Principal().getName();
     }
 
     private SignerProperties createSignerProperties() {

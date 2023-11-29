@@ -33,6 +33,9 @@ public final class SignLogMessageConstant {
             "Unexpected exception without message was thrown during keystore processing";
     public static final String UNABLE_TO_PARSE_AIA_CERT = "Unable to parse certificates coming from authority info "
             + "access extension. Those won't be included into the certificate chain.";
+    
+    public static final String REVOCATION_DATA_NOT_ADDED_VALIDITY_ASSURED =
+            "Revocation data for certificate: \"{0}\" is not added due to validity assured - short term extension.";
 
     private SignLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

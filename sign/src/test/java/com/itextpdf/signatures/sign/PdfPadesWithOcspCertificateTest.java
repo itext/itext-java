@@ -53,6 +53,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -109,10 +110,12 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
 
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        List<String> expectedCerts = Arrays.asList(getCertName(rootCert), getCertName(signRsaCert), getCertName(
+                (X509Certificate) tsaChain[0]), getCertName((X509Certificate) tsaChain[1]), getCertName(ocspCert));
         // It is expected to have two OCSP responses, one for signing cert and another for OCSP response.
         expectedNumberOfOcsps.put(ocspCert.getSubjectX500Principal().getName(), 2);
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
-                expectedNumberOfCrls, expectedNumberOfOcsps);
+                expectedNumberOfCrls, expectedNumberOfOcsps, expectedCerts);
     }
 
     @Test
@@ -180,10 +183,16 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
 
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        List<String> expectedCerts = Arrays.asList(getCertName(rootCert), getCertName(signRsaCert), getCertName(
+                (X509Certificate) tsaChain[0]), getCertName((X509Certificate) tsaChain[1]));
         // It is expected to have one OCSP response, only for signing cert.
         expectedNumberOfOcsps.put(signRsaCert.getSubjectX500Principal().getName(), 1);
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
-                expectedNumberOfCrls, expectedNumberOfOcsps);
+                expectedNumberOfCrls, expectedNumberOfOcsps, expectedCerts);
+    }
+
+    private String getCertName(X509Certificate certificate) {
+        return certificate.getSubjectX500Principal().getName();
     }
 
     private SignerProperties createSignerProperties() {

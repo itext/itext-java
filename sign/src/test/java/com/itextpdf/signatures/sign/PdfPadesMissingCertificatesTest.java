@@ -42,6 +42,9 @@ import com.itextpdf.signatures.testutils.client.AdvancedTestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -99,11 +102,11 @@ public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
         X509Certificate crlCert = (X509Certificate) PemFileHelper.readFirstChain(crlCertFileName)[0];
         X509Certificate ocspCert = (X509Certificate) PemFileHelper.readFirstChain(ocspCertFileName)[0];
         PrivateKey ocspPrivateKey = PemFileHelper.readFirstKey(ocspCertFileName, password);
-        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
+        X509Certificate tsaCert = (X509Certificate) PemFileHelper.readFirstChain(tsaCertFileName)[0];
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
 
         SignerProperties signerProperties = createSignerProperties();
-        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
+        TestTsaClient testTsa = new TestTsaClient(Collections.singletonList(tsaCert), tsaPrivateKey);
 
         CrlClientOnline testCrlClient = new CrlClientOnline() {
             @Override
@@ -122,6 +125,7 @@ public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
         X509Certificate crlIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateCrlFileName)[0];
         X509Certificate ocspIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateOscpFileName)[0];
         X509Certificate tsaIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateTsaFileName)[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateCertFileName)[0]; 
 
         AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
         ocspClient.addBuilderForCertIssuer(signCert, ocspCert, ocspPrivateKey);
@@ -186,8 +190,16 @@ public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
         expectedNumberOfCrls.put(rootCert.getSubjectX500Principal().getName(), 1);
         // It is expected to have OCSP responses for all the root, CRL/OCSP/TSA intermediate certs, and signing cert.
         expectedNumberOfOcsps.put(ocspCert.getSubjectX500Principal().getName(), 8);
+        List<String> certs = Arrays.asList(getCertName(rootCert), getCertName(crlRootCert), getCertName(crlCert),
+                getCertName(ocspCert), getCertName(tsaRootCert), getCertName(crlIntermediateCert),
+                getCertName(ocspIntermediateCert), getCertName(tsaIntermediateCert), getCertName(ocspRootCert),
+                getCertName(signCert), getCertName(tsaCert), getCertName(intermediateCert));
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
-                expectedNumberOfCrls, expectedNumberOfOcsps);
+                expectedNumberOfCrls, expectedNumberOfOcsps, certs);
+    }
+
+    private String getCertName(X509Certificate certificate) {
+        return certificate.getSubjectX500Principal().getName();
     }
 
     private SignerProperties createSignerProperties() {

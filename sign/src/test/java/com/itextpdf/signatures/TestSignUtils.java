@@ -46,6 +46,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -56,10 +57,13 @@ public final class TestSignUtils {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     public static void assertDssDict(InputStream inputStream, Map<String, Integer> expectedNumberOfCrls,
-            Map<String, Integer> expectedNumberOfOcsp)
+            Map<String, Integer> expectedNumberOfOcsp, List<String> expectedCerts)
             throws IOException, CertificateException, CRLException, AbstractOCSPException {
         try (PdfDocument outDocument = new PdfDocument(new PdfReader(inputStream))) {
             PdfDictionary dss = outDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+            
+            PdfArray certs = dss.getAsArray(PdfName.Certs) == null ? new PdfArray() : dss.getAsArray(PdfName.Certs);
+            List<String> realCertificates = createCertsList(certs);
 
             PdfArray crls = dss.getAsArray(PdfName.CRLs) == null ? new PdfArray() : dss.getAsArray(PdfName.CRLs);
             Map<String, Integer> realNumberOfCrls = createCrlMap(crls);
@@ -67,11 +71,25 @@ public final class TestSignUtils {
             PdfArray ocsps = dss.getAsArray(PdfName.OCSPs) == null ? new PdfArray() : dss.getAsArray(PdfName.OCSPs);
             Map<String, Integer> realNumberOfOcsp = createOcspMap(ocsps);
 
+            if (expectedCerts != null) {
+                Assert.assertEquals("Certs entry in DSS dictionary isn't correct", realCertificates.size(),
+                        expectedCerts.size());
+                // Order agnostic list comparison.
+                for (String expectedCert : expectedCerts) {
+                    Assert.assertTrue(realCertificates.stream().anyMatch(cert -> cert.equals(expectedCert)));
+                }
+            }
             Assert.assertTrue("CRLs entry in DSS dictionary isn't correct",
                     MapUtil.equals(expectedNumberOfCrls, realNumberOfCrls));
             Assert.assertTrue("OCSPs entry in DSS dictionary isn't correct",
                     MapUtil.equals(expectedNumberOfOcsp, realNumberOfOcsp));
         }
+    }
+
+    public static void assertDssDict(InputStream inputStream, Map<String, Integer> expectedNumberOfCrls,
+            Map<String, Integer> expectedNumberOfOcsp)
+            throws IOException, CertificateException, CRLException, AbstractOCSPException {
+        assertDssDict(inputStream, expectedNumberOfCrls, expectedNumberOfOcsp, null);
     }
     
     public static void basicCheckSignedDoc(String filePath, String signatureName) throws GeneralSecurityException, IOException {
@@ -88,11 +106,12 @@ public final class TestSignUtils {
         }
     }
     
-    public static void signedDocumentContainsCerts(InputStream inputStream, List<X509Certificate> expectedCertificates)
+    public static void signedDocumentContainsCerts(InputStream inputStream, List<X509Certificate> expectedCertificates,
+            String signatureName)
             throws IOException {
         try (PdfDocument outDocument = new PdfDocument(new PdfReader(inputStream))) {
             SignatureUtil sigUtil = new SignatureUtil(outDocument);
-            List<Certificate> actualCertificates = Arrays.asList(sigUtil.readSignatureData("Signature1").getCertificates());
+            List<Certificate> actualCertificates = Arrays.asList(sigUtil.readSignatureData(signatureName).getCertificates());
             // Searching for every certificate we expect should be in the resulting document.
             Assert.assertEquals(expectedCertificates.size(), actualCertificates.size());
             for (X509Certificate expectedCert : expectedCertificates) {
@@ -100,6 +119,17 @@ public final class TestSignUtils {
                         ((X509Certificate) cert).getSubjectX500Principal().equals(expectedCert.getSubjectX500Principal())));
             }
         }
+    }
+    
+    private static List<String> createCertsList(PdfArray certs) throws CertificateException {
+        List<String> certsNames = new ArrayList<>();
+        for (PdfObject cert : certs) {
+            PdfStream certStream = (PdfStream) cert;
+            byte[] certBytes = certStream.getBytes();
+            X509Certificate certificate = (X509Certificate) SignUtils.readAllCerts(certBytes).toArray(new Certificate[0])[0];
+            certsNames.add(certificate.getSubjectX500Principal().getName());
+        }
+        return certsNames;
     }
 
     private static Map<String, Integer> createCrlMap(PdfArray crls) throws CertificateException, CRLException {

@@ -241,8 +241,8 @@ public class OCSPVerifier extends RootStoreVerifier {
                 // validating ocsp signers certificate
                 // Check if responders certificate has id-pkix-ocsp-nocheck extension,
                 // in which case we do not validate (perform revocation check on) ocsp certs for lifetime of certificate
-                if (responderCert.getExtensionValue(
-                        BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNoCheck().getId()) == null) {
+                if (SignUtils.getExtensionValueByOid(responderCert, BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers()
+                        .getIdPkixOcspNoCheck().getId()) == null) {
                     CRL crl;
                     try {
                         // TODO DEVSIX-5210 Implement a check heck for Authority Information Access according to

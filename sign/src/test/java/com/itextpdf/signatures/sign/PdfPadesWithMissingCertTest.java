@@ -138,7 +138,8 @@ public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
         } else {
             expectedCerts = Arrays.asList(signCert, fistIntermediateCert, secondIntermediateCert, rootCert);
         }
-        TestSignUtils.signedDocumentContainsCerts(new ByteArrayInputStream(outputStream.toByteArray()), expectedCerts);
+        TestSignUtils.signedDocumentContainsCerts(new ByteArrayInputStream(outputStream.toByteArray()), expectedCerts,
+                "Signature1");
     }
 
     private SignerProperties createSignerProperties() {

@@ -203,11 +203,12 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
             padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
 
             TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
-            assertDss(outputStream, rootCert);
+            assertDss(outputStream, rootCert, signRsaCert, (X509Certificate) tsaChain[0], (X509Certificate) tsaChain[1]);
         }
     }
     
-    private void assertDss(ByteArrayOutputStream outputStream, X509Certificate rootCert)
+    private void assertDss(ByteArrayOutputStream outputStream, X509Certificate rootCert, X509Certificate signRsaCert,
+            X509Certificate tsaCert, X509Certificate rootTsaCert)
             throws AbstractOCSPException, CertificateException, IOException, CRLException {
         Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
         if (amountOfCrlsForRoot + amountOfCrlsForSign != 0) {
@@ -217,7 +218,14 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
         if (amountOfOcspsForRoot + amountOfOcspsForSign != 0) {
             expectedNumberOfOcsps.put(rootCert.getSubjectX500Principal().getName(), amountOfOcspsForRoot + amountOfOcspsForSign);
         }
-        TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()), expectedNumberOfCrls, expectedNumberOfOcsps);
+        List<String> expectedCerts = Arrays.asList(getCertName(rootCert), getCertName(signRsaCert),
+                getCertName(tsaCert), getCertName(rootTsaCert));
+        TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()), expectedNumberOfCrls,
+                expectedNumberOfOcsps, expectedCerts);
+    }
+
+    private String getCertName(X509Certificate certificate) {
+        return certificate.getSubjectX500Principal().getName();
     }
 
     private SignerProperties createSignerProperties() {
