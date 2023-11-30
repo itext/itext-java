@@ -23,16 +23,13 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class converts stroke related SVG parameters and attributes into those from PDF specification.
@@ -42,27 +39,25 @@ public final class SvgStrokeParameterConverter {
     private SvgStrokeParameterConverter() {
     }
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SvgStrokeParameterConverter.class);
-
     /**
      * Convert stroke related SVG parameters and attributes into PDF line dash parameters.
      *
      * @param strokeDashArray 'stroke-dasharray' css property value.
      * @param strokeDashOffset 'stroke-dashoffset' css property value.
+     * @param fontSize font size of the current element.
+     * @param context the svg draw context.
      * @return PDF line dash parameters represented by {@link PdfLineDashParameters}.
      */
-    public static PdfLineDashParameters convertStrokeDashParameters(String strokeDashArray, String strokeDashOffset) {
+    public static PdfLineDashParameters convertStrokeDashParameters(String strokeDashArray, String strokeDashOffset,
+            float fontSize, SvgDrawContext context) {
         if (strokeDashArray != null && !SvgConstants.Values.NONE.equalsIgnoreCase(strokeDashArray)) {
+            final float rem = context.getCssContext().getRootFontSize();
+            final float viewPortHeight = context.getCurrentViewPort().getHeight();
+            final float viewPortWidth = context.getCurrentViewPort().getWidth();
+            final float percentBaseValue = (float) (Math.sqrt(viewPortHeight * viewPortHeight +
+                    viewPortWidth * viewPortWidth) / Math.sqrt(2));
+
             List<String> dashArray = SvgCssUtils.splitValueList(strokeDashArray);
-
-            for (String dashArrayItem : dashArray) {
-                if (CssTypesValidationUtils.isPercentageValue(dashArrayItem)) {
-                    LOGGER.error(SvgLogMessageConstant.
-                            PERCENTAGE_VALUES_IN_STROKE_DASHARRAY_AND_STROKE_DASHOFFSET_ARE_NOT_SUPPORTED);
-                    return null;
-                }
-            }
-
             if (dashArray.size() > 0) {
                 if (dashArray.size() % 2 == 1) {
                     // If an odd number of values is provided, then the list of values is repeated to yield an even
@@ -71,19 +66,16 @@ public final class SvgStrokeParameterConverter {
                 }
                 float[] dashArrayFloat = new float[dashArray.size()];
                 for (int i = 0; i < dashArray.size(); i++) {
-                    dashArrayFloat[i] = CssDimensionParsingUtils.parseAbsoluteLength(dashArray.get(i));
+                    dashArrayFloat[i] = CssDimensionParsingUtils.parseLength(dashArray.get(i), percentBaseValue,
+                            1f, fontSize, rem);
                 }
 
                 // Parse stroke dash offset
                 float dashPhase = 0;
                 if (strokeDashOffset != null && !strokeDashOffset.isEmpty() &&
                         !SvgConstants.Values.NONE.equalsIgnoreCase(strokeDashOffset)) {
-                    if (CssTypesValidationUtils.isPercentageValue(strokeDashOffset)) {
-                        LOGGER.error(SvgLogMessageConstant.
-                                PERCENTAGE_VALUES_IN_STROKE_DASHARRAY_AND_STROKE_DASHOFFSET_ARE_NOT_SUPPORTED);
-                    } else {
-                        dashPhase = CssDimensionParsingUtils.parseAbsoluteLength(strokeDashOffset);
-                    }
+                    dashPhase = CssDimensionParsingUtils.parseLength(strokeDashOffset, percentBaseValue,
+                            1f, fontSize, rem);
                 }
 
                 return new PdfLineDashParameters(dashArrayFloat, dashPhase);

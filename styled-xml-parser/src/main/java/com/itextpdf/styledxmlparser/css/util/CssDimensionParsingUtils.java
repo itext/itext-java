@@ -299,6 +299,30 @@ public final class CssDimensionParsingUtils {
     }
 
     /**
+     * Parse length attributes.
+     *
+     * @param length {@link String} for parsing
+     * @param percentBaseValue the value on which percent length is based on
+     * @param defaultValue default value if length is not recognized
+     * @param fontSize font size of the current element
+     * @param rootFontSize root element font size
+     * @return absolute value in points
+     */
+    public static float parseLength(String length, float percentBaseValue, float defaultValue,
+            float fontSize, float rootFontSize) {
+        if (CssTypesValidationUtils.isPercentageValue(length)) {
+            return CssDimensionParsingUtils.parseRelativeValue(length, percentBaseValue);
+        } else {
+            UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(length, fontSize, rootFontSize);
+            if (unitValue != null && unitValue.isPointValue()) {
+                return unitValue.getValue();
+            } else {
+                return defaultValue;
+            }
+        }
+    }
+
+    /**
      * Parses the absolute font size.
      * <p>
      * A numeric value (without px, pt, etc in the given length string) is considered to be in the default metric that

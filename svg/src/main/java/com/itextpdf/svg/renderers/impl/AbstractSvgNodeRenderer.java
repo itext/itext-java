@@ -344,27 +344,19 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     /**
-     * Parse absolute length.
+     * Parse length attributes.
+     *
      * @param length {@link String} for parsing
-     * @param percentRelativeValue the value on which percent length is based on
+     * @param percentBaseValue the value on which percent length is based on
      * @param defaultValue default value if length is not recognized
      * @param context current {@link SvgDrawContext}
      * @return absolute value in points
      */
-    protected float parseAbsoluteLength(String length, float percentRelativeValue, float defaultValue,
+    protected float parseAbsoluteLength(String length, float percentBaseValue, float defaultValue,
             SvgDrawContext context) {
-        if (CssTypesValidationUtils.isPercentageValue(length)) {
-            return CssDimensionParsingUtils.parseRelativeValue(length, percentRelativeValue);
-        } else {
-            final float em = getCurrentFontSize();
-            final float rem = context.getCssContext().getRootFontSize();
-            UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(length, em, rem);
-            if (unitValue != null && unitValue.isPointValue()) {
-                return unitValue.getValue();
-            } else {
-                return defaultValue;
-            }
-        }
+        final float em = getCurrentFontSize();
+        final float rem = context.getCssContext().getRootFontSize();
+        return CssDimensionParsingUtils.parseLength(length, percentBaseValue, defaultValue, em, rem);
     }
 
     private TransparentColor getColorFromAttributeValue(SvgDrawContext context, String rawColorValue,
@@ -485,7 +477,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             String strokeDashOffsetRawValue = getAttribute(Attributes.STROKE_DASHOFFSET);
             SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters =
                     SvgStrokeParameterConverter.convertStrokeDashParameters(strokeDashArrayRawValue,
-                            strokeDashOffsetRawValue);
+                            strokeDashOffsetRawValue, getCurrentFontSize(), context);
             if (lineDashParameters != null) {
                 currentCanvas.setLineDash(lineDashParameters.getDashArray(), lineDashParameters.getDashPhase());
             }

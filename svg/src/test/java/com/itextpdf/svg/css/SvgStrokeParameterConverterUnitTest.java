@@ -22,11 +22,10 @@
  */
 package com.itextpdf.svg.css;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.svg.css.SvgStrokeParameterConverter.PdfLineDashParameters;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.UnitTest;
 
 import org.junit.Assert;
@@ -36,46 +35,65 @@ import org.junit.experimental.categories.Category;
 @Category(UnitTest.class)
 public class SvgStrokeParameterConverterUnitTest extends ExtendedITextTest {
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    SvgLogMessageConstant.PERCENTAGE_VALUES_IN_STROKE_DASHARRAY_AND_STROKE_DASHOFFSET_ARE_NOT_SUPPORTED)})
     @Test
-    public void testStrokeDashArrayPercentsAreNotSupported() {
-        Assert.assertNull(SvgStrokeParameterConverter.convertStrokeDashParameters("5,3%", null));
+    public void testStrokeDashArrayPercents() {
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("10pt,3%", null,
+                12f, createTextSvgContext());
+        Assert.assertEquals(new PdfLineDashParameters(new float[]{10, 30}, 0), result);
     }
 
     @Test
     public void testStrokeDashArrayOddNumberOfValues() {
-        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt", null);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(0, result.getDashPhase(), 0);
-        Assert.assertArrayEquals(new float[] {5, 5}, result.getDashArray(), 1e-5f);
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt", null,
+                12f, createTextSvgContext());
+        Assert.assertEquals(new PdfLineDashParameters(new float[]{5, 5}, 0), result);
     }
 
     @Test
     public void testEmptyStrokeDashArray() {
-        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("", null);
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("", null,
+                12f, createTextSvgContext());
         Assert.assertNull(result);
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    SvgLogMessageConstant.PERCENTAGE_VALUES_IN_STROKE_DASHARRAY_AND_STROKE_DASHOFFSET_ARE_NOT_SUPPORTED)})
     @Test
-    public void testStrokeDashOffsetPercentsAreNotSupported() {
-        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt,3pt", "10%");
-        Assert.assertEquals(new PdfLineDashParameters(new float[]{5, 3}, 0), result);
+    public void testStrokeDashOffsetPercents() {
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt,3pt", "10%",
+                12f, createTextSvgContext());
+        Assert.assertEquals(new PdfLineDashParameters(new float[]{5, 3}, 100), result);
     }
 
     @Test
     public void testEmptyStrokeDashOffset() {
-        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt,3pt", "");
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt,3pt", "",
+                12f, createTextSvgContext());
         Assert.assertEquals(new PdfLineDashParameters(new float[]{5, 3}, 0), result);
     }
 
     @Test
     public void testStrokeDashOffset() {
-        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt,3pt", "10");
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("5pt,3pt", "10",
+                12f, createTextSvgContext());
         Assert.assertEquals(new PdfLineDashParameters(new float[]{5, 3}, 7.5f), result);
+    }
+
+    @Test
+    public void testStrokeEm() {
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("1em,2em", "0.5em",
+                8f, createTextSvgContext());
+        Assert.assertEquals(new PdfLineDashParameters(new float[]{8, 16}, 4), result);
+    }
+
+    @Test
+    public void testStrokeRem() {
+        PdfLineDashParameters result = SvgStrokeParameterConverter.convertStrokeDashParameters("1rem,2rem", "0.5rem",
+                12f, createTextSvgContext());
+        Assert.assertEquals(new PdfLineDashParameters(new float[]{12, 24}, 6), result);
+    }
+
+    private SvgDrawContext createTextSvgContext() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        context.addViewPort(new Rectangle(1000, 1000));
+        return context;
     }
 }

@@ -59,6 +59,63 @@
            style="stroke: black;stroke-dasharray: 30 10; stroke-dashoffset:10"
    />
 
-   <circle r="60" cx="150" cy="400" fill="none" stroke="teal" stroke-opacity=".5" stroke-width="40" stroke-dasharray="40 40 30 30 20 20 10 10" stroke-dashoffset="5"></circle>
+   <line
+           x1="100"
+           y1="13"
+           x2="230"
+           y2="13"
+           style="stroke: black;stroke-dasharray: 5% 5%"
+   />
 
+   <line
+           x1="100"
+           y1="15"
+           x2="230"
+           y2="15"
+           style="stroke: black;stroke-dasharray: 1em 1em; font-size: 9pt"
+   />
+
+   <line
+           x1="100"
+           y1="17"
+           x2="230"
+           y2="17"
+           style="stroke: black;stroke-dasharray: 1rem 1rem; font-size: 9pt"
+   />
+
+   <line
+           x1="100"
+           y1="19"
+           x2="230"
+           y2="19"
+           style="stroke: black;stroke-dasharray: 5% 5%; stroke-dashoffset: 5%"
+   />
+
+   <line
+           x1="100"
+           y1="21"
+           x2="230"
+           y2="21"
+           style="stroke: black;stroke-dasharray: 1em 1em; stroke-dashoffset: 0.5em; font-size: 9pt"
+   />
+
+   <line
+           x1="100"
+           y1="23"
+           x2="230"
+           y2="23"
+           style="stroke: black;stroke-dasharray: 1rem 1rem; stroke-dashoffset: -0.5rem; font-size: 9pt"
+   />
+
+   <circle
+           r="60"
+           cx="150"
+           cy="400"
+           fill="none"
+           stroke="teal"
+           stroke-opacity=".5"
+           stroke-width="40"
+           stroke-dasharray="30 30 5% 5% 2em 2rem 10 10"
+           stroke-dashoffset="3%"
+   />
 </svg>
