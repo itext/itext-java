@@ -26,6 +26,7 @@ import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
+import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -36,11 +37,14 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.utils.IValidationChecker;
+import com.itextpdf.kernel.utils.ValidationContext;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,7 +67,7 @@ import java.util.Set;
  * standard and its derivates will get their own implementation in the
  * iText - pdfa project.
  */
-public abstract class PdfAChecker {
+public abstract class PdfAChecker implements IValidationChecker {
 
     /**
      * The Red-Green-Blue color profile as defined by the International Color
@@ -169,6 +173,75 @@ public abstract class PdfAChecker {
         checkPages(catalog.getDocument());
         checkOpenAction(catalogDict.get(PdfName.OpenAction));
         checkColorsUsages();
+    }
+
+
+    public void validateDocument(ValidationContext validationContext) {
+        for (PdfFont pdfFont : validationContext.getFonts()) {
+            checkFont(pdfFont);
+        }
+        PdfCatalog catalog = validationContext.getPdfDocument().getCatalog();
+        checkDocument(catalog);
+    }
+
+    public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
+            Object extra) {
+
+        CanvasGraphicsState gState;
+        PdfDictionary currentColorSpaces = null;
+        if (resources != null) {
+            currentColorSpaces = resources.getPdfObject().getAsDictionary(PdfName.ColorSpace);
+        }
+        switch (key) {
+            case CANVAS_STACK:
+                checkCanvasStack((char) obj);
+                break;
+            case PDF_OBJECT:
+                checkPdfObject((PdfObject) obj);
+                break;
+            case RENDERING_INTENT:
+                checkRenderingIntent((PdfName) obj);
+                break;
+            case INLINE_IMAGE:
+                checkInlineImage((PdfStream) obj, currentColorSpaces);
+                break;
+            case EXTENDED_GRAPHICS_STATE:
+                gState = (CanvasGraphicsState) obj;
+                checkExtGState(gState, contentStream);
+                break;
+            case FILL_COLOR:
+                gState = (CanvasGraphicsState) obj;
+                checkColor(gState, gState.getFillColor(), currentColorSpaces, true, contentStream);
+                break;
+            case PAGE:
+                checkSinglePage((PdfPage) obj);
+                break;
+            case STROKE_COLOR:
+                gState = (CanvasGraphicsState) obj;
+                checkColor(gState, gState.getStrokeColor(), currentColorSpaces, false, contentStream);
+                break;
+            case TAG_STRUCTURE_ELEMENT:
+                checkTagStructureElement((PdfObject) obj);
+                break;
+            case FONT_GLYPHS:
+                checkFontGlyphs(((CanvasGraphicsState) obj).getFont(), contentStream);
+                break;
+            case XREF_TABLE:
+                checkXrefTable((PdfXrefTable) obj);
+                break;
+            case SIGNATURE:
+                checkSignature((PdfDictionary) obj);
+                break;
+            case SIGNATURE_TYPE:
+                checkSignatureType(((Boolean) obj).booleanValue());
+                break;
+            case CRYPTO:
+                checkCrypto((PdfObject) obj);
+                break;
+            case FONT:
+                checkText((String) obj, (PdfFont) extra);
+                break;
+        }
     }
 
     /**

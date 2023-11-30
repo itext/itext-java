@@ -26,6 +26,7 @@ package com.itextpdf.kernel.pdf;
  * Type of object to conform.
  */
 public enum IsoKey {
+    // PDF/A Enums
     CANVAS_STACK,
     FILL_COLOR,
     EXTENDED_GRAPHICS_STATE,
@@ -40,5 +41,8 @@ public enum IsoKey {
     SIGNATURE,
     SIGNATURE_TYPE,
     CRYPTO,
-    FONT
+    FONT,
+    // PDF/UA Enums
+    CANVAS_BEGIN_MARKED_CONTENT,
+    CANVAS_WRITING_CONTENT
 }

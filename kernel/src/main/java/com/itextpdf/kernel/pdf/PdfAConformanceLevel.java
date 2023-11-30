@@ -31,7 +31,7 @@ import com.itextpdf.kernel.xmp.properties.XMPProperty;
 /**
  * Enumeration of all the PDF/A conformance levels.
  */
-public class PdfAConformanceLevel {
+public class PdfAConformanceLevel implements IConformanceLevel {
 
     public static final PdfAConformanceLevel PDF_A_1A = new PdfAConformanceLevel("1", "A");
     public static final PdfAConformanceLevel PDF_A_1B = new PdfAConformanceLevel("1", "B");

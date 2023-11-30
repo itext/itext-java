@@ -87,6 +87,15 @@ public class DIContainer {
         return (T) supplier;
     }
 
-
+    /**
+     * Checks if an instance is registered for a class.
+     * If the class is registered but the value is null, it will still return {@code true}.
+     *
+     * @param clazz the class
+     *
+     * @return {@code true} if an instance is registered, {@code false} otherwise
+     */
+    public boolean isRegistered(Class<?> clazz) {
+        return localInstances.containsKey(clazz) || instances.containsKey(clazz);
+    }
 }
-

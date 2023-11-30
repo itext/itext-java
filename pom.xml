@@ -60,6 +60,7 @@
     <module>bouncy-castle-fips-adapter</module>
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
+    <module>pdfua</module>
   </modules>
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
@@ -511,6 +512,8 @@
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                 </excludeModules>
               </parameter>
+              <!-- TODO DEVSIX-7811 Enable japicmp after release -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>

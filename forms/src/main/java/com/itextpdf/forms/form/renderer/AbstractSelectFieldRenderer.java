@@ -242,7 +242,10 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
         if (document == null) {
             return null;
         }
-        return document.getConformanceLevel();
+        if (document.getConformanceLevel() instanceof PdfAConformanceLevel) {
+            return (PdfAConformanceLevel) document.getConformanceLevel();
+        }
+        return null;
     }
 
     protected List<IRenderer> getOptionsMarkedSelected(IRenderer optionsSubTree) {

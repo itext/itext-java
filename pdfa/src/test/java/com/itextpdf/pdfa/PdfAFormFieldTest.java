@@ -80,7 +80,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -662,7 +662,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         docToCopy.close();
         doc2.close();
 
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf));
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER, "diff_"));
 
     }

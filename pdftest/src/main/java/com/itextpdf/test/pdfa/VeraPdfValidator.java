@@ -22,6 +22,11 @@
  */
 package com.itextpdf.test.pdfa;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.verapdf.component.LogsSummary;
@@ -34,21 +39,23 @@ import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 import org.verapdf.processor.BatchProcessor;
+import org.verapdf.processor.FormatOption;
 import org.verapdf.processor.ProcessorConfig;
 import org.verapdf.processor.ProcessorFactory;
 import org.verapdf.processor.TaskType;
 import org.verapdf.processor.plugins.PluginsCollectionConfig;
-import org.verapdf.processor.FormatOption;
 import org.verapdf.processor.reports.BatchSummary;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.EnumSet;
 
 // Android-Conversion-Skip-File (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 public class VeraPdfValidator {
+
+
+    /**
+     * @return the {@link PDFAFlavour} to use for validation
+     */
+    protected PDFAFlavour getSpecification() {
+        return PDFAFlavour.NO_FLAVOUR;
+    }
 
     public String validate(String filePath) {
         String errorMessage = null;
@@ -60,7 +67,7 @@ public class VeraPdfValidator {
             // Initializes default VeraPDF configurations
             ProcessorConfig customProfile = ProcessorFactory.defaultConfig();
             FeatureExtractorConfig featuresConfig = customProfile.getFeatureConfig();
-            ValidatorConfig valConfig = ValidatorFactory.createConfig(PDFAFlavour.NO_FLAVOUR, false, -1, false, true,
+            ValidatorConfig valConfig = ValidatorFactory.createConfig(getSpecification(), false, -1, false, true,
                     Level.WARNING);
             PluginsCollectionConfig plugConfig = customProfile.getPluginsCollectionConfig();
             MetadataFixerConfig metaConfig = customProfile.getFixerConfig();

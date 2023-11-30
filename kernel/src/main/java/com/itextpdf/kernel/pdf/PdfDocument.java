@@ -60,6 +60,8 @@ import com.itextpdf.kernel.pdf.statistics.NumberOfPagesStatisticsEvent;
 import com.itextpdf.kernel.pdf.statistics.SizeOfPdfStatisticsEvent;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.utils.ValidationContainer;
+import com.itextpdf.kernel.utils.ValidationContext;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -1153,11 +1155,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
 
     /**
-     * Get the {@link PdfAConformanceLevel}
+     * Get the {@link IConformanceLevel}
      *
-     * @return the {@link PdfAConformanceLevel}  will be null if the document is not a PDF/A document
+     * @return the {@link IConformanceLevel}  will be null if the document does not have a conformance level specified
      */
-    public PdfAConformanceLevel getConformanceLevel() {
+    public IConformanceLevel getConformanceLevel() {
         return null;
     }
 
@@ -1573,17 +1575,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
      *
      * @param obj An object to conform.
      * @param key type of object to conform.
      */
     public void checkIsoConformance(Object obj, IsoKey key) {
+        checkIsoConformance(obj, key, null, null);
     }
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
      *
      * @param obj           an object to conform.
      * @param key           type of object to conform.
@@ -1591,11 +1592,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @param contentStream current content stream
      */
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
+        checkIsoConformance(obj, key, resources, contentStream, null);
     }
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
      *
      * @param obj           an object to conform.
      * @param key           type of object to conform.
@@ -1605,6 +1606,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
             Object extra) {
+        if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
+            return;
+        }
+        ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
+        if (container == null) {
+            return;
+        }
+        container.validate(obj, key, resources, contentStream, extra);
     }
 
     /**
@@ -1982,10 +1991,20 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
+     * Checks whether PDF document conforms to a specific standard.
      */
     protected void checkIsoConformance() {
+        if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
+            return;
+        }
+        ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
+        if (container == null) {
+            return;
+        }
+        ValidationContext context = new ValidationContext()
+                .withPdfDocument(this)
+                .withFonts(getDocumentFonts());
+        container.validate(context);
     }
 
     /**
