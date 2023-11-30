@@ -68,7 +68,7 @@ public class VeraPdfValidator {
             ProcessorConfig customProfile = ProcessorFactory.defaultConfig();
             FeatureExtractorConfig featuresConfig = customProfile.getFeatureConfig();
             ValidatorConfig valConfig = ValidatorFactory.createConfig(getSpecification(), false, -1, false, true,
-                    Level.WARNING);
+                    Level.WARNING, "", false);
             PluginsCollectionConfig plugConfig = customProfile.getPluginsCollectionConfig();
             MetadataFixerConfig metaConfig = customProfile.getFixerConfig();
             ProcessorConfig resultConfig = ProcessorFactory.fromValues(valConfig, featuresConfig,
