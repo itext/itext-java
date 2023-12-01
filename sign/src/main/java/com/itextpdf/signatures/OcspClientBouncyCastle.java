@@ -183,7 +183,7 @@ public class OcspClientBouncyCastle implements IOcspClient {
             return null;
         }
         InputStream in = createRequestAndResponse(checkCert, rootCert, url);
-        return BOUNCY_CASTLE_FACTORY.createOCSPResp(StreamUtil.inputStreamToArray(in));
+        return in == null ? null : BOUNCY_CASTLE_FACTORY.createOCSPResp(StreamUtil.inputStreamToArray(in));
     }
 
     /**

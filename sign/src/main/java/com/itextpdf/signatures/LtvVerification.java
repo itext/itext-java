@@ -60,12 +60,14 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -334,7 +336,7 @@ public class LtvVerification {
         X509Certificate parent;
         for (Certificate certificate : certs) {
             parent = (X509Certificate) certificate;
-            if (!cert.getIssuerDN().equals(parent.getSubjectDN())) {
+            if (!cert.getIssuerX500Principal().equals(parent.getSubjectX500Principal())) {
                 continue;
             }
             try {
@@ -351,14 +353,16 @@ public class LtvVerification {
             ICrlClient crl, Level level, CertificateInclusion certInclude, CertificateOption certOption,
             ValidationData validationData, Set<X509Certificate> processedCerts)
             throws CertificateException, IOException, CRLException {
-        for (Certificate certificate : certChain) {
+        Certificate[] fullChain = certOption == CertificateOption.ALL_CERTIFICATES ?
+                retrieveMissingCertificates(certChain) : certChain;
+        for (Certificate certificate : fullChain) {
             X509Certificate cert = (X509Certificate) certificate;
             LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
             if ((certOption == CertificateOption.SIGNING_CERTIFICATE && !cert.equals(signingCert))
                     || processedCerts.contains(cert)) {
                 continue;
             }
-            addRevocationDataForCertificate(signingCert, certChain, cert, ocsp, crl, level, certInclude, certOption,
+            addRevocationDataForCertificate(signingCert, fullChain, cert, ocsp, crl, level, certInclude, certOption,
                     validationData, processedCerts);
         }
     }
@@ -596,4 +600,17 @@ public class LtvVerification {
         public List<byte[]> ocsps = new ArrayList<>();
         public List<byte[]> certs = new ArrayList<>();
     }
+
+    private Certificate[] retrieveMissingCertificates(Certificate[] certChain) {
+        Map<String, Certificate> restoredChain = new LinkedHashMap<>();
+        Certificate[] subChain;
+        for (Certificate certificate : certChain) {
+            subChain = issuingCertificateRetriever.retrieveMissingCertificates(new Certificate[]{certificate});
+            for (Certificate cert : subChain) {
+                restoredChain.put(((X509Certificate) cert).getSubjectX500Principal().getName(), cert);
+            }
+        }
+        return restoredChain.values().toArray(new Certificate[0]);
+    }
+
 }

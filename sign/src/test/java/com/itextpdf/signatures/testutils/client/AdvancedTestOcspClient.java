@@ -46,7 +46,7 @@ public class AdvancedTestOcspClient extends OcspClientBouncyCastle {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private final Map<String, TestOcspResponseBuilder> issuerIdToResponseBuilder = new LinkedHashMap<>();
+    private final Map<String, TestOcspResponseBuilder> subjectNameToResponseBuilder = new LinkedHashMap<>();
     
     public AdvancedTestOcspClient(OCSPVerifier verifier) {
         super(verifier);
@@ -57,7 +57,10 @@ public class AdvancedTestOcspClient extends OcspClientBouncyCastle {
             throws IOException, AbstractOperatorCreationException, AbstractOCSPException, CertificateEncodingException {
         IOCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
-        TestOcspResponseBuilder builder = issuerIdToResponseBuilder.get(checkCert.getSerialNumber().toString(16));
+        TestOcspResponseBuilder builder = subjectNameToResponseBuilder.get(checkCert.getSubjectX500Principal().getName());
+        if (builder == null) {
+            return null;
+        }
         try {
             IOCSPResp resp = BOUNCY_CASTLE_FACTORY.createOCSPRespBuilder().build(
                     BOUNCY_CASTLE_FACTORY.createOCSPRespBuilderInstance().getSuccessful(),
@@ -71,13 +74,13 @@ public class AdvancedTestOcspClient extends OcspClientBouncyCastle {
     public AdvancedTestOcspClient addBuilderForCertIssuer(X509Certificate cert, X509Certificate signingCert,
             PrivateKey privateKey)
             throws CertificateEncodingException, IOException {
-        issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16),
+        subjectNameToResponseBuilder.put(cert.getSubjectX500Principal().getName(),
                 new TestOcspResponseBuilder(signingCert, privateKey));
         return this;
     }
 
     public AdvancedTestOcspClient addBuilderForCertIssuer(X509Certificate cert, TestOcspResponseBuilder builder) {
-        issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16), builder);
+        subjectNameToResponseBuilder.put(cert.getSubjectX500Principal().getName(), builder);
         return this;
     }
 }
