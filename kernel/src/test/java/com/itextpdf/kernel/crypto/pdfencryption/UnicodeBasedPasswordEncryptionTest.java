@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.crypto;
+package com.itextpdf.kernel.crypto.pdfencryption;
 
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
@@ -50,10 +50,12 @@ import static org.junit.Assert.fail;
 @Category(BouncyCastleIntegrationTest.class)
 public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/UnicodeBasedPasswordEncryptionTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/UnicodeBasedPasswordEncryptionTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/pdfencryption/UnicodeBasedPasswordEncryptionTest/";
+    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/pdfencryption/UnicodeBasedPasswordEncryptionTest/";
 
     private static Map<String, SaslPreparedString> nameToSaslPrepared;
+
+    PdfEncryptionTestUtils encryptionUtil = new PdfEncryptionTestUtils(destinationFolder,sourceFolder);
 
     static {
         // values are calculated with com.ibm.icu.text.StringPrep class in icu4j v58.2 lib
@@ -200,18 +202,18 @@ public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
     private void encryptAes256AndCheck(String filename, byte[] ownerPassword) throws IOException, InterruptedException {
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         WriterProperties writerProperties = new WriterProperties()
-                .setStandardEncryption(PdfEncryptionTest.USER, ownerPassword, permissions, EncryptionConstants.ENCRYPTION_AES_256)
+                .setStandardEncryption(PdfEncryptionTestUtils.USER, ownerPassword, permissions, EncryptionConstants.ENCRYPTION_AES_256)
                 .setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename, writerProperties.addXmpMetadata());
         PdfDocument document = new PdfDocument(writer);
-        document.getDocumentInfo().setMoreInfo(PdfEncryptionTest.customInfoEntryKey, PdfEncryptionTest.customInfoEntryValue);
+        document.getDocumentInfo().setMoreInfo(PdfEncryptionTestUtils.CUSTOM_INFO_ENTRY_KEY, PdfEncryptionTestUtils.CUSTOM_INFO_ENTRY_VALUE);
         PdfPage page = document.addNewPage();
-        PdfEncryptionTest.writeTextBytesOnPageContent(page, PdfEncryptionTest.pageTextContent);
+        PdfEncryptionTestUtils.writeTextBytesOnPageContent(page, PdfEncryptionTestUtils.PAGE_TEXT_CONTENT);
 
         page.flush();
         document.close();
 
-        PdfEncryptionTest.checkDecryptedWithPasswordContent(destinationFolder + filename, ownerPassword, PdfEncryptionTest.pageTextContent);
+        encryptionUtil.checkDecryptedWithPasswordContent(destinationFolder + filename, ownerPassword, PdfEncryptionTestUtils.PAGE_TEXT_CONTENT);
 
         CompareTool compareTool = new CompareTool().enableEncryptionCompare();
         String compareResult = compareTool.compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_", ownerPassword, ownerPassword);

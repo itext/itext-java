@@ -1018,7 +1018,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 // either writer properties, or in the writer init section on document open or from pdfreader. So we
                 // shouldn't worry about it being null next
                 PdfObject fileId = PdfEncryption.createInfoId(ByteUtils.getIsoBytes(originalDocumentId.getValue()),
-                        ByteUtils.getIsoBytes(modifiedDocumentId.getValue()));
+                        ByteUtils.getIsoBytes(modifiedDocumentId.getValue()), this.properties.preserveEncryption);
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
                 if (writer.getOutputStream() instanceof CountOutputStream) {

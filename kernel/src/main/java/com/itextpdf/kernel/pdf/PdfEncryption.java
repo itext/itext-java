@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.SystemUtil;
+import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.crypto.securityhandler.PubKeySecurityHandler;
@@ -290,20 +291,39 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param firstId the first id
      * @param secondId the second id
+     *
+     * @return PdfObject containing the two entries.
+     * @deprecated Use {@link #createInfoId(byte[], byte[], boolean)} instead
+     */
+    @Deprecated
+    public static PdfObject createInfoId(byte[] firstId, byte[] secondId) {
+        return createInfoId(firstId, secondId, false);
+    }
+
+    /**
+     * Creates a PdfLiteral that contains an array of two id entries. These entries are both hexadecimal
+     * strings containing up to 16 hex characters. The first entry is the original id, the second entry
+     * should be different from the first one if the document has changed.
+     *
+     * @param firstId the first id
+     * @param secondId the second id
+     * @param preserveEncryption the encryption preserve
+     *
      * @return PdfObject containing the two entries.
      */
-    public static PdfObject createInfoId(byte[] firstId, byte[] secondId) {
-        if ( firstId.length < 16 ) {
-            firstId = padByteArrayTo16(firstId);
+    public static PdfObject createInfoId(byte[] firstId, byte[] secondId, boolean preserveEncryption) {
+        if (!preserveEncryption) {
+            if (firstId.length < 16) {
+                firstId = padByteArrayTo16(firstId);
+            }
+
+            if (secondId.length < 16) {
+                secondId = padByteArrayTo16(secondId);
+            }
         }
 
-        if ( secondId.length < 16 ) {
-            secondId = padByteArrayTo16(secondId);
-        }
-
-        com.itextpdf.io.source.ByteBuffer buf = new com.itextpdf.io.source.ByteBuffer(90);
+        ByteBuffer buf = new ByteBuffer(90);
         buf.append('[').append('<');
-
         for (int k = 0; k < firstId.length; ++k)
             buf.appendHex(firstId[k]);
         buf.append('>').append('<');
