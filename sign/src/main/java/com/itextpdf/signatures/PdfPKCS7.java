@@ -1200,9 +1200,11 @@ public class PdfPKCS7 {
                 v.add(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2));
 
                 IASN1EncodableVector aaV2 = BOUNCY_CASTLE_FACTORY.createASN1EncodableVector();
-                IAlgorithmIdentifier algoId = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
-                        BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
-                aaV2.add(algoId);
+                if (!digestAlgorithmOid.equals(SecurityIDs.ID_SHA256)) {
+                    IAlgorithmIdentifier algoId = BOUNCY_CASTLE_FACTORY.createAlgorithmIdentifier(
+                            BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(digestAlgorithmOid));
+                    aaV2.add(algoId);
+                }
                 MessageDigest md = SignUtils.getMessageDigest(getDigestAlgorithmName(), interfaceDigest);
                 byte[] dig = md.digest(signCert.getEncoded());
                 aaV2.add(BOUNCY_CASTLE_FACTORY.createDEROctetString(dig));
