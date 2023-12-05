@@ -204,7 +204,7 @@ public class MemoryLimitsAwareHandler {
     public void checkIfXrefStructureExceedsTheLimit(int requestedCapacity) {
         // Objects in xref structures are using 1-based indexes, so to store maxNumberOfElementsInXrefStructure
         // amount of elements we need maxNumberOfElementsInXrefStructure + 1 capacity.
-        if (requestedCapacity - 1 > maxNumberOfElementsInXrefStructure) {
+        if (requestedCapacity - 1 > maxNumberOfElementsInXrefStructure || requestedCapacity < 0) {
             throw new MemoryLimitsAwareException(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT);
         }
     }

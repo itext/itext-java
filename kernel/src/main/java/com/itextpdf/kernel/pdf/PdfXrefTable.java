@@ -27,6 +27,8 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -435,7 +437,7 @@ public class PdfXrefTable {
         // ensure zero object is free
         xref[0].setState(PdfObject.FREE);
         TreeSet<Integer> freeReferences = new TreeSet<>();
-        for (int i = 1; i < size(); ++i) {
+        for (int i = 1; i < size() && i < xref.length; ++i) {
             PdfIndirectReference ref = xref[i];
             if (ref == null || ref.isFree()) {
                 freeReferences.add(i);
