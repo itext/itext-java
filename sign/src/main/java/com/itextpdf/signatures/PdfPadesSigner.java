@@ -117,7 +117,7 @@ public class PdfPadesSigner {
     public void signWithBaselineBProfile(SignerProperties signerProperties, Certificate[] chain, PrivateKey privateKey)
             throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineBProfile(signerProperties, chain, externalSignature);
     }
 
@@ -151,7 +151,7 @@ public class PdfPadesSigner {
     public void signWithBaselineTProfile(SignerProperties signerProperties, Certificate[] chain, PrivateKey privateKey,
             ITSAClient tsaClient) throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineTProfile(signerProperties, chain, externalSignature, tsaClient);
     }
 
@@ -196,7 +196,7 @@ public class PdfPadesSigner {
     public void signWithBaselineLTProfile(SignerProperties signerProperties, Certificate[] chain, PrivateKey privateKey,
             ITSAClient tsaClient) throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineLTProfile(signerProperties, chain, externalSignature, tsaClient);
     }
 
@@ -242,7 +242,7 @@ public class PdfPadesSigner {
     public void signWithBaselineLTAProfile(SignerProperties signerProperties, Certificate[] chain,
             PrivateKey privateKey, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineLTAProfile(signerProperties, chain, externalSignature, tsaClient);
     }
 
@@ -513,6 +513,18 @@ public class PdfPadesSigner {
         }
         if (ocspClient == null) {
             ocspClient = new OcspClientBouncyCastle(null);
+        }
+    }
+
+    private String getDigestAlgorithm(PrivateKey privateKey) {
+        String signatureAlgorithm = SignUtils.getPrivateKeyAlgorithm(privateKey);
+        switch (signatureAlgorithm) {
+            case "Ed25519":
+                return DigestAlgorithms.SHA512;
+            case "Ed448":
+                return DigestAlgorithms.SHAKE256;
+            default:
+                return DEFAULT_DIGEST_ALGORITHM;
         }
     }
 }

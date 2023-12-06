@@ -22,12 +22,15 @@
  */
 package com.itextpdf.bouncycastlefips.openssl;
 
+import com.itextpdf.bouncycastlefips.asn1.pcks.PrivateKeyInfoBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509CertificateHolderBCFips;
 import com.itextpdf.bouncycastlefips.pkcs.PKCS8EncryptedPrivateKeyInfoBCFips;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
@@ -67,6 +70,9 @@ public class PEMParserBCFips implements IPEMParser {
         }
         if (readObject instanceof PKCS8EncryptedPrivateKeyInfo) {
             return new PKCS8EncryptedPrivateKeyInfoBCFips((PKCS8EncryptedPrivateKeyInfo) readObject);
+        }
+        if (readObject instanceof PrivateKeyInfo) {
+            return new PrivateKeyInfoBCFips((PrivateKeyInfo) readObject);
         }
         return readObject;
     }

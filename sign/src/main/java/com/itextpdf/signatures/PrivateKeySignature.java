@@ -27,7 +27,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 
