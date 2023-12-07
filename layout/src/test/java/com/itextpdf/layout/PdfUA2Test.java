@@ -30,8 +30,13 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PageLabelNumberingStyle;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
@@ -39,6 +44,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -581,13 +587,13 @@ public class PdfUA2Test extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + "bibliographicEntryTest.pdf";
         String cmpFile = SOURCE_FOLDER + "cmp_bibliographicEntryTest.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             Document document = new Document(pdfDocument);
             PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
-
 
             Paragraph section = new Paragraph("Bibliography section:\n");
             section.getAccessibilityProperties().setRole(StandardRoles.SECT);
@@ -596,6 +602,116 @@ public class PdfUA2Test extends ExtendedITextTest {
                     StandardNamespaces.PDF_1_7));
             section.add(bibliography);
             document.add(section);
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkMetadataNoTitleTest() throws IOException, XMPException {
+        String outFile = DESTINATION_FOLDER + "pdfuaMetadataNoTitleTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "simplePdfUA2.xmp"));
+            XMPMeta xmpMeta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
+            pdfDocument.setXmpMetadata(xmpMeta);
+            pdfDocument.setTagged();
+            pdfDocument.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+            pdfDocument.getCatalog().setLang(new PdfString("en-US"));
+        }
+        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void checkMetadataDisplayDocTitleFalseTest() throws IOException, XMPException {
+        String outFile = DESTINATION_FOLDER + "pdfuaMetadataDisplayDocTitleFalseTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "simplePdfUA2.xmp"));
+            XMPMeta xmpMeta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
+            pdfDocument.setXmpMetadata(xmpMeta);
+            pdfDocument.setTagged();
+            pdfDocument.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(false));
+            pdfDocument.getCatalog().setLang(new PdfString("en-US"));
+            PdfDocumentInfo info = pdfDocument.getDocumentInfo();
+            info.setTitle("PdfUA2 Title");
+        }
+        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void checkMetadataNoViewerPrefTest() throws IOException, XMPException {
+        String outFile = DESTINATION_FOLDER + "pdfuaMetadataNoViewerPrefTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "simplePdfUA2.xmp"));
+            XMPMeta xmpMeta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
+            pdfDocument.setXmpMetadata(xmpMeta);
+            pdfDocument.setTagged();
+            pdfDocument.getCatalog().setLang(new PdfString("en-US"));
+            PdfDocumentInfo info = pdfDocument.getDocumentInfo();
+            info.setTitle("PdfUA2 Title");
+        }
+        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void checkEmbeddedFileTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "pdfuaEmbeddedFileTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_pdfuaEmbeddedFileTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            createSimplePdfUA2Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            Paragraph paragraph = new Paragraph("Hello PdfUA2").setFont(font);
+            new Document(pdfDocument).add(paragraph);
+            PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, SOURCE_FOLDER + "sample.wav", "sample.wav", "sample", null, null);
+            pdfDocument.addFileAttachment("specificname", spec);
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkEmbeddedFileNoDescTest() throws IOException, XMPException {
+        String outFile = DESTINATION_FOLDER + "pdfuaEmbeddedFileNoDescTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            createSimplePdfUA2Document(pdfDocument);
+            PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, SOURCE_FOLDER + "sample.wav", "sample.wav", "sample", null, null);
+            ((PdfDictionary) spec.getPdfObject()).remove(PdfName.Desc);
+            pdfDocument.addFileAttachment("specificname", spec);
+        }
+        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void checkPageLabelTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "pdfuaPageLabelTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_pdfuaPageLabelTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            createSimplePdfUA2Document(pdfDocument);
+            PdfPage pdfPage = pdfDocument.addNewPage();
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            Paragraph paragraph = new Paragraph("Hello PdfUA2").setFont(font);
+            new Document(pdfDocument).add(paragraph);
+            pdfPage.setPageLabel(PageLabelNumberingStyle.DECIMAL_ARABIC_NUMERALS, null, 1);
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkPageNumberAndLabelTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "pdfuaPageNumLabelTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_pdfuaPageNumLabelTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            createSimplePdfUA2Document(pdfDocument);
+            Document document = new Document(pdfDocument);
+            PdfPage pdfPage = pdfDocument.addNewPage();
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            Paragraph paragraph = new Paragraph("Hello PdfUA2").setFont(font);
+            document.add(paragraph);
+            pdfPage.getPdfObject().getAsStream(PdfName.Contents).put(PdfName.PageNum, new PdfNumber(5));
+            pdfPage.setPageLabel(PageLabelNumberingStyle.DECIMAL_ARABIC_NUMERALS, null, 5);
         }
         compareAndValidate(outFile, cmpFile);
     }
