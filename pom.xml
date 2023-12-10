@@ -362,6 +362,10 @@
               <packages>com.itextpdf.pdfa*</packages>
             </group>
             <group>
+              <title>PDF/UA</title>
+              <packages>com.itextpdf.pdfua*</packages>
+            </group>
+            <group>
               <title>Signatures</title>
               <packages>com.itextpdf.signatures*</packages>
             </group>
