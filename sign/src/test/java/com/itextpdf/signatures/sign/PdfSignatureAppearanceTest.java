@@ -30,6 +30,7 @@ import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -575,6 +576,47 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
     }
 
+    @Test
+    public void reuseAppearanceTest() throws GeneralSecurityException,
+            IOException, InterruptedException {
+        // Field is not merged with widget and has /P key
+        String src = SOURCE_FOLDER + "emptyFieldNotMerged.pdf";
+        String fileName = "reuseAppearance.pdf";
+        testReuseAppearance(src, fileName, false, true, false);
+    }
+
+    @Test
+    public void reuseAppearanceDeprecatedTest() throws GeneralSecurityException,
+            IOException, InterruptedException {
+        // Field is not merged with widget and has /P key
+        String src = SOURCE_FOLDER + "emptyFieldNotMerged.pdf";
+        String fileName = "reuseAppearanceDeprecated.pdf";
+        testReuseAppearance(src, fileName, true, false, true);
+    }
+
+    @Test
+    public void reuseAppearanceCompatibilityTest() throws GeneralSecurityException,
+            IOException, InterruptedException {
+        // Field is not merged with widget and has /P key
+        String src = SOURCE_FOLDER + "emptyFieldNotMerged.pdf";
+        String fileName = "reuseAppearanceCompatibility.pdf";
+        testReuseAppearance(src, fileName, true, true, false);
+    }
+
+    @Test
+    public void fieldLayersTest() throws IOException, GeneralSecurityException {
+        String src = SOURCE_FOLDER + "noSignatureField.pdf";
+        String fileName = "fieldLayersTest.pdf";
+        testLayers(src, fileName, false);
+    }
+
+    @Test
+    public void deprecatedLayersTest() throws IOException, GeneralSecurityException {
+        String src = SOURCE_FOLDER + "noSignatureField.pdf";
+        String fileName = "deprecatedLayersTest.pdf";
+        testLayers(src, fileName, true);
+    }
+
     private static void compareSignatureAppearances(String outPdf, String cmpPdf) throws IOException {
         ITextTest.printOutCmpPdfNameAndDir(outPdf, cmpPdf);
         try (PdfDocument outDoc = new PdfDocument(new PdfReader(outPdf))) {
@@ -588,6 +630,94 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
                 Assert.assertNull(new CompareTool().compareDictionariesStructure(outN, cmpN));
             }
         }
+    }
+
+    private void testReuseAppearance(String src, String fileName, boolean useDeprecated, boolean fieldReuseAp,
+                                     boolean deprecatedReuseAp) throws IOException, GeneralSecurityException, InterruptedException {
+        String cmp = SOURCE_FOLDER + "cmp_" + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
+        String fieldName = "Signature1";
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        signer.setFieldName(fieldName);
+        signer.getSignatureField().setReuseAppearance(fieldReuseAp);
+        if (useDeprecated) {
+            signer.getSignatureAppearance().setReuseAppearance(deprecatedReuseAp);
+        }
+
+        signer.setReason("Test 1").setLocation("TestCity")
+                .setSignatureAppearance(new SignatureFieldAppearance(fieldName)
+                        .setContent("New appearance").setFontColor(ColorConstants.GREEN));
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_"));
+    }
+
+    private void testLayers(String src, String fileName, boolean useDeprecated)
+            throws IOException, GeneralSecurityException {
+        String dest = DESTINATION_FOLDER + fileName;
+        String fieldName = "Signature1";
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        signer.setFieldName(fieldName);
+        signer.setPageRect(new Rectangle(250, 500, 100, 100)).setReason("Test 1").setLocation("TestCity")
+                .setSignatureAppearance(new SignatureFieldAppearance(fieldName));
+
+        PdfFormXObject layer0 = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        // Draw pink rectangle with blue border
+        new PdfCanvas(layer0, signer.getDocument())
+                .saveState()
+                .setFillColor(ColorConstants.PINK)
+                .setStrokeColor(ColorConstants.BLUE)
+                .rectangle(0, 0, 100, 100)
+                .fillStroke()
+                .restoreState();
+
+        PdfFormXObject layer2 = new PdfFormXObject(new Rectangle(0, 0, 100, 100));
+        // Draw yellow circle with gray border
+        new PdfCanvas(layer2, signer.getDocument())
+                .saveState()
+                .setFillColor(ColorConstants.YELLOW)
+                .setStrokeColor(ColorConstants.DARK_GRAY)
+                .circle(50, 50, 50)
+                .fillStroke()
+                .restoreState();
+
+        signer.getSignatureField().setBackgroundLayer(layer0).setSignatureAppearanceLayer(layer2);
+
+        if (useDeprecated) {
+            // Creating the appearance
+            PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+
+            PdfFormXObject deprecatedLayer0 = appearance.getLayer0();
+            // Draw yellow rectangle with gray border
+            new PdfCanvas(deprecatedLayer0, signer.getDocument())
+                    .saveState()
+                    .setFillColor(ColorConstants.YELLOW)
+                    .setStrokeColor(ColorConstants.DARK_GRAY)
+                    .rectangle(0, 0, 100, 100)
+                    .fillStroke()
+                    .restoreState();
+
+            PdfFormXObject deprecatedLayer2 = appearance.getLayer2();
+            // Draw pink circle with blue border
+            new PdfCanvas(deprecatedLayer2, signer.getDocument())
+                    .saveState()
+                    .setFillColor(ColorConstants.PINK)
+                    .setStrokeColor(ColorConstants.BLUE)
+                    .circle(50, 50, 50)
+                    .fillStroke()
+                    .restoreState();
+        }
+
+        // Signing
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        compareSignatureAppearances(dest, SOURCE_FOLDER + "cmp_" + fileName);
     }
 
     private void testSignatureOnRotatedPage(int pageNum, PdfSignatureAppearance.RenderingMode renderingMode,

@@ -188,6 +188,9 @@ public class PdfSignatureAppearance {
      * Indicates if we need to reuse the existing appearance as layer 0.
      */
     private boolean reuseAppearance = false;
+    // Option for backward compatibility.
+    private boolean reuseAppearanceSet = false;
+
 
     /**
      * Creates a PdfSignatureAppearance.
@@ -546,6 +549,7 @@ public class PdfSignatureAppearance {
     @Deprecated
     public PdfSignatureAppearance setReuseAppearance(boolean reuseAppearance) {
         this.reuseAppearance = reuseAppearance;
+        this.reuseAppearanceSet = true;
         return this;
     }
 
@@ -866,6 +870,16 @@ public class PdfSignatureAppearance {
      */
     boolean isReuseAppearance() {
         return reuseAppearance;
+    }
+
+    /**
+     * Checks if reuseAppearance value was set using {@link this#setReuseAppearance(boolean)}.
+     * Used for backward compatibility.
+     *
+     * @return boolean value.
+     */
+    boolean isReuseAppearanceSet() {
+        return reuseAppearanceSet;
     }
 
     /**

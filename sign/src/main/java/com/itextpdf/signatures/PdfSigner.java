@@ -209,6 +209,11 @@ public class PdfSigner {
     protected boolean closed = false;
 
     /**
+     * AcroForm for the PdfDocument.
+     */
+    private final PdfAcroForm acroForm;
+
+    /**
      * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
      *
      * @param reader       PdfReader that reads the PDF file
@@ -241,6 +246,7 @@ public class PdfSigner {
             this.tempFile = FileUtil.createTempFile(path);
             document = initDocument(reader, new PdfWriter(FileUtil.getFileOutputStream(tempFile)), localProps);
         }
+        acroForm = PdfFormCreator.getAcroForm(document, true);
 
         originalOS = outputStream;
         fieldName = getNewSigFieldName();
@@ -255,6 +261,7 @@ public class PdfSigner {
             this.tempFile = tempFile;
         }
         this.document = document;
+        this.acroForm = PdfFormCreator.getAcroForm(document, true);
         this.originalOS = outputStream;
         this.fieldName = getNewSigFieldName();
         this.appearance = new PdfSignatureAppearance(document, new Rectangle(0, 0), 1);
@@ -385,7 +392,6 @@ public class PdfSigner {
      * @return A new signature field name.
      */
     public String getNewSigFieldName() {
-        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
         String name = "Signature";
         int step = 1;
 
@@ -404,8 +410,6 @@ public class PdfSigner {
      */
     public void setFieldName(String fieldName) {
         if (fieldName != null) {
-            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
-
             PdfFormField field = acroForm.getField(fieldName);
             if (field != null) {
                 if (!PdfName.Sig.equals(field.getFormType())) {
@@ -431,7 +435,7 @@ public class PdfSigner {
                 }
             }
 
-            appearance.setFieldName(fieldName);
+            this.appearance.setFieldName(fieldName);
             this.fieldName = fieldName;
         }
     }
@@ -620,6 +624,31 @@ public class PdfSigner {
     public PdfSigner setLocation(String location) {
         appearance.setLocation(location);
         return this;
+    }
+
+    /**
+     * Gets the signature field to be signed. The field can already be presented in the document. If the field is
+     * not presented in the document, it will be created.
+     *
+     * <p>
+     * This field instance is expected to be used for setting appearance related properties such as
+     * {@link PdfSignatureFormField#setReuseAppearance}, {@link PdfSignatureFormField#setBackgroundLayer} and
+     * {@link PdfSignatureFormField#setSignatureAppearanceLayer}.
+     *
+     * @return the {@link PdfSignatureFormField} instance.
+     */
+    public PdfSignatureFormField getSignatureField() {
+        PdfFormField field = acroForm.getField(fieldName);
+        if (field == null) {
+            PdfSignatureFormField sigField = new SignatureFormFieldBuilder(document, fieldName)
+                    .setWidgetRectangle(getPageRect()).createSignature();
+            acroForm.addField(sigField);
+            return sigField;
+        }
+        if (field instanceof PdfSignatureFormField) {
+            return (PdfSignatureFormField) field;
+        }
+        return null;
     }
 
     /**
@@ -1036,7 +1065,6 @@ public class PdfSigner {
             throw new PdfException(SignExceptionMessageConstant.DOCUMENT_ALREADY_PRE_CLOSED);
         }
         preClosed = true;
-        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
         SignatureUtil sgnUtil = new SignatureUtil(document);
         String name = getFieldName();
         boolean fieldExist = sgnUtil.doesSignatureFieldExist(name);
@@ -1149,7 +1177,6 @@ public class PdfSigner {
      */
     protected PdfSigFieldLock populateExistingSignatureFormField(PdfAcroForm acroForm) throws IOException {
         PdfSignatureFormField sigField = (PdfSignatureFormField) acroForm.getField(fieldName);
-        sigField.put(PdfName.V, cryptoDictionary.getPdfObject());
 
         PdfSigFieldLock sigFieldLock = sigField.getSigFieldLockDictionary();
 
@@ -1172,9 +1199,15 @@ public class PdfSigner {
         sigField.put(PdfName.F, new PdfNumber(flags));
 
         sigField.disableFieldRegeneration();
-        sigField.setReuseAppearance(appearance.isReuseAppearance())
-                .setSignatureAppearanceLayer(appearance.getSignatureAppearanceLayer())
-                .setBackgroundLayer(appearance.getBackgroundLayer());
+        if (appearance.isReuseAppearanceSet()) {
+            sigField.setReuseAppearance(appearance.isReuseAppearance());
+        }
+        if (appearance.getSignatureAppearanceLayer() != null) {
+            sigField.setSignatureAppearanceLayer(appearance.getSignatureAppearanceLayer());
+        }
+        if (appearance.getBackgroundLayer() != null) {
+            sigField.setBackgroundLayer(appearance.getBackgroundLayer());
+        }
         sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getSignatureAppearance());
         sigField.enableFieldRegeneration();
 
@@ -1382,24 +1415,21 @@ public class PdfSigner {
             urSignature = catalogPerms.getAsDictionary(PdfName.UR3);
         }
 
-        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, false);
-        if (acroForm != null) {
-            for (Map.Entry<String, PdfFormField> entry : acroForm.getAllFormFields().entrySet()) {
-                PdfDictionary fieldDict = entry.getValue().getPdfObject();
-                if (!PdfName.Sig.equals(fieldDict.get(PdfName.FT)))
-                    continue;
-                PdfDictionary sigDict = fieldDict.getAsDictionary(PdfName.V);
-                if (sigDict == null)
-                    continue;
-                PdfSignature pdfSignature = new PdfSignature(sigDict);
-                if (pdfSignature.getContents() == null || pdfSignature.getByteRange() == null) {
-                    continue;
-                }
+        for (Map.Entry<String, PdfFormField> entry : acroForm.getAllFormFields().entrySet()) {
+            PdfDictionary fieldDict = entry.getValue().getPdfObject();
+            if (!PdfName.Sig.equals(fieldDict.get(PdfName.FT)))
+                continue;
+            PdfDictionary sigDict = fieldDict.getAsDictionary(PdfName.V);
+            if (sigDict == null)
+                continue;
+            PdfSignature pdfSignature = new PdfSignature(sigDict);
+            if (pdfSignature.getContents() == null || pdfSignature.getByteRange() == null) {
+                continue;
+            }
 
-                if (!pdfSignature.getType().equals(PdfName.DocTimeStamp) && sigDict != urSignature) {
-                    containsCertificationOrApprovalSignature = true;
-                    break;
-                }
+            if (!pdfSignature.getType().equals(PdfName.DocTimeStamp) && sigDict != urSignature) {
+                containsCertificationOrApprovalSignature = true;
+                break;
             }
         }
         return containsCertificationOrApprovalSignature;
