@@ -45,16 +45,20 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.List;
@@ -88,7 +92,6 @@ public class PdfUA2Test extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
-
 
     @Test
     public void checkXmpMetadataTest() throws IOException, XMPException, InterruptedException {
@@ -712,6 +715,43 @@ public class PdfUA2Test extends ExtendedITextTest {
             document.add(paragraph);
             pdfPage.getPdfObject().getAsStream(PdfName.Contents).put(PdfName.PageNum, new PdfNumber(5));
             pdfPage.setPageLabel(PageLabelNumberingStyle.DECIMAL_ARABIC_NUMERALS, null, 5);
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkStructureDestinationTest() throws IOException, InterruptedException, XMPException {
+        String outFile = DESTINATION_FOLDER + "structureDestination01Test.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_structureDestination01Test.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+
+            Paragraph paragraph = new Paragraph("Some text");
+            document.add(paragraph);
+
+            // Now add a link to the paragraph
+            TagStructureContext context = pdfDocument.getTagStructureContext();
+            TagTreePointer tagPointer = context.getAutoTaggingPointer();
+            PdfStructElem structElem = context.getPointerStructElem(tagPointer);
+
+            PdfLinkAnnotation linkExplicitDest = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+            PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
+            PdfAction gotoStructAction = PdfAction.createGoTo(dest);
+            gotoStructAction.put(PdfName.SD, dest.getPdfObject());
+            linkExplicitDest.setAction(gotoStructAction);
+
+            document.add(new AreaBreak());
+
+            Link linkElem = new Link("Link to paragraph", linkExplicitDest);
+            linkElem.getAccessibilityProperties().setRole(StandardRoles.LINK);
+            linkElem.getAccessibilityProperties().setAlternateDescription("Some text");
+
+            document.add(new Paragraph(linkElem));
         }
         compareAndValidate(outFile, cmpFile);
     }

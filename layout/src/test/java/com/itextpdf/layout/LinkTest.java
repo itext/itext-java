@@ -22,14 +22,18 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
@@ -72,7 +76,7 @@ public class LinkTest extends ExtendedITextTest {
 
     @BeforeClass
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @Test
@@ -392,4 +396,69 @@ public class LinkTest extends ExtendedITextTest {
         Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
+    @Test
+    public void intraForwardLinkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "intraForwardLink.pdf";
+        String cmpFileName = sourceFolder + "cmp_intraForwardLink.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDoc.setTagged();
+        Document doc = new Document(pdfDoc);
+
+        PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))
+                .setAction(PdfAction.createGoTo("custom"));
+
+        Paragraph text = new Paragraph("Link to custom text");
+        text.setProperty(Property.LINK_ANNOTATION, linkAnnotation);
+        doc.add(text);
+
+        doc.add(new AreaBreak());
+
+        pdfDoc.getPage(1).flush();
+
+        doc.add(text);
+
+        Paragraph customText = new Paragraph("Custom text");
+        customText.setProperty(Property.DESTINATION, new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        doc.add(customText);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void intraBackwardLinkTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "intraBackwardLink.pdf";
+        String cmpFileName = sourceFolder + "cmp_intraBackwardLink.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDoc.setTagged();
+        Document doc = new Document(pdfDoc);
+
+        PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))
+                .setAction(PdfAction.createGoTo("custom"));
+
+        Paragraph customText = new Paragraph("Custom text");
+        customText.setProperty(Property.DESTINATION, new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        doc.add(customText);
+
+        doc.add(new AreaBreak());
+        pdfDoc.getPage(1).flush();
+
+        Paragraph text = new Paragraph("Link to custom text");
+        text.setProperty(Property.LINK_ANNOTATION, linkAnnotation);
+        doc.add(text);
+
+        doc.add(new AreaBreak());
+        pdfDoc.getPage(2).flush();
+
+        doc.add(text);
+
+        doc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }
