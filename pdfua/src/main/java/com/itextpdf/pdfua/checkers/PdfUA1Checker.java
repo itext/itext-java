@@ -31,9 +31,15 @@ import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.utils.IValidationChecker;
 import com.itextpdf.kernel.utils.ValidationContext;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -41,6 +47,7 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -54,6 +61,8 @@ public class PdfUA1Checker implements IValidationChecker {
 
     private final PdfDocument pdfDocument;
 
+    private final TagStructureContext tagStructureContext;
+
     /**
      * Creates PdfUA1Checker instance with PDF document which will be validated against PDF/UA-1 standard.
      *
@@ -61,6 +70,7 @@ public class PdfUA1Checker implements IValidationChecker {
      */
     public PdfUA1Checker(PdfDocument pdfDocument) {
         this.pdfDocument = pdfDocument;
+        this.tagStructureContext = new TagStructureContext(pdfDocument);
     }
 
     /**
@@ -69,6 +79,7 @@ public class PdfUA1Checker implements IValidationChecker {
     @Override
     public void validateDocument(ValidationContext validationContext) {
         checkCatalog(validationContext.getPdfDocument().getCatalog());
+        checkStructureTreeRoot(validationContext.getPdfDocument().getStructTreeRoot());
         checkFonts(validationContext.getFonts());
     }
 
@@ -107,12 +118,13 @@ public class PdfUA1Checker implements IValidationChecker {
     }
 
     private void checkOnOpeningBeginMarkedContent(Object obj, Object extra) {
+        Tuple2<PdfName, PdfDictionary> currentBmc = (Tuple2<PdfName, PdfDictionary>) extra;
+        checkStandardRoleMapping(currentBmc);
+
         Stack<Tuple2<PdfName, PdfDictionary>> stack = getTagStack(obj);
         if (stack.isEmpty()) {
             return;
         }
-
-        Tuple2<PdfName, PdfDictionary> currentBmc = (Tuple2<PdfName, PdfDictionary>) extra;
 
         boolean isRealContent = isRealContent(currentBmc);
         boolean isArtifact = PdfName.Artifact.equals(currentBmc.getFirst());
@@ -122,6 +134,15 @@ public class PdfUA1Checker implements IValidationChecker {
         }
         if (isRealContent && isInsideArtifact(stack)) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.REAL_CONTENT_CANT_BE_INSIDE_ARTIFACT);
+        }
+    }
+
+    private void checkStandardRoleMapping(Tuple2<PdfName, PdfDictionary> tag) {
+        final PdfNamespace namespace = tagStructureContext.getDocumentDefaultNamespace();
+        final String role = tag.getFirst().getValue();
+        if (!StandardRoles.ARTIFACT.equals(role) && !tagStructureContext.checkIfRoleShallBeMappedToStandardRole(role, namespace)) {
+            throw new PdfUAConformanceException(
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, role));
         }
     }
 
@@ -171,6 +192,19 @@ public class PdfUA1Checker implements IValidationChecker {
             if (markInfoSuspects != null && markInfoSuspects.getValue()) {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE);
+            }
+        }
+    }
+
+    private void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
+        PdfDictionary roleMap = structTreeRoot.getRoleMap();
+        for (Map.Entry<PdfName, PdfObject> entry : roleMap.entrySet()) {
+            final String role = entry.getKey().getValue();
+            final IRoleMappingResolver roleMappingResolver = pdfDocument.getTagStructureContext()
+                    .getRoleMappingResolver(role);
+
+            if (roleMappingResolver.currentRoleIsStandard()) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ONE_OR_MORE_STANDARD_ROLE_REMAPPED);
             }
         }
     }

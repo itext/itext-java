@@ -432,7 +432,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         canvas
                 .saveState()
-                .openTag(new CanvasTag(PdfName.Rect))
+                .openTag(new CanvasTag(PdfName.Art))
                 .setFillColor(ColorConstants.RED);
         Exception e = Assert.assertThrows(PdfUAConformanceException.class, () -> {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
