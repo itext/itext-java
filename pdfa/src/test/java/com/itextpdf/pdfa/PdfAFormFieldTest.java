@@ -32,11 +32,13 @@ import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
+import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.CheckBox;
 import com.itextpdf.forms.form.element.ComboBoxField;
@@ -44,6 +46,7 @@ import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.form.element.InputField;
 import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -664,6 +667,41 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assert.assertNull(new CompareTool().compareByContent(outPdf, cmp, DESTINATION_FOLDER, "diff_"));
+
+    }
+
+    @Test
+    public void pdfASignatureFieldTestWithAndFontText() throws IOException, InterruptedException {
+        String name = "pdfASignatureFieldTestWithText";
+        String fileName = DESTINATION_FOLDER + name + ".pdf";
+        String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfASignatureFieldTestWithText.pdf";
+
+        PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+                "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+
+        makePdfDocument(fileName, cmp, (pdfDoc) -> {
+            SignatureFieldAppearance signatureFieldAppearance = new SignatureFieldAppearance("Signature1");
+            signatureFieldAppearance.setContent(new SignedAppearanceText().setLocationLine("HEEELLLLLO"));
+            signatureFieldAppearance.setInteractive(true);
+            signatureFieldAppearance.setFont(fontFreeSans);
+            pdfDoc.add(signatureFieldAppearance);
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc.getPdfDocument(), true);
+            SignatureFormFieldBuilder signatureFormFieldBuilder = new SignatureFormFieldBuilder(pdfDoc.getPdfDocument(),
+                    "Signature2");
+
+            SignatureFieldAppearance signatureFieldAppearance2 = new SignatureFieldAppearance("Signature2");
+            signatureFieldAppearance2.setContent(new SignedAppearanceText().setLocationLine("Byeeee"));
+            signatureFieldAppearance2.setInteractive(true);
+
+            PdfSignatureFormField signatureFormField = signatureFormFieldBuilder.setWidgetRectangle(
+                            new Rectangle(200, 200, 40, 40))
+                    .setFont(fontFreeSans)
+                    .setConformanceLevel(PdfAConformanceLevel.PDF_A_4)
+                    .createSignature();
+            signatureFormField.getFirstFormAnnotation().setFormFieldElement(signatureFieldAppearance2);
+            form.addField(signatureFormField);
+
+        });
 
     }
 

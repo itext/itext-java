@@ -1100,6 +1100,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (parent instanceof PdfButtonFormField) {
             return ((PdfButtonFormField) parent).isPushButton();
         }
+        if (parent instanceof PdfSignatureFormField) {
+            return false;
+        }
         return true;
     }
 

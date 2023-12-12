@@ -1542,7 +1542,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             return true;
         } else {
-            throw new IllegalStateException("Invalid FONT property value type.");
+            throw new IllegalStateException(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE);
         }
     }
 

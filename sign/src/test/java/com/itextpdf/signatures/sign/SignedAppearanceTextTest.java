@@ -27,14 +27,32 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
+import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
@@ -46,12 +64,9 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.itextpdf.test.pdfa.VeraPdfValidator;  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -63,6 +78,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(BouncyCastleIntegrationTest.class)
 public class SignedAppearanceTextTest extends ExtendedITextTest {
@@ -70,6 +90,8 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/SignedAppearanceTextTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/signatures/font/";
+    private static final String PDFA_FOLDER = "./src/test/resources/com/itextpdf/signatures/pdfa/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/SignedAppearanceTextTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
@@ -108,6 +130,137 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
                 getTestMap(new Rectangle(36, 676, 200, 15))));
 
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+    @Test
+    public void signPDFADocumentWithoutSettingFont() throws IOException {
+        String srcFile = DESTINATION_FOLDER + "simplePDFA.pdf";
+        createSimplePDFADocument(srcFile).close();
+
+        Rectangle rect = new Rectangle(50, 70, 400, 200);
+        String fieldName = "Signature1";
+
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
+                .setContent(new SignedAppearanceText()
+                        .setSignedBy("Test")
+                        .setSignDate(DateTimeUtil.getCurrentTimeCalendar())
+                        .setLocationLine("Test City"));
+
+        String outPdf = DESTINATION_FOLDER + "signPDFADocumentWithoutSettingFont.pdf";
+        Exception e = Assert.assertThrows(Exception.class, () -> {
+            sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
+        });
+        Assert.assertEquals(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE, e.getMessage());
+    }
+
+    @Test
+    public void signPDFADocumentSettingBadFont() throws IOException {
+        String srcFile = DESTINATION_FOLDER + "simplePDFA1.pdf";
+        createSimplePDFADocument(srcFile).close();
+
+        Rectangle rect = new Rectangle(50, 70, 400, 200);
+        String fieldName = "Signature1";
+
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
+                .setFont(PdfFontFactory.createFont(StandardFonts.COURIER))
+                .setContent(new SignedAppearanceText()
+                        .setSignedBy("Test")
+                        .setSignDate(DateTimeUtil.getCurrentTimeCalendar())
+                        .setLocationLine("Test City"));
+
+        String outPdf = DESTINATION_FOLDER + "signPDFADocumentBadFont.pdf";
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+            sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
+        });
+        Assert.assertEquals(e.getMessage(),
+                MessageFormatUtil.format(PdfaExceptionMessageConstant.ALL_THE_FONTS_MUST_BE_EMBEDDED_THIS_ONE_IS_NOT_0,
+                        "Courier"));
+    }
+
+    @Test
+    public void defaultPdfATextTest() throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = DESTINATION_FOLDER + "simplePDFADocument.pdf";
+        createSimplePDFADocument(srcFile).close();
+
+        Assert.assertNull(new VeraPdfValidator().validate(srcFile));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        String cmpPdf = SOURCE_FOLDER + "cmp_defaultSignedPDFAAppearanceTextTest.pdf";
+        String outPdf = DESTINATION_FOLDER + "defaultSignedPDFAAppearanceTextTest.pdf";
+
+        Rectangle rect = new Rectangle(50, 200, 400, 100);
+
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf", EmbeddingStrategy.FORCE_EMBEDDED);
+        String fieldName = "Signature1";
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
+                .setFont(font)
+                .setContent(new SignedAppearanceText()
+                        .setSignedBy("Test")
+                        .setSignDate(DateTimeUtil.getCurrentTimeCalendar())
+                        .setLocationLine("Test City"));
+
+        sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assert.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
+                getTestMap(rect)));
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+
+    @Test
+    public void signPdfAWithFormfieldAlreadyExistingTest()
+            throws GeneralSecurityException, IOException, InterruptedException {
+        String srcFile = DESTINATION_FOLDER + "simplePDFADocumentWithSignature.pdf";
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf", EmbeddingStrategy.FORCE_EMBEDDED);
+        Document doc = createSimplePDFADocument(srcFile);
+
+        String fieldName = "Signature1";
+        SignatureFieldAppearance appearanceOg = (SignatureFieldAppearance) new SignatureFieldAppearance(fieldName)
+                .setFont(font)
+                .setFontColor(ColorConstants.MAGENTA)
+                .setContent(new SignedAppearanceText()
+                        .setSignedBy("Test")
+                        .setReasonLine("Making pdfs safe")
+                        .setSignDate(DateTimeUtil.getCurrentTimeCalendar())
+                        .setLocationLine("Test City"))
+                .setInteractive(true);
+        doc.add(appearanceOg);
+
+        doc.close();
+
+        String cmpPdf = SOURCE_FOLDER + "cmp_signPdfAWithFormfieldAlreadyExisting.pdf";
+        String outPdf = DESTINATION_FOLDER + "signPdfAWithFormfieldAlreadyExisting.pdf";
+
+        Rectangle rect = new Rectangle(50, 200, 400, 100);
+
+        PdfFont font1 = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf", EmbeddingStrategy.FORCE_EMBEDDED);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
+                .setFont(font1)
+                .setContent(new SignedAppearanceText()
+                        .setSignedBy("Test")
+                        .setSignDate(DateTimeUtil.getCurrentTimeCalendar())
+                        .setLocationLine("Test City"));
+
+        sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
+
+        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+    private static Document createSimplePDFADocument(String filename) throws IOException {
+        WriterProperties writerProperties = new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0);
+        String icmProfile = PDFA_FOLDER + "sRGB Color Space Profile.icm";
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1", new FileInputStream(icmProfile));
+        PdfDocument document = new PdfADocument(new PdfWriter(filename, writerProperties),
+                PdfAConformanceLevel.PDF_A_4,
+                outputIntent);
+        Document doc = new Document(document);
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf", EmbeddingStrategy.FORCE_EMBEDDED);
+        doc.add(new Paragraph("Hello World!").setFont(font));
+        document.addNewPage();
+        return doc;
+
     }
 
     @Test

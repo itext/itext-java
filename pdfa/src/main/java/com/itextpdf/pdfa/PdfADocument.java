@@ -120,7 +120,10 @@ public class PdfADocument extends PdfDocument {
      */
     @Override
     public PdfFont getDefaultFont() {
-        return null;
+        if (isPdfADocument) {
+            return null;
+        }
+        return super.getDefaultFont();
     }
 
     /**
