@@ -274,6 +274,37 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         compareOutput(outFileName, cmpFileName);
     }
 
+    @Test
+    public void formFieldTaggingTest11() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "taggedPdfWithForms11.pdf";
+        String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms11.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocWithFields.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.setTagged();
+
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
+
+        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
+                .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Button 1").createPushButton();
+        pushButton.setFontSize(12f);
+
+        PdfButtonFormField pushButton2 = new PushButtonFormFieldBuilder(pdfDoc, "push 2")
+                .setWidgetRectangle(new Rectangle(36, 600, 40, 20)).setCaption("Button 2").createPushButton();
+        pushButton.setFontSize(12f);
+
+        TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+        tagPointer.moveToKid(StandardRoles.DIV);
+        acroForm.addField(pushButton);
+        tagPointer.moveToKid(StandardRoles.FORM);
+        acroForm.addField(pushButton2);
+
+        pdfDoc.close();
+
+        compareOutput(outFileName, cmpFileName);
+    }
+
     private void addFormFieldsToDocument(PdfDocument pdfDoc, PdfAcroForm acroForm) {
         Rectangle rect = new Rectangle(36, 700, 20, 20);
         Rectangle rect1 = new Rectangle(36, 680, 20, 20);

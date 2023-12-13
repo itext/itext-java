@@ -50,6 +50,8 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
@@ -100,7 +102,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkTextAreaTest() throws IOException, XMPException, InterruptedException {
+    public void checkTextAreaWithLabelTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "textAreaTest.pdf";
         String cmpFile = SOURCE_FOLDER + "cmp_textAreaTest.pdf";
 
@@ -112,13 +114,19 @@ public class PdfUA2FormTest extends ExtendedITextTest {
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
 
-            TextArea formTextArea = new TextArea("form text area");
+            Paragraph paragraph = new Paragraph("Widget label").setFont(font);
+            paragraph.getAccessibilityProperties().setRole(StandardRoles.LBL);
+
+            TextArea formTextArea = new TextArea("form text1");
             formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "form\ntext\narea");
 
-            document.add(formTextArea);
-            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, true);
-            form.getField("form text area").getPdfObject().put(PdfName.Contents, new PdfString("Description"));
+            Div div = new Div();
+            div.getAccessibilityProperties().setRole(StandardRoles.FORM);
+            div.add(paragraph);
+            div.add(formTextArea);
+
+            document.add(div);
         }
         compareAndValidate(outFile, cmpFile);
     }
