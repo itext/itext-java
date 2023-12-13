@@ -1,139 +1,25 @@
 /*
- *
- * This file is part of the iText (R) project.
-    Copyright (c) 1998-2022 iText Group NV
- * Authors: Bruno Lowagie, Paulo Soares, et al.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License version 3
- * as published by the Free Software Foundation with the addition of the
- * following permission added to Section 15 as permitted in Section 7(a):
- * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
- * ITEXT GROUP. ITEXT GROUP DISCLAIMS THE WARRANTY OF NON INFRINGEMENT
- * OF THIRD PARTY RIGHTS
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * You should have received a copy of the GNU Affero General Public License
- * along with this program; if not, see http://www.gnu.org/licenses or write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA, 02110-1301 USA, or download the license from the following URL:
- * http://itextpdf.com/terms-of-use/
- *
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License,
- * a covered work must retain the producer line in every PDF that is created
- * or manipulated using iText.
- *
- * You can be released from the requirements of the license by purchasing
- * a commercial license. Buying such a license is mandatory as soon as you
- * develop commercial activities involving the iText software without
- * disclosing the source code of your own applications.
- * These activities include: offering paid services to customers as an ASP,
- * serving PDFs on the fly in a web application, shipping iText with a closed
- * source product.
- *
- * For more information, please contact iText Software Corp. at this
- * address: sales@itextpdf.com
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
+
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-/********************************************************************
- *                                                                  *
- *  Title:  pfm2afm - Convert Windows .pfm files to .afm files      *
- *                                                                  *
- *  Author: Ken Borgendale   10/9/91  Version 1.0                   *
- *                                                                  *
- *  Function:                                                       *
- *      Convert a Windows .pfm (Printer Font Metrics) file to a     *
- *      .afm (Adobe Font Metrics) file.  The purpose of this is     *
- *      to allow fonts put out for Windows to be used with OS/2.    *
- *                                                                  *
- *  Syntax:                                                         *
- *      pfm2afm  infile  [outfile] -a                               *
- *                                                                  *
- *  Copyright:                                                      *
- *      pfm2afm - Copyright (C) IBM Corp., 1991                     *
- *                                                                  *
- *      This code is released for public use as long as the         *
- *      copyright remains intact.  This code is provided asis       *
- *      without any warrenties, express or implied.                 *
- *                                                                  *
- *  Notes:                                                          *
- *      1. Much of the information in the original .afm file is     *
- *         lost when the .pfm file is created, and thus cannot be   *
- *         reconstructed by this utility.  This is especially true  *
- *         of data for characters not in the Windows character set. *
- *                                                                  *
- *      2. This module is coded to be compiled by the MSC 6.0.      *
- *         For other compilers, be careful of the packing of the    *
- *         PFM structure.                                           *
- *                                                                  *
- ********************************************************************/
-
-/********************************************************************
- *                                                                  *
- *  Modifications by Rod Smith, 5/22/96                             *
- *                                                                  *
- *  These changes look for the strings "italic", "bold", "black",   *
- *  and "light" in the font's name and set the weight accordingly   *
- *  and adds an ItalicAngle line with a value of "0" or "-12.00".   *
- *  This allows OS/2 programs such as DeScribe to handle the bold   *
- *  and italic attributes appropriately, which was not the case     *
- *  when I used the original version on fonts from the KeyFonts     *
- *  Pro 2002 font CD.                                               *
- *                                                                  *
- *  I've also increased the size of the buffer used to load the     *
- *  .PFM file; the old size was inadequate for most of the fonts    *
- *  from the SoftKey collection.                                    *
- *                                                                  *
- *  Compiled with Watcom C 10.6                                     *
- *                                                                  *
- ********************************************************************/
-
-/********************************************************************
- *                                                                  *
- *  Further modifications, 4/21/98, by Rod Smith                    *
- *                                                                  *
- *  Minor changes to get the program to compile with gcc under      *
- *  Linux (Red Hat 5.0, to be precise).  I had to add an itoa       *
- *  function from the net (the function was buggy, so I had to fix  *
- *  it, too!).  I also made the program more friendly towards       *
- *  files with mixed-case filenames.                                *
- *                                                                  *
- ********************************************************************/
-
-/********************************************************************
- *                                                                  *
- *  1/31/2005, by Paulo Soares                                      *
- *                                                                  *
- *  This code was integrated into iText.                            *
- *  Note that the itoa function mentioned in the comment by Rod     *
- *  Smith is no longer in the code because Java has native support  *
- *  in PrintWriter to convert integers to strings                   *
- *                                                                  *
- ********************************************************************/
-
-/********************************************************************
- *                                                                  *
- *  7/16/2005, by Bruno Lowagie                                     *
- *                                                                  *
- *  I solved an Eclipse Warning.                                    *
- *                                                                  *
- ********************************************************************/
-
-/********************************************************************
- *                                                                  *
- *  9/14/2006, by Xavier Le Vourch                                  *
- *                                                                  *
- *  expand import clauses (import java.io.*)                        *
- *  the removal of an exception in readString was restored on 9/16  *
- *                                                                  *
- ********************************************************************/
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.source.RandomAccessFileOrArray;
