@@ -178,15 +178,18 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
                 break;
             case DESCRIPTION:
                 // Default one, it just shows whatever description was defined for the signature.
+                float additionalHeight = calculateAdditionalHeight();
                 if (retrieveHeight() == null) {
                     // Adjust calculated occupied area height to keep the same font size.
                     float calculatedHeight = getOccupiedArea().getBBox().getHeight();
-                    getOccupiedArea().getBBox().moveDown(calculatedHeight * TOP_SECTION)
-                            .setHeight(calculatedHeight * (1 + TOP_SECTION));
-                    bBox.moveDown(calculatedHeight * TOP_SECTION);
+                    // (calcHeight + addHeight + topSect) * (1 - TOP_SECTION) - addHeight = calcHeight, =>
+                    float topSection = (calculatedHeight + additionalHeight) * TOP_SECTION / (1 - TOP_SECTION);
+                    getOccupiedArea().getBBox().moveDown(topSection + additionalHeight)
+                            .setHeight(calculatedHeight + topSection + additionalHeight);
+                    bBox.moveDown(bBox.getBottom() - getOccupiedArea().getBBox().getBottom() - additionalHeight / 2);
                 }
                 descriptionRect = bBox.setHeight(getOccupiedArea().getBBox().getHeight() * (1 - TOP_SECTION)
-                - calculateAdditionalHeight());
+                - additionalHeight);
                 break;
             default:
                 return;

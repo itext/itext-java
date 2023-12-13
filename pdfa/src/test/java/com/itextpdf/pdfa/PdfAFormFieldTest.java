@@ -671,10 +671,10 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfASignatureFieldTestWithAndFontText() throws IOException, InterruptedException {
+    public void pdfASignatureFieldWithTextAndFontTest() throws IOException, InterruptedException {
         String name = "pdfASignatureFieldTestWithText";
         String fileName = DESTINATION_FOLDER + name + ".pdf";
-        String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfASignatureFieldTestWithText.pdf";
+        String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_" + name + ".pdf";
 
         PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);

@@ -399,7 +399,6 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_fontSizeTest.pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             SignatureFieldAppearance sigField = new SignatureFieldAppearance("SigField");
-            //TODO DEVSIX-7970 Fontsize doesn't get recalculate correctly in SignatureFieldAppearance making the signature look absent
             sigField.setFontSize(20);
             sigField.setContent("test");
             document.add(sigField);
