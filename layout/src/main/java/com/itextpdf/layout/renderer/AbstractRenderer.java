@@ -1953,6 +1953,7 @@ public abstract class AbstractRenderer implements IRenderer {
                         logMessageArg));
                 return;
             }
+
             PdfArray array = new PdfArray();
             array.add(document.getPage(pageNumber).getPdfObject());
             array.add(PdfName.XYZ);
@@ -1964,9 +1965,8 @@ public abstract class AbstractRenderer implements IRenderer {
 
         final boolean isPdf20 = document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
         if (linkActionDict != null && isPdf20 && document.isTagged()) {
-            TagStructureContext context = document.getTagStructureContext();
-            TagTreePointer tagPointer = context.getAutoTaggingPointer();
-            PdfStructElem structElem = context.getPointerStructElem(tagPointer);
+            // Add structure destination for the action for tagged pdf 2.0
+            PdfStructElem structElem = getCurrentStructElem(document);
             PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
             linkActionDict.put(PdfName.SD, dest.getPdfObject());
         }
@@ -2841,5 +2841,11 @@ public abstract class AbstractRenderer implements IRenderer {
 
     private static boolean hasOwnOrModelProperty(IRenderer renderer, int property) {
         return renderer.hasOwnProperty(property) || (null != renderer.getModelElement() && renderer.getModelElement().hasProperty(property));
+    }
+
+    private static PdfStructElem getCurrentStructElem(PdfDocument document) {
+        TagStructureContext context = document.getTagStructureContext();
+        TagTreePointer tagPointer = context.getAutoTaggingPointer();
+        return context.getPointerStructElem(tagPointer);
     }
 }

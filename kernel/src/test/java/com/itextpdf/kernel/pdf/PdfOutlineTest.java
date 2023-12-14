@@ -30,6 +30,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
+import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
@@ -41,7 +42,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -799,6 +799,52 @@ public class PdfOutlineTest extends ExtendedITextTest {
             Assert.assertTrue(resultedF.getAllChildren().get(0).getAllChildren().isEmpty());
             Assert.assertTrue(resultedF.getAllChildren().get(1).getAllChildren().isEmpty());
         }
+    }
+
+    @Test
+    public void createOutlinesWithActionsTest() throws IOException, InterruptedException {
+        String filename = "createOutlinesWithActions.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename))) {
+            pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
+
+            PdfPage firstPage = pdfDoc.addNewPage();
+            PdfPage secondPage = pdfDoc.addNewPage();
+
+            PdfOutline rootOutline = pdfDoc.getOutlines(false);
+            PdfOutline firstOutline = rootOutline.addOutline("First Page");
+            PdfOutline secondOutline = rootOutline.addOutline("Second Page");
+
+            PdfDestination page1Dest = PdfExplicitDestination.createFit(firstPage);
+            PdfAction page1Action = PdfAction.createGoTo(page1Dest);
+            firstOutline.addAction(page1Action);
+            Assert.assertEquals(page1Dest.getPdfObject(), firstOutline.getDestination().getPdfObject());
+
+            PdfAction page2Action = PdfAction.createGoTo(PdfExplicitDestination.createFit(secondPage));
+            secondOutline.addAction(page2Action);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void createOutlinesWithURIActionTest() throws IOException, InterruptedException {
+        String filename = "createOutlinesWithURIAction.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename))) {
+            pdfDoc.getCatalog().setPageMode(PdfName.UseOutlines);
+
+            PdfOutline rootOutline = pdfDoc.getOutlines(false);
+            PdfOutline firstOutline = rootOutline.addOutline("First Page");
+
+            // The test was created to improve the coverage but
+            // Apparently it works!
+            PdfAction action1 = PdfAction.createURI("https://example.com");
+            firstOutline.addAction(action1);
+            Assert.assertNull(firstOutline.getDestination());
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     private static final class EmptyNameTree implements IPdfNameTreeAccess {

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -36,7 +37,9 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
@@ -67,6 +70,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
@@ -724,7 +728,8 @@ public class PdfUA2Test extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + "structureDestination01Test.pdf";
         String cmpFile = SOURCE_FOLDER + "cmp_structureDestination01Test.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             Document document = new Document(pdfDocument);
             PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
@@ -754,6 +759,52 @@ public class PdfUA2Test extends ExtendedITextTest {
             document.add(new Paragraph(linkElem));
         }
         compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkOutlinesAsStructureDestinationsTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "checkOutlinesAsStructureDestinations.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_checkOutlinesAsStructureDestinations.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+
+            createSimplePdfUA2Document(pdfDocument);
+
+            PdfOutline topOutline = pdfDocument.getOutlines(false);
+            PdfOutline header1Outline = topOutline.addOutline("header1 title");
+            PdfAction action1 = PdfAction.createGoTo("header1");
+            header1Outline.addAction(action1);
+
+            PdfOutline header11Outline = header1Outline.addOutline("header1.1 title");
+            PdfAction action11 = PdfAction.createGoTo("header1.1");
+            header11Outline.addAction(action11);
+
+
+            Paragraph header1 = new Paragraph("header1 text");
+            header1.setProperty(Property.DESTINATION,
+                    new Tuple2<String, PdfDictionary>("header1", action1.getPdfObject()));
+            Paragraph header11 = new Paragraph("header1.1 text");
+            header11.setProperty(Property.DESTINATION,
+                    new Tuple2<String, PdfDictionary>("header1.1", action11.getPdfObject()));
+
+            document.add(header1);
+            document.add(header11);
+        }
+
+        compareAndValidate(outFile, cmpFile);
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(outFile))) {
+            PdfOutline outline = pdfDocument.getOutlines(false);
+            Assert.assertEquals("header1", outline.getAllChildren().get(0)
+                    .getDestination().getPdfObject().toString());
+            Assert.assertEquals("header1.1", outline.getAllChildren().get(0).getAllChildren().get(0)
+                    .getDestination().getPdfObject().toString());
+        }
     }
 
     private void createSimplePdfUA2Document(PdfDocument pdfDocument) throws IOException, XMPException {
