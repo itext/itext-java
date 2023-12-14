@@ -9,7 +9,7 @@
 
 iText Core/Community is a high-performance, battle-tested library that allows you to create, adapt,
 inspect and maintain PDF documents, allowing you to add PDF
-functionality to your software projects with ease. It is also available for .[NET][itext7net] (C#) .
+functionality to your software projects with ease. It is also available for .[NET][itext7net] (C#).
 
 ### The key features of iText Core/Community are:
 
@@ -131,7 +131,7 @@ results.
 | Redact based on regex                      | [Java](https://itextpdf.com/products/pdf-redaction-pdfsweep)                                                                                                                                                                                                       |
 | <br>                                       |                                                                                                                                                                                                                                                                    |
 | **Support complex writing systems**                             | [Link to docs](https://itextpdf.com/products/pdfcalligraph)                                                                                                                                                                                                        |
-| Add Arabic text                           | [Java](https://github.com/itext/i7js-examples/blob/master/src/main/java/com/itextpdf/samples/sandbox/typography/arabic/ArabicWordSpacing.java) , [PDF](https://github.com/itext/i7js-examples/blob/master/cmpfiles/sandbox/typography/cmp_ArabicWordSpacing.pdf) |
+| Add Arabic text                           | [Java](https://github.com/itext/i7js-examples/blob/master/src/main/java/com/itextpdf/samples/sandbox/typography/arabic/ArabicWordSpacing.java), [PDF](https://github.com/itext/i7js-examples/blob/master/cmpfiles/sandbox/typography/cmp_ArabicWordSpacing.pdf) |
 | <br>                                       |                                                                                                                                                                                                                                                                    |
 | **Optimizing PDFs**                              | [Link to docs](https://itextpdf.com/products/compress-pdf-pdfoptimizer)                                                                                                                                                                                            |
 | Reduce size of PDF                         | [Java](https://itextpdf.com/products/compress-pdf-pdfoptimizer)                                                                                                                                                                                                    |
