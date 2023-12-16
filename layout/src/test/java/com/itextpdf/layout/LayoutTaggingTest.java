@@ -1128,6 +1128,31 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         compareResult(outFile, "cmp_" + outFile);
     }
 
+    @Test
+    public void unexpectedTableHintChildTest()
+            throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFile = "unexpectedTableHintChildTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile))){
+            Document document = new Document(pdfDocument);
+            pdfDocument.setTagged();
+
+            Div div = new Div();
+            div.getAccessibilityProperties().setRole(StandardRoles.TABLE);
+
+            final Paragraph c1 = new Paragraph("c1");
+            c1.getAccessibilityProperties().setRole(StandardRoles.LINK);
+            div.add(c1);
+
+            Paragraph p1 = new Paragraph("c");
+            p1.getAccessibilityProperties().setRole(StandardRoles.TD);
+            div.add(p1);
+
+            document.add(div);
+        }
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
     private Paragraph createParagraph1() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");

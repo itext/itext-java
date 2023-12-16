@@ -50,11 +50,17 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The class is a helper which is used to correctly create structure
+ * tree for layout element (with keeping right order for tags).
+ */
 public class LayoutTaggingHelper {
     private TagStructureContext context;
     private PdfDocument document;
     private boolean immediateFlush;
 
+    // kidsHints and parentHints fields represent tree of TaggingHintKey, where parentHints
+    // stores a parent for the key, and kidsHints stores kids for key.
     private Map<TaggingHintKey, List<TaggingHintKey>> kidsHints;
     private Map<TaggingHintKey, TaggingHintKey> parentHints;
 
@@ -62,7 +68,8 @@ public class LayoutTaggingHelper {
 
     private Map<String, List<ITaggingRule>> taggingRules;
 
-    private Map<PdfObject, TaggingDummyElement> existingTagsDummies;
+    // dummiesForPreExistingTags is used to process TaggingDummyElement
+    private Map<PdfObject, TaggingDummyElement> dummiesForPreExistingTags;
 
     private final int RETVAL_NO_PARENT = -1;
     private final int RETVAL_PARENT_AND_KID_FINISHED = -2;
@@ -79,7 +86,7 @@ public class LayoutTaggingHelper {
         this.taggingRules = new HashMap<>();
         registerRules(context.getTagStructureTargetVersion());
 
-        existingTagsDummies = new LinkedHashMap<>();
+        dummiesForPreExistingTags = new LinkedHashMap<>();
     }
 
     public static void addTreeHints(LayoutTaggingHelper taggingHelper, IRenderer rootRenderer) {
@@ -103,10 +110,10 @@ public class LayoutTaggingHelper {
 
     public void addKidsHint(TagTreePointer parentPointer, Iterable<? extends IPropertyContainer> newKids) {
         PdfDictionary pointerStructElem = context.getPointerStructElem(parentPointer).getPdfObject();
-        TaggingDummyElement dummy = existingTagsDummies.get(pointerStructElem);
+        TaggingDummyElement dummy = dummiesForPreExistingTags.get(pointerStructElem);
         if (dummy == null) {
             dummy = new TaggingDummyElement(parentPointer.getRole());
-            existingTagsDummies.put(pointerStructElem, dummy);
+            dummiesForPreExistingTags.put(pointerStructElem, dummy);
         }
         context.getWaitingTagsManager().assignWaitingState(parentPointer, getOrCreateHintKey(dummy));
         addKidsHint(dummy, newKids);
@@ -295,11 +302,11 @@ public class LayoutTaggingHelper {
     }
 
     public void releaseAllHints() {
-        for (TaggingDummyElement dummy : existingTagsDummies.values()) {
+        for (TaggingDummyElement dummy : dummiesForPreExistingTags.values()) {
             finishTaggingHint(dummy);
             finishDummyKids(getKidsHint(getHintKey(dummy)));
         }
-        existingTagsDummies.clear();
+        dummiesForPreExistingTags.clear();
 
         releaseFinishedHints();
 
@@ -524,6 +531,7 @@ public class LayoutTaggingHelper {
             } else {
                 kidsHint.add(kidKey);
             }
+            kidsHints.put(parentKey, kidsHint);
             parentHints.put(kidKey, parentKey);
 
             if (parentTagAlreadyCreated) {
@@ -541,10 +549,6 @@ public class LayoutTaggingHelper {
                     moveKidTagIfCreated(parentTagHint, kidKey);
                 }
             }
-        }
-
-        if (!kidsHint.isEmpty()) {
-            kidsHints.put(parentKey, kidsHint);
         }
     }
 

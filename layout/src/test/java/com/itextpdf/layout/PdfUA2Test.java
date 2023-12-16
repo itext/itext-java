@@ -68,6 +68,7 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.CaptionSide;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.Property;
@@ -531,10 +532,57 @@ public class PdfUA2Test extends ExtendedITextTest {
             PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
 
             IStructureNode tableNode = structTreeRoot.getKids().get(0).getKids().get(0);
-            // TODO DEVSIX-7951 Table caption is added as the 2nd child of the table into struct tree
-            String tableChildRole  =  tableNode.getKids().get(1).getRole().toString();
+            String tableChildRole  =  tableNode.getKids().get(0).getRole().toString();
             Assert.assertEquals("/Caption" , tableChildRole);
         }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkCaptionPlacementInTreeStructure() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "checkCaptionPlacementInTreeStructure.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_checkCaptionPlacementInTreeStructure.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+            Table tableCaptionBottom = new Table(new float[]{1, 2, 2});
+            Paragraph caption = new Paragraph("This is Caption to the bottom").setBackgroundColor(ColorConstants.GREEN);
+            tableCaptionBottom.setCaption(new Div().add(caption), CaptionSide.BOTTOM);
+            tableCaptionBottom.setHorizontalAlignment(HorizontalAlignment.CENTER);
+            tableCaptionBottom.setWidth(200);
+            tableCaptionBottom.addHeaderCell("ID");
+            tableCaptionBottom.addHeaderCell("Name");
+            tableCaptionBottom.addHeaderCell("Age");
+
+            for (int i = 1; i <= 5; i++) {
+                tableCaptionBottom.addCell("ID: " + i);
+                tableCaptionBottom.addCell("Name " + i);
+                tableCaptionBottom.addCell("Age: " + (20 + i));
+            }
+            document.add(tableCaptionBottom);
+
+            Table captionTopTable = new Table(new float[]{1,2,3});
+            captionTopTable.setCaption(new Div().add(new Paragraph("Caption on top")));
+
+           captionTopTable.setHorizontalAlignment(HorizontalAlignment.CENTER);
+           captionTopTable.setWidth(200);
+           captionTopTable.addHeaderCell("ID");
+           captionTopTable.addHeaderCell("Name");
+           captionTopTable.addHeaderCell("Age");
+
+            for (int i = 1; i <= 5; i++) {
+               captionTopTable.addCell("ID: " + i);
+               captionTopTable.addCell("Name " + i);
+               captionTopTable.addCell("Age: " + (20 + i));
+            }
+
+            document.add(captionTopTable);
+        }
+
         compareAndValidate(outFile, cmpFile);
     }
 

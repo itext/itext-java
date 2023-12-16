@@ -24,7 +24,11 @@ package com.itextpdf.layout.tagging;
 
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.CaptionSide;
+import com.itextpdf.layout.properties.Property;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,9 +74,12 @@ class TableTaggingRule implements ITaggingRule {
         TaggingDummyElement tbodyTag = null;
         tbodyTag = new TaggingDummyElement(createTBody ? StandardRoles.TBODY : null);
 
+
         for (TaggingHintKey nonCellKid : nonCellKids) {
             String kidRole = nonCellKid.getAccessibleElement().getAccessibilityProperties().getRole();
-            if (!StandardRoles.THEAD.equals(kidRole) && !StandardRoles.TFOOT.equals(kidRole)) {
+            if (!StandardRoles.THEAD.equals(kidRole) && !StandardRoles.TFOOT.equals(kidRole) && !StandardRoles.CAPTION.equals(kidRole)) {
+                // In usual cases it isn't expected that this for loop will work, but it is possible to
+                // create custom tag hierarchy by specifying role, and put any child to tableHintKey
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
@@ -89,7 +96,6 @@ class TableTaggingRule implements ITaggingRule {
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
-
         for (TreeMap<Integer, TaggingHintKey> rowTags : tableTags.values()) {
             TaggingDummyElement row = new TaggingDummyElement(StandardRoles.TR);
             TaggingHintKey rowTagHint = LayoutTaggingHelper.getOrCreateHintKey(row);
@@ -105,6 +111,35 @@ class TableTaggingRule implements ITaggingRule {
             taggingHelper.addKidsHint(tbodyTag, Collections.<TaggingDummyElement>singletonList(row), -1);
         }
 
+        for (TaggingHintKey nonCellKid : nonCellKids) {
+            String kidRole = nonCellKid.getAccessibleElement().getAccessibilityProperties().getRole();
+            if (StandardRoles.CAPTION.equals(kidRole)) {
+                moveCaption(taggingHelper, nonCellKid, tableHintKey);
+            }
+        }
+
         return true;
+    }
+
+    private static void moveCaption(LayoutTaggingHelper taggingHelper, TaggingHintKey caption, TaggingHintKey tableHintKey) {
+        if (!(tableHintKey.getAccessibleElement() instanceof Table)) {
+            return;
+        }
+        Table tableElem = (Table) tableHintKey.getAccessibleElement();
+        Div captionDiv = tableElem.getCaption();
+        if (captionDiv == null) {
+            return;
+        }
+        CaptionSide captionSide;
+        if (captionDiv.<CaptionSide>getProperty(Property.CAPTION_SIDE) == null) {
+            captionSide = CaptionSide.TOP;
+        } else {
+            captionSide = (CaptionSide) captionDiv.<CaptionSide>getProperty(Property.CAPTION_SIDE);
+        }
+        if (CaptionSide.TOP.equals(captionSide)) {
+            taggingHelper.moveKidHint(caption, tableHintKey, 0);
+        } else {
+            taggingHelper.moveKidHint(caption, tableHintKey);
+        }
     }
 }
