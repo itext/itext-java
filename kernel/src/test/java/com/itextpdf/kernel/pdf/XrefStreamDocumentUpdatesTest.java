@@ -52,7 +52,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
-    
+
     @Test
     public void readFreeRefReusingInIncrementTest() throws IOException {
         PdfDocument document = new PdfDocument(new PdfReader
@@ -137,12 +137,12 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         Assert.assertEquals(8, expectObjNumber);
         Assert.assertEquals(0, expectGenNumber);
         Assert.assertTrue(xref.get(5).isFree());
-        
+
         pdfDoc1.close();
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void checkEncryptionInXrefStmInIncrementsTest() throws IOException, InterruptedException {
         String inFileName = sourceFolder + "encryptedDocWithXrefStm.pdf";
@@ -277,5 +277,28 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
         doc.close();
         Assert.assertEquals(1, xrefTableCounter);
+    }
+
+    @Test
+    public void hybridReferenceIncrementTwiceTest() throws IOException, InterruptedException {
+        String inFileName = sourceFolder + "hybridReferenceDocument.pdf";
+        String outFileName = destinationFolder + "hybridReferenceDocumentUpdateTwice.pdf";
+
+        PdfDocument pdfDoc1 = new PdfDocument(
+                new PdfReader(inFileName),
+                new PdfWriter(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
+                new StampingProperties().useAppendMode()
+        );
+        pdfDoc1.close();
+
+        PdfDocument pdfDoc2 = new PdfDocument(
+                new PdfReader(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
+                CompareTool.createTestPdfWriter(outFileName),
+                new StampingProperties().useAppendMode()
+        );
+        pdfDoc2.close();
+
+        //if document processed correctly, no errors should occur
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
     }
 }
