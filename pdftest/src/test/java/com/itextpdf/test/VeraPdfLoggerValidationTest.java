@@ -1,0 +1,59 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2023 Apryse Group NV
+    Authors: Apryse Software.
+
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.test;
+
+import com.itextpdf.test.annotations.type.UnitTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.utils.FileUtil;
+
+import java.io.IOException;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+
+@Category(UnitTest.class)
+public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
+
+    static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdftest/cmp/VeraPdfLoggerValidationTest/";
+    static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdftest/VeraPdfLoggerValidationTest/";
+
+    @BeforeClass
+    public static void beforeClass() {
+        createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @Test
+    public void checkValidatorLogsTest() throws IOException {
+
+        String fileNameWithWarnings = "cmp_pdfA2b_checkValidatorLogsTest_with_warnings.pdf";
+        String fileNameWithoutWarnings = "cmp_pdfA2b_checkValidatorLogsTest.pdf";
+        FileUtil.copy(SOURCE_FOLDER + fileNameWithWarnings, DESTINATION_FOLDER + fileNameWithWarnings);
+        FileUtil.copy(SOURCE_FOLDER + fileNameWithoutWarnings, DESTINATION_FOLDER + fileNameWithoutWarnings);
+
+        Assert.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings));
+        //We check that the logs are empty after the first check
+        Assert.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings));
+    }
+}
