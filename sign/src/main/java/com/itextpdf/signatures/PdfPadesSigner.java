@@ -399,10 +399,24 @@ public class PdfPadesSigner {
      *
      * @param issuingCertificateRetriever {@link IIssuingCertificateRetriever} instance to be used for getting missing
      *                                 certificates in chain or CRL response issuer certificates.
+     *
      * @return same instance of {@link PdfPadesSigner}.
      */
     public PdfPadesSigner setIssuingCertificateRetriever(IIssuingCertificateRetriever issuingCertificateRetriever) {
         this.issuingCertificateRetriever = issuingCertificateRetriever;
+        return this;
+    }
+
+    /**
+     * Set certificate list to be used by the {@link IIssuingCertificateRetriever} to retrieve missing certificates.
+     *
+     * @param certificateList certificate list for getting missing certificates in chain
+     *                        or CRL response issuer certificates.
+     *
+     * @return same instance of {@link PdfPadesSigner}.
+     */
+    public PdfPadesSigner setTrustedCertificates(List<Certificate> certificateList) {
+        this.issuingCertificateRetriever.setTrustedCertificates(certificateList);
         return this;
     }
 

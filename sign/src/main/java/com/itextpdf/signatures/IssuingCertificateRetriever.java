@@ -30,10 +30,13 @@ import java.net.URL;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +44,10 @@ import org.slf4j.LoggerFactory;
  * {@link IIssuingCertificateRetriever} default implementation.
  */
 public class IssuingCertificateRetriever implements IIssuingCertificateRetriever {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(IssuingCertificateRetriever.class);
+
+    private final Map<String, Certificate> certificateMap = new HashMap<>();
 
     /**
      * Creates {@link IssuingCertificateRetriever} instance.
@@ -65,28 +70,34 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         fullChain.add(signingCertificate);
 
         int i = 1;
-        Certificate lastAddedCert = signingCertificate;
-        while (!CertificateUtil.isSelfSigned((X509Certificate) lastAddedCert)) {
+        X509Certificate lastAddedCert = signingCertificate;
+        while (!CertificateUtil.isSelfSigned(lastAddedCert)) {
             //  Check if there are any missing certificates with isSignedByNext
             if (i < chain.length &&
-                    CertificateUtil.isIssuerCertificate((X509Certificate) lastAddedCert, (X509Certificate) chain[i])) {
+                    CertificateUtil.isIssuerCertificate(lastAddedCert, (X509Certificate) chain[i])) {
                 fullChain.add(chain[i]);
                 i++;
             } else {
                 // Get missing certificates using AIA Extensions
-                String url = CertificateUtil.getIssuerCertURL((X509Certificate) lastAddedCert);
+                String url = CertificateUtil.getIssuerCertURL(lastAddedCert);
                 Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
                 if (certificatesFromAIA == null || certificatesFromAIA.isEmpty()) {
-                    // Unable to retrieve missing certificates
-                    while (i < chain.length) {
-                        fullChain.add(chain[i]);
-                        i++;
+                    // Retrieve Issuer from the certificate store
+                    Certificate issuer = certificateMap.get(lastAddedCert.getIssuerX500Principal().getName());
+                    if (issuer == null) {
+                        // Unable to retrieve missing certificates
+                        while (i < chain.length) {
+                            fullChain.add(chain[i]);
+                            i++;
+                        }
+                        return fullChain.toArray(new Certificate[0]);
                     }
-                    return fullChain.toArray(new Certificate[0]);
+                    fullChain.add(issuer);
+                } else {
+                    fullChain.addAll(certificatesFromAIA);
                 }
-                fullChain.addAll(certificatesFromAIA);
             }
-            lastAddedCert = fullChain.get(fullChain.size() - 1);
+            lastAddedCert = (X509Certificate) fullChain.get(fullChain.size() - 1);
         }
 
         return fullChain.toArray(new Certificate[0]);
@@ -110,8 +121,28 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         // AIA Extension
         String url = CertificateUtil.getIssuerCertURL(crl);
         List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
-        return certificatesFromAIA == null ? new Certificate[0] :
-                retrieveMissingCertificates(certificatesFromAIA.toArray(new Certificate[0]));
+        if (certificatesFromAIA == null) {
+            // Retrieve Issuer from the certificate store
+            Certificate issuer = certificateMap.get(((X509CRL) crl).getIssuerX500Principal().getName());
+            if (issuer == null) {
+                // Unable to retrieve CRL issuer
+                return new Certificate[0];
+            }
+            return retrieveMissingCertificates(new Certificate[]{issuer});
+        }
+        return retrieveMissingCertificates(certificatesFromAIA.toArray(new Certificate[0]));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param certificates {@inheritDoc}
+     */
+    @Override
+    public void setTrustedCertificates(Collection<Certificate> certificates) {
+        for (Certificate certificate : certificates) {
+            certificateMap.put(((X509Certificate) certificate).getSubjectX500Principal().getName(), certificate);
+        }
     }
 
     /**

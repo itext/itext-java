@@ -24,6 +24,7 @@ package com.itextpdf.signatures;
 
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
+import java.util.Collection;
 
 /**
  * Interface helper to support retrieving CAIssuers certificates from Authority Information Access (AIA) Extension in
@@ -49,4 +50,12 @@ public interface IIssuingCertificateRetriever {
      * @return certificates retrieved from CRL AIA extension or an empty list in case certificates cannot be retrieved.
      */
     Certificate[] getCrlIssuerCertificates(CRL crl);
+
+    /**
+     * Sets trusted certificate list to be used for the missing certificates retrieving by the issuer name.
+     *
+     * @param certificates certificate list for getting missing certificates in chain
+     *                     or CRL response issuer certificates.
+     */
+    void setTrustedCertificates(Collection<Certificate> certificates);
 }

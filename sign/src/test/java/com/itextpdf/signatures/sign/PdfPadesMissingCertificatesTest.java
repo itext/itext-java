@@ -42,9 +42,6 @@ import com.itextpdf.signatures.testutils.client.AdvancedTestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-
-import java.util.Collections;
-import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -59,8 +56,11 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Category(IntegrationTest.class)
@@ -125,7 +125,7 @@ public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
         X509Certificate crlIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateCrlFileName)[0];
         X509Certificate ocspIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateOscpFileName)[0];
         X509Certificate tsaIntermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateTsaFileName)[0];
-        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateCertFileName)[0]; 
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateCertFileName)[0];
 
         AdvancedTestOcspClient ocspClient = new AdvancedTestOcspClient(null);
         ocspClient.addBuilderForCertIssuer(signCert, ocspCert, ocspPrivateKey);
@@ -194,6 +194,69 @@ public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
                 getCertName(ocspCert), getCertName(tsaRootCert), getCertName(crlIntermediateCert),
                 getCertName(ocspIntermediateCert), getCertName(tsaIntermediateCert), getCertName(ocspRootCert),
                 getCertName(signCert), getCertName(tsaCert), getCertName(intermediateCert));
+        TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
+                expectedNumberOfCrls, expectedNumberOfOcsps, certs);
+    }
+
+    @Test
+    public void retrieveMissingCertificatesUsingTrustedStoreTest() throws GeneralSecurityException, IOException,
+            AbstractOperatorCreationException, AbstractPKCSException, AbstractOCSPException {
+        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
+        String rootCertFileName = sourceFolder + "root.pem";
+        String signCertFileName = sourceFolder + "sign.pem";
+        String rootCrlFileName = sourceFolder + "crlRoot.pem";
+        String crlCertFileName = sourceFolder + "crlCert.pem";
+        String tsaCertFileName = sourceFolder + "tsCert.pem";
+        String crlSignedByCA = sourceFolder + "crlWithRootIssuer.crl";
+        String crlSignedByCrlCert = sourceFolder + "crlWithCrlIssuer.crl";
+
+        X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+        X509Certificate crlCert = (X509Certificate) PemFileHelper.readFirstChain(crlCertFileName)[0];
+        X509Certificate tsaCert = (X509Certificate) PemFileHelper.readFirstChain(tsaCertFileName)[0];
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
+
+        SignerProperties signerProperties = createSignerProperties();
+        TestTsaClient testTsa = new TestTsaClient(Collections.singletonList(tsaCert), tsaPrivateKey);
+
+        CrlClientOnline testCrlClient = new CrlClientOnline() {
+            @Override
+            protected InputStream getCrlResponse(X509Certificate cert, URL urlt) throws IOException {
+                if (urlt.toString().contains("cert-crl")) {
+                    return FileUtil.getInputStreamForFile(crlSignedByCrlCert);
+                }
+                return FileUtil.getInputStreamForFile(crlSignedByCA);
+            }
+        };
+
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        X509Certificate crlRootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCrlFileName)[0];
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfPadesSigner padesSigner =
+                new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)), outputStream);
+        padesSigner.setCrlClient(testCrlClient);
+
+        List<Certificate> trustedCertificates = new ArrayList<>();
+        trustedCertificates.add(rootCert);
+        trustedCertificates.add(crlRootCert);
+        trustedCertificates.add(crlCert);
+        padesSigner.setTrustedCertificates(trustedCertificates);
+
+        Certificate[] signChain = new Certificate[]{signCert};
+        padesSigner.signWithBaselineLTProfile(signerProperties, signChain, signPrivateKey, testTsa);
+
+        outputStream.close();
+
+        TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
+
+        Map<String, Integer> expectedNumberOfCrls = new HashMap<>();
+        Map<String, Integer> expectedNumberOfOcsps = new HashMap<>();
+        // It is expected to have two CRL responses, one for signing cert and another for CRL response.
+        expectedNumberOfCrls.put(crlCert.getSubjectX500Principal().getName(), 1);
+        expectedNumberOfCrls.put(rootCert.getSubjectX500Principal().getName(), 1);
+        List<String> certs = Arrays.asList(getCertName(rootCert), getCertName(crlRootCert), getCertName(crlCert),
+                getCertName(signCert), getCertName(tsaCert));
         TestSignUtils.assertDssDict(new ByteArrayInputStream(outputStream.toByteArray()),
                 expectedNumberOfCrls, expectedNumberOfOcsps, certs);
     }

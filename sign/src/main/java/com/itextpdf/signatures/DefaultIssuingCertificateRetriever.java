@@ -24,6 +24,7 @@ package com.itextpdf.signatures;
 
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
+import java.util.Collection;
 
 /**
  * Empty {@link IIssuingCertificateRetriever} implementation for compatibility with the older code.
@@ -57,5 +58,15 @@ class DefaultIssuingCertificateRetriever implements IIssuingCertificateRetriever
     @Override
     public Certificate[] getCrlIssuerCertificates(CRL crl) {
         return new Certificate[0];
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param certificates {@inheritDoc}
+     */
+    @Override
+    public void setTrustedCertificates(Collection<Certificate> certificates) {
+        // Do nothing.
     }
 }
