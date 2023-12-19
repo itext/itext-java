@@ -68,8 +68,8 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-                                                
-import java.io.ByteArrayOutputStream;               
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -1094,6 +1094,58 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         canvas.saveState();
         canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
+        canvas.restoreState();
+
+        pdfDoc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void imageJpeg20002ColorChannelsTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000.pdf";
+
+        PdfDocument pdfDoc = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // This should suppress transparency and device RGB
+        page.addOutputIntent(new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1",
+                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.saveState();
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "jpeg2000/bee2colorchannels.jp2"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
+        canvas.restoreState();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_BE_1_3_OR_4, e.getMessage());
+    }
+
+    @Test
+    public void imageJpeg2000Test() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_jpeg2000.pdf";
+
+        PdfDocument pdfDoc = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // This should suppress transparency and device RGB
+        page.addOutputIntent(new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1",
+                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.saveState();
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "jpeg2000/bee.jp2"),
                 new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
         canvas.restoreState();
 

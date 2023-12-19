@@ -12,3 +12,6 @@ This software uses the following test resources under the following licenses:
 | p0_02.j2k | (2023/07/25) cpyrght.htm | 
 | p1_01.j2k | (2023/07/25) cpyrght.htm | 
 | p1_02.j2k | (2023/07/25) cpyrght.htm | 
+| bee.jp2 | CC0-1.0 | CC0-1.0.txt | (2023/10/10) https://unsplash.com/photos/tuQGZ6U7P2A 
+| bee2colorchannels.jp2 | CC0-1.0 | CC0-1.0.txt | (2023/10/10) https://unsplash.com/photos/tuQGZ6U7P2A
+
