@@ -482,18 +482,11 @@ public class LtvVerification {
         return BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspResponse).getEncoded();
     }
 
-    private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
+    private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException {
         PdfSignature sig = sgnUtil.getSignature(signatureName);
         PdfString contents = sig.getContents();
         byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
-        byte[] bt = null;
-        if (PdfName.ETSI_RFC3161.equals(sig.getSubFilter())) {
-            try (IASN1InputStream din = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(bc))) {
-                IASN1Primitive pkcs = din.readObject();
-                bc = pkcs.getEncoded();
-            }
-        }
-        bt = hashBytesSha1(bc);
+        byte[] bt = hashBytesSha1(bc);
         return new PdfName(convertToHex(bt));
     }
 
