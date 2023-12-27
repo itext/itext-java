@@ -145,6 +145,9 @@ public class CMSContainer {
      *
      * @return the estimated size of the complete CMS container before signature is added, size for the signature is
      * added, size for other attributes like timestamps is not.
+     *
+     * @throws CertificateEncodingException if an encoding error occurs in {@link X509Certificate}.
+     * @throws IOException                  if an I/O error occurs.
      */
     public long getSizeEstimation() throws CertificateEncodingException, IOException {
         byte[] result = serialize(true);
@@ -163,8 +166,11 @@ public class CMSContainer {
     /**
      * The digest algorithm OID and parameters used by the signer.
      * This class only supports one signer for use in pdf signatures, so only one digest algorithm is supported.
-     * </P>
+     *
+     * <p>
      * This field is set when adding the signerInfo.
+     *
+     * @return {@link AlgorithmIdentifier} digest algorithm.
      */
     public AlgorithmIdentifier getDigestAlgorithm() {
         if (signerInfo == null) {

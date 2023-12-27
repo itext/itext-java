@@ -175,6 +175,8 @@ public class SignerInfo {
      * Sets the certificate that is used to sign.
      *
      * @param certificate the certificate that is used to sign
+     *
+     * @throws IOException if input-output exception occurs.
      */
     public void setSigningCertificate(X509Certificate certificate) throws IOException {
         this.signerCertificate = certificate;
@@ -200,6 +202,11 @@ public class SignerInfo {
      *
      * @param certificate        the certificate that is used to sign
      * @param digestAlgorithmOid the oid of the digest algorithm to be added to the signed attributes
+     *
+     * @throws CertificateEncodingException if an encoding error occurs.
+     * @throws NoSuchAlgorithmException     when the algorithm is unknown.
+     * @throws NoSuchProviderException      when provider is unknown.
+     * @throws IOException                  if input-output exception occurs.
      */
     public void setSigningCertificateAndAddToSignedAttributes(X509Certificate certificate, String digestAlgorithmOid)
             throws CertificateEncodingException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
@@ -298,16 +305,18 @@ public class SignerInfo {
     }
 
     /**
-     * Value 0 when no signerIdentifier is available
-     * Value 1 when signerIdentifier is of type issuerAndSerialNumber
-     * Value 3 when signerIdentifier is of type subjectKeyIdentifier
+     * Value 0 when no signerIdentifier is available.
+     * Value 1 when signerIdentifier is of type issuerAndSerialNumber.
+     * Value 3 when signerIdentifier is of type subjectKeyIdentifier.
+     *
+     * @return CMS version.
      */
     public int getCmsVersion() {
         return 1;
     }
 
     /**
-     * Optional
+     * Optional.
      *
      * <p>
      * Attributes that should be part of the signed content
@@ -326,6 +335,8 @@ public class SignerInfo {
      * A message-digest attribute, having as its value the message
      * digest of the content.  Section 11.2 defines the message-digest
      * attribute.
+     *
+     * @return collection of the signed attributes.
      */
     public Collection<Attribute> getSignedAttributes() {
         return Collections.unmodifiableCollection(signedAttributes);
