@@ -58,8 +58,8 @@ import java.util.Map;
  */
 public class SignatureUtil {
 
-    private PdfDocument document;
-    private PdfAcroForm acroForm;
+    private final PdfDocument document;
+    private final PdfAcroForm acroForm;
     private Map<String, int[]> sigNames;
     private List<String> orderedSignatureNames;
     private int totalRevisions;

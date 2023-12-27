@@ -254,6 +254,7 @@ import java.util.List;
 import java.util.Set;
 import javax.crypto.Cipher;
 import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -695,6 +696,18 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IASN1Enumerated createASN1Enumerated(int i) {
         return new ASN1EnumeratedBC(i);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1Enumerated createASN1Enumerated(IASN1Encodable object) {
+        ASN1EncodableBC encodable = (ASN1EncodableBC) object;
+        if (encodable.getEncodable() instanceof ASN1Enumerated) {
+            return new ASN1EnumeratedBC((ASN1Enumerated) encodable.getEncodable());
+        }
+        return null;
     }
 
     /**

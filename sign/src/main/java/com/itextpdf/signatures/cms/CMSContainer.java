@@ -29,7 +29,9 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
+import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.SecurityIDs;
@@ -40,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.CRL;
+import java.security.cert.CRLException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +57,27 @@ import java.util.Collections;
 public class CMSContainer {
 
     private static final IBouncyCastleFactory BC_FACTORY = BouncyCastleFactoryCreator.getFactory();
+
+    /**
+     * Collection to store revocation info other than OCSP and CRL responses, e.g. SCVP Request and Response.
+     */
+    final Collection<IASN1Sequence> otherRevocationInfo = new ArrayList<>();
+
+    /**
+     * Optional.
+     *
+     * <p>
+     * It is a collection of CRL revocation status information.
+     */
+    private final Collection<CRL> crls = new ArrayList<>();
+
+    /**
+     * Optional.
+     *
+     * <p>
+     * It is a collection of CRL revocation status information.
+     */
+    private final Collection<IBasicOCSPResponse> ocsps = new ArrayList<>();
 
     /**
      * This represents the signed content.
@@ -87,8 +112,9 @@ public class CMSContainer {
      *
      * @throws IOException          if issues occur during ASN1 objects creation.
      * @throws CertificateException if issues occur processing the embedded certificates.
+     * @throws CRLException         if CRL encoding error occurs.
      */
-    public CMSContainer(byte[] encodedCMSdata) throws IOException, CertificateException {
+    public CMSContainer(byte[] encodedCMSdata) throws IOException, CertificateException, CRLException {
         try (IASN1InputStream is = BC_FACTORY.createASN1InputStream(new ByteArrayInputStream(encodedCMSdata))) {
             IASN1Sequence contentInfo = BC_FACTORY.createASN1Sequence(is.readObject());
             IASN1Sequence signedData = BC_FACTORY.createASN1Sequence(
@@ -104,12 +130,14 @@ public class CMSContainer {
             IASN1Sequence lencapContentInfo = BC_FACTORY.createASN1Sequence(signedData.getObjectAt(2));
             encapContentInfo = new EncapsulatedContentInfo(lencapContentInfo);
             processCertificates(signedData);
-
-            IASN1Set signerInfosS = BC_FACTORY.createASN1Set(signedData.getObjectAt(4));
-            if (signerInfosS == null) {
-                // Most probably revocation data is in place, so read next item.
-                signerInfosS = BC_FACTORY.createASN1Set(signedData.getObjectAt(5));
+            int next = 4;
+            IASN1TaggedObject taggedObj = BC_FACTORY.createASN1TaggedObject(signedData.getObjectAt(next));
+            if (taggedObj != null) {
+                ++next;
+                CertificateUtil.retrieveRevocationInfoFromSignedData(taggedObj, this.crls, this.ocsps,
+                        this.otherRevocationInfo);
             }
+            IASN1Set signerInfosS = BC_FACTORY.createASN1Set(signedData.getObjectAt(next));
             if (signerInfosS.size() != 1) {
                 throw new PdfException(SignExceptionMessageConstant.CMS_ONLY_ONE_SIGNER_ALLOWED);
             }
@@ -148,8 +176,9 @@ public class CMSContainer {
      *
      * @throws CertificateEncodingException if an encoding error occurs in {@link X509Certificate}.
      * @throws IOException                  if an I/O error occurs.
+     * @throws CRLException                 if CRL encoding error occurs.
      */
-    public long getSizeEstimation() throws CertificateEncodingException, IOException {
+    public long getSizeEstimation() throws CertificateEncodingException, IOException, CRLException {
         byte[] result = serialize(true);
         return result.length;
     }
@@ -228,6 +257,42 @@ public class CMSContainer {
     }
 
     /**
+     * Retrieves a copy of the list of CRLs.
+     *
+     * @return the list of CRL revocation info.
+     */
+    public Collection<CRL> getCrls() {
+        return Collections.unmodifiableCollection(crls);
+    }
+
+    /**
+     * Adds a CRL response to the CMS container.
+     *
+     * @param crl the CRL response to be added.
+     */
+    public void addCrl(CRL crl) {
+        crls.add(crl);
+    }
+
+    /**
+     * Retrieves a copy of the list of OCSPs.
+     *
+     * @return the list of OCSP revocation info.
+     */
+    public Collection<IBasicOCSPResponse> getOcsps() {
+        return Collections.unmodifiableCollection(ocsps);
+    }
+
+    /**
+     * Adds an OCSP response to the CMS container.
+     *
+     * @param ocspResponse the OCSP response to be added.
+     */
+    public void addOcsp(IBasicOCSPResponse ocspResponse) {
+        ocsps.add(ocspResponse);
+    }
+
+    /**
      * Sets the  Signed Attributes of the signer info to this serialized version.
      * The signed attributes will become read-only.
      *
@@ -259,12 +324,13 @@ public class CMSContainer {
      *
      * @throws CertificateEncodingException if errors occur during certificate processing.
      * @throws IOException                  if issues occur during ASN1 objects creation.
+     * @throws CRLException                 if CRL encoding error occurs.
      */
-    public byte[] serialize() throws CertificateEncodingException, IOException {
+    public byte[] serialize() throws CertificateEncodingException, IOException, CRLException {
         return serialize(false);
     }
 
-    private byte[] serialize(boolean forEstimation) throws CertificateEncodingException, IOException {
+    private byte[] serialize(boolean forEstimation) throws CertificateEncodingException, IOException, CRLException {
     /* ContentInfo SEQUENCE
            ContentType OBJECT IDENTIFIER (1.2.840.113549.1.7.2)
            Content [0] SEQUENCE
@@ -274,12 +340,19 @@ public class CMSContainer {
                      DigestAlgorithmIdentifier SEQUENCE
                          algorithm OBJECT IDENTIFIER
                          parameters ANY
-                     encapContentInfo EncapsulatedContentInfo SEQUENCE
+                 encapContentInfo EncapsulatedContentInfo SEQUENCE
                          eContentType ContentType OBJECT IDENTIFIER (1.2.840.113549.1.7.1 data)
-                     CertificateSet [0] (set?)
+                 certificates CertificateSet [0] SET
                          CertificateChoices SEQUENCE
                              tbsCertificate TBSCertificate SEQUENCE
-                     signerInfos SignerInfos SET
+                 crls RevocationInfoChoices [1] SET
+                         RevocationInfoChoice CHOICE {
+                             crl CertificateList SEQUENCE,
+                             other OtherRevocationInfoFormat SEQUENCE
+                                    otherRevInfoFormat OBJECT IDENTIFIER,
+                                    otherRevInfo ANY DEFINED BY otherRevInfoFormat (SEQUENCE for OCSP)
+                         }
+                 signerInfos SignerInfos SET
      */
 
         IASN1EncodableVector contentInfoV = BC_FACTORY.createASN1EncodableVector();
@@ -300,6 +373,12 @@ public class CMSContainer {
             certificateSetV.add(BC_FACTORY.createASN1Primitive(cert.getEncoded()));
         }
         singedDataV.add(BC_FACTORY.createDERTaggedObject(false, 0, BC_FACTORY.createDERSet(certificateSetV)));
+
+        IDERSet revInfoChoices =
+                CertificateUtil.createRevocationInfoChoices(this.crls, this.ocsps, this.otherRevocationInfo);
+        if (revInfoChoices != null) {
+            singedDataV.add(BC_FACTORY.createDERTaggedObject(false, 1, revInfoChoices));
+        }
 
         IASN1EncodableVector signerInfosV = BC_FACTORY.createASN1EncodableVector();
         signerInfosV.add(signerInfo.getAsDerSequence(forEstimation));

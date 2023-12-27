@@ -56,4 +56,14 @@ public class ASN1EnumeratedBC extends ASN1PrimitiveBC implements IASN1Enumerated
     public ASN1Enumerated getASN1Enumerated() {
         return (ASN1Enumerated) getEncodable();
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public int intValueExact() {
+        return getASN1Enumerated().intValueExact();
+    }
 }

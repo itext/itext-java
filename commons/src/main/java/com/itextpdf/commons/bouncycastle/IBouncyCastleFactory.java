@@ -498,6 +498,15 @@ public interface IBouncyCastleFactory {
     IASN1Enumerated createASN1Enumerated(int i);
 
     /**
+     * Create ASN1 Enumerated wrapper from {@code IASN1Encodable} value.
+     *
+     * @param object {@code IASN1Encodable} to create ASN1 Enumerated wrapper from
+     *
+     * @return created ASN1 Enumerated wrapper.
+     */
+    IASN1Enumerated createASN1Enumerated(IASN1Encodable object);
+
+    /**
      * Create ASN1 Encoding without parameters.
      *
      * @return created ASN1 Encoding

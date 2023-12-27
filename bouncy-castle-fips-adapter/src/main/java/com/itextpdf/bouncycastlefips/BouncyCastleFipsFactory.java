@@ -255,6 +255,7 @@ import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -701,6 +702,18 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IASN1Enumerated createASN1Enumerated(int i) {
         return new ASN1EnumeratedBCFips(i);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IASN1Enumerated createASN1Enumerated(IASN1Encodable object) {
+        ASN1EncodableBCFips encodable = (ASN1EncodableBCFips) object;
+        if (encodable.getEncodable() instanceof ASN1Enumerated) {
+            return new ASN1EnumeratedBCFips((ASN1Enumerated) encodable.getEncodable());
+        }
+        return null;
     }
 
     /**

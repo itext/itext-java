@@ -257,6 +257,11 @@ final class SignUtils {
         return factory.generateCertificate(data);
     }
 
+    static Collection<CRL> readAllCRLs(byte[] contentsKey) throws CertificateException, CRLException {
+        final CertificateFactory factory = CertificateFactory.getInstance("X509", FACTORY.getProvider());
+        return new ArrayList<>(factory.generateCRLs(new ByteArrayInputStream(contentsKey)));
+    }
+
     static <T> T getFirstElement(Iterable<T> iterable) {
         return iterable.iterator().next();
     }

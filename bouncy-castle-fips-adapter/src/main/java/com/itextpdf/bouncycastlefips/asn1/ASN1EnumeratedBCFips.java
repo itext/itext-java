@@ -56,4 +56,14 @@ public class ASN1EnumeratedBCFips extends ASN1PrimitiveBCFips implements IASN1En
     public ASN1Enumerated getASN1Enumerated() {
         return (ASN1Enumerated) getEncodable();
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public int intValueExact() {
+        return getASN1Enumerated().getValue().intValueExact();
+    }
 }

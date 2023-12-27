@@ -24,6 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1Enumerated;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
@@ -32,11 +34,17 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1TaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.IDERIA5String;
 import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
+import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
+import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ICRLDistPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -48,6 +56,9 @@ import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.cert.X509CRL;
+import java.util.Collection;
+import java.util.Enumeration;
 
 /**
  * This class contains a series of static methods that
@@ -56,6 +67,7 @@ import java.security.cert.X509Certificate;
 public class CertificateUtil {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateUtil.class);
 
     // Certificate Revocation Lists
 
@@ -225,6 +237,119 @@ public class CertificateUtil {
     }
 
     /**
+     * Try to retrieve CRL and OCSP responses from the signed data crls field.
+     *
+     * @param taggedObj signed data crls field as {@link IASN1TaggedObject}.
+     *
+     * @param crls                          collection to store retrieved CRL responses.
+     * @param ocsps                         collection of {@link IBasicOCSPResponse} wrappers to store retrieved
+     *                                      OCSP responses.
+     * @param otherRevocationInfoFormats    collection of revocation info other than OCSP and CRL responses,
+     *                                      e.g. SCVP Request and Response, stored as {@link IASN1Sequence}.
+     *
+     * @throws IOException          if some I/O error occurred.
+     * @throws CertificateException if CertificateFactory instance wasn't created.
+     */
+    public static void retrieveRevocationInfoFromSignedData(IASN1TaggedObject taggedObj, Collection<CRL> crls,
+                                                            Collection<IBasicOCSPResponse> ocsps,
+                                                            Collection<IASN1Sequence> otherRevocationInfoFormats)
+            throws IOException, CertificateException {
+        Enumeration revInfo = FACTORY.createASN1Set(taggedObj, false).getObjects();
+        while (revInfo.hasMoreElements()) {
+            IASN1Sequence s = FACTORY.createASN1Sequence(revInfo.nextElement());
+            IASN1ObjectIdentifier o = FACTORY.createASN1ObjectIdentifier(s.getObjectAt(0));
+            if (o != null && SecurityIDs.ID_RI_OCSP_RESPONSE.equals(o.getId())) {
+                IASN1Sequence ocspResp = FACTORY.createASN1Sequence(s.getObjectAt(1));
+                IASN1Enumerated respStatus = FACTORY.createASN1Enumerated(ocspResp.getObjectAt(0));
+                if (respStatus.intValueExact() == FACTORY.createOCSPRespBuilderInstance().getSuccessful()) {
+                    IASN1Sequence responseBytes = FACTORY.createASN1Sequence(ocspResp.getObjectAt(1));
+                    if (responseBytes != null) {
+                        ocsps.add(CertificateUtil.createOcsp(responseBytes));
+                    }
+                }
+            } else {
+                try {
+                    crls.addAll(SignUtils.readAllCRLs(s.getEncoded()));
+                } catch (CRLException ignored) {
+                    LOGGER.warn(SignLogMessageConstant.UNABLE_TO_PARSE_REV_INFO);
+                    otherRevocationInfoFormats.add(s);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates the revocation info (crls field) for SignedData structure:
+     * RevocationInfoChoices ::= SET OF RevocationInfoChoice
+     *
+     *       RevocationInfoChoice ::= CHOICE {
+     *         crl CertificateList,
+     *         other [1] IMPLICIT OtherRevocationInfoFormat }
+     *
+     *       OtherRevocationInfoFormat ::= SEQUENCE {
+     *         otherRevInfoFormat OBJECT IDENTIFIER,
+     *         otherRevInfo ANY DEFINED BY otherRevInfoFormat }
+     *
+     *       CertificateList  ::=  SEQUENCE  {
+     *         tbsCertList          TBSCertList,
+     *         signatureAlgorithm   AlgorithmIdentifier,
+     *         signatureValue       BIT STRING  }
+     *
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc5652#section-10.2.1">RFC 5652 §10.2.1</a>
+     *
+     * @param crls                          collection of CRL revocation status information.
+     * @param ocsps                         collection of OCSP revocation status information.
+     * @param otherRevocationInfoFormats    collection of revocation info other than OCSP and CRL responses,
+     *                                      e.g. SCVP Request and Response, stored as {@link IASN1Sequence}.
+     *
+     * @return {@code crls [1] RevocationInfoChoices} field of SignedData structure. Null if SignedData has
+     * no revocation data.
+     *
+     * @throws CRLException if an encoding error occurs.
+     * @throws IOException  if an I/O error occurs.
+     */
+    public static IDERSet createRevocationInfoChoices(Collection<CRL> crls, Collection<IBasicOCSPResponse> ocsps,
+                                                      Collection<IASN1Sequence> otherRevocationInfoFormats)
+            throws CRLException, IOException {
+        if (crls.size() == 0 && ocsps.size() == 0) {
+            return null;
+        }
+        IASN1EncodableVector revocationInfoChoices = FACTORY.createASN1EncodableVector();
+
+        // Add CRLs
+        for (CRL element : crls) {
+            // Add crl CertificateList (crl RevocationInfoChoice)
+            revocationInfoChoices.add(FACTORY.createASN1Sequence(((X509CRL) element).getEncoded()));
+        }
+
+        // Add OCSPs
+        for (IBasicOCSPResponse element : ocsps) {
+            IASN1EncodableVector ocspResponseRevInfo = FACTORY.createASN1EncodableVector();
+            // Add otherRevInfoFormat (ID_RI_OCSP_RESPONSE)
+            ocspResponseRevInfo.add(FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_RI_OCSP_RESPONSE));
+
+            IASN1EncodableVector ocspResponse = FACTORY.createASN1EncodableVector();
+            ocspResponse.add(FACTORY.createOCSPResponseStatus(
+                    FACTORY.createOCSPRespBuilderInstance().getSuccessful()).toASN1Primitive());
+            ocspResponse.add(FACTORY.createResponseBytes(
+                    FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspBasic(),
+                    FACTORY.createDEROctetString(element.toASN1Primitive().getEncoded())).toASN1Primitive());
+            // Add otherRevInfo (ocspResponse)
+            ocspResponseRevInfo.add(FACTORY.createDERSequence(ocspResponse));
+
+            // Add other [1] IMPLICIT OtherRevocationInfoFormat (ocsp RevocationInfoChoice)
+            revocationInfoChoices.add(FACTORY.createDERSequence(ocspResponseRevInfo));
+        }
+
+        // Add other RevocationInfo formats
+        for (IASN1Sequence revInfo : otherRevocationInfoFormats) {
+            revocationInfoChoices.add(revInfo);
+        }
+
+        return FACTORY.createDERSet(revocationInfoChoices);
+    }
+
+    /**
      * Checks if the certificate is signed by provided issuer certificate.
      *
      * @param subjectCertificate a certificate to check
@@ -326,6 +451,29 @@ public class CertificateUtil {
             if (accessDescription.size() == 2 && id != null && accessMethod.equals(id.getId())) {
                 IASN1Primitive description = FACTORY.createASN1Primitive(accessDescription.getObjectAt(1));
                 return getStringFromGeneralName(description);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Helper method that creates the {@link IBasicOCSPResponse} object from the response bytes.
+     *
+     * @param seq response bytes.
+     *
+     * @return {@link IBasicOCSPResponse} object.
+     *
+     * @throws IOException if some I/O error occurred.
+     */
+    private static IBasicOCSPResponse createOcsp(IASN1Sequence seq) throws IOException {
+        IASN1ObjectIdentifier objectIdentifier = FACTORY.createASN1ObjectIdentifier(
+                seq.getObjectAt(0));
+        IOCSPObjectIdentifiers ocspObjectIdentifiers = FACTORY.createOCSPObjectIdentifiers();
+        if (objectIdentifier != null
+                && objectIdentifier.getId().equals(ocspObjectIdentifiers.getIdPkixOcspBasic().getId())) {
+            IASN1OctetString os = FACTORY.createASN1OctetString(seq.getObjectAt(1));
+            try (IASN1InputStream inp = FACTORY.createASN1InputStream(os.getOctets())) {
+                return FACTORY.createBasicOCSPResponse(inp.readObject());
             }
         }
         return null;

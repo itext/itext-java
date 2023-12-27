@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1OctetString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
@@ -33,10 +34,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,6 +49,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CRLException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -333,6 +337,20 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
     }
 
     @Test
+    public void getEncodedPkcs7WithRevocationInfoTest() throws NoSuchAlgorithmException, InvalidKeyException,
+            NoSuchProviderException, IOException, CertificateException, CRLException {
+        String hashAlgorithm = DigestAlgorithms.SHA256;
+        PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
+        pkcs7.getSignedDataCRLs().add(SignTestPortUtil.parseCrlFromStream(new FileInputStream(SOURCE_FOLDER + "firstCrl.bin")));
+        pkcs7.getSignedDataOcsps().add(BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(BOUNCY_CASTLE_FACTORY.createASN1InputStream(
+                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+        byte[] bytes = pkcs7.getEncodedPKCS7();
+        byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs7WithRevInfo.txt"));
+        Assert.assertEquals("SHA256withRSA", pkcs7.getSignatureMechanismName());
+        Assert.assertEquals(serializedAsString(bytes), serializedAsString(cmpBytes));
+    }
+
+    @Test
     public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
         // SHAKE256 is not available in BCFIPS
         if ("BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
@@ -358,5 +376,11 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
         return new PdfPKCS7(null, chain, DigestAlgorithms.SHA256, null,
                 new BouncyCastleDigest(), false);
+    }
+
+    private String serializedAsString(byte[] serialized) throws IOException {
+        IASN1InputStream is = BOUNCY_CASTLE_FACTORY.createASN1InputStream(serialized);
+        IASN1Primitive obj1 = is.readObject();
+        return BOUNCY_CASTLE_FACTORY.createASN1Dump().dumpAsString(obj1, true).replace("\r\n", "\n");
     }
 }

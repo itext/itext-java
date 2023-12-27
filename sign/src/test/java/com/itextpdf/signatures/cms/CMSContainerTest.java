@@ -30,20 +30,29 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SecurityIDs;
 import com.itextpdf.signatures.SignatureMechanisms;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -51,6 +60,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.CRLException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,10 +69,9 @@ import java.util.Collections;
 public class CMSContainerTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/cms/CMSContainerTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
-
-    private static final byte[] EXPECTEDRESULT_1 = Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST);
 
     private X509Certificate[] chain;
     private X509Certificate signCert;
@@ -88,7 +97,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void testSerialize() throws CertificateEncodingException, IOException, NoSuchAlgorithmException,
-            NoSuchProviderException {
+            NoSuchProviderException, CRLException {
         CMSContainer sut = new CMSContainer();
         sut.addCertificates((X509Certificate[]) chain);
 
@@ -101,17 +110,43 @@ public class CMSContainerTest extends ExtendedITextTest {
         si.setCrlResponses(Collections.singletonList(testCrlResponse));
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(
+                SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
         si.setSignature(new byte[256]);
         sut.setSignerInfo(si);
 
         byte[] serRes = sut.serialize();
-        Assert.assertEquals(serializedAsString(EXPECTEDRESULT_1), serializedAsString(serRes));
+        Assert.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST)),
+                serializedAsString(serRes));
+    }
+
+    @Test
+    public void testSerializationWithRevocationData() throws CertificateException, IOException, NoSuchAlgorithmException,
+            NoSuchProviderException, CRLException {
+        CMSContainer sut = new CMSContainer();
+        sut.addCertificates((X509Certificate[]) chain);
+        sut.addCrl(SignTestPortUtil.parseCrlFromStream(new ByteArrayInputStream(testCrlResponse)));
+        sut.addOcsp(FACTORY.createBasicOCSPResponse(FACTORY.createASN1InputStream(
+                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+
+        SignerInfo si = new SignerInfo();
+        si.setSigningCertificate(signCert);
+        si.setMessageDigest(new byte[256]);
+        si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
+        si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(
+                SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
+        si.setSignature(new byte[256]);
+        sut.setSignerInfo(si);
+
+        byte[] serRes = sut.serialize();
+        Assert.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL)),
+                serializedAsString(serRes));
     }
 
     @Test
     public void testGetSizeEstimation() throws CertificateEncodingException, IOException, NoSuchAlgorithmException,
-            NoSuchProviderException {
+            NoSuchProviderException, CRLException {
         CMSContainer sut = new CMSContainer();
         sut.addCertificates((X509Certificate[]) chain);
 
@@ -124,7 +159,8 @@ public class CMSContainerTest extends ExtendedITextTest {
         si.setCrlResponses(Collections.singletonList(testCrlResponse));
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(
+                SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
         si.setSignature(new byte[256]);
         sut.setSignerInfo(si);
 
@@ -133,39 +169,56 @@ public class CMSContainerTest extends ExtendedITextTest {
         Assert.assertEquals(4827, size);
     }
 
-
     @Test
-    public void testDeserialisation() throws CertificateException, IOException {
-        byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_CASE1);
+    public void testDeserialization() throws CertificateException, IOException, CRLException {
+        byte[] rawData = Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST);
         CMSContainer sd = new CMSContainer(rawData);
-        Assert.assertEquals("2.16.840.1.101.3.4.2.1", sd.getDigestAlgorithm().getAlgorithmOid());
+        Assert.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
         Assert.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
         Assert.assertEquals(3, sd.getCertificates().size());
-        Assert.assertTrue(sd.getCertificates().stream()
-                .anyMatch(c -> "140282000747862710817410059465802198354".equals(c.getSerialNumber().toString())));
-        Assert.assertTrue(sd.getCertificates().stream()
-                .anyMatch(c -> "151118660848720701053205649823964411794".equals(c.getSerialNumber().toString())));
-        Assert.assertTrue(sd.getCertificates().stream()
-                .anyMatch(c -> "8380897714609953925".equals(c.getSerialNumber().toString())));
-        Assert.assertEquals("8380897714609953925",
+        Assert.assertEquals(0, sd.getCrls().size());
+        Assert.assertEquals(0, sd.getOcsps().size());
+        for (X509Certificate certificate : chain) {
+            Assert.assertTrue(sd.getCertificates().stream()
+                    .anyMatch(c -> certificate.getSerialNumber().toString().equals(c.getSerialNumber().toString())));
+        }
+        Assert.assertEquals(chain[0].getSerialNumber().toString(),
                 sd.getSignerInfo().getSigningCertificate().getSerialNumber().toString());
     }
 
     @Test
-    public void testDeserialisationWithRevocationData() throws CertificateException, IOException {
-        byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_CASE2);
+    public void testDeserializationWithRevocationData() throws CertificateException, IOException, CRLException {
+        byte[] rawData = Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL);
         CMSContainer sd = new CMSContainer(rawData);
-        Assert.assertEquals("2.16.840.1.101.3.4.2.1", sd.getDigestAlgorithm().getAlgorithmOid());
+        Assert.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
         Assert.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
         Assert.assertEquals(3, sd.getCertificates().size());
-        Assert.assertTrue(sd.getCertificates().stream()
-                .anyMatch(c -> "3081".equals(c.getSerialNumber().toString())));
-        Assert.assertTrue(sd.getCertificates().stream()
-                .anyMatch(c -> "2776".equals(c.getSerialNumber().toString())));
-        Assert.assertTrue(sd.getCertificates().stream()
-                .anyMatch(c -> "1".equals(c.getSerialNumber().toString())));
-        Assert.assertEquals("3081",
+        Assert.assertEquals(1, sd.getCrls().size());
+        Assert.assertEquals(1, sd.getOcsps().size());
+        for (X509Certificate certificate : chain) {
+            Assert.assertTrue(sd.getCertificates().stream()
+                    .anyMatch(c -> certificate.getSerialNumber().toString().equals(c.getSerialNumber().toString())));
+        }
+        Assert.assertEquals(chain[0].getSerialNumber().toString(),
                 sd.getSignerInfo().getSigningCertificate().getSerialNumber().toString());
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UNABLE_TO_PARSE_REV_INFO))
+    public void testDeserializationWithIncorrectRevocationData() throws CertificateException, IOException, CRLException {
+        byte[] rawData = Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_INCORRECT_REV_INFO);
+        CMSContainer sd = new CMSContainer(rawData);
+        Assert.assertEquals(1, sd.getCrls().size());
+        Assert.assertEquals(1, sd.getOcsps().size());
+        Assert.assertEquals(1, sd.otherRevocationInfo.size());
+    }
+
+    @Test
+    public void createPkcs7WithRevocationInfoTest() {
+        PdfPKCS7 pkcs7 = new PdfPKCS7(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL),
+                PdfName.Adbe_pkcs7_detached, FACTORY.getProviderName());
+        Assert.assertEquals(1, pkcs7.getSignedDataCRLs().size());
+        Assert.assertEquals(1, pkcs7.getSignedDataOcsps().size());
     }
 
     @Test
