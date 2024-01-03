@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2024 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -63,7 +63,7 @@ class ImagePdfBytesInfo {
     private static final String TIFFTAG_SOFTWARE_VALUE = "iText\u00ae " +
             ITextCoreProductData.getInstance().getVersion() + " \u00a9" + ITextCoreProductData.getInstance()
             .getSinceCopyrightYear() + "-" + ITextCoreProductData.getInstance().getToCopyrightYear()
-            + " iText Group NV";
+            + " Apryse Group NV";
     private final int bpc;
     private final int width;
     private final int height;
