@@ -481,6 +481,7 @@
             <fileset reason="Different implementation on .NET and java">
                 <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
+                <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest.java"/>
                 <file path="com/itextpdf/signatures/sign/LtvSigTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest.java"/>
@@ -607,6 +608,21 @@
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest1_FIPS.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest2_FIPS.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest3_FIPS.pdf"/>
+            
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest2_FIPS.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest3.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest4.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest2_FIPS.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest3.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest4.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest1.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest2.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest3.pdf"/>
+            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest4.pdf"/>
             
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest/cmp_defaultSignerPropertiesTest.pdf"/>
 

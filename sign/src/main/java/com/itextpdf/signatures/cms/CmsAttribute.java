@@ -27,7 +27,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 /**
  * This class represents Attribute structure.
  */
-public class Attribute {
+public class CmsAttribute {
     private final String type;
     private final IASN1Primitive value;
 
@@ -37,7 +37,7 @@ public class Attribute {
      * @param type  the type of the attribute
      * @param value the value
      */
-    public Attribute(String type, IASN1Primitive value) {
+    public CmsAttribute(String type, IASN1Primitive value) {
         this.type = type;
         this.value = value;
     }

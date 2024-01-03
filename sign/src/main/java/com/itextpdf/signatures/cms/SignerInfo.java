@@ -74,8 +74,8 @@ public class SignerInfo {
 
     private AlgorithmIdentifier digestAlgorithm;
     private AlgorithmIdentifier signingAlgorithm;
-    private final Collection<Attribute> signedAttributes = new ArrayList<Attribute>();
-    private final Collection<Attribute> unSignedAttributes;
+    private final Collection<CmsAttribute> signedAttributes = new ArrayList<>();
+    private final Collection<CmsAttribute> unSignedAttributes;
     private byte[] serializedSignedAttributes;
     private Collection<byte[]> ocspResponses;
     private Collection<byte[]> crlResponses;
@@ -87,11 +87,11 @@ public class SignerInfo {
      * Creates an empty SignerInfo structure.
      */
     public SignerInfo() {
-        Attribute contentType =
-                new Attribute(SecurityIDs.ID_CONTENT_TYPE,
+        CmsAttribute contentType =
+                new CmsAttribute(SecurityIDs.ID_CONTENT_TYPE,
                         BC_FACTORY.createDERSet(BC_FACTORY.createASN1ObjectIdentifier(SecurityIDs.ID_PKCS7_DATA)));
         signedAttributes.add(contentType);
-        unSignedAttributes = new ArrayList<Attribute>();
+        unSignedAttributes = new ArrayList<>();
     }
 
     /**
@@ -132,7 +132,7 @@ public class SignerInfo {
                         BC_FACTORY.createASN1TaggedObject(signerInfoSeq.getObjectAt(index));
                 unSignedAttributes = processAttributeSet(BC_FACTORY.createASN1Set(taggedUnsingedAttributes, false));
             } else {
-                unSignedAttributes = new ArrayList<Attribute>();
+                unSignedAttributes = new ArrayList<>();
             }
         } catch (NullPointerException npe) {
             throw new PdfException(SignExceptionMessageConstant.CMS_INVALID_CONTAINER_STRUCTURE, npe);
@@ -166,7 +166,7 @@ public class SignerInfo {
         if (signedAttributesReadOnly) {
             throw new IllegalStateException(SignExceptionMessageConstant.CMS_SIGNERINFO_READONLY);
         }
-        Attribute digestAttribute = new Attribute(SecurityIDs.ID_MESSAGE_DIGEST, BC_FACTORY.createDERSet(
+        CmsAttribute digestAttribute = new CmsAttribute(SecurityIDs.ID_MESSAGE_DIGEST, BC_FACTORY.createDERSet(
                                 BC_FACTORY.createDEROctetString(digest)));
         signedAttributes.add(digestAttribute);
     }
@@ -175,17 +175,9 @@ public class SignerInfo {
      * Sets the certificate that is used to sign.
      *
      * @param certificate the certificate that is used to sign
-     *
-     * @throws IOException if input-output exception occurs.
      */
-    public void setSigningCertificate(X509Certificate certificate) throws IOException {
+    public void setSigningCertificate(X509Certificate certificate) {
         this.signerCertificate = certificate;
-        if (certificate.getSigAlgParams() != null) {
-            this.signingAlgorithm = new AlgorithmIdentifier(certificate.getSigAlgOID(),
-                    BC_FACTORY.createASN1Primitive(certificate.getSigAlgParams()));
-        } else {
-            this.signingAlgorithm = new AlgorithmIdentifier(certificate.getSigAlgOID());
-        }
     }
 
     /**
@@ -206,10 +198,9 @@ public class SignerInfo {
      * @throws CertificateEncodingException if an encoding error occurs.
      * @throws NoSuchAlgorithmException     when the algorithm is unknown.
      * @throws NoSuchProviderException      when provider is unknown.
-     * @throws IOException                  if input-output exception occurs.
      */
     public void setSigningCertificateAndAddToSignedAttributes(X509Certificate certificate, String digestAlgorithmOid)
-            throws CertificateEncodingException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
+            throws CertificateEncodingException, NoSuchAlgorithmException, NoSuchProviderException {
         setSigningCertificate(certificate);
         addSignerCertificateToSignedAttributes(certificate, digestAlgorithmOid);
     }
@@ -241,7 +232,7 @@ public class SignerInfo {
     }
 
     /**
-     * Adds the signer certificate to the signed attributes as a issuerAndSerialNumber structure.
+     * Adds the signer certificate to the signed attributes as a SigningCertificateV2 structure.
      *
      * @param cert               the certificate to add
      * @param digestAlgorithmOid the digest algorithm oid that will be used
@@ -266,12 +257,13 @@ public class SignerInfo {
         }
         byte[] dig = md.digest(cert.getEncoded());
         certContents.add(BC_FACTORY.createDEROctetString(dig));
-        IASN1Sequence issuer = BC_FACTORY.createASN1Sequence(
+        IASN1Sequence issuerName = BC_FACTORY.createASN1Sequence(
                 CertificateInfo.getIssuer(cert.getTBSCertificate()));
-        IDERTaggedObject issuerTagged = BC_FACTORY.createDERTaggedObject(true, 4, issuer);
+        IDERTaggedObject issuerTagged = BC_FACTORY.createDERTaggedObject(true, 4, issuerName);
+        IDERSequence issuer = BC_FACTORY.createDERSequence(issuerTagged);
         IASN1Integer serial = BC_FACTORY.createASN1Integer(cert.getSerialNumber());
         IASN1EncodableVector v = BC_FACTORY.createASN1EncodableVector();
-        v.add(issuerTagged);
+        v.add(issuer);
         v.add(serial);
         IDERSequence issuerS = BC_FACTORY.createDERSequence(v);
         certContents.add(issuerS);
@@ -279,7 +271,7 @@ public class SignerInfo {
         IDERSequence certContentsSeqSeq = BC_FACTORY.createDERSequence(certContentsSeq);
         IDERSequence certContentsSeqSeqSeq = BC_FACTORY.createDERSequence(certContentsSeqSeq);
         IDERSet certContentsSeqSeqSeqSet = BC_FACTORY.createDERSet(certContentsSeqSeqSeq);
-        Attribute attribute = new Attribute(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2, certContentsSeqSeqSeqSet);
+        CmsAttribute attribute = new CmsAttribute(SecurityIDs.ID_AA_SIGNING_CERTIFICATE_V2, certContentsSeqSeqSeqSet);
 
         signedAttributes.add(attribute);
     }
@@ -322,7 +314,7 @@ public class SignerInfo {
      * Attributes that should be part of the signed content
      * optional, but it MUST be present if the content type of
      * the EncapsulatedContentInfo value being signed is not id-data.
-     * In that case it must at least contain it MUSTthe following two attributes:
+     * In that case it must at least contain the following two attributes:
      *
      * <p>
      * A content-type attribute having as its value the content type
@@ -338,7 +330,7 @@ public class SignerInfo {
      *
      * @return collection of the signed attributes.
      */
-    public Collection<Attribute> getSignedAttributes() {
+    public Collection<CmsAttribute> getSignedAttributes() {
         return Collections.unmodifiableCollection(signedAttributes);
     }
 
@@ -348,7 +340,7 @@ public class SignerInfo {
      *
      * @param attribute the attribute to add
      */
-    public void addSignedAttribute(Attribute attribute) {
+    public void addSignedAttribute(CmsAttribute attribute) {
         if (signedAttributesReadOnly) {
             throw new IllegalStateException(SignExceptionMessageConstant.CMS_SIGNERINFO_READONLY);
         }
@@ -360,7 +352,7 @@ public class SignerInfo {
      *
      * @return the optional unsigned attributes.
      */
-    public Collection<Attribute> getUnSignedAttributes() {
+    public Collection<CmsAttribute> getUnSignedAttributes() {
         return Collections.unmodifiableCollection(unSignedAttributes);
     }
 
@@ -372,7 +364,7 @@ public class SignerInfo {
      *
      * @param attribute the attribute to add
      */
-    public void addUnSignedAttribute(Attribute attribute) {
+    public void addUnSignedAttribute(CmsAttribute attribute) {
         unSignedAttributes.add(attribute);
     }
 
@@ -460,14 +452,14 @@ public class SignerInfo {
         issuerAndSerialNumberV.add(CertificateInfo.getIssuer(signerCertificate.getTBSCertificate()));
         issuerAndSerialNumberV.add(BC_FACTORY.createASN1Integer(signerCertificate.getSerialNumber()));
         signerInfoV.add(BC_FACTORY.createDERSequence(issuerAndSerialNumberV));
-        // digestalgorithm
+        // digest algorithm
         IASN1EncodableVector digestalgorithmV = BC_FACTORY.createASN1EncodableVector();
 
         digestalgorithmV.add(BC_FACTORY.createASN1ObjectIdentifier(this.digestAlgorithm.getAlgorithmOid()));
         digestalgorithmV.add(digestAlgorithm.getParameters());
 
         signerInfoV.add(BC_FACTORY.createDERSequence(digestalgorithmV));
-        // signedattributes
+        // signed attributes
         if (!signedAttributes.isEmpty() || signedAttributesReadOnly) {
             if (estimationRun || !signedAttributesReadOnly) {
                 signerInfoV.add(BC_FACTORY.createDERTaggedObject(false, 0, getAttributesAsDERSet(signedAttributes)));
@@ -480,10 +472,12 @@ public class SignerInfo {
             }
         }
         // signatureAlgorithm
-        IASN1EncodableVector signatureAlgorithmV = BC_FACTORY.createASN1EncodableVector();
-        signatureAlgorithmV.add(BC_FACTORY.createASN1ObjectIdentifier(signingAlgorithm.getAlgorithmOid()));
-        signatureAlgorithmV.add(signingAlgorithm.getParameters());
-        signerInfoV.add(BC_FACTORY.createDERSequence(signatureAlgorithmV));
+        if (signingAlgorithm != null) {
+            IASN1EncodableVector signatureAlgorithmV = BC_FACTORY.createASN1EncodableVector();
+            signatureAlgorithmV.add(BC_FACTORY.createASN1ObjectIdentifier(signingAlgorithm.getAlgorithmOid()));
+            signatureAlgorithmV.add(signingAlgorithm.getParameters());
+            signerInfoV.add(BC_FACTORY.createDERSequence(signatureAlgorithmV));
+        }
         // signatureValue
         byte[] workingSignatureData;
         if (signatureData == null) {
@@ -538,14 +532,14 @@ public class SignerInfo {
         }
     }
 
-    private static Collection<Attribute> processAttributeSet(IASN1Encodable asnStruct) {
+    private static Collection<CmsAttribute> processAttributeSet(IASN1Encodable asnStruct) {
         IASN1Set usaSet = BC_FACTORY.createASN1Set(asnStruct);
-        Collection<Attribute> attributes = new ArrayList<>(usaSet.size());
+        Collection<CmsAttribute> attributes = new ArrayList<>(usaSet.size());
         for (int i = 0; i < usaSet.size(); i++) {
             IASN1Sequence attrSeq = BC_FACTORY.createASN1Sequence(usaSet.getObjectAt(i));
             IASN1ObjectIdentifier attrType = BC_FACTORY.createASN1ObjectIdentifier(attrSeq.getObjectAt(0));
             IASN1Primitive attrVal = BC_FACTORY.createASN1Primitive(attrSeq.getObjectAt(1));
-            attributes.add(new Attribute(attrType.getId(), attrVal));
+            attributes.add(new CmsAttribute(attrType.getId(), attrVal));
         }
         return attributes;
     }
@@ -560,8 +554,8 @@ public class SignerInfo {
             createCRLStructure(revocationV);
             createOCPSStructure(revocationV);
 
-            Attribute digestAttribute =
-                    new Attribute(SecurityIDs.ID_ADBE_REVOCATION,
+            CmsAttribute digestAttribute =
+                    new CmsAttribute(SecurityIDs.ID_ADBE_REVOCATION,
                             BC_FACTORY.createDERSequence(revocationV));
             signedAttributes.add(digestAttribute);
         }
@@ -612,9 +606,9 @@ public class SignerInfo {
                 (crlResponses != null && !crlResponses.isEmpty());
     }
 
-    private static IDERSet getAttributesAsDERSet(Collection<Attribute> attributeSet) {
+    private static IDERSet getAttributesAsDERSet(Collection<CmsAttribute> attributeSet) {
         IASN1EncodableVector attributes = BC_FACTORY.createASN1EncodableVector();
-        for (Attribute attr : attributeSet) {
+        for (CmsAttribute attr : attributeSet) {
             IASN1EncodableVector v = BC_FACTORY.createASN1EncodableVector();
             v.add(BC_FACTORY.createASN1ObjectIdentifier(attr.getType()));
             v.add(attr.getValue());

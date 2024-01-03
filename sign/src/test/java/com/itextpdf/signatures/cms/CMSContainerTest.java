@@ -30,7 +30,9 @@ import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationExcept
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.SecurityIDs;
+import com.itextpdf.signatures.SignatureMechanisms;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
@@ -99,6 +101,7 @@ public class CMSContainerTest extends ExtendedITextTest {
         si.setCrlResponses(Collections.singletonList(testCrlResponse));
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
         si.setSignature(new byte[256]);
         sut.setSignerInfo(si);
 
@@ -121,12 +124,13 @@ public class CMSContainerTest extends ExtendedITextTest {
         si.setCrlResponses(Collections.singletonList(testCrlResponse));
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
         si.setSignature(new byte[256]);
         sut.setSignerInfo(si);
 
         long size = sut.getSizeEstimation();
 
-        Assert.assertEquals(4825, size);
+        Assert.assertEquals(4827, size);
     }
 
 

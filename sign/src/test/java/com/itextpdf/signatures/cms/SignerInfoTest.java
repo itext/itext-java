@@ -130,7 +130,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         Assert.assertThrows(IllegalStateException.class, () -> si.setOcspResponses(fakeOcspREsponses));
         Assert.assertThrows(IllegalStateException.class, () -> si.setMessageDigest(new byte[1024]));
 
-        Attribute attribute = new Attribute("", FACTORY.createASN1Integer(1));
+        CmsAttribute attribute = new CmsAttribute("", FACTORY.createASN1Integer(1));
         Assert.assertThrows(IllegalStateException.class,
                 () -> si.addSignedAttribute(attribute));
         Assert.assertThrows(IllegalStateException.class, () ->
@@ -180,7 +180,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         SignerInfo si = new SignerInfo();
         Assert.assertFalse(si.getSignedAttributes().stream().anyMatch(a ->
                 Objects.equals(a.getType(), SecurityIDs.ID_SIGNING_TIME)));
-        Attribute attrib = new Attribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
+        CmsAttribute attrib = new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
         si.addSignedAttribute(attrib);
         Assert.assertTrue(si.getSignedAttributes().stream().anyMatch(a ->
                 Objects.equals(a.getType(), SecurityIDs.ID_SIGNING_TIME)));
@@ -189,10 +189,10 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testAddUnsignedAttribute() {
         SignerInfo si = new SignerInfo();
-        Attribute attrib = new Attribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
+        CmsAttribute attrib = new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.createNullASN1Set());
         si.addUnSignedAttribute(attrib);
         Assert.assertEquals(SecurityIDs.ID_SIGNING_TIME,
-                SignTestPortUtil.<Attribute>getFirstElement(si.getUnSignedAttributes()).getType());
+                SignTestPortUtil.<CmsAttribute>getFirstElement(si.getUnSignedAttributes()).getType());
     }
 
     @Test
@@ -225,7 +225,7 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.addUnSignedAttribute(new Attribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
 
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
@@ -244,7 +244,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         SignerInfo si = new SignerInfo();
 
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA_WITH_SHA256));
-        si.addUnSignedAttribute(new Attribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
 
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
@@ -255,8 +255,7 @@ public class SignerInfoTest extends ExtendedITextTest {
 
         long res = si.getEstimatedSize();
 
-        Assert.assertEquals(1975, res);
-
+        Assert.assertEquals(1977, res);
     }
 
     @Test
@@ -275,7 +274,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si2.setSerializedSignedAttributes(serialized);
 
         Assert.assertEquals(si.getSignedAttributes().size(), si2.getSignedAttributes().size());
-        for (Attribute attribute : si.getSignedAttributes()) {
+        for (CmsAttribute attribute : si.getSignedAttributes()) {
             Assert.assertTrue(MessageFormatUtil.format("Expected to find an attribute with id {0} and value {1}",
                     attribute.getType(), attribute.getValue().toString()), si2.getSignedAttributes().stream()
                     .anyMatch(a -> a.getType().equals(attribute.getType()) && a.getValue().equals(attribute.getValue())));
@@ -288,7 +287,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         SignerInfo si = new SignerInfo();
 
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA_WITH_SHA256));
-        si.addUnSignedAttribute(new Attribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
@@ -297,7 +296,7 @@ public class SignerInfoTest extends ExtendedITextTest {
 
         long res = si.getEstimatedSize();
 
-        Assert.assertEquals(2487, res);
+        Assert.assertEquals(2489, res);
     }
 
     @Test
@@ -306,7 +305,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         SignerInfo si = new SignerInfo();
 
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA_WITH_SHA256));
-        si.addUnSignedAttribute(new Attribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
+        si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");

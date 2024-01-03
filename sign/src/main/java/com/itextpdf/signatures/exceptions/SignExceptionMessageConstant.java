@@ -48,6 +48,9 @@ public final class SignExceptionMessageConstant {
             + "cannot be created, because signing certificate doesn't contain revocation data sources. " 
             + "Please try to explicitly add OCSP or CRL client.";
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
+    public static final String DIGEST_ALGORITHMS_ARE_NOT_SAME = "Digest algorithm used in the provided " 
+            + "IExternalSignature shall be the same as digest algorithm in the provided CMSContainer. " 
+            + "Digest algorithm in CMS container: \"{0}\". Digest algorithm in IExternalSignature: \"{1}\"";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
     public static final String DOCUMENT_MUST_HAVE_READER = "Document must have reader.";
@@ -83,6 +86,8 @@ public final class SignExceptionMessageConstant {
     public static final String THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN = "TSA {0} failed to return time stamp "
             + "token: {1}.";
     public static final String TOO_BIG_KEY = "The key is too big.";
+    public static final String TSA_CLIENT_IS_MISSING = "ITSAClient must be present to rich this PAdES level. " 
+            + "Please use setTSAClient method to provide it.";
     public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_GT_GT = "unexpected >>.";
     public static final String UNKNOWN_HASH_ALGORITHM = "Unknown hash algorithm: {0}.";
