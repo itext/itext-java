@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2024 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -42,13 +42,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -62,10 +62,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -75,6 +71,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class PdfPagesTest extends ExtendedITextTest {
@@ -85,6 +85,25 @@ public class PdfPagesTest extends ExtendedITextTest {
     @BeforeClass
     public static void setup() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @Test
+    public void hugeNumberOfPagesWithOnePageTest() throws IOException {
+         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hugeNumberOfPagesWithOnePage.pdf"),
+                 new PdfWriter(new ByteArrayOutputStream()));
+         PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
+         AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+    }
+
+    @Test
+    public void countDontCorrespondToRealTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "countDontCorrespondToReal.pdf"),
+                new PdfWriter(new ByteArrayOutputStream()));
+        PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
+        AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+
+        // we don't expect that Count will be different from real number of pages
+        Assert.assertThrows(NullPointerException.class, () -> pdfDoc.close());
     }
 
     @Test

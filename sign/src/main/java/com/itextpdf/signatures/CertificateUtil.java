@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -116,7 +116,7 @@ public class CertificateUtil {
                 if (name.getTagNo() != GeneralName.uniformResourceIdentifier) {
                     continue;
                 }
-                DERIA5String derStr = DERIA5String.getInstance((ASN1TaggedObject)name.toASN1Primitive(), false);
+                DERIA5String derStr = (DERIA5String)DERIA5String.getInstance((ASN1TaggedObject)name.toASN1Primitive(), false);
                 return derStr.getString();
             }
         }

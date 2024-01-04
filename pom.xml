@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.2.5</version>
+  <version>7.2.6</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
   <inceptionYear>1998</inceptionYear>
   <organization>
-    <name>iText Group NV</name>
+    <name>Apryse Group NV</name>
     <url>https://itextpdf.com/</url>
   </organization>
   <licenses>
@@ -72,7 +72,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.70</bouncycastle.version>
+    <bouncycastle.version>1.75</bouncycastle.version>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>

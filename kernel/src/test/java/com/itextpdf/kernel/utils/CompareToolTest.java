@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2024 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License version 3
@@ -156,7 +156,7 @@ public class CompareToolTest extends ExtendedITextTest {
 
     @Test
     public void differentProducerTest() throws IOException {
-        String expectedMessage = "Document info fail. Expected: \"iText\u00ae <version> \u00a9<copyright years> iText Group NV (iText Software; licensed version)\", actual: \"iText\u00ae <version> \u00a9<copyright years> iText Group NV (AGPL-version)\"";
+        String expectedMessage = "Document info fail. Expected: \"iText\u00ae <version> \u00a9<copyright years> Apryse Group NV (iText Software; licensed version)\", actual: \"iText\u00ae <version> \u00a9<copyright years> Apryse Group NV (AGPL-version)\"";
         String licensed = sourceFolder + "producerLicensed.pdf";
         String agpl = sourceFolder + "producerAGPL.pdf";
         Assert.assertEquals(expectedMessage, new CompareTool().compareDocumentInfo(agpl, licensed));
@@ -164,8 +164,8 @@ public class CompareToolTest extends ExtendedITextTest {
 
     @Test
     public void versionReplaceTest() {
-        String initial = "iText® 1.10.10-SNAPSHOT (licensed to iText) ©2000-2018 iText Group NV";
-        String replacedExpected = "iText® <version> (licensed to iText) ©<copyright years> iText Group NV";
+        String initial = "iText® 1.10.10-SNAPSHOT (licensed to iText) ©2000-2018 Apryse Group NV";
+        String replacedExpected = "iText® <version> (licensed to iText) ©<copyright years> Apryse Group NV";
         Assert.assertEquals(replacedExpected, new CompareTool().convertProducerLine(initial));
     }
 

@@ -1,7 +1,7 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-    Authors: iText Software.
+    Copyright (c) 1998-2024 Apryse Group NV
+    Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
     For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
@@ -23,14 +23,11 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
-import com.itextpdf.kernel.pdf.layer.PdfLayer;
-import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.pdf.PdfPagesTree.NullUnlimitedList;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
-import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -41,5 +38,38 @@ public class PdfPagesTreeTest extends ExtendedITextTest {
     public void generateTreeDocHasNoPagesTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
+    }
+
+    @Test
+    public void nullUnlimitedListAddTest() {
+        NullUnlimitedList<String> list = new NullUnlimitedList<>();
+        list.add("hey");
+        list.add("bye");
+        Assert.assertEquals(2, list.size());
+        list.add(-1, "hello");
+        list.add(3, "goodbye");
+        Assert.assertEquals(2, list.size());
+    }
+
+    @Test
+    public void nullUnlimitedListIndexOfTest() {
+        NullUnlimitedList<String> list = new NullUnlimitedList<>();
+        list.add("hey");
+        list.add(null);
+        list.add("bye");
+        list.add(null);
+        Assert.assertEquals(4, list.size());
+        Assert.assertEquals(1, list.indexOf(null));
+    }
+
+    @Test
+    public void nullUnlimitedListRemoveTest() {
+        NullUnlimitedList<String> list = new NullUnlimitedList<>();
+        list.add("hey");
+        list.add("bye");
+        Assert.assertEquals(2, list.size());
+        list.remove(-1);
+        list.remove(2);
+        Assert.assertEquals(2, list.size());
     }
 }

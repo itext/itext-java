@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -276,7 +276,7 @@ public class PdfPKCS7 {
             if (!objId.getId().equals(SecurityIDs.ID_PKCS7_SIGNED_DATA))
                 throw new IllegalArgumentException(
                         SignExceptionMessageConstant.NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA);
-            ASN1Sequence content = (ASN1Sequence) ((ASN1TaggedObject) signedData.getObjectAt(1)).getObject();
+            ASN1Sequence content = (ASN1Sequence) ((ASN1TaggedObject) signedData.getObjectAt(1)).getBaseObject().toASN1Primitive();
             // the positions that we care are:
             //     0 - version
             //     1 - digestAlgorithms
@@ -300,7 +300,7 @@ public class PdfPKCS7 {
             ASN1Sequence rsaData = (ASN1Sequence) content.getObjectAt(2);
             if (rsaData.size() > 1) {
                 ASN1OctetString rsaDataContent =
-                        (ASN1OctetString) ((ASN1TaggedObject) rsaData.getObjectAt(1)).getObject();
+                        (ASN1OctetString) ((ASN1TaggedObject) rsaData.getObjectAt(1)).getBaseObject().toASN1Primitive();
                 this.rsaData = rsaDataContent.getOctets();
             }
 
@@ -400,11 +400,11 @@ public class PdfPKCS7 {
                         for (int j = 0; j < seqout.size(); ++j) {
                             ASN1TaggedObject tg = (ASN1TaggedObject) seqout.getObjectAt(j);
                             if (tg.getTagNo() == 0) {
-                                ASN1Sequence seqin = (ASN1Sequence) tg.getObject();
+                                ASN1Sequence seqin = (ASN1Sequence) tg.getBaseObject().toASN1Primitive();
                                 findCRL(seqin);
                             }
                             if (tg.getTagNo() == 1) {
-                                ASN1Sequence seqin = (ASN1Sequence) tg.getObject();
+                                ASN1Sequence seqin = (ASN1Sequence) tg.getBaseObject().toASN1Primitive();
                                 findOcsp(seqin);
                             }
                         }
@@ -1397,8 +1397,8 @@ public class PdfPKCS7 {
                 }
                 if (seq.getObjectAt(k) instanceof ASN1TaggedObject) {
                     ASN1TaggedObject tag = (ASN1TaggedObject) seq.getObjectAt(k);
-                    if (tag.getObject() instanceof ASN1Sequence) {
-                        seq = (ASN1Sequence) tag.getObject();
+                    if (tag.getBaseObject().toASN1Primitive() instanceof ASN1Sequence) {
+                        seq = (ASN1Sequence) tag.getBaseObject().toASN1Primitive();
                         ret = false;
                         break;
                     } else {

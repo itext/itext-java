@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -43,18 +43,19 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Algorithm for construction {@link PdfPages} tree
@@ -65,9 +66,9 @@ class PdfPagesTree {
 
     private final int leafSize = DEFAULT_LEAF_SIZE;
 
-    private List<PdfIndirectReference> pageRefs;
+    private NullUnlimitedList<PdfIndirectReference> pageRefs;
     private List<PdfPages> parents;
-    private List<PdfPage> pages;
+    private NullUnlimitedList<PdfPage> pages;
     private PdfDocument document;
     private boolean generated = false;
     private PdfPages root;
@@ -81,9 +82,9 @@ class PdfPagesTree {
      */
     public PdfPagesTree(PdfCatalog pdfCatalog) {
         this.document = pdfCatalog.getDocument();
-        this.pageRefs = new ArrayList<>();
+        this.pageRefs = new NullUnlimitedList<>();
         this.parents = new ArrayList<>();
-        this.pages = new ArrayList<>();
+        this.pages = new NullUnlimitedList<>();
         if (pdfCatalog.getPdfObject().containsKey(PdfName.Pages)) {
             PdfDictionary pages = pdfCatalog.getPdfObject().getAsDictionary(PdfName.Pages);
             if (pages == null) {
@@ -472,10 +473,9 @@ class PdfPagesTree {
         } else {
             int from = parent.getFrom();
 
-            // Possible exception in case kids.getSize() < parent.getCount().
-            // In any case parent.getCount() has higher priority.
             // NOTE optimization? when we already found needed index
-            for (int i = 0; i < parent.getCount(); i++) {
+            final int pageCount = Math.min(parent.getCount(), kids.size());
+            for (int i = 0; i < pageCount; i++) {
                 PdfObject kid = kids.get(i, false);
                 if (kid instanceof PdfIndirectReference) {
                     pageRefs.set(from + i, (PdfIndirectReference) kid);
@@ -531,6 +531,101 @@ class PdfPagesTree {
             if (parents.get(i) != null) {
                 parents.get(i).correctFrom(correction);
             }
+        }
+    }
+
+    /**
+     * The class represents a list which allows null elements, but doesn't allocate a memory for them, in the rest of
+     * cases it behaves like usual {@link ArrayList} and should have the same complexity (because keys are unique
+     * integers, so collisions are impossible). Class doesn't implement {@code List} interface because it provides
+     * only methods which are in use in {@link PdfPagesTree} class.
+     *
+     * @param <T> elements of the list
+     */
+    static final class NullUnlimitedList<T> {
+        private final Map<Integer, T> map = new HashMap<>();
+        private int size = 0;
+
+        // O(1)
+        public void add(T element) {
+            if (element == null) {
+                size++;
+                return;
+            }
+            map.put(size++, element);
+        }
+
+        // In worth scenario O(n^2) but it is mostly impossible because keys shouldn't have
+        // collisions at all (they are integers). So in average should be O(n).
+        public void add(int index, T element) {
+            if (index < 0 || index > size) {
+                return;
+            }
+            size++;
+            // Shifts the element currently at that position (if any) and any
+            // subsequent elements to the right (adds one to their indices).
+            T previous = map.get(index);
+            for (int i = index + 1; i < size; i++) {
+                T currentToAdd = previous;
+                previous = map.get(i);
+                this.set(i, currentToAdd);
+            }
+
+            this.set(index, element);
+        }
+
+        // average O(1), worth O(n) (mostly impossible in case when keys are integers)
+        public T get(int index) {
+            return map.get(index);
+        }
+
+        // average O(1), worth O(n) (mostly impossible in case when keys are integers)
+        public void set(int index, T element) {
+            if (element == null) {
+                map.remove(index);
+            } else {
+                map.put(index, element);
+            }
+        }
+
+        // O(n)
+        public int indexOf(T element) {
+            if (element == null) {
+                for (int i = 0; i < size; i++) {
+                    if (!map.containsKey(i)) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            for (Map.Entry<Integer, T> entry : map.entrySet()) {
+                if (element.equals(entry.getValue())) {
+                    return entry.getKey();
+                }
+            }
+            return -1;
+        }
+
+        // In worth scenario O(n^2) but it is mostly impossible because keys shouldn't have
+        // collisions at all (they are integers). So in average should be O(n).
+        public void remove(int index) {
+            if (index < 0 || index >= size) {
+                return;
+            }
+            map.remove(index);
+            // Shifts any subsequent elements to the left (subtracts one from their indices).
+            T previous = map.get(size - 1);
+            for (int i = size - 2; i >= index; i--) {
+                T current = previous;
+                previous = map.get(i);
+                this.set(i, current);
+            }
+            map.remove(--size);
+        }
+
+        // O(1)
+        public int size() {
+            return size;
         }
     }
 }

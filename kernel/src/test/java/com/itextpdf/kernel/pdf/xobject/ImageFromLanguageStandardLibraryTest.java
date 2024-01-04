@@ -1,7 +1,7 @@
 /*
 This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 iText Group NV
-Authors: iText Software.
+    Copyright (c) 1998-2024 Apryse Group NV
+Authors: Apryse Software.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License version 3

@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>itext7-core</artifactId>
-  <version>7.2.5</version>
+  <version>7.2.6</version>
   <packaging>pom</packaging>
   <name>iText 7 Core</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
   <inceptionYear>1998</inceptionYear>
   <organization>
-    <name>iText Group NV</name>
+    <name>Apryse Group NV</name>
     <url>https://itextpdf.com/</url>
   </organization>
   <licenses>
