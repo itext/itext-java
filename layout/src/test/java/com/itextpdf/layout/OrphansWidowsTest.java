@@ -251,13 +251,17 @@ public class OrphansWidowsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
     public void keepTogetherLargeParagraphOrphans() throws IOException, InterruptedException {
         runKeepTogether("keepTogetherLargeParagraphOrphans", true, true);
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
     public void keepTogetherLargeParagraphWidows() throws IOException, InterruptedException {
         runKeepTogether("keepTogetherLargeParagraphWidows", false, true);
     }

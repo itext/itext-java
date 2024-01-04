@@ -105,6 +105,9 @@ public class MulticolRenderer extends AbstractRenderer {
         final MulticolLayoutResult layoutResult = layoutInColumns(layoutContext, actualBBox);
 
         if (layoutResult.getSplitRenderers().isEmpty()) {
+            for (IRenderer child : elementRenderer.getChildRenderers()) {
+                child.setParent(elementRenderer);
+            }
             return new LayoutResult(LayoutResult.NOTHING, null, null, this, layoutResult.getCauseOfNothing());
         } else if (layoutResult.getOverflowRenderer() == null) {
             final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(

@@ -798,52 +798,51 @@ public class TableRenderer extends AbstractRenderer {
                         splitResult[1].deleteOwnProperty(Property.BORDER_BOTTOM);
                     }
                 }
-                if (split) {
-                    int[] rowspans = new int[currentRow.length];
-                    boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
-                    for (col = 0; col < currentRow.length; col++) {
-                        if (splits[col] != null) {
-                            CellRenderer cellSplit = (CellRenderer) splits[col].getSplitRenderer();
-                            if (null != cellSplit) {
-                                rowspans[col] = ((Cell) cellSplit.getModelElement()).getRowspan();
-                            }
-                            if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
-                                childRenderers.add(cellSplit);
-                            }
-                            LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
-                            if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
-                                CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
-                                CellRenderer originalCell = currentRow[col];
-                                currentRow[col] = null;
-                                rows.get(targetOverflowRowIndex[col])[col] = originalCell;
-                                overflowRows.setCell(0, col, null);
-                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) cellOverflow.setParent(splitResult[1]));
-                            } else {
-                                overflowRows.setCell(targetOverflowRowIndex[col] - row, col, (CellRenderer) currentRow[col].setParent(splitResult[1]));
-                            }
-                            overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
-                        } else if (currentRow[col] != null) {
-                            if (hasContent) {
-                                rowspans[col] = ((Cell) currentRow[col].getModelElement()).getRowspan();
-                            }
-                            boolean isBigRowspannedCell = 1 != ((Cell) currentRow[col].getModelElement()).getRowspan();
-                            if (hasContent || isBigRowspannedCell) {
-                                columnsWithCellToBeEnlarged[col] = true;
-                            }
+
+                int[] rowspans = new int[currentRow.length];
+                boolean[] columnsWithCellToBeEnlarged = new boolean[currentRow.length];
+                for (col = 0; col < currentRow.length; col++) {
+                    if (splits[col] != null) {
+                        CellRenderer cellSplit = (CellRenderer) splits[col].getSplitRenderer();
+                        if (null != cellSplit) {
+                            rowspans[col] = ((Cell) cellSplit.getModelElement()).getRowspan();
+                        }
+                        if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
+                            childRenderers.add(cellSplit);
+                        }
+                        LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
+                        if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
+                            CellRenderer cellOverflow = (CellRenderer) splits[col].getOverflowRenderer();
+                            CellRenderer originalCell = currentRow[col];
+                            currentRow[col] = null;
+                            rows.get(targetOverflowRowIndex[col])[col] = originalCell;
+                            overflowRows.setCell(0, col, null);
+                            overflowRows.setCell(targetOverflowRowIndex[col] - row, col, cellOverflow);
+                        } else {
+                            overflowRows.setCell(targetOverflowRowIndex[col] - row, col, currentRow[col]);
+                        }
+                        overflowRows.getCell(targetOverflowRowIndex[col] - row, col).occupiedArea = cellOccupiedArea;
+                    } else if (currentRow[col] != null) {
+                        if (hasContent) {
+                            rowspans[col] = ((Cell) currentRow[col].getModelElement()).getRowspan();
+                        }
+                        boolean isBigRowspannedCell = 1 != ((Cell) currentRow[col].getModelElement()).getRowspan();
+                        if (hasContent || isBigRowspannedCell) {
+                            columnsWithCellToBeEnlarged[col] = true;
                         }
                     }
+                }
 
-                    int minRowspan = Integer.MAX_VALUE;
-                    for (col = 0; col < rowspans.length; col++) {
-                        if (0 != rowspans[col]) {
-                            minRowspan = Math.min(minRowspan, rowspans[col]);
-                        }
+                int minRowspan = Integer.MAX_VALUE;
+                for (col = 0; col < rowspans.length; col++) {
+                    if (0 != rowspans[col]) {
+                        minRowspan = Math.min(minRowspan, rowspans[col]);
                     }
+                }
 
-                    for (col = 0; col < numberOfColumns; col++) {
-                        if (columnsWithCellToBeEnlarged[col]) {
-                            enlargeCell(col, row, minRowspan,currentRow, overflowRows, targetOverflowRowIndex, splitResult);
-                        }
+                for (col = 0; col < numberOfColumns; col++) {
+                    if (columnsWithCellToBeEnlarged[col]) {
+                        enlargeCell(col, row, minRowspan,currentRow, overflowRows, targetOverflowRowIndex, splitResult);
                     }
                 }
 
@@ -1254,20 +1253,18 @@ public class TableRenderer extends AbstractRenderer {
     protected TableRenderer[] split(int row, boolean hasContent, boolean cellWithBigRowspanAdded) {
         TableRenderer splitRenderer = createSplitRenderer(new Table.RowRange(rowRange.getStartRow(), rowRange.getStartRow() + row));
         splitRenderer.rows = rows.subList(0, row);
-
         splitRenderer.bordersHandler = bordersHandler;
-
         splitRenderer.heights = heights;
         splitRenderer.columnWidths = columnWidths;
         splitRenderer.countedColumnWidth = countedColumnWidth;
         splitRenderer.totalWidthForColumns = totalWidthForColumns;
+        splitRenderer.occupiedArea = occupiedArea;
+
         TableRenderer overflowRenderer = createOverflowRenderer(new Table.RowRange(rowRange.getStartRow() + row, rowRange.getFinishRow()));
         if (0 == row && !(hasContent || cellWithBigRowspanAdded) && 0 == rowRange.getStartRow()) {
             overflowRenderer.isOriginalNonSplitRenderer = isOriginalNonSplitRenderer;
         }
         overflowRenderer.rows = rows.subList(row, rows.size());
-        splitRenderer.occupiedArea = occupiedArea;
-
         overflowRenderer.bordersHandler = bordersHandler;
 
         return new TableRenderer[]{splitRenderer, overflowRenderer};
@@ -1885,7 +1882,6 @@ public class TableRenderer extends AbstractRenderer {
      */
     private static class OverflowRowsWrapper {
         private TableRenderer overflowRenderer;
-        private HashMap<Integer, Boolean> isRowReplaced = new HashMap<>();
         private boolean isReplaced = false;
 
         public OverflowRowsWrapper(TableRenderer overflowRenderer) {
@@ -1901,9 +1897,7 @@ public class TableRenderer extends AbstractRenderer {
                 overflowRenderer.rows = new ArrayList<>(overflowRenderer.rows);
                 isReplaced = true;
             }
-            if (!Boolean.TRUE.equals(isRowReplaced.get(row))) {
-                overflowRenderer.rows.set(row, (CellRenderer[]) overflowRenderer.rows.get(row).clone());
-            }
+            overflowRenderer.rows.set(row, (CellRenderer[]) overflowRenderer.rows.get(row).clone());
             return overflowRenderer.rows.get(row)[col] = newCell;
         }
     }

@@ -3396,7 +3396,7 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     public void bigRowSpanTooFarNothingTest() throws IOException, InterruptedException {
         String filename = "bigRowSpanTooFarNothingTest.pdf";

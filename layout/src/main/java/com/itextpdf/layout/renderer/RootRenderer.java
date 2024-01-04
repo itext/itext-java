@@ -500,12 +500,8 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (toDisableKeepTogether == null) {
             return false;
         }
-
-        // Ideally the disabling of keep together property should be done on the renderers layer,
-        // but due to the problem with renderers tree (parent links from causeOfNothing
-        // may not lead to overflowRenderer) such approach does not work now. So we are
-        // disabling keep together on the models layer.
-        toDisableKeepTogether.getModelElement().setProperty(Property.KEEP_TOGETHER, false);
+        
+        toDisableKeepTogether.setProperty(Property.KEEP_TOGETHER, false);
         Logger logger = LoggerFactory.getLogger(RootRenderer.class);
         if (logger.isWarnEnabled()) {
             logger.warn(MessageFormatUtil.format(

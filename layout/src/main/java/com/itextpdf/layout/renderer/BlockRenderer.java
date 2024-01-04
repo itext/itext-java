@@ -672,7 +672,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         AbstractRenderer overflowRenderer = createOverflowRenderer(layoutStatus);
         overflowRenderer.childRenderers.addAll(waitingOverflowFloatRenderers);
         if (childResult.getOverflowRenderer() != null) {
-            overflowRenderer.childRenderers.add(childResult.getOverflowRenderer());
+            overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
         }
         overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
 
@@ -940,7 +940,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (keepTogether) {
                 splitRenderer = null;
                 overflowRenderer.childRenderers.clear();
-                overflowRenderer.childRenderers = new ArrayList<>(childRenderers);
+                overflowRenderer.addAllChildRenderers(childRenderers);
             }
 
             correctFixedLayout(layoutBox);
