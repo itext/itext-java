@@ -65,6 +65,9 @@ public class AlgorithmIdentifierBCFips extends ASN1EncodableBCFips implements IA
      */
     @Override
     public IASN1Encodable getParameters() {
+        if (getAlgorithmIdentifier().getParameters() == null) {
+            return null;
+        }
         return new ASN1EncodableBCFips(getAlgorithmIdentifier().getParameters());
     }
 }

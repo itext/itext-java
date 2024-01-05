@@ -1102,6 +1102,15 @@ public interface IBouncyCastleFactory {
     ITBSCertificate createTBSCertificate(IASN1Encodable encodable);
 
     /**
+     * Create TBS Certificate wrapper from ASN1 Encoded data.
+     *
+     * @param bytes ASN1 Encoded TBS Certificate
+     *
+     * @return created TBS Certificate wrapper
+     */
+    ITBSCertificate createTBSCertificate(byte[] bytes);
+
+    /**
      * Create issuer and serial number wrapper from X500 Name wrapper and {@link BigInteger}.
      *
      * @param issuer X500 Name wrapper to create issuer and serial number wrapper from

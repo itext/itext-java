@@ -96,7 +96,6 @@ import java.util.Map;
  * Takes care of the cryptographic options and appearances that form a signature.
  */
 public class PdfSigner {
-
     /**
      * Enum containing the Cryptographic Standards. Possible values are "CMS" and "CADES".
      */
@@ -233,6 +232,35 @@ public class PdfSigner {
      */
     public PdfSigner(PdfReader reader, OutputStream outputStream, StampingProperties properties) throws IOException {
         this(reader, outputStream, null, properties);
+    }
+
+    /**
+     * Creates a PdfSigner instance. Uses a {@link java.io.ByteArrayOutputStream} instead of a temporary file.
+     *
+     * @param reader       PdfReader that reads the PDF file
+     * @param outputStream OutputStream to write the signed PDF file
+     * @param path         File to which the output is temporarily written
+     * @param stampingProperties   {@link StampingProperties} for the signing document. Note that encryption will be
+     *                     preserved regardless of what is set in properties.
+     * @param signerProperties {@link SignerProperties} bundled properties to be used in signing operations.
+     * @throws IOException if some I/O problem occurs
+     */
+    public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties stampingProperties,
+                     SignerProperties signerProperties) throws IOException {
+        this(reader, outputStream, path, stampingProperties);
+        this.fieldLock = signerProperties.getFieldLockDict();
+        updateFieldName(signerProperties.getFieldName());
+        // We need to update field name because the setter could change it and the user can rely on this field
+        signerProperties.setFieldName(fieldName);
+        certificationLevel =signerProperties.getCertificationLevel();
+        appearance.setPageRect(signerProperties.getPageRect());
+        appearance.setPageNumber(signerProperties.getPageNumber());
+        appearance.setSignDate(signerProperties.getSignDate());
+        appearance.setSignatureCreator(signerProperties.getSignatureCreator());
+        appearance.setContact(signerProperties.getContact());
+        appearance.setReason(signerProperties.getReason());
+        appearance.setLocation(signerProperties.getLocation());
+        this.appearance.setSignatureAppearance(signerProperties.getSignatureAppearance());
     }
 
     /**
@@ -418,35 +446,7 @@ public class PdfSigner {
      * @param fieldName The name indicating the field to be signed.
      */
     public void setFieldName(String fieldName) {
-        if (fieldName != null) {
-            PdfFormField field = acroForm.getField(fieldName);
-            if (field != null) {
-                if (!PdfName.Sig.equals(field.getFormType())) {
-                    throw new IllegalArgumentException(
-                            SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE);
-                }
-
-                if (field.getValue() != null) {
-                    throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_ALREADY_SIGNED);
-                }
-
-                List<PdfWidgetAnnotation> widgets = field.getWidgets();
-                if (widgets.size() > 0) {
-                    PdfWidgetAnnotation widget = widgets.get(0);
-                    setPageRect(getWidgetRectangle(widget));
-                    setPageNumber(getWidgetPageNumber(widget));
-                }
-            } else {
-                // Do not allow dots for new fields
-                // For existing fields dots are allowed because there it might be fully qualified name
-                if (fieldName.indexOf('.') >= 0) {
-                    throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_NAMES_CANNOT_CONTAIN_A_DOT);
-                }
-            }
-
-            this.appearance.setFieldName(fieldName);
-            this.fieldName = fieldName;
-        }
+        updateFieldName(fieldName);
     }
 
     /**
@@ -939,86 +939,6 @@ public class PdfSigner {
     }
 
     /**
-     * Prepares document for signing, calculates the document digest to sign and closes the document.
-     *
-     * @param digestAlgorithm the algorithm to generate the digest with
-     * @param filter          PdfName of the signature handler to use when validating this signature
-     * @param subFilter       PdfName that describes the encoding of the signature
-     * @param estimatedSize   the estimated size of the signature, this is the size of the space reserved for
-     *                        the Cryptographic Message Container
-     * @param includeDate     specifies if the signing date should be set to the signature dictionary
-     *
-     * @return the message digest of the prepared document.
-     *
-     * @throws IOException              if some I/O problem occurs.
-     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
-     */
-    public byte[] prepareDocumentForSignature(String digestAlgorithm, PdfName filter, PdfName subFilter,
-            int estimatedSize, boolean includeDate) throws IOException, GeneralSecurityException {
-        return prepareDocumentForSignature(SignUtils.getMessageDigest(digestAlgorithm), filter, subFilter,
-                estimatedSize, includeDate);
-    }
-
-    /**
-     * Prepares document for signing, calculates the document digest to sign and closes the document.
-     *
-     * @param externalDigest  an external digest to provide the MessageDigest
-     * @param digestAlgorithm the algorithm to generate the digest with
-     * @param filter          PdfName of the signature handler to use when validating this signature
-     * @param subFilter       PdfName that describes the encoding of the signature
-     * @param estimatedSize   the estimated size of the signature, this is the size of the space reserved for
-     *                        the Cryptographic Message Container
-     * @param includeDate     specifies if the signing date should be set to the signature dictionary
-     *
-     * @return the message digest of the prepared document.
-     *
-     * @throws IOException              if some I/O problem occurs.
-     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
-     */
-    public byte[] prepareDocumentForSignature(IExternalDigest externalDigest, String digestAlgorithm, PdfName filter,
-                                              PdfName subFilter, int estimatedSize, boolean includeDate)
-            throws IOException, GeneralSecurityException {
-        return prepareDocumentForSignature(externalDigest.getMessageDigest(digestAlgorithm), filter, subFilter,
-                estimatedSize, includeDate);
-    }
-
-    /**
-     * Adds an existing signature to a PDF where space was already reserved.
-     *
-     * @param document      the original PDF
-     * @param fieldName     the field to sign. It must be the last field
-     * @param outs          the output PDF
-     * @param signedContent the bytes for the signed data
-     *
-     * @throws IOException              if some I/O problem occurs.
-     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
-     */
-    public static void addSignatureToPreparedDocument(PdfDocument document, String fieldName, OutputStream outs,
-                                                      byte[] signedContent)
-            throws IOException, GeneralSecurityException {
-        SignatureApplier applier = new SignatureApplier(document, fieldName, outs);
-        applier.apply(a -> signedContent);
-    }
-
-    /**
-     * Adds an existing signature to a PDF where space was already reserved.
-     *
-     * @param document      the original PDF
-     * @param fieldName     the field to sign. It must be the last field
-     * @param outs          the output PDF
-     * @param cmsContainer  the finalized CMS container
-     *
-     * @throws IOException              if some I/O problem occurs.
-     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
-     */
-    public static void addSignatureToPreparedDocument(PdfDocument document, String fieldName, OutputStream outs,
-                                                      CMSContainer cmsContainer)
-            throws IOException, GeneralSecurityException {
-        SignatureApplier applier = new SignatureApplier(document, fieldName, outs);
-        applier.apply(a -> cmsContainer.serialize());
-    }
-
-    /**
      * Signs a PDF where space was already reserved.
      *
      * @param document                   the original PDF
@@ -1499,39 +1419,43 @@ public class PdfSigner {
         return pageNumber;
     }
 
-    private byte[] prepareDocumentForSignature(MessageDigest messageDigest, PdfName filter,
-                                               PdfName subFilter, int estimatedSize, boolean includeDate)
-            throws IOException {
-        if (closed) {
-            throw new PdfException(SignExceptionMessageConstant.THIS_INSTANCE_OF_PDF_SIGNER_ALREADY_CLOSED);
+    private void updateFieldName(String fieldName) {
+        if (fieldName != null) {
+            PdfFormField field = acroForm.getField(fieldName);
+            if (field != null) {
+                if (!PdfName.Sig.equals(field.getFormType())) {
+                    throw new IllegalArgumentException(
+                            SignExceptionMessageConstant.FIELD_TYPE_IS_NOT_A_SIGNATURE_FIELD_TYPE);
+                }
+
+                if (field.getValue() != null) {
+                    throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_ALREADY_SIGNED);
+                }
+
+                List<PdfWidgetAnnotation> widgets = field.getWidgets();
+                if (widgets.size() > 0) {
+                    PdfWidgetAnnotation widget = widgets.get(0);
+                    setPageRect(getWidgetRectangle(widget));
+                    setPageNumber(getWidgetPageNumber(widget));
+                }
+            } else {
+                // Do not allow dots for new fields
+                // For existing fields dots are allowed because there it might be fully qualified name
+                if (fieldName.indexOf('.') >= 0) {
+                    throw new IllegalArgumentException(SignExceptionMessageConstant.FIELD_NAMES_CANNOT_CONTAIN_A_DOT);
+                }
+            }
+            this.appearance.setFieldName(fieldName);
+            this.fieldName = fieldName;
         }
-
-        cryptoDictionary = createSignatureDictionary(includeDate);
-        cryptoDictionary.put(PdfName.Filter, filter);
-        cryptoDictionary.put(PdfName.SubFilter, subFilter);
-
-
-        Map<PdfName, Integer> exc = new HashMap<>();
-        exc.put(PdfName.Contents, estimatedSize * 2 + 2);
-        preClose(exc);
-
-        InputStream data = getRangeStream();
-        byte[] digest = DigestAlgorithms.digest(data, messageDigest);
-        byte[] paddedSig = new byte[estimatedSize];
-
-        PdfDictionary dic2 = new PdfDictionary();
-        dic2.put(PdfName.Contents, new PdfString(paddedSig).setHexWriting(true));
-        close(dic2);
-
-        closed = true;
-        return digest;
     }
+
 
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
     }
 
-    private PdfSignature createSignatureDictionary(boolean includeDate) {
+    PdfSignature createSignatureDictionary(boolean includeDate) {
         PdfSignature dic = new PdfSignature();
         dic.setReason(getReason());
         dic.setLocation(getLocation());
@@ -1582,7 +1506,7 @@ public class PdfSigner {
         void getSignatureDictionary(PdfSignature sig);
     }
 
-    private static class SignatureApplier {
+    static class SignatureApplier {
 
         private final PdfDocument document;
         private final String fieldName;
@@ -1645,7 +1569,7 @@ public class PdfSigner {
     }
 
     @FunctionalInterface
-    private interface ISignatureDataProvider {
+    interface ISignatureDataProvider {
         byte[] sign(SignatureApplier applier) throws GeneralSecurityException, IOException;
     }
 }

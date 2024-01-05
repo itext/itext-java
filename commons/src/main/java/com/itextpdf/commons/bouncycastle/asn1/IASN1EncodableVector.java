@@ -50,4 +50,25 @@ public interface IASN1EncodableVector {
      * @param element AlgorithmIdentifier wrapper.
      */
     void add(IAlgorithmIdentifier element);
+
+    /**
+     * Calls actual {@code add} method for the wrapped ASN1EncodableVector object if the primitive is not null.
+     *
+     * @param primitive ASN1Primitive wrapper.
+     */
+    void addOptional(IASN1Primitive primitive);
+
+    /**
+     * Calls actual {@code add} method for the wrapped ASN1EncodableVector object if the attribute is not null.
+     *
+     * @param attribute Attribute wrapper.
+     */
+    void addOptional(IAttribute attribute);
+
+    /**
+     * Calls actual {@code add} method for the wrapped ASN1EncodableVector object if the element is not null.
+     *
+     * @param element AlgorithmIdentifier wrapper.
+     */
+    void addOptional(IAlgorithmIdentifier element);
 }

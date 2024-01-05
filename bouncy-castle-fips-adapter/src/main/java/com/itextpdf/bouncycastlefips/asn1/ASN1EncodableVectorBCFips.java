@@ -91,6 +91,36 @@ public class ASN1EncodableVectorBCFips implements IASN1EncodableVector {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addOptional(IASN1Primitive primitive) {
+        if (primitive != null) {
+            add(primitive);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addOptional(IAttribute attribute) {
+        if (attribute != null) {
+            add(attribute);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addOptional(IAlgorithmIdentifier element) {
+        if (element != null) {
+            add(element);
+        }
+    }
+
+    /**
      * Indicates whether some other object is "equal to" this one. Compares wrapped objects.
      */
     @Override

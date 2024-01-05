@@ -140,6 +140,7 @@ public class CMSContainerTest extends ExtendedITextTest {
         sut.setSignerInfo(si);
 
         byte[] serRes = sut.serialize();
+
         Assert.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL)),
                 serializedAsString(serRes));
     }
@@ -158,15 +159,15 @@ public class CMSContainerTest extends ExtendedITextTest {
         si.setOcspResponses(fakeOcspREsponses);
         si.setCrlResponses(Collections.singletonList(testCrlResponse));
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
-        si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
         si.setSignatureAlgorithm(new AlgorithmIdentifier(
                 SignatureMechanisms.getSignatureMechanismOid("RSA", DigestAlgorithms.SHA512)));
+        si.setSigningCertificateAndAddToSignedAttributes(signCert, SecurityIDs.ID_SHA512);
         si.setSignature(new byte[256]);
         sut.setSignerInfo(si);
 
         long size = sut.getSizeEstimation();
 
-        Assert.assertEquals(4827, size);
+        Assert.assertEquals(4821, size);
     }
 
     @Test

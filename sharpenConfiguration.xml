@@ -437,6 +437,9 @@
             </fileset>
             <!-- sign -->
             <file path="com/itextpdf/signatures/IExternalDigest.java"/>
+            <fileset reason="IExternalDigest class exists only on Java.">
+                <file path="com/itextpdf/signatures/PdfTwoPhaseSigner.java"/>
+            </fileset>
             <file path="com/itextpdf/signatures/ProviderDigest.java"/>
             <fileset reason="ProviderDigest class exists only on Java.">
                 <file path="com/itextpdf/signatures/ProviderDigestUnitTest.java"/>

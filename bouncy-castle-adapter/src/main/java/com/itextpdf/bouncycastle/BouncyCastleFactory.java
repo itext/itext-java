@@ -1302,6 +1302,15 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITBSCertificate createTBSCertificate(byte[] bytes) {
+        return new TBSCertificateBC(TBSCertificate.getInstance((bytes)));
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value) {
         return new IssuerAndSerialNumberBC(issuer, value);
     }

@@ -65,6 +65,9 @@ public class AlgorithmIdentifierBC extends ASN1EncodableBC implements IAlgorithm
      */
     @Override
     public IASN1Encodable getParameters() {
+        if (getAlgorithmIdentifier().getParameters() == null) {
+            return null;
+        }
         return new ASN1EncodableBC(getAlgorithmIdentifier().getParameters());
     }
 }

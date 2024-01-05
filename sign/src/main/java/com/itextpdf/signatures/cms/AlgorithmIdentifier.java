@@ -48,7 +48,7 @@ public class AlgorithmIdentifier {
      */
     public AlgorithmIdentifier(String algorithmId) {
         this.algorithm = algorithmId;
-        parameters = BouncyCastleFactoryCreator.getFactory().createDERNull();
+        parameters = null;
     }
 
     /**

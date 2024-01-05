@@ -112,7 +112,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testSignedAttributesReadonlyModeActivatedByGettingSerializedData() throws IOException {
+    public void testSignedAttributesReadonlyModeActivatedByGettingSerializedData() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA));
         si.setSigningCertificate(signCert);
@@ -138,7 +138,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testGetSerializedBasicSignedAttributes() throws IOException {
+    public void testGetSerializedBasicSignedAttributes() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
         si.setSigningCertificate(signCert);
@@ -149,7 +149,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testGetSerializedExtendedSignedAttributes() throws IOException {
+    public void testGetSerializedExtendedSignedAttributes() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
         si.setSigningCertificate(signCert);
@@ -164,7 +164,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testGetSerializedExtendedSignedAttributesCrlOnly() throws IOException {
+    public void testGetSerializedExtendedSignedAttributesCrlOnly() throws IOException, CertificateEncodingException {
         SignerInfo si = new SignerInfo();
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
         si.setSigningCertificate(signCert);
@@ -228,8 +228,8 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
 
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
         si.setSigningCertificateAndAddToSignedAttributes(signCert, "2.16.840.1.101.3.4.2.3");
+        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
         si.setMessageDigest(new byte[1024]);
         si.setDigestAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_SHA512));
         si.setSignature(new byte[512]);
@@ -243,7 +243,6 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA_WITH_SHA256));
         si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
 
@@ -255,7 +254,7 @@ public class SignerInfoTest extends ExtendedITextTest {
 
         long res = si.getEstimatedSize();
 
-        Assert.assertEquals(1977, res);
+        Assert.assertEquals(1973, res);
     }
 
     @Test
@@ -286,7 +285,6 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA_WITH_SHA256));
         si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));
@@ -296,7 +294,7 @@ public class SignerInfoTest extends ExtendedITextTest {
 
         long res = si.getEstimatedSize();
 
-        Assert.assertEquals(2489, res);
+        Assert.assertEquals(2485, res);
     }
 
     @Test
@@ -304,7 +302,6 @@ public class SignerInfoTest extends ExtendedITextTest {
             NoSuchProviderException, IOException {
         SignerInfo si = new SignerInfo();
 
-        si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSA_WITH_SHA256));
         si.addUnSignedAttribute(new CmsAttribute(SecurityIDs.ID_SIGNING_TIME, FACTORY.
                 createDERSet(FACTORY.createASN1Integer(123456))));
         si.setSignatureAlgorithm(new AlgorithmIdentifier(SecurityIDs.ID_RSASSA_PSS));

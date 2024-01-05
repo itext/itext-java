@@ -42,6 +42,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERSet;
 import com.itextpdf.commons.bouncycastle.asn1.IDERTaggedObject;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.kernel.exceptions.PdfException;
 
 import com.itextpdf.signatures.CertificateInfo;
@@ -175,9 +176,29 @@ public class SignerInfo {
      * Sets the certificate that is used to sign.
      *
      * @param certificate the certificate that is used to sign
+     * @throws CertificateEncodingException if an encoding error occurs.
      */
-    public void setSigningCertificate(X509Certificate certificate) {
+    public void setSigningCertificate(X509Certificate certificate) throws CertificateEncodingException {
         this.signerCertificate = certificate;
+
+        ITBSCertificate tbsCert = BC_FACTORY.createTBSCertificate(certificate.getTBSCertificate());
+        if (signingAlgorithm != null) {
+            return;
+        }
+        if (tbsCert.getSubjectPublicKeyInfo().getAlgorithm().getParameters() != null) {
+            if (tbsCert.getSubjectPublicKeyInfo().getAlgorithm().getParameters().isNull()) {
+                this.signingAlgorithm = new AlgorithmIdentifier(
+                        tbsCert.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm().getId(),
+                        BC_FACTORY.createDERNull());
+                return;
+            }
+            this.signingAlgorithm = new AlgorithmIdentifier(
+                    tbsCert.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm().getId(),
+                    tbsCert.getSubjectPublicKeyInfo().getAlgorithm().getParameters().toASN1Primitive());
+            return;
+        }
+        this.signingAlgorithm = new AlgorithmIdentifier(
+                tbsCert.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm().getId());
     }
 
     /**
@@ -456,7 +477,7 @@ public class SignerInfo {
         IASN1EncodableVector digestalgorithmV = BC_FACTORY.createASN1EncodableVector();
 
         digestalgorithmV.add(BC_FACTORY.createASN1ObjectIdentifier(this.digestAlgorithm.getAlgorithmOid()));
-        digestalgorithmV.add(digestAlgorithm.getParameters());
+        digestalgorithmV.addOptional(digestAlgorithm.getParameters());
 
         signerInfoV.add(BC_FACTORY.createDERSequence(digestalgorithmV));
         // signed attributes
@@ -475,7 +496,7 @@ public class SignerInfo {
         if (signingAlgorithm != null) {
             IASN1EncodableVector signatureAlgorithmV = BC_FACTORY.createASN1EncodableVector();
             signatureAlgorithmV.add(BC_FACTORY.createASN1ObjectIdentifier(signingAlgorithm.getAlgorithmOid()));
-            signatureAlgorithmV.add(signingAlgorithm.getParameters());
+            signatureAlgorithmV.addOptional(signingAlgorithm.getParameters());
             signerInfoV.add(BC_FACTORY.createDERSequence(signatureAlgorithmV));
         }
         // signatureValue

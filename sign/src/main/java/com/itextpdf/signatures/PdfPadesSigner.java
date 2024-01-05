@@ -431,24 +431,8 @@ public class PdfPadesSigner {
         if (temporaryDirectoryPath != null) {
             tempFilePath = getNextTempFile().getAbsolutePath();
         }
-        PdfSigner signer = new PdfSigner(reader,
-                isFinal ? outputStream : createOutputStream(), tempFilePath, stampingProperties);
-        signer.setFieldLockDict(signerProperties.getFieldLockDict());
-        signer.setFieldName(signerProperties.getFieldName());
-        
-        // We need to update field name because signer could change it
-        signerProperties.setFieldName(signer.getFieldName());
-        
-        signer.setCertificationLevel(signerProperties.getCertificationLevel());
-        signer.setPageRect(signerProperties.getPageRect());
-        signer.setPageNumber(signerProperties.getPageNumber());
-        signer.setSignDate(signerProperties.getSignDate());
-        signer.setSignatureCreator(signerProperties.getSignatureCreator());
-        signer.setContact(signerProperties.getContact());
-        signer.setReason(signerProperties.getReason());
-        signer.setLocation(signerProperties.getLocation());
-        signer.setSignatureAppearance(signerProperties.getSignatureAppearance());
-        return signer;
+        return new PdfSigner(reader,
+                isFinal ? outputStream : createOutputStream(), tempFilePath, stampingProperties, signerProperties);
     }
 
     void performLtvVerification(PdfDocument pdfDocument, List<String> signatureNames,

@@ -1312,6 +1312,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITBSCertificate createTBSCertificate(byte[] bytes) {
+        return new TBSCertificateBCFips(TBSCertificate.getInstance((bytes)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value) {
         return new IssuerAndSerialNumberBCFips(issuer, value);
     }

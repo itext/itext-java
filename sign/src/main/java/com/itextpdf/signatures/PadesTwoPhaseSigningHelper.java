@@ -28,11 +28,9 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.pdf.PdfDeveloperExtension;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.cms.AlgorithmIdentifier;
@@ -226,10 +224,7 @@ public class PadesTwoPhaseSigningHelper {
         Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(certificates);
         X509Certificate[] x509FullChain = Arrays.asList(fullChain).toArray(new X509Certificate[0]);
         PdfPadesSigner padesSigner = createPadesSigner(inputDocument, outputStream);
-        PdfSigner pdfSigner = padesSigner.createPdfSigner(signerProperties, true);
-        PdfDocument document = pdfSigner.getDocument();
-        
-        setPadesExtensions(document, x509FullChain[0], digestAlgorithm);
+        PdfTwoPhaseSigner pdfTwoPhaseSigner =  new PdfTwoPhaseSigner(inputDocument, outputStream);
         
         CMSContainer cms = new CMSContainer();
         SignerInfo signerInfo = new SignerInfo();
@@ -239,7 +234,6 @@ public class PadesTwoPhaseSigningHelper {
         cms.addCertificates(x509FullChain);
         cms.setSignerInfo(signerInfo);
 
-        pdfSigner.setFieldName(signerProperties.getFieldName());
         MessageDigest messageDigest = MessageDigest.getInstance(DigestAlgorithms.getDigest(digestAlgorithmOid));
         int realSignatureSize = messageDigest.getDigestLength() + (int) cms.getSizeEstimation();
         if (tsaClient != null) {
@@ -247,8 +241,8 @@ public class PadesTwoPhaseSigningHelper {
         }
         int expectedSignatureSize = estimatedSize < 0 ? realSignatureSize : estimatedSize;
         
-        byte[] digestedDocumentBytes = pdfSigner.prepareDocumentForSignature(digestAlgorithm, PdfName.Adobe_PPKLite,
-                PdfName.ETSI_CAdES_DETACHED, expectedSignatureSize, true);
+        byte[] digestedDocumentBytes = pdfTwoPhaseSigner.prepareDocumentForSignature(signerProperties, digestAlgorithm,
+                PdfName.Adobe_PPKLite, PdfName.ETSI_CAdES_DETACHED, expectedSignatureSize, true);
         signerInfo.setMessageDigest(digestedDocumentBytes);
         
         return cms;
@@ -259,7 +253,7 @@ public class PadesTwoPhaseSigningHelper {
         setSignatureAlgorithmAndSignature(externalSignature, cmsContainer);
 
         try (PdfDocument document = new PdfDocument(inputDocument)) {
-            PdfSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
+            PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
         } finally {
             outputStream.close();
         }
@@ -282,7 +276,7 @@ public class PadesTwoPhaseSigningHelper {
         }
 
         try (PdfDocument document = new PdfDocument(inputDocument)) {
-            PdfSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
+            PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
         } finally {
             outputStream.close();
         }
@@ -364,18 +358,5 @@ public class PadesTwoPhaseSigningHelper {
         padesSigner.setIssuingCertificateRetriever(issuingCertificateRetriever);
         padesSigner.setEstimatedSize(estimatedSize);
         return padesSigner;
-    }
-
-    private static void setPadesExtensions(PdfDocument document, X509Certificate signingCert, String digestAlgorithm) {
-        if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) < 0) {
-            document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
-        }
-        String algorithmOid = signingCert.getSigAlgOID();
-        if (SignatureMechanisms.getAlgorithm(algorithmOid).startsWith("Ed")) {
-            document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32002);
-        }
-        if (digestAlgorithm.startsWith("SHA3-") || digestAlgorithm.equals(DigestAlgorithms.SHAKE256)) {
-            document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ISO_32001);
-        }
     }
 }
