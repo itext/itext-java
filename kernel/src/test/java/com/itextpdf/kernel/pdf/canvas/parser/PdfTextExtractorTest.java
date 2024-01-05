@@ -132,4 +132,23 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
             Assert.assertEquals("EC", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
         }
     }
+
+    @Test
+    public void notDefaultCodespacesCyrillicTest() throws IOException {
+        String inFile = sourceFolder + "notDefaultCodespacesCyrillic.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+            Assert.assertTrue(extractedText.contains("бронирование"));
+            Assert.assertTrue(extractedText.contains("From"));
+        }
+    }
+
+    @Test
+    public void notDefaultCodespacesChineseTest() throws IOException {
+        String inFile = sourceFolder + "notDefaultCodespacesChinese.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+            Assert.assertTrue(extractedText.contains("L3B 廠： 新竹科學工業園區新竹市東區力行二路 1 號"));
+        }
+    }
 }
