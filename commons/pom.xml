@@ -12,6 +12,7 @@
 
   <properties>
     <jackson.core.version>2.16.1</jackson.core.version>
+    <sonar.coverage.exclusions>**/com/itextpdf/commons/bouncycastle/**</sonar.coverage.exclusions>
   </properties>
 
   <dependencies>

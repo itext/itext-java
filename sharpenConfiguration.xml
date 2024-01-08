@@ -337,6 +337,10 @@
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampToken.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampTokenGenerator.java"/>
             </fileset>
+            <fileset reason="These classes are used only in Java.">
+                <file path="com/itextpdf/commons/bouncycastle/crypto/fips/AbstractFipsUnapprovedOperationError.java"/>
+                <file path="com/itextpdf/bouncycastlefips/crypto/fips/FipsUnapprovedOperationErrorBCFips.java"/>
+            </fileset>
             <!-- kernel -->
             <file path="com/itextpdf/kernel/pdf/CountOutputStream.java"/>
             <file path="com/itextpdf/kernel/crypto/securityhandler/EncryptionUtils.java"/>

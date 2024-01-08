@@ -112,6 +112,7 @@ import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSignerInfoGeneratorBuilderBCF
 import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyAgreeEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
+import com.itextpdf.bouncycastlefips.crypto.fips.FipsUnapprovedOperationErrorBCFips;
 import com.itextpdf.bouncycastlefips.openssl.PEMParserBCFips;
 import com.itextpdf.bouncycastlefips.openssl.jcajce.JcaPEMKeyConverterBCFips;
 import com.itextpdf.bouncycastlefips.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilderBCFips;
@@ -310,6 +311,7 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
+import org.bouncycastle.crypto.fips.FipsUnapprovedOperationError;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -1741,7 +1743,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         } catch (NoSuchAlgorithmException ignored) {
             cipher = Cipher.getInstance("RSA", PROVIDER);
         }
-        cipher.init(Cipher.WRAP_MODE, x509certificate.getPublicKey());
+        try {
+            cipher.init(Cipher.WRAP_MODE, x509certificate.getPublicKey());
+        } catch (FipsUnapprovedOperationError e) {
+            throw new FipsUnapprovedOperationErrorBCFips(e);
+        }
         return cipher.wrap(new SecretKeySpec(abyte0, "AES"));
     }
 

@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.crypto.fips.AbstractFipsUnapprovedOperationError;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -119,7 +120,13 @@ public class PdfEncryptingTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT), ignore = true)
     public void encryptWithCertificateAes256Rsa() throws GeneralSecurityException, IOException, InterruptedException {
-        encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt");
+        if (BouncyCastleFactoryCreator.getFactory().isInApprovedOnlyMode()) {
+            // RSA PKCS1.5 encryption disallowed
+            Assert.assertThrows(AbstractFipsUnapprovedOperationError.class,
+                    () -> encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt"));
+        } else {
+            encryptWithCertificate("encryptWithCertificateAes256Rsa.pdf", "SHA256withRSA.crt");
+        }
     }
 
     @Test

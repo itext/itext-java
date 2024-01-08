@@ -11,7 +11,7 @@
   <url>https://itextpdf.com/</url>
 
   <properties>
-    <bouncycastleFips.version>1.0.2.3</bouncycastleFips.version>
+    <bouncycastleFips.version>1.0.2.4</bouncycastleFips.version>
     <bouncycastlePkixFips.version>1.0.6</bouncycastlePkixFips.version>
     <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
