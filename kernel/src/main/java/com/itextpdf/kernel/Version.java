@@ -64,7 +64,7 @@ public final class Version {
      * iText Group requests that you retain the iText producer line
      * in every PDF that is created or manipulated using iText.
      */
-    private static final String producerLine = iTextProductName + " " + release + " \u00a92000-2022 iText Group NV";
+    private static final String producerLine = iTextProductName + " " + release + " \u00a92000-2024 iText Group NV";
 
     /**
      * The version info;
