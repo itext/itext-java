@@ -45,12 +45,19 @@ import org.slf4j.helpers.SubstituteLoggerFactory;
 public class LogListener extends TestWatcher {
 
     private static final String ROOT_ITEXT_PACKAGE = "com.itextpdf";
+    private static final String ITEXT_LICENCING_PACKAGE = "com.itextpdf.licensing";
+    private static final String ITEXT_ACTIONS_PACKAGE = "com.itextpdf.commons.actions.processors";
+    private static final String TOKEN_ITEXT_LOGLEVEL = "ITEXT_SILENT_MODE";
 
-    private final CustomListAppender<ILoggingEvent> listAppender = new CustomListAppender<>();
-
+    private final CustomListAppender<ILoggingEvent> listAppender;
     private final ILoggerFactory lc = LoggerFactory.getILoggerFactory();
 
     private Map<Logger, Map<String, Appender<ILoggingEvent>>> appenders;
+
+    public LogListener() {
+       String logLevel = getPropertyOrEnvironmentVariable(TOKEN_ITEXT_LOGLEVEL);
+       listAppender = new CustomListAppender<>(parseSilentMode(logLevel));
+    }
 
     @Override
     protected void starting(Description description) {
@@ -61,6 +68,13 @@ public class LogListener extends TestWatcher {
     protected void finished(Description description) {
         checkLogMessages(description);
         after();
+    }
+
+    private boolean parseSilentMode(String logLevel) {
+        if (logLevel == null){
+            return  false;
+        }
+       return logLevel.equalsIgnoreCase("TRUE");
     }
 
     private int contains(LogMessage loggingStatement) {
@@ -159,9 +173,23 @@ public class LogListener extends TestWatcher {
         }
     }
 
+    private static String getPropertyOrEnvironmentVariable(String name) {
+        String s = System.getProperty(name);
+        if (s == null) {
+            s = System.getenv(name);
+        }
+        return s;
+    }
+
     private class CustomListAppender<E> extends ListAppender<ILoggingEvent> {
 
         private Map<String, Boolean> expectedTemplates = new HashMap<>();
+        private  final boolean runTestsInSilentMode;
+
+        private CustomListAppender(boolean runTestsInSilentMode) {
+            this.runTestsInSilentMode = runTestsInSilentMode;
+        }
+
 
         public void setExpectedTemplates(Map<String, Boolean> expectedTemplates) {
             this.expectedTemplates.clear();
@@ -175,12 +203,25 @@ public class LogListener extends TestWatcher {
 
         protected void append(ILoggingEvent e) {
             if(!isExpectedMessageQuiet(e.getMessage())){
-                System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
+                if (shouldPrintMessage(e)){
+                    System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
+                }
             }
             printStackTraceIfAny(e);
             if (e.getLevel().isGreaterOrEqual(Level.WARN) || isExpectedMessage(e.getMessage())) {
                 this.list.add(e);
             }
+        }
+
+        private boolean shouldPrintMessage(ILoggingEvent level) {
+            //Those 2 if statements are when we rely on the logmessages being printed for certain tests
+            if (level.getLoggerName().startsWith(ITEXT_LICENCING_PACKAGE)){
+                return true;
+            }
+            if (level.getLoggerName().startsWith(ITEXT_ACTIONS_PACKAGE)){
+                return true;
+            }
+            return !runTestsInSilentMode;
         }
 
         private boolean isExpectedMessage(String message) {
