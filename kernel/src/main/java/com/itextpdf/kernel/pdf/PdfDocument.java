@@ -121,6 +121,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * Not null if document opened either in writing or stamping mode.
      */
     protected PdfWriter writer = null;
+
     /**
      * PdfReader associated with the document.
      * Not null if document is opened either in reading or stamping mode.
@@ -184,7 +185,6 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     private EncryptedEmbeddedStreamsHandler encryptedEmbeddedStreamsHandler;
 
     private final DIContainer diContainer = new DIContainer();
-
 
     /**
      * Open PDF document in reading mode.
@@ -1325,6 +1325,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
         // Copying OCGs should go after copying LinkAnnotations
         if (getCatalog() != null && getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null) {
             OcgPropertiesCopier.copyOCGProperties(this, toDocument, page2page);
+            toDocument.getCatalog().setOcgCopied(true);
         }
 
         // It's important to copy tag structure after link annotations were copied, because object content items in tag

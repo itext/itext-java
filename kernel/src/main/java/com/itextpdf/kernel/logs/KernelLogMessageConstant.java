@@ -49,7 +49,6 @@ public final class KernelLogMessageConstant {
             "Full compression mode was requested to be switched off in append mode but the original document has "
                     + "cross-reference stream, not cross-reference table. Falling back to cross-reference stream in "
                     + "appended document and switching full compression on";
-
     public static final String JPXDECODE_FILTER_DECODING =
             "JPXDecode filter decoding into the bit map is not supported. The stream data would be left in JPEG2000 "
                     + "format";
@@ -89,6 +88,9 @@ public final class KernelLogMessageConstant {
             "Flattening annotation type {0} is not yet supported, it will not be removed from the page";
     public static final String FORMFIELD_ANNOTATION_WILL_NOT_BE_FLATTENED = "Form field annotation flattening is not "
             + "supported. Use the PdfAcroForm#flattenFields() method instead.";
+
+    public static final String INVALID_DDICTIONARY_FIELD_VALUE = "The default configuration dictionary field {0}" +
+            " has a value of {1}, which is not the required value for this field. The field will not be processed.";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
