@@ -164,7 +164,7 @@ public class PdfType0Font extends PdfFont {
             embeddedToUnicode = toUnicodeCMap;
         }
 
-        if (cmap.isName() && (PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
+        if (cmap.isName() && ((toUnicodeCMap != null) || PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
                 PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
 
             if (toUnicodeCMap == null) {

@@ -151,4 +151,14 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
             Assert.assertTrue(extractedText.contains("L3B 廠： 新竹科學工業園區新竹市東區力行二路 1 號"));
         }
     }
+
+    @Test
+    public void mixedCharacterCodes() throws IOException {
+        String inFile = sourceFolder + "SameCidForDifferentCodes.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+            Assert.assertTrue(extractedText.contains("18个月"));
+            Assert.assertFalse(extractedText.contains("18个⽉"));
+        }
+    }
 }
