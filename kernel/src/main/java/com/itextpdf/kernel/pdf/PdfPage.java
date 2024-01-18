@@ -31,6 +31,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -857,6 +858,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged()) {
             if (tagAnnotation) {
                 TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
+                if (annotation instanceof PdfMarkupAnnotation && StandardRoles.DOCUMENT.equals(tagPointer.getRole())
+                        && PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
+                    tagPointer.addTag(StandardRoles.ANNOT);
+                }
                 PdfPage prevPage = tagPointer.getCurrentPage();
                 tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
                 if (prevPage != null) {

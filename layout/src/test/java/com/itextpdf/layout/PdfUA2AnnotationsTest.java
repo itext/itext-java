@@ -144,8 +144,6 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfPage pdfPage = pdfDocument.addNewPage();
             Rectangle rect = new Rectangle(100, 650, 400, 100);
             createSimplePdfUA2Document(pdfDocument);
-            TagTreePointer tagPointer = pdfDocument.getTagStructureContext().getAutoTaggingPointer();
-            tagPointer.addTag(StandardRoles.ANNOT);
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                     pdfDocument, "file".getBytes(StandardCharsets.UTF_8), "description", "file.txt", null, null, null);
             PdfFileAttachmentAnnotation annot = new PdfFileAttachmentAnnotation(rect, fs);
@@ -189,8 +187,6 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             createSimplePdfUA2Document(pdfDocument);
-            TagTreePointer tagPointer = pdfDocument.getTagStructureContext().getAutoTaggingPointer();
-            tagPointer.addTag(StandardRoles.ANNOT);
             PdfPage pdfPage = pdfDocument.addNewPage();
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
             stamp.setStampName(PdfName.Approved);
@@ -257,8 +253,6 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             createSimplePdfUA2Document(pdfDocument);
-            TagTreePointer tagPointer = pdfDocument.getTagStructureContext().getAutoTaggingPointer();
-            tagPointer.addTag(StandardRoles.ANNOT);
             PdfPage pdfPage = pdfDocument.addNewPage();
             PdfInkAnnotation ink = createInkAnnotation();
             pdfPage.addAnnotation(ink);
@@ -293,8 +287,6 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             createSimplePdfUA2Document(pdfDocument);
-            TagTreePointer tagPointer = pdfDocument.getTagStructureContext().getAutoTaggingPointer();
-            tagPointer.addTag(StandardRoles.ANNOT);
             PdfPage pdfPage = pdfDocument.addNewPage();
             PdfRedactAnnotation redact = createRedactionAnnotation();
             pdfPage.addAnnotation(redact);
