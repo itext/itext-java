@@ -22,21 +22,16 @@
  */
 package com.itextpdf.forms.form.renderer;
 
-import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -353,61 +348,6 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
                 modelElement.deleteOwnProperty(integerObjectEntry.getKey());
             }
         }
-    }
-
-    /**
-     * Applies the border property.
-     *
-     * @param annotation the annotation to set border characteristics to.
-     */
-    void applyBorderProperty(PdfFormAnnotation annotation) {
-        applyBorderProperty(this, annotation);
-    }
-
-    /**
-     * Applies the border property to the renderer.
-     *
-     * @param renderer renderer to apply border properties to.
-     * @param annotation the annotation to set border characteristics to.
-     */
-    static void applyBorderProperty(IRenderer renderer, PdfFormAnnotation annotation) {
-        Border border = renderer.<Border>getProperty(Property.BORDER);
-        if (border == null) {
-            // For now, we set left border to an annotation, but appropriate borders for an element will be drawn.
-            border = renderer.<Border>getProperty(Property.BORDER_LEFT);
-        }
-        if (border != null) {
-            annotation.setBorderStyle(transformBorderTypeToBorderStyleDictionary(border.getType()));
-            annotation.setBorderColor(border.getColor());
-            annotation.setBorderWidth(border.getWidth());
-        }
-    }
-
-    static private PdfDictionary transformBorderTypeToBorderStyleDictionary(int borderType) {
-        PdfDictionary bs = new PdfDictionary();
-        PdfName style;
-        switch (borderType) {
-            case 1001:
-                style = PdfAnnotation.STYLE_UNDERLINE;
-                break;
-            case 1002:
-                style = PdfAnnotation.STYLE_BEVELED;
-                break;
-            case 1003:
-                style = PdfAnnotation.STYLE_INSET;
-                break;
-            case Border.DASHED_FIXED:
-            case Border.DASHED:
-            case Border.DOTTED:
-                // Default dash array will be used.
-                style = PdfAnnotation.STYLE_DASHED;
-                break;
-            default:
-                style = PdfAnnotation.STYLE_SOLID;
-                break;
-        }
-        bs.put(PdfName.S, style);
-        return bs;
     }
 
     private void processLangAttribute() {

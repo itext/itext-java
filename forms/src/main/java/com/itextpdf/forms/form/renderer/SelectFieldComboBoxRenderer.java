@@ -30,6 +30,7 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ComboBoxField;
 import com.itextpdf.forms.form.element.SelectFieldItem;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -126,7 +127,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         if (background != null) {
             comboBoxField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
         }
-        AbstractFormFieldRenderer.applyBorderProperty(this, comboBoxField.getFirstFormAnnotation());
+        BorderStyleUtil.applyBorderProperty(this, comboBoxField.getFirstFormAnnotation());
 
         UnitValue fontSize = getFontSize();
         if (fontSize != null) {

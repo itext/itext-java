@@ -26,11 +26,13 @@ import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
@@ -39,6 +41,7 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.IsoKey;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -59,6 +62,11 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.pdfa.PdfAAgnosticPdfDocument;
 import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -1269,7 +1277,7 @@ public class PdfSigner {
         sigField.setReuseAppearance(appearance.isReuseAppearance())
                 .setSignatureAppearanceLayer(appearance.getSignatureAppearanceLayer())
                 .setBackgroundLayer(appearance.getBackgroundLayer());
-        sigField.getFirstFormAnnotation().setFormFieldElement(appearance.getSignatureAppearance());
+        applyDefaultPropertiesForTheNewField(sigField);
         sigField.enableFieldRegeneration();
         acroForm.addField(sigField, document.getPage(pagen));
 
@@ -1525,7 +1533,6 @@ public class PdfSigner {
 
     private PdfSignature createSignatureDictionary(boolean includeDate) {
         PdfSignature dic = new PdfSignature();
-        PdfSignatureAppearance appearance = getSignatureAppearance();
         dic.setReason(getReason());
         dic.setLocation(getLocation());
         dic.setSignatureCreator(getSignatureCreator());
@@ -1534,6 +1541,32 @@ public class PdfSigner {
             dic.setDate(new PdfDate(getSignDate())); // time-stamp will over-rule this
         }
         return dic;
+    }
+
+    private void applyDefaultPropertiesForTheNewField(PdfSignatureFormField sigField) {
+        SignatureFieldAppearance formFieldElement = appearance.getSignatureAppearance();
+        PdfFormAnnotation annotation = sigField.getFirstFormAnnotation();
+        annotation.setFormFieldElement(formFieldElement);
+        // Apply default field properties:
+        sigField.getWidgets().get(0).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE);
+        sigField.setJustification(formFieldElement.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT));
+        final Object retrievedFont = formFieldElement.<Object>getProperty(Property.FONT);
+        if (retrievedFont instanceof PdfFont) {
+            sigField.setFont((PdfFont) retrievedFont);
+        }
+        UnitValue fontSize = formFieldElement.<UnitValue>getProperty(Property.FONT_SIZE);
+        if (fontSize != null && fontSize.isPointValue()) {
+            sigField.setFontSize(fontSize.getValue());
+        }
+        TransparentColor color = formFieldElement.<TransparentColor>getProperty(Property.FONT_COLOR);
+        if (color != null) {
+            sigField.setColor(color.getColor());
+        }
+        BorderStyleUtil.applyBorderProperty(formFieldElement, annotation);
+        Background background = formFieldElement.<Background>getProperty(Property.BACKGROUND);
+        if (background != null) {
+            sigField.getFirstFormAnnotation().setBackgroundColor(background.getColor());
+        }
     }
 
     /**

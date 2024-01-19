@@ -45,7 +45,9 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
@@ -56,6 +58,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
@@ -179,15 +182,15 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest),
                 new StampingProperties().useAppendMode());
 
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        String fieldName = "Sign1";
 
-        appearance.setLayer2FontSize(13.8f)
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName).setFontSize(13.8f);
+
+        signer.setFieldName(fieldName);
+        signer.setReason("Test").setLocation("Nagpur")
                 .setPageRect(new Rectangle(36, 748, 200, 100))
                 .setPageNumber(1)
-                .setReason("Test")
-                .setLocation("Nagpur");
-
-        signer.setFieldName("Sign1");
+                .setSignatureAppearance(appearance);
 
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
@@ -212,13 +215,13 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String src = SOURCE_FOLDER + "simpleDocument.pdf";
 
         PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
-        // Creating the appearance
-        signer.getSignatureAppearance()
-                .setLayer2FontColor(ColorConstants.RED)
-                .setLayer2Text("Verified and signed by me.")
-                .setPageRect(rect);
-
         signer.setFieldName("Signature1");
+        // Creating the appearance
+        signer.setPageRect(rect)
+                .setSignatureAppearance(new SignatureFieldAppearance(signer.getFieldName())
+                        .setFontColor(ColorConstants.RED)
+                        .setContent("Verified and signed by me."));
+
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());
@@ -267,12 +270,13 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
-        signer.getSignatureAppearance()
-                .setLayer2Text("Verified and signed by me.")
+        signer.setFieldName("Signature1");
+        signer
                 .setReason("Test 1")
                 .setLocation("TestCity")
-                .setReuseAppearance(false);
-        signer.setFieldName("Signature1");
+                .setSignatureAppearance(new SignatureFieldAppearance(signer.getFieldName())
+                        .setContent("Verified and signed by me."));
+        signer.getSignatureField().setReuseAppearance(false);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());
@@ -297,13 +301,14 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
         signer.setFieldName("Signature1");
-        signer.getSignatureAppearance()
-                .setLayer2Text("SIGNED")
-                .setLayer2FontColor(ColorConstants.GREEN)
-                .setReason("Test 1")
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
+                .setContent("SIGNED")
+                .setFontColor(ColorConstants.GREEN);
+        appearance.setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
+        signer.setReason("Test 1")
                 .setLocation("TestCity")
-                .setReuseAppearance(true)
-                .getSignatureAppearance().setProperty(Property.VERTICAL_ALIGNMENT, VerticalAlignment.MIDDLE);
+                .setSignatureAppearance(appearance);
+        signer.getSignatureField().setReuseAppearance(true);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());
@@ -327,12 +332,12 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
         signer.setCertificationLevel(PdfSigner.NOT_CERTIFIED);
 
-        signer.getSignatureAppearance()
-                .setLayer2Text("Verified and signed by me.")
-                .setReason("Test 1")
-                .setLocation("TestCity")
-                .setReuseAppearance(true);
         signer.setFieldName("Signature1");
+        signer.setReason("Test 1")
+                .setLocation("TestCity")
+                .setSignatureAppearance(new SignatureFieldAppearance(signer.getFieldName())
+                        .setContent("Verified and signed by me."));
+        signer.getSignatureField().setReuseAppearance(true);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
                 FACTORY.getProviderName());
@@ -525,24 +530,25 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
     public void createAndSignSignatureFieldTest() throws IOException, GeneralSecurityException {
         String src = SOURCE_FOLDER + "noSignatureField.pdf";
         String dest = DESTINATION_FOLDER + "createdAndSignedSignatureField.pdf";
+        String fieldName = "Signature1";
 
         String unsignedDoc = DESTINATION_FOLDER + "unsignedSignatureField.pdf";
         PdfDocument document = new PdfDocument(new PdfReader(src), new PdfWriter(unsignedDoc));
 
-        PdfSignatureFormField field = new SignatureFormFieldBuilder(document, "Signature1")
+        PdfSignatureFormField field = new SignatureFormFieldBuilder(document, fieldName)
                 .setPage(1).setWidgetRectangle(new Rectangle(45, 509, 517, 179)).createSignature();
         PdfFormCreator.getAcroForm(document, true).addField(field);
         document.close();
 
         PdfSigner signer = new PdfSigner(new PdfReader(unsignedDoc), new FileOutputStream(dest), new StampingProperties());
+        signer.setFieldName(fieldName);
         // Creating the appearance
-        signer.getSignatureAppearance()
-                .setReason("Appearance is tested")
-                .setLocation("TestCity")
-                .setLayer2Text("Test signature field appearance. Test signature field appearance. " +
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
+                .setContent("Test signature field appearance. Test signature field appearance. " +
                         "Test signature field appearance. Test signature field appearance");
-
-        signer.setFieldName("Signature1");
+        signer.setReason("Appearance is tested")
+                .setLocation("TestCity")
+                .setSignatureAppearance(appearance);
 
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
@@ -558,16 +564,16 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String dest = DESTINATION_FOLDER + fileName;
 
         PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        signer.setFieldName("Signature1");
 
         // Creating the appearance
-        signer.getSignatureAppearance()
-                .setReason("Appearance is tested")
-                .setLocation("TestCity")
-                .setReuseAppearance(true)
-                .setLayer2Text("Test signature field appearance. Test signature field appearance. " +
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName())
+                .setContent("Test signature field appearance. Test signature field appearance. " +
                         "Test signature field appearance. Test signature field appearance");
-
-        signer.setFieldName("Signature1");
+        signer.setReason("Appearance is tested")
+                .setLocation("TestCity")
+                .setSignatureAppearance(appearance);
+        signer.getSignatureField().setReuseAppearance(true);
 
         // Signing
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
@@ -615,6 +621,35 @@ public class PdfSignatureAppearanceTest extends ExtendedITextTest {
         String src = SOURCE_FOLDER + "noSignatureField.pdf";
         String fileName = "deprecatedLayersTest.pdf";
         testLayers(src, fileName, true);
+    }
+
+    @Test
+    public void signatureFieldAppearanceTest() throws IOException, GeneralSecurityException, InterruptedException {
+        String fileName = "signatureFieldAppearanceTest.pdf";
+        String src = SOURCE_FOLDER + "noSignatureField.pdf";
+        String cmp = SOURCE_FOLDER + "cmp_" + fileName;
+        String dest = DESTINATION_FOLDER + fileName;
+        String fieldName = "Signature1";
+
+        PdfSigner signer = new PdfSigner(new PdfReader(src), new FileOutputStream(dest), new StampingProperties());
+        signer.setFieldName(fieldName);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(fieldName)
+                .setContent("Signature field")
+                .setBackgroundColor(ColorConstants.GREEN)
+                .setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 3))
+                .setFontColor(ColorConstants.DARK_GRAY)
+                .setFontSize(20)
+                .setTextAlignment(TextAlignment.CENTER);
+        signer.setPageRect(new Rectangle(250, 500, 100, 100)).setReason("Test 1").setLocation("TestCity")
+                .setSignatureAppearance(appearance);
+
+        // Signing
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256,
+                FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        Assert.assertNull(SignaturesCompareTool.compareSignatures(dest, cmp));
+        Assert.assertNull(new CompareTool().compareVisually(dest, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     private static void compareSignatureAppearances(String outPdf, String cmpPdf) throws IOException {

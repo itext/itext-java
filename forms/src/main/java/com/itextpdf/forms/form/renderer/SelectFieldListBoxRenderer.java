@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
 import com.itextpdf.forms.form.element.ListBoxField;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -218,7 +219,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         }
         choiceField.setJustification(this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT));
 
-        AbstractFormFieldRenderer.applyBorderProperty(this, choiceField.getFirstFormAnnotation());
+        BorderStyleUtil.applyBorderProperty(this, choiceField.getFirstFormAnnotation());
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
         if (background != null) {

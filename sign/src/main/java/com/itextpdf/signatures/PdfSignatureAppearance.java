@@ -281,7 +281,8 @@ public class PdfSignatureAppearance {
      * @return layer 0.
      *
      * @deprecated will be deleted in the next major release.
-     * See {@link PdfSignatureFormField#setBackgroundLayer(PdfFormXObject)}.
+     * See {@link PdfSignatureFormField#setBackgroundLayer(PdfFormXObject)}. Note that it should be called
+     * for the field retrieved with {@link PdfSigner#getSignatureField()} method.
      */
     @Deprecated
     public PdfFormXObject getLayer0() {
@@ -302,7 +303,8 @@ public class PdfSignatureAppearance {
      * @return layer 2.
      *
      * @deprecated will be deleted in the next major release.
-     * See {@link PdfSignatureFormField#setSignatureAppearanceLayer(PdfFormXObject)}.
+     * See {@link PdfSignatureFormField#setSignatureAppearanceLayer(PdfFormXObject)}. Note that it should be called
+     * for the field retrieved with {@link PdfSigner#getSignatureField()} method.
      */
     @Deprecated
     public PdfFormXObject getLayer2() {
@@ -544,7 +546,8 @@ public class PdfSignatureAppearance {
      *
      * @return this instance to support fluent interface.
      *
-     * @deprecated in favour of {@link PdfSignatureFormField#setReuseAppearance(boolean)}.
+     * @deprecated in favour of {@link PdfSignatureFormField#setReuseAppearance(boolean)}. Note that it should be called
+     * for the field retrieved with {@link PdfSigner#getSignatureField()} method.
      */
     @Deprecated
     public PdfSignatureAppearance setReuseAppearance(boolean reuseAppearance) {

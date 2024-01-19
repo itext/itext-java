@@ -30,6 +30,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Radio;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -201,7 +202,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         if (background != null) {
             radio.setBackgroundColor(background.getColor());
         }
-        applyBorderProperty(radio);
+        BorderStyleUtil.applyBorderProperty(this, radio);
         radio.setFormFieldElement((Radio) modelElement);
 
         radioGroup.addKid(radio);
