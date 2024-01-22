@@ -47,6 +47,9 @@ public final class PdfUAExceptionMessageConstants {
             "Suspects entry in mark info dictionary shall not have a value of true.";
     public static final String TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE =
             "\"{0}\" tag mapping does not terminate with a standard type.";
+    public static final String IMAGE_SHALL_HAVE_ALT = "Figure tags shall include an alternative representation or "
+            + "replacement text. call com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setActualText or com"
+            + ".itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setAlternateDescription to be PDF/UA compliant.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor

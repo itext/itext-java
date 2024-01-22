@@ -44,5 +44,6 @@ public enum IsoKey {
     FONT,
     // PDF/UA Enums
     CANVAS_BEGIN_MARKED_CONTENT,
-    CANVAS_WRITING_CONTENT
+    CANVAS_WRITING_CONTENT,
+    LAYOUT
 }

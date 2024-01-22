@@ -40,8 +40,12 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.IValidationChecker;
 import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
@@ -54,7 +58,6 @@ import java.util.Stack;
 /**
  * The class defines the requirements of the PDF/UA-1 standard.
  * <p>
- *
  * The specification implemented by this class is ISO 14289-1
  */
 public class PdfUA1Checker implements IValidationChecker {
@@ -89,6 +92,9 @@ public class PdfUA1Checker implements IValidationChecker {
     @Override
     public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream, Object extra) {
         switch (key) {
+            case LAYOUT:
+                LayoutCheckUtil.checkLayoutElements(obj);
+                break;
             case CANVAS_WRITING_CONTENT:
                 checkOnWritingCanvasToContent(obj);
                 break;
@@ -98,18 +104,22 @@ public class PdfUA1Checker implements IValidationChecker {
         }
     }
 
+
     private void checkOnWritingCanvasToContent(Object data) {
         Stack<Tuple2<PdfName, PdfDictionary>> tagStack = getTagStack(data);
-        if (tagStack.isEmpty() ) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING);
+        if (tagStack.isEmpty()) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING);
         }
 
         final boolean insideRealContent = isInsideRealContent(tagStack);
         final boolean insideArtifact = isInsideArtifact(tagStack);
         if (insideRealContent && insideArtifact) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA);
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA);
         } else if (!insideRealContent && !insideArtifact) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT);
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT);
         }
     }
 
@@ -140,9 +150,11 @@ public class PdfUA1Checker implements IValidationChecker {
     private void checkStandardRoleMapping(Tuple2<PdfName, PdfDictionary> tag) {
         final PdfNamespace namespace = tagStructureContext.getDocumentDefaultNamespace();
         final String role = tag.getFirst().getValue();
-        if (!StandardRoles.ARTIFACT.equals(role) && !tagStructureContext.checkIfRoleShallBeMappedToStandardRole(role, namespace)) {
+        if (!StandardRoles.ARTIFACT.equals(role) && !tagStructureContext.checkIfRoleShallBeMappedToStandardRole(role,
+                namespace)) {
             throw new PdfUAConformanceException(
-                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, role));
+                    MessageFormatUtil.format(
+                            PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, role));
         }
     }
 
@@ -172,7 +184,8 @@ public class PdfUA1Checker implements IValidationChecker {
         if (properties == null || !properties.containsKey(PdfName.MCID)) {
             return false;
         }
-        PdfMcr mcr = this.pdfDocument.getStructTreeRoot().findMcrByMcid(pdfDocument, (int) properties.getAsInt(PdfName.MCID));
+        PdfMcr mcr = this.pdfDocument.getStructTreeRoot()
+                .findMcrByMcid(pdfDocument, (int) properties.getAsInt(PdfName.MCID));
         if (mcr == null) {
             throw new PdfUAConformanceException(
                     PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT);
@@ -207,6 +220,12 @@ public class PdfUA1Checker implements IValidationChecker {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ONE_OR_MORE_STANDARD_ROLE_REMAPPED);
             }
         }
+
+        TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
+        tagTreeIterator.addHandler(GraphicsCheckUtil.createFigureTagHandler());
+        tagTreeIterator.traverse();
+
+
     }
 
     private void checkFonts(Collection<PdfFont> fontsInDocument) {
