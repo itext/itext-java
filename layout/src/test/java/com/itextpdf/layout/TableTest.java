@@ -2048,9 +2048,6 @@ public class TableTest extends AbstractTableTest {
     }
 
 	@Test
-	@LogMessages(messages = {
-	        @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING)
-    })
 	public void tableWithEmptyRowsBetweenFullRowsTest() throws IOException, InterruptedException {
 		String testName = "tableWithEmptyRowsBetweenFullRowsTest.pdf";
 		String outFileName = destinationFolder + testName;
@@ -2073,7 +2070,6 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 2),
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     public void tableWithEmptyRowAfterJustOneCellTest() throws IOException, InterruptedException {
@@ -2099,7 +2095,6 @@ public class TableTest extends AbstractTableTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 39),
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     public void tableWithAlternatingRowsTest() throws IOException, InterruptedException {
@@ -2146,9 +2141,30 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING, count = 2)
-    })
+    public void tableWithEmptyRowsAndSpansTest() throws IOException, InterruptedException {
+        String testName = "tableWithEmptyRowsAndSpansTest.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30, 30}));
+        table.addCell(new Cell().add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("Lovely")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+        startSeveralEmptyRows(table);
+        table.addCell(new Cell(2, 2).add(new Paragraph("Hello")));
+        table.addCell(new Cell().add(new Paragraph("Lovely")));
+        table.addCell(new Cell().add(new Paragraph("World")));
+
+        doc.add(table);
+
+        doc.close();
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+    }
+
+    @Test
     public void tableWithEmptyRowsAndSeparatedBordersTest() throws IOException, InterruptedException {
         String testName = "tableWithEmptyRowsAndSeparatedBordersTest.pdf";
         String outFileName = destinationFolder + testName;
@@ -2171,10 +2187,6 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    // TODO DEVSIX-6020:Border-collapsing doesn't work in case startNewRow has been called
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING)
-    })
     public void tableWithCollapsedBordersTest() throws IOException, InterruptedException {
         String testName = "tableWithCollapsedBordersTest.pdf";
         String outFileName = destinationFolder + testName;

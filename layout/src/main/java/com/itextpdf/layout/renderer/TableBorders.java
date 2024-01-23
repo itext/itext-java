@@ -155,6 +155,10 @@ abstract class TableBorders {
     protected abstract float getCellVerticalAddition(float[] indents);
     // endregion
 
+    /**
+     * @deprecated Remove rowspansToDeduct parameter which is not used anymore.
+     */
+    @Deprecated
     protected abstract void buildBordersArrays(CellRenderer cell, int row, int col, int[] rowspansToDeduct);
 
     protected abstract TableBorders updateBordersOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
@@ -162,7 +166,6 @@ abstract class TableBorders {
 
     protected TableBorders processAllBordersAndEmptyRows() {
         CellRenderer[] currentRow;
-        int[] rowspansToDeduct = new int[numberOfColumns];
         int numOfRowsToRemove = 0;
         if (!rows.isEmpty()) {
             for (int row = startRow - largeTableIndexOffset; row <= finishRow - largeTableIndexOffset; row++) {
@@ -170,26 +173,19 @@ abstract class TableBorders {
                 boolean hasCells = false;
                 for (int col = 0; col < numberOfColumns; col++) {
                     if (null != currentRow[col]) {
-                        int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
-                        if (rowspansToDeduct[col] > 0) {
-                            int rowspan = (int) currentRow[col].getPropertyAsInteger(Property.ROWSPAN) - rowspansToDeduct[col];
-                            if (rowspan < 1) {
-                                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                                logger.warn(IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING);
-                                rowspan = 1;
-                            }
-                            currentRow[col].setProperty(Property.ROWSPAN, rowspan);
-                            if (0 != numOfRowsToRemove) {
-                                removeRows(row - numOfRowsToRemove, numOfRowsToRemove);
-                                row -= numOfRowsToRemove;
-                                numOfRowsToRemove = 0;
-                            }
+                        if (0 != numOfRowsToRemove) {
+                            // Decrease rowspans if necessary
+                            updateRowspanForNextNonEmptyCellInEachColumn(numOfRowsToRemove, row);
+
+                            // Remove empty rows
+                            removeRows(row - numOfRowsToRemove, numOfRowsToRemove);
+                            row -= numOfRowsToRemove;
+                            numOfRowsToRemove = 0;
                         }
-                        buildBordersArrays(currentRow[col], row, col, rowspansToDeduct);
+
+                        buildBordersArrays(currentRow[col], row, col, null);
                         hasCells = true;
-                        for (int i = 0; i < colspan; i++) {
-                            rowspansToDeduct[col + i] = 0;
-                        }
+                        int colspan = (int) currentRow[col].getPropertyAsInteger(Property.COLSPAN);
                         col += colspan - 1;
                     } else {
                         if (horizontalBorders.get(row).size() <= col) {
@@ -197,19 +193,17 @@ abstract class TableBorders {
                         }
                     }
                 }
+                
                 if (!hasCells) {
                     if (row == rows.size() - 1) {
-                        removeRows(row - rowspansToDeduct[0], rowspansToDeduct[0]);
+                        removeRows(row - numOfRowsToRemove, numOfRowsToRemove);
                         // delete current row
-                        rows.remove(row - rowspansToDeduct[0]);
+                        rows.remove(row - numOfRowsToRemove);
                         setFinishRow(finishRow - 1);
 
                         Logger logger = LoggerFactory.getLogger(TableRenderer.class);
                         logger.warn(IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
                     } else {
-                        for (int i = 0; i < numberOfColumns; i++) {
-                            rowspansToDeduct[i]++;
-                        }
                         numOfRowsToRemove++;
                     }
                 }
@@ -219,17 +213,6 @@ abstract class TableBorders {
             setFinishRow(startRow);
         }
         return this;
-    }
-
-    private void removeRows(int startRow, int numOfRows) {
-        for (int row = startRow; row < startRow + numOfRows; row++) {
-            rows.remove(startRow);
-            horizontalBorders.remove(startRow + 1);
-            for (int j = 0; j <= numberOfColumns; j++) {
-                verticalBorders.get(j).remove(startRow + 1);
-            }
-        }
-        setFinishRow(finishRow - numOfRows);
     }
 
     // region init
@@ -415,4 +398,62 @@ abstract class TableBorders {
         return indents;
     }
     // endregion
+
+    private void removeRows(int startRow, int numOfRows) {
+        for (int row = startRow; row < startRow + numOfRows; row++) {
+            rows.remove(startRow);
+            horizontalBorders.remove(startRow + 1);
+            for (int j = 0; j <= numberOfColumns; j++) {
+                verticalBorders.get(j).remove(startRow + 1);
+            }
+        }
+        setFinishRow(finishRow - numOfRows);
+    }
+
+    private void updateRowspanForNextNonEmptyCellInEachColumn(int numOfRowsToRemove, int row) {
+        // We go by columns in a current row which is not empty. For each column we look for
+        // a non-empty cell going up by rows (going down in a table). For each such cell we
+        // collect data to be able to analyze its rowspan.
+
+        // Iterate by columns
+        int c = 0;
+        while (c < numberOfColumns) {
+            int r = row;
+            CellRenderer[] cr = null;
+            // Look for non-empty cell in a column
+            while (r < rows.size() && (cr == null || cr[c] == null)) {
+                cr = rows.get(r);
+                ++r;
+            }
+
+            // Found a cell
+            if (cr != null && cr[c] != null) {
+                CellRenderer cell = cr[c];
+                final int origRowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
+                int spansToRestore = 0;
+                // Here we analyze whether current cell's rowspan touches a non-empty row before
+                // numOfRowsToRemove. If it doesn't touch it we will need to 'restore' a few
+                // rowspans which is a difference between the current (non-empty) row and the row
+                // where we found non-empty cell for this column
+                if (row - numOfRowsToRemove < r - origRowspan) {
+                    spansToRestore = r - row - 1;
+                }
+
+                int rowspan = origRowspan;
+                rowspan = rowspan - numOfRowsToRemove;
+                if (rowspan < 1) {
+                    rowspan = 1;
+                }
+                rowspan += spansToRestore;
+                rowspan = Math.min(rowspan, origRowspan);
+
+                cell.setProperty(Property.ROWSPAN, rowspan);
+
+                final int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
+                c += colspan;
+            } else {
+                ++c;
+            }
+        }
+    }
 }
