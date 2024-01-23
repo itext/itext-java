@@ -250,7 +250,7 @@ public class CMSContainer {
     /**
      * Retrieves a copy of the list of certificates.
      *
-     * @return the list of certificates to be used  for signing and certificate validation
+     * @return the list of certificates to be used for signing and certificate validation
      */
     public Collection<X509Certificate> getCertificates() {
         return Collections.unmodifiableCollection(certificates);

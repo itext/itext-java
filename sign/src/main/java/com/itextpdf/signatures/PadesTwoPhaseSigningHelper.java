@@ -217,7 +217,22 @@ public class PadesTwoPhaseSigningHelper {
         this.stampingProperties = stampingProperties;
         return this;
     }
-    
+
+    /**
+     * Creates CMS container compliant with PAdES level. Prepares document and placeholder for the future signature
+     * without actual signing process.
+     *
+     * @param certificates      certificates to be added to the CMS container
+     * @param digestAlgorithm   the algorithm to generate the digest with
+     * @param inputDocument     reader {@link PdfReader} instance to read original PDF file
+     * @param outputStream      {@link OutputStream} output stream to write the resulting PDF file into
+     * @param signerProperties  properties to be used in the signing operations
+     *
+     * @return prepared CMS container without signature.
+     *
+     * @throws IOException                  if an I/O error occurs.
+     * @throws GeneralSecurityException     if some problem with signature or security occur.
+     */
     public CMSContainer createCMSContainerWithoutSignature(Certificate[] certificates, String digestAlgorithm,
             PdfReader inputDocument, OutputStream outputStream, SignerProperties signerProperties)
             throws IOException, GeneralSecurityException {
@@ -248,6 +263,17 @@ public class PadesTwoPhaseSigningHelper {
         return cms;
     }
 
+    /**
+     * Follow-up step that signs prepared document with PAdES Baseline-B profile.
+     *
+     * @param externalSignature     external signature to do the actual signing
+     * @param inputDocument         reader {@link PdfReader} instance to read prepared document
+     * @param outputStream          the output PDF
+     * @param signatureFieldName    the field to sign
+     * @param cmsContainer          the finalized CMS container (e.g. created in the first step)
+     *
+     * @throws Exception if some exception occur.
+     */
     public void signCMSContainerWithBaselineBProfile(IExternalSignature externalSignature, PdfReader inputDocument,
             OutputStream outputStream, String signatureFieldName, CMSContainer cmsContainer) throws Exception {
         setSignatureAlgorithmAndSignature(externalSignature, cmsContainer);
@@ -258,7 +284,18 @@ public class PadesTwoPhaseSigningHelper {
             outputStream.close();
         }
     }
-    
+
+    /**
+     * Follow-up step that signs prepared document with PAdES Baseline-T profile.
+     *
+     * @param externalSignature     external signature to do the actual signing
+     * @param inputDocument         reader {@link PdfReader} instance to read prepared document
+     * @param outputStream          the output PDF
+     * @param signatureFieldName    the field to sign
+     * @param cmsContainer          the finalized CMS container (e.g. created in the first step)
+     *
+     * @throws Exception if some exception occur.
+     */
     public void signCMSContainerWithBaselineTProfile(IExternalSignature externalSignature, PdfReader inputDocument,
             OutputStream outputStream, String signatureFieldName, CMSContainer cmsContainer) throws Exception {
         byte[] signature = setSignatureAlgorithmAndSignature(externalSignature, cmsContainer);
@@ -281,7 +318,18 @@ public class PadesTwoPhaseSigningHelper {
             outputStream.close();
         }
     }
-    
+
+    /**
+     * Follow-up step that signs prepared document with PAdES Baseline-LT profile.
+     *
+     * @param externalSignature     external signature to do the actual signing
+     * @param inputDocument         reader {@link PdfReader} instance to read prepared document
+     * @param outputStream          the output PDF
+     * @param signatureFieldName    the field to sign
+     * @param cmsContainer          the finalized CMS container (e.g. created in the first step)
+     *
+     * @throws Exception if some exception occur.
+     */
     public void signCMSContainerWithBaselineLTProfile(IExternalSignature externalSignature, PdfReader inputDocument,
             OutputStream outputStream, String signatureFieldName, CMSContainer cmsContainer) throws Exception {
         PdfPadesSigner padesSigner = createPadesSigner(inputDocument, outputStream);
@@ -301,6 +349,17 @@ public class PadesTwoPhaseSigningHelper {
         }
     }
 
+    /**
+     * Follow-up step that signs prepared document with PAdES Baseline-LTA profile.
+     *
+     * @param externalSignature     external signature to do the actual signing
+     * @param inputDocument         reader {@link PdfReader} instance to read prepared document
+     * @param outputStream          the output PDF
+     * @param signatureFieldName    the field to sign
+     * @param cmsContainer          the finalized CMS container (e.g. created in the first step)
+     *
+     * @throws Exception if some exception occur.
+     */
     public void signCMSContainerWithBaselineLTAProfile(IExternalSignature externalSignature, PdfReader inputDocument,
             OutputStream outputStream, String signatureFieldName, CMSContainer cmsContainer) throws Exception {
         PdfPadesSigner padesSigner = createPadesSigner(inputDocument, outputStream);

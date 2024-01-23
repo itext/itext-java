@@ -86,7 +86,7 @@ public final class SignExceptionMessageConstant {
     public static final String THIS_TSA_FAILED_TO_RETURN_TIME_STAMP_TOKEN = "TSA {0} failed to return time stamp "
             + "token: {1}.";
     public static final String TOO_BIG_KEY = "The key is too big.";
-    public static final String TSA_CLIENT_IS_MISSING = "ITSAClient must be present to rich this PAdES level. " 
+    public static final String TSA_CLIENT_IS_MISSING = "ITSAClient must be present to reach this PAdES level. "
             + "Please use setTSAClient method to provide it.";
     public static final String UNEXPECTED_CLOSE_BRACKET = "Unexpected close bracket.";
     public static final String UNEXPECTED_GT_GT = "unexpected >>.";
