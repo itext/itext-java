@@ -50,6 +50,15 @@ public class PdfXrefTable {
     private static final int INITIAL_CAPACITY = 32;
     private static final int MAX_GENERATION = 65535;
 
+    /**
+     * The maximum offset in a cross-reference stream. This is a limitation of the PDF specification.
+     * SPEC1.7: 7.5.4 Cross reference trailer
+     * <p>
+     *
+     * It states that the offset should be a 10-digit byte, so the maximum value is 9999999999.
+     * This is the max value that can be represented in 10 bytes.
+     */
+    private static final long MAX_OFFSET_IN_CROSS_REFERENCE_STREAM = 9_999_999_999L;
     private static final byte[] freeXRefEntry = ByteUtils.getIsoBytes("f \n");
     private static final byte[] inUseXRefEntry = ByteUtils.getIsoBytes("n \n");
 
@@ -368,7 +377,9 @@ public class PdfXrefTable {
                 writer.writeInteger(first).writeSpace().writeInteger(len).writeByte((byte) '\n');
                 for (int i = first; i < first + len; i++) {
                     PdfIndirectReference reference = xrefTable.get(i);
-
+                    if (reference.getOffset() > MAX_OFFSET_IN_CROSS_REFERENCE_STREAM) {
+                        throw new PdfException(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET);
+                    }
                     StringBuilder off = new StringBuilder("0000000000").append(reference.getOffset());
                     StringBuilder gen = new StringBuilder("00000").append(reference.getGenNumber());
                     writer.writeString(off.substring(off.length() - 10, off.length())).writeSpace().

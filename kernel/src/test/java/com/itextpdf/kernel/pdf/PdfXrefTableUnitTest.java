@@ -22,8 +22,12 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.test.AssertUtil;
+import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -127,5 +131,74 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         final PdfXrefTable xrefTable = new PdfXrefTable(0, memoryLimitsAwareHandler);
 
         Assert.assertEquals(20, xrefTable.getCapacity());
+    }
+
+    @Test
+    public void xRefMaxValueLong() {
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        document.xref.add(new PdfIndirectReferenceProxy(document, 11, Long.MAX_VALUE));
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> {
+            document.close();
+        });
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
+    }
+
+
+    @Test
+    public void maxCrossReferenceOffSetReached() {
+        long justOver10gbLogical = 10_000_000_001L;
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        document.xref.add(new PdfIndirectReferenceProxy(document, 11, justOver10gbLogical));
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> {
+            document.close();
+        });
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
+    }
+
+    @Test
+    public void maxCrossReference() {
+        long justOver10gbLogical = 10_000_000_000L;
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        document.xref.add(new PdfIndirectReferenceProxy(document, 11, justOver10gbLogical));
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> {
+            document.close();
+        });
+        Assert.assertEquals(KernelExceptionMessageConstant.XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET, e.getMessage());
+    }
+
+    @Test
+    public void justBelowXrefThreshold() {
+        long maxAllowedOffset = 10_000_000_000L - 1L;
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        document.xref.add(new PdfIndirectReferenceProxy(document, 11, maxAllowedOffset));
+
+        AssertUtil.doesNotThrow(() -> document.close());
+    }
+
+    @Test
+    public void xRefIntMax() {
+        PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        document.xref.add(new PdfIndirectReferenceProxy(document, 11, Integer.MAX_VALUE));
+        AssertUtil.doesNotThrow(() -> document.close());
+    }
+
+
+
+
+}
+ class PdfIndirectReferenceProxy extends PdfIndirectReference {
+    private final long offset;
+
+    public PdfIndirectReferenceProxy(PdfDocument document, int objNumber, long offset) {
+        super(document, objNumber);
+        this.offset = offset;
+    }
+
+    @Override
+    public long getOffset() {
+        return offset;
     }
 }

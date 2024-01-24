@@ -435,5 +435,10 @@ public final class KernelExceptionMessageConstant {
             "Failed to open the document. Security handler {0} is not supported";
 
     public static final String ARG_SHOULD_NOT_BE_NULL = "{0} should not be null.";
-    private KernelExceptionMessageConstant(){}
+    public static final String XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET = "Pdf document is to large to "
+            + "use normal cross reference table. Use cross reference streams instead. To enable feature use com.itextpdf"
+            + ".kernel.pdf.WriterProperties#setFullCompressionMode(true). ";
+
+    private KernelExceptionMessageConstant() {
+    }
 }
