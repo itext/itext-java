@@ -436,16 +436,12 @@
                 <file path="com/itextpdf/forms/xfdf/ExceptionTestXmlParserFactory.java"/>
             </fileset>
             <!-- sign -->
-            <file path="com/itextpdf/signatures/IExternalDigest.java"/>
-            <fileset reason="IExternalDigest class exists only on Java.">
-                <file path="com/itextpdf/signatures/PdfTwoPhaseSigner.java"/>
-            </fileset>
             <file path="com/itextpdf/signatures/ProviderDigest.java"/>
             <fileset reason="ProviderDigest class exists only on Java.">
                 <file path="com/itextpdf/signatures/ProviderDigestUnitTest.java"/>
             </fileset>
-            <file path="com/itextpdf/signatures/BouncyCastleDigest.java"/>
-            <fileset reason="BouncyCastleDigest class exists only on Java.">
+            <fileset reason="BouncyCastleDigest class differs in Java and .NET.">
+                <file path="com/itextpdf/signatures/BouncyCastleDigest.java"/>
                 <file path="com/itextpdf/signatures/BouncyCastleDigestUnitTest.java"/>
             </fileset>
             <file path="com/itextpdf/signatures/CertificateSupportedCriticalExtensionsTest.java"/>

@@ -192,6 +192,24 @@ public class PdfPKCS7 {
         }
     }
 
+    /**
+     * Assembles all the elements needed to create a signature, except for the data.
+     *
+     * @param privKey         the private key
+     * @param certChain       the certificate chain
+     * @param hashAlgorithm   the hash algorithm
+     * @param provider        the provider or <code>null</code> for the default provider
+     * @param hasEncapContent <CODE>true</CODE> if the sub-filter is adbe.pkcs7.sha1
+     * @throws InvalidKeyException      on error
+     * @throws NoSuchProviderException  on error
+     * @throws NoSuchAlgorithmException on error
+     */
+    public PdfPKCS7(PrivateKey privKey, Certificate[] certChain, String hashAlgorithm, String provider,
+                    boolean hasEncapContent)
+            throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
+        this(privKey, certChain, hashAlgorithm, provider, new BouncyCastleDigest(), hasEncapContent);
+    }
+
     // Constructors for validating existing signatures
 
     /**

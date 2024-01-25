@@ -695,6 +695,29 @@ public class PdfSigner {
      * @param crlList           the CRL list
      * @param ocspClient        the OCSP client
      * @param tsaClient         the Timestamp client
+     * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
+     * @param sigtype           Either Signature.CMS or Signature.CADES
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
+     */
+    public void signDetached(IExternalSignature externalSignature, Certificate[] chain,
+                             Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+                             CryptoStandard sigtype) throws IOException, GeneralSecurityException {
+        signDetached(new BouncyCastleDigest(), externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize,
+                sigtype, (ISignaturePolicyIdentifier) null);
+    }
+
+    /**
+     * Signs the document using the detached mode, CMS or CAdES equivalent.
+     * <br><br>
+     * NOTE: This method closes the underlying pdf document. This means, that current instance
+     * of PdfSigner cannot be used after this method call.
+     *
+     * @param externalSignature the interface providing the actual signing
+     * @param chain             the certificate chain
+     * @param crlList           the CRL list
+     * @param ocspClient        the OCSP client
+     * @param tsaClient         the Timestamp client
      * @param externalDigest    an implementation that provides the digest
      * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
      * @param sigtype           Either Signature.CMS or Signature.CADES
@@ -707,6 +730,55 @@ public class PdfSigner {
             CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
         signDetached(externalDigest, externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
                 signaturePolicy.toSignaturePolicyIdentifier());
+    }
+
+    /**
+     * Signs the document using the detached mode, CMS or CAdES equivalent.
+     * <br><br>
+     * NOTE: This method closes the underlying pdf document. This means, that current instance
+     * of PdfSigner cannot be used after this method call.
+     *
+     * @param externalSignature the interface providing the actual signing
+     * @param chain             the certificate chain
+     * @param crlList           the CRL list
+     * @param ocspClient        the OCSP client
+     * @param tsaClient         the Timestamp client
+     * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
+     * @param sigtype           Either Signature.CMS or Signature.CADES
+     * @param signaturePolicy   the signature policy (for EPES signatures)
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
+     */
+    public void signDetached(IExternalSignature externalSignature, Certificate[] chain,
+                             Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+                             CryptoStandard sigtype, SignaturePolicyInfo signaturePolicy) throws IOException, GeneralSecurityException {
+        signDetached(new BouncyCastleDigest(), externalSignature, chain, crlList, ocspClient, tsaClient, estimatedSize, sigtype,
+                signaturePolicy);
+    }
+
+    /**
+     * Signs the document using the detached mode, CMS or CAdES equivalent.
+     * <br><br>
+     * NOTE: This method closes the underlying pdf document. This means, that current instance
+     * of PdfSigner cannot be used after this method call.
+     *
+     * @param externalSignature the interface providing the actual signing
+     * @param chain             the certificate chain
+     * @param crlList           the CRL list
+     * @param ocspClient        the OCSP client
+     * @param tsaClient         the Timestamp client
+     * @param estimatedSize     the reserved size for the signature. It will be estimated if 0
+     * @param sigtype           Either Signature.CMS or Signature.CADES
+     * @param signaturePolicy   the signature policy (for EPES signatures)
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
+     */
+    public void signDetached(IExternalSignature externalSignature, Certificate[] chain,
+                             Collection<ICrlClient> crlList, IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize,
+                             CryptoStandard sigtype, ISignaturePolicyIdentifier signaturePolicy)
+            throws IOException, GeneralSecurityException {
+        signDetached(new BouncyCastleDigest(), externalSignature, chain, crlList, ocspClient, tsaClient,
+                estimatedSize, sigtype, signaturePolicy);
     }
 
     /**
