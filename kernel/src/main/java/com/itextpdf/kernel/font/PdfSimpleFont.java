@@ -296,11 +296,10 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                     glyph.setChars(toUnicodeCMap.lookup(code));
                 }
             } else {
+                glyph = getFontProgram().getGlyphByCode(code);
                 int uni = enc.getUnicode(code);
-                if (uni > -1) {
+                if (uni > -1 && (glyph == null || glyph.getUnicode() != uni)) {
                     glyph = getGlyph(uni);
-                } else if (enc.getBaseEncoding() == null) {
-                    glyph = getFontProgram().getGlyphByCode(code);
                 }
             }
             if (glyph != null) {

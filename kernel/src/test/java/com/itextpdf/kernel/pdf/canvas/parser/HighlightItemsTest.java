@@ -240,7 +240,6 @@ public class HighlightItemsTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO: DEVSIX-4784 (incorrect displaying of highlights)
     public void invalidHighlightTest() throws IOException, InterruptedException {
         String input = sourceFolder + "invalidHighlight.pdf";
         String output = outputPath + "invalidHighlightOutput.pdf";
