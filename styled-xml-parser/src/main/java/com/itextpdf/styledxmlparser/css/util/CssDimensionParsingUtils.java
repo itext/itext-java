@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -296,6 +296,30 @@ public final class CssDimensionParsingUtils {
             return new UnitValue(UnitValue.POINT, parseRelativeValue(value, emValue));
         }
         return null;
+    }
+
+    /**
+     * Parse length attributes.
+     *
+     * @param length {@link String} for parsing
+     * @param percentBaseValue the value on which percent length is based on
+     * @param defaultValue default value if length is not recognized
+     * @param fontSize font size of the current element
+     * @param rootFontSize root element font size
+     * @return absolute value in points
+     */
+    public static float parseLength(String length, float percentBaseValue, float defaultValue,
+            float fontSize, float rootFontSize) {
+        if (CssTypesValidationUtils.isPercentageValue(length)) {
+            return CssDimensionParsingUtils.parseRelativeValue(length, percentBaseValue);
+        } else {
+            UnitValue unitValue = CssDimensionParsingUtils.parseLengthValueToPt(length, fontSize, rootFontSize);
+            if (unitValue != null && unitValue.isPointValue()) {
+                return unitValue.getValue();
+            } else {
+                return defaultValue;
+            }
+        }
     }
 
     /**

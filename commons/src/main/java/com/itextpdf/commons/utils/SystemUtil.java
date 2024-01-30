@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,10 +41,20 @@ public final class SystemUtil {
 
     private final static String SPLIT_REGEX = "((\".+?\"|[^'\\s]|'.+?')+)\\s*";
 
+    /**
+     * Gets seed as long value of current time in milliseconds.
+     *
+     * @return current time in millis as long.
+     */
     public static long getTimeBasedSeed() {
         return System.currentTimeMillis();
     }
 
+    /**
+     * Gets seed as int value of current time in milliseconds.
+     *
+     * @return current time in millis as int.
+     */
     public static int getTimeBasedIntSeed() {
         return (int) System.currentTimeMillis();
     }
@@ -65,6 +75,11 @@ public final class SystemUtil {
         return System.currentTimeMillis();
     }
 
+    /**
+     * Gets free available memory for JDK.
+     *
+     * @return available memory in bytes.
+     */
     public static long getFreeMemory() {
         return Runtime.getRuntime().freeMemory();
     }
@@ -83,19 +98,87 @@ public final class SystemUtil {
         return s;
     }
 
+    /**
+     * Executes the specified command and arguments in a separate process with the specified environment and working directory.
+     * This method checks that exec is a valid operating system command. Which commands are valid is system-dependent,
+     * but at the very least the command must be a non-empty and non-null.
+     * The subprocess inherits the environment settings of the current process.
+     * A minimal set of system dependent environment variables may be required to start a process on some operating systems.
+     * The working directory of the new subprocess is the current working directory of the current process.
+     *
+     * @param exec a specified system command.
+     * @param params a parameters for the specifed system command.
+     *
+     * @return true if subprocess was successfully executed, false otherwise.
+     *
+     * @throws IOException if any I/O error occurs.
+     * @throws InterruptedException if process was interrupted.
+     */
     public static boolean runProcessAndWait(String exec, String params) throws IOException, InterruptedException {
         return runProcessAndWait(exec, params, null);
     }
 
+    /**
+     * Executes the specified command and arguments in a separate process with the specified environment and working directory.
+     * This method checks that exec is a valid operating system command. Which commands are valid is system-dependent,
+     * but at the very least the command must be a non-empty and non-null.
+     * The subprocess inherits the environment settings of the current process.
+     * A minimal set of system dependent environment variables may be required to start a process on some operating systems.
+     * The working directory of the new subprocess is specified by workingDirPath.
+     * If dir is null, the subprocess inherits the current working directory of the current process.
+     *
+     * @param exec a specified system command.
+     * @param params a parameters for the specifed system command.
+     * @param workingDirPath working dir for subprocess.
+     *
+     * @return true if subprocess was successfully executed, false otherwise.
+     *
+     * @throws IOException if any I/O error occurs.
+     * @throws InterruptedException if process was interrupted.
+     */
     public static boolean runProcessAndWait(String exec, String params,
                                             String workingDirPath) throws IOException, InterruptedException {
         return runProcessAndGetExitCode(exec, params, workingDirPath) == 0;
     }
 
+    /**
+     * Executes the specified command and arguments in a separate process with the specified environment and working directory.
+     * This method checks that exec is a valid operating system command. Which commands are valid is system-dependent,
+     * but at the very least the command must be a non-empty and non-null.
+     * The subprocess inherits the environment settings of the current process.
+     * A minimal set of system dependent environment variables may be required to start a process on some operating systems.
+     * The working directory of the new subprocess is the current working directory of the current process.
+     *
+     * @param exec a specified system command.
+     * @param params a parameters for the specifed system command.
+     *
+     * @return exit code.
+     *
+     * @throws IOException if any I/O error occurs.
+     * @throws InterruptedException if process was interrupted.
+     */
     public static int runProcessAndGetExitCode(String exec, String params) throws IOException, InterruptedException {
         return runProcessAndGetExitCode(exec, params, null);
     }
 
+    /**
+     * Executes the specified command and arguments in a separate process with the specified environment and working directory.
+     * This method checks that exec is a valid operating system command. Which commands are valid is system-dependent,
+     * but at the very least the command must be a non-empty and non-null.
+     * The subprocess inherits the environment settings of the current process.
+     * A minimal set of system dependent environment variables may be required to start a process on some operating systems.
+     * The working directory of the new subprocess is specified by workingDirPath.
+     * If dir is null, the subprocess inherits the current working directory of the current process.
+     *
+     * @param exec a specified system command.
+     * @param params a parameters for the specifed system command.
+     * @param workingDirPath working dir for subprocess.
+     *
+     * @return exit code.
+     *
+     * @throws IOException if any I/O error occurs.
+     * @throws InterruptedException if process was interrupted.
+     */
     public static int runProcessAndGetExitCode(String exec, String params,
                                                String workingDirPath) throws IOException, InterruptedException {
         Process p = runProcess(exec, params, workingDirPath);
@@ -103,14 +186,66 @@ public final class SystemUtil {
         return p.waitFor();
     }
 
+    /**
+     * Executes the specified command and arguments in a separate process with the specified environment and working
+     * directory and returns output as a string.
+     * This method checks that exec is a valid operating system command. Which commands are valid is system-dependent,
+     * but at the very least the command must be a non-empty and non-null.
+     * The subprocess inherits the environment settings of the current process.
+     * A minimal set of system dependent environment variables may be required to start a process on some operating systems.
+     * The working directory of the new subprocess is specified by workingDirPath.
+     * If dir is null, the subprocess inherits the current working directory of the current process.
+     *
+     * @param command a specified system command.
+     * @param params a parameters for the specifed system command.
+     *
+     * @return subprocess output result.
+     *
+     * @throws IOException if any I/O error occurs.
+     */
     public static String runProcessAndGetOutput(String command, String params) throws IOException {
         return getProcessOutput(runProcess(command, params, null));
     }
 
+    /**
+     * Executes the specified command and arguments in a separate process with the specified environment and working
+     * directory and returns output errors as a string.
+     * This method checks that exec is a valid operating system command. Which commands are valid is system-dependent,
+     * but at the very least the command must be a non-empty and non-null.
+     * The subprocess inherits the environment settings of the current process.
+     * A minimal set of system dependent environment variables may be required to start a process on some operating systems.
+     * The working directory of the new subprocess is specified by workingDirPath.
+     * If dir is null, the subprocess inherits the current working directory of the current process.
+     *
+     * @param execPath a specified system command.
+     * @param params a parameters for the specifed system command.
+     *
+     * @return subprocess errors as {@code StringBuilder}.
+     *
+     * @throws IOException if any I/O error occurs.
+     */
     public static StringBuilder runProcessAndCollectErrors(String execPath, String params) throws IOException {
         return printProcessErrorsOutput(runProcess(execPath, params, null));
     }
 
+    /**
+     * Executes the specified command and arguments in a separate process with the specified environment and working
+     * directory and returns process info.
+     * This method checks that exec is a valid operating system command. Which commands are valid is system-dependent,
+     * but at the very least the command must be a non-empty and non-null.
+     * The subprocess inherits the environment settings of the current process.
+     * A minimal set of system dependent environment variables may be required to start a process on some operating systems.
+     * The working directory of the new subprocess is specified by workingDirPath.
+     * If dir is null, the subprocess inherits the current working directory of the current process.
+     *
+     * @param command a specified system command.
+     * @param params a parameters for the specifed system command.
+     *
+     * @return process info instance.
+     *
+     * @throws IOException if any I/O error occurs.
+     * @throws InterruptedException if process was interrupted.
+     */
     public static ProcessInfo runProcessAndGetProcessInfo(String command, String params) throws IOException,
             InterruptedException {
         Process p = runProcess(command, params, null);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -43,8 +43,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,6 +63,11 @@ public class CompareToolTest extends ExtendedITextTest {
     @BeforeClass
     public static void setUp() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -212,7 +219,7 @@ public class CompareToolTest extends ExtendedITextTest {
     public void compareDiffFilesWithSameLinkAnnotationTest() throws IOException {
         String firstPdf = destinationFolder + "firstPdf.pdf";
         String secondPdf = destinationFolder + "secondPdf.pdf";
-        PdfDocument firstDocument = new PdfDocument(new PdfWriter(firstPdf));
+        PdfDocument firstDocument = new PdfDocument(CompareTool.createTestPdfWriter(firstPdf));
 
         PdfPage page1FirstDocument = firstDocument.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page1FirstDocument);
@@ -229,7 +236,7 @@ public class CompareToolTest extends ExtendedITextTest {
         page1FirstDocument.flush();
         firstDocument.close();
 
-        PdfDocument secondDocument = new PdfDocument(new PdfWriter(secondPdf));
+        PdfDocument secondDocument = new PdfDocument(CompareTool.createTestPdfWriter(secondPdf));
         PdfPage page1secondDocument = secondDocument.addNewPage();
         canvas = new PdfCanvas(page1secondDocument);
         canvas.beginText();
@@ -252,8 +259,8 @@ public class CompareToolTest extends ExtendedITextTest {
     public void compareFilesWithDiffLinkAnnotationTest() throws IOException {
         String firstPdf = destinationFolder + "outPdf.pdf";
         String secondPdf = destinationFolder + "secondPdf.pdf";
-        PdfDocument firstDocument = new PdfDocument(new PdfWriter(firstPdf));
-        PdfDocument secondDocument = new PdfDocument(new PdfWriter(secondPdf));
+        PdfDocument firstDocument = new PdfDocument(CompareTool.createTestPdfWriter(firstPdf));
+        PdfDocument secondDocument = new PdfDocument(CompareTool.createTestPdfWriter(secondPdf));
 
         PdfPage page1FirstDocument = firstDocument.addNewPage();
         page1FirstDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 400, 50)).setDestination(
@@ -291,5 +298,64 @@ public class CompareToolTest extends ExtendedITextTest {
             Assert.assertEquals("new job", docInfo[3]);
             Assert.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);
                 }
+    }
+
+    @Test
+    public void memoryFirstWriterNoFileTest() throws InterruptedException, IOException {
+        String firstPdf = destinationFolder + "memoryFirstWriterNoFileTest.pdf";
+        String secondPdf = destinationFolder + "memoryFirstWriterNoFileTest2.pdf";
+        PdfDocument firstDocument = new PdfDocument(CompareTool.createTestPdfWriter(firstPdf));
+        PdfDocument secondDocument = new PdfDocument(CompareTool.createTestPdfWriter(secondPdf));
+
+        PdfPage page1FirstDocument = firstDocument.addNewPage();
+        page1FirstDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 400, 50)).setDestination(
+                PdfExplicitDestination.createFit(page1FirstDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1FirstDocument.flush();
+        firstDocument.close();
+
+        PdfPage page1SecondDocument = secondDocument.addNewPage();
+        page1SecondDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 400, 50)).setDestination(
+                PdfExplicitDestination.createFit(page1SecondDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1SecondDocument.flush();
+        secondDocument.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
+        Assert.assertFalse(new File(firstPdf).exists());
+        Assert.assertFalse(new File(secondPdf).exists());
+    }
+
+    @Test
+    public void dumpMemoryFirstWriterOnDiskTest() throws InterruptedException, IOException {
+        String firstPdf = destinationFolder + "dumpMemoryFirstWriterOnDiskTest.pdf";
+        String secondPdf = destinationFolder + "dumpMemoryFirstWriterOnDiskTest2.pdf";
+        PdfDocument firstDocument = new PdfDocument(CompareTool.createTestPdfWriter(firstPdf));
+        PdfDocument secondDocument = new PdfDocument(CompareTool.createTestPdfWriter(secondPdf));
+
+        PdfPage page1FirstDocument = firstDocument.addNewPage();
+        page1FirstDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 400, 50)).setDestination(
+                PdfExplicitDestination.createFit(page1FirstDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1FirstDocument.flush();
+        firstDocument.close();
+
+        PdfPage page1SecondDocument = secondDocument.addNewPage();
+        page1SecondDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 260, 25)).setDestination(
+                PdfExplicitDestination.createFit(page1SecondDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1SecondDocument.flush();
+        secondDocument.close();
+
+        Assert.assertNotNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
+        Assert.assertTrue(new File(firstPdf).exists());
+        Assert.assertTrue(new File(secondPdf).exists());
+    }
+
+    @Test
+    public void cleanupTest() throws FileNotFoundException {
+        CompareTool.createTestPdfWriter(destinationFolder + "cleanupTest/cleanupTest.pdf");
+        Assert.assertNotNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> CompareTool.cleanup(null));
+
+        CompareTool.cleanup(destinationFolder + "cleanupTest");
+        Assert.assertNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
     }
 }

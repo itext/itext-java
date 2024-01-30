@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,12 +23,19 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
+/**
+ * Implementation of the Codabar barcode.
+ * <p>
+ * Codabar was designed to be accurately read even when printed on dot-matrix printers for multi-part forms such as
+ * FedEx airbills and blood bank forms, where variants are still in use as of 2007. Although newer symbologies hold more
+ * information in a smaller space.
+ */
 public class BarcodeCodabar extends Barcode1D {
 
     /**
@@ -169,6 +176,13 @@ public class BarcodeCodabar extends Barcode1D {
         return bars;
     }
 
+    /**
+     * Calculates the checksum.
+     *
+     * @param code the value to calculate the checksum for
+     *
+     * @return the checksum for the given value
+     */
     public static String calculateChecksum(String code) {
         if (code.length() < 2)
             return code;

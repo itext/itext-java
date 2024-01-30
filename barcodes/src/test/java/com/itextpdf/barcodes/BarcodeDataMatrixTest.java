@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -34,6 +34,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,10 +51,15 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -69,7 +75,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix2.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page1 = document.addNewPage();
@@ -84,7 +90,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
     @Test
     public void barcode03Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix3.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page1 = document.addNewPage();
@@ -103,7 +109,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
     @Test
     public void barcode04Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix4.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page1 = document.addNewPage();
@@ -122,7 +128,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
     @Test
     public void barcode05Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix5.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page1 = document.addNewPage();
@@ -141,7 +147,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
     @Test
     public void barcode06Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeDataMatrix6.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page1 = document.addNewPage();
@@ -256,7 +262,7 @@ public class BarcodeDataMatrixTest extends ExtendedITextTest {
     @Test
     public void barcode16Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode16Test.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
 
         PdfCanvas canvas = new PdfCanvas(document.addNewPage());
         BarcodeDataMatrix barcode = new BarcodeDataMatrix();

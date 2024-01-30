@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -87,6 +87,14 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     }
 
     @Test
+    public void simpleFontWithPartialToUnicodeTest() throws IOException {
+        String inFile = sourceFolder + "simpleFontWithPartialToUnicode.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            Assert.assertEquals("Registered", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+        }
+    }
+
+    @Test
     public void type0FontToUnicodeTest() throws IOException {
         String inFile = sourceFolder + "type0FontToUnicode.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
@@ -114,6 +122,43 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
         String expected = "\u0943\n\u0938\u0902\u0938\u094d\u0915\u0943\u0924 \u092e\u094d";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
             Assert.assertEquals(expected, PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+        }
+    }
+
+    @Test
+    public void shortOctalDataAsTextTest() throws IOException {
+        String inFile = sourceFolder + "shortOctalDataAsText.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            Assert.assertEquals("EC", PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1)));
+        }
+    }
+
+    @Test
+    public void notDefaultCodespacesCyrillicTest() throws IOException {
+        String inFile = sourceFolder + "notDefaultCodespacesCyrillic.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+            Assert.assertTrue(extractedText.contains("бронирование"));
+            Assert.assertTrue(extractedText.contains("From"));
+        }
+    }
+
+    @Test
+    public void notDefaultCodespacesChineseTest() throws IOException {
+        String inFile = sourceFolder + "notDefaultCodespacesChinese.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+            Assert.assertTrue(extractedText.contains("L3B 廠： 新竹科學工業園區新竹市東區力行二路 1 號"));
+        }
+    }
+
+    @Test
+    public void mixedCharacterCodes() throws IOException {
+        String inFile = sourceFolder + "SameCidForDifferentCodes.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
+            String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+            Assert.assertTrue(extractedText.contains("18个月"));
+            Assert.assertFalse(extractedText.contains("18个⽉"));
         }
     }
 }

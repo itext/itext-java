@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,40 +22,41 @@
  */
 package com.itextpdf.pdfa;
 
-import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.colors.IccBased;
-import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceN;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.colors.IccBased;
 import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfCircleAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.function.PdfType0Function;
 import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -66,19 +67,21 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.FileNotFoundException;
 import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
@@ -1100,6 +1103,58 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
     }
 
     @Test
+    public void imageJpeg20002ColorChannelsTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000.pdf";
+
+        PdfDocument pdfDoc = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // This should suppress transparency and device RGB
+        page.addOutputIntent(new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1",
+                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.saveState();
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "jpeg2000/bee2colorchannels.jp2"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
+        canvas.restoreState();
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.THE_NUMBER_OF_COLOUR_CHANNELS_IN_THE_JPEG2000_DATA_SHALL_BE_1_3_OR_4, e.getMessage());
+    }
+
+    @Test
+    public void imageJpeg2000Test() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_jpeg2000.pdf";
+
+        PdfDocument pdfDoc = new PdfADocument(
+                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                PdfAConformanceLevel.PDF_A_4, null);
+
+        PdfPage page = pdfDoc.addNewPage();
+        // This should suppress transparency and device RGB
+        page.addOutputIntent(new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1",
+                new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.saveState();
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "jpeg2000/bee.jp2"),
+                new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
+        canvas.restoreState();
+
+        pdfDoc.close();
+
+        compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
     public void pdfA4AnnotationsNoOutputIntentTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pdfA4AnnotationsNoOutputIntent.pdf";
         String cmpPdf = CMP_FOLDER + "cmp_pdfA4AnnotationsNoOutputIntent.pdf";
@@ -1185,6 +1240,123 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         compareResult(outPdf, cmpPdf);
     }
+
+    @Test
+    public void destOutputIntentProfileNotAllowedTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowed.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("prtr", "not_def").getBytes(StandardCharsets.US_ASCII);
+
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        pdfDoc.addOutputIntent(pdfOutputIntent);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.PROFILE_STREAM_OF_OUTPUTINTENT_SHALL_BE_OUTPUT_PROFILE_PRTR_OR_MONITOR_PROFILE_MNTR, e.getMessage());
+    }
+
+    @Test
+    public void destOutputIntentProfileNotAllowedInPageTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowedInPage.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDoc.addNewPage();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("prtr", "not_def").getBytes(StandardCharsets.US_ASCII);
+
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        page.addOutputIntent(pdfOutputIntent);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.PROFILE_STREAM_OF_OUTPUTINTENT_SHALL_BE_OUTPUT_PROFILE_PRTR_OR_MONITOR_PROFILE_MNTR, e.getMessage());
+    }
+
+    @Test
+    public void destOutputIntentColorSpaceNotAllowedTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowed.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("CMYK", "not_def").getBytes(StandardCharsets.US_ASCII);
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        pdfDoc.addOutputIntent(pdfOutputIntent);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.OUTPUT_INTENT_COLOR_SPACE_SHALL_BE_EITHER_GRAY_RGB_OR_CMYK, e.getMessage());
+
+    }
+
+    @Test
+    public void destOutputIntentColorSpaceNotAllowedInPageTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowedInPage.pdf";
+        String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
+
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfDoc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4, null);
+        PdfPage page = pdfDoc.addNewPage();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(isoFilePath));
+        byte[] manipulatedBytes = new String(bytes, StandardCharsets.US_ASCII).replace("CMYK", "not_def").getBytes(StandardCharsets.US_ASCII);
+        PdfOutputIntent pdfOutputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "cmyk",
+                new FileInputStream(isoFilePath));
+
+        pdfOutputIntent.getPdfObject().put(PdfName.DestOutputProfile, new PdfStream(manipulatedBytes));
+        page.addOutputIntent(pdfOutputIntent);
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class,
+                () -> pdfDoc.close()
+        );
+        Assert.assertEquals(PdfaExceptionMessageConstant.OUTPUT_INTENT_COLOR_SPACE_SHALL_BE_EITHER_GRAY_RGB_OR_CMYK, e.getMessage());
+    }
+
+
+
+    @Test
+    public void destOutputIntentRefNotAllowedTest() throws IOException {
+        String outPdf = DESTINATION_FOLDER + "PdfWithOutputIntentProfileRef.pdf";
+        PdfAConformanceLevel conformanceLevel = PdfAConformanceLevel.PDF_A_4;
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument pdfADocument = new PdfADocument(writer, conformanceLevel,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        PdfPage page = pdfADocument.addNewPage();
+
+        PdfDictionary catalog = pdfADocument.getCatalog().getPdfObject();
+        PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
+        PdfDictionary outputIntent = outputIntents.getAsDictionary(0);
+        outputIntent.put(new PdfName("DestOutputProfileRef"), new PdfDictionary());
+        outputIntents.add(outputIntent);
+        catalog.put(PdfName.OutputIntents, outputIntents);
+
+        Exception exc = Assert.assertThrows(PdfAConformanceException.class, () -> pdfADocument.close());
+        Assert.assertEquals(PdfaExceptionMessageConstant.OUTPUTINTENT_SHALL_NOT_CONTAIN_DESTOUTPUTPROFILEREF_KEY,
+                exc.getMessage());
+    }
+
 
     private void testWithColourant(PdfName color) throws FileNotFoundException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),

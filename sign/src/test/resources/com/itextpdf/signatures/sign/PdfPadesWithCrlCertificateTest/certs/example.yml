@@ -1,0 +1,134 @@
+external-url-prefix: "http://test.example.com"
+keysets:
+  testkeys:
+    keys:
+      ca:
+        path: keys/root_key.pem
+        password: testpassphrase
+      leaf:
+        path: keys/sign_key.pem
+        password: testpassphrase
+      crl_root:
+        path: keys/crl_root.pem
+        password: testpassphrase
+      crl_cert:
+        path: keys/crl_cert.pem
+        password: testpassphrase
+
+
+pki-architectures:
+  example-ca:
+    keyset: testkeys
+    entity-defaults:
+      country-name: BE
+      organization-name: iText
+    entities:
+      ca:
+        common-name: PdfPadesWithCrlCertificateTestRoot
+      leaf:
+        common-name: PdfPadesWithCrlCertificateTest
+      crl_root:
+        common-name: iTextTestCRLRootCert
+      crl_cert:
+        common-name: iTextTestCRLSignCert
+    certs:
+      ca:
+        subject: ca
+        issuer: ca
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2500-01-01T00:00:00+0000"
+        extensions:
+          - id: basic_constraints
+            critical: true
+            value:
+              ca: true
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      leaf:
+        subject: leaf
+        issuer: ca
+        validity:
+          valid-from: "2020-01-01T00:00:00+0000"
+          valid-to: "2400-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment]
+          - id: crl_distribution_points
+            smart-value:
+              schema: crl-dist-url
+              params:
+                crl-repo-names: [cert-crl]
+      crl_root:
+        subject: crl_root
+        issuer: crl_root
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2500-01-01T00:00:00+0000"
+        extensions:
+          - id: basic_constraints
+            critical: true
+            value:
+              ca: true
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      crl_cert:
+        subject: crl_cert
+        issuer: crl_root
+        validity:
+          valid-from: "2020-01-01T00:00:00+0000"
+          valid-to: "2400-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment]
+          - id: authority_information_access
+            smart-value:
+              schema: aia-urls
+              params:
+                ca-issuer-links: [{repo: crl_root}]
+          - id: crl_distribution_points
+            smart-value:
+              schema: crl-dist-url
+              params:
+                crl-repo-names: [ca-crl]
+    services:
+      crl-repo:
+        cert-crl:
+          for-issuer: crl_cert
+          signing-key: crl_cert
+          issuer-cert: crl_cert
+          simulated-update-schedule: "P90D"
+          crl-extensions:
+             - id: authority_information_access
+               smart-value:
+                 schema: aia-urls
+                 params:
+                   ca-issuer-links: [{repo: crl_cert}]
+        ca-crl:
+          for-issuer: ca
+          signing-key: ca
+          simulated-update-schedule: "P90D"
+      ocsp:
+        root-ca-ocsp:
+          for-issuer: ca
+          responder-cert: ca
+          signing-key: ca
+      cert-repo:
+        crl_root:
+          for-issuer: crl_root
+          publish-issued-certs: yes
+        crl_cert:
+          for-issuer: crl_root
+          publish-issued-certs: yes

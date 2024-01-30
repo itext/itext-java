@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,6 +33,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,10 +53,15 @@ public class Barcode39Test extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode39_01.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
 
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -74,7 +81,7 @@ public class Barcode39Test extends ExtendedITextTest {
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode39_02.pdf";
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "DocumentWithTrueTypeFont1.pdf"),
-                new PdfWriter(destinationFolder + filename));
+                CompareTool.createTestPdfWriter(destinationFolder + filename));
 
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());
 

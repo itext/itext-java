@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,9 +24,9 @@ package com.itextpdf.bouncycastlefips.asn1;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import org.bouncycastle.asn1.ASN1Encodable;
 
 import java.util.Objects;
-import org.bouncycastle.asn1.ASN1Encodable;
 
 /**
  * Wrapper class for {@link ASN1Encodable}.
@@ -76,9 +76,10 @@ public class ASN1EncodableBCFips implements IASN1Encodable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || !this.getClass().isAssignableFrom(o.getClass())) {
             return false;
         }
+
         ASN1EncodableBCFips that = (ASN1EncodableBCFips) o;
         return Objects.equals(encodable, that.encodable);
     }

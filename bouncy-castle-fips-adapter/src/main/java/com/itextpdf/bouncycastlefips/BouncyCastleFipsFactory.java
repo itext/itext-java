@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -112,6 +112,7 @@ import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSignerInfoGeneratorBuilderBCF
 import com.itextpdf.bouncycastlefips.cms.jcajce.JcaSimpleSignerInfoVerifierBuilderBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyAgreeEnvelopedRecipientBCFips;
 import com.itextpdf.bouncycastlefips.cms.jcajce.JceKeyTransEnvelopedRecipientBCFips;
+import com.itextpdf.bouncycastlefips.crypto.fips.FipsUnapprovedOperationErrorBCFips;
 import com.itextpdf.bouncycastlefips.openssl.PEMParserBCFips;
 import com.itextpdf.bouncycastlefips.openssl.jcajce.JcaPEMKeyConverterBCFips;
 import com.itextpdf.bouncycastlefips.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilderBCFips;
@@ -255,6 +256,7 @@ import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -309,11 +311,13 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
+import org.bouncycastle.crypto.fips.FipsUnapprovedOperationError;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
@@ -348,6 +352,22 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public String getAlgorithmOid(String name) {
         AlgorithmIdentifier algorithmIdentifier = new DefaultSignatureAlgorithmIdentifierFinder().find(name);
         return algorithmIdentifier.getAlgorithm().getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDigestAlgorithmOid(String name) {
+        try {
+            AlgorithmIdentifier algorithmIdentifier = new DefaultDigestAlgorithmIdentifierFinder().find(name);
+            if (algorithmIdentifier != null) {
+                return algorithmIdentifier.getAlgorithm().getId();
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Do nothing.
+        }
+        return null;
     }
 
     /**
@@ -690,6 +710,18 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IASN1Enumerated createASN1Enumerated(IASN1Encodable object) {
+        ASN1EncodableBCFips encodable = (ASN1EncodableBCFips) object;
+        if (encodable.getEncodable() instanceof ASN1Enumerated) {
+            return new ASN1EnumeratedBCFips((ASN1Enumerated) encodable.getEncodable());
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IASN1Encoding createASN1Encoding() {
         return ASN1EncodingBCFips.getInstance();
     }
@@ -777,6 +809,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IBasicOCSPResponse createBasicOCSPResponse(IASN1Primitive primitive) {
         ASN1PrimitiveBCFips primitiveBCFips = (ASN1PrimitiveBCFips) primitive;
         return new BasicOCSPResponseBCFips(BasicOCSPResponse.getInstance(primitiveBCFips.getPrimitive()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IBasicOCSPResponse createBasicOCSPResponse(byte[] bytes) {
+        return new BasicOCSPResponseBCFips(BasicOCSPResponse.getInstance(bytes));
     }
 
     /**
@@ -1272,6 +1312,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITBSCertificate createTBSCertificate(byte[] bytes) {
+        return new TBSCertificateBCFips(TBSCertificate.getInstance((bytes)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IIssuerAndSerialNumber createIssuerAndSerialNumber(IX500Name issuer, BigInteger value) {
         return new IssuerAndSerialNumberBCFips(issuer, value);
     }
@@ -1670,6 +1718,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public boolean isNull(IASN1Encodable encodable) {
+        return ((ASN1EncodableBCFips) encodable).getEncodable() == null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SecureRandom getSecureRandom() {
         return ((BouncyCastleFipsProvider) PROVIDER).getDefaultSecureRandom();
     }
@@ -1695,7 +1751,11 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
         } catch (NoSuchAlgorithmException ignored) {
             cipher = Cipher.getInstance("RSA", PROVIDER);
         }
-        cipher.init(Cipher.WRAP_MODE, x509certificate.getPublicKey());
+        try {
+            cipher.init(Cipher.WRAP_MODE, x509certificate.getPublicKey());
+        } catch (FipsUnapprovedOperationError e) {
+            throw new FipsUnapprovedOperationErrorBCFips(e);
+        }
         return cipher.wrap(new SecretKeySpec(abyte0, "AES"));
     }
 

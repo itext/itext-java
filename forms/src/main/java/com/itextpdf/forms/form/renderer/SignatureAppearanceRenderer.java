@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -51,10 +51,10 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link AbstractTextFieldRenderer} implementation for SigFields.
@@ -178,15 +178,18 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
                 break;
             case DESCRIPTION:
                 // Default one, it just shows whatever description was defined for the signature.
+                float additionalHeight = calculateAdditionalHeight();
                 if (retrieveHeight() == null) {
                     // Adjust calculated occupied area height to keep the same font size.
                     float calculatedHeight = getOccupiedArea().getBBox().getHeight();
-                    getOccupiedArea().getBBox().moveDown(calculatedHeight * TOP_SECTION)
-                            .setHeight(calculatedHeight * (1 + TOP_SECTION));
-                    bBox.moveDown(calculatedHeight * TOP_SECTION);
+                    // (calcHeight + addHeight + topSect) * (1 - TOP_SECTION) - addHeight = calcHeight, =>
+                    float topSection = (calculatedHeight + additionalHeight) * TOP_SECTION / (1 - TOP_SECTION);
+                    getOccupiedArea().getBBox().moveDown(topSection + additionalHeight)
+                            .setHeight(calculatedHeight + topSection + additionalHeight);
+                    bBox.moveDown(bBox.getBottom() - getOccupiedArea().getBBox().getBottom() - additionalHeight / 2);
                 }
                 descriptionRect = bBox.setHeight(getOccupiedArea().getBBox().getHeight() * (1 - TOP_SECTION)
-                - calculateAdditionalHeight());
+                - additionalHeight);
                 break;
             default:
                 return;
@@ -251,9 +254,11 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfSignatureFormField sigField = new SignatureFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setConformanceLevel(getConformanceLevel(doc))
+                .setFont(font)
                 .createSignature();
         sigField.disableFieldRegeneration();
-        sigField.setFont(font).setFontSize(fontSizeValue);
+        sigField.setFontSize(fontSizeValue);
         sigField.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(sigField);
         sigField.getFirstFormAnnotation().setFormFieldElement((SignatureFieldAppearance) modelElement);

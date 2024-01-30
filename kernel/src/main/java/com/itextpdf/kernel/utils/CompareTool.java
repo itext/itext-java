@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,15 +22,15 @@
  */
 package com.itextpdf.kernel.utils;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.ImageMagickHelper;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.io.util.XmlUtil;
-import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -49,6 +49,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -61,10 +62,12 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.ParseOptions;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -150,6 +153,70 @@ public class CompareTool {
     CompareTool(String gsExec, String compareExec) {
         this.gsExec = gsExec;
         this.compareExec = compareExec;
+    }
+
+    /**
+     * Create {@link PdfWriter} optimized for tests.
+     *
+     * @param filename File to write to when necessary.
+     * @return {@link PdfWriter} to be used in tests.
+     * @throws FileNotFoundException if the file exists but is a directory
+     *                               rather than a regular file, does not exist but cannot
+     *                               be created, or cannot be opened for any other reason.
+     */
+    public static PdfWriter createTestPdfWriter(String filename) throws FileNotFoundException {
+        return createTestPdfWriter(filename, new WriterProperties());
+    }
+
+    /**
+     * Create {@link PdfWriter} optimized for tests.
+     *
+     * @param filename File to write to when necessary.
+     * @param properties {@link WriterProperties} to use.
+     * @return {@link PdfWriter} to be used in tests.
+     * @throws FileNotFoundException if the file exists but is a directory
+     *                               rather than a regular file, does not exist but cannot
+     *                               be created, or cannot be opened for any other reason.
+     */
+    public static PdfWriter createTestPdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
+        return new MemoryFirstPdfWriter(filename, properties);
+    }
+
+    /**
+     * Create {@link PdfReader} out of the data created recently or read from disk.
+     *
+     * @param filename File to read the data from when necessary.
+     * @return {@link PdfReader} to be used in tests.
+     * @throws IOException on error
+     */
+    public static PdfReader createOutputReader(String filename) throws IOException {
+        return CompareTool.createOutputReader(filename, new ReaderProperties());
+    }
+
+    /**
+     * Create {@link PdfReader} out of the data created recently or read from disk.
+     *
+     * @param filename File to read the data from when necessary.
+     * @param properties {@link ReaderProperties} to use.
+     * @return {@link PdfReader} to be used in tests.
+     * @throws IOException on error
+     */
+    public static PdfReader createOutputReader(String filename, ReaderProperties properties) throws IOException {
+        MemoryFirstPdfWriter outWriter = MemoryFirstPdfWriter.get(filename);
+        if (outWriter != null) {
+            return new PdfReader(new ByteArrayInputStream(outWriter.getBAOutputStream().toByteArray()), properties);
+        } else {
+            return new PdfReader(filename, properties);
+        }
+    }
+
+    /**
+     * Clean up memory occupied for the tests.
+     *
+     * @param path Path to clean up memory for.
+     */
+    public static void cleanup(String path) {
+        MemoryFirstPdfWriter.cleanup(path);
     }
 
     /**
@@ -703,10 +770,10 @@ public class CompareTool {
      */
     public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties) {
         init(outPdf, cmpPdf);
-        try (PdfReader readerCmp = new PdfReader(this.cmpPdf);
+        try (PdfReader readerCmp = CompareTool.createOutputReader(this.cmpPdf);
                 PdfDocument cmpDocument = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerOut = new PdfReader(this.outPdf);
+                PdfReader readerOut = CompareTool.createOutputReader(this.outPdf);
                 PdfDocument outDocument = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             byte[] cmpBytes = cmpDocument.getXmpMetadata(), outBytes = outDocument.getXmpMetadata();
@@ -790,10 +857,10 @@ public class CompareTool {
         System.out.print("[itext] INFO  Comparing document info.......");
         String message = null;
         setPassword(outPass, cmpPass);
-        try (PdfReader readerOut = new PdfReader(outPdf, getOutReaderProperties());
+        try (PdfReader readerOut = CompareTool.createOutputReader(outPdf, getOutReaderProperties());
                 PdfDocument outDocument = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerCmp = new PdfReader(cmpPdf, getCmpReaderProperties());
+                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf, getCmpReaderProperties());
                 PdfDocument cmpDocument = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             String[] cmpInfo = convertDocInfoToStrings(cmpDocument.getDocumentInfo());
@@ -805,10 +872,13 @@ public class CompareTool {
                 }
             }
         }
-        if (message == null)
+        if (message == null) {
             System.out.println("OK");
-        else
+        } else {
+            CompareTool.writeOnDisk(outPdf);
+            CompareTool.writeOnDiskIfNotExists(cmpPdf);
             System.out.println("Fail");
+        }
         System.out.flush();
         return message;
     }
@@ -836,10 +906,10 @@ public class CompareTool {
     public String compareLinkAnnotations(String outPdf, String cmpPdf) throws IOException {
         System.out.print("[itext] INFO  Comparing link annotations....");
         String message = null;
-        try (PdfReader readerOut = new PdfReader(outPdf);
+        try (PdfReader readerOut = CompareTool.createOutputReader(outPdf);
                 PdfDocument outDocument = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerCmp = new PdfReader(cmpPdf);
+                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
                 PdfDocument cmpDocument = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))){
             for (int i = 0; i < outDocument.getNumberOfPages() && i < cmpDocument.getNumberOfPages(); i++) {
@@ -858,10 +928,13 @@ public class CompareTool {
                 }
             }
         }
-        if (message == null)
+        if (message == null) {
             System.out.println("OK");
-        else
+        } else {
+            CompareTool.writeOnDisk(outPdf);
+            CompareTool.writeOnDiskIfNotExists(cmpPdf);
             System.out.println("Fail");
+        }
         System.out.flush();
         return message;
     }
@@ -888,13 +961,13 @@ public class CompareTool {
         String cmpXmlPath = outPdf.replace(".pdf", ".cmp.xml");
 
         String message = null;
-        try (PdfReader readerOut = new PdfReader(outPdf);
+        try (PdfReader readerOut = CompareTool.createOutputReader(outPdf);
                 PdfDocument docOut = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
                 FileOutputStream xmlOut = new FileOutputStream(outXmlPath)) {
             new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
         }
-        try (PdfReader readerCmp = new PdfReader(cmpPdf);
+        try (PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
                 PdfDocument docCmp = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
                 FileOutputStream xmlCmp = new FileOutputStream(cmpXmlPath)) {
@@ -904,10 +977,13 @@ public class CompareTool {
         if (!compareXmls(outXmlPath, cmpXmlPath)) {
             message = "The tag structures are different.";
         }
-        if (message == null)
+        if (message == null) {
             System.out.println("OK");
-        else
+        } else {
+            CompareTool.writeOnDisk(outPdf);
+            CompareTool.writeOnDiskIfNotExists(cmpPdf);
             System.out.println("Fail");
+        }
         System.out.flush();
         return message;
     }
@@ -1093,10 +1169,10 @@ public class CompareTool {
         StampingProperties properties = new StampingProperties();
         properties.setEventCountingMetaInfo(metaInfo);
         try (PdfWriter outWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + outPdfName);
-                PdfReader readerOut = new PdfReader(outPdf);
+                PdfReader readerOut = CompareTool.createOutputReader(outPdf);
                 PdfDocument pdfOutDoc = new PdfDocument(readerOut, outWriter, properties);
                 PdfWriter cmpWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + cmpPdfName);
-                PdfReader readerCmp = new PdfReader(cmpPdf);
+                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
                 PdfDocument pdfCmpDoc = new PdfDocument(readerCmp, cmpWriter, properties)) {
             for (Map.Entry<Integer, List<Rectangle>> entry : ignoredAreas.entrySet()) {
                 int pageNumber = entry.getKey();
@@ -1155,10 +1231,11 @@ public class CompareTool {
     private String compareByContent(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         printOutCmpDirectories();
         System.out.print("Comparing by content..........");
-        try (PdfReader readerOut = new PdfReader(outPdf, getOutReaderProperties());
+
+        try (PdfReader readerOut = CompareTool.createOutputReader(outPdf, getOutReaderProperties());
                 PdfDocument outDocument = new PdfDocument(readerOut,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerCmp = new PdfReader(cmpPdf, getCmpReaderProperties());
+                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf, getCmpReaderProperties());
                 PdfDocument cmpDocument = new PdfDocument(readerCmp,
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
 
@@ -1170,8 +1247,11 @@ public class CompareTool {
             cmpPagesRef = new ArrayList<>();
             loadPagesFromReader(cmpDocument, cmpPages, cmpPagesRef);
 
-            if (outPages.size() != cmpPages.size())
+            if (outPages.size() != cmpPages.size()) {
+                CompareTool.writeOnDisk(outPdf);
+                CompareTool.writeOnDiskIfNotExists(cmpPdf);
                 return compareVisuallyAndCombineReports("Documents have different numbers of pages.", outPath, differenceImagePrefix, ignoredAreas, null);
+            }
 
             CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
             List<Integer> equalPages = new ArrayList<>(cmpPages.size());
@@ -1200,7 +1280,6 @@ public class CompareTool {
                 } finally {
                     xml.close();
                 }
-
             }
 
             if (equalPages.size() == cmpPages.size() && compareResult.isOk()) {
@@ -1208,8 +1287,23 @@ public class CompareTool {
                 System.out.flush();
                 return null;
             } else {
+                CompareTool.writeOnDisk(outPdf);
+                CompareTool.writeOnDiskIfNotExists(cmpPdf);
                 return compareVisuallyAndCombineReports(compareResult.getReport(), outPath, differenceImagePrefix, ignoredAreas, equalPages);
             }
+        }
+    }
+
+    private static void writeOnDisk(String filename) throws IOException {
+        MemoryFirstPdfWriter outWriter = MemoryFirstPdfWriter.get(filename);
+        if (outWriter != null) {
+            outWriter.dump();
+        }
+    }
+
+    private static void writeOnDiskIfNotExists(String filename) throws IOException {
+        if (!new File(filename).exists()) {
+            CompareTool.writeOnDisk(filename);
         }
     }
 

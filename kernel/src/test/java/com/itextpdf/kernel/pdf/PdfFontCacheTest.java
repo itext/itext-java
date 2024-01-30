@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,6 +33,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,6 +60,11 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     private static final String[] TextSetHelloWorld = new String[]{"Hello World"};
     private static final String[] TextSetWithABC = new String[]{"Hello World", "ABC", "XYZ"};
     private static final String[] TextSetInternational = new String[]{"Hello World", "Привет, мир", "你好，世界", "안녕 세상"};
@@ -460,7 +467,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         String font = StandardFonts.HELVETICA;
@@ -509,7 +516,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         String font = StandardFonts.HELVETICA;
@@ -556,7 +563,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         String font = "AboriginalSerif";
@@ -602,7 +609,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         String font = "NotoSansCJKjp-Bold";
@@ -649,7 +656,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         String font = "AboriginalSerif";
@@ -695,7 +702,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
 
         PdfReader reader = new PdfReader(input);
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
         String encoding = "Identity-H";
@@ -810,7 +817,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     private int countPdfFonts(String filename) throws IOException {
-        PdfReader reader = new PdfReader(filename);
+        PdfReader reader = CompareTool.createOutputReader(filename);
         PdfDocument pdfDoc = new PdfDocument(reader);
         Set<PdfIndirectReference> fonts = new HashSet<>();
         for (int i = 1; i <= pdfDoc.getNumberOfPages(); i++) {
@@ -823,7 +830,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     private PdfDocument createDocument(String filename) throws FileNotFoundException {
-        PdfWriter writer = new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         return new PdfDocument(writer);
     }
 }

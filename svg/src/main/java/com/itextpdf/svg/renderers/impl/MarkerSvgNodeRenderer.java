@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -217,6 +217,12 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             String parentValue = this.getParent().getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
             if (parentValue != null) {
                 // If stroke width is a percentage value is always computed as a percentage of the normalized viewBox diagonal length.
+                // TODO DEVSIX-3432 - the code below looks wrong. Issues:
+                // 1. Why root view port but not current?
+                // 2. Why do we convert to Pts. Viewport is already in points.
+                // 3. Diagonal length should be divided by sqrt(2) to be passed to parseAbsoluteLength and used as
+                // percentBaseValue.
+                // 4. Conversion to pixels at the end is in question either.
                 double rootViewPortHeight = context.getRootViewPort().getHeight();
                 double rootViewPortWidth = context.getRootViewPort().getWidth();
                 double viewBoxDiagonalLength = CssUtils.convertPxToPts(Math

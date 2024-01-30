@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -88,6 +88,36 @@ public class ASN1EncodableVectorBCFips implements IASN1EncodableVector {
     public void add(IAlgorithmIdentifier element) {
         AlgorithmIdentifierBCFips elementBCFips = (AlgorithmIdentifierBCFips) element;
         encodableVector.add(elementBCFips.getAlgorithmIdentifier());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addOptional(IASN1Primitive primitive) {
+        if (primitive != null) {
+            add(primitive);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addOptional(IAttribute attribute) {
+        if (attribute != null) {
+            add(attribute);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addOptional(IAlgorithmIdentifier element) {
+        if (element != null) {
+            add(element);
+        }
     }
 
     /**

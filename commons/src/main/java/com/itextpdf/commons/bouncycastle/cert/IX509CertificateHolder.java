@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,9 +22,18 @@
  */
 package com.itextpdf.commons.bouncycastle.cert;
 
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+
 /**
  * This interface represents the wrapper for X509CertificateHolder that provides the ability
  * to switch between bouncy-castle and bouncy-castle FIPS implementations.
  */
 public interface IX509CertificateHolder {
+
+    /**
+     * Retrieves signature algorithm identifier from the certificate.
+     *
+     * @return signature algorithm.
+     */
+    IAlgorithmIdentifier getSignatureAlgorithm();
 }

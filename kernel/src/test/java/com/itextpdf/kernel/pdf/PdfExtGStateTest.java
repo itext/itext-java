@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,6 +30,8 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,10 +48,15 @@ public class PdfExtGStateTest extends ExtendedITextTest{
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void egsTest1() throws Exception {
         String destinationDocument = destinationFolder + "egsTest1.pdf";
-        PdfDocument document = new PdfDocument(new PdfWriter(destinationDocument));
+        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationDocument));
 
         //Create page and canvas
         PdfPage page = document.addNewPage();

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -72,9 +72,10 @@ public class DestinationResolverCopyFilter implements ICopyFilter {
     }
 
     private boolean processLinkAnnotion(PdfObject newParent, PdfObject value, PdfDictionary dict) {
-        if (dict.get(PdfName.Dest) != null) {
+        PdfObject destination = dict.get(PdfName.Dest);
+        if (destination != null && !destination.equals(PdfNull.PDF_NULL)) {
             fromDocument.storeDestinationToReaddress(
-                    PdfDestination.makeDestination(dict.get(PdfName.Dest)), (PdfDestination nd) -> {
+                    PdfDestination.makeDestination(destination), (PdfDestination nd) -> {
                         final PdfObject newVal = value.copyTo(targetDocument, this);
                         (new PdfPage((PdfDictionary) newParent)).
                                 addAnnotation(-1, PdfAnnotation.makeAnnotation(newVal), false);
@@ -84,6 +85,7 @@ public class DestinationResolverCopyFilter implements ICopyFilter {
             return false;
         }
         if (dict.getAsDictionary(PdfName.A) != null && dict.getAsDictionary(PdfName.A).get(PdfName.D) != null
+                && !PdfNull.PDF_NULL.equals(dict.getAsDictionary(PdfName.A).get(PdfName.D))
                 && !PdfName.GoToR.equals(dict.getAsDictionary(PdfName.A).get(PdfName.S))) {
             fromDocument.storeDestinationToReaddress(
                     PdfDestination.makeDestination(dict.getAsDictionary(PdfName.A).get(PdfName.D)),
@@ -101,8 +103,12 @@ public class DestinationResolverCopyFilter implements ICopyFilter {
     }
 
     private void processAction(PdfObject newParent, PdfName name, PdfDictionary dict) {
+        PdfObject destination = dict.get(PdfName.D);
+        if (destination == null || PdfNull.PDF_NULL.equals(destination)) {
+            return;
+        }
         fromDocument.storeDestinationToReaddress(
-                PdfDestination.makeDestination(dict.get(PdfName.D)), (PdfDestination nd) -> {
+                PdfDestination.makeDestination(destination), (PdfDestination nd) -> {
                     //Add action with new destination
                     final PdfObject newVal = dict.copyTo(targetDocument, EXCLUDE_KEYS_ACTIONCOPY, false);
                     ((PdfDictionary) newVal).put(PdfName.D, nd.getPdfObject());

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,8 +23,8 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -37,13 +37,13 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
-import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
+import com.itextpdf.pdfa.PdfAXMPUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
@@ -250,6 +250,18 @@ public class PdfA4Checker extends PdfA3Checker {
                 throw new PdfAConformanceException(
                         PdfaExceptionMessageConstant.NAME_DICTIONARY_SHALL_CONTAIN_EMBEDDED_FILES_KEY);
             }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkPageObject(PdfDictionary pageDict, PdfDictionary pageResources) {
+        super.checkPageObject(pageDict, pageResources);
+        PdfStream xmpMeta = pageDict.getAsStream(PdfName.Metadata);
+        if (xmpMeta != null && !PdfAXMPUtil.isUtf8(xmpMeta.getBytes())) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING);
         }
     }
 
@@ -493,6 +505,7 @@ public class PdfA4Checker extends PdfA3Checker {
         try {
             final PdfStream xmpMetadata = catalog.getAsStream(PdfName.Metadata);
             byte[] bytes = xmpMetadata.getBytes();
+            isValidEncoding(bytes);
             checkPacketHeader(bytes);
             final XMPMeta meta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
             checkVersionIdentification(meta);
@@ -500,6 +513,26 @@ public class PdfA4Checker extends PdfA3Checker {
         } catch (XMPException ex) {
             throw new PdfException(ex);
         }
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    protected void checkOutputIntents(PdfDictionary catalog) {
+        super.checkOutputIntents(catalog);
+        final PdfArray outputIntents = catalog.getAsArray(PdfName.OutputIntents);
+        if (outputIntents == null) {
+            return;
+        }
+        for (int i = 0; i < outputIntents.size(); ++i) {
+            final PdfDictionary outputIntent = outputIntents.getAsDictionary(i);
+            if (outputIntent.containsKey(new PdfName("DestOutputProfileRef"))) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.OUTPUTINTENT_SHALL_NOT_CONTAIN_DESTOUTPUTPROFILEREF_KEY);
+            }
+        }
+
     }
 
     /**
@@ -566,6 +599,12 @@ public class PdfA4Checker extends PdfA3Checker {
      */
     protected int getMaxNameLength() {
         return Integer.MAX_VALUE;
+    }
+
+    private static void isValidEncoding(byte[] data) {
+        if (!PdfAXMPUtil.isUtf8(data)) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING);
+        }
     }
 
     private static boolean isValidXmpConformance(String value) {

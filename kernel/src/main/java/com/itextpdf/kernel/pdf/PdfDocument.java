@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -60,6 +60,8 @@ import com.itextpdf.kernel.pdf.statistics.NumberOfPagesStatisticsEvent;
 import com.itextpdf.kernel.pdf.statistics.SizeOfPdfStatisticsEvent;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.utils.ValidationContainer;
+import com.itextpdf.kernel.utils.ValidationContext;
 import com.itextpdf.kernel.xmp.PdfConst;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -418,6 +420,15 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public PdfPage getLastPage() {
         return getPage(getNumberOfPages());
+    }
+
+    /**
+     * Gets current memory limits handler
+     *
+     * @return {@code MemoryLimitsAwareHandler} instance
+     */
+    public MemoryLimitsAwareHandler getMemoryLimitsAwareHandler() {
+        return memoryLimitsAwareHandler;
     }
 
     /**
@@ -1007,7 +1018,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
                 // either writer properties, or in the writer init section on document open or from pdfreader. So we
                 // shouldn't worry about it being null next
                 PdfObject fileId = PdfEncryption.createInfoId(ByteUtils.getIsoBytes(originalDocumentId.getValue()),
-                        ByteUtils.getIsoBytes(modifiedDocumentId.getValue()));
+                        ByteUtils.getIsoBytes(modifiedDocumentId.getValue()), this.properties.preserveEncryption);
                 xref.writeXrefTableAndTrailer(this, fileId, crypto);
                 writer.flush();
                 if (writer.getOutputStream() instanceof CountOutputStream) {
@@ -1140,6 +1151,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
         return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
+    }
+
+
+    /**
+     * Get the {@link IConformanceLevel}
+     *
+     * @return the {@link IConformanceLevel}  will be null if the document does not have a conformance level specified
+     */
+    public IConformanceLevel getConformanceLevel() {
+        return null;
     }
 
     /**
@@ -1554,17 +1575,16 @@ public class PdfDocument implements IEventDispatcher, Closeable {
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
      *
      * @param obj An object to conform.
      * @param key type of object to conform.
      */
     public void checkIsoConformance(Object obj, IsoKey key) {
+        checkIsoConformance(obj, key, null, null);
     }
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
      *
      * @param obj           an object to conform.
      * @param key           type of object to conform.
@@ -1572,11 +1592,11 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      * @param contentStream current content stream
      */
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream) {
+        checkIsoConformance(obj, key, resources, contentStream, null);
     }
 
     /**
      * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
      *
      * @param obj           an object to conform.
      * @param key           type of object to conform.
@@ -1586,6 +1606,14 @@ public class PdfDocument implements IEventDispatcher, Closeable {
      */
     public void checkIsoConformance(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
             Object extra) {
+        if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
+            return;
+        }
+        ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
+        if (container == null) {
+            return;
+        }
+        container.validate(obj, key, resources, contentStream, extra);
     }
 
     /**
@@ -1963,10 +1991,20 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     }
 
     /**
-     * Checks whether PDF document conforms a specific standard.
-     * Shall be overridden.
+     * Checks whether PDF document conforms to a specific standard.
      */
     protected void checkIsoConformance() {
+        if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
+            return;
+        }
+        ValidationContainer container = this.getDiContainer().getInstance(ValidationContainer.class);
+        if (container == null) {
+            return;
+        }
+        ValidationContext context = new ValidationContext()
+                .withPdfDocument(this)
+                .withFonts(getDocumentFonts());
+        container.validate(context);
     }
 
     /**

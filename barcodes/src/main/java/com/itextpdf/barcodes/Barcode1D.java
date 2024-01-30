@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,18 +23,31 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
+/**
+ * Base class for the barcode types that have 1D representation.
+ * This means all data is encoded in the width of the bars. And the height of the bars is constant.
+ */
 public abstract class Barcode1D {
 
+    /**
+     * Constant that defines left alignment.
+     */
     public static final int ALIGN_LEFT = 1;
+    /**
+     * Constant that defines right alignment.
+     */
     public static final int ALIGN_RIGHT = 2;
+    /**
+     * Constant that defines center alignment.
+     */
     public static final int ALIGN_CENTER = 3;
 
     // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
@@ -134,6 +147,11 @@ public abstract class Barcode1D {
      */
     protected String altText;
 
+    /**
+     * Creates new {@link Barcode1D} instance.
+     *
+     * @param document The document
+     */
     protected Barcode1D(PdfDocument document) {
         this.document = document;
     }
@@ -192,6 +210,11 @@ public abstract class Barcode1D {
         this.font = font;
     }
 
+    /**
+     * Gets the size of the text.
+     *
+     * @return the size
+     */
     public float getSize() {
         return size;
     }
@@ -527,6 +550,11 @@ public abstract class Barcode1D {
         setX(x * width / getBarcodeSize().getWidth());
     }
 
+    /**
+     * Gets the descender value of the font.
+     *
+     * @return the descender value of the font
+     */
     protected float getDescender() {
         final float sizeCoefficient = FontProgram.convertTextSpaceToGlyphSpace(size);
         return font.getFontProgram().getFontMetrics().getTypoDescender() * sizeCoefficient;

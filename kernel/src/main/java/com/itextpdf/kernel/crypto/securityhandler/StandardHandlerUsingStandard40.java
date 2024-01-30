@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -50,6 +50,8 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
     protected int keyLength;
 
     protected ARCFOUREncryption arcfour = new ARCFOUREncryption();
+
+    private static final int DEFAULT_KEY_LENGTH = 40;
 
     public StandardHandlerUsingStandard40(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,
                                       int permissions, boolean encryptMetadata, boolean embeddedFilesOnly, byte[] documentId) {
@@ -214,6 +216,6 @@ public class StandardHandlerUsingStandard40 extends StandardSecurityHandler {
 
     private int getKeyLength(PdfDictionary encryptionDict) {
         Integer keyLength = encryptionDict.getAsInt(PdfName.Length);
-        return keyLength != null ? (int) keyLength : 40;
+        return keyLength != null ? (int) keyLength : DEFAULT_KEY_LENGTH;
     }
 }

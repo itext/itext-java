@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -48,6 +48,7 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Path;
+import com.itextpdf.kernel.pdf.MemoryLimitsAwareHandler;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfIndirectReference;
@@ -124,7 +125,7 @@ public class PdfCanvasProcessor {
      * Stack is needed in case if some "inner" content stream with it's own resources
      * is encountered (like Form XObject).
      */
-    private Stack<PdfResources> resourcesStack;
+    private List<PdfResources> resourcesStack;
 
     /**
      * Stack keeping track of the graphics state.
@@ -148,6 +149,16 @@ public class PdfCanvasProcessor {
      * A stack containing marked content info.
      */
     private Stack<CanvasTag> markedContentStack = new Stack<>();
+
+    /**
+     * A memory limits handler.
+     */
+    private MemoryLimitsAwareHandler memoryLimitsHandler = null;
+
+    /**
+     * Page size in bytes.
+     */
+    private long pageSize = 0;
 
     /**
      * Creates a new PDF Content Stream Processor that will send its output to the
@@ -222,11 +233,13 @@ public class PdfCanvasProcessor {
      * Resets the graphics state stack, matrices and resources.
      */
     public void reset() {
+        memoryLimitsHandler = null;
+        pageSize = 0;
         gsStack.removeAllElements();
         gsStack.push(new ParserGraphicsState());
         textMatrix = null;
         textLineMatrix = null;
-        resourcesStack = new Stack<>();
+        resourcesStack = new ArrayList<>();
         isClip = false;
         currentPath = new Path();
     }
@@ -251,7 +264,12 @@ public class PdfCanvasProcessor {
         if (resources == null) {
             throw new PdfException(KernelExceptionMessageConstant.RESOURCES_CANNOT_BE_NULL);
         }
-        this.resourcesStack.push(resources);
+        if (memoryLimitsHandler != null) {
+            pageSize += (long)contentBytes.length;
+            memoryLimitsHandler.checkIfPageSizeExceedsTheLimit(this.pageSize);
+        }
+
+        this.resourcesStack.add(resources);
         PdfTokenizer tokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
         PdfCanvasParser ps = new PdfCanvasParser(tokeniser, resources);
         List<PdfObject> operands = new ArrayList<>();
@@ -264,7 +282,7 @@ public class PdfCanvasProcessor {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
         }
 
-        this.resourcesStack.pop();
+        this.resourcesStack.remove(resourcesStack.size() - 1);
 
     }
 
@@ -276,6 +294,7 @@ public class PdfCanvasProcessor {
      * @param page the page to process
      */
     public void processPageContent(PdfPage page) {
+        this.memoryLimitsHandler = page.getDocument().getMemoryLimitsAwareHandler();
         initClippingPath(page);
         ParserGraphicsState gs = getGraphicsState();
         eventOccurred(new ClippingPathInfo(gs, gs.getClippingPath(), gs.getCtm()), EventType.CLIP_PATH_CHANGED);
@@ -439,7 +458,7 @@ public class PdfCanvasProcessor {
     }
 
     protected PdfResources getResources() {
-        return resourcesStack.peek();
+        return resourcesStack.get(resourcesStack.size() - 1);
     }
 
     protected void populateXObjectDoHandlers() {

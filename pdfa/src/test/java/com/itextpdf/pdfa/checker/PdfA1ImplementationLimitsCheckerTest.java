@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -621,7 +621,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         Color color = new PatternColor(pattern);
 
-        pdfA1Checker.checkColor(color, new PdfDictionary(), true, null);
+        pdfA1Checker.checkColor(null, color, new PdfDictionary(), true, null);
     }
 
     private void checkInShadingPattern(PdfObject object) {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,6 +40,7 @@ public final class NamespaceConstant {
     public static final String CORE_LAYOUT = ITEXT + ".layout";
     public static final String CORE_BARCODES = ITEXT + ".barcodes";
     public static final String CORE_PDFA = ITEXT + ".pdfa";
+    public static final String CORE_PDFUA = ITEXT + ".pdfua";
     public static final String CORE_SIGN = ITEXT + ".signatures";
     public static final String CORE_FORMS = ITEXT + ".forms";
     public static final String CORE_SXP = ITEXT + ".styledxmlparser";
@@ -58,6 +59,7 @@ public final class NamespaceConstant {
             NamespaceConstant.CORE_LAYOUT,
             NamespaceConstant.CORE_BARCODES,
             NamespaceConstant.CORE_PDFA,
+            NamespaceConstant.CORE_PDFUA,
             NamespaceConstant.CORE_SIGN,
             NamespaceConstant.CORE_FORMS,
             NamespaceConstant.CORE_SXP,

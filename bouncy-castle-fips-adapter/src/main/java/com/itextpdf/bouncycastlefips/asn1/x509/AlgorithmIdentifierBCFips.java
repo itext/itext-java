@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -65,6 +65,9 @@ public class AlgorithmIdentifierBCFips extends ASN1EncodableBCFips implements IA
      */
     @Override
     public IASN1Encodable getParameters() {
+        if (getAlgorithmIdentifier().getParameters() == null) {
+            return null;
+        }
         return new ASN1EncodableBCFips(getAlgorithmIdentifier().getParameters());
     }
 }

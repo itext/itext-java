@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,10 +22,10 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -37,8 +37,6 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -47,6 +45,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a wrapper-class for structure tree root dictionary. See ISO-32000-1 "14.7.2 Structure hierarchy".
@@ -316,6 +316,19 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
 
     public PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {
         return getParentTreeHandler().findMcrByMcid(pageDict, mcid);
+    }
+
+
+    public PdfMcr findMcrByMcid(PdfDocument document, int mcid) {
+        int amountOfPages = document.getNumberOfPages();
+        for (int i = 1; i <= amountOfPages; ++i) {
+            PdfPage page = document.getPage(i);
+            PdfMcr mcr = findMcrByMcid(page.getPdfObject(), mcid);
+            if (mcr != null) {
+                return mcr;
+            }
+        }
+        return null;
     }
 
     public PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {

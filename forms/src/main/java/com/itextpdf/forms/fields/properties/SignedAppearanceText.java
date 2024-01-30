@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -70,6 +70,10 @@ public class SignedAppearanceText {
     /**
      * Sets the signing reason.
      *
+     * <p>
+     * Note, that this reason won't be passed to the signature dictionary. If none is set, value set by
+     * {@code PdfSigner#setReason} will be used.
+     *
      * @param reason signing reason.
      *
      * @return this same {@link SignedAppearanceText} instance.
@@ -91,6 +95,10 @@ public class SignedAppearanceText {
     /**
      * Sets the signing location.
      *
+     * <p>
+     * Note, that this location won't be passed to the signature dictionary. If none is set, value set by
+     * {@code PdfSigner#setLocation} will be used.
+     *
      * @param location new signing location.
      *
      * @return this same {@link SignedAppearanceText} instance.
@@ -102,6 +110,9 @@ public class SignedAppearanceText {
 
     /**
      * Sets the name of the signer from the certificate.
+     *
+     * <p>
+     * Note, that the signer name will be replaced by the one from the signing certificate during the actual signing.
      *
      * @param signedBy name of the signer.
      *
@@ -132,6 +143,9 @@ public class SignedAppearanceText {
 
     /**
      * Sets the signature date.
+     *
+     * <p>
+     * Note, that the signing date will be replaced by the one from the {@code PdfSigner} during the signing.
      *
      * @param signDate new signature date.
      * @return this same {@link SignedAppearanceText} instance.

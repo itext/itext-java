@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -35,6 +35,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,10 +52,15 @@ public class BarcodeCodabarTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "codabar.pdf";
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();

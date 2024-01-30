@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>8.0.2</version>
+  <version>8.0.3</version>
   <packaging>pom</packaging>
   <name>iText</name>
   <description>A Free Java-PDF library</description>
@@ -60,6 +60,7 @@
     <module>bouncy-castle-fips-adapter</module>
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
+    <module>pdfua</module>
   </modules>
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
@@ -361,6 +362,10 @@
               <packages>com.itextpdf.pdfa*</packages>
             </group>
             <group>
+              <title>PDF/UA</title>
+              <packages>com.itextpdf.pdfua*</packages>
+            </group>
+            <group>
               <title>Signatures</title>
               <packages>com.itextpdf.signatures*</packages>
             </group>
@@ -511,6 +516,8 @@
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                 </excludeModules>
               </parameter>
+              <!-- TODO DEVSIX-7811 Enable japicmp after release -->
+              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>

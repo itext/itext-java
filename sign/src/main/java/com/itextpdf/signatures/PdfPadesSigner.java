@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -64,6 +64,7 @@ public class PdfPadesSigner {
     
     private IOcspClient ocspClient = null;
     private ICrlClient crlClient;
+    private IIssuingCertificateRetriever issuingCertificateRetriever = new IssuingCertificateRetriever();
     private int estimatedSize = 0;
     private String timestampSignatureName;
     private String temporaryDirectoryPath = null;
@@ -116,7 +117,7 @@ public class PdfPadesSigner {
     public void signWithBaselineBProfile(SignerProperties signerProperties, Certificate[] chain, PrivateKey privateKey)
             throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineBProfile(signerProperties, chain, externalSignature);
     }
 
@@ -150,7 +151,7 @@ public class PdfPadesSigner {
     public void signWithBaselineTProfile(SignerProperties signerProperties, Certificate[] chain, PrivateKey privateKey,
             ITSAClient tsaClient) throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineTProfile(signerProperties, chain, externalSignature, tsaClient);
     }
 
@@ -167,13 +168,14 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
-        createRevocationClients(chain, true);
+        createRevocationClients(chain[0], true);
         try {
             performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(outputStream), new StampingProperties().useAppendMode())) {
-                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()));
+                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()),
+                        LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
             }
         } finally {
             deleteTempFiles();
@@ -194,7 +196,7 @@ public class PdfPadesSigner {
     public void signWithBaselineLTProfile(SignerProperties signerProperties, Certificate[] chain, PrivateKey privateKey,
             ITSAClient tsaClient) throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineLTProfile(signerProperties, chain, externalSignature, tsaClient);
     }
 
@@ -211,13 +213,14 @@ public class PdfPadesSigner {
      */
     public void signWithBaselineLTAProfile(SignerProperties signerProperties, Certificate[] chain,
             IExternalSignature externalSignature, ITSAClient tsaClient) throws IOException, GeneralSecurityException {
-        createRevocationClients(chain, true);
+        createRevocationClients(chain[0], true);
         try {
             performSignDetached(signerProperties, false, externalSignature, chain, tsaClient);
             try (InputStream inputStream = createInputStream();
                     PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream),
                             new PdfWriter(createOutputStream()), new StampingProperties().useAppendMode())) {
-                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()));
+                performLtvVerification(pdfDocument, Collections.singletonList(signerProperties.getFieldName()),
+                        LtvVerification.RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE);
                 performTimestamping(pdfDocument, outputStream, tsaClient);
             }
         } finally {
@@ -239,7 +242,7 @@ public class PdfPadesSigner {
     public void signWithBaselineLTAProfile(SignerProperties signerProperties, Certificate[] chain,
             PrivateKey privateKey, ITSAClient tsaClient) throws GeneralSecurityException, IOException {
         IExternalSignature externalSignature =
-                new PrivateKeySignature(privateKey, DEFAULT_DIGEST_ALGORITHM, FACTORY.getProviderName());
+                new PrivateKeySignature(privateKey, getDigestAlgorithm(privateKey), FACTORY.getProviderName());
         signWithBaselineLTAProfile(signerProperties, chain, externalSignature, tsaClient);
     }
 
@@ -262,8 +265,8 @@ public class PdfPadesSigner {
             if (signatureNames.isEmpty()) {
                 throw new PdfException(SignExceptionMessageConstant.NO_SIGNATURES_TO_PROLONG);
             }
-            createRevocationClients(new Certificate[0], false);
-            performLtvVerification(pdfDocument, signatureNames);
+            createRevocationClients(null, false);
+            performLtvVerification(pdfDocument, signatureNames, LtvVerification.RevocationDataNecessity.OPTIONAL);
             if (tsaClient != null) {
                 performTimestamping(pdfDocument, outputStream, tsaClient);
             }
@@ -388,65 +391,71 @@ public class PdfPadesSigner {
         return this;
     }
 
-    private void performTimestamping(PdfDocument document, OutputStream outputStream, ITSAClient tsaClient)
+    /**
+     * Set {@link IIssuingCertificateRetriever} to be used before main signing operation.
+     *
+     * <p>
+     * If none is set, {@link IssuingCertificateRetriever} instance will be used instead.
+     *
+     * @param issuingCertificateRetriever {@link IIssuingCertificateRetriever} instance to be used for getting missing
+     *                                 certificates in chain or CRL response issuer certificates.
+     *
+     * @return same instance of {@link PdfPadesSigner}.
+     */
+    public PdfPadesSigner setIssuingCertificateRetriever(IIssuingCertificateRetriever issuingCertificateRetriever) {
+        this.issuingCertificateRetriever = issuingCertificateRetriever;
+        return this;
+    }
+
+    /**
+     * Set certificate list to be used by the {@link IIssuingCertificateRetriever} to retrieve missing certificates.
+     *
+     * @param certificateList certificate list for getting missing certificates in chain
+     *                        or CRL response issuer certificates.
+     *
+     * @return same instance of {@link PdfPadesSigner}.
+     */
+    public PdfPadesSigner setTrustedCertificates(List<Certificate> certificateList) {
+        this.issuingCertificateRetriever.setTrustedCertificates(certificateList);
+        return this;
+    }
+
+    void performTimestamping(PdfDocument document, OutputStream outputStream, ITSAClient tsaClient)
             throws IOException, GeneralSecurityException {
         PdfSigner timestampSigner = new PdfSigner(document, outputStream, tempOutputStream, tempFile);
         timestampSigner.timestamp(tsaClient, timestampSignatureName);
     }
 
-    private void performSignDetached(SignerProperties signerProperties, boolean isFinal,
-            IExternalSignature externalSignature, Certificate[] chain, ITSAClient tsaClient)
-            throws GeneralSecurityException, IOException {
-        PdfSigner signer = createPdfSigner(signerProperties, isFinal);
-        try {
-            signer.signDetached(externalDigest, externalSignature, chain, null, null, tsaClient,
-                    estimatedSize, CryptoStandard.CADES);
-        } finally {
-            signer.originalOS.close();
-        }
-    }
-
-    private PdfSigner createPdfSigner(SignerProperties signerProperties, boolean isFinal) throws IOException {
+    PdfSigner createPdfSigner(SignerProperties signerProperties, boolean isFinal) throws IOException {
         String tempFilePath = null;
         if (temporaryDirectoryPath != null) {
             tempFilePath = getNextTempFile().getAbsolutePath();
         }
-        PdfSigner signer = new PdfSigner(reader,
-                isFinal ? outputStream : createOutputStream(), tempFilePath, stampingProperties);
-        signer.setFieldLockDict(signerProperties.getFieldLockDict());
-        signer.setFieldName(signerProperties.getFieldName());
-        
-        // We need to update field name because signer could change it
-        signerProperties.setFieldName(signer.getFieldName());
-        
-        signer.setCertificationLevel(signerProperties.getCertificationLevel());
-        signer.setPageRect(signerProperties.getPageRect());
-        signer.setPageNumber(signerProperties.getPageNumber());
-        signer.setSignDate(signerProperties.getSignDate());
-        signer.setSignatureCreator(signerProperties.getSignatureCreator());
-        signer.setContact(signerProperties.getContact());
-        signer.setSignatureAppearance(signerProperties.getSignatureAppearance());
-        return signer;
+        return new PdfSigner(reader,
+                isFinal ? outputStream : createOutputStream(), tempFilePath, stampingProperties, signerProperties);
     }
 
-    private void performLtvVerification(PdfDocument pdfDocument, List<String> signatureNames)
+    void performLtvVerification(PdfDocument pdfDocument, List<String> signatureNames,
+                                        LtvVerification.RevocationDataNecessity revocationDataNecessity)
             throws IOException, GeneralSecurityException {
-        LtvVerification ltvVerification = new LtvVerification(pdfDocument);
+        LtvVerification ltvVerification = new LtvVerification(pdfDocument)
+                .setRevocationDataNecessity(revocationDataNecessity)
+                .setIssuingCertificateRetriever(issuingCertificateRetriever);
         for (String signatureName : signatureNames) {
             ltvVerification.addVerification(signatureName, ocspClient, crlClient,
-                    CertificateOption.WHOLE_CHAIN, Level.OCSP_OPTIONAL_CRL,
+                    CertificateOption.ALL_CERTIFICATES, Level.OCSP_OPTIONAL_CRL,
                     LtvVerification.CertificateInclusion.YES);
         }
         ltvVerification.merge();
     }
 
-    private void deleteTempFiles() {
+    void deleteTempFiles() {
         for (File tempFile : tempFiles) {
             tempFile.delete();
         }
     }
 
-    private OutputStream createOutputStream() throws FileNotFoundException {
+    OutputStream createOutputStream() throws FileNotFoundException {
         if (temporaryDirectoryPath != null) {
             return FileUtil.getFileOutputStream(getNextTempFile());
         }
@@ -454,11 +463,40 @@ public class PdfPadesSigner {
         return tempOutputStream;
     }
 
-    private InputStream createInputStream() throws IOException {
+    InputStream createInputStream() throws IOException {
         if (temporaryDirectoryPath != null) {
             return FileUtil.getInputStreamForFile(tempFile);
         }
         return new ByteArrayInputStream(tempOutputStream.toByteArray());
+    }
+
+    void createRevocationClients(Certificate signingCert, boolean clientsRequired) {
+        if (crlClient == null && ocspClient == null && clientsRequired) {
+            X509Certificate signingCertificate = (X509Certificate) signingCert;
+            if (CertificateUtil.getOCSPURL(signingCertificate) == null &&
+                    CertificateUtil.getCRLURL(signingCertificate) == null) {
+                throw new PdfException(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED);
+            }
+        }
+        if (crlClient == null) {
+            crlClient = new CrlClientOnline();
+        }
+        if (ocspClient == null) {
+            ocspClient = new OcspClientBouncyCastle(null);
+        }
+    }
+
+    private void performSignDetached(SignerProperties signerProperties, boolean isFinal,
+            IExternalSignature externalSignature, Certificate[] chain, ITSAClient tsaClient)
+            throws GeneralSecurityException, IOException {
+        Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(chain);
+        PdfSigner signer = createPdfSigner(signerProperties, isFinal);
+        try {
+            signer.signDetached(externalDigest, externalSignature, fullChain, null, null, tsaClient,
+                    estimatedSize, CryptoStandard.CADES);
+        } finally {
+            signer.originalOS.close();
+        }
     }
 
     private File getNextTempFile() {
@@ -475,20 +513,16 @@ public class PdfPadesSigner {
         }
         return tempFile;
     }
-    
-    private void createRevocationClients(Certificate[] chain, boolean clientsRequired) {
-        if (crlClient == null && ocspClient == null && clientsRequired) {
-            X509Certificate signingCertificate = (X509Certificate) chain[0];
-            if (CertificateUtil.getOCSPURL(signingCertificate) == null &&
-                    CertificateUtil.getCRLURL(signingCertificate) == null) {
-                throw new PdfException(SignExceptionMessageConstant.DEFAULT_CLIENTS_CANNOT_BE_CREATED);
-            }
-        }
-        if (crlClient == null) {
-            crlClient = new CrlClientOnline(chain);
-        }
-        if (ocspClient == null) {
-            ocspClient = new OcspClientBouncyCastle(null);
+
+    private String getDigestAlgorithm(PrivateKey privateKey) {
+        String signatureAlgorithm = SignUtils.getPrivateKeyAlgorithm(privateKey);
+        switch (signatureAlgorithm) {
+            case "Ed25519":
+                return DigestAlgorithms.SHA512;
+            case "Ed448":
+                return DigestAlgorithms.SHAKE256;
+            default:
+                return DEFAULT_DIGEST_ALGORITHM;
         }
     }
 }

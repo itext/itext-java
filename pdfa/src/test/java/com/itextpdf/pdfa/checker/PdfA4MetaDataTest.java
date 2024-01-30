@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,18 +39,22 @@ import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
+import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.pdfa.PdfADocument;
+import com.itextpdf.pdfa.PdfAXMPUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
@@ -144,6 +148,36 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> {
             checker.checkMetaData(catalog);
         });
+    }
+
+    @Test
+    public void pdfA4DocumentMetaDataRevPropertyHasCorrectPrefix() throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithMultipleXmpHeaders.xmp"));
+        String xmpContent = new String(bytes, StandardCharsets.US_ASCII).replace("pdfaid:rev", "rev");
+        PdfA4Checker checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
+        PdfDictionary catalog = new PdfDictionary();
+        catalog.put(PdfName.Metadata, new PdfStream(xmpContent.getBytes(StandardCharsets.UTF_8)));
+
+        Exception e = Assert.assertThrows(PdfException.class, () -> {
+            checker.checkMetaData(catalog);
+        });
+    }
+
+    @Test
+    public void pdfA4DocumentMetaDataIdentificationSchemaUsesCorrectNamespaceURI() throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithMultipleXmpHeaders.xmp"));
+        String xmpContent = new String(bytes, StandardCharsets.US_ASCII).replace("http://www.aiim.org/pdfa/ns/id/", "no_link");
+        PdfA4Checker checker = new PdfA4Checker(PdfAConformanceLevel.PDF_A_4);
+        PdfDictionary catalog = new PdfDictionary();
+        catalog.put(PdfName.Metadata, new PdfStream(xmpContent.getBytes(StandardCharsets.UTF_8)));
+
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+            checker.checkMetaData(catalog);
+        });
+
+        Assert.assertEquals(MessageFormatUtil.format(
+                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
+                e.getMessage());
     }
 
     @Test
@@ -478,6 +512,44 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
+    @Test
+    public void pdfA4DocumentMetaDataIsNotUTF8Encoded() throws IOException, XMPException {
+        String outPdf = DESTINATION_FOLDER + "metadataNotUTF8.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithEmpty.xmp"));
+        XMPMeta xmpMeta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        XMPMetaFactory.serialize(xmpMeta, os);
+        doc.setXmpMetadata(xmpMeta, new SerializeOptions().setEncodeUTF16BE(true));
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+            doc.close();
+        });
+        Assert.assertEquals(
+                PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING,
+                e.getMessage());
+    }
+
+    @Test
+    public void pdfA4DocumentPageMetaDataIsNotUTF8Encoded() throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "encodedXmp.xmp"));
+        String outPdf = DESTINATION_FOLDER + "metadataNotUTF8.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfADocument doc = new PdfADocument(writer, PdfAConformanceLevel.PDF_A_4,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",
+                        new FileInputStream(SOURCE_FOLDER + "sRGB Color Space Profile.icm")));
+        doc.addNewPage();
+        doc.getPage(1).setXmpMetadata(bytes);
+        Exception e = Assert.assertThrows(PdfAConformanceException.class, () -> {
+            doc.close();
+        });
+        Assert.assertEquals(
+                PdfaExceptionMessageConstant.INVALID_XMP_METADATA_ENCODING,
+                e.getMessage());
+    }
 
     private void generatePdfADocument(PdfAConformanceLevel conformanceLevel, String outPdf,
             Consumer<PdfDocument> consumer) throws FileNotFoundException {

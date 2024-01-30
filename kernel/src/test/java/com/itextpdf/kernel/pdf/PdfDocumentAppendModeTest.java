@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,6 +30,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,6 +47,11 @@ public class PdfDocumentAppendModeTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+    
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY)})
     public void testAppendModeWithFullCompressionRequestedWhenOriginalDocumentHasXrefTable()
@@ -54,7 +60,7 @@ public class PdfDocumentAppendModeTest extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + "documentWithXrefTableAfterAppending.pdf";
         String cmpFile = SOURCE_FOLDER + "cmp_documentWithXrefTableAfterAppending.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile),
-                new PdfWriter(outFile, new WriterProperties().setFullCompressionMode(true)),
+                CompareTool.createTestPdfWriter(outFile, new WriterProperties().setFullCompressionMode(true)),
                 new StampingProperties().useAppendMode());
         pdfDocument.addNewPage();
         pdfDocument.close();
@@ -69,7 +75,7 @@ public class PdfDocumentAppendModeTest extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + "documentWithXrefStreamAfterAppending.pdf";
         String cmpFile = SOURCE_FOLDER + "cmp_documentWithXrefStreamAfterAppending.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile),
-                new PdfWriter(outFile, new WriterProperties().setFullCompressionMode(false)),
+                CompareTool.createTestPdfWriter(outFile, new WriterProperties().setFullCompressionMode(false)),
                 new StampingProperties().useAppendMode());
         pdfDocument.addNewPage();
         pdfDocument.close();

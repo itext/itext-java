@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -78,7 +78,6 @@ public class TestCertificateBuilder {
         this.endDate = endDate;
     }
 
-    // TODO generalize
     public X509Certificate buildAuthorizedOCSPResponderCert()
             throws IOException, CertificateException, AbstractOperatorCreationException {
         IX500Name subjectDnName = FACTORY.createX500Name(subjectDN);
@@ -87,9 +86,6 @@ public class TestCertificateBuilder {
         IContentSigner contentSigner = FACTORY.createJcaContentSignerBuilder(signatureAlgorithm).build(signingKey);
         IJcaX509v3CertificateBuilder certBuilder = FACTORY.createJcaX509v3CertificateBuilder(signingCert,
                 certSerialNumber, startDate, endDate, subjectDnName, publicKey);
-
-        // TODO generalize extensions setting
-        // Extensions --------------------------
 
         boolean ca = true;
         addExtension(FACTORY.createExtension().getBasicConstraints(), true, FACTORY.createBasicConstraints(ca),

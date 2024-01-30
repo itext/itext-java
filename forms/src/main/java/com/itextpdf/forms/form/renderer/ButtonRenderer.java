@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -259,8 +259,9 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         final Color backgroundColor = background == null ? null : background.getColor();
 
         final float fontSizeValue = fontSize.getValue();
+
         if (font == null) {
-            font = doc.getDefaultFont();
+            font = getResolvedFont(doc);
         }
 
         // Some properties are set to the HtmlDocumentRenderer, which is root renderer for this ButtonRenderer, but
@@ -269,9 +270,11 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfButtonFormField button = new PushButtonFormFieldBuilder(doc, name).setWidgetRectangle(area)
+                .setFont(font)
+                .setConformanceLevel(getConformanceLevel(doc))
                 .createPushButton();
         button.disableFieldRegeneration();
-        button.setFont(font).setFontSize(fontSizeValue);
+        button.setFontSize(fontSizeValue);
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
         button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);

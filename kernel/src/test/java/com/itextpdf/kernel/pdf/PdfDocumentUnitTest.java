@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,6 +33,10 @@ import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
+import com.itextpdf.kernel.utils.IValidationChecker;
+import com.itextpdf.kernel.utils.ValidationContainer;
+import com.itextpdf.kernel.utils.ValidationContext;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -449,5 +453,41 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
                 () -> pdfDoc.setEncryptedPayload(fs));
         Assert.assertEquals(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT,
                 exception.getMessage());
+    }
+
+    @Test
+    public void checkEmptyIsoConformanceTest() {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            AssertUtil.doesNotThrow(() -> doc.checkIsoConformance());
+        }
+    }
+
+    @Test
+    public void checkIsoConformanceTest() {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            ValidationContainer container = new ValidationContainer();
+            final CustomValidationChecker checker = new CustomValidationChecker();
+            container.addChecker(checker);
+            doc.getDiContainer().register(ValidationContainer.class, container);
+            Assert.assertFalse(checker.documentValidationPerformed);
+            doc.checkIsoConformance();
+            Assert.assertTrue(checker.documentValidationPerformed);
+        }
+    }
+
+    private static class CustomValidationChecker implements IValidationChecker {
+        public boolean documentValidationPerformed = false;
+        public boolean objectValidationPerformed = false;
+
+        @Override
+        public void validateDocument(ValidationContext validationContext) {
+            documentValidationPerformed = true;
+        }
+
+        @Override
+        public void validateObject(Object obj, IsoKey key, PdfResources resources, PdfStream contentStream,
+                Object extra) {
+            objectValidationPerformed = true;
+        }
     }
 }

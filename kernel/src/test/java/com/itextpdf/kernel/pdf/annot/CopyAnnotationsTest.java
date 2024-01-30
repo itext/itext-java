@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,9 +27,11 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,10 +53,15 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void copyGoToRDestinationTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedGoToRAnnotation.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "GoToRAnnotation.pdf"))) {
                 input.copyPagesTo(1, input.getNumberOfPages(), out);
             }
@@ -66,7 +73,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void copyMultipleGoToRDestinationTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedMultiGoToRAnnotation.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "MultiDestinations.pdf"))) {
                 input.copyPagesTo(1, input.getNumberOfPages(), out);
             }
@@ -78,7 +85,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void copyGoToRWithoutTargetTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedGoToRNoTarget.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "namedDest.pdf"))) {
                 input.copyPagesTo(2, 6, out);
             }
@@ -90,7 +97,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void copyGoToRNamedDestinationTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedGoToRNamedDest.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "namedDest.pdf"))) {
                 input.copyPagesTo(1, 6, out);
             }
@@ -104,7 +111,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void fileAttachmentTargetTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedFileAttachmentTarget.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fileAttachmentTargetTest.pdf"))) {
                 input.copyPagesTo(1, input.getNumberOfPages(), out);
             }
@@ -118,7 +125,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void copyLinkWidgetTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedLinkWidget.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(
                     new PdfReader(SOURCE_FOLDER + "LinkWidgetExplicitDestination.pdf"))) {
                 input.copyPagesTo(1, input.getNumberOfPages(), out);
@@ -132,7 +139,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void noPdfNameATest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedNoPdfNameA.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "GoToRAnnotation.pdf"))) {
                 PdfAnnotation pdfAnnotation = input.getPage(1).getAnnotations().get(0);
                 pdfAnnotation.getPdfObject().remove(PdfName.A);
@@ -146,7 +153,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void noPdfNameDTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedNoPdfNameD.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "GoToRAnnotation.pdf"))) {
                 PdfAnnotation pdfAnnotation = input.getPage(1).getAnnotations().get(0);
                 pdfAnnotation.getPdfObject().getAsDictionary(PdfName.A).remove(PdfName.D);
@@ -161,7 +168,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void noPdfNameSTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedNoPdfNameS.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "GoToRAnnotation.pdf"))) {
                 PdfAnnotation pdfAnnotation = input.getPage(1).getAnnotations().get(0);
                 pdfAnnotation.getPdfObject().getAsDictionary(PdfName.A).remove(PdfName.S);
@@ -175,7 +182,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void noPdfNameDWithGoToRTest() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedNoPdfNameDGoToR.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "GoToRAnnotation.pdf"))) {
                 PdfAnnotation pdfAnnotation = input.getPage(1).getAnnotations().get(0);
                 PdfDictionary aDictionary = pdfAnnotation.getPdfObject().getAsDictionary(PdfName.A);
@@ -192,7 +199,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
     @Test
     public void linkInsideArray() throws IOException {
         String outFile = DESTINATION_FOLDER + "CopiedLinkInArray.pdf";
-        try (PdfDocument out = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             try (PdfDocument input = new PdfDocument(new PdfReader(SOURCE_FOLDER + "LinkInArray.pdf"))) {
                 input.copyPagesTo(1, 1, out);
             }
@@ -203,7 +210,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
 
     private List<PdfAnnotation> getAnnotationsFromPdf(String outFilePath, int pageNumber) throws IOException {
         List<PdfAnnotation> annotations;
-        try (PdfDocument result = new PdfDocument(new PdfReader(outFilePath))) {
+        try (PdfDocument result = new PdfDocument(CompareTool.createOutputReader(outFilePath))) {
             annotations = result.getPage(pageNumber).getAnnotations();
         }
         return annotations;

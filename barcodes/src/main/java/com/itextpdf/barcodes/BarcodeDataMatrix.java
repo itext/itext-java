@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -25,16 +25,23 @@ package com.itextpdf.barcodes;
 import com.itextpdf.barcodes.dmcode.DmParams;
 import com.itextpdf.barcodes.dmcode.Placement;
 import com.itextpdf.barcodes.dmcode.ReedSolomon;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+/**
+ * A Data Matrix is a two-dimensional bar code consisting of black and white "cells" or dots arranged in either a square
+ * or
+ * rectangular pattern, also known as a matrix. The information to be encoded can be text or numeric data. Usual data
+ * size is from a few bytes up to 1556 bytes. The length of the encoded data depends on the number of cells in the
+ * matrix.
+ */
 public class BarcodeDataMatrix extends Barcode2D {
 
     /**
@@ -169,26 +176,47 @@ public class BarcodeDataMatrix extends Barcode2D {
         encoding = DEFAULT_DATA_MATRIX_ENCODING;
     }
 
+    /**
+     * Creates an instance of {@link BarcodeDataMatrix}
+     *
+     * @param code the code to generate. It should be noted that all characters will be encoded using the default
+     *             encoding, ISO-8859-1
+     */
     public BarcodeDataMatrix(String code) {
         encoding = DEFAULT_DATA_MATRIX_ENCODING;
         setCode(code);
     }
 
+    /**
+     * Creates an instance of {@link BarcodeDataMatrix}
+     *
+     * @param code     the code to generate.
+     * @param encoding the encoding to use when generating the barcode
+     */
     public BarcodeDataMatrix(String code, String encoding) {
         this.encoding = encoding;
         setCode(code);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Rectangle getBarcodeSize() {
         return new Rectangle(0, 0, width + 2 * ws, height + 2 * ws);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground) {
         return placeBarcode(canvas, foreground, DEFAULT_MODULE_SIZE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PdfFormXObject createFormXObject(Color foreground, PdfDocument document) {
         return createFormXObject(foreground, DEFAULT_MODULE_SIZE, document);
@@ -210,6 +238,15 @@ public class BarcodeDataMatrix extends Barcode2D {
         return xObject;
     }
 
+    /**
+     * Places the barcode in a PdfCanvas
+     *
+     * @param canvas     the canvas to place the barcode on
+     * @param foreground The foreground color of the barcode
+     * @param moduleSide The side (width and height) of the pixels.
+     *
+     * @return the dimensions the barcode occupies
+     */
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground, float moduleSide) {
         if (image == null) {
             return null;
@@ -548,6 +585,11 @@ public class BarcodeDataMatrix extends Barcode2D {
         this.encoding = encoding;
     }
 
+    /**
+     * getting encoding for data matrix code
+     *
+     * @return encoding for data matrix code
+     */
     public String getEncoding() {
         return encoding;
     }

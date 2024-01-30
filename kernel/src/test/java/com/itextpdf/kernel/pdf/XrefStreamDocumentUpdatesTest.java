@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,6 +32,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,6 +46,11 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     @BeforeClass
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -65,7 +71,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         String outputFile = destinationFolder + "adjustingsInObjStm.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFile),
-                new PdfWriter(outputFile).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
+                CompareTool.createTestPdfWriter(outputFile).setCompressionLevel(CompressionConstants.NO_COMPRESSION));
 
         PdfArray media = pdfDoc.getPage(1).getPdfObject().getAsArray(PdfName.MediaBox);
         media.remove(2);
@@ -91,7 +97,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         String outputFile = destinationFolder + "adjustingsInObjStmInIncrement.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(inputFile),
-                new PdfWriter(outputFile).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
+                CompareTool.createTestPdfWriter(outputFile).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
                 new StampingProperties().useAppendMode());
 
         PdfObject newObj = pdfDoc.getPage(1).getPdfObject();
@@ -115,7 +121,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         String filename = destinationFolder + "freeRefReuseWhenAddNewObj.pdf";
 
         PdfDocument pdfDoc1 = new PdfDocument(new PdfReader(sourceFolder + "pdfWithRemovedObjInOldVer.pdf"),
-                new PdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
+                CompareTool.createTestPdfWriter(filename).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
                 new StampingProperties().useAppendMode());
         pdfDoc1.getCatalog().getPdfObject().put(new PdfName("CustomKey"), new PdfArray().makeIndirect(pdfDoc1));
         PdfObject newObj = pdfDoc1.getCatalog().getPdfObject();
@@ -131,12 +137,12 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         Assert.assertEquals(8, expectObjNumber);
         Assert.assertEquals(0, expectGenNumber);
         Assert.assertTrue(xref.get(5).isFree());
-        
+
         pdfDoc1.close();
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void checkEncryptionInXrefStmInIncrementsTest() throws IOException, InterruptedException {
         String inFileName = sourceFolder + "encryptedDocWithXrefStm.pdf";
@@ -144,7 +150,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
 
         PdfReader pdfReader = new PdfReader(inFileName).setUnethicalReading(true);
 
-        PdfDocument pdfDocument = new PdfDocument(pdfReader, new PdfWriter(outFileName),
+        PdfDocument pdfDocument = new PdfDocument(pdfReader, CompareTool.createTestPdfWriter(outFileName),
                 new StampingProperties().useAppendMode().preserveEncryption());
 
         PdfDictionary xrefStm = (PdfDictionary) pdfDocument.getPdfObject(6);
@@ -162,7 +168,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
 
         PdfReader pdfReader = new PdfReader(inFileName);
 
-        PdfDocument pdfDocument = new PdfDocument(pdfReader, new PdfWriter(outFileName),
+        PdfDocument pdfDocument = new PdfDocument(pdfReader, CompareTool.createTestPdfWriter(outFileName),
                 new StampingProperties().useAppendMode());
 
         pdfDocument.close();
@@ -174,7 +180,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     public void xrefStmInWriteModeTest() throws IOException {
         String fileName = destinationFolder + "xrefStmInWriteMode.pdf";
 
-        PdfWriter writer = new PdfWriter(fileName, new WriterProperties().setFullCompressionMode(true)
+        PdfWriter writer = CompareTool.createTestPdfWriter(fileName, new WriterProperties().setFullCompressionMode(true)
                 .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
         PdfDocument pdfDocument = new PdfDocument(writer);
         PdfPage page = pdfDocument.addNewPage();
@@ -187,7 +193,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        PdfDocument doc = new PdfDocument(new PdfReader(fileName));
+        PdfDocument doc = new PdfDocument(CompareTool.createOutputReader(fileName));
 
         int xrefTableCounter = 0;
         for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
@@ -213,12 +219,12 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         String fileName = destinationFolder + "xrefStmInAppendMode.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "xrefStmInWriteMode.pdf"),
-                new PdfWriter(fileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
+                CompareTool.createTestPdfWriter(fileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
                 new StampingProperties().useAppendMode());
         pdfDocument.close();
 
 
-        PdfDocument doc = new PdfDocument(new PdfReader(fileName));
+        PdfDocument doc = new PdfDocument(CompareTool.createOutputReader(fileName));
 
         int xrefTableCounter = 0;
         for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
@@ -244,7 +250,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         String fileName = destinationFolder + "xrefStmInAppendMode.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "xrefStmInWriteMode.pdf"),
-                new PdfWriter(fileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
+                CompareTool.createTestPdfWriter(fileName).setCompressionLevel(CompressionConstants.NO_COMPRESSION),
                 new StampingProperties().useAppendMode());
         // Clear state for document info indirect reference so that there are no modified objects
         // in the document due to which, the document will have only one xref table.
@@ -252,7 +258,7 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         pdfDocument.close();
 
 
-        PdfDocument doc = new PdfDocument(new PdfReader(fileName));
+        PdfDocument doc = new PdfDocument(CompareTool.createOutputReader(fileName));
 
         int xrefTableCounter = 0;
         for (int i = 1; i < doc.getNumberOfPdfObjects(); i++) {
@@ -271,5 +277,28 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
         Assert.assertEquals(((PdfNumber) doc.getTrailer().get(PdfName.Size)).intValue(), doc.getNumberOfPdfObjects());
         doc.close();
         Assert.assertEquals(1, xrefTableCounter);
+    }
+
+    @Test
+    public void hybridReferenceIncrementTwiceTest() throws IOException, InterruptedException {
+        String inFileName = sourceFolder + "hybridReferenceDocument.pdf";
+        String outFileName = destinationFolder + "hybridReferenceDocumentUpdateTwice.pdf";
+
+        PdfDocument pdfDoc1 = new PdfDocument(
+                new PdfReader(inFileName),
+                new PdfWriter(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
+                new StampingProperties().useAppendMode()
+        );
+        pdfDoc1.close();
+
+        PdfDocument pdfDoc2 = new PdfDocument(
+                new PdfReader(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
+                CompareTool.createTestPdfWriter(outFileName),
+                new StampingProperties().useAppendMode()
+        );
+        pdfDoc2.close();
+
+        //if document processed correctly, no errors should occur
+        Assert.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
     }
 }

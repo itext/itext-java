@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,18 +23,24 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * PDF417 is a stacked linear barcode format used in a variety of applications such as transport, identification cards,
+ * and inventory management. "PDF" stands for Portable Data File. The "417" signifies that each pattern in the code
+ * consists of 4 bars and spaces in a pattern that is 17 units (modules) long.
+ * It is defined in ISO 15438.
+ */
 public class BarcodePDF417 extends Barcode2D {
 
     /**
@@ -667,17 +673,33 @@ public class BarcodePDF417 extends Barcode2D {
         aspectRatio = 0.5f;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Rectangle getBarcodeSize() {
         paintCode();
         return new Rectangle(0, 0, bitColumns, codeRows);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground) {
         return placeBarcode(canvas, foreground, DEFAULT_MODULE_SIZE, DEFAULT_MODULE_SIZE);
     }
 
+    /**
+     * Places the barcode in a {@link PdfCanvas}.
+     *
+     * @param canvas       the {@link PdfCanvas} where the barcode will be placed
+     * @param foreground   the {@link Color} of the bars of the barcode
+     * @param moduleWidth  the width of the thinnest bar
+     * @param moduleHeight the height of the bars
+     *
+     * @return the dimensions the barcode occupies
+     */
     public Rectangle placeBarcode(PdfCanvas canvas, Color foreground, float moduleWidth, float moduleHeight) {
         paintCode();
         int stride = (bitColumns + 7) / 8;
@@ -1069,6 +1091,12 @@ public class BarcodePDF417 extends Barcode2D {
         this.yHeight = yHeight;
     }
 
+
+    /**
+     * Adds the code word to the correct code word to the 17th bit.
+     *
+     * @param codeword the code word
+     */
     protected void outCodeword17(int codeword) {
         int bytePtr = bitPtr / 8;
         int bit = bitPtr - bytePtr * 8;
@@ -1079,6 +1107,11 @@ public class BarcodePDF417 extends Barcode2D {
         bitPtr += 17;
     }
 
+    /**
+     * Adds the code word to the correct code word to the 18th bit.
+     *
+     * @param codeword the code word
+     */
     protected void outCodeword18(int codeword) {
         int bytePtr = bitPtr / 8;
         int bit = bitPtr - bytePtr * 8;
@@ -1092,18 +1125,32 @@ public class BarcodePDF417 extends Barcode2D {
     }
 
 
+    /**
+     * Utility method that adds a codeword to the barcode.
+     *
+     * @param codeword the codeword to add
+     */
     protected void outCodeword(int codeword) {
         outCodeword17(codeword);
     }
 
+    /**
+     * Adds the stop pattern to the output.
+     */
     protected void outStopPattern() {
         outCodeword18(STOP_PATTERN);
     }
 
+    /**
+     * Adds the start pattern to the output.
+     */
     protected void outStartPattern() {
         outCodeword17(START_PATTERN);
     }
 
+    /**
+     * Adds the barcode to the output bits.
+     */
     protected void outPaintCode() {
         int codePtr = 0;
         bitColumns = START_CODE_SIZE * (codeColumns + 3) + STOP_SIZE;
@@ -1152,6 +1199,11 @@ public class BarcodePDF417 extends Barcode2D {
         }
     }
 
+    /**
+     * Calculates the error correction codewords.
+     *
+     * @param dest length of the code words
+     */
     protected void calculateErrorCorrection(int dest) {
         if (errorLevel < 0 || errorLevel > 8)
             errorLevel = 0;
@@ -1172,34 +1224,81 @@ public class BarcodePDF417 extends Barcode2D {
             codewords[dest + k] = (MOD - codewords[dest + k]) % MOD;
     }
 
+    /**
+     * Compacts the codewords.
+     *
+     * @param start  the start position
+     * @param length the length
+     */
     protected void textCompaction(int start, int length) {
         textCompaction(code, start, length);
     }
 
+    /**
+     * Compacts the codewords.
+     *
+     * @param start  the start position
+     * @param length the length
+     */
     protected void basicNumberCompaction(int start, int length) {
         basicNumberCompaction(code, start, length);
     }
 
+    /**
+     * Gets the text type and value.
+     *
+     * @param maxLength the maximum length
+     * @param idx       the index
+     *
+     * @return the text type and value
+     */
     protected int getTextTypeAndValue(int maxLength, int idx) {
         return getTextTypeAndValue(code, maxLength, idx);
     }
 
+    /**
+     * Checks whether the segment is of a certain type.
+     *
+     * @param segment the segment to check
+     * @param type    the type to check against
+     *
+     * @return true if the segment is of the specified type
+     */
     protected boolean checkSegmentType(Segment segment, char type) {
         if (segment == null)
             return false;
         return segment.type == type;
     }
 
+    /**
+     * Calculates the length of the given segment
+     *
+     * @param segment the segment to check
+     *
+     * @return the length of the segment
+     */
     protected int getSegmentLength(Segment segment) {
         if (segment == null)
             return 0;
         return segment.end - segment.start;
     }
 
+
+    /**
+     * Compacts the code words.
+     *
+     * @param start  the start position
+     * @param length the length
+     */
     protected void numberCompaction(int start, int length) {
         numberCompaction(code, start, length);
     }
 
+    /**
+     * Compacts the code words
+     *
+     * @param start the start position
+     */
     protected void byteCompaction6(int start) {
         int length = 6;
         int ret = cwPtr;
@@ -1223,6 +1322,9 @@ public class BarcodePDF417 extends Barcode2D {
         }
     }
 
+    /**
+     * Assembles the data of the code words.
+     */
     protected void assemble() {
         int k;
         if (segmentList.size() == 0)
@@ -1252,6 +1354,13 @@ public class BarcodePDF417 extends Barcode2D {
         }
     }
 
+    /**
+     * Calculates the highest error level that can be used for the remaining number of data codewords.
+     *
+     * @param remain the number of data codewords
+     *
+     * @return the highest error level that can be used
+     */
     protected static int maxPossibleErrorLevel(int remain) {
         int level = 8;
         int size = 512;
@@ -1264,6 +1373,9 @@ public class BarcodePDF417 extends Barcode2D {
         return 0;
     }
 
+    /**
+     * Prints the segments to standard output.
+     */
     protected void dumpList() {
         if (segmentList.size() == 0)
             return;
@@ -1283,6 +1395,12 @@ public class BarcodePDF417 extends Barcode2D {
         }
     }
 
+    /**
+     * Calculates the max square that can contain the barcode.
+     * And sets the codeColumns and codeRows variables.
+     *
+     * @return the max square that can contain the barcode
+     */
     protected int getMaxSquare() {
         if (codeColumns > 21) {
             codeColumns = 29;
@@ -1667,11 +1785,21 @@ public class BarcodePDF417 extends Barcode2D {
         }
     }
 
+    /**
+     * A container that encapsulates all data needed for a segment.
+     */
     protected static class Segment {
         public char type;
         public int start;
         public int end;
 
+        /**
+         * Creates a new {@link Segment} instance.
+         *
+         * @param type  the type of segment
+         * @param start the start of the segment
+         * @param end   the end of the segment
+         */
         public Segment(char type, int start, int end) {
             this.type = type;
             this.start = start;
@@ -1679,25 +1807,52 @@ public class BarcodePDF417 extends Barcode2D {
         }
     }
 
+    /**
+     * An utility class that encapsulates a list of segments.
+     */
     protected static class SegmentList {
         protected List<Segment> list = new ArrayList<>();
 
+        /**
+         * Adds a new segment to the list
+         *
+         * @param type  the type of the segment
+         * @param start the start position
+         * @param end   the end position
+         */
         public void add(char type, int start, int end) {
             list.add(new Segment(type, start, end));
         }
 
+        /**
+         * Gets the segment at the specified index
+         *
+         * @param idx the index
+         *
+         * @return the segment at the specified index or null if the index is out of bounds
+         */
         public Segment get(int idx) {
             if (idx < 0 || idx >= list.size())
                 return null;
             return list.get(idx);
         }
 
+        /**
+         * Removes the segment at the specified index
+         *
+         * @param idx the index
+         */
         public void remove(int idx) {
             if (idx < 0 || idx >= list.size())
                 return;
             list.remove(idx);
         }
 
+        /**
+         * Gets the number of segments in the list
+         *
+         * @return the number of segments in the list
+         */
         public int size() {
             return list.size();
         }

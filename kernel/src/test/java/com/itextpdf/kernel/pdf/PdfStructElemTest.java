@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,8 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -49,13 +49,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.xml.parsers.ParserConfigurationException;
-
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.xml.sax.SAXException;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -70,9 +69,14 @@ public class PdfStructElemTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void structElemTest01() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest01.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest01.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
@@ -122,7 +126,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
     @Test
     public void structElemTest02() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest02.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest02.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
@@ -154,7 +158,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
     @Test
     public void structElemTest03() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest03.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest03.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
@@ -199,7 +203,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
         document.close();
 
-        document = new PdfDocument(new PdfReader(destinationFolder + "structElemTest03.pdf"));
+        document = new PdfDocument(CompareTool.createOutputReader(destinationFolder + "structElemTest03.pdf"));
         Assert.assertEquals(2, (int) document.getNextStructParentIndex());
         PdfPage page = document.getPage(1);
         Assert.assertEquals(0, page.getStructParentIndex());
@@ -239,7 +243,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
         byte[] bytes = baos.toByteArray();
 
         PdfReader reader = new PdfReader(new ByteArrayInputStream(bytes));
-        writer = new PdfWriter(destinationFolder + "structElemTest04.pdf");
+        writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest04.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         document = new PdfDocument(reader, writer);
 
@@ -276,7 +280,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
     @Test
     public void structElemTest05() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest05.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest05.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
@@ -317,7 +321,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
     @Test
     public void structElemTest06() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest06.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest06.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
@@ -348,7 +352,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     @LogMessages(messages =
     @LogMessage(messageTemplate = IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, count = 5))
     public void structElemTest07() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest07.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest07.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
@@ -388,7 +392,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
     @Test
     public void structElemTest08() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest08.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest08.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
@@ -424,7 +428,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
 
     @Test
     public void structElemTest09() throws Exception {
-        PdfWriter writer = new PdfWriter(destinationFolder + "structElemTest09.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structElemTest09.pdf");
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards_mult_roots.pdf"),
                 writer);
@@ -442,7 +446,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structTreeCopyingTest01() throws Exception {
         PdfDocument source = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"));
 
-        PdfDocument destination = new PdfDocument(new PdfWriter(destinationFolder + "structTreeCopyingTest01.pdf"));
+        PdfDocument destination = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest01.pdf"));
         destination.setTagged();
         destination.initializeOutlines();
 
@@ -467,7 +471,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structTreeCopyingTest02() throws Exception {
         PdfDocument source = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"));
 
-        PdfDocument destination = new PdfDocument(new PdfWriter(destinationFolder + "structTreeCopyingTest02.pdf"));
+        PdfDocument destination = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest02.pdf"));
         destination.setTagged();
         destination.initializeOutlines();
 
@@ -487,7 +491,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structTreeCopyingTest03() throws Exception {
         PdfDocument source = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"));
 
-        PdfDocument destination = new PdfDocument(new PdfWriter(destinationFolder + "structTreeCopyingTest03.pdf"));
+        PdfDocument destination = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest03.pdf"));
         destination.initializeOutlines();
 
         source.copyPagesTo(6, source.getNumberOfPages(), destination);
@@ -510,7 +514,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structTreeCopyingTest04() throws Exception {
         PdfDocument source = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"));
 
-        PdfDocument destination = new PdfDocument(new PdfWriter(destinationFolder + "structTreeCopyingTest04.pdf"));
+        PdfDocument destination = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest04.pdf"));
         destination.setTagged();
         destination.initializeOutlines();
 
@@ -527,7 +531,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     @Test
     public void structTreeCopyingTest05() throws Exception {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"),
-                new PdfWriter(destinationFolder + "structTreeCopyingTest05.pdf"));
+                CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest05.pdf"));
 
         PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));
         document1.copyPagesTo(1, 1, document, 2);
@@ -549,7 +553,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structTreeCopyingTest06() throws Exception {
         PdfDocument source = new PdfDocument(new PdfReader(sourceFolder + "iphone_user_guide.pdf"));
 
-        PdfDocument destination = new PdfDocument(new PdfWriter(destinationFolder + "structTreeCopyingTest06.pdf"));
+        PdfDocument destination = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest06.pdf"));
         destination.setTagged();
         destination.initializeOutlines();
 
@@ -564,7 +568,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     @Test
     public void structTreeCopyingTest07() throws Exception {
         PdfReader reader = new PdfReader(sourceFolder + "quick-brown-fox.pdf");
-        PdfWriter writer = new PdfWriter(destinationFolder + "structTreeCopyingTest07.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest07.pdf");
         PdfDocument document = new PdfDocument(writer);
         document.setTagged();
         PdfStructElem doc = document.getStructTreeRoot().addKid(new PdfStructElem(document, PdfName.Document));
@@ -599,7 +603,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     @Test
     public void structTreeCopyingTest08() throws Exception {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox-table.pdf"),
-                new PdfWriter(destinationFolder + "structTreeCopyingTest08.pdf"));
+                CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest08.pdf"));
 
         PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));
         document1.initializeOutlines();
@@ -614,7 +618,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     @Test
     public void structTreeCopyingTest09() throws Exception {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox-table.pdf"),
-                new PdfWriter(destinationFolder + "structTreeCopyingTest09.pdf"));
+                CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest09.pdf"));
 
         PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));
         document1.initializeOutlines();
@@ -630,7 +634,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     @Test
     public void structTreeCopyingTest10() throws Exception {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards.pdf"),
-                new PdfWriter(destinationFolder + "structTreeCopyingTest10.pdf"));
+                CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest10.pdf"));
 
         PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox-table.pdf"));
         document1.initializeOutlines();
@@ -651,7 +655,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST))
     public void structTreeCopyingTest11() throws Exception {
         PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + "88th_Academy_Awards.pdf"),
-                new PdfWriter(destinationFolder + "structTreeCopyingTest11.pdf"));
+                CompareTool.createTestPdfWriter(destinationFolder + "structTreeCopyingTest11.pdf"));
 
         PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox_mapping_mod.pdf"));
         document1.initializeOutlines();
@@ -672,7 +676,7 @@ public class PdfStructElemTest extends ExtendedITextTest {
     public void structTreeCopyingToPartiallyFlushedDocumentTest() throws Exception {
         String outFile = "structTreeCopyingToPartiallyFlushedDocumentTest.pdf";
 
-        PdfDocument resultDoc = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument resultDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         resultDoc.setTagged();
 
         PdfDocument document1 = new PdfDocument(new PdfReader(sourceFolder + "quick-brown-fox.pdf"));

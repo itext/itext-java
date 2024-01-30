@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.ActualTextIterator;
@@ -31,11 +32,11 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.kernel.colors.DeviceGray;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -68,7 +69,6 @@ import com.itextpdf.kernel.pdf.tagutils.TagReference;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -190,6 +190,8 @@ public class PdfCanvas {
      * The list where we save/restore the layer depth.
      */
     protected List<Integer> layerDepth;
+
+    private Stack<Tuple2<PdfName, PdfDictionary>> tagStructureStack = new Stack<>();
 
     /**
      * Creates PdfCanvas from content stream of page, form XObject, pattern etc.
@@ -719,7 +721,7 @@ public class PdfCanvas {
     public PdfCanvas showText(GlyphLine text, Iterator<GlyphLine.GlyphLinePart> iterator) {
         checkDefaultDeviceGrayBlackColor(getColorKeyForText());
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
-
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         PdfFont font;
         if ((font = currentGs.getFont()) == null) {
             throw new PdfException(
@@ -896,7 +898,7 @@ public class PdfCanvas {
     public PdfCanvas showText(PdfArray textArray) {
         checkDefaultDeviceGrayBlackColor(getColorKeyForText());
         document.checkIsoConformance(currentGs, IsoKey.FONT_GLYPHS, null, contentStream);
-
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         if (currentGs.getFont() == null) {
             throw new PdfException(
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
@@ -949,6 +951,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas lineTo(double x, double y) {
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x)
                 .writeSpace()
@@ -969,6 +972,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x1)
                 .writeSpace()
@@ -996,6 +1000,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveTo(double x2, double y2, double x3, double y3) {
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x2)
                 .writeSpace()
@@ -1018,6 +1023,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas curveFromTo(double x1, double y1, double x3, double y3) {
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream()
                 .writeDouble(x1)
                 .writeSpace()
@@ -1175,6 +1181,7 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas rectangle(double x, double y, double width, double height) {
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         contentStream.getOutputStream().writeDouble(x).
                 writeSpace().
                 writeDouble(y).
@@ -2001,7 +2008,7 @@ public class PdfCanvas {
      * @param e       an element of the transformation matrix
      * @param f       an element of the transformation matrix
      * @return the current canvas
-     * @see #concatMatrix(double, double, double, double, double, double) 
+     * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfCanvas addXObjectWithTransformationMatrix(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
         if (xObject instanceof PdfFormXObject) {
@@ -2124,6 +2131,9 @@ public class PdfCanvas {
         } else {
             out.write(resources.addProperties(properties)).writeSpace().writeBytes(BDC);
         }
+        final Tuple2<PdfName, PdfDictionary> tuple2 = new Tuple2<>(tag, properties);
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_BEGIN_MARKED_CONTENT, null, null, tuple2);
+        tagStructureStack.push(tuple2);
         return this;
     }
 
@@ -2136,6 +2146,7 @@ public class PdfCanvas {
         if (--mcDepth < 0)
             throw new PdfException(KernelExceptionMessageConstant.UNBALANCED_BEGIN_END_MARKED_CONTENT_OPERATORS);
         contentStream.getOutputStream().writeBytes(EMC);
+        tagStructureStack.pop();
         return this;
     }
 
@@ -2396,6 +2407,7 @@ public class PdfCanvas {
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
 
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         document.checkIsoConformance(text, IsoKey.FONT, null, null, currentGs.getFont());
 
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
@@ -2451,6 +2463,7 @@ public class PdfCanvas {
 
     private PdfCanvas drawArc(double x1, double y1, double x2, double y2,
             double startAng, double extent, boolean continuous) {
+        document.checkIsoConformance(tagStructureStack, IsoKey.CANVAS_WRITING_CONTENT);
         List<double[]> ar = bezierArc(x1, y1, x2, y2, startAng, extent);
         if (ar.isEmpty()) {
             return this;

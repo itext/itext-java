@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,13 @@
  */
 package com.itextpdf.barcodes.qrcode;
 
+/**
+ * A QR code (short for "quick-response code") is a type of two-dimensional matrix barcode, invented in 1994, by
+ * Japanese company Denso Wave for labelling automobile parts.[1][2] A barcode is a machine-readable optical image that
+ * contains information specific to the labelled item. In practice, QR codes contain data for a locator, an identifier,
+ * and web tracking. To efficiently store data, QR codes use four standardized modes of encoding (i) numeric, (ii)
+ * alphanumeric, (iii) byte or binary, and (iv) kanji.[3]
+ */
 final class QRCode {
 
     public static final int NUM_MASK_PATTERNS = 8;

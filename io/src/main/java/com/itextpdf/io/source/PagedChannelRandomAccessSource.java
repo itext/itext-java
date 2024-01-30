@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,12 +23,12 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.channels.FileChannel}.  The channel is mapped into memory using a paging scheme to allow for efficient reads of very large files.
@@ -175,13 +175,13 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
          * @return the element that was removed from the MRU to make room for the new element, or null if no element needed to be removed
          */
         public E enqueue(E newElement){
-            // TODO: this check may not be an effective optimization - the GroupedRandomAccessSource already tracks the 'current' source, so it seems unlikely that we would ever hit this code branch
-            if (queue.size() > 0 && queue.getFirst() == newElement)
+            if (!queue.isEmpty() && queue.getFirst() == newElement) {
                 return null;
+            }
 
-            for(Iterator<E> it = queue.iterator(); it.hasNext();){
+            for (Iterator<E> it = queue.iterator(); it.hasNext();) {
                 E element = it.next();
-                if (newElement == element){
+                if (newElement == element) {
                     it.remove();
                     queue.addFirst(newElement);
                     return null;
@@ -189,8 +189,9 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
             }
             queue.addFirst(newElement);
 
-            if (queue.size() > limit)
+            if (queue.size() > limit) {
                 return queue.removeLast();
+            }
 
             return null;
         }

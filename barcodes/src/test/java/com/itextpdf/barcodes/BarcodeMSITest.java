@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,6 +32,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,10 +53,15 @@ public class BarcodeMSITest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcodeMSI_01.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
@@ -71,7 +78,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
     @Test
     public void barcode02Test() throws IOException, InterruptedException {
         String filename = "barcodeMSI_02.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfReader reader = new PdfReader(sourceFolder + "DocumentWithTrueTypeFont1.pdf");
         PdfDocument document = new PdfDocument(reader, writer);
         PdfCanvas canvas = new PdfCanvas(document.getLastPage());
@@ -86,7 +93,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
     @Test
     public void barcodeAlignRightTest() throws IOException, InterruptedException {
         final String filename = "barcodeMSI_AlignRight.pdf";
-        final PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        final PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         final PdfDocument document = new PdfDocument(writer);
         final PdfPage page = document.addNewPage();
         final PdfCanvas canvas = new PdfCanvas(page);
@@ -102,7 +109,7 @@ public class BarcodeMSITest extends ExtendedITextTest {
     @Test
     public void barcodeAlignCenterTest() throws IOException, InterruptedException {
         final String filename = "barcodeMSI_AlignCenter.pdf";
-        final PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        final PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         final PdfDocument document = new PdfDocument(writer);
         final PdfPage page = document.addNewPage();
         final PdfCanvas canvas = new PdfCanvas(page);

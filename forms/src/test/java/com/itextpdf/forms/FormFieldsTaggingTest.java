@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -268,6 +268,37 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         PdfDocument docToCopyFrom = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms07.pdf"));
         docToCopyFrom.copyPagesTo(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
         docToCopyFrom.copyPagesTo(1, docToCopyFrom.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
+
+        pdfDoc.close();
+
+        compareOutput(outFileName, cmpFileName);
+    }
+
+    @Test
+    public void formFieldTaggingTest11() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFileName = destinationFolder + "taggedPdfWithForms11.pdf";
+        String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms11.pdf";
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfReader reader = new PdfReader(sourceFolder + "taggedDocWithFields.pdf");
+        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+        pdfDoc.setTagged();
+
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
+
+        PdfButtonFormField pushButton = new PushButtonFormFieldBuilder(pdfDoc, "push")
+                .setWidgetRectangle(new Rectangle(36, 650, 40, 20)).setCaption("Button 1").createPushButton();
+        pushButton.setFontSize(12f);
+
+        PdfButtonFormField pushButton2 = new PushButtonFormFieldBuilder(pdfDoc, "push 2")
+                .setWidgetRectangle(new Rectangle(36, 600, 40, 20)).setCaption("Button 2").createPushButton();
+        pushButton.setFontSize(12f);
+
+        TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+        tagPointer.moveToKid(StandardRoles.DIV);
+        acroForm.addField(pushButton);
+        tagPointer.moveToKid(StandardRoles.FORM);
+        acroForm.addField(pushButton2);
 
         pdfDoc.close();
 

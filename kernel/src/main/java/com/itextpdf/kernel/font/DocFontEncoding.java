@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -61,6 +61,8 @@ class DocFontEncoding extends FontEncoding {
         }
         if (toUnicode != null) {
             DocFontEncoding fontEncoding = new DocFontEncoding();
+            FontEncoding.fillFontEncoding(fontEncoding);
+
             fontEncoding.differences = new String[256];
             fillDifferences(fontEncoding, toUnicode);
             return fontEncoding;

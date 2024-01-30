@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,14 @@
  */
 package com.itextpdf.layout.tagging;
 
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.renderer.RootRenderer;
+
+/**
+ * TaggingHintKey instances are created in the scope of {@link RootRenderer#addChild(IRenderer)}
+ * to preserve logical order of layout elements from model elements.
+ */
 public final class TaggingHintKey {
     private IAccessibleElement elem;
     private boolean isArtifact;
@@ -29,39 +37,81 @@ public final class TaggingHintKey {
     private String overriddenRole;
     private boolean elementBasedFinishingOnly;
 
+    /**
+     * Instantiate a new {@link TaggingHintKey} instance.
+     *
+     * @param elem element this hint key will be created for.
+     * @param createdElementBased {@code true} if element implements {@link IElement}.
+     */
     TaggingHintKey(IAccessibleElement elem, boolean createdElementBased) {
         this.elem = elem;
         this.elementBasedFinishingOnly = createdElementBased;
     }
 
+    /**
+     * Get accessible element.
+     *
+     * @return the accessible element.
+     */
     public IAccessibleElement getAccessibleElement() {
         return elem;
     }
 
+    /**
+     * Retrieve hint key finished flag.
+     *
+     * @return {@code true} if hint key is finished, {@code false} otherwise.
+     */
     boolean isFinished() {
         return isFinished;
     }
 
+    /**
+     * Set finished flag for hint key instance.
+     */
     void setFinished() {
         this.isFinished = true;
     }
 
+    /**
+     * Retrieve information whether this hint key is artifact or not.
+     *
+     * @return {@code true} if hint key corresponds to artifact, {@code false} otherwise.
+     */
     boolean isArtifact() {
         return isArtifact;
     }
 
+    /**
+     * Specify that hint key instance corresponds to artifact.
+     */
     void setArtifact() {
         this.isArtifact = true;
     }
 
+    /**
+     * Get overridden role.
+     *
+     * @return the overridden role.
+     */
     String getOverriddenRole() {
         return overriddenRole;
     }
 
+    /**
+     * Set the overridden role.
+     *
+     * @param overriddenRole overridden role.
+     */
     void setOverriddenRole(String overriddenRole) {
         this.overriddenRole = overriddenRole;
     }
 
+    /**
+     * Retrieve information whether the element backed by this hint key implements {@link IElement}.
+     *
+     * @return {@code} true if element implements {@link IElement}.
+     */
     boolean isElementBasedFinishingOnly() {
         return elementBasedFinishingOnly;
     }

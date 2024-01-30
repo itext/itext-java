@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -1125,6 +1125,31 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
         document.add(table);
         document.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+    @Test
+    public void unexpectedTableHintChildTest()
+            throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        String outFile = "unexpectedTableHintChildTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile))){
+            Document document = new Document(pdfDocument);
+            pdfDocument.setTagged();
+
+            Div div = new Div();
+            div.getAccessibilityProperties().setRole(StandardRoles.TABLE);
+
+            final Paragraph c1 = new Paragraph("c1");
+            c1.getAccessibilityProperties().setRole(StandardRoles.LINK);
+            div.add(c1);
+
+            Paragraph p1 = new Paragraph("c");
+            p1.getAccessibilityProperties().setRole(StandardRoles.TD);
+            div.add(p1);
+
+            document.add(div);
+        }
         compareResult(outFile, "cmp_" + outFile);
     }
 

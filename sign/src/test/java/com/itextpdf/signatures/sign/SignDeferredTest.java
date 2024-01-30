@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,7 +26,6 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
-import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -46,6 +45,7 @@ import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
@@ -182,7 +182,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
 
         // validate result
-        PadesSigTest.basicCheckSignedDoc(outFileName, sigFieldName);
+        TestSignUtils.basicCheckSignedDoc(outFileName, sigFieldName);
         Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
@@ -234,7 +234,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
 
         // validate result
-        PadesSigTest.basicCheckSignedDoc(outFileName, sigFieldName);
+        TestSignUtils.basicCheckSignedDoc(outFileName, sigFieldName);
         Assert.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
         Assert.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }

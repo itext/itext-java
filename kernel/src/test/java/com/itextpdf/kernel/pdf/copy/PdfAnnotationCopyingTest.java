@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -47,6 +47,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -64,13 +65,18 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     @Ignore("Unignore when DEVSIX-3585 would be implemented")
     public void testCopyingPageWithAnnotationContainingPopupKey() throws IOException {
         String inFilePath = SOURCE_FOLDER + "annotation-with-popup.pdf";
         String outFilePath = DESTINATION_FOLDER + "copy-annotation-with-popup.pdf";
         PdfDocument originalDocument = new PdfDocument(new PdfReader(inFilePath));
-        PdfDocument outDocument = new PdfDocument(new PdfWriter(outFilePath));
+        PdfDocument outDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFilePath));
 
         originalDocument.copyPagesTo(1, 1, outDocument);
         // During the second copy call we have to rebuild/preserve all the annotation relationship (Popup in this case),
@@ -114,7 +120,7 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         String inFilePath = SOURCE_FOLDER + "annotation-with-irt.pdf";
         String outFilePath = DESTINATION_FOLDER + "copy-annotation-with-irt.pdf";
         PdfDocument originalDocument = new PdfDocument(new PdfReader(inFilePath));
-        PdfDocument outDocument = new PdfDocument(new PdfWriter(outFilePath));
+        PdfDocument outDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFilePath));
 
         originalDocument.copyPagesTo(1, 1, outDocument);
         // During the second copy call we have to rebuild/preserve all the annotation relationship (IRT in this case),
@@ -153,7 +159,8 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         String cmpFilePath = SOURCE_FOLDER + "cmp_copySameLinksWithGoToSmartMode.pdf";
         String outFilePath = DESTINATION_FOLDER + "copySameLinksWithGoToSmartMode.pdf";
 
-        copyLinksGoToActionTest(outFilePath, true, false);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFilePath).setSmartMode(true);
+        copyLinksGoToActionTest(writer, true, false);
 
         Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
@@ -163,7 +170,8 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         String cmpFilePath = SOURCE_FOLDER + "cmp_copyDiffDestLinksWithGoToSmartMode.pdf";
         String outFilePath = DESTINATION_FOLDER + "copyDiffDestLinksWithGoToSmartMode.pdf";
 
-        copyLinksGoToActionTest(outFilePath, false, false);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFilePath).setSmartMode(true);
+        copyLinksGoToActionTest(writer, false, false);
 
         Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
@@ -173,7 +181,8 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         String cmpFilePath = SOURCE_FOLDER + "cmp_copyDiffDisplayLinksWithGoToSmartMode.pdf";
         String outFilePath = DESTINATION_FOLDER + "copyDiffDisplayLinksWithGoToSmartMode.pdf";
 
-        copyLinksGoToActionTest(outFilePath, false, true);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFilePath).setSmartMode(true);
+        copyLinksGoToActionTest(writer, false, true);
 
         Assert.assertNull(new CompareTool().compareByContent(outFilePath, cmpFilePath, DESTINATION_FOLDER));
     }
@@ -209,9 +218,9 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
         copyPages(srcFilePath, outFilePath, cmpFilePath);
     }
 
-    private void copyLinksGoToActionTest(String dest, boolean isTheSameLinks, boolean diffDisplayOptions)
+    private void copyLinksGoToActionTest(PdfWriter writer, boolean isTheSameLinks, boolean diffDisplayOptions)
             throws IOException {
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(dest).setSmartMode(true));
+        PdfDocument destDoc = new PdfDocument(writer);
         ByteArrayOutputStream sourceBaos1 = createPdfWithGoToAnnot(isTheSameLinks, diffDisplayOptions);
         PdfDocument sourceDoc1 = new PdfDocument(new PdfReader(new ByteArrayInputStream(sourceBaos1.toByteArray())));
 
@@ -223,8 +232,8 @@ public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
     private void copyPages(String sourceFile, String outFilePath, String cmpFilePath)
             throws IOException, InterruptedException {
-        try (PdfWriter writer = new PdfWriter(outFilePath);
-                PdfDocument pdfDoc = new PdfDocument(writer)) {
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFilePath);
+        try (PdfDocument pdfDoc = new PdfDocument(writer)) {
             pdfDoc.addNewPage();
             pdfDoc.addNewPage();
 

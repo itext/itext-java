@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,11 +23,16 @@
 package com.itextpdf.barcodes;
 
 
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 
+/**
+ * POSTNET (Postal Numeric Encoding Technique) is a barcode symbology used by the United States Postal Service to assist
+ * in directing mail. The ZIP Code or ZIP+4 code is encoded in half- and full-height bars.[1] Most often, the delivery
+ * point is added, usually being the last two digits of the address or PO box number.
+ */
 public class BarcodePostnet extends Barcode1D {
 
     public static int TYPE_POSTNET = 1;
@@ -50,6 +55,11 @@ public class BarcodePostnet extends Barcode1D {
                     {1, 0, 1, 0, 0}
             };
 
+    /**
+     * Creates new {@link  BarcodePostnet} instance.
+     *
+     * @param document The document
+     */
     public BarcodePostnet(PdfDocument document) {
         super(document);
         // distance between bars

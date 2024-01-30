@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,6 +30,7 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.Radio;
+import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.forms.util.DrawingUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -180,7 +181,9 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
 
         PdfButtonFormField radioGroup = (PdfButtonFormField) form.getField(groupName);
         if (null == radioGroup) {
-            radioGroup = new RadioFormFieldBuilder(doc, groupName).createRadioGroup();
+            radioGroup = new RadioFormFieldBuilder(doc, groupName)
+                    .setConformanceLevel(getConformanceLevel(doc))
+                    .createRadioGroup();
             radioGroup.disableFieldRegeneration();
             radioGroup.setValue(PdfFormAnnotation.OFF_STATE_VALUE);
         } else {
@@ -191,6 +194,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         }
 
         PdfFormAnnotation radio = new RadioFormFieldBuilder(doc, null)
+                .setConformanceLevel(getConformanceLevel(doc))
                 .createRadioButton(getModelId(), area);
         radio.disableFieldRegeneration();
 
@@ -198,7 +202,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         if (background != null) {
             radio.setBackgroundColor(background.getColor());
         }
-        applyBorderProperty(radio);
+        BorderStyleUtil.applyBorderProperty(this, radio);
         radio.setFormFieldElement((Radio) modelElement);
 
         radioGroup.addKid(radio);

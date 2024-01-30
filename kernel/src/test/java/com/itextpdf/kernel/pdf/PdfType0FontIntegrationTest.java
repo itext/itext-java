@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,12 +58,17 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void notoSansJpFontTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "notoSansJpFontTest.pdf";
         String cmpFilename = SOURCE_FOLDER + "cmp_notoSansJpFontTest.pdf";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -88,7 +94,7 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "notoSansScFontTest.pdf";
         String cmpFilename = SOURCE_FOLDER + "cmp_notoSansScFontTest.pdf";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -117,7 +123,7 @@ public class PdfType0FontIntegrationTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "notoSansTcFontTest.pdf";
         String cmpFilename = SOURCE_FOLDER + "cmp_notoSansTcFontTest.pdf";
 
-        PdfWriter writer = new PdfWriter(filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(filename);
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 

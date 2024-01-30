@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -42,6 +42,7 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         Assert.assertEquals(Integer.MAX_VALUE / 100, handler.getMaxSizeOfSingleDecompressedPdfStream());
         Assert.assertEquals(Integer.MAX_VALUE / 20, handler.getMaxSizeOfDecompressedPdfStreamsSum());
         Assert.assertEquals(50000000, handler.getMaxNumberOfElementsInXrefStructure());
+        Assert.assertEquals(1024L*1024L*1024L*3L, handler.getMaxXObjectsSizePerPage());
     }
 
     @Test
@@ -116,6 +117,29 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         Assert.assertEquals(50000000, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
         memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(20);
         Assert.assertEquals(20, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
+    }
+
+    @Test
+    public void customMaxXObjectSizePerPageHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+
+        Assert.assertEquals(1024L*1024L*1024L*3L, memoryLimitsAwareHandler.getMaxXObjectsSizePerPage());
+        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(1024L);
+        Assert.assertEquals(1024L, memoryLimitsAwareHandler.getMaxXObjectsSizePerPage());
+    }
+
+    @Test
+    public void minSizeBasedXrefCapacityHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(1024*1024);
+
+        Assert.assertEquals(500000, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
+    }
+
+    @Test
+    public void sizeBasedXrefCapacityHandlerTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler(1024*1024*80);
+
+        Assert.assertEquals(40000000, memoryLimitsAwareHandler.getMaxNumberOfElementsInXrefStructure());
     }
 
     @Test

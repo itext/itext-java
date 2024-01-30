@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -31,9 +31,11 @@ import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.renderer.ButtonRenderer;
 import com.itextpdf.forms.form.renderer.InputFieldRenderer;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -56,7 +58,6 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -92,6 +93,68 @@ public class ButtonTest extends ExtendedITextTest {
             Button flattenButton = new Button("flatten button");
             flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flattenButton.add(new Paragraph("flatten button"));
+            flattenButton.add(new Paragraph("paragraph with pink border inside button")
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 1)));
+            document.add(flattenButton);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void basicButtonTestWithFontDiffersOnParagraph() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "basicButtonWithFontDiffersOnParagraph.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_basicButtonWithFontDiffersOnParagraph.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            Button formButton = new Button("form button");
+
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
+            formButton.add(new Paragraph("form button"));
+            formButton.add(new Paragraph("paragraph with yellow border inside button")
+                    .setFont(PdfFontFactory.createFont(StandardFonts.COURIER))
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 1)));
+            document.add(formButton);
+
+            document.add(new Paragraph(""));
+
+            Button flattenButton = new Button("flatten button");
+            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenButton.add(new Paragraph("flatten button"));
+
+            flattenButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
+            flattenButton.add(new Paragraph("paragraph with pink border inside button")
+                    .setFont(PdfFontFactory.createFont(StandardFonts.COURIER))
+                    .setBorder(new SolidBorder(ColorConstants.PINK, 1)));
+            document.add(flattenButton);
+        }
+
+        Assert.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void basicButtonTestWithFont() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "basicButtonWithFont.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_basicButtonWithFon.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            Button formButton = new Button("form button");
+
+            formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
+            formButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
+            formButton.add(new Paragraph("form button"));
+            formButton.add(new Paragraph("paragraph with yellow border inside button")
+                    .setBorder(new SolidBorder(ColorConstants.YELLOW, 1)));
+            document.add(formButton);
+
+            document.add(new Paragraph(""));
+
+            Button flattenButton = new Button("flatten button");
+            flattenButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
+            flattenButton.add(new Paragraph("flatten button"));
+
+            flattenButton.setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
             flattenButton.add(new Paragraph("paragraph with pink border inside button")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 1)));
             document.add(flattenButton);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,8 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.pdf.PdfAConformanceLevel;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -30,8 +32,10 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.UnitTest;
 
@@ -94,6 +98,23 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
         // and doesn't return any value. The only result is exception which
         // was or wasn't thrown. Successful scenario is tested here therefore
         // no assertion is provided
+    }
+
+    @Test
+    public void deprecatedCheckColorShadingTest() {
+        PdfDictionary patternDict = new PdfDictionary();
+        patternDict.put(PdfName.ExtGState, new PdfDictionary());
+        PdfPattern.Shading pattern = new PdfPattern.Shading(patternDict);
+
+        PdfDictionary dictionary = new PdfDictionary();
+        dictionary.put(PdfName.ColorSpace, PdfName.DeviceCMYK);
+        pattern.setShading(dictionary);
+
+        Color color = new PatternColor(pattern);
+
+        AssertUtil.doesNotThrow(() -> {
+            pdfA1Checker.checkColor(color, new PdfDictionary(), true, null);
+        });
     }
 
     @Test

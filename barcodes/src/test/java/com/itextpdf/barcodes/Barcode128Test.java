@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,6 +32,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,10 +52,15 @@ public class Barcode128Test extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void barcode01Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode128_01.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfDocument document = new PdfDocument(writer);
 
         PdfPage page = document.addNewPage();
@@ -74,7 +81,7 @@ public class Barcode128Test extends ExtendedITextTest {
     @Test
     public void barcode02Test() throws IOException, PdfException, InterruptedException {
         String filename = "barcode128_02.pdf";
-        PdfWriter writer = new PdfWriter(destinationFolder + filename);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename);
         PdfReader reader = new PdfReader(sourceFolder + "DocumentWithTrueTypeFont1.pdf");
         PdfDocument document = new PdfDocument(reader, writer);
 

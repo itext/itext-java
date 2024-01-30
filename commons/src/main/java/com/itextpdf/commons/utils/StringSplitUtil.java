@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,6 +24,9 @@ package com.itextpdf.commons.utils;
 
 import java.util.regex.Pattern;
 
+/**
+ * Utility class which splits string data to array by provided character.
+ */
 public final class StringSplitUtil {
 
     private StringSplitUtil() {
@@ -31,6 +34,14 @@ public final class StringSplitUtil {
     }
 
 
+    /**
+     * Splits string data to array by provided character.
+     *
+     * @param data data to split.
+     * @param toSplitOn character by which data will be split.
+     *
+     * @return array of string which were split.
+     */
     public static String[] splitKeepTrailingWhiteSpace(String data, char toSplitOn) {
         return data.split(Pattern.quote(String.valueOf(toSplitOn)), -1);
     }

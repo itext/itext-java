@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -69,14 +69,31 @@ public class PdfButtonFormField extends PdfFormField {
      */
     public static final int FF_RADIOS_IN_UNISON = makeFieldFlag(26);
 
+    /**
+     * Creates a minimal {@link PdfButtonFormField}.
+     *
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfButtonFormField(PdfDocument pdfDocument) {
         super(pdfDocument);
     }
 
+    /**
+     * Creates a button form field as a parent of a {@link PdfWidgetAnnotation}.
+     *
+     * @param widget The widget which will be a kid of the {@link PdfButtonFormField}.
+     * @param pdfDocument The {@link PdfDocument} instance.
+     */
     protected PdfButtonFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         super(widget, pdfDocument);
     }
 
+    /**
+     * Creates a button form field as a wrapper object around a {@link PdfDictionary}.
+     * This {@link PdfDictionary} must be an indirect object.
+     *
+     * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
+     */
     protected PdfButtonFormField(PdfDictionary pdfObject) {
         super(pdfObject);
     }

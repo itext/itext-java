@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,11 +30,13 @@ import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -47,7 +49,9 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.signatures.OID.X509Extensions;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -55,14 +59,20 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CRLException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,14 +83,15 @@ public class LtvVerification {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
 
-    private PdfDocument document;
-    private SignatureUtil sgnUtil;
-    private PdfAcroForm acroForm;
-    private Map<PdfName, ValidationData> validated = new HashMap<>();
+    private final PdfDocument document;
+    private final SignatureUtil sgnUtil;
+    private final Map<PdfName, ValidationData> validated = new HashMap<>();
     private boolean used = false;
     private String securityProviderCode = null;
+    private RevocationDataNecessity revocationDataNecessity = RevocationDataNecessity.OPTIONAL;
+    private IIssuingCertificateRetriever issuingCertificateRetriever = new DefaultIssuingCertificateRetriever();
 
     /**
      * What type of verification to include.
@@ -115,7 +126,12 @@ public class LtvVerification {
         /**
          * Include verification for the whole chain of certificates.
          */
-        WHOLE_CHAIN
+        WHOLE_CHAIN,
+        /**
+         * Include verification for the whole certificates chain, certificates used to create OCSP responses,
+         * CRL response certificates and timestamp certificates included in the signatures.
+         */
+        ALL_CERTIFICATES
     }
 
     /**
@@ -134,6 +150,20 @@ public class LtvVerification {
     }
 
     /**
+     * Option to determine whether revocation information is required for the signing certificate.
+     */
+    public enum RevocationDataNecessity {
+        /**
+         * Require revocation information for the signing certificate.
+         */
+        REQUIRED_FOR_SIGNING_CERTIFICATE,
+        /**
+         * Revocation data for the signing certificate may be optional.
+         */
+        OPTIONAL
+    }
+
+    /**
      * The verification constructor. This class should only be created with
      * PdfStamper.getLtvVerification() otherwise the information will not be
      * added to the Pdf.
@@ -142,7 +172,6 @@ public class LtvVerification {
      */
     public LtvVerification(PdfDocument document) {
         this.document = document;
-        this.acroForm = PdfFormCreator.getAcroForm(document, true);
         this.sgnUtil = new SignatureUtil(document);
     }
 
@@ -157,6 +186,36 @@ public class LtvVerification {
     public LtvVerification(PdfDocument document, String securityProviderCode) {
         this(document);
         this.securityProviderCode = securityProviderCode;
+    }
+
+    /**
+     * Sets {@link RevocationDataNecessity} option to specify the necessity of revocation data.
+     *
+     * <p>
+     * Default value is {@link RevocationDataNecessity#OPTIONAL}.
+     *
+     * @param revocationDataNecessity {@link RevocationDataNecessity} value to set
+     *
+     * @return this {@link LtvVerification} instance.
+     */
+    public LtvVerification setRevocationDataNecessity(RevocationDataNecessity revocationDataNecessity) {
+        this.revocationDataNecessity = revocationDataNecessity;
+        return this;
+    }
+
+    /**
+     * Sets {@link IIssuingCertificateRetriever} instance needed to get CRL issuer certificates (using AIA extension).
+     *
+     * <p>
+     * Default value is {@link DefaultIssuingCertificateRetriever}.
+     *
+     * @param issuingCertificateRetriever {@link IIssuingCertificateRetriever} instance to set
+     *
+     * @return this {@link LtvVerification} instance.
+     */
+    public LtvVerification setIssuingCertificateRetriever(IIssuingCertificateRetriever issuingCertificateRetriever) {
+        this.issuingCertificateRetriever = issuingCertificateRetriever;
+        return this;
     }
 
     /**
@@ -176,59 +235,35 @@ public class LtvVerification {
      * @throws IOException              signals that an I/O exception has occurred
      */
     public boolean addVerification(String signatureName, IOcspClient ocsp, ICrlClient crl, CertificateOption certOption,
-            Level level, CertificateInclusion certInclude) throws IOException, GeneralSecurityException {
+            Level level, CertificateInclusion certInclude)
+            throws IOException, GeneralSecurityException {
         if (used) {
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
         }
         PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
-        Certificate[] xc = pk.getCertificates();
-        X509Certificate cert;
+        Certificate[] certificateChain = pk.getCertificates();
         X509Certificate signingCert = pk.getSigningCertificate();
-        ValidationData vd = new ValidationData();
-        for (Certificate certificate : xc) {
-            cert = (X509Certificate) certificate;
-            LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
-            if (certOption == CertificateOption.SIGNING_CERTIFICATE
-                    && !cert.equals(signingCert)) {
-                continue;
-            }
-            byte[] ocspEnc = null;
-            if (ocsp != null && level != Level.CRL) {
-                ocspEnc = ocsp.getEncoded(cert, getParent(cert, xc), null);
-                if (ocspEnc != null) {
-                    vd.ocsps.add(buildOCSPResponse(ocspEnc));
-                    LOGGER.info("OCSP added");
-                }
-            }
-            if (crl != null
-                    && (level == Level.CRL || level == Level.OCSP_CRL
-                        || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
-                Collection<byte[]> cims = crl.getEncoded(cert, null);
-                if (cims != null) {
-                    for (byte[] cim : cims) {
-                        boolean dup = false;
-                        for (byte[] b : vd.crls) {
-                            if (Arrays.equals(b, cim)) {
-                                dup = true;
-                                break;
-                            }
-                        }
-                        if (!dup) {
-                            vd.crls.add(cim);
-                            LOGGER.info("CRL added");
-                        }
-                    }
-                }
-            }
-            if (certInclude == CertificateInclusion.YES) {
-                vd.certs.add(cert.getEncoded());
+        ValidationData validationData = new ValidationData();
+        Set<X509Certificate> processedCerts = new HashSet<>();
+        addRevocationDataForChain(signingCert, certificateChain, ocsp, crl, level, certInclude, certOption,
+                validationData, processedCerts);
+
+        if (certOption == CertificateOption.ALL_CERTIFICATES) {
+            Certificate[] timestampCertsChain = pk.getTimestampCertificates();
+            addRevocationDataForChain(signingCert, timestampCertsChain, ocsp, crl, level, certInclude, certOption,
+                    validationData, processedCerts);
+        }
+        if (certInclude == CertificateInclusion.YES) {
+            for (X509Certificate processedCert : processedCerts) {
+                validationData.certs.add(processedCert.getEncoded());
             }
         }
-        if (vd.crls.size() == 0 && vd.ocsps.size() == 0) {
+        
+        if (validationData.crls.size() == 0 && validationData.ocsps.size() == 0) {
             return false;
         }
-        validated.put(getSignatureHashKey(signatureName), vd);
+        validated.put(getSignatureHashKey(signatureName), validationData);
         return true;
     }
 
@@ -268,61 +303,6 @@ public class LtvVerification {
     }
 
     /**
-     * Get the issuing certificate for a child certificate.
-     *
-     * @param cert  the certificate for which we search the parent
-     * @param certs an array with certificates that contains the parent
-     *
-     * @return the parent certificate
-     */
-    X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
-        X509Certificate parent;
-        for (Certificate certificate : certs) {
-            parent = (X509Certificate) certificate;
-            if (!cert.getIssuerDN().equals(parent.getSubjectDN())) {
-                continue;
-            }
-            try {
-                cert.verify(parent.getPublicKey());
-                return parent;
-            } catch (Exception e) {
-                // do nothing
-            }
-        }
-        return null;
-    }
-
-    private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
-        IDEROctetString doctet = BOUNCY_CASTLE_FACTORY.createDEROctetString(basicOcspResponse);
-        IOCSPResponseStatus respStatus = BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus(
-                BOUNCY_CASTLE_FACTORY.createOCSPRespBuilderInstance().getSuccessful());
-        IResponseBytes responseBytes = BOUNCY_CASTLE_FACTORY.createResponseBytes(
-                BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspBasic(), doctet);
-        IOCSPResponse ocspResponse = BOUNCY_CASTLE_FACTORY.createOCSPResponse(respStatus, responseBytes);
-        return BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspResponse).getEncoded();
-    }
-
-    private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException, IOException {
-        PdfSignature sig = sgnUtil.getSignature(signatureName);
-        PdfString contents = sig.getContents();
-        byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
-        byte[] bt = null;
-        if (PdfName.ETSI_RFC3161.equals(sig.getSubFilter())) {
-            try (IASN1InputStream din = BOUNCY_CASTLE_FACTORY.createASN1InputStream(new ByteArrayInputStream(bc))) {
-                IASN1Primitive pkcs = din.readObject();
-                bc = pkcs.getEncoded();
-            }
-        }
-        bt = hashBytesSha1(bc);
-        return new PdfName(convertToHex(bt));
-    }
-
-    private static byte[] hashBytesSha1(byte[] b) throws NoSuchAlgorithmException {
-        MessageDigest sh = MessageDigest.getInstance("SHA1");
-        return sh.digest(b);
-    }
-
-    /**
      * Merges the validation with any validation already in the document or creates a new one.
      */
     public void merge() {
@@ -337,6 +317,182 @@ public class LtvVerification {
         } else {
             updateDss();
         }
+    }
+
+    /**
+     * Converts an array of bytes to a String of hexadecimal values
+     *
+     * @param bytes a byte array
+     *
+     * @return the same bytes expressed as hexadecimal values
+     */
+    public static String convertToHex(byte[] bytes) {
+        ByteBuffer buf = new ByteBuffer();
+        for (byte b : bytes) {
+            buf.appendHex(b);
+        }
+        return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
+    }
+
+    /**
+     * Get the issuing certificate for a child certificate.
+     *
+     * @param cert  the certificate for which we search the parent
+     * @param certs an array with certificates that contains the parent
+     *
+     * @return the parent certificate
+     */
+    X509Certificate getParent(X509Certificate cert, Certificate[] certs) {
+        X509Certificate parent;
+        for (Certificate certificate : certs) {
+            parent = (X509Certificate) certificate;
+            if (!cert.getIssuerX500Principal().equals(parent.getSubjectX500Principal())) {
+                continue;
+            }
+            try {
+                cert.verify(parent.getPublicKey());
+                return parent;
+            } catch (Exception e) {
+                // do nothing
+            }
+        }
+        return null;
+    }
+
+    private void addRevocationDataForChain(X509Certificate signingCert, Certificate[] certChain, IOcspClient ocsp,
+            ICrlClient crl, Level level, CertificateInclusion certInclude, CertificateOption certOption,
+            ValidationData validationData, Set<X509Certificate> processedCerts)
+            throws CertificateException, IOException, CRLException {
+        Certificate[] fullChain = certOption == CertificateOption.ALL_CERTIFICATES ?
+                retrieveMissingCertificates(certChain) : certChain;
+        for (Certificate certificate : fullChain) {
+            X509Certificate cert = (X509Certificate) certificate;
+            LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
+            if ((certOption == CertificateOption.SIGNING_CERTIFICATE && !cert.equals(signingCert))
+                    || processedCerts.contains(cert)) {
+                continue;
+            }
+            addRevocationDataForCertificate(signingCert, fullChain, cert, ocsp, crl, level, certInclude, certOption,
+                    validationData, processedCerts);
+        }
+    }
+
+    private void addRevocationDataForCertificate(X509Certificate signingCert, Certificate[] certificateChain,
+            X509Certificate cert, IOcspClient ocsp, ICrlClient crl, Level level, CertificateInclusion certInclude,
+            CertificateOption certOption, ValidationData validationData, Set<X509Certificate> processedCerts)
+            throws IOException, CertificateException, CRLException {
+        processedCerts.add(cert);
+        byte[] validityAssured = SignUtils.getExtensionValueByOid(cert, X509Extensions.VALIDITY_ASSURED_SHORT_TERM);
+        if (validityAssured != null) {
+            LOGGER.info(MessageFormatUtil.format(SignLogMessageConstant.REVOCATION_DATA_NOT_ADDED_VALIDITY_ASSURED,
+                    cert.getSubjectX500Principal()));
+            return;
+        }
+        byte[] ocspEnc = null;
+        boolean revocationDataAdded = false;
+        if (ocsp != null && level != Level.CRL) {
+            ocspEnc = ocsp.getEncoded(cert, getParent(cert, certificateChain), null);
+            if (ocspEnc != null) {
+                validationData.ocsps.add(buildOCSPResponse(ocspEnc));
+                revocationDataAdded = true;
+                LOGGER.info("OCSP added");
+                if (certOption == CertificateOption.ALL_CERTIFICATES) {
+                    addRevocationDataForOcspCert(ocspEnc, signingCert, ocsp, crl, level, certInclude, certOption,
+                            validationData, processedCerts);
+                }
+            }
+        }
+        if (crl != null
+                && (level == Level.CRL || level == Level.OCSP_CRL
+                || (level == Level.OCSP_OPTIONAL_CRL && ocspEnc == null))) {
+            Collection<byte[]> cims = crl.getEncoded(cert, null);
+            if (cims != null) {
+                for (byte[] cim : cims) {
+                    boolean dup = false;
+                    for (byte[] b : validationData.crls) {
+                        if (Arrays.equals(b, cim)) {
+                            dup = true;
+                            break;
+                        }
+                    }
+                    if (!dup) {
+                        validationData.crls.add(cim);
+                        revocationDataAdded = true;
+                        LOGGER.info("CRL added");
+                        if (certOption == CertificateOption.ALL_CERTIFICATES) {
+                            Certificate[] certsList = issuingCertificateRetriever.getCrlIssuerCertificates(
+                                    SignUtils.parseCrlFromStream(new ByteArrayInputStream(cim)));
+                            addRevocationDataForChain(signingCert, certsList, ocsp, crl,
+                                    level, certInclude, certOption, validationData, processedCerts);
+                        }
+                    }
+                }
+            }
+        }
+        if (revocationDataNecessity == RevocationDataNecessity.REQUIRED_FOR_SIGNING_CERTIFICATE &&
+                signingCert.equals(cert) && !revocationDataAdded) {
+            throw new PdfException(SignExceptionMessageConstant.NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE);
+        }
+    }
+    
+    private void addRevocationDataForOcspCert(byte[] ocspEnc, X509Certificate signingCert, IOcspClient ocsp,
+            ICrlClient crl, Level level, CertificateInclusion certInclude, CertificateOption certOption,
+            ValidationData validationData, Set<X509Certificate> processedCerts)
+            throws CertificateException, IOException, CRLException {
+        IBasicOCSPResp ocspResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
+                BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(ocspEnc));
+        Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(ocspResp);
+        List<X509Certificate> ocspCertsList = iterableToList(certs);
+        X509Certificate ocspSigningCert = null;
+        for (X509Certificate ocspCert : ocspCertsList) {
+            try {
+                if (SignUtils.isSignatureValid(ocspResp, ocspCert, BOUNCY_CASTLE_FACTORY.getProviderName())) {
+                    ocspSigningCert = ocspCert;
+                    break;
+                }
+            } catch (AbstractOperatorCreationException | AbstractOCSPException ignored) {
+                // Wasn't possible to check if this cert is signing one, skip.
+            }
+        }
+        if (ocspSigningCert != null && SignUtils.getExtensionValueByOid(
+                ocspSigningCert, X509Extensions.ID_PKIX_OCSP_NOCHECK) != null) {
+            // If ocsp_no_check extension is set on OCSP signing cert we shan't collect revocation data for this cert.
+            ocspCertsList.remove(ocspSigningCert);
+            processedCerts.add(ocspSigningCert);
+        }
+        addRevocationDataForChain(signingCert, ocspCertsList.toArray(new X509Certificate[0]),
+                ocsp, crl, level, certInclude, certOption, validationData, processedCerts);
+    }
+    
+    private static List<X509Certificate> iterableToList(Iterable<X509Certificate> iterable) {
+        List<X509Certificate> list = new ArrayList<>();
+        for (X509Certificate certificate : iterable) {
+            list.add(certificate);
+        }
+        return list;
+    }
+
+    private static byte[] buildOCSPResponse(byte[] basicOcspResponse) throws IOException {
+        IDEROctetString doctet = BOUNCY_CASTLE_FACTORY.createDEROctetString(basicOcspResponse);
+        IOCSPResponseStatus respStatus = BOUNCY_CASTLE_FACTORY.createOCSPResponseStatus(
+                BOUNCY_CASTLE_FACTORY.createOCSPRespBuilderInstance().getSuccessful());
+        IResponseBytes responseBytes = BOUNCY_CASTLE_FACTORY.createResponseBytes(
+                BOUNCY_CASTLE_FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspBasic(), doctet);
+        IOCSPResponse ocspResponse = BOUNCY_CASTLE_FACTORY.createOCSPResponse(respStatus, responseBytes);
+        return BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspResponse).getEncoded();
+    }
+
+    private PdfName getSignatureHashKey(String signatureName) throws NoSuchAlgorithmException {
+        PdfSignature sig = sgnUtil.getSignature(signatureName);
+        PdfString contents = sig.getContents();
+        byte[] bc = PdfEncodings.convertToBytes(contents.getValue(), null);
+        byte[] bt = hashBytesSha1(bc);
+        return new PdfName(convertToHex(bt));
+    }
+
+    private static byte[] hashBytesSha1(byte[] b) throws NoSuchAlgorithmException {
+        MessageDigest sh = MessageDigest.getInstance("SHA1");
+        return sh.digest(b);
     }
 
     private void updateDss() {
@@ -476,18 +632,16 @@ public class LtvVerification {
         public List<byte[]> certs = new ArrayList<>();
     }
 
-    /**
-     * Converts an array of bytes to a String of hexadecimal values
-     *
-     * @param bytes a byte array
-     *
-     * @return the same bytes expressed as hexadecimal values
-     */
-    public static String convertToHex(byte[] bytes) {
-        ByteBuffer buf = new ByteBuffer();
-        for (byte b : bytes) {
-            buf.appendHex(b);
+    private Certificate[] retrieveMissingCertificates(Certificate[] certChain) {
+        Map<String, Certificate> restoredChain = new LinkedHashMap<>();
+        Certificate[] subChain;
+        for (Certificate certificate : certChain) {
+            subChain = issuingCertificateRetriever.retrieveMissingCertificates(new Certificate[]{certificate});
+            for (Certificate cert : subChain) {
+                restoredChain.put(((X509Certificate) cert).getSubjectX500Principal().getName(), cert);
+            }
         }
-        return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
+        return restoredChain.values().toArray(new Certificate[0]);
     }
+
 }

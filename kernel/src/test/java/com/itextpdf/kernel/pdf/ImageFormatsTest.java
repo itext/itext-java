@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,6 +33,8 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.type.IntegrationTest;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,11 +52,16 @@ public class ImageFormatsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+    
     @Test
     public void imagesWithDifferentDepth() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "transparencyTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_transparencyTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties()
                 .setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         PdfPage page = pdfDocument.addNewPage(PageSize.A3);
         PdfCanvas canvas = new PdfCanvas(page);
@@ -133,7 +140,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
     public void png_imageTransparency_8bitDepthImage() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "png_imageTransparancy_8bitDepthImage.pdf";
         String cmpFileName = sourceFolder + "cmp_png_imageTransparancy_8bitDepthImage.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties()
                 .setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         PdfPage page = pdfDocument.addNewPage(PageSize.A4);
         PdfCanvas canvas = new PdfCanvas(page);
@@ -164,7 +171,7 @@ public class ImageFormatsTest extends ExtendedITextTest {
     public void png_imageTransparency_24bitDepthImage() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "png_imageTransparancy_24bitDepthImage.pdf";
         String cmpFileName = sourceFolder + "cmp_png_imageTransparancy_24bitDepthImage.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName, new WriterProperties()
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties()
                 .setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         PdfPage page = pdfDocument.addNewPage(PageSize.A4);
         PdfCanvas canvas = new PdfCanvas(page);

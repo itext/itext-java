@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -31,7 +31,7 @@ import com.itextpdf.kernel.xmp.properties.XMPProperty;
 /**
  * Enumeration of all the PDF/A conformance levels.
  */
-public class PdfAConformanceLevel {
+public class PdfAConformanceLevel implements IConformanceLevel {
 
     public static final PdfAConformanceLevel PDF_A_1A = new PdfAConformanceLevel("1", "A");
     public static final PdfAConformanceLevel PDF_A_1B = new PdfAConformanceLevel("1", "B");

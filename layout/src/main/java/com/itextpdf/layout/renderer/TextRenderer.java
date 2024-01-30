@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -1542,7 +1542,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             return true;
         } else {
-            throw new IllegalStateException("Invalid FONT property value type.");
+            throw new IllegalStateException(LayoutExceptionMessageConstant.INVALID_FONT_PROPERTY_VALUE);
         }
     }
 

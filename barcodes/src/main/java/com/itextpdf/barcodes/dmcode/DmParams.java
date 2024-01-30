@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,10 @@
  */
 package com.itextpdf.barcodes.dmcode;
 
+/**
+ * Class that contains the parameters for a DM code.
+ * It contains all the information needed to create one data matrix entry
+ */
 public  class DmParams {
     /**
      * Creates a DM code parameter block

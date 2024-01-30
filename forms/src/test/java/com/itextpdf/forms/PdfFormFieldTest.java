@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -1918,18 +1918,50 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         pdfDoc.addNewPage();
 
         PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
-                .setWidgetRectangle(new Rectangle(100, 600, 400, 150)).createSignature();
+                .setWidgetRectangle(new Rectangle(100, 600, 400, 150))
+                .createSignature();
         signField.getPdfObject().put(PdfName.Name, new PdfName("test name"));
         signField.getPdfObject().put(PdfName.Reason, new PdfString("test reason"));
         signField.getPdfObject().put(PdfName.Location, new PdfString("test location"));
         signField.getPdfObject().put(PdfName.ContactInfo, new PdfString("test contact"));
-        signField.getFirstFormAnnotation().setBackgroundColor(ColorConstants.PINK).setColor(ColorConstants.WHITE);
+        signField.getFirstFormAnnotation()
+                .setBackgroundColor(ColorConstants.PINK)
+                .setColor(ColorConstants.WHITE);
         form.addField(signField);
 
         pdfDoc.close();
 
         Assert.assertNull(new CompareTool().compareByContent(fileName,
                 sourceFolder + "cmp_pdfWithSignatureFieldTest.pdf", destinationFolder, "diff_"));
+    }
+
+
+    @Test
+    public void pdfWithSignatureAndFontInBuilderFieldTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "pdfWithSignatureAndFontInBuilderFieldTestFieldTest.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(fileName));
+
+        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+        pdfDoc.addNewPage();
+
+        PdfFormField signField = new SignatureFormFieldBuilder(pdfDoc, "signature")
+                .setWidgetRectangle(new Rectangle(100, 600, 400, 150))
+                .setFont(PdfFontFactory.createFont(StandardFonts.COURIER))
+                .createSignature();
+        signField.getPdfObject().put(PdfName.Name, new PdfName("test name"));
+        signField.getPdfObject().put(PdfName.Reason, new PdfString("test reason"));
+        signField.getPdfObject().put(PdfName.Location, new PdfString("test location"));
+        signField.getPdfObject().put(PdfName.ContactInfo, new PdfString("test contact"));
+        signField.getFirstFormAnnotation()
+                .setBackgroundColor(ColorConstants.PINK)
+                .setColor(ColorConstants.WHITE);
+        form.addField(signField);
+
+        pdfDoc.close();
+
+        Assert.assertNull(new CompareTool().compareByContent(fileName,
+                sourceFolder + "cmp_pdfWithSignatureAndFontInBuilderFieldTest.pdf", destinationFolder,
+                "diff_"));
     }
 
     static class CustomButtonFormField extends PdfButtonFormField {

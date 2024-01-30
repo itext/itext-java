@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -53,6 +53,7 @@ public final class LayoutExceptionMessageConstant {
 
     public static final String INVALID_COLUMN_PROPERTIES =
             "Invalid column-count/column-width/column-gap properties, they're absent or have negative value";
+    public static final String INVALID_FONT_PROPERTY_VALUE = "Invalid FONT property value type.";
 
     private LayoutExceptionMessageConstant(){}
 }

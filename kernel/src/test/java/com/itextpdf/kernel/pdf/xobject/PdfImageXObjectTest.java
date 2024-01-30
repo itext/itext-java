@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -38,6 +38,7 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,13 +55,18 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterClass
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void addFlushedImageXObjectToCanvas() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "addFlushedImageXObjectToCanvas.pdf";
         String cmpfile = SOURCE_FOLDER + "cmp_addFlushedImageXObjectToCanvas.pdf";
         String image = SOURCE_FOLDER + "image.png";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(image));
         // flushing pdf object directly
@@ -158,7 +164,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         String cmpFile = SOURCE_FOLDER + "cmp_group3CompTiffImgRecoverErrorAndDirect.pdf";
         String image = SOURCE_FOLDER + "group3CompressionImage.tif";
 
-        try (PdfWriter writer = new PdfWriter(filename);
+        try (PdfWriter writer = CompareTool.createTestPdfWriter(filename);
                 PdfDocument pdfDoc = new PdfDocument(writer)) {
 
             PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.createTiff(UrlUtil.toURL(image),
@@ -189,7 +195,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         String cmpFilename = SOURCE_FOLDER + "cmp_redundantDecodeParms.pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFilename),
-                new PdfWriter(new FileOutputStream(destFilename)),
+                CompareTool.createTestPdfWriter(destFilename),
                 new StampingProperties())) {
         }
 
@@ -202,7 +208,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outFilename));
         System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpFilename)+ "\n");
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFilename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFilename));
 
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(imageFilename));
 
@@ -210,11 +216,11 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(50, 500, 346, imageXObject.getHeight()));
         pdfDoc.close();
 
-        PdfDocument outDoc = new PdfDocument(new PdfReader(outFilename));
+        PdfDocument outDoc = new PdfDocument(CompareTool.createOutputReader(outFilename));
 
         PdfStream outStream = outDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
-        PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFilename));
+        PdfDocument cmpDoc = new PdfDocument(CompareTool.createOutputReader(cmpFilename));
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
 
@@ -230,18 +236,18 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outFilename));
         System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpFilename)+ "\n");
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFilename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFilename));
 
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(10, 20, 575 , 802));
         pdfDoc.close();
 
-        PdfDocument outDoc = new PdfDocument(new PdfReader(outFilename));
+        PdfDocument outDoc = new PdfDocument(CompareTool.createOutputReader(outFilename));
 
         PdfStream outStream = outDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
-        PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpFilename));
+        PdfDocument cmpDoc = new PdfDocument(CompareTool.createOutputReader(cmpFilename));
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2024 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -141,8 +141,8 @@ class ImagePdfBytesInfo {
         byte[] newImageBytes = scs.getTintTransformation().calculateFromByteArray(imageBytes, 0,
                 imageBytes.length, 8, 8
         );
-        // TODO switch top tiff for CMYK
-        // TODO verify RGBA is working
+        // TODO DEVSIX-6757 switch top tiff for CMYK
+        // TODO DEVSIX-6757 verify RGBA is working
         if (scs.getBaseCs().getNumberOfComponents() > 3) {
             throw new UnsupportedOperationException(KernelExceptionMessageConstant.
                     GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB);
