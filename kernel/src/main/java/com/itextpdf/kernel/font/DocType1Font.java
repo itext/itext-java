@@ -57,6 +57,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         if (!fontDictionary.containsKey(PdfName.FontDescriptor)) {
             final Type1Font type1StdFont = getType1Font(baseFont);
             if (type1StdFont != null) {
+                type1StdFont.initializeGlyphs(fontEncoding);
                 return type1StdFont;
             }
         }
@@ -64,11 +65,12 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         PdfDictionary fontDesc = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fontProgram.subtype = fontDesc != null ? fontDesc.getAsName(PdfName.Subtype) : null;
         fillFontDescriptor(fontProgram, fontDesc);
-        processWidth(fontDictionary,fontEncoding,toUnicode,fontProgram);
+        initializeGlyphs(fontDictionary, fontEncoding, toUnicode, fontProgram);
+
         return fontProgram;
     }
 
-    static void processWidth(PdfDictionary fontDictionary, FontEncoding fontEncoding,
+    static void initializeGlyphs(PdfDictionary fontDictionary, FontEncoding fontEncoding,
             CMapToUnicode toUnicode, DocType1Font fontProgram) {
         PdfNumber firstCharNumber = fontDictionary.getAsNumber(PdfName.FirstChar);
         int firstChar = firstCharNumber != null ? Math.max(firstCharNumber.intValue(), 0) : 0;
@@ -109,7 +111,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         try {
             //if there are no font modifiers, cached font could be used,
             //otherwise a new instance should be created.
-            return (Type1Font) FontProgramFactory.createFont(baseFont, true);
+            return (Type1Font) FontProgramFactory.createFont(baseFont, false);
         } catch (Exception e ) {
             return null;
         }

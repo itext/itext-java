@@ -286,23 +286,21 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
         byte[] contentBytes = characterCodes.getValueBytes();
         for (byte b : contentBytes) {
             int code = b & 0xff;
-            Glyph glyph = null;
-            CMapToUnicode toUnicodeCMap = getToUnicode();
-            if (toUnicodeCMap != null && toUnicodeCMap.lookup(code) != null
-                    && (glyph = getFontProgram().getGlyphByCode(code)) != null) {
-                if (!Arrays.equals(toUnicodeCMap.lookup(code), glyph.getChars())) {
+            Glyph glyph = getFontProgram().getGlyphByCode(code);
+            final int uni = enc.getUnicode(code);
+            if (glyph == null && uni > -1) {
+                glyph = getGlyph(uni);
+            }
+
+            if (glyph != null) {
+                char[] chars;
+                CMapToUnicode toUnicodeCMap = getToUnicode();
+                if (toUnicodeCMap != null && (chars = toUnicodeCMap.lookup(code)) != null
+                        && !Arrays.equals(chars, glyph.getChars())) {
                     // Copy the glyph because the original one may be reused (e.g. standard Helvetica font program)
                     glyph = new Glyph(glyph);
-                    glyph.setChars(toUnicodeCMap.lookup(code));
+                    glyph.setChars(chars);
                 }
-            } else {
-                glyph = getFontProgram().getGlyphByCode(code);
-                int uni = enc.getUnicode(code);
-                if (uni > -1 && (glyph == null || glyph.getUnicode() != uni)) {
-                    glyph = getGlyph(uni);
-                }
-            }
-            if (glyph != null) {
                 list.add(glyph);
             } else {
                 Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -81,6 +81,26 @@ public class Type1Font extends FontProgram {
         getFontNames().setFontName(baseFont);
     }
 
+    /**
+     * Fills missing character codes in {@code codeToGlyph} map.
+     *
+     * @param fontEncoding to be used to map unicode values to character codes.
+     */
+    public void initializeGlyphs(FontEncoding fontEncoding) {
+        for (int i = 0; i < 256; i++) {
+            final int unicode = fontEncoding.getUnicode(i);
+            // Original unicodeToGlyph will be the source of widths here
+            Glyph fontGlyph = unicodeToGlyph.get(unicode);
+            if (fontGlyph == null) {
+                continue;
+            }
+
+            Glyph glyph = new Glyph(i, fontGlyph.getWidth(), unicode, fontGlyph.getChars(), false);
+            codeToGlyph.put(i, glyph);
+            unicodeToGlyph.put(glyph.getUnicode(), glyph);
+        }
+    }
+
     public boolean isBuiltInFont() {
         return fontParser != null && fontParser.isBuiltInFont();
     }
