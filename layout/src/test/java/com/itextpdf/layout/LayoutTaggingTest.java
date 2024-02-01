@@ -1155,6 +1155,105 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         compareResult(outFile, "cmp_" + outFile);
     }
 
+    @Test
+    public void tableAppendsScopeToCell()
+            throws IOException, ParserConfigurationException, InterruptedException, SAXException {
+        String outFile = "tableAppendsScopeToCell.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        Cell cell = new Cell().add(new Paragraph("Header 1"));
+        cell.getAccessibilityProperties().setRole(StandardRoles.TH);
+        table.addHeaderCell(cell);
+
+        Cell cell2 = new Cell().add(new Paragraph("Header 2"));
+        cell2.getAccessibilityProperties().setRole(StandardRoles.TH);
+        table.addHeaderCell(cell2);
+
+        Cell cell3 = new Cell().add(new Paragraph("Data 1"));
+        table.addCell(cell3);
+
+        Cell cell4 = new Cell().add(new Paragraph("Data 2"));
+        table.addCell(cell4);
+
+        document.add(table);
+        document.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+    @Test
+    public void tableAppendsScopeNoneToCell() throws Exception {
+        String outFile = "tableAppendsScopeNoneToCell.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        Cell cell = new Cell().add(new Paragraph("Header 1"));
+        cell.getAccessibilityProperties().setRole(StandardRoles.TH);
+        cell.getAccessibilityProperties().addAttributes(new PdfStructureAttributes("Table")
+                .addEnumAttribute("Scope", "None"));
+        table.addHeaderCell(cell);
+
+        Cell cell2 = new Cell().add(new Paragraph("Header 2"));
+        cell2.getAccessibilityProperties().setRole(StandardRoles.TH);
+        cell2.getAccessibilityProperties().addAttributes(new PdfStructureAttributes("Table")
+                .addEnumAttribute("Scope", "None"));
+        table.addHeaderCell(cell2);
+
+        Cell cell3 = new Cell().add(new Paragraph("Data 1"));
+        table.addCell(cell3);
+
+        Cell cell4 = new Cell().add(new Paragraph("Data 2"));
+        table.addCell(cell4);
+
+        document.add(table);
+        document.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+    @Test
+    public void tableAddsScopeRegardlessOfHeaderId() throws Exception {
+        String outFile = "tableAddsScopeRegardlessOfHeaderId.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
+        Cell hCell = new Cell().add(new Paragraph("Header 1"));
+        hCell.getAccessibilityProperties().setRole(StandardRoles.TH)
+                .getAttributesList()
+                .add(new PdfStructureAttributes("Table")
+                        .addEnumAttribute("Scope", "Both"));
+        table.addHeaderCell(hCell);
+
+        Cell hCell2 = new Cell().add(new Paragraph("Header 2"));
+        hCell2.getAccessibilityProperties().setRole(StandardRoles.TH);
+        hCell2.getAccessibilityProperties().setStructureElementIdString("ID_header");
+        table.addHeaderCell(hCell2);
+
+        Cell hCell3 = new Cell().add(new Paragraph("Header 2"));
+        hCell3.getAccessibilityProperties().setRole(StandardRoles.TH);
+        hCell3.getAccessibilityProperties().getAttributesList()
+                .add(new PdfStructureAttributes("Table")
+                        .addEnumAttribute("Scope", "Row"));
+        table.addHeaderCell(hCell3);
+
+        Cell cell3 = new Cell().add(new Paragraph("Data 1"));
+        table.addCell(cell3);
+
+        Cell cell4 = new Cell().add(new Paragraph("Data 2"));
+        table.addCell(cell4);
+
+        table.addCell(new Cell().add(new Paragraph("Data 3")));
+
+        document.add(table);
+        document.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
     private Paragraph createParagraph1() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");

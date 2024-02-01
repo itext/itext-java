@@ -730,6 +730,15 @@ public class TagTreePointer {
         return currentStructElem;
     }
 
+    /**
+     * Applies properties to the current tag.
+     * <p>
+     * @param properties the properties to be applied to the current tag.
+     */
+    public void applyProperties(AccessibilityProperties properties) {
+        AccessibilityPropertiesToStructElem.apply(properties, getCurrentStructElem());
+    }
+
     private int getNextNewKidPosition() {
         int nextPos = nextNewKidIndex;
         nextNewKidIndex = -1;
