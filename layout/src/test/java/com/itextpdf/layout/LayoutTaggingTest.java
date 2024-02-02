@@ -33,6 +33,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -1019,8 +1020,9 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO update cmp-file after DEVSIX-3351 fixed
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.XOBJECT_HAS_NO_STRUCT_PARENTS)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
+    })
     public void checkParentTreeIfFormXObjectTaggedTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "checkParentTreeIfFormXObjectTaggedTest.pdf";
         String cmpPdf = sourceFolder + "cmp_checkParentTreeIfFormXObjectTaggedTest.pdf";

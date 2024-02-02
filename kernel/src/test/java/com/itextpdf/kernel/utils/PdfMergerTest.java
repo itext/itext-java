@@ -35,7 +35,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -550,43 +549,52 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
     })
-    public void mergePdfWithMissingStructElemBeginningOfTreeTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(mergeSinglePdfAndGetResultingStructTreeRoot("structParentMissingFirstElement.pdf"));
+    public void mergePdfWithMissingStructElemBeginningOfTreeTest() throws IOException, InterruptedException {
+        String name = "structParentMissingFirstElement.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED)
     })
-    public void mergePdfWithMissingStructElemEndOfTreeTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(
-                mergeSinglePdfAndGetResultingStructTreeRoot("structParentMissingLastElement.pdf"));
+    public void mergePdfWithMissingStructElemEndOfTreeTest() throws IOException, InterruptedException {
+        String name = "structParentMissingLastElement.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY)
+            @LogMessage(messageTemplate = IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY),
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED, count = 4)
     })
-    public void mergePdfAllObjectsMissingStructParentTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(mergeSinglePdfAndGetResultingStructTreeRoot(
-                "allObjectsHaveStructParent.pdf"));
+    public void mergePdfAllObjectsMissingStructParentTest() throws IOException, InterruptedException {
+        String name = "allObjectsHaveStructParent.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED)
+            @LogMessage(messageTemplate = KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED, count = 2)
     })
-    public void mergePdfChildObjectsOfSameStructElemMissingStructParentTest() throws IOException {
-        //TODO change assertion after DEVSIX-7478 is fixed
-        Assert.assertNull(mergeSinglePdfAndGetResultingStructTreeRoot(
-                "SameStructElemNoParent.pdf"));
+    public void mergePdfChildObjectsOfSameStructElemMissingStructParentTest() throws IOException, InterruptedException {
+        String name = "SameStructElemNoParent.pdf";
+        Assert.assertNotNull(mergeSinglePdfAndGetResultingStructTreeRoot(name));
+        Assert.assertNull(new CompareTool().compareByContent(
+                destinationFolder + name,
+                sourceFolder + "cmp_" + name, destinationFolder));
     }
 
     @Test

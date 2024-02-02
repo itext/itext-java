@@ -92,6 +92,12 @@ public final class KernelLogMessageConstant {
     public static final String INVALID_DDICTIONARY_FIELD_VALUE = "The default configuration dictionary field {0}" +
             " has a value of {1}, which is not the required value for this field. The field will not be processed.";
 
+    public static final String STRUCT_PARENT_INDEX_MISSED_AND_RECREATED =
+            "StructParent index not found in tagged object, so index is recreated.";
+
+    public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED =
+            "XObject has no StructParents index in its stream, so index is recreated";
+
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
     }

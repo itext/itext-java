@@ -476,6 +476,8 @@ public final class IoLogMessageConstant {
 
     public static final String XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE = "Xfdf unsupported attribute type";
 
+    @Deprecated
+    // replaced by com.itextpdf.kernel.logs.KernelLogMessageConstant#XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED
     public static final String XOBJECT_HAS_NO_STRUCT_PARENTS = "XObject has no StructParents entry in its stream, no "
             + "entry in ParentTree will be created for the corresponding structure elements";
 
