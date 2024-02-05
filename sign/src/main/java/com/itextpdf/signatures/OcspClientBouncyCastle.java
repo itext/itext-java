@@ -76,8 +76,8 @@ public class OcspClientBouncyCastle implements IOcspClient {
     /**
      * Gets OCSP response. If {@link OCSPVerifier} was set, the response will be checked.
      *
-     * @param checkCert to certificate to check
-     * @param rootCert  the parent certificate
+     * @param checkCert the certificate to check
+     * @param rootCert  parent certificate
      * @param url       to get the verification
      *
      * @return {@link IBasicOCSPResp} an OCSP response wrapper

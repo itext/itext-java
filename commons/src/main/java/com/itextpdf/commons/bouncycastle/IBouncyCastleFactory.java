@@ -1514,6 +1514,15 @@ public interface IBouncyCastleFactory {
     ITime createTime(Date date);
 
     /**
+     * Create time wrapper from the end date of the certificate.
+     *
+     * @param certificate {@link X509Certificate} to get end date to create time wrapper from
+     *
+     * @return created time wrapper
+     */
+    ITime createEndDate(X509Certificate certificate);
+
+    /**
      * Checks if provided extension wrapper wraps {@code null}.
      *
      * @param extNonce extension wrapper to check

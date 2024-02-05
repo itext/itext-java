@@ -909,6 +909,11 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
     }
 
     @Override
+    public ITime createEndDate(X509Certificate certificate) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
     public boolean isNullExtension(IExtension extNonce) {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }

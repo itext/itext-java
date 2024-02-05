@@ -238,7 +238,6 @@ public class PadesTwoPhaseSigningHelper {
             throws IOException, GeneralSecurityException {
         Certificate[] fullChain = issuingCertificateRetriever.retrieveMissingCertificates(certificates);
         X509Certificate[] x509FullChain = Arrays.asList(fullChain).toArray(new X509Certificate[0]);
-        PdfPadesSigner padesSigner = createPadesSigner(inputDocument, outputStream);
         PdfTwoPhaseSigner pdfTwoPhaseSigner =  new PdfTwoPhaseSigner(inputDocument, outputStream);
         
         CMSContainer cms = new CMSContainer();

@@ -1701,6 +1701,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITime createEndDate(X509Certificate certificate) {
+        return createTime(certificate.getNotAfter());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isNullExtension(IExtension ext) {
         return ((ExtensionBC) ext).getExtension() == null;
     }

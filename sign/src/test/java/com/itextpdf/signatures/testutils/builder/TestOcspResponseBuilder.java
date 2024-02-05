@@ -57,6 +57,8 @@ public class TestOcspResponseBuilder {
     private ICertificateStatus certificateStatus;
     private Calendar thisUpdate = DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME);
     private Calendar nextUpdate = DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME);
+    private IX509CertificateHolder[] chain;
+    private boolean chainSet = false;
 
     public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey,
             ICertificateStatus certificateStatus) throws CertificateEncodingException, IOException {
@@ -113,9 +115,16 @@ public class TestOcspResponseBuilder {
 
         Date time = TimeTestUtil.TEST_DATE_TIME;
 
-        IX509CertificateHolder[] chain = {FACTORY.createJcaX509CertificateHolder(issuerCert)};
+        if (!chainSet) {
+            chain = new IX509CertificateHolder[]{FACTORY.createJcaX509CertificateHolder(issuerCert)};
+        }
         IContentSigner signer = FACTORY.createJcaContentSignerBuilder(SIGN_ALG).setProvider(FACTORY.getProviderName())
                 .build(issuerPrivateKey);
         return responseBuilder.build(signer, chain, time);
+    }
+
+    public void setOcspCertsChain(IX509CertificateHolder[] ocspCertsChain) {
+        chain = ocspCertsChain;
+        chainSet = true;
     }
 }
