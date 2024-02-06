@@ -181,7 +181,7 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8114 Fix randomNumberPagesTest test)
+    @org.junit.Ignore
     public void randomNumberPagesTest() throws IOException {
         String filename = "randomNumberPagesTest.pdf";
         int pageCount = 1000;
