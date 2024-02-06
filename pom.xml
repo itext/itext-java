@@ -57,7 +57,6 @@
     <module>sign</module>
     <module>styled-xml-parser</module>
     <module>svg</module>
-    <module>bouncy-castle-fips-adapter</module>
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
@@ -513,7 +512,6 @@
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
-                  <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                 </excludeModules>
               </parameter>
               <!-- TODO DEVSIX-7811 Enable japicmp after release -->
